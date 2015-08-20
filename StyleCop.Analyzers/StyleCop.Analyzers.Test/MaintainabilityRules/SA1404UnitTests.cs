@@ -4,6 +4,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.MaintainabilityRules;
     using TestHelper;
@@ -57,6 +58,18 @@ public class Foo
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 6);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixTestCode = @"public class Foo
+{
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = """ + SA1404CodeFixProvider.JustificationPlaceholder + @""")]
+    public void Bar()
+    {
+
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -75,6 +88,19 @@ public class Foo
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 6);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixTestCode = @"using SuppressMessageAttribute = System.Diagnostics.CodeAnalysis.SuppressMessageAttribute;
+public class Foo
+{
+    [SuppressMessage(null, null, Justification = """ + SA1404CodeFixProvider.JustificationPlaceholder + @""")]
+    public void Bar()
+    {
+
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -93,6 +119,19 @@ public class Foo
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 6);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixTestCode = @"using MySuppressionAttribute = System.Diagnostics.CodeAnalysis.SuppressMessageAttribute;
+public class Foo
+{
+    [MySuppression(null, null, Justification = """ + SA1404CodeFixProvider.JustificationPlaceholder + @""")]
+    public void Bar()
+    {
+
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -110,6 +149,18 @@ public class Foo
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 66);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixTestCode = @"public class Foo
+{
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = """ + SA1404CodeFixProvider.JustificationPlaceholder + @""")]
+    public void Bar()
+    {
+
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -127,6 +178,18 @@ public class Foo
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 66);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixTestCode = @"public class Foo
+{
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justific\u0061tion = """ + SA1404CodeFixProvider.JustificationPlaceholder + @""")]
+    public void Bar()
+    {
+
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -144,6 +207,18 @@ public class Foo
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 66);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixTestCode = @"public class Foo
+{
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = """ + SA1404CodeFixProvider.JustificationPlaceholder + @""")]
+    public void Bar()
+    {
+
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -161,6 +236,18 @@ public class Foo
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 66);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixTestCode = @"public class Foo
+{
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = """ + SA1404CodeFixProvider.JustificationPlaceholder + @""")]
+    public void Bar()
+    {
+
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -195,6 +282,19 @@ public class Foo
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 66);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixTestCode = @"public class Foo
+{
+    const string JUSTIFICATION = ""    "";
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = """ + SA1404CodeFixProvider.JustificationPlaceholder + @""")]
+    public void Bar()
+    {
+
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -227,6 +327,11 @@ public class Foo
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1404CodeAnalysisSuppressionMustHaveJustification();
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1404CodeFixProvider();
         }
     }
 }

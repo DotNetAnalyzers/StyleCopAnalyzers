@@ -203,6 +203,7 @@
     <Compile Include="MaintainabilityRules\SA1402FileMayOnlyContainASingleClass.cs" />
     <Compile Include="MaintainabilityRules\SA1403FileMayOnlyContainASingleNamespace.cs" />
     <Compile Include="MaintainabilityRules\SA1404CodeAnalysisSuppressionMustHaveJustification.cs" />
+    <Compile Include="MaintainabilityRules\SA1404CodeFixProvider.cs" />
     <Compile Include="MaintainabilityRules\SA1405DebugAssertMustProvideMessageText.cs" />
     <Compile Include="MaintainabilityRules\SA1406DebugFailMustProvideMessageText.cs" />
     <Compile Include="MaintainabilityRules\SA1407ArithmeticExpressionsMustDeclarePrecedence.cs" />
@@ -453,6 +454,7 @@
     <EmbeddedResource Include="MaintainabilityRules\MaintainabilityResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>MaintainabilityResources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="NamingRules\NamingResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
