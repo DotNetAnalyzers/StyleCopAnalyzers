@@ -10,7 +10,6 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers;
-    using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1404CodeAnalysisSuppressionMustHaveJustification"/>.
@@ -37,14 +36,14 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!this.FixableDiagnosticIds.Contains(diagnostic.Id))
                 {
                     continue;
                 }
-
-                var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
                 var node = root.FindNode(diagnostic.Location.SourceSpan);
 
@@ -56,7 +55,7 @@
                         CodeAction.Create(
                             MaintainabilityResources.SA1404CodeFix,
                             token => AddJustificationToAttributeAsync(context.Document, root, attribute),
-                            nameof(SA1400CodeFixProvider) + "-Add"), diagnostic);
+                            nameof(SA1404CodeFixProvider) + "-Add"), diagnostic);
                     return;
                 }
 
@@ -67,7 +66,7 @@
                         CodeAction.Create(
                             MaintainabilityResources.SA1404CodeFix,
                             token => UpdateValueOfArgumentAsync(context.Document, root, argument),
-                            nameof(SA1400CodeFixProvider) + "-Update"), diagnostic);
+                            nameof(SA1404CodeFixProvider) + "-Update"), diagnostic);
                     return;
                 }
             }
@@ -81,8 +80,8 @@
 
         private static Task<Document> AddJustificationToAttributeAsync(Document document, SyntaxNode syntaxRoot, AttributeSyntax attribute)
         {
-            var attributeName = IdentifierName(nameof(SuppressMessageAttribute.Justification));
-            var newArgument = AttributeArgument(NameEquals(attributeName), null, GetNewAttributeValue());
+            var attributeName = SyntaxFactory.IdentifierName(nameof(SuppressMessageAttribute.Justification));
+            var newArgument = SyntaxFactory.AttributeArgument(SyntaxFactory.NameEquals(attributeName), null, GetNewAttributeValue());
 
             var newArgumentList = attribute.ArgumentList.AddArguments(newArgument);
             return Task.FromResult(document.WithSyntaxRoot(syntaxRoot.ReplaceNode(attribute.ArgumentList, newArgumentList)));
@@ -90,7 +89,9 @@
 
         private static LiteralExpressionSyntax GetNewAttributeValue()
         {
-            return LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(SA1404CodeAnalysisSuppressionMustHaveJustification.JustificationPlaceholder));
+            return SyntaxFactory.LiteralExpression(
+                SyntaxKind.StringLiteralExpression,
+                SyntaxFactory.Literal(SA1404CodeAnalysisSuppressionMustHaveJustification.JustificationPlaceholder));
         }
     }
 }

@@ -85,7 +85,8 @@ public class Foo
     }
 }";
 
-            // Do not verify diagnostics as the placeholder will still generate a violation
+            expected = this.CSharpDiagnostic().WithLocation(3, 66);
+            await this.VerifyCSharpDiagnosticAsync(fixTestCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
@@ -116,7 +117,8 @@ public class Foo
     }
 }";
 
-            // Do not verify diagnostics as the placeholder will still generate a violation
+            expected = this.CSharpDiagnostic().WithLocation(4, 34);
+            await this.VerifyCSharpDiagnosticAsync(fixTestCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
@@ -147,7 +149,8 @@ public class Foo
     }
 }";
 
-            // Do not verify diagnostics as the placeholder will still generate a violation
+            expected = this.CSharpDiagnostic().WithLocation(4, 32);
+            await this.VerifyCSharpDiagnosticAsync(fixTestCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
@@ -176,7 +179,8 @@ public class Foo
     }
 }";
 
-            // Do not verify diagnostics as the placeholder will still generate a violation
+            expected = this.CSharpDiagnostic().WithLocation(3, 66);
+            await this.VerifyCSharpDiagnosticAsync(fixTestCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
@@ -205,7 +209,8 @@ public class Foo
     }
 }";
 
-            // Do not verify diagnostics as the placeholder will still generate a violation
+            expected = this.CSharpDiagnostic().WithLocation(3, 66);
+            await this.VerifyCSharpDiagnosticAsync(fixTestCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
@@ -234,7 +239,8 @@ public class Foo
     }
 }";
 
-            // Do not verify diagnostics as the placeholder will still generate a violation
+            expected = this.CSharpDiagnostic().WithLocation(3, 66);
+            await this.VerifyCSharpDiagnosticAsync(fixTestCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
@@ -263,7 +269,8 @@ public class Foo
     }
 }";
 
-            // Do not verify diagnostics as the placeholder will still generate a violation
+            expected = this.CSharpDiagnostic().WithLocation(3, 66);
+            await this.VerifyCSharpDiagnosticAsync(fixTestCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
@@ -310,7 +317,8 @@ public class Foo
     }
 }";
 
-            // Do not verify diagnostics as the placeholder will still generate a violation
+            expected = this.CSharpDiagnostic().WithLocation(4, 66);
+            await this.VerifyCSharpDiagnosticAsync(fixTestCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
