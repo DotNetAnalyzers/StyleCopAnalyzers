@@ -10,6 +10,8 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CodeActions;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.MSBuild;
 
@@ -62,7 +64,7 @@
 
                 stopwatch.Restart();
 
-                var diagnostics = GetAnalyzerDiagnosticsAsync(solution, analyzers).Result;
+                var diagnostics = GetAnalyzerDiagnosticsAsync(solution, solutionPath, analyzers).Result;
 
                 Console.WriteLine($"Found {diagnostics.Count} diagnostics in {stopwatch.ElapsedMilliseconds}ms");
 
@@ -79,7 +81,43 @@
                         }
                     }
                 }
+
+                Console.WriteLine("Calculating fixes");
+
+                List<CodeAction> fixes = new List<CodeAction>();
+
+                var codeFixers = GetAllCodeFixers();
+
+                foreach (var item in diagnostics)
+                {
+                    foreach (var codeFixer in codeFixers.GetValueOrDefault(item.Id, ImmutableList.Create<CodeFixProvider>()))
+                    {
+                        fixes.AddRange(GetFixesAsync(solution, codeFixer, item).GetAwaiter().GetResult());
+                    }
             }
+
+                Console.WriteLine($"Found {fixes.Count} potential code fixes");
+
+                Console.WriteLine("Calculating changes");
+
+                stopwatch.Restart();
+
+                Parallel.ForEach(fixes, fix =>
+                {
+                    fix.GetOperationsAsync(CancellationToken.None).GetAwaiter().GetResult();
+                });
+
+                Console.WriteLine($"Calculating changes completed in {stopwatch.ElapsedMilliseconds}ms");
+            }
+        }
+
+        private static async Task<IEnumerable<CodeAction>> GetFixesAsync(Solution solution, CodeFixProvider codeFixProvider, Diagnostic diagnostic)
+        {
+            List<CodeAction> codeActions = new List<CodeAction>();
+
+            await codeFixProvider.RegisterCodeFixesAsync(new CodeFixContext(solution.GetDocument(diagnostic.Location.SourceTree), diagnostic, (a, d) => codeActions.Add(a), CancellationToken.None));
+
+            return codeActions;
         }
 
         private static Statistic GetAnalyzerStatistics(IEnumerable<Project> projects)
@@ -158,7 +196,31 @@
             return analyzers.ToImmutableArray();
         }
 
-        private static async Task<ImmutableList<Diagnostic>> GetAnalyzerDiagnosticsAsync(Solution solution, ImmutableArray<DiagnosticAnalyzer> analyzers)
+        private static ImmutableDictionary<string, ImmutableList<CodeFixProvider>> GetAllCodeFixers()
+        {
+            Assembly assembly = typeof(StyleCop.Analyzers.NoCodeFixAttribute).Assembly;
+
+            var diagnosticAnalyzerType = typeof(CodeFixProvider);
+
+            Dictionary<string, ImmutableList<CodeFixProvider>> providers = new Dictionary<string, ImmutableList<CodeFixProvider>>();
+
+            foreach (var type in assembly.GetTypes())
+            {
+                if (type.IsSubclassOf(diagnosticAnalyzerType) && !type.IsAbstract)
+                {
+                    var codeFixProvider = (CodeFixProvider)Activator.CreateInstance(type);
+
+                    foreach (var diagnosticId in codeFixProvider.FixableDiagnosticIds)
+                    {
+                        providers.AddToInnerList(diagnosticId, codeFixProvider);
+                    }
+                }
+            }
+
+            return providers.ToImmutableDictionary();
+        }
+
+        private static async Task<ImmutableList<Diagnostic>> GetAnalyzerDiagnosticsAsync(Solution solution, string solutionPath, ImmutableArray<DiagnosticAnalyzer> analyzers)
         {
             List<Task<ImmutableArray<Diagnostic>>> projectDiagnosticTasks = new List<Task<ImmutableArray<Diagnostic>>>();
 
