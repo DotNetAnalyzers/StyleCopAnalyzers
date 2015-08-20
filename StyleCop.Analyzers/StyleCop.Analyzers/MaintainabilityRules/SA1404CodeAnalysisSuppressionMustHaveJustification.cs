@@ -28,6 +28,11 @@
     public class SA1404CodeAnalysisSuppressionMustHaveJustification : DiagnosticAnalyzer
     {
         /// <summary>
+        /// The placeholder to insert as part of the code fix.
+        /// </summary>
+        public const string JustificationPlaceholder = "<Pending>";
+
+        /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1404CodeAnalysisSuppressionMustHaveJustification"/>
         /// analyzer.
         /// </summary>
@@ -115,12 +120,12 @@
                                 var value = context.SemanticModel.GetConstantValue(attributeArgument.Expression);
 
                                 // If value does not have a value the expression is not constant -> Compilation error
-                                if (!value.HasValue || !string.IsNullOrWhiteSpace(value.Value as string))
+                                if (!value.HasValue || (!string.IsNullOrWhiteSpace(value.Value as string) && (value.Value as string) != JustificationPlaceholder))
                                 {
                                     return;
                                 }
 
-                                // Empty, Whitespace or null justification provided
+                                // Empty, Whitespace, placeholder or null justification provided
                                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, attributeArgument.GetLocation()));
                                 return;
                             }

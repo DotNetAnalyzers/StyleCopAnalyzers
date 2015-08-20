@@ -22,11 +22,6 @@
     [Shared]
     public class SA1404CodeFixProvider : CodeFixProvider
     {
-        /// <summary>
-        /// The placeholder to insert as part of the code fix.
-        /// </summary>
-        public const string JustificationPlaceholder = "Code reviewed, suppressed.";
-
         private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1404CodeAnalysisSuppressionMustHaveJustification.DiagnosticId);
 
@@ -101,7 +96,7 @@
 
         private static LiteralExpressionSyntax GetNewAttributeValue()
         {
-            return LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(JustificationPlaceholder));
+            return LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(SA1404CodeAnalysisSuppressionMustHaveJustification.JustificationPlaceholder));
         }
     }
 }

@@ -44,6 +44,23 @@ public class Foo
         }
 
         [Fact]
+        public async Task TestSuppressionWithPlaceholderValueAsync()
+        {
+            var testCode = @"using SuppressMessageAttribute = System.Diagnostics.CodeAnalysis.SuppressMessageAttribute;
+public class Foo
+{
+    [SuppressMessage(null, null, Justification = """ + SA1404CodeAnalysisSuppressionMustHaveJustification.JustificationPlaceholder + @""")]
+    public void Bar()
+    {
+
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 34);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestSuppressionWithNoJustificationAsync()
         {
             var testCode = @"public class Foo
@@ -61,14 +78,14 @@ public class Foo
 
             var fixTestCode = @"public class Foo
 {
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = """ + SA1404CodeFixProvider.JustificationPlaceholder + @""")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = """ + SA1404CodeAnalysisSuppressionMustHaveJustification.JustificationPlaceholder + @""")]
     public void Bar()
     {
 
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            // Do not verify diagnostics as the placeholder will still generate a violation
             await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
@@ -92,14 +109,14 @@ public class Foo
             var fixTestCode = @"using SuppressMessageAttribute = System.Diagnostics.CodeAnalysis.SuppressMessageAttribute;
 public class Foo
 {
-    [SuppressMessage(null, null, Justification = """ + SA1404CodeFixProvider.JustificationPlaceholder + @""")]
+    [SuppressMessage(null, null, Justification = """ + SA1404CodeAnalysisSuppressionMustHaveJustification.JustificationPlaceholder + @""")]
     public void Bar()
     {
 
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            // Do not verify diagnostics as the placeholder will still generate a violation
             await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
@@ -123,14 +140,14 @@ public class Foo
             var fixTestCode = @"using MySuppressionAttribute = System.Diagnostics.CodeAnalysis.SuppressMessageAttribute;
 public class Foo
 {
-    [MySuppression(null, null, Justification = """ + SA1404CodeFixProvider.JustificationPlaceholder + @""")]
+    [MySuppression(null, null, Justification = """ + SA1404CodeAnalysisSuppressionMustHaveJustification.JustificationPlaceholder + @""")]
     public void Bar()
     {
 
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            // Do not verify diagnostics as the placeholder will still generate a violation
             await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
@@ -152,14 +169,14 @@ public class Foo
 
             var fixTestCode = @"public class Foo
 {
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = """ + SA1404CodeFixProvider.JustificationPlaceholder + @""")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = """ + SA1404CodeAnalysisSuppressionMustHaveJustification.JustificationPlaceholder + @""")]
     public void Bar()
     {
 
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            // Do not verify diagnostics as the placeholder will still generate a violation
             await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
@@ -181,14 +198,14 @@ public class Foo
 
             var fixTestCode = @"public class Foo
 {
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justific\u0061tion = """ + SA1404CodeFixProvider.JustificationPlaceholder + @""")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justific\u0061tion = """ + SA1404CodeAnalysisSuppressionMustHaveJustification.JustificationPlaceholder + @""")]
     public void Bar()
     {
 
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            // Do not verify diagnostics as the placeholder will still generate a violation
             await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
@@ -210,14 +227,14 @@ public class Foo
 
             var fixTestCode = @"public class Foo
 {
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = """ + SA1404CodeFixProvider.JustificationPlaceholder + @""")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = """ + SA1404CodeAnalysisSuppressionMustHaveJustification.JustificationPlaceholder + @""")]
     public void Bar()
     {
 
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            // Do not verify diagnostics as the placeholder will still generate a violation
             await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
@@ -239,14 +256,14 @@ public class Foo
 
             var fixTestCode = @"public class Foo
 {
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = """ + SA1404CodeFixProvider.JustificationPlaceholder + @""")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = """ + SA1404CodeAnalysisSuppressionMustHaveJustification.JustificationPlaceholder + @""")]
     public void Bar()
     {
 
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            // Do not verify diagnostics as the placeholder will still generate a violation
             await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
@@ -286,14 +303,14 @@ public class Foo
             var fixTestCode = @"public class Foo
 {
     const string JUSTIFICATION = ""    "";
-    [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = """ + SA1404CodeFixProvider.JustificationPlaceholder + @""")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = """ + SA1404CodeAnalysisSuppressionMustHaveJustification.JustificationPlaceholder + @""")]
     public void Bar()
     {
 
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            // Do not verify diagnostics as the placeholder will still generate a violation
             await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
