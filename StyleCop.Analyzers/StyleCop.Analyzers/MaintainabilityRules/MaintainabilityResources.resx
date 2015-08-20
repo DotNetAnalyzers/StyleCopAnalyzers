@@ -126,6 +126,9 @@
   <data name="SA1402CodeFix" xml:space="preserve">
     <value>Move type to new file</value>
   </data>
+  <data name="SA1404CodeFix" xml:space="preserve">
+    <value>Fix justification</value>
+  </data>
   <data name="SA1407SA1408CodeFix" xml:space="preserve">
     <value>Add parentheses</value>
   </data>
