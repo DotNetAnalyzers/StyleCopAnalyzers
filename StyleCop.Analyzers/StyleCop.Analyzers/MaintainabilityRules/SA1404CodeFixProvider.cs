@@ -37,7 +37,6 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            SyntaxNode root = null;
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!this.FixableDiagnosticIds.Contains(diagnostic.Id))
@@ -45,10 +44,7 @@
                     continue;
                 }
 
-                if (root == null)
-                {
-                    root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-                }
+                var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
                 var node = root.FindNode(diagnostic.Location.SourceSpan);
 
@@ -56,24 +52,22 @@
                 if (attribute != null)
                 {
                     // In this case there is no justification at all
-                    var fixTitle = MaintainabilityResources.SA1404CodeFixAdd;
                     context.RegisterCodeFix(
                         CodeAction.Create(
-                            fixTitle,
+                            MaintainabilityResources.SA1404CodeFix,
                             token => AddJustificationToAttributeAsync(context.Document, root, attribute),
-                            fixTitle), diagnostic);
+                            nameof(SA1400CodeFixProvider) + "-Add"), diagnostic);
                     return;
                 }
 
                 var argument = node as AttributeArgumentSyntax;
                 if (argument != null)
                 {
-                    var fixTitle = MaintainabilityResources.SA1404CodeFixUpdate;
                     context.RegisterCodeFix(
                         CodeAction.Create(
-                            fixTitle,
+                            MaintainabilityResources.SA1404CodeFix,
                             token => UpdateValueOfArgumentAsync(context.Document, root, argument),
-                            fixTitle), diagnostic);
+                            nameof(SA1400CodeFixProvider) + "-Update"), diagnostic);
                     return;
                 }
             }

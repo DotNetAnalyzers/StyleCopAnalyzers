@@ -89,20 +89,11 @@ namespace StyleCop.Analyzers.MaintainabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add justification.
-        /// </summary>
-        internal static string SA1404CodeFixAdd {
-            get {
-                return ResourceManager.GetString("SA1404CodeFixAdd", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Fix justification.
         /// </summary>
-        internal static string SA1404CodeFixUpdate {
+        internal static string SA1404CodeFix {
             get {
-                return ResourceManager.GetString("SA1404CodeFixUpdate", resourceCulture);
+                return ResourceManager.GetString("SA1404CodeFix", resourceCulture);
             }
         }
         
