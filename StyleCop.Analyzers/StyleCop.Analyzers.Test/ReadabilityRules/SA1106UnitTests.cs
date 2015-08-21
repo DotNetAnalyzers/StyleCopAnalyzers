@@ -121,7 +121,8 @@ class TestClass
         [InlineData("struct Foo { }")]
         [InlineData("interface IFoo { }")]
         [InlineData("enum Foo { }")]
-        public async Task TestTypeAsync(string declaration)
+        [InlineData("namespace Foo { }")]
+        public async Task TestMemberAsync(string declaration)
         {
             var testCode = declaration + @"
 ;";
