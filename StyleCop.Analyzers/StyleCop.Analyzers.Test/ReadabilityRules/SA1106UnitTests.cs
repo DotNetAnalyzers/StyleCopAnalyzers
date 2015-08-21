@@ -116,6 +116,21 @@ class TestClass
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Theory]
+        [InlineData("class Foo { }")]
+        [InlineData("struct Foo { }")]
+        [InlineData("interface IFoo { }")]
+        [InlineData("enum Foo { }")]
+        public async Task TestTypeAsync(string declaration)
+        {
+            var testCode = declaration + @"
+;";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 1);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1106CodeMustNotContainEmptyStatements();
