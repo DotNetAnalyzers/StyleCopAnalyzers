@@ -1023,6 +1023,19 @@ public class Foo
         }
 
         [Fact]
+        public async Task TestIndexerWithLocalDefinitionAsync()
+        {
+            var testCode = @"
+class ClassName : System.Collections.Generic.List<int>
+{
+  public new int this[int index] { get { return base[index]; } }
+  public int Property { get { return base[0]; } }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestIndexerAsync()
         {
             var testCode = @"
