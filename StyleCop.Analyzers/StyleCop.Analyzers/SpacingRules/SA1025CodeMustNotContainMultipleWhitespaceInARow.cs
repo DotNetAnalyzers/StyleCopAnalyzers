@@ -80,15 +80,21 @@
             SyntaxToken token = trivia.Token;
             SyntaxToken precedingToken;
             SyntaxToken followingToken;
-            if (token.LeadingTrivia.Contains(trivia))
+
+            int index;
+            SyntaxTriviaList list;
+
+            if ((index = token.LeadingTrivia.IndexOf(trivia)) >= 0)
             {
                 precedingToken = token.GetPreviousToken();
                 followingToken = token;
+                list = token.LeadingTrivia;
             }
-            else if (token.TrailingTrivia.Contains(trivia))
+            else if ((index = token.TrailingTrivia.IndexOf(trivia)) >= 0)
             {
                 precedingToken = token;
                 followingToken = precedingToken.GetNextToken();
+                list = token.TrailingTrivia;
             }
             else
             {
@@ -96,7 +102,12 @@
                 return;
             }
 
-            if (precedingToken.IsKind(SyntaxKind.CommaToken) || precedingToken.IsKind(SyntaxKind.SemicolonToken))
+            var followingTrivia = index + 1 < list.Count ? list[index + 1] : default(SyntaxTrivia);
+
+            if (precedingToken.IsKind(SyntaxKind.CommaToken)
+                || precedingToken.IsKind(SyntaxKind.SemicolonToken)
+                || followingTrivia.IsKind(SyntaxKind.EndOfLineTrivia)
+                || followingToken.IsKind(SyntaxKind.EndOfFileToken))
             {
                 return;
             }
