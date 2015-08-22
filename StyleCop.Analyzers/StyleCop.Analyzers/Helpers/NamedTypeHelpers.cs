@@ -46,7 +46,7 @@
             }
 
             INamedTypeSymbol typeSymbol = type;
-            while (typeSymbol.ContainingType != null)
+            while ((typeSymbol = typeSymbol.ContainingType) != null)
             {
                 if (IsNativeMethodsClass(typeSymbol))
                 {
