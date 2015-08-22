@@ -4,6 +4,8 @@
     using System.IO;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
 
     /// <summary>
     /// Class that manages the settings files for StyleCopAnalyzers.
