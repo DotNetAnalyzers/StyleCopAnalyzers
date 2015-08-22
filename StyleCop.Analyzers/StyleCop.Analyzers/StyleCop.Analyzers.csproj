@@ -314,6 +314,8 @@
     <Compile Include="ReadabilityRules\SA1125UseShorthandForNullableTypes.cs" />
     <Compile Include="ReadabilityRules\SA1126PrefixCallsCorrectly.cs" />
     <Compile Include="ReadabilityRules\SA1102CodeFixProvider.cs" />
+    <Compile Include="Settings\SettingsHelper.cs" />
+    <Compile Include="Settings\StyleCopSettings.cs" />
     <Compile Include="SpacingRules\OpenCloseSpacingCodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1000CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1000KeywordsMustBeSpacedCorrectly.cs" />
@@ -406,6 +408,10 @@
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.Workspaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.0.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.7.0.1\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Collections.Immutable, Version=1.1.36.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
