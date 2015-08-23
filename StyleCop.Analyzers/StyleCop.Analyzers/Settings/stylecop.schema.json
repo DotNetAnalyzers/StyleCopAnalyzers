@@ -32,6 +32,11 @@
                 }
               },
               "additionalProperties": false
+            },
+            "xmlHeader": {
+              "type": "boolean",
+              "description": "Determines whether the file header should be wrapped in the StyleCop-standard XML structure.",
+              "default": true
             }
           }
         }

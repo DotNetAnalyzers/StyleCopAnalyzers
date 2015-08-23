@@ -36,6 +36,12 @@
         private ImmutableDictionary<string, string> variables;
 
         /// <summary>
+        /// This is the backing field for the <see cref="XmlHeader"/> property.
+        /// </summary>
+        [JsonProperty("xmlHeader", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        private bool xmlHeader;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="DocumentationSettings"/> class during JSON deserialization.
         /// </summary>
         [JsonConstructor]
@@ -44,6 +50,7 @@
             this.companyName = DefaultCompanyName;
             this.copyrightText = DefaultCopyrightText;
             this.variables = ImmutableDictionary<string, string>.Empty;
+            this.xmlHeader = true;
         }
 
         public string CompanyName
@@ -93,6 +100,14 @@
             get
             {
                 return this.variables;
+            }
+        }
+
+        public bool XmlHeader
+        {
+            get
+            {
+                return this.xmlHeader;
             }
         }
     }
