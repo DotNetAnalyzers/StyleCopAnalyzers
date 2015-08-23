@@ -145,7 +145,17 @@
                 return;
 
             case SyntaxKind.XmlTextLiteralToken:
-                if (token.Text.StartsWith(" ", StringComparison.Ordinal))
+                if (token.Text.StartsWith("  ", StringComparison.Ordinal))
+                {
+                    SyntaxKind grandparentKind = token.Parent?.Parent?.Kind() ?? SyntaxKind.None;
+                    if (grandparentKind != SyntaxKind.SingleLineDocumentationCommentTrivia
+                        && grandparentKind != SyntaxKind.MultiLineDocumentationCommentTrivia)
+                    {
+                        // Allow extra indentation for nested text and elements.
+                        return;
+                    }
+                }
+                else if (token.Text.StartsWith(" ", StringComparison.Ordinal))
                 {
                     return;
                 }
