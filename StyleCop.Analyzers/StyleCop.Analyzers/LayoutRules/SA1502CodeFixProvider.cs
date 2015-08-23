@@ -193,7 +193,7 @@
 
         private class TokenRewriter : CSharpSyntaxRewriter
         {
-            private Dictionary<SyntaxToken, SyntaxToken> tokensToReplace;
+            private readonly Dictionary<SyntaxToken, SyntaxToken> tokensToReplace;
 
             public TokenRewriter(Dictionary<SyntaxToken, SyntaxToken> tokensToReplace)
             {

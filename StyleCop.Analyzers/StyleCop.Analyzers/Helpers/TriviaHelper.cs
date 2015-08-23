@@ -344,9 +344,9 @@
         /// </summary>
         private class DualTriviaListHelper : IReadOnlyList<SyntaxTrivia>
         {
-            private IReadOnlyList<SyntaxTrivia> part1;
-            private int part1Count;
-            private IReadOnlyList<SyntaxTrivia> part2;
+            private readonly IReadOnlyList<SyntaxTrivia> part1;
+            private readonly int part1Count;
+            private readonly IReadOnlyList<SyntaxTrivia> part2;
 
             public DualTriviaListHelper(IReadOnlyList<SyntaxTrivia> part1, IReadOnlyList<SyntaxTrivia> part2)
             {

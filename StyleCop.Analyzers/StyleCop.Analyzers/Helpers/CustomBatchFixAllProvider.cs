@@ -69,7 +69,6 @@
         {
             Debug.Assert(!diagnostics.IsDefault, "!diagnostics.IsDefault");
             var cancellationToken = fixAllContext.CancellationToken;
-            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var fixerTasks = new Task[diagnostics.Length];
             var fixes = new List<CodeAction>[diagnostics.Length];
 

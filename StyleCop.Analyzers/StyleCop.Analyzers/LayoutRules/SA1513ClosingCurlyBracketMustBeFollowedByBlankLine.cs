@@ -77,8 +77,8 @@
 
         private class CurlyBracketsVisitor : CSharpSyntaxWalker
         {
-            private SyntaxTreeAnalysisContext context;
-            private Stack<SyntaxToken> curlyBracketsStack = new Stack<SyntaxToken>();
+            private readonly SyntaxTreeAnalysisContext context;
+            private readonly Stack<SyntaxToken> curlyBracketsStack = new Stack<SyntaxToken>();
 
             public CurlyBracketsVisitor(SyntaxTreeAnalysisContext context)
                 : base(SyntaxWalkerDepth.Token)
