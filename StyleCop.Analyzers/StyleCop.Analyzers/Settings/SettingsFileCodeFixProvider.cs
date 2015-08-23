@@ -11,6 +11,7 @@
     using Microsoft.CodeAnalysis.CodeFixes;
     using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// Implements a code fix that will generate a StyleCop settings file if it does not exist yet.
@@ -24,7 +25,7 @@
   ""$schema"": ""https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json"",
   ""settings"": {
     ""documentationRules"": {
-      ""companyName"": ""PlaceholderCompany""
+      ""companyName"": """ + DocumentationSettings.DefaultCompanyName + @"""
     }
   }
 }

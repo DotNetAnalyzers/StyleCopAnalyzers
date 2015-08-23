@@ -20,8 +20,8 @@
         {
             var styleCopSettings = SettingsHelper.GetStyleCopSettings(default(SyntaxTreeAnalysisContext));
 
-            Assert.Equal("PlaceHolderCompany", styleCopSettings.CompanyName);
-            Assert.Equal("Copyright (c) PlaceHolderCompany. All rights reserved.", styleCopSettings.CopyrightText);
+            Assert.Equal("PlaceholderCompany", styleCopSettings.DocumentationRules.CompanyName);
+            Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.CopyrightText);
         }
 
         /// <summary>
@@ -45,8 +45,8 @@
 
             var styleCopSettings = context.GetStyleCopSettings();
 
-            Assert.Equal("TestCompany", styleCopSettings.CompanyName);
-            Assert.Equal("Custom copyright text.", styleCopSettings.CopyrightText);
+            Assert.Equal("TestCompany", styleCopSettings.DocumentationRules.CompanyName);
+            Assert.Equal("Custom copyright text.", styleCopSettings.DocumentationRules.CopyrightText);
         }
 
         /// <summary>
@@ -69,8 +69,8 @@
 
             var styleCopSettings = context.GetStyleCopSettings();
 
-            Assert.Equal("TestCompany", styleCopSettings.CompanyName);
-            Assert.Equal("Copyright (c) TestCompany. All rights reserved.", styleCopSettings.CopyrightText);
+            Assert.Equal("TestCompany", styleCopSettings.DocumentationRules.CompanyName);
+            Assert.Equal("Copyright (c) TestCompany. All rights reserved.", styleCopSettings.DocumentationRules.CopyrightText);
         }
 
         private static async Task<SyntaxTreeAnalysisContext> CreateAnalysisContextAsync(string stylecopJSON)
