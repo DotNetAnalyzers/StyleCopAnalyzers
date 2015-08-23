@@ -41,7 +41,7 @@ public class TypeName
 public class TypeName
 {
     ///<summary>
-    ///The summary text.
+    ///     The summary text.
     ///</summary>
     ///   <param name=""x"">The document root.</param>
     ///    <param name=""y"">The XML header token.</param>
@@ -55,22 +55,75 @@ public class TypeName
 public class TypeName
 {
     /// <summary>
-    /// The summary text.
+    ///     The summary text.
     /// </summary>
-    ///   <param name=""x"">The document root.</param>
-    ///    <param name=""y"">The XML header token.</param>
+    /// <param name=""x"">The document root.</param>
+    /// <param name=""y"">The XML header token.</param>
     private void Method1(int x, int y)
     {
     }
 }
 ";
 
-            // Currently the extra indentation for <param> elements is not checked.
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(4, 8),
-                this.CSharpDiagnostic().WithLocation(5, 8),
                 this.CSharpDiagnostic().WithLocation(6, 8),
+                this.CSharpDiagnostic().WithLocation(7, 8),
+                this.CSharpDiagnostic().WithLocation(8, 8),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestNestedElementIndentationAsync()
+        {
+            string testCode = @"
+public class TypeName
+{
+    /// <summary>
+    /// The summary text.
+    /// </summary>
+    /// <remarks>
+    ///<ul>
+    ///<li>Item 1</li>
+    /// <li>Item 2</li>
+    ///  <li>Item 3</li>
+    ///</ul>
+    /// </remarks>
+    private void Method1()
+    {
+    }
+}
+";
+
+            string fixedCode = @"
+public class TypeName
+{
+    /// <summary>
+    /// The summary text.
+    /// </summary>
+    /// <remarks>
+    /// <ul>
+    /// <li>Item 1</li>
+    /// <li>Item 2</li>
+    ///  <li>Item 3</li>
+    /// </ul>
+    /// </remarks>
+    private void Method1()
+    {
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(8, 8),
+                this.CSharpDiagnostic().WithLocation(9, 8),
+                this.CSharpDiagnostic().WithLocation(12, 8),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
