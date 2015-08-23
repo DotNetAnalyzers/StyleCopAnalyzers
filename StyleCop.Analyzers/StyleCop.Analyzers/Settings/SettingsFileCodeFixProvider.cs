@@ -21,6 +21,7 @@
     {
         private const string StyleCopSettingsFileName = "stylecop.json";
         private const string DefaultSettingsFileContent = @"{
+  ""$schema"": ""https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json"",
   ""settings"": {
     ""documentationRules"": {
       ""companyName"": ""PlaceholderCompany""
