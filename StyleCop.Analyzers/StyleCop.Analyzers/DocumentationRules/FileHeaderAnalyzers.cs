@@ -84,70 +84,70 @@
         /// </summary>
         /// <value>The <see cref="DiagnosticDescriptor"/> for SA1633.</value>
         public static DiagnosticDescriptor SA1633DescriptorMissing { get; } =
-            new DiagnosticDescriptor(SA1633Identifier, SA1633Title, SA1633MessageFormatMissing, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1633Description, SA1633HelpLink);
+            new DiagnosticDescriptor(SA1633Identifier, SA1633Title, SA1633MessageFormatMissing, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1633Description, SA1633HelpLink);
 
         /// <summary>
         /// Gets the diagnostic descriptor for SA1633 with a malformed header.
         /// </summary>
         /// <value>The <see cref="DiagnosticDescriptor"/> for SA1633.</value>
         public static DiagnosticDescriptor SA1633DescriptorMalformed { get; } =
-            new DiagnosticDescriptor(SA1633Identifier, SA1633Title, SA1633MessageFormatMalformed, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1633Description, SA1633HelpLink);
+            new DiagnosticDescriptor(SA1633Identifier, SA1633Title, SA1633MessageFormatMalformed, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1633Description, SA1633HelpLink);
 
         /// <summary>
         /// Gets the diagnostic descriptor for SA1634.
         /// </summary>
         /// <value>The <see cref="DiagnosticDescriptor"/> for SA1634.</value>
         public static DiagnosticDescriptor SA1634Descriptor { get; } =
-            new DiagnosticDescriptor(SA1634Identifier, SA1634Title, SA1634MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1634Description, SA1634HelpLink);
+            new DiagnosticDescriptor(SA1634Identifier, SA1634Title, SA1634MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1634Description, SA1634HelpLink);
 
         /// <summary>
         /// Gets the diagnostic descriptor for SA1635.
         /// </summary>
         /// <value>The <see cref="DiagnosticDescriptor"/> for SA1635.</value>
         public static DiagnosticDescriptor SA1635Descriptor { get; } =
-            new DiagnosticDescriptor(SA1635Identifier, SA1635Title, SA1635MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1635Description, SA1635HelpLink);
+            new DiagnosticDescriptor(SA1635Identifier, SA1635Title, SA1635MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1635Description, SA1635HelpLink);
 
         /// <summary>
         /// Gets the diagnostic descriptor for SA1636.
         /// </summary>
         /// <value>The <see cref="DiagnosticDescriptor"/> for SA1636.</value>
         public static DiagnosticDescriptor SA1636Descriptor { get; } =
-            new DiagnosticDescriptor(SA1636Identifier, SA1636Title, SA1636MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1636Description, SA1636HelpLink);
+            new DiagnosticDescriptor(SA1636Identifier, SA1636Title, SA1636MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1636Description, SA1636HelpLink);
 
         /// <summary>
         /// Gets the diagnostic descriptor for SA1637.
         /// </summary>
         /// <value>The <see cref="DiagnosticDescriptor"/> for SA1637.</value>
         public static DiagnosticDescriptor SA1637Descriptor { get; } =
-            new DiagnosticDescriptor(SA1637Identifier, SA1637Title, SA1637MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1637Description, SA1637HelpLink);
+            new DiagnosticDescriptor(SA1637Identifier, SA1637Title, SA1637MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1637Description, SA1637HelpLink);
 
         /// <summary>
         /// Gets the diagnostic descriptor for SA1638.
         /// </summary>
         /// <value>The <see cref="DiagnosticDescriptor"/> for SA1638.</value>
         public static DiagnosticDescriptor SA1638Descriptor { get; } =
-            new DiagnosticDescriptor(SA1638Identifier, SA1638Title, SA1638MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1638Description, SA1638HelpLink);
+            new DiagnosticDescriptor(SA1638Identifier, SA1638Title, SA1638MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1638Description, SA1638HelpLink);
 
         /// <summary>
         /// Gets the diagnostic descriptor for SA1639.
         /// </summary>
         /// <value>The <see cref="DiagnosticDescriptor"/> for SA1639.</value>
         public static DiagnosticDescriptor SA1639Descriptor { get; } =
-            new DiagnosticDescriptor(SA1639Identifier, SA1639Title, SA1639MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledByDefault, SA1639Description, SA1639HelpLink);
+            new DiagnosticDescriptor(SA1639Identifier, SA1639Title, SA1639MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledByDefault, SA1639Description, SA1639HelpLink);
 
         /// <summary>
         /// Gets the diagnostic descriptor for SA1640.
         /// </summary>
         /// <value>The <see cref="DiagnosticDescriptor"/> for SA1640.</value>
         public static DiagnosticDescriptor SA1640Descriptor { get; } =
-            new DiagnosticDescriptor(SA1640Identifier, SA1640Title, SA1640MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1640Description, SA1640HelpLink);
+            new DiagnosticDescriptor(SA1640Identifier, SA1640Title, SA1640MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1640Description, SA1640HelpLink);
 
         /// <summary>
         /// Gets the diagnostic descriptor for SA1641.
         /// </summary>
         /// <value>The <see cref="DiagnosticDescriptor"/> for SA1641.</value>
         public static DiagnosticDescriptor SA1641Descriptor { get; } =
-            new DiagnosticDescriptor(SA1641Identifier, SA1641Title, SA1641MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1641Description, SA1641HelpLink);
+            new DiagnosticDescriptor(SA1641Identifier, SA1641Title, SA1641MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1641Description, SA1641HelpLink);
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
