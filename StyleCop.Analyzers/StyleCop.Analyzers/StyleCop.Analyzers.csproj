@@ -394,6 +394,7 @@
       <Symbols>True</Symbols>
       <PackageAnalysis>False</PackageAnalysis>
     </NuGetManifest>
+    <None Include="Settings\stylecop.schema.json" />
     <None Include="tools\install.ps1" />
     <None Include="tools\uninstall.ps1" />
     <None Include="ReadMe.txt" />
