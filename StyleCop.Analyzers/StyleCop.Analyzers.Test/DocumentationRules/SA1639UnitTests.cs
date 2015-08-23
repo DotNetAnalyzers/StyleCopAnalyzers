@@ -1,14 +1,14 @@
 ﻿namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
     using Xunit;
 
     /// <summary>
-    /// Unit tests for the <see cref="SA1639FileHeaderMustHaveSummary"/> analyzer.
+    /// Unit tests for the SA1639 diagnostic.
     /// </summary>
     public class SA1639UnitTests : FileHeaderTestBase
     {
@@ -19,7 +19,7 @@
         [Fact]
         public async Task TestFileHeaderWithoutSummaryTagAsync()
         {
-            var testCode = @"// <copyright file=""test0.cs"" company=""FooCorp"">
+            var testCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
 //   Copyright (c) FooCorp. All rights reserved.
 // </copyright>
 
@@ -28,7 +28,7 @@ namespace Bar
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(1, 1);
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1639Descriptor).WithLocation(1, 1);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -39,7 +39,7 @@ namespace Bar
         [Fact]
         public async Task TestFileHeaderWithEmptySummaryTagAsync()
         {
-            var testCode = @"// <copyright file=""test0.cs"" company=""FooCorp"">
+            var testCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
 //   Copyright (c) FooCorp. All rights reserved.
 // </copyright>
 // <summary/>
@@ -49,7 +49,7 @@ namespace Bar
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(4, 4);
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1639Descriptor).WithLocation(4, 4);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -60,7 +60,7 @@ namespace Bar
         [Fact]
         public async Task TestFileHeaderWithWhitespaceOnlySummaryTagAsync()
         {
-            var testCode = @"// <copyright file=""test0.cs"" company=""FooCorp"">
+            var testCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
 //   Copyright (c) FooCorp. All rights reserved.
 // </copyright>
 // <summary>   </summary>
@@ -70,7 +70,7 @@ namespace Bar
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(4, 4);
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1639Descriptor).WithLocation(4, 4);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -80,16 +80,13 @@ namespace Bar
         [Fact]
         public void TestDisabledByDefault()
         {
-            var analyzer = new SA1639FileHeaderMustHaveSummary();
-
-            Assert.Equal(analyzer.SupportedDiagnostics.Length, 1);
-            Assert.False(analyzer.SupportedDiagnostics[0].IsEnabledByDefault);
+            Assert.False(FileHeaderAnalyzers.SA1639Descriptor.IsEnabledByDefault);
         }
 
         /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        protected override IEnumerable<string> GetDisabledDiagnostics()
         {
-            yield return new SA1639FileHeaderMustHaveSummary();
+            return Enumerable.Empty<string>();
         }
     }
 }

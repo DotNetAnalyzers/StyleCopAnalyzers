@@ -91,15 +91,7 @@
     <Compile Include="DocumentationRules\SA1630DocumentationTextMustContainWhitespace.cs" />
     <Compile Include="DocumentationRules\SA1631DocumentationMustMeetCharacterPercentage.cs" />
     <Compile Include="DocumentationRules\SA1632DocumentationTextMustMeetMinimumCharacterLength.cs" />
-    <Compile Include="DocumentationRules\SA1633FileMustHaveHeader.cs" />
-    <Compile Include="DocumentationRules\SA1634FileHeaderMustShowCopyright.cs" />
-    <Compile Include="DocumentationRules\SA1635FileHeaderMustHaveCopyrightText.cs" />
-    <Compile Include="DocumentationRules\SA1636FileHeaderCopyrightTextMustMatch.cs" />
-    <Compile Include="DocumentationRules\SA1637FileHeaderMustContainFileName.cs" />
-    <Compile Include="DocumentationRules\SA1638FileHeaderFileNameDocumentationMustMatchFileName.cs" />
-    <Compile Include="DocumentationRules\SA1639FileHeaderMustHaveSummary.cs" />
-    <Compile Include="DocumentationRules\SA1640FileHeaderMustHaveValidCompanyText.cs" />
-    <Compile Include="DocumentationRules\SA1641FileHeaderCompanyNameTextMustMatch.cs" />
+    <Compile Include="DocumentationRules\FileHeaderAnalyzers.cs" />
     <Compile Include="DocumentationRules\SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.cs" />
     <Compile Include="DocumentationRules\SA1642SA1643CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1643DestructorSummaryDocumentationMustBeginWithStandardText.cs" />
