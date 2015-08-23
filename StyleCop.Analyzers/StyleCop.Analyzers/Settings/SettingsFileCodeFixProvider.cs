@@ -33,15 +33,15 @@
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(
-                SA1633FileMustHaveHeader.DiagnosticId,
-                SA1634FileHeaderMustShowCopyright.DiagnosticId,
-                SA1635FileHeaderMustHaveCopyrightText.DiagnosticId,
-                SA1636FileHeaderCopyrightTextMustMatch.DiagnosticId,
-                SA1637FileHeaderMustContainFileName.DiagnosticId,
-                SA1638FileHeaderFileNameDocumentationMustMatchFileName.DiagnosticId,
-                SA1639FileHeaderMustHaveSummary.DiagnosticId,
-                SA1640FileHeaderMustHaveValidCompanyText.DiagnosticId,
-                SA1641FileHeaderCompanyNameTextMustMatch.DiagnosticId,
+                FileHeaderAnalyzers.SA1633DescriptorMissing.Id,
+                FileHeaderAnalyzers.SA1634Descriptor.Id,
+                FileHeaderAnalyzers.SA1635Descriptor.Id,
+                FileHeaderAnalyzers.SA1636Descriptor.Id,
+                FileHeaderAnalyzers.SA1637Descriptor.Id,
+                FileHeaderAnalyzers.SA1638Descriptor.Id,
+                FileHeaderAnalyzers.SA1639Descriptor.Id,
+                FileHeaderAnalyzers.SA1640Descriptor.Id,
+                FileHeaderAnalyzers.SA1641Descriptor.Id,
                 SA1649FileHeaderFileNameDocumentationMustMatchTypeName.DiagnosticId);
 
         /// <inheritdoc/>

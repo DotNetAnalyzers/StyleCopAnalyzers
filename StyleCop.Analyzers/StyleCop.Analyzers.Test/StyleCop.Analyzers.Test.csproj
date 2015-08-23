@@ -154,10 +154,12 @@
     <Compile Include="DocumentationRules\SA1633UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1634UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1635UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1636UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1637UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1638UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1639UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1640UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1641UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1642UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1643UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1645UnitTests.cs" />

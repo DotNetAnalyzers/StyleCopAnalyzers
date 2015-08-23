@@ -35,7 +35,7 @@ namespace NamespaceName
         {
             this.createSettingsFile = false;
 
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(1, 1).WithArguments("is missing or not located at the top of the file.");
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
             await this.VerifyCSharpDiagnosticAsync(TestCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
 
             // verify that the code fix does not alter the document
@@ -71,7 +71,7 @@ namespace NamespaceName
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1633FileMustHaveHeader();
+            yield return new FileHeaderAnalyzers();
         }
 
         /// <inheritdoc/>

@@ -69,7 +69,7 @@
                 var processedProject = project.WithCompilationOptions(modifiedCompilationOptions);
 
                 var compilation = await processedProject.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
-                var compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, null, cancellationToken);
+                var compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, processedProject.AnalyzerOptions, cancellationToken);
                 var compilerDiagnostics = compilation.GetDiagnostics(cancellationToken);
                 var compilerErrors = compilerDiagnostics.Where(i => i.Severity == DiagnosticSeverity.Error);
                 var diags = await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
