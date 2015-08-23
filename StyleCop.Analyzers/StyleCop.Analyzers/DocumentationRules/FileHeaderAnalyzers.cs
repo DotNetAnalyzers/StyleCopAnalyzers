@@ -6,6 +6,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// Analyzer for all file header related diagnostics.
@@ -277,7 +278,7 @@
                 return;
             }
 
-            if (string.CompareOrdinal(copyrightText.Trim(' ', '\r', '\n'), settings.CopyrightText) != 0)
+            if (string.CompareOrdinal(copyrightText.Trim(' ', '\r', '\n'), settings.DocumentationRules.CopyrightText) != 0)
             {
                 var location = fileHeader.GetElementLocation(context.Tree, copyrightElement);
                 context.ReportDiagnostic(Diagnostic.Create(SA1636Descriptor, location));
@@ -299,7 +300,7 @@
                 return;
             }
 
-            if (string.CompareOrdinal(companyName, settings.CompanyName) != 0)
+            if (string.CompareOrdinal(companyName, settings.DocumentationRules.CompanyName) != 0)
             {
                 var location = fileHeader.GetElementLocation(context.Tree, copyrightElement);
                 context.ReportDiagnostic(Diagnostic.Create(SA1641Descriptor, location));

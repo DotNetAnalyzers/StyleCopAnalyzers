@@ -17,6 +17,21 @@
               "type": "string",
               "description": "The name of the company which appears in file headers.",
               "default": "PlaceholderCompany"
+            },
+            "copyrightText": {
+              "type": "string",
+              "description": "The copyright text which should appear in file headers.",
+              "default": "Copyright (c) {companyName}. All rights reserved."
+            },
+            "variables": {
+              "type": "object",
+              "description": "Replacement variables which may be used in the 'copyrightText' value.",
+              "patternProperties": {
+                "^[a-zA-Z0-9]+$": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
             }
           }
         }
