@@ -43,6 +43,37 @@
         }
 
         [Fact]
+        public async Task TestLowerCaseComlicatedNamespaceAsync()
+        {
+            var testCode = @"namespace test.foo.bar
+{
+
+}";
+
+            var fixedCode = @"namespace Test.Foo.Bar
+{
+
+}";
+
+            DiagnosticResult[] expected = new[]
+            {
+                this.CSharpDiagnostic().WithArguments("test").WithLocation(1, 11),
+                this.CSharpDiagnostic().WithArguments("test").WithLocation(1, 11),
+                this.CSharpDiagnostic().WithArguments("test").WithLocation(1, 11),
+                this.CSharpDiagnostic().WithArguments("foo").WithLocation(1, 16),
+                this.CSharpDiagnostic().WithArguments("foo").WithLocation(1, 16),
+                this.CSharpDiagnostic().WithArguments("foo").WithLocation(1, 16),
+                this.CSharpDiagnostic().WithArguments("bar").WithLocation(1, 20),
+                this.CSharpDiagnostic().WithArguments("bar").WithLocation(1, 20),
+                this.CSharpDiagnostic().WithArguments("bar").WithLocation(1, 20)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestUpperCaseClassAsync()
         {
             var testCode = @"public class Test

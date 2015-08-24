@@ -62,9 +62,9 @@
                 }
 
                 var newName = char.ToUpper(token.ValueText[0]) + token.ValueText.Substring(1);
-                var typeSyntax = this.GetParentTypeDeclaration(token);
+                var memberSyntax = this.GetParentTypeDeclaration(token);
 
-                if (token.Parent?.Parent is NamespaceDeclarationSyntax)
+                if (memberSyntax is NamespaceDeclarationSyntax)
                 {
                     // namespaces are not symbols. So we are just renaming the namespace
                     Func<CancellationToken, Task<Document>> renameNamespace = t =>
@@ -79,11 +79,11 @@
 
                     context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.RenameToCodeFix, newName), renameNamespace, equivalenceKey: nameof(RenameToUpperCaseCodeFixProvider) + "_" + diagnostic.Id), diagnostic);
                 }
-                else if (typeSyntax != null)
+                else if (memberSyntax != null)
                 {
                     SemanticModel semanticModel = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
 
-                    var typeDeclarationSymbol = semanticModel.GetDeclaredSymbol(typeSyntax) as INamedTypeSymbol;
+                    var typeDeclarationSymbol = semanticModel.GetDeclaredSymbol(memberSyntax) as INamedTypeSymbol;
                     if (typeDeclarationSymbol == null)
                     {
                         continue;
@@ -113,13 +113,13 @@
             return true;
         }
 
-        private BaseTypeDeclarationSyntax GetParentTypeDeclaration(SyntaxToken token)
+        private MemberDeclarationSyntax GetParentTypeDeclaration(SyntaxToken token)
         {
             SyntaxNode parent = token.Parent;
 
             while (parent != null)
             {
-                var declarationParent = parent as BaseTypeDeclarationSyntax;
+                var declarationParent = parent as MemberDeclarationSyntax;
                 if (declarationParent != null)
                 {
                     return declarationParent;
