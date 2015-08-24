@@ -21,7 +21,7 @@
     /// </summary>
     public class SolutionReader
     {
-        private static Regex diagnosticPathRegex = new Regex(@"(?<type>[A-Za-z]+)Rules\\(?<id>S[A-Z][0-9]{4})(?<name>[A-Za-z0-9]+)\.cs$");
+        private static Regex diagnosticPathRegex = new Regex(@"(?<type>[A-Za-z]+)Rules\\(?<name>[A-Za-z0-9]+)\.cs$");
         private INamedTypeSymbol diagnosticAnalyzerTypeSymbol;
         private INamedTypeSymbol noCodeFixAttributeTypeSymbol;
 
@@ -123,7 +123,6 @@
                     continue;
                 }
 
-                string id = match.Groups["id"].Value;
                 string shortName = match.Groups["name"].Value;
                 CodeFixStatus codeFixStatus;
                 string noCodeFixReason = null;
@@ -140,14 +139,18 @@
                     continue;
                 }
 
-                bool hasImplementation = HasImplementation(syntaxRoot);
+                if (classSymbol.IsAbstract)
+                {
+                    continue;
+                }
 
-                codeFixStatus = this.HasCodeFix(id, classSymbol, out noCodeFixReason);
+                bool hasImplementation = HasImplementation(syntaxRoot);
 
                 IEnumerable<DiagnosticDescriptor> descriptorInfos = this.GetDescriptor(classSymbol);
 
                 foreach (var descriptorInfo in descriptorInfos)
                 {
+                    codeFixStatus = this.HasCodeFix(descriptorInfo.Id, classSymbol, out noCodeFixReason);
                     string status = this.GetStatus(classSymbol, syntaxRoot, semanticModel, descriptorInfo);
                     if (descriptorInfo.CustomTags.Contains(WellKnownDiagnosticTags.NotConfigurable))
                     {
@@ -198,14 +201,26 @@
 
             foreach (var member in members)
             {
-                VariableDeclaratorSyntax node = root.FindNode(member.Locations.FirstOrDefault().SourceSpan) as VariableDeclaratorSyntax;
+                ObjectCreationExpressionSyntax initializer;
+                SyntaxNode node = root.FindNode(member.Locations.FirstOrDefault().SourceSpan);
 
-                if (node == null)
+                if (node != null)
+                {
+                    initializer = (node as PropertyDeclarationSyntax)?.Initializer?.Value as ObjectCreationExpressionSyntax;
+                    if (initializer == null)
+                    {
+                        initializer = (node as VariableDeclaratorSyntax)?.Initializer?.Value as ObjectCreationExpressionSyntax;
+
+                        if (initializer == null)
+                        {
+                            continue;
+                        }
+                    }
+                }
+                else
                 {
                     continue;
                 }
-
-                ObjectCreationExpressionSyntax initializer = node.Initializer.Value as ObjectCreationExpressionSyntax;
 
                 var firstArgument = initializer.ArgumentList.Arguments[0];
 
