@@ -120,11 +120,11 @@ else
         </tr>
         <tr>
             <td>Author</td>
-            <td>@Model.Git.Author</td>
+            <td>@Model.Git.Author (@(Model.Git.Committer.When.ToUniversalTime().ToString("s") + "Z"))</td>
         </tr>
         <tr>
             <td>Committer</td>
-            <td>@Model.Git.Committer</td>
+            <td>@Model.Git.Committer (@(Model.Git.Committer.When.ToUniversalTime().ToString("s") + "Z"))</td>
         </tr>
         <tr>
             <td>Parents</td>
