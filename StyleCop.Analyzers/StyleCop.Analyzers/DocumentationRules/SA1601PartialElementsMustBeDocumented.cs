@@ -100,6 +100,11 @@
 
         private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
+            if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+            {
+                return;
+            }
+
             TypeDeclarationSyntax typeDeclaration = context.Node as TypeDeclarationSyntax;
             if (typeDeclaration != null)
             {
@@ -115,6 +120,11 @@
 
         private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
+            if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+            {
+                return;
+            }
+
             MethodDeclarationSyntax methodDeclaration = context.Node as MethodDeclarationSyntax;
             if (methodDeclaration != null)
             {

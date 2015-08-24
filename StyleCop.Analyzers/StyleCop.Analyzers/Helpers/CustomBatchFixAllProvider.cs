@@ -69,7 +69,6 @@
         {
             Debug.Assert(!diagnostics.IsDefault, "!diagnostics.IsDefault");
             var cancellationToken = fixAllContext.CancellationToken;
-            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var fixerTasks = new Task[diagnostics.Length];
             var fixes = new List<CodeAction>[diagnostics.Length];
 
@@ -242,15 +241,16 @@
                 {
                     fixAllContext.CancellationToken.ThrowIfCancellationRequested();
                     var projectToFix = projectsToFix[i];
-                    tasks[i] = Task.Run(async () =>
-                    {
-                        var projectDiagnostics = await fixAllContext.GetAllDiagnosticsAsync(projectToFix).ConfigureAwait(false);
-                        foreach (var diagnostic in projectDiagnostics)
+                    tasks[i] = Task.Run(
+                        async () =>
                         {
-                            fixAllContext.CancellationToken.ThrowIfCancellationRequested();
-                            diagnostics.Add(diagnostic);
-                        }
-                    }, fixAllContext.CancellationToken);
+                            var projectDiagnostics = await fixAllContext.GetAllDiagnosticsAsync(projectToFix).ConfigureAwait(false);
+                            foreach (var diagnostic in projectDiagnostics)
+                            {
+                                fixAllContext.CancellationToken.ThrowIfCancellationRequested();
+                                diagnostics.Add(diagnostic);
+                            }
+                        }, fixAllContext.CancellationToken);
                 }
 
                 await Task.WhenAll(tasks).ConfigureAwait(false);

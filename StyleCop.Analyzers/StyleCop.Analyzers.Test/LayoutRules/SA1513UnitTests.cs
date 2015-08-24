@@ -380,6 +380,16 @@ public class Foo
     public object[] GetterOnlyAutoProperty2 { get; } =
         {
         };
+
+    // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1173
+    bool contained =
+        new[]
+        {
+            1,
+            2,
+            3
+        }
+        .Contains(3);
 }
 ";
 

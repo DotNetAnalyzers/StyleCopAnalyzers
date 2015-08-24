@@ -81,6 +81,14 @@
                     continue;
                 }
 
+                if (usingDirective.IsPrecededByPreprocessorDirective())
+                {
+                    CheckIncorrectlyOrderedUsingsAndReportDiagnostic(context, usingDirectives);
+                    CheckIncorrectlyOrderedUsingsAndReportDiagnostic(context, systemUsingDirectives);
+                    usingDirectives.Clear();
+                    systemUsingDirectives.Clear();
+                }
+
                 if (HasNamespaceAliasQualifier(usingDirective) || !usingDirective.IsSystemUsingDirective())
                 {
                     usingDirectives.Add(usingDirective);

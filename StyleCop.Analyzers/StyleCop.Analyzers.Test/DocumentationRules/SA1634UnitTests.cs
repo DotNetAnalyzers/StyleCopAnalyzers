@@ -1,28 +1,34 @@
 ﻿namespace StyleCop.Analyzers.Test.DocumentationRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
-    using TestHelper;
     using Xunit;
 
     /// <summary>
-    /// Unit tests for the <see cref="SA1634FileHeaderMustShowCopyright"/> analyzer.
+    /// Unit tests for the SA1634 diagnostic.
     /// </summary>
     public class SA1634UnitTests : FileHeaderTestBase
     {
-        /// <inheritdoc/>
-        protected override DiagnosticResult[] MissingCopyrightTagDiagnostics
+        /// <summary>
+        /// Verifies that a file header without a copyright element will produce the expected diagnostic (none for the default case)
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestFileHeaderWithMissingCopyrightTagAsync()
         {
-            get
-            {
-                return new[]
-                {
-                    this.CSharpDiagnostic().WithLocation(1, 1)
-                };
-            }
+            var testCode = @"// <author>
+//   John Doe
+// </author>
+// <summary>This is a test file.</summary>
+
+namespace Bar
+{
+}
+";
+
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1634Descriptor).WithLocation(1, 1);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -35,7 +41,7 @@
             var testCode = @"// <author>
 //   John Doe
 // </author>
-// <copyright file=""test0.cs"" company=""FooCorp"">
+// <copyright file=""Test0.cs"" company=""FooCorp"">
 //   Copyright (c) FooCorp. All rights reserved.
 // </copyright>
 
@@ -48,20 +54,21 @@ namespace Bar
         }
 
         /// <summary>
-        /// Verifies that a file header with a copyright element in short hand notation will not produce a diagnostic message.
+        /// Verifies that a file header with a copyright element in short hand notation will not produce SA1634.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestValidFileHeaderWithShorthandCopyrightAsync()
         {
-            var testCode = @"// <copyright file=""test0.cs"" company=""FooCorp""/>
+            var testCode = @"// <copyright file=""Test0.cs"" company=""FooCorp""/>
 
 namespace Bar
 {
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1635Descriptor).WithLocation(1, 4);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -71,7 +78,7 @@ namespace Bar
         [Fact]
         public async Task TestInvalidFileHeaderWithCopyrightInWrongCaseAsync()
         {
-            var testCode = @"// <Copyright file=""test0.cs"" company=""FooCorp"">
+            var testCode = @"// <Copyright file=""Test0.cs"" company=""FooCorp"">
 //   Copyright (c) FooCorp. All rights reserved.
 // </Copyright>
 
@@ -80,14 +87,8 @@ namespace Bar
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(1, 1);
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1634Descriptor).WithLocation(1, 1);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1634FileHeaderMustShowCopyright();
         }
     }
 }

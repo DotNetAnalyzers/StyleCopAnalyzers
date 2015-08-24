@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.DocumentationRules
 {
+    using System;
     using System.Collections.Immutable;
     using Helpers;
     using Microsoft.CodeAnalysis;
@@ -79,7 +80,7 @@
 
                         if (!string.IsNullOrEmpty(text))
                         {
-                            if (text.TrimStart().StartsWith(DefaultText))
+                            if (text.TrimStart().StartsWith(DefaultText, StringComparison.Ordinal))
                             {
                                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, summaryElement.GetLocation()));
                             }

@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.SpacingRules
 {
+    using System;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -118,7 +119,7 @@
                 switch (lastLeadingTrivia.Kind())
                 {
                 case SyntaxKind.WhitespaceTrivia:
-                    if (lastLeadingTrivia.ToFullString().StartsWith(" "))
+                    if (lastLeadingTrivia.ToFullString().StartsWith(" ", StringComparison.Ordinal))
                     {
                         return;
                     }
@@ -144,7 +145,17 @@
                 return;
 
             case SyntaxKind.XmlTextLiteralToken:
-                if (token.Text.StartsWith(" "))
+                if (token.Text.StartsWith("  ", StringComparison.Ordinal))
+                {
+                    SyntaxKind grandparentKind = token.Parent?.Parent?.Kind() ?? SyntaxKind.None;
+                    if (grandparentKind != SyntaxKind.SingleLineDocumentationCommentTrivia
+                        && grandparentKind != SyntaxKind.MultiLineDocumentationCommentTrivia)
+                    {
+                        // Allow extra indentation for nested text and elements.
+                        return;
+                    }
+                }
+                else if (token.Text.StartsWith(" ", StringComparison.Ordinal))
                 {
                     return;
                 }

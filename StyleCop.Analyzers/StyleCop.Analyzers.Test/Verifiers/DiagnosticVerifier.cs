@@ -1,5 +1,6 @@
 ﻿namespace TestHelper
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
@@ -109,7 +110,8 @@
             {
                 string diagnosticsOutput = actualResults.Any() ? FormatDiagnostics(analyzers, actualResults.ToArray()) : "    NONE.";
 
-                Assert.True(false,
+                Assert.True(
+                    false,
                     string.Format("Mismatch between number of diagnostics returned, expected \"{0}\" actual \"{1}\"\r\n\r\nDiagnostics:\r\n{2}\r\n", expectedCount, actualCount, diagnosticsOutput));
             }
 
@@ -123,7 +125,8 @@
                     if (actual.Location != Location.None)
                     {
                         string message =
-                            string.Format("Expected:\nA project diagnostic with No location\nActual:\n{0}",
+                            string.Format(
+                                "Expected:\nA project diagnostic with No location\nActual:\n{0}",
                                 FormatDiagnostics(analyzers, actual));
                         Assert.True(false, message);
                     }
@@ -136,7 +139,8 @@
                     if (additionalLocations.Length != expected.Locations.Length - 1)
                     {
                         string message =
-                            string.Format("Expected {0} additional locations but got {1} for Diagnostic:\r\n    {2}\r\n",
+                            string.Format(
+                                "Expected {0} additional locations but got {1} for Diagnostic:\r\n    {2}\r\n",
                                 expected.Locations.Length - 1, additionalLocations.Length,
                                 FormatDiagnostics(analyzers, actual));
                         Assert.True(false, message);
@@ -151,7 +155,8 @@
                 if (actual.Id != expected.Id)
                 {
                     string message =
-                        string.Format("Expected diagnostic id to be \"{0}\" was \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
+                        string.Format(
+                            "Expected diagnostic id to be \"{0}\" was \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
                             expected.Id, actual.Id, FormatDiagnostics(analyzers, actual));
                     Assert.True(false, message);
                 }
@@ -159,7 +164,8 @@
                 if (actual.Severity != expected.Severity)
                 {
                     string message =
-                        string.Format("Expected diagnostic severity to be \"{0}\" was \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
+                        string.Format(
+                            "Expected diagnostic severity to be \"{0}\" was \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
                             expected.Severity, actual.Severity, FormatDiagnostics(analyzers, actual));
                     Assert.True(false, message);
                 }
@@ -167,7 +173,8 @@
                 if (actual.GetMessage() != expected.Message)
                 {
                     string message =
-                        string.Format("Expected diagnostic message to be \"{0}\" was \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
+                        string.Format(
+                            "Expected diagnostic message to be \"{0}\" was \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
                             expected.Message, actual.GetMessage(), FormatDiagnostics(analyzers, actual));
                     Assert.True(false, message);
                 }
@@ -189,9 +196,11 @@
             var actualSpan = actual.GetLineSpan();
 
             string message =
-                string.Format("Expected diagnostic to be in file \"{0}\" was actually in file \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
+                string.Format(
+                    "Expected diagnostic to be in file \"{0}\" was actually in file \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
                     expected.Path, actualSpan.Path, FormatDiagnostics(analyzers, diagnostic));
-            Assert.True(actualSpan.Path == expected.Path || (actualSpan.Path != null && actualSpan.Path.Contains("Test0.") && expected.Path.Contains("Test.")),
+            Assert.True(
+                actualSpan.Path == expected.Path || (actualSpan.Path != null && actualSpan.Path.Contains("Test0.") && expected.Path.Contains("Test.")),
                 message);
 
             var actualLinePosition = actualSpan.StartLinePosition;
@@ -202,7 +211,8 @@
                 if (actualLinePosition.Line + 1 != expected.Line)
                 {
                     string message2 =
-                        string.Format("Expected diagnostic to be on line \"{0}\" was actually on line \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
+                        string.Format(
+                            "Expected diagnostic to be on line \"{0}\" was actually on line \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
                             expected.Line, actualLinePosition.Line + 1, FormatDiagnostics(analyzers, diagnostic));
                     Assert.True(false, message2);
                 }
@@ -214,7 +224,8 @@
                 if (actualLinePosition.Character + 1 != expected.Column)
                 {
                     string message2 =
-                        string.Format("Expected diagnostic to start at column \"{0}\" was actually at column \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
+                        string.Format(
+                            "Expected diagnostic to start at column \"{0}\" was actually at column \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
                             expected.Column, actualLinePosition.Character + 1, FormatDiagnostics(analyzers, diagnostic));
                     Assert.True(false, message2);
                 }
@@ -248,13 +259,15 @@
                     }
                     else
                     {
-                        Assert.True(location.IsInSource,
+                        Assert.True(
+                            location.IsInSource,
                             string.Format("Test base does not currently handle diagnostics in metadata locations. Diagnostic in metadata:\r\n", diagnostics[i]));
 
                         string resultMethodName = diagnostics[i].Location.SourceTree.FilePath.EndsWith(".cs") ? "GetCSharpResultAt" : "GetBasicResultAt";
                         var linePosition = diagnostics[i].Location.GetLineSpan().StartLinePosition;
 
-                        builder.AppendFormat("{0}({1}, {2}, {3}.{4})",
+                        builder.AppendFormat(
+                            "{0}({1}, {2}, {3}.{4})",
                             resultMethodName,
                             linePosition.Line + 1,
                             linePosition.Character + 1,
@@ -294,12 +307,12 @@
             if (filenames == null)
             {
                 // Also check if the analyzer honors exclusions
-                if (expected.Any(x => x.Id.StartsWith("SA") || x.Id.StartsWith("SX")))
+                if (expected.Any(x => x.Id.StartsWith("SA", StringComparison.Ordinal) || x.Id.StartsWith("SX", StringComparison.Ordinal)))
                 {
                     // We want to look at non-stylecop diagnostics only. We also insert a new line at the beginning
                     // so we have to move all diagnostic location down by one line
                     var expectedResults = expected
-                        .Where(x => !x.Id.StartsWith("SA") && !x.Id.StartsWith("SX"))
+                        .Where(x => !x.Id.StartsWith("SA", StringComparison.Ordinal) && !x.Id.StartsWith("SX", StringComparison.Ordinal))
                         .Select(x => x.WithLineOffset(1))
                         .ToArray();
 

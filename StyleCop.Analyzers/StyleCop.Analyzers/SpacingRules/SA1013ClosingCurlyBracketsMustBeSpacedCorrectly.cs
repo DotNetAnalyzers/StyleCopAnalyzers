@@ -104,7 +104,8 @@
                     || nextToken.IsKind(SyntaxKind.CommaToken)
                     || nextToken.IsKind(SyntaxKind.SemicolonToken)
                     || nextToken.IsKind(SyntaxKind.DotToken)
-                    || (nextToken.IsKind(SyntaxKind.QuestionToken) && nextToken.GetNextToken(includeZeroWidth: true).IsKind(SyntaxKind.DotToken));
+                    || (nextToken.IsKind(SyntaxKind.QuestionToken) && nextToken.GetNextToken(includeZeroWidth: true).IsKind(SyntaxKind.DotToken))
+                    || nextToken.IsKind(SyntaxKind.CloseBracketToken);
             }
             else
             {

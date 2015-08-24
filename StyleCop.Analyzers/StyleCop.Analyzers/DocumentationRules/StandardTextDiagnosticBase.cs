@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.DocumentationRules
 {
+    using System;
     using System.Linq;
     using Helpers;
     using Microsoft.CodeAnalysis;
@@ -80,10 +81,6 @@
 
                 if (firstTextPartSyntax != null && classReferencePart != null && secondTextParSyntaxt != null)
                 {
-                    // Check text parts
-                    var firstText = XmlCommentHelper.GetText(firstTextPartSyntax);
-                    var secondText = XmlCommentHelper.GetText(secondTextParSyntaxt);
-
                     if (TextPartsMatch(firstTextPart, secondTextPart, firstTextPartSyntax, secondTextParSyntaxt)
                         && SeeTagIsCorrect(context, classReferencePart, declarationSyntax))
                     {
@@ -131,7 +128,7 @@
             }
 
             string secondTextPartText = XmlCommentHelper.GetText(secondTextPart, normalizeWhitespace: true);
-            if (!secondTextPartText.StartsWith(secondText))
+            if (!secondTextPartText.StartsWith(secondText, StringComparison.Ordinal))
             {
                 return false;
             }

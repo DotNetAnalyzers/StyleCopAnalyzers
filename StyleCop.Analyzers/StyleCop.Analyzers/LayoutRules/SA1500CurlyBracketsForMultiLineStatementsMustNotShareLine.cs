@@ -204,6 +204,7 @@
                 case SyntaxKind.CloseParenToken:
                 case SyntaxKind.CommaToken:
                 case SyntaxKind.SemicolonToken:
+                case SyntaxKind.DotToken:
                     // these are allowed to appear on the same line
                     return;
 

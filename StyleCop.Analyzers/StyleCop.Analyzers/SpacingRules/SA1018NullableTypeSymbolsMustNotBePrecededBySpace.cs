@@ -60,6 +60,12 @@
                 return;
             }
 
+            NullableTypeSyntax parentNullableTypeSyntax = questionToken.Parent as NullableTypeSyntax;
+            if (parentNullableTypeSyntax != null && parentNullableTypeSyntax.ElementType.IsMissing)
+            {
+                return;
+            }
+
             /* Do not test for the first character on the line!
              * The StyleCop documentation is wrong there, the actual StyleCop code does not accept it.
              */

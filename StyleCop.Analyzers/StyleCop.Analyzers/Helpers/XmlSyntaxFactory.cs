@@ -73,7 +73,7 @@
 
         public static XmlTextAttributeSyntax TextAttribute(string name, SyntaxKind quoteKind, SyntaxTokenList textTokens)
         {
-            return TextAttribute(SyntaxFactory.XmlName(name), SyntaxKind.DoubleQuoteToken, textTokens);
+            return TextAttribute(SyntaxFactory.XmlName(name), quoteKind, textTokens);
         }
 
         public static XmlTextAttributeSyntax TextAttribute(XmlNameSyntax name, SyntaxKind quoteKind, SyntaxTokenList textTokens)

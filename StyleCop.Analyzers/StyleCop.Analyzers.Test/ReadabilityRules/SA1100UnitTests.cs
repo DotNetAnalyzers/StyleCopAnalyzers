@@ -1022,6 +1022,61 @@ public class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestIndexerWithLocalDefinitionAsync()
+        {
+            var testCode = @"
+class ClassName : System.Collections.Generic.List<int>
+{
+  public new int this[int index] { get { return base[index]; } }
+  public int Property { get { return base[0]; } }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestIndexerAsync()
+        {
+            var testCode = @"
+class ClassName : System.Collections.Generic.List<int>
+{
+  public int Property { get { return base[0]; } }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 38);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedTest = @"
+class ClassName : System.Collections.Generic.List<int>
+{
+  public int Property { get { return this[0]; } }
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestIndexerWithInvokationAsync()
+        {
+            var testCode = @"
+class ClassName : System.Collections.Generic.List<System.Func<int>>
+{
+  public int Property { get { return base[0](); } }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 38);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedTest = @"
+class ClassName : System.Collections.Generic.List<System.Func<int>>
+{
+  public int Property { get { return this[0](); } }
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists();

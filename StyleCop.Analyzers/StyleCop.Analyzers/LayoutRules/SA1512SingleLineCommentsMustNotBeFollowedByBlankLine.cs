@@ -107,7 +107,7 @@
 
             foreach (var trivia in syntaxRoot.DescendantTrivia().Where(trivia => trivia.IsKind(SyntaxKind.SingleLineCommentTrivia)))
             {
-                if (trivia.ToString().StartsWith("////"))
+                if (trivia.ToString().StartsWith("////", StringComparison.Ordinal))
                 {
                     // ignore commented out code
                     continue;

@@ -215,7 +215,8 @@
 
             var parent = firstNode.Parent;
 
-            var allTrivia = parent.DescendantTrivia(TextSpan.FromBounds(firstNode.Span.End, secondNode.Span.Start),
+            var allTrivia = parent.DescendantTrivia(
+                TextSpan.FromBounds(firstNode.Span.End, secondNode.Span.Start),
                 descendIntoTrivia: true);
 
             if (!HasEmptyLine(allTrivia))

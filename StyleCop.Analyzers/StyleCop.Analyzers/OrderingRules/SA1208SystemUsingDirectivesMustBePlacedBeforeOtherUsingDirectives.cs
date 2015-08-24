@@ -77,7 +77,7 @@
             {
                 var usingDirective = usings[i];
 
-                if (usingDirective.Alias != null || !usingDirective.StaticKeyword.IsKind(SyntaxKind.None))
+                if (usingDirective.Alias != null || !usingDirective.StaticKeyword.IsKind(SyntaxKind.None) || usingDirective.IsPrecededByPreprocessorDirective())
                 {
                     continue;
                 }

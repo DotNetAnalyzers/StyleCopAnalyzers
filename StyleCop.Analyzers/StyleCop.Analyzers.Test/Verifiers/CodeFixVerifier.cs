@@ -79,6 +79,7 @@
             var t1 = this.VerifyFixInternalAsync(LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), this.GetCSharpCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics, maxNumberOfIterations, GetSingleAnalyzerDocumentAsync, cancellationToken).ConfigureAwait(false);
 
             var fixAllProvider = this.GetCSharpCodeFixProvider().GetFixAllProvider();
+            Assert.NotEqual(WellKnownFixAllProviders.BatchFixer, fixAllProvider);
 
             if (fixAllProvider == null)
             {
@@ -106,6 +107,18 @@
         protected async Task VerifyCSharpFixAllFixAsync(string oldSource, string newSource, int? codeFixIndex = null, bool allowNewCompilerDiagnostics = false, int maxNumberOfIterations = int.MaxValue, CancellationToken cancellationToken = default(CancellationToken))
         {
             await this.VerifyFixInternalAsync(LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), this.GetCSharpCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics, maxNumberOfIterations, GetFixAllAnalyzerDocumentAsync, cancellationToken).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Gets all offered code fixes for the specified diagnostic within the given source.
+        /// </summary>
+        /// <param name="source">A valid C# source file in the form of a string.</param>
+        /// <param name="diagnosticIndex">Index determining which diagnostic to use for determining the offered code fixes. Uses the first diagnostic if null.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
+        /// <returns>The collection of offered code actions. This collection may be empty.</returns>
+        protected async Task<ImmutableArray<CodeAction>> GetOfferedCSharpFixesAsync(string source, int? diagnosticIndex = null, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return await this.GetOfferedFixesInternalAsync(LanguageNames.CSharp, source, diagnosticIndex, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), this.GetCSharpCodeFixProvider(), cancellationToken).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -252,7 +265,8 @@
 
             for (var i = 0; i < analyzerDiagnostics.Length; i++)
             {
-                if (analyzerDiagnostics[i].Id != previousDiagnostics[i].Id)
+                if ((analyzerDiagnostics[i].Id != previousDiagnostics[i].Id)
+                    || (analyzerDiagnostics[i].Location.SourceSpan != previousDiagnostics[i].Location.SourceSpan))
                 {
                     return true;
                 }
@@ -279,7 +293,8 @@
                 newCompilerDiagnostics = GetNewDiagnostics(compilerDiagnostics, await GetCompilerDiagnosticsAsync(document, cancellationToken).ConfigureAwait(false));
 
                 string message =
-                    string.Format("Fix introduced new compiler diagnostics:\r\n{0}\r\n\r\nNew document:\r\n{1}\r\n",
+                    string.Format(
+                        "Fix introduced new compiler diagnostics:\r\n{0}\r\n\r\nNew document:\r\n{1}\r\n",
                         string.Join("\r\n", newCompilerDiagnostics.Select(d => d.ToString())),
                         (await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false)).ToFullString());
                 Assert.True(false, message);
@@ -288,6 +303,22 @@
             // after applying all of the code fixes, compare the resulting string to the inputted one
             var actual = await GetStringFromDocumentAsync(document, cancellationToken).ConfigureAwait(false);
             Assert.Equal(newSource, actual);
+        }
+
+        private async Task<ImmutableArray<CodeAction>> GetOfferedFixesInternalAsync(string language, string source, int? diagnosticIndex, ImmutableArray<DiagnosticAnalyzer> analyzers, CodeFixProvider codeFixProvider, CancellationToken cancellationToken)
+        {
+            var document = this.CreateDocument(source, language);
+            var analyzerDiagnostics = await GetSortedDiagnosticsFromDocumentsAsync(analyzers, new[] { document }, cancellationToken).ConfigureAwait(false);
+
+            var index = diagnosticIndex.HasValue ? diagnosticIndex.Value : 0;
+
+            Assert.True(index < analyzerDiagnostics.Count());
+
+            var actions = new List<CodeAction>();
+            var context = new CodeFixContext(document, analyzerDiagnostics[index], (a, d) => actions.Add(a), cancellationToken);
+            await codeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
+
+            return actions.ToImmutableArray();
         }
     }
 }

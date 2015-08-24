@@ -77,7 +77,8 @@
             var document = project.Documents.First();
 
             // Create a diagnostic for the document to fix
-            var diagnostic = Diagnostic.Create(this.GetCSharpDiagnosticAnalyzers().First().SupportedDiagnostics.First(),
+            var diagnostic = Diagnostic.Create(
+                this.GetCSharpDiagnosticAnalyzers().First().SupportedDiagnostics.First(),
                 Location.Create(await document.GetSyntaxTreeAsync().ConfigureAwait(false), TextSpan.FromBounds(0, 0)));
 
             await codeFixer.RegisterCodeFixesAsync(new CodeFixContext(document, diagnostic, (ca, d) =>
@@ -160,12 +161,14 @@
             foreach (var document in project.Documents)
             {
                 // Create a diagnostic for the document to fix
-                var diagnostic = Diagnostic.Create(descriptor,
+                var diagnostic = Diagnostic.Create(
+                    descriptor,
                     Location.Create(await document.GetSyntaxTreeAsync().ConfigureAwait(false), TextSpan.FromBounds(0, 0)));
                 diagnostics.Add(diagnostic);
             }
 
-            FixAllContext fixAllContext = new FixAllContext(project.Documents.First(),
+            FixAllContext fixAllContext = new FixAllContext(
+                project.Documents.First(),
                 codeFixer,
                 scope,
                 nameof(SA1412CodeFixProvider) + "." + this.fileEncoding.WebName,
@@ -222,12 +225,14 @@
             foreach (var document in project.Documents)
             {
                 // Create a diagnostic for the document to fix
-                var diagnostic = Diagnostic.Create(descriptor,
+                var diagnostic = Diagnostic.Create(
+                    descriptor,
                     Location.Create(await document.GetSyntaxTreeAsync().ConfigureAwait(false), TextSpan.FromBounds(0, 0)));
                 diagnostics.Add(diagnostic);
             }
 
-            FixAllContext fixAllContext = new FixAllContext(project.Documents.First(),
+            FixAllContext fixAllContext = new FixAllContext(
+                project.Documents.First(),
                 codeFixer,
                 scope,
                 nameof(SA1412CodeFixProvider) + "." + this.fileEncoding.WebName,

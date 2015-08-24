@@ -1,14 +1,12 @@
 ﻿namespace StyleCop.Analyzers.Test.DocumentationRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
     using Xunit;
 
     /// <summary>
-    /// Unit tests for the <see cref="SA1635FileHeaderMustHaveCopyrightText"/> analyzer.
+    /// Unit tests for the SA1635 diagnostic.
     /// </summary>
     public class SA1635UnitTests : FileHeaderTestBase
     {
@@ -19,14 +17,14 @@
         [Fact]
         public async Task TestFileHeaderWithShorthandCopyrightAsync()
         {
-            var testCode = @"// <copyright file=""test0.cs"" company=""FooCorp""/>
+            var testCode = @"// <copyright file=""Test0.cs"" company=""FooCorp""/>
 
 namespace Bar
 {
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(1, 4);
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1635Descriptor).WithLocation(1, 4);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -38,7 +36,7 @@ namespace Bar
         public async Task TestFileHeaderWithWhitespaceOnlyCopyrightAsync()
         {
             var testCode =
-                "// <copyright file=\"test0.cs\" company=\"FooCorp\">\r\n" +
+                "// <copyright file=\"Test0.cs\" company=\"FooCorp\">\r\n" +
                 "//     \r\n" +
                 "// </copyright>\r\n" +
                 "\r\n" +
@@ -46,14 +44,8 @@ namespace Bar
                 "{\r\n" +
                 "}\r\n";
 
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(1, 4);
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1635Descriptor).WithLocation(1, 4);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1635FileHeaderMustHaveCopyrightText();
         }
     }
 }

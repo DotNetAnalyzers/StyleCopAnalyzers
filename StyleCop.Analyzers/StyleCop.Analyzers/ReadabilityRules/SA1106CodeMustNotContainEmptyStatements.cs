@@ -44,6 +44,31 @@
         public override void Initialize(AnalysisContext context)
         {
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleEmptyStatementSyntax, SyntaxKind.EmptyStatement);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeSyntax, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeSyntax, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeSyntax, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeSyntax, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleNamespaceSyntax, SyntaxKind.NamespaceDeclaration);
+        }
+
+        private void HandleTypeSyntax(SyntaxNodeAnalysisContext context)
+        {
+            var declaration = context.Node as BaseTypeDeclarationSyntax;
+
+            if (declaration.SemicolonToken.IsKind(SyntaxKind.SemicolonToken))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.SemicolonToken.GetLocation()));
+            }
+        }
+
+        private void HandleNamespaceSyntax(SyntaxNodeAnalysisContext context)
+        {
+            var declaration = context.Node as NamespaceDeclarationSyntax;
+
+            if (declaration.SemicolonToken.IsKind(SyntaxKind.SemicolonToken))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.SemicolonToken.GetLocation()));
+            }
         }
 
         private void HandleEmptyStatementSyntax(SyntaxNodeAnalysisContext context)

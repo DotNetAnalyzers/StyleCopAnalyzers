@@ -5,7 +5,6 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using StyleCop.Analyzers.SpacingRules;
 
     /// <summary>
     /// A call to a member from an inherited class begins with <c>base.</c>, and the local class does not contain an
@@ -84,27 +83,38 @@
         private void AnalyzeBaseExpression(SyntaxNodeAnalysisContext context)
         {
             var baseExpressionSyntax = (BaseExpressionSyntax)context.Node;
-            var targetSymbol = context.SemanticModel.GetSymbolInfo(baseExpressionSyntax.Parent, context.CancellationToken);
+            var parent = baseExpressionSyntax.Parent;
+            var targetSymbol = context.SemanticModel.GetSymbolInfo(parent, context.CancellationToken);
             if (targetSymbol.Symbol == null)
             {
                 return;
             }
 
-            var memberAccessExpression = baseExpressionSyntax.Parent as MemberAccessExpressionSyntax;
-            if (memberAccessExpression == null)
+            var memberAccessExpression = parent as MemberAccessExpressionSyntax;
+            var elementAccessExpression = parent as ElementAccessExpressionSyntax;
+
+            ExpressionSyntax speculativeExpression;
+
+            if (memberAccessExpression != null)
+            {
+                // make sure to evaluate the complete invocation expression if this is a call, or overload resolution will fail
+                speculativeExpression = memberAccessExpression.WithExpression(SyntaxFactory.ThisExpression());
+                InvocationExpressionSyntax invocationExpression = memberAccessExpression.Parent as InvocationExpressionSyntax;
+                if (invocationExpression != null)
+                {
+                    speculativeExpression = invocationExpression.WithExpression(speculativeExpression);
+                }
+            }
+            else if (elementAccessExpression != null)
+            {
+                speculativeExpression = elementAccessExpression.WithExpression(SyntaxFactory.ThisExpression());
+            }
+            else
             {
                 return;
             }
 
-            // make sure to evaluate the complete invocation expression if this is a call, or overload resolution will fail
-            ExpressionSyntax speculativeExpression = memberAccessExpression.WithExpression(SyntaxFactory.ThisExpression());
-            InvocationExpressionSyntax invocationExpression = memberAccessExpression.Parent as InvocationExpressionSyntax;
-            if (invocationExpression != null)
-            {
-                speculativeExpression = invocationExpression.WithExpression(speculativeExpression);
-            }
-
-            var speculativeSymbol = context.SemanticModel.GetSpeculativeSymbolInfo(memberAccessExpression.SpanStart, speculativeExpression, SpeculativeBindingOption.BindAsExpression);
+            var speculativeSymbol = context.SemanticModel.GetSpeculativeSymbolInfo(parent.SpanStart, speculativeExpression, SpeculativeBindingOption.BindAsExpression);
             if (speculativeSymbol.Symbol != targetSymbol.Symbol)
             {
                 return;

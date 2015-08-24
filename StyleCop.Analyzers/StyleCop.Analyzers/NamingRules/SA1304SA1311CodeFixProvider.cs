@@ -25,8 +25,9 @@
         private const string Suffix = "Value";
 
         private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter.DiagnosticId,
-                                  SA1304NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter.DiagnosticId);
+            ImmutableArray.Create(
+                SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter.DiagnosticId,
+                SA1304NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;

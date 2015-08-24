@@ -1,0 +1,31 @@
+﻿namespace StyleCop.Analyzers.Test.DocumentationRules
+{
+    using System.Collections.Generic;
+    using System.Linq;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.DocumentationRules;
+    using TestHelper;
+    using Xunit;
+
+    /// <summary>
+    /// This class contains unit tests for <see cref="SA1646IncludedDocumentationXPathDoesNotExist"/>.
+    /// </summary>
+    public class SA1646UnitTests : DiagnosticVerifier
+    {
+        [Fact]
+        public void TestDisabledByDefaultAndNotConfigurable()
+        {
+            var analyzer = this.GetCSharpDiagnosticAnalyzers().Single();
+            Assert.Equal(1, analyzer.SupportedDiagnostics.Length);
+            Assert.False(analyzer.SupportedDiagnostics[0].IsEnabledByDefault);
+            Assert.Contains(WellKnownDiagnosticTags.NotConfigurable, analyzer.SupportedDiagnostics[0].CustomTags);
+        }
+
+        /// <inheritdoc/>
+        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        {
+            yield return new SA1646IncludedDocumentationXPathDoesNotExist();
+        }
+    }
+}

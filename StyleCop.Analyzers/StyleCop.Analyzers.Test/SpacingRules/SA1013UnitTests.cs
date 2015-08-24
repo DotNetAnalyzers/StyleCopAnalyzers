@@ -337,6 +337,50 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that the analyzer will properly handle anonymous classes in indexers.
+        /// This is a regression test for <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1191">DotNetAnalyzers/StyleCopAnalyzers#1191</see>
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestIndexersAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod()
+        {
+            var dictionary = new System.Collections.Generic.Dictionary<object, object>();
+            dictionary[new { Foo = ""Foo"", Bar = 5 }] = 42;
+        }
+    }
+}
+";
+
+            // no space between closing curly bracket and closing bracket should not be reported by SA1013
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer will properly handle end of file without a new line.
+        /// This is a regression test for <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/685">DotNetAnalyzers/StyleCopAnalyzers#685</see>
+        /// </summary>
+        /// <param name="declarationType">The declaration type.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("namespace")]
+        [InlineData("class")]
+        [InlineData("interface")]
+        [InlineData("struct")]
+        [InlineData("enum")]
+        public async Task TestEndOfFileWithoutNewLineAsync(string declarationType)
+        {
+            var testCode = $"{declarationType} TestItem {{ }}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {

@@ -152,8 +152,9 @@
                 }
 
                 DocumentationCommentTriviaSyntax newDocumentationComment = documentationComment.WithContent(
-                    documentationComment.Content.InsertRange(documentationComment.Content.Count - 1,
-                    XmlSyntaxFactory.List(leadingNewLine, returnsElement)));
+                    documentationComment.Content.InsertRange(
+                        documentationComment.Content.Count - 1,
+                        XmlSyntaxFactory.List(leadingNewLine, returnsElement)));
 
                 newRoot = root.ReplaceNode(documentationComment, newDocumentationComment);
             }
@@ -204,7 +205,7 @@
 
                 foreach (AttributeSyntax attribute in attributeList.Attributes)
                 {
-                    IMethodSymbol methodSymbol = semanticModel.GetSymbolInfo(attribute.Name).Symbol as IMethodSymbol;
+                    IMethodSymbol methodSymbol = semanticModel.GetSymbolInfo(attribute.Name, cancellationToken).Symbol as IMethodSymbol;
                     if (methodSymbol == null)
                     {
                         continue;
@@ -227,8 +228,7 @@
         {
             return node
                 .DescendantTrivia(descendIntoTrivia: true)
-                .Where(trivia => trivia.IsKind(SyntaxKind.DocumentationCommentExteriorTrivia))
-                .LastOrDefault();
+                .LastOrDefault(trivia => trivia.IsKind(SyntaxKind.DocumentationCommentExteriorTrivia));
         }
     }
 }

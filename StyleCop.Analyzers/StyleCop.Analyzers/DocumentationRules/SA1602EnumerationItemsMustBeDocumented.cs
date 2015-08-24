@@ -68,6 +68,11 @@
 
         private void HandleEnumMember(SyntaxNodeAnalysisContext context)
         {
+            if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+            {
+                return;
+            }
+
             EnumMemberDeclarationSyntax enumMemberDeclaration = context.Node as EnumMemberDeclarationSyntax;
             if (enumMemberDeclaration != null)
             {

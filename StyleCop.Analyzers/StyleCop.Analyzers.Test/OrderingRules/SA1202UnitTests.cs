@@ -542,6 +542,98 @@ class MyClass
         }
 
         /// <summary>
+        /// Verifies that the analyzer will properly handle explicit interface implementations.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestExplicitInterfaceImplementationsAsync()
+        {
+            var testCode = @"using System;
+internal interface IA
+{
+    event EventHandler TestEvent1;
+
+    string T { get; }
+
+    int U { get; }
+
+    string this[string a] { get; }
+
+    void TestMethod1();
+}
+
+class Test : IA
+{
+    private event EventHandler TestEvent2;
+
+    event EventHandler IA.TestEvent1 { add { } remove { } }
+
+    public int Q { get; set; }
+
+    string IA.T
+    {
+        get { return null; }
+    }
+
+    // SA1202 (All public properties must come before all private properties) wrongly reported here.
+    public int W { get; set; }
+
+    protected string S { get; set; }
+
+    // SA1202 should be reported here (according to legacy StyleCop), but is not.
+    int IA.U
+    {
+        get { return 0; }
+    }
+
+    protected int this[int index] { get { return index; } }
+
+    string IA.this[string a] { get { return a; } }
+
+    protected void TestMethod2() { }
+
+    void IA.TestMethod1() { }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                // explicit interface events are considered private by StyleCop
+                this.CSharpDiagnostic().WithLocation(34, 12).WithArguments("public", "properties", "protected"),
+                this.CSharpDiagnostic().WithLocation(41, 15).WithArguments("public", "indexers", "protected"),
+                this.CSharpDiagnostic().WithLocation(45, 13).WithArguments("public", "methods", "protected")
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestExplicitInterfaceFollowedByPrivateStaticAsync()
+        {
+            var testCode = @"
+public interface TestInterface
+{
+    void SomeMethod();
+}
+
+public class TestClass : TestInterface
+{
+    private static void ExampleMethod()
+    {
+    }
+
+    void TestInterface.SomeMethod()
+    {
+    }
+}
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(13, 24).WithArguments("public", "methods", "private");
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that the analyzer will properly handle incomplete members.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>

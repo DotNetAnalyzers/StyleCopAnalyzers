@@ -77,8 +77,8 @@
 
         private class CurlyBracketsVisitor : CSharpSyntaxWalker
         {
-            private SyntaxTreeAnalysisContext context;
-            private Stack<SyntaxToken> curlyBracketsStack = new Stack<SyntaxToken>();
+            private readonly SyntaxTreeAnalysisContext context;
+            private readonly Stack<SyntaxToken> curlyBracketsStack = new Stack<SyntaxToken>();
 
             public CurlyBracketsVisitor(SyntaxTreeAnalysisContext context)
                 : base(SyntaxWalkerDepth.Token)
@@ -127,6 +127,12 @@
                 // check if the next token is not preceded by significant trivia.
                 if (nextToken.LeadingTrivia.All(trivia => trivia.IsKind(SyntaxKind.WhitespaceTrivia)))
                 {
+                    if (nextToken.IsKind(SyntaxKind.DotToken))
+                    {
+                        // the close brace is followed by a member accessor on the next line
+                        return;
+                    }
+
                     if (nextToken.IsKind(SyntaxKind.CloseBraceToken))
                     {
                         // the close brace is followed by another close brace on the next line

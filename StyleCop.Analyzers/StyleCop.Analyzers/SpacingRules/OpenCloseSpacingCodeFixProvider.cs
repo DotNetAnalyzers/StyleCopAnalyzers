@@ -10,6 +10,7 @@
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using ReadabilityRules;
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
@@ -21,10 +22,13 @@
     {
         internal const string LocationKey = "location";
         internal const string ActionKey = "action";
+        internal const string LayoutKey = "layout";
         internal const string LocationPreceding = "preceding";
         internal const string LocationFollowing = "following";
         internal const string ActionInsert = "insert";
         internal const string ActionRemove = "remove";
+        internal const string LayoutPack = "pack";
+        internal const string LayoutPreserve = "preserve";
 
         private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(
@@ -36,7 +40,11 @@
                 SA1015ClosingGenericBracketsMustBeSpacedCorrectly.DiagnosticId,
                 SA1019MemberAccessSymbolsMustBeSpacedCorrectly.DiagnosticId,
                 SA1020IncrementDecrementSymbolsMustBeSpacedCorrectly.DiagnosticId,
-                SA1023DereferenceAndAccessOfSymbolsMustBeSpacedCorrectly.DiagnosticId);
+                SA1023DereferenceAndAccessOfSymbolsMustBeSpacedCorrectly.DiagnosticId,
+                SA1110OpeningParenthesisMustBeOnDeclarationLine.DiagnosticId,
+                SA1111ClosingParenthesisMustBeOnLineOfLastParameter.DiagnosticId,
+                SA1112ClosingParenthesisMustBeOnLineOfOpeningParenthesis.DiagnosticId,
+                SA1113CommaMustBeOnSameLineAsPreviousParameter.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
@@ -76,6 +84,12 @@
                 return document;
             }
 
+            string layout;
+            if (!diagnostic.Properties.TryGetValue(LayoutKey, out layout))
+            {
+                layout = LayoutPack;
+            }
+
             var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>();
             SyntaxTriviaList triviaList;
             switch (location)
@@ -89,10 +103,69 @@
 
                 case ActionRemove:
                     var prevToken = token.GetPreviousToken();
+                    bool tokenIsFirstInLine = token.IsFirstInLine();
+                    bool preserveLayout = layout == LayoutPreserve;
                     triviaList = prevToken.TrailingTrivia.AddRange(token.LeadingTrivia);
+                    if (triviaList.Any(t => t.IsDirective))
+                    {
+                        return document;
+                    }
 
                     replaceMap[prevToken] = prevToken.WithTrailingTrivia();
-                    replaceMap[token] = token.WithLeadingTrivia(triviaList.WithoutTrailingWhitespace());
+                    if ((!preserveLayout || !tokenIsFirstInLine)
+                        && triviaList.All(i => i.IsKind(SyntaxKind.WhitespaceTrivia) || i.IsKind(SyntaxKind.EndOfLineTrivia)))
+                    {
+                        replaceMap[token] = token.WithLeadingTrivia();
+                    }
+                    else if (tokenIsFirstInLine && token.IsLastInLine())
+                    {
+                        /* This block covers the case where `token` is the only non-trivia token on its line. However,
+                         * the line may still contain non-whitespace trivia which we want the removal process to
+                         * preserve. This code fix only removes the whitespace surrounding `token` if it is the only
+                         * non-whitespace token on the line.
+                         */
+                        int lastNewLineLeading = token.LeadingTrivia.LastIndexOf(SyntaxKind.EndOfLineTrivia);
+                        int firstNewLineFollowing = token.TrailingTrivia.IndexOf(SyntaxKind.EndOfLineTrivia);
+                        bool onlyWhitespace = true;
+                        for (int i = lastNewLineLeading + 1; i < token.LeadingTrivia.Count; i++)
+                        {
+                            onlyWhitespace &= token.LeadingTrivia[i].IsKind(SyntaxKind.WhitespaceTrivia);
+                        }
+
+                        firstNewLineFollowing = firstNewLineFollowing == -1 ? token.TrailingTrivia.Count : firstNewLineFollowing;
+                        for (int i = 0; i < firstNewLineFollowing; i++)
+                        {
+                            onlyWhitespace &= token.TrailingTrivia[i].IsKind(SyntaxKind.WhitespaceTrivia);
+                        }
+
+                        if (onlyWhitespace)
+                        {
+                            // Move the token, and remove the other tokens from its line. Keep all other surrounding
+                            // trivia. Keep the last newline that precedes token, but not the first that follows it.
+                            SyntaxTriviaList trailingTrivia = prevToken.TrailingTrivia;
+                            if (lastNewLineLeading >= 0)
+                            {
+                                trailingTrivia = trailingTrivia.AddRange(token.LeadingTrivia.Take(lastNewLineLeading + 1));
+                            }
+
+                            // firstNewLineFollowing was adjusted above to account for the missing case.
+                            trailingTrivia = trailingTrivia.AddRange(token.TrailingTrivia.Take(firstNewLineFollowing));
+
+                            replaceMap[token] = token.WithLeadingTrivia().WithTrailingTrivia(trailingTrivia);
+                        }
+                        else
+                        {
+                            // Just move the token and keep all surrounding trivia.
+                            SyntaxTriviaList trailingTrivia = triviaList.AddRange(token.TrailingTrivia);
+                            replaceMap[token] = token.WithLeadingTrivia().WithTrailingTrivia(trailingTrivia);
+                        }
+                    }
+                    else
+                    {
+                        SyntaxTriviaList trailingTrivia = triviaList.AddRange(token.TrailingTrivia.WithoutLeadingWhitespace(endOfLineIsWhitespace: false));
+                        replaceMap[token] = token.WithLeadingTrivia().WithTrailingTrivia(trailingTrivia);
+                    }
+
                     break;
 
                 default:

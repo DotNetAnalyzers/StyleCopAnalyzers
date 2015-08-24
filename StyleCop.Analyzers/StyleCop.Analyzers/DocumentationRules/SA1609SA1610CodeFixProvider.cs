@@ -75,8 +75,7 @@
         {
             return node
                 .DescendantTrivia(descendIntoTrivia: true)
-                .Where(trivia => trivia.IsKind(SyntaxKind.DocumentationCommentExteriorTrivia))
-                .LastOrDefault();
+                .LastOrDefault(trivia => trivia.IsKind(SyntaxKind.DocumentationCommentExteriorTrivia));
         }
 
         private async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
@@ -149,8 +148,9 @@
             else
             {
                 DocumentationCommentTriviaSyntax newDocumentationComment = documentationComment.WithContent(
-                    documentationComment.Content.InsertRange(documentationComment.Content.Count - 1,
-                    XmlSyntaxFactory.List(leadingNewLine, valueElement)));
+                    documentationComment.Content.InsertRange(
+                        documentationComment.Content.Count - 1,
+                        XmlSyntaxFactory.List(leadingNewLine, valueElement)));
 
                 newRoot = root.ReplaceNode(documentationComment, newDocumentationComment);
             }

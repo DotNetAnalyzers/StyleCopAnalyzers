@@ -231,7 +231,7 @@
 
         private class Rewriter : CSharpSyntaxRewriter
         {
-            private Dictionary<SyntaxToken, SyntaxToken> tokenReplacements = new Dictionary<SyntaxToken, SyntaxToken>();
+            private readonly Dictionary<SyntaxToken, SyntaxToken> tokenReplacements = new Dictionary<SyntaxToken, SyntaxToken>();
 
             public void AddReplacement(SyntaxToken originalToken, SyntaxToken replacementToken)
             {

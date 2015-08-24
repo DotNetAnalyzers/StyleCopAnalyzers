@@ -20,6 +20,29 @@
         /// <returns>Return true if the <see cref="UsingDirectiveSyntax"/>is system using directive, otherwise false.</returns>
         internal static bool IsSystemUsingDirective(this UsingDirectiveSyntax usingDirective) => string.Equals(SystemUsingDirectiveIdentifier, GetFirstIdentifierInUsingDirective(usingDirective)?.Text, StringComparison.Ordinal);
 
+        /// <summary>
+        /// Check if <see cref="UsingDirectiveSyntax"/> is preceded by a preprocessor directive.
+        /// </summary>
+        /// <param name="usingDirective">The using directive.</param>
+        /// <returns>True if the <see cref="UsingDirectiveSyntax"/> is preceded by a preprocessor directive, otherwise false.</returns>
+        internal static bool IsPrecededByPreprocessorDirective(this UsingDirectiveSyntax usingDirective)
+        {
+            if (!usingDirective.HasLeadingTrivia)
+            {
+                return false;
+            }
+
+            foreach (var trivia in usingDirective.GetLeadingTrivia())
+            {
+                if (trivia.IsDirective)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         private static bool ExcludeGlobalKeyword(IdentifierNameSyntax token) => !token.Identifier.IsKind(SyntaxKind.GlobalKeyword);
 
         private static SyntaxToken? GetFirstIdentifierInUsingDirective(UsingDirectiveSyntax usingDirective) => usingDirective.DescendantNodes().OfType<IdentifierNameSyntax>().FirstOrDefault(ExcludeGlobalKeyword)?.Identifier;

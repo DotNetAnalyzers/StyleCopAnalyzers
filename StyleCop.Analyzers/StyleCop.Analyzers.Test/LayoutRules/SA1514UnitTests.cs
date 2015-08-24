@@ -714,6 +714,265 @@ namespace TestNamespace
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that comments before documentation are properly handled, when the comment is preceded by empty lines.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestDocumenationPrecededByCommentNotReportedForLooseCommentAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    using System;
+
+    // some comment
+    /// <summary>
+    /// some documentation.
+    /// </summary>
+    public class TestClass
+    {
+    }
+}
+";
+            var fixedCode = @"namespace TestNamespace
+{
+    using System;
+
+    // some comment
+
+    /// <summary>
+    /// some documentation.
+    /// </summary>
+    public class TestClass
+    {
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(6, 5)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that trailing comments before documentation are properly handled.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestTrailingCommentPrecedingDocumentationAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public bool SomeMethod() => true; // some comment
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void SomeOtherMethod()
+    {
+    }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    public bool SomeMethod() => true; // some comment
+
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void SomeOtherMethod()
+    {
+    }
+}
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(5, 5);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a pragma before a documentation header is properly handled.
+        /// This is regression for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1223
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestPragmaPrecedingDocumentationAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    #pragma warning disable RS1012
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method1()
+    {
+    }
+
+    #pragma checksum ""test0.cs"" ""{00000000-0000-0000-0000-000000000000}"" ""{01234567}"" // comment
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method2()
+    {
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that preprocessor directives before a documentation header are properly handled.
+        /// This is regression for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1231
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestDirectivesPrecedingDocumentationAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+#if true
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method1()
+    {
+    }
+#else
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method2()
+    {
+    }
+#endif
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method3()
+    {
+    }
+
+#region SomeRegion
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method4()
+    {
+    }
+#endregion SomeRegion
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method5()
+    {
+    }
+
+#region AnotherRegion // comment
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method6()
+    {
+    }
+#endregion AnotherRegion // comment
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method7()
+    {
+    }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+#if true
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method1()
+    {
+    }
+#else
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method2()
+    {
+    }
+#endif
+
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method3()
+    {
+    }
+
+#region SomeRegion
+
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method4()
+    {
+    }
+#endregion SomeRegion
+
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method5()
+    {
+    }
+
+#region AnotherRegion // comment
+
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method6()
+    {
+    }
+#endregion AnotherRegion // comment
+
+    /// <summary>
+    /// ...
+    /// </summary>
+    public void Method7()
+    {
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(19, 5),
+                this.CSharpDiagnostic().WithLocation(27, 5),
+                this.CSharpDiagnostic().WithLocation(34, 5),
+                this.CSharpDiagnostic().WithLocation(42, 5),
+                this.CSharpDiagnostic().WithLocation(49, 5)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1514ElementDocumentationHeaderMustBePrecededByBlankLine();

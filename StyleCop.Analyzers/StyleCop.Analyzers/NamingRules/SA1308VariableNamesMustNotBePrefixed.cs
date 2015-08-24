@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.NamingRules
 {
+    using System;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -86,9 +87,9 @@
                     continue;
                 }
 
-                if (!identifier.ValueText.StartsWith("m_")
-                    && !identifier.ValueText.StartsWith("s_")
-                    && !identifier.ValueText.StartsWith("t_"))
+                if (!identifier.ValueText.StartsWith("m_", StringComparison.Ordinal)
+                    && !identifier.ValueText.StartsWith("s_", StringComparison.Ordinal)
+                    && !identifier.ValueText.StartsWith("t_", StringComparison.Ordinal))
                 {
                     continue;
                 }

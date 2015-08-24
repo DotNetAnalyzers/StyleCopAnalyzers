@@ -179,7 +179,8 @@
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 13);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode,
+            await this.VerifyCSharpDiagnosticAsync(
+                testCode,
                 expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"namespace FooNamespace

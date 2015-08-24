@@ -340,10 +340,12 @@ public class Foo
         [InlineData("--")]
         public async Task TestSpaceIncrementOrDecrementOperatorFollowingParenthesisAsync(string operatorValue)
         {
-            var invalidStatement = string.Format(@"int i = 0;
+            var invalidStatement = string.Format(
+                @"int i = 0;
             (i) {0};",
             operatorValue);
-            var validStatement = string.Format(@"int i = 0;
+            var validStatement = string.Format(
+                @"int i = 0;
             (i){0};",
             operatorValue);
 
@@ -439,6 +441,261 @@ public class Foo
 ";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies the analyzer will properly handle trailing single line comments.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestTrailingSingleLineCommentAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public bool TestMethod1() { return true; }
+
+    public void TestMethod2()
+    {
+        TestMethod1()// some comment
+;
+        TestMethod3(
+            TestMethod1()// some comment
+            , TestMethod1());
+
+        // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1206
+        TestMethod3(
+            true,
+            (false || true) // comment
+        );
+
+        // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1206
+        if (
+            true || // Comment 1
+            false // Comment 2
+           )
+        {
+        }
+
+        // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1206
+        if (
+            true || // Comment 1
+            false
+    // Comment 2
+           )
+        {
+        }
+
+        // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1206
+        if (
+            true || // Comment 1
+            false
+    // Comment 2
+           ) // Comment 3
+        {
+        }
+    }
+
+    public void TestMethod3(bool a, bool b) { }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    public bool TestMethod1() { return true; }
+
+    public void TestMethod2()
+    {
+        TestMethod1() // some comment
+;
+        TestMethod3(
+            TestMethod1() // some comment
+            , TestMethod1());
+
+        // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1206
+        TestMethod3(
+            true,
+            (false || true)) // comment
+        ;
+
+        // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1206
+        if (
+            true || // Comment 1
+            false) // Comment 2
+        {
+        }
+
+        // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1206
+        if (
+            true || // Comment 1
+            false)
+    // Comment 2
+        {
+        }
+
+        // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1206
+        if (
+            true || // Comment 1
+            false)
+    // Comment 2
+            // Comment 3
+        {
+        }
+    }
+
+    public void TestMethod3(bool a, bool b) { }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(8, 21).WithArguments(string.Empty, "followed"),
+                this.CSharpDiagnostic().WithLocation(11, 25).WithArguments(string.Empty, "followed"),
+                this.CSharpDiagnostic().WithLocation(18, 9).WithArguments(" not", "preceded"),
+                this.CSharpDiagnostic().WithLocation(24, 12).WithArguments(" not", "preceded"),
+                this.CSharpDiagnostic().WithLocation(33, 12).WithArguments(" not", "preceded"),
+                this.CSharpDiagnostic().WithLocation(42, 12).WithArguments(" not", "preceded"),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies the analyzer will properly handle trailing multi-line comments.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestTrailingMultiLineCommentAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public bool TestMethod1() { return true; }
+
+    public void TestMethod2()
+    {
+        TestMethod1()/* some comment */
+;
+        TestMethod3(
+            TestMethod1()/* some comment */
+            , TestMethod1());
+    }
+
+    public void TestMethod3(bool a, bool b) { }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    public bool TestMethod1() { return true; }
+
+    public void TestMethod2()
+    {
+        TestMethod1() /* some comment */
+;
+        TestMethod3(
+            TestMethod1() /* some comment */
+            , TestMethod1());
+    }
+
+    public void TestMethod3(bool a, bool b) { }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(8, 21).WithArguments(string.Empty, "followed"),
+                this.CSharpDiagnostic().WithLocation(11, 25).WithArguments(string.Empty, "followed")
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies preprocessor directives will be properly handled.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestDirectiveTriviaAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod1(int a,
+#if false
+int b
+#else
+int c
+#endif
+        )
+    {
+    }
+
+    public void TestMethod2(
+#if true
+int a )
+#endif
+    {
+        TestMethod3(TestMethod3(
+#if true
+                0 )
+#else
+                1 )
+#endif
+                );
+    }
+
+    public int TestMethod3(int a) { return a; }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    public void TestMethod1(int a,
+#if false
+int b
+#else
+int c
+#endif
+        )
+    {
+    }
+
+    public void TestMethod2(
+#if true
+int a)
+#endif
+    {
+        TestMethod3(TestMethod3(
+#if true
+                0)
+#else
+                1 )
+#endif
+                );
+    }
+
+    public int TestMethod3(int a) { return a; }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(10, 9).WithArguments(" not", "preceded"),
+                this.CSharpDiagnostic().WithLocation(16, 7).WithArguments(" not", "preceded"),
+                this.CSharpDiagnostic().WithLocation(21, 19).WithArguments(" not", "preceded"),
+                this.CSharpDiagnostic().WithLocation(25, 17).WithArguments(" not", "preceded")
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

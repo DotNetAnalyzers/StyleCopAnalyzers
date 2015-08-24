@@ -5,6 +5,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A static using directive is positioned at the wrong location.
@@ -66,7 +67,7 @@
                 {
                     lastStaticUsingDirective = usingDirective;
                 }
-                else if (lastStaticUsingDirective != null)
+                else if (lastStaticUsingDirective != null && !usingDirective.IsPrecededByPreprocessorDirective())
                 {
                     // only report a single diagnostic for the last static using directive that is followed by a non-static using directive
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, lastStaticUsingDirective.GetLocation()));

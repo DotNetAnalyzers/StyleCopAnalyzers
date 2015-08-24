@@ -53,6 +53,7 @@
       <DependentUpon>DocumentationResources.resx</DependentUpon>
     </Compile>
     <Compile Include="DocumentationRules\ElementDocumentationSummaryBase.cs" />
+    <Compile Include="DocumentationRules\FileHeaderAnalyzers.cs" />
     <Compile Include="DocumentationRules\PartialElementDocumentationSummaryBase.cs" />
     <Compile Include="DocumentationRules\PropertyDocumentationSummaryBase.cs" />
     <Compile Include="DocumentationRules\SA1600ElementsMustBeDocumented.cs" />
@@ -91,15 +92,6 @@
     <Compile Include="DocumentationRules\SA1630DocumentationTextMustContainWhitespace.cs" />
     <Compile Include="DocumentationRules\SA1631DocumentationMustMeetCharacterPercentage.cs" />
     <Compile Include="DocumentationRules\SA1632DocumentationTextMustMeetMinimumCharacterLength.cs" />
-    <Compile Include="DocumentationRules\SA1633FileMustHaveHeader.cs" />
-    <Compile Include="DocumentationRules\SA1634FileHeaderMustShowCopyright.cs" />
-    <Compile Include="DocumentationRules\SA1635FileHeaderMustHaveCopyrightText.cs" />
-    <Compile Include="DocumentationRules\SA1636FileHeaderCopyrightTextMustMatch.cs" />
-    <Compile Include="DocumentationRules\SA1637FileHeaderMustContainFileName.cs" />
-    <Compile Include="DocumentationRules\SA1638FileHeaderFileNameDocumentationMustMatchFileName.cs" />
-    <Compile Include="DocumentationRules\SA1639FileHeaderMustHaveSummary.cs" />
-    <Compile Include="DocumentationRules\SA1640FileHeaderMustHaveValidCompanyText.cs" />
-    <Compile Include="DocumentationRules\SA1641FileHeaderCompanyNameTextMustMatch.cs" />
     <Compile Include="DocumentationRules\SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.cs" />
     <Compile Include="DocumentationRules\SA1642SA1643CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1643DestructorSummaryDocumentationMustBeginWithStandardText.cs" />
@@ -122,7 +114,6 @@
     <Compile Include="Helpers\DeclarationModifiersHelper.cs" />
     <Compile Include="Helpers\DiagnosticOptionsHelper.cs" />
     <Compile Include="Helpers\DocumentationCommentExtensions.cs" />
-    <Compile Include="Helpers\EnumerableHelpers.cs" />
     <Compile Include="Helpers\FileHeader.cs" />
     <Compile Include="Helpers\FileHeaderHelpers.cs" />
     <Compile Include="Helpers\HelpersResources.Designer.cs">
@@ -157,6 +148,7 @@
     <Compile Include="LayoutRules\SA1503CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1503CurlyBracketsMustNotBeOmitted.cs" />
     <Compile Include="LayoutRules\SA1504AllAccessorsMustBeSingleLineOrMultiLine.cs" />
+    <Compile Include="LayoutRules\SA1504CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1505CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1505OpeningCurlyBracketsMustNotBeFollowedByBlankLine.cs" />
     <Compile Include="LayoutRules\SA1506CodeFixProvider.cs" />
@@ -202,6 +194,7 @@
     <Compile Include="MaintainabilityRules\SA1402FileMayOnlyContainASingleClass.cs" />
     <Compile Include="MaintainabilityRules\SA1403FileMayOnlyContainASingleNamespace.cs" />
     <Compile Include="MaintainabilityRules\SA1404CodeAnalysisSuppressionMustHaveJustification.cs" />
+    <Compile Include="MaintainabilityRules\SA1404CodeFixProvider.cs" />
     <Compile Include="MaintainabilityRules\SA1405DebugAssertMustProvideMessageText.cs" />
     <Compile Include="MaintainabilityRules\SA1406DebugFailMustProvideMessageText.cs" />
     <Compile Include="MaintainabilityRules\SA1407ArithmeticExpressionsMustDeclarePrecedence.cs" />
@@ -296,6 +289,7 @@
     <Compile Include="ReadabilityRules\SA1113CommaMustBeOnSameLineAsPreviousParameter.cs" />
     <Compile Include="ReadabilityRules\SA1114ParameterListMustFollowDeclaration.cs" />
     <Compile Include="ReadabilityRules\SA1115ParameterMustFollowComma.cs" />
+    <Compile Include="ReadabilityRules\SA1116CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1116SplitParametersMustStartOnLineAfterDeclaration.cs" />
     <Compile Include="ReadabilityRules\SA1117ParametersMustBeOnSameLineOrSeparateLines.cs" />
     <Compile Include="ReadabilityRules\SA1118ParameterMustNotSpanMultipleLines.cs" />
@@ -311,6 +305,16 @@
     <Compile Include="ReadabilityRules\SA1125UseShorthandForNullableTypes.cs" />
     <Compile Include="ReadabilityRules\SA1126PrefixCallsCorrectly.cs" />
     <Compile Include="ReadabilityRules\SA1102CodeFixProvider.cs" />
+    <Compile Include="Settings\ObjectModel\DocumentationSettings.cs" />
+    <Compile Include="Settings\ObjectModel\SettingsFile.cs" />
+    <Compile Include="Settings\ObjectModel\StyleCopSettings.cs" />
+    <Compile Include="Settings\SettingsFileCodeFixProvider.cs" />
+    <Compile Include="Settings\SettingsHelper.cs" />
+    <Compile Include="Settings\SettingsResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SettingsResources.resx</DependentUpon>
+    </Compile>
     <Compile Include="SpacingRules\OpenCloseSpacingCodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1000CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1000KeywordsMustBeSpacedCorrectly.cs" />
@@ -384,6 +388,7 @@
       <Symbols>True</Symbols>
       <PackageAnalysis>False</PackageAnalysis>
     </NuGetManifest>
+    <None Include="Settings\stylecop.schema.json" />
     <None Include="tools\install.ps1" />
     <None Include="tools\uninstall.ps1" />
     <None Include="ReadMe.txt" />
@@ -403,6 +408,10 @@
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.Workspaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.0.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.7.0.1\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Collections.Immutable, Version=1.1.36.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -433,7 +442,7 @@
     <Analyzer Include="..\..\packages\AsyncUsageAnalyzers.1.0.0-alpha003\analyzers\dotnet\AsyncUsageAnalyzers.dll" />
     <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
-    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0-beta005\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0-beta008\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="DocumentationRules\DocumentationResources.resx">
@@ -463,6 +472,10 @@
     <EmbeddedResource Include="ReadabilityRules\ReadabilityResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ReadabilityResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Settings\SettingsResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SettingsResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="SpacingRules\SpacingResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

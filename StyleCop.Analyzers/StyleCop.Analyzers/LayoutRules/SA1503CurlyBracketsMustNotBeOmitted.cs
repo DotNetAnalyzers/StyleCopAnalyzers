@@ -80,14 +80,17 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleIfStatement, SyntaxKind.IfStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDoStatement, SyntaxKind.DoStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleWhileStatement, SyntaxKind.WhileStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleForStatement, SyntaxKind.ForStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleForEachStatement, SyntaxKind.ForEachStatement);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleIfStatement, SyntaxKind.IfStatement);
+            context.RegisterSyntaxNodeActionHonorExclusions(ctx => CheckChildStatement(ctx, ((DoStatementSyntax)ctx.Node).Statement), SyntaxKind.DoStatement);
+            context.RegisterSyntaxNodeActionHonorExclusions(ctx => CheckChildStatement(ctx, ((WhileStatementSyntax)ctx.Node).Statement), SyntaxKind.WhileStatement);
+            context.RegisterSyntaxNodeActionHonorExclusions(ctx => CheckChildStatement(ctx, ((ForStatementSyntax)ctx.Node).Statement), SyntaxKind.ForStatement);
+            context.RegisterSyntaxNodeActionHonorExclusions(ctx => CheckChildStatement(ctx, ((ForEachStatementSyntax)ctx.Node).Statement), SyntaxKind.ForEachStatement);
+            context.RegisterSyntaxNodeActionHonorExclusions(ctx => CheckChildStatement(ctx, ((FixedStatementSyntax)ctx.Node).Statement), SyntaxKind.FixedStatement);
+            context.RegisterSyntaxNodeActionHonorExclusions(ctx => CheckChildStatement(ctx, ((UsingStatementSyntax)ctx.Node).Statement), SyntaxKind.UsingStatement);
+            context.RegisterSyntaxNodeActionHonorExclusions(ctx => CheckChildStatement(ctx, ((LockStatementSyntax)ctx.Node).Statement), SyntaxKind.LockStatement);
         }
 
-        private void HandleIfStatement(SyntaxNodeAnalysisContext context)
+        private static void HandleIfStatement(SyntaxNodeAnalysisContext context)
         {
             var ifStatement = (IfStatementSyntax)context.Node;
             if (ifStatement.Parent.IsKind(SyntaxKind.ElseClause))
@@ -117,47 +120,11 @@
 
             foreach (StatementSyntax clause in clauses)
             {
-                this.CheckChildStatement(context, clause);
+                CheckChildStatement(context, clause);
             }
         }
 
-        private void HandleDoStatement(SyntaxNodeAnalysisContext context)
-        {
-            var doStatement = context.Node as DoStatementSyntax;
-            if (doStatement != null)
-            {
-                this.CheckChildStatement(context, doStatement.Statement);
-            }
-        }
-
-        private void HandleWhileStatement(SyntaxNodeAnalysisContext context)
-        {
-            var whileStatement = context.Node as WhileStatementSyntax;
-            if (whileStatement != null)
-            {
-                this.CheckChildStatement(context, whileStatement.Statement);
-            }
-        }
-
-        private void HandleForStatement(SyntaxNodeAnalysisContext context)
-        {
-            var forStatement = context.Node as ForStatementSyntax;
-            if (forStatement != null)
-            {
-                this.CheckChildStatement(context, forStatement.Statement);
-            }
-        }
-
-        private void HandleForEachStatement(SyntaxNodeAnalysisContext context)
-        {
-            var forEachStatement = context.Node as ForEachStatementSyntax;
-            if (forEachStatement != null)
-            {
-                this.CheckChildStatement(context, forEachStatement.Statement);
-            }
-        }
-
-        private void CheckChildStatement(SyntaxNodeAnalysisContext context, StatementSyntax childStatement)
+        private static void CheckChildStatement(SyntaxNodeAnalysisContext context, StatementSyntax childStatement)
         {
             if (childStatement is BlockSyntax)
             {

@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.Helpers
+﻿// There are no start actions in this file. This warning should not be reported.
+#pragma warning disable RS1012 // Start action has no registered actions.
+
+namespace StyleCop.Analyzers.Helpers
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
@@ -12,12 +15,34 @@
         /// <summary>
         /// Determines if the diagnostic identified by the given identifier is currently suppressed.
         /// </summary>
-        /// <param name="context">The context that will be used to determine if the diagnostic is currenlty suppressed.</param>
+        /// <param name="context">The context that will be used to determine if the diagnostic is currently suppressed.</param>
         /// <param name="diagnosticId">The diagnostic identifier to check.</param>
         /// <returns>True if the diagnostic is currently suppressed.</returns>
         internal static bool IsAnalyzerSuppressed(this SyntaxNodeAnalysisContext context, string diagnosticId)
         {
-            return context.SemanticModel.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(diagnosticId, ReportDiagnostic.Default) == ReportDiagnostic.Suppress;
+            return context.SemanticModel.Compilation.IsAnalyzerSuppressed(diagnosticId);
+        }
+
+        /// <summary>
+        /// Determines if the diagnostic identified by the given identifier is currently suppressed.
+        /// </summary>
+        /// <param name="context">The context that will be used to determine if the diagnostic is currently suppressed.</param>
+        /// <param name="diagnosticId">The diagnostic identifier to check.</param>
+        /// <returns>True if the diagnostic is currently suppressed.</returns>
+        internal static bool IsAnalyzerSuppressed(this CompilationStartAnalysisContext context, string diagnosticId)
+        {
+            return context.Compilation.IsAnalyzerSuppressed(diagnosticId);
+        }
+
+        /// <summary>
+        /// Determines if the diagnostic identified by the given identifier is currently suppressed.
+        /// </summary>
+        /// <param name="compilation">The compilation that will be used to determine if the diagnostic is currently suppressed.</param>
+        /// <param name="diagnosticId">The diagnostic identifier to check.</param>
+        /// <returns>True if the diagnostic is currently suppressed.</returns>
+        internal static bool IsAnalyzerSuppressed(this Compilation compilation, string diagnosticId)
+        {
+            return compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(diagnosticId, ReportDiagnostic.Default) == ReportDiagnostic.Suppress;
         }
 
         /// <summary>

@@ -18,7 +18,7 @@
     /// diagnostics it could find. This is useful to easily test performance without having the overhead of visual
     /// studio running.
     /// </summary>
-    internal class Program
+    internal static class Program
     {
         private static void Main(string[] args)
         {
@@ -41,7 +41,7 @@
                 }
 
                 MSBuildWorkspace workspace = MSBuildWorkspace.Create();
-                string solutionPath = args.SingleOrDefault(i => !i.StartsWith("/"));
+                string solutionPath = args.SingleOrDefault(i => !i.StartsWith("/", StringComparison.Ordinal));
                 Solution solution = workspace.OpenSolutionAsync(solutionPath).Result;
 
                 Console.WriteLine($"Loaded solution in {stopwatch.ElapsedMilliseconds}ms");
@@ -62,7 +62,7 @@
 
                 stopwatch.Restart();
 
-                var diagnostics = GetAnalyzerDiagnosticsAsync(solution, solutionPath, analyzers).Result;
+                var diagnostics = GetAnalyzerDiagnosticsAsync(solution, analyzers).Result;
 
                 Console.WriteLine($"Found {diagnostics.Count} diagnostics in {stopwatch.ElapsedMilliseconds}ms");
 
@@ -71,7 +71,7 @@
                     Console.WriteLine($"  {group.Key}: {group.Count()} instances");
 
                     // Print out analyzer diagnostics like AD0001 for analyzer exceptions
-                    if (group.Key.StartsWith("AD"))
+                    if (group.Key.StartsWith("AD", StringComparison.Ordinal))
                     {
                         foreach (var item in group)
                         {
@@ -115,7 +115,7 @@
         {
             bool useAll = args.Contains("/all");
 
-            HashSet<string> ids = new HashSet<string>(args.Where(y => y.StartsWith("/id:")).Select(y => y.Substring(4)));
+            HashSet<string> ids = new HashSet<string>(args.Where(y => y.StartsWith("/id:", StringComparison.Ordinal)).Select(y => y.Substring(4)));
 
             foreach (var analyzer in analyzers)
             {
@@ -158,7 +158,7 @@
             return analyzers.ToImmutableArray();
         }
 
-        private static async Task<ImmutableList<Diagnostic>> GetAnalyzerDiagnosticsAsync(Solution solution, string solutionPath, ImmutableArray<DiagnosticAnalyzer> analyzers)
+        private static async Task<ImmutableList<Diagnostic>> GetAnalyzerDiagnosticsAsync(Solution solution, ImmutableArray<DiagnosticAnalyzer> analyzers)
         {
             List<Task<ImmutableArray<Diagnostic>>> projectDiagnosticTasks = new List<Task<ImmutableArray<Diagnostic>>>();
 

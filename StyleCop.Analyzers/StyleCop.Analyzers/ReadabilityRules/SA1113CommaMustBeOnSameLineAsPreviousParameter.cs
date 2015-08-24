@@ -1,10 +1,12 @@
 ﻿namespace StyleCop.Analyzers.ReadabilityRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using SpacingRules;
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
@@ -240,7 +242,13 @@
 
                     if (previousNode.GetEndLine() < nodeOrToken.GetLineSpan().StartLinePosition.Line)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, nodeOrToken.GetLocation()));
+                        var properties = new Dictionary<string, string>
+                        {
+                            [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationPreceding,
+                            [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove,
+                            [OpenCloseSpacingCodeFixProvider.LayoutKey] = OpenCloseSpacingCodeFixProvider.LayoutPreserve
+                        };
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, nodeOrToken.GetLocation(), properties.ToImmutableDictionary()));
                     }
                 }
             }
