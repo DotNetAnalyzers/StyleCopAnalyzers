@@ -83,7 +83,7 @@
                 {
                     SemanticModel semanticModel = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
 
-                    var typeDeclarationSymbol = semanticModel.GetDeclaredSymbol(memberSyntax) as INamedTypeSymbol;
+                    var typeDeclarationSymbol = semanticModel.GetDeclaredSymbol(memberSyntax);
                     if (typeDeclarationSymbol == null)
                     {
                         continue;
@@ -99,27 +99,50 @@
             }
         }
 
-        private bool IsValidNewMemberName(INamedTypeSymbol typeSymbol, string name)
+        private bool IsValidNewMemberName(ISymbol typeSymbol, string name)
         {
             if (typeSymbol == null)
             {
                 throw new ArgumentNullException(nameof(typeSymbol));
             }
-            else if (typeSymbol.Name == name || typeSymbol.GetMembers(name).Length > 0)
+            else if (typeSymbol.Name == name)
             {
                 return false;
             }
 
+            var members = (typeSymbol as INamedTypeSymbol)?.GetMembers(name);
+            if (members.HasValue && !members.Value.IsDefaultOrEmpty)
+            {
+                return false;
+            }
+
+            var containingType = typeSymbol.ContainingSymbol as INamedTypeSymbol;
+            if (containingType != null)
+            {
+                // The name can't be the same as the name of the containing type
+                if (containingType.Name == name)
+                {
+                    return false;
+                }
+
+                // The name can't be the same as the name of an other member of the same type
+                members = containingType.GetMembers(name);
+                if (!members.Value.IsDefaultOrEmpty)
+                {
+                    return false;
+                }
+            }
             return true;
         }
 
-        private MemberDeclarationSyntax GetParentTypeDeclaration(SyntaxToken token)
+        private SyntaxNode GetParentTypeDeclaration(SyntaxToken token)
         {
             SyntaxNode parent = token.Parent;
 
             while (parent != null)
             {
-                var declarationParent = parent as MemberDeclarationSyntax;
+                var declarationParent = parent as MemberDeclarationSyntax
+                    ?? (SyntaxNode)(parent as VariableDeclaratorSyntax);
                 if (declarationParent != null)
                 {
                     return declarationParent;
