@@ -5,7 +5,7 @@
 
 @helper GetDiagnosticColorClass(StyleCopDiagnostic diagnostic)
 {
-if (diagnostic.HasImplementation)
+if (diagnostic.HasImplementation && diagnostic.Status != "DisabledNoTests")
 {
         <text>success</text>
 }
@@ -111,8 +111,12 @@ else
     <h3>Commit information</h3>
     <table>
         <tr>
-            <td>Current commit</td>
-            <td>@Model.Git.Sha</td>
+            <td>Sha1</td>
+            <td><a href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/tree/@Model.Git.Sha">@Model.Git.Sha</a></td>
+        </tr>
+        <tr>
+            <td>Message</td>
+            <td>@Model.Git.Message</td>
         </tr>
         <tr>
             <td>Author</td>
