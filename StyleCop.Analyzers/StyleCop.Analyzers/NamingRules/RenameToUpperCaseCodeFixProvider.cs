@@ -3,12 +3,13 @@
     using System;
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
@@ -63,7 +64,22 @@
                 var newName = char.ToUpper(token.ValueText[0]) + token.ValueText.Substring(1);
                 var typeSyntax = this.GetParentTypeDeclaration(token);
 
-                if (typeSyntax != null)
+                if (token.Parent?.Parent is NamespaceDeclarationSyntax)
+                {
+                    // namespaces are not symbols. So we are just renaming the namespace
+                    Func<CancellationToken, Task<Document>> renameNamespace = t =>
+                    {
+                        IdentifierNameSyntax identifierSyntax = (IdentifierNameSyntax)token.Parent;
+
+                        var newIdentifierSyntac = identifierSyntax.WithIdentifier(SyntaxFactory.Identifier(newName));
+
+                        var newRoot = root.ReplaceNode(identifierSyntax, newIdentifierSyntac);
+                        return Task.FromResult(context.Document.WithSyntaxRoot(newRoot));
+                    };
+
+                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.RenameToCodeFix, newName), renameNamespace, equivalenceKey: nameof(RenameToUpperCaseCodeFixProvider) + "_" + diagnostic.Id), diagnostic);
+                }
+                else if (typeSyntax != null)
                 {
                     SemanticModel semanticModel = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
 
@@ -97,13 +113,13 @@
             return true;
         }
 
-        private TypeDeclarationSyntax GetParentTypeDeclaration(SyntaxToken token)
+        private BaseTypeDeclarationSyntax GetParentTypeDeclaration(SyntaxToken token)
         {
             SyntaxNode parent = token.Parent;
 
             while (parent != null)
             {
-                var declarationParent = parent as TypeDeclarationSyntax;
+                var declarationParent = parent as BaseTypeDeclarationSyntax;
                 if (declarationParent != null)
                 {
                     return declarationParent;
