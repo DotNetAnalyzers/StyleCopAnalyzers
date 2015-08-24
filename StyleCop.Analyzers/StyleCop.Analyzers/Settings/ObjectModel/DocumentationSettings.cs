@@ -42,6 +42,30 @@
         private bool xmlHeader;
 
         /// <summary>
+        /// This is the backing field for the <see cref="DocumentInternalMembers"/> property.
+        /// </summary>
+        [JsonProperty("documentInternalMembers", DefaultValueHandling = DefaultValueHandling.Include)]
+        private bool documentInternalMembers;
+
+        /// <summary>
+        /// This is the backing field for the <see cref="DocumentPrivateMembers"/> property.
+        /// </summary>
+        [JsonProperty("documentPrivateMembers", DefaultValueHandling = DefaultValueHandling.Include)]
+        private bool documentPrivateMembers;
+
+        /// <summary>
+        /// This is the backing field for the <see cref="DocumentInterfaces"/> property.
+        /// </summary>
+        [JsonProperty("documentInterfaces", DefaultValueHandling = DefaultValueHandling.Include)]
+        private bool documentInterfaces;
+
+        /// <summary>
+        /// This is the backing field for the <see cref="DocumentPrivateFields"/> property.
+        /// </summary>
+        [JsonProperty("documentPrivateFields", DefaultValueHandling = DefaultValueHandling.Include)]
+        private bool documentPrivateFields;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="DocumentationSettings"/> class during JSON deserialization.
         /// </summary>
         [JsonConstructor]
@@ -51,6 +75,11 @@
             this.copyrightText = DefaultCopyrightText;
             this.variables = ImmutableDictionary<string, string>.Empty;
             this.xmlHeader = true;
+
+            this.documentInternalMembers = true;
+            this.documentPrivateMembers = false;
+            this.documentInterfaces = true;
+            this.documentPrivateFields = false;
         }
 
         public string CompanyName
@@ -110,5 +139,17 @@
                 return this.xmlHeader;
             }
         }
+
+        public bool DocumentInternalMembers =>
+            this.documentInternalMembers;
+
+        public bool DocumentPrivateMembers =>
+            this.documentPrivateMembers;
+
+        public bool DocumentInterfaces =>
+            this.documentInterfaces;
+
+        public bool DocumentPrivateFields =>
+            this.documentPrivateFields;
     }
 }

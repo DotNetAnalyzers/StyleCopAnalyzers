@@ -7,6 +7,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Settings.ObjectModel;
 
     /// <summary>
     /// A C# code element is missing a documentation header.
@@ -56,275 +57,293 @@
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.EnumDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleDestructorDeclaration, SyntaxKind.DestructorDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandlePropertyDeclaration, SyntaxKind.PropertyDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleFieldDeclaration, SyntaxKind.FieldDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleEventDeclaration, SyntaxKind.EventDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleEventFieldDeclaration, SyntaxKind.EventFieldDeclaration);
+            Analyzer analyzer = new Analyzer(context.Options);
+            context.RegisterSyntaxNodeActionHonorExclusions(analyzer.HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(analyzer.HandleTypeDeclaration, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(analyzer.HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(analyzer.HandleTypeDeclaration, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(analyzer.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(analyzer.HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(analyzer.HandleDestructorDeclaration, SyntaxKind.DestructorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(analyzer.HandlePropertyDeclaration, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(analyzer.HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(analyzer.HandleFieldDeclaration, SyntaxKind.FieldDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(analyzer.HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(analyzer.HandleEventDeclaration, SyntaxKind.EventDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(analyzer.HandleEventFieldDeclaration, SyntaxKind.EventFieldDeclaration);
         }
 
-        private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
+        private class Analyzer
         {
-            if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+            private readonly DocumentationSettings documentationSettings;
+
+            public Analyzer(AnalyzerOptions options)
             {
-                return;
+                StyleCopSettings settings = options.GetStyleCopSettings();
+                this.documentationSettings = settings.DocumentationRules;
             }
 
-            BaseTypeDeclarationSyntax declaration = context.Node as BaseTypeDeclarationSyntax;
-
-            bool isNestedInClassOrStruct = IsNestedType(declaration);
-
-            if (declaration != null && NeedsComment(declaration.Modifiers, isNestedInClassOrStruct ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword))
+            public void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
             {
-                if (!XmlCommentHelper.HasDocumentation(declaration))
+                if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
+                    return;
                 }
-            }
-        }
 
-        private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
-            {
-                return;
-            }
-
-            MethodDeclarationSyntax declaration = context.Node as MethodDeclarationSyntax;
-            SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
-
-            if (IsInterfaceMemberDeclaration(declaration) || declaration.ExplicitInterfaceSpecifier != null)
-            {
-                defaultVisibility = SyntaxKind.PublicKeyword;
-            }
-
-            if (declaration != null && NeedsComment(declaration.Modifiers, defaultVisibility))
-            {
-                if (!XmlCommentHelper.HasDocumentation(declaration))
+                BaseTypeDeclarationSyntax declaration = (BaseTypeDeclarationSyntax)context.Node;
+                if (declaration.Modifiers.Any(SyntaxKind.PartialKeyword))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
+                    // Handled by SA1601
+                    return;
                 }
-            }
-        }
 
-        private static void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
-            {
-                return;
-            }
-
-            ConstructorDeclarationSyntax declaration = context.Node as ConstructorDeclarationSyntax;
-
-            if (declaration != null && NeedsComment(declaration.Modifiers, SyntaxKind.PrivateKeyword))
-            {
-                if (!XmlCommentHelper.HasDocumentation(declaration))
+                Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+                Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+                if (this.NeedsComment(declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
-                }
-            }
-        }
-
-        private static void HandleDestructorDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
-            {
-                return;
-            }
-
-            DestructorDeclarationSyntax declaration = context.Node as DestructorDeclarationSyntax;
-
-            if (declaration != null)
-            {
-                if (!XmlCommentHelper.HasDocumentation(declaration))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
-                }
-            }
-        }
-
-        private static void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
-            {
-                return;
-            }
-
-            PropertyDeclarationSyntax declaration = context.Node as PropertyDeclarationSyntax;
-            SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
-
-            if (IsInterfaceMemberDeclaration(declaration) || declaration.ExplicitInterfaceSpecifier != null)
-            {
-                defaultVisibility = SyntaxKind.PublicKeyword;
-            }
-
-            if (declaration != null && NeedsComment(declaration.Modifiers, defaultVisibility))
-            {
-                if (!XmlCommentHelper.HasDocumentation(declaration))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
-                }
-            }
-        }
-
-        private static void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
-            {
-                return;
-            }
-
-            IndexerDeclarationSyntax declaration = context.Node as IndexerDeclarationSyntax;
-            SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
-
-            if (IsInterfaceMemberDeclaration(declaration) || declaration.ExplicitInterfaceSpecifier != null)
-            {
-                defaultVisibility = SyntaxKind.PublicKeyword;
-            }
-
-            if (declaration != null && NeedsComment(declaration.Modifiers, defaultVisibility))
-            {
-                if (!XmlCommentHelper.HasDocumentation(declaration))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.ThisKeyword.GetLocation()));
-                }
-            }
-        }
-
-        private static void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
-            {
-                return;
-            }
-
-            FieldDeclarationSyntax declaration = context.Node as FieldDeclarationSyntax;
-            var variableDeclaration = declaration?.Declaration;
-
-            if (variableDeclaration != null && NeedsComment(declaration.Modifiers, SyntaxKind.PrivateKeyword))
-            {
-                if (!XmlCommentHelper.HasDocumentation(declaration))
-                {
-                    var locations = variableDeclaration.Variables.Select(v => v.Identifier.GetLocation());
-                    foreach (var location in locations)
+                    if (!XmlCommentHelper.HasDocumentation(declaration))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
                     }
                 }
             }
-        }
 
-        private static void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+            public void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
             {
-                return;
-            }
-
-            DelegateDeclarationSyntax declaration = context.Node as DelegateDeclarationSyntax;
-
-            bool isNestedInClassOrStruct = IsNestedType(declaration);
-
-            if (declaration != null && NeedsComment(declaration.Modifiers, isNestedInClassOrStruct ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword))
-            {
-                if (!XmlCommentHelper.HasDocumentation(declaration))
+                if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
+                    return;
                 }
-            }
-        }
 
-        private static void HandleEventDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
-            {
-                return;
-            }
+                MethodDeclarationSyntax declaration = (MethodDeclarationSyntax)context.Node;
 
-            EventDeclarationSyntax declaration = context.Node as EventDeclarationSyntax;
-            SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
-
-            if (declaration.ExplicitInterfaceSpecifier != null)
-            {
-                defaultVisibility = SyntaxKind.PublicKeyword;
-            }
-
-            if (declaration != null && NeedsComment(declaration.Modifiers, defaultVisibility))
-            {
-                if (!XmlCommentHelper.HasDocumentation(declaration))
+                Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+                Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+                if (this.NeedsComment(declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
-                }
-            }
-        }
-
-        private static void HandleEventFieldDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
-            {
-                return;
-            }
-
-            EventFieldDeclarationSyntax declaration = context.Node as EventFieldDeclarationSyntax;
-            SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
-
-            if (IsInterfaceMemberDeclaration(declaration))
-            {
-                defaultVisibility = SyntaxKind.PublicKeyword;
-            }
-
-            var variableDeclaration = declaration?.Declaration;
-
-            if (variableDeclaration != null && NeedsComment(declaration.Modifiers, defaultVisibility))
-            {
-                if (!XmlCommentHelper.HasDocumentation(declaration))
-                {
-                    var locations = variableDeclaration.Variables.Select(v => v.Identifier.GetLocation());
-                    foreach (var location in locations)
+                    if (!XmlCommentHelper.HasDocumentation(declaration))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
                     }
                 }
             }
-        }
 
-        private static bool NeedsComment(SyntaxTokenList modifiers, SyntaxKind defaultModifier)
-        {
-            if (!(modifiers.Any(SyntaxKind.PublicKeyword)
-                || modifiers.Any(SyntaxKind.ProtectedKeyword)
-                || modifiers.Any(SyntaxKind.InternalKeyword)
-                || defaultModifier == SyntaxKind.PublicKeyword
-                || defaultModifier == SyntaxKind.ProtectedKeyword
-                || defaultModifier == SyntaxKind.InternalKeyword))
+            public void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
             {
-                return false;
+                if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+                {
+                    return;
+                }
+
+                ConstructorDeclarationSyntax declaration = (ConstructorDeclarationSyntax)context.Node;
+
+                Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+                Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+                if (this.NeedsComment(declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
+                {
+                    if (!XmlCommentHelper.HasDocumentation(declaration))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
+                    }
+                }
             }
 
-            // Also ignore partial classes because they get reported as SA1601
-            return !modifiers.Any(SyntaxKind.PartialKeyword);
-        }
+            public void HandleDestructorDeclaration(SyntaxNodeAnalysisContext context)
+            {
+                if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+                {
+                    return;
+                }
 
-        private static bool IsNestedType(BaseTypeDeclarationSyntax typeDeclaration)
-        {
-            return typeDeclaration?.Parent is BaseTypeDeclarationSyntax;
-        }
+                DestructorDeclarationSyntax declaration = (DestructorDeclarationSyntax)context.Node;
 
-        private static bool IsNestedType(DelegateDeclarationSyntax delegateDeclaration)
-        {
-            return delegateDeclaration?.Parent is BaseTypeDeclarationSyntax;
-        }
+                Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+                Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+                if (this.NeedsComment(declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
+                {
+                    if (!XmlCommentHelper.HasDocumentation(declaration))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
+                    }
+                }
+            }
 
-        private static bool IsInterfaceMemberDeclaration(SyntaxNode declaration)
-        {
-            return declaration?.Parent is InterfaceDeclarationSyntax;
+            public void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
+            {
+                if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+                {
+                    return;
+                }
+
+                PropertyDeclarationSyntax declaration = (PropertyDeclarationSyntax)context.Node;
+
+                Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+                Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+                if (this.NeedsComment(declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
+                {
+                    if (!XmlCommentHelper.HasDocumentation(declaration))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
+                    }
+                }
+            }
+
+            public void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)
+            {
+                if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+                {
+                    return;
+                }
+
+                IndexerDeclarationSyntax declaration = (IndexerDeclarationSyntax)context.Node;
+
+                Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+                Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+                if (this.NeedsComment(declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
+                {
+                    if (!XmlCommentHelper.HasDocumentation(declaration))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.ThisKeyword.GetLocation()));
+                    }
+                }
+            }
+
+            public void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
+            {
+                if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+                {
+                    return;
+                }
+
+                FieldDeclarationSyntax declaration = (FieldDeclarationSyntax)context.Node;
+                var variableDeclaration = declaration.Declaration;
+
+                Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+                Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+                if (variableDeclaration != null && this.NeedsComment(declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
+                {
+                    if (!XmlCommentHelper.HasDocumentation(declaration))
+                    {
+                        var locations = variableDeclaration.Variables.Select(v => v.Identifier.GetLocation());
+                        foreach (var location in locations)
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                        }
+                    }
+                }
+            }
+
+            public void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
+            {
+                if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+                {
+                    return;
+                }
+
+                DelegateDeclarationSyntax declaration = (DelegateDeclarationSyntax)context.Node;
+
+                Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+                Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+                if (this.NeedsComment(declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
+                {
+                    if (!XmlCommentHelper.HasDocumentation(declaration))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
+                    }
+                }
+            }
+
+            public void HandleEventDeclaration(SyntaxNodeAnalysisContext context)
+            {
+                if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+                {
+                    return;
+                }
+
+                EventDeclarationSyntax declaration = (EventDeclarationSyntax)context.Node;
+
+                Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+                Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+                if (this.NeedsComment(declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
+                {
+                    if (!XmlCommentHelper.HasDocumentation(declaration))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
+                    }
+                }
+            }
+
+            public void HandleEventFieldDeclaration(SyntaxNodeAnalysisContext context)
+            {
+                if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+                {
+                    return;
+                }
+
+                EventFieldDeclarationSyntax declaration = (EventFieldDeclarationSyntax)context.Node;
+                VariableDeclarationSyntax variableDeclaration = declaration.Declaration;
+
+                Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+                Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+                if (variableDeclaration != null && this.NeedsComment(declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
+                {
+                    if (!XmlCommentHelper.HasDocumentation(declaration))
+                    {
+                        var locations = variableDeclaration.Variables.Select(v => v.Identifier.GetLocation());
+                        foreach (var location in locations)
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                        }
+                    }
+                }
+            }
+
+            private bool NeedsComment(SyntaxKind syntaxKind, SyntaxKind parentSyntaxKind, Accessibility declaredAccessibility, Accessibility effectiveAccessibility)
+            {
+                if (this.documentationSettings.DocumentInterfaces
+                    && (syntaxKind == SyntaxKind.InterfaceDeclaration || parentSyntaxKind == SyntaxKind.InterfaceDeclaration))
+                {
+                    // DocumentInterfaces => all interfaces must be documented
+                    return true;
+                }
+
+                if (syntaxKind == SyntaxKind.FieldDeclaration && this.documentationSettings.DocumentPrivateFields)
+                {
+                    // DocumentPrivateFields => all fields must be documented
+                    return true;
+                }
+
+                if (this.documentationSettings.DocumentPrivateMembers)
+                {
+                    if (syntaxKind == SyntaxKind.FieldDeclaration && declaredAccessibility == Accessibility.Private)
+                    {
+                        // Handled by DocumentPrivateFields
+                        return false;
+                    }
+
+                    // DocumentPrivateMembers => everything except declared private fields must be documented
+                    return true;
+                }
+
+                switch (effectiveAccessibility)
+                {
+                case Accessibility.Public:
+                case Accessibility.Protected:
+                case Accessibility.ProtectedOrInternal:
+                    // These items are part of the public API surface => always document
+                    return true;
+
+                case Accessibility.ProtectedAndInternal:
+                case Accessibility.Internal:
+                    // These items are part of the internal API surface => document if configured
+                    return this.documentationSettings.DocumentInternalMembers;
+
+                case Accessibility.NotApplicable:
+                case Accessibility.Private:
+                default:
+                    return false;
+                }
+            }
         }
     }
 }
