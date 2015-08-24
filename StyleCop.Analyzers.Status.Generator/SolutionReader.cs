@@ -149,6 +149,10 @@
                 foreach (var descriptorInfo in descriptorInfos)
                 {
                     string status = this.GetStatus(classSymbol, syntaxRoot, semanticModel, descriptorInfo);
+                    if (descriptorInfo.CustomTags.Contains(WellKnownDiagnosticTags.NotConfigurable))
+                    {
+                        continue;
+                    }
 
                     var diagnostic = new StyleCopDiagnostic
                     {
