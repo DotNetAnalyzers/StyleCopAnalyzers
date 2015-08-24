@@ -12,22 +12,25 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Implements a code fix for <see cref="SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter"/>
+    /// Implements a code fix for all analyzers that require a symbol to be upper case.
     /// </summary>
     /// <remarks>
-    /// <para>To fix a violation of this rule, change the name of the field so that it begins with an upper-case
-    /// letter.</para>
+    /// <para>To fix a violation of this rule, change the name of the symbol so that it begins with an upper-case letter,
+    /// or place the item within a <c>NativeMethods</c> class if appropriate.</para>
     /// </remarks>
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1304SA1311CodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RenameToUpperCaseCodeFixProvider))]
     [Shared]
-    public class SA1304SA1311CodeFixProvider : CodeFixProvider
+    public class RenameToUpperCaseCodeFixProvider : CodeFixProvider
     {
         private const string Suffix = "Value";
 
         private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(
-                SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter.DiagnosticId,
-                SA1304NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter.DiagnosticId);
+                SA1300ElementMustBeginWithUpperCaseLetter.DiagnosticId,
+                SA1303ConstFieldNamesMustBeginWithUpperCaseLetter.DiagnosticId,
+                SA1304NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter.DiagnosticId,
+                SA1307AccessibleFieldsMustBeginWithUpperCaseLetter.DiagnosticId,
+                SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
@@ -46,7 +49,7 @@
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!FixableDiagnostics.Any(d => diagnostic.Id.Equals(d)))
+                if (!FixableDiagnostics.Contains(diagnostic.Id))
                 {
                     continue;
                 }
@@ -75,7 +78,7 @@
                         newName = newName + Suffix;
                     }
 
-                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.SA1304SA1311CodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken), equivalenceKey: nameof(SA1304SA1311CodeFixProvider)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.RenameToCodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken), equivalenceKey: nameof(RenameToUpperCaseCodeFixProvider) + "_" + diagnostic.Id), diagnostic);
                 }
             }
         }
@@ -113,3 +116,4 @@
         }
     }
 }
+

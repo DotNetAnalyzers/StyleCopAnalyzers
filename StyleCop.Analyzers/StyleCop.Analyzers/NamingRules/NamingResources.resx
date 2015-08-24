@@ -117,28 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="SA1302CodeFix" xml:space="preserve">
-    <value>Rename interface to '{0}'</value>
-  </data>
-  <data name="SA1304SA1311CodeFix" xml:space="preserve">
-    <value>Rename field to '{0}'</value>
-  </data>
-  <data name="SA1306CodeFix" xml:space="preserve">
-    <value>Rename field to '{0}'</value>
-  </data>
-  <data name="SA1307CodeFix" xml:space="preserve">
-    <value>Rename field to '{0}'</value>
-  </data>
-  <data name="SA1308CodeFix" xml:space="preserve">
-    <value>Rename field to '{0}'</value>
-  </data>
-  <data name="SA1309CodeFix" xml:space="preserve">
-    <value>Rename field to '{0}'</value>
-  </data>
-  <data name="SA1310CodeFix" xml:space="preserve">
-    <value>Rename field to '{0}'</value>
-  </data>
-  <data name="SX1309CodeFix" xml:space="preserve">
-    <value>Rename field to '{0}'</value>
+  <data name="RenameToCodeFix" xml:space="preserve">
+    <value>Rename To '{0}'</value>
   </data>
 </root>

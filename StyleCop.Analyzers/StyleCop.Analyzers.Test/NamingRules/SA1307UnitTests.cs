@@ -131,7 +131,7 @@ string Bar, Car, Dar;
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1307CodeFixProvider();
+            return new RenameToUpperCaseCodeFixProvider();
         }
     }
 }
