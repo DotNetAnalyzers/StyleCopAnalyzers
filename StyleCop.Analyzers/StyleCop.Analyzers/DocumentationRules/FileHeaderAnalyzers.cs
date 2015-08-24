@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.DocumentationRules
 {
+    using System;
     using System.Collections.Immutable;
     using System.IO;
     using System.Xml.Linq;
@@ -183,6 +184,7 @@
         private static void HandleSyntaxTreeAxtion(SyntaxTreeAnalysisContext context, Compilation compilation)
         {
             var root = context.Tree.GetRoot(context.CancellationToken);
+            var settings = context.GetStyleCopSettings();
 
             // don't process empty files
             if (root.FullSpan.IsEmpty)
@@ -190,31 +192,64 @@
                 return;
             }
 
-            var fileHeader = FileHeaderHelpers.ParseFileHeader(root);
-            if (fileHeader.IsMissing)
+            if (settings.DocumentationRules.XmlHeader)
             {
-                context.ReportDiagnostic(Diagnostic.Create(SA1633DescriptorMissing, fileHeader.GetLocation(context.Tree)));
-                return;
-            }
+                var fileHeader = FileHeaderHelpers.ParseXmlFileHeader(root);
+                if (fileHeader.IsMissing)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(SA1633DescriptorMissing, fileHeader.GetLocation(context.Tree)));
+                    return;
+                }
 
-            if (fileHeader.IsMalformed)
-            {
-                context.ReportDiagnostic(Diagnostic.Create(SA1633DescriptorMalformed, fileHeader.GetLocation(context.Tree)));
-                return;
-            }
+                if (fileHeader.IsMalformed)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(SA1633DescriptorMalformed, fileHeader.GetLocation(context.Tree)));
+                    return;
+                }
 
-            if (!compilation.IsAnalyzerSuppressed(SA1634Identifier))
-            {
-                CheckCopyrightHeader(context, compilation, fileHeader);
-            }
+                if (!compilation.IsAnalyzerSuppressed(SA1634Identifier))
+                {
+                    CheckCopyrightHeader(context, compilation, settings, fileHeader);
+                }
 
-            if (!compilation.IsAnalyzerSuppressed(SA1639Identifier))
+                if (!compilation.IsAnalyzerSuppressed(SA1639Identifier))
+                {
+                    CheckSummaryHeader(context, compilation, fileHeader);
+                }
+            }
+            else
             {
-                CheckSummaryHeader(context, compilation, fileHeader);
+                var fileHeader = FileHeaderHelpers.ParseFileHeader(root);
+                if (fileHeader.IsMissing)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(SA1633DescriptorMissing, fileHeader.GetLocation(context.Tree)));
+                    return;
+                }
+
+                if (!compilation.IsAnalyzerSuppressed(SA1635Identifier))
+                {
+                    if (string.IsNullOrWhiteSpace(fileHeader.CopyrightText))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(SA1635Descriptor, fileHeader.GetLocation(context.Tree)));
+                        return;
+                    }
+
+                    if (compilation.IsAnalyzerSuppressed(SA1636Identifier))
+                    {
+                        return;
+                    }
+
+                    // make sure that both \n and \r\n are accepted from the settings.
+                    var reformattedCopyrightText = settings.DocumentationRules.CopyrightText.Replace("\r\n", "\n").Replace("\n", Environment.NewLine);
+                    if (string.CompareOrdinal(fileHeader.CopyrightText, reformattedCopyrightText) != 0)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(SA1636Descriptor, fileHeader.GetLocation(context.Tree)));
+                    }
+                }
             }
         }
 
-        private static void CheckCopyrightHeader(SyntaxTreeAnalysisContext context, Compilation compilation, FileHeader fileHeader)
+        private static void CheckCopyrightHeader(SyntaxTreeAnalysisContext context, Compilation compilation, StyleCopSettings settings, XmlFileHeader fileHeader)
         {
             var copyrightElement = fileHeader.GetElement("copyright");
             if (copyrightElement == null)
@@ -222,8 +257,6 @@
                 context.ReportDiagnostic(Diagnostic.Create(SA1634Descriptor, fileHeader.GetLocation(context.Tree)));
                 return;
             }
-
-            var settings = context.GetStyleCopSettings();
 
             if (!compilation.IsAnalyzerSuppressed(SA1637Identifier))
             {
@@ -241,7 +274,7 @@
             }
         }
 
-        private static void CheckFile(SyntaxTreeAnalysisContext context, Compilation compilation, FileHeader fileHeader, XElement copyrightElement, StyleCopSettings settings)
+        private static void CheckFile(SyntaxTreeAnalysisContext context, Compilation compilation, XmlFileHeader fileHeader, XElement copyrightElement, StyleCopSettings settings)
         {
             var fileAttribute = copyrightElement.Attribute("file");
             if (fileAttribute == null)
@@ -264,7 +297,7 @@
             }
         }
 
-        private static void CheckCopyrightText(SyntaxTreeAnalysisContext context, Compilation compilation, FileHeader fileHeader, XElement copyrightElement, StyleCopSettings settings)
+        private static void CheckCopyrightText(SyntaxTreeAnalysisContext context, Compilation compilation, XmlFileHeader fileHeader, XElement copyrightElement, StyleCopSettings settings)
         {
             var copyrightText = copyrightElement.Value;
             if (string.IsNullOrWhiteSpace(copyrightText))
@@ -286,7 +319,7 @@
             }
         }
 
-        private static void CheckCompanyName(SyntaxTreeAnalysisContext context, Compilation compilation, FileHeader fileHeader, XElement copyrightElement, StyleCopSettings settings)
+        private static void CheckCompanyName(SyntaxTreeAnalysisContext context, Compilation compilation, XmlFileHeader fileHeader, XElement copyrightElement, StyleCopSettings settings)
         {
             var companyName = copyrightElement.Attribute("company")?.Value;
             if (string.IsNullOrWhiteSpace(companyName))
@@ -308,7 +341,7 @@
             }
         }
 
-        private static void CheckSummaryHeader(SyntaxTreeAnalysisContext context, Compilation compilation, FileHeader fileHeader)
+        private static void CheckSummaryHeader(SyntaxTreeAnalysisContext context, Compilation compilation, XmlFileHeader fileHeader)
         {
             var summaryElement = fileHeader.GetElement("summary");
             if (summaryElement == null)

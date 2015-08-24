@@ -38,7 +38,7 @@
         /// <summary>
         /// This is the backing field for the <see cref="XmlHeader"/> property.
         /// </summary>
-        [JsonProperty("xmlHeader", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [JsonProperty("xmlHeader", DefaultValueHandling = DefaultValueHandling.Include)]
         private bool xmlHeader;
 
         /// <summary>
