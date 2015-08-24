@@ -27,6 +27,8 @@
 
             var diagnostics = reader.GetDiagnosticsAsync().Result;
 
+            diagnostics = diagnostics.Sort((a, b) => a.Id.CompareTo(b.Id));
+
             Commit commit;
             string commitId;
 
