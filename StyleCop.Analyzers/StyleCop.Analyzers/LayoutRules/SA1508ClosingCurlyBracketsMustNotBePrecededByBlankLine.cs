@@ -44,7 +44,7 @@
         private const string Title = "Closing curly brackets must not be preceded by blank line";
         private const string MessageFormat = "A closing curly bracket must not be preceded by a blank line.";
         private const string Description = "A closing curly bracket within a C# element, statement, or expression is preceded by a blank line.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1508.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1508.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

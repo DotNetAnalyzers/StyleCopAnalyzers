@@ -36,7 +36,7 @@
         private const string Title = "Field names must not begin with underscore";
         private const string MessageFormat = "Field '{0}' must not begin with an underscore";
         private const string Description = "A field name in C# begins with an underscore.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1309.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1309.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

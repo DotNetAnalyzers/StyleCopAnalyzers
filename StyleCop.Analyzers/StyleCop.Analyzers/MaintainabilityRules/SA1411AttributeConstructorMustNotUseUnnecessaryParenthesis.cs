@@ -34,7 +34,7 @@
         private const string Title = "Attribute constructor must not use unnecessary parenthesis";
         private const string MessageFormat = "Attribute constructor must not use unnecessary parenthesis";
         private const string Description = "TODO.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1411.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1411.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);

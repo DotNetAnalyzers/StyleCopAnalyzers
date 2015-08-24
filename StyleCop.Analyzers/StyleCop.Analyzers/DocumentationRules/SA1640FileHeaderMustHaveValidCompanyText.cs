@@ -40,7 +40,7 @@
         private const string Title = "File header must have valid company text";
         private const string MessageFormat = "File header must have valid company text";
         private const string Description = "The file header at the top of a C# code file does not contain company name text.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1640.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1640.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

@@ -38,7 +38,7 @@
         private const string Title = "File header must show copyright";
         private const string MessageFormat = "The file header must contain a copyright tag.";
         private const string Description = "The file header at the top of a C# code file is missing a copyright tag.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1634.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1634.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

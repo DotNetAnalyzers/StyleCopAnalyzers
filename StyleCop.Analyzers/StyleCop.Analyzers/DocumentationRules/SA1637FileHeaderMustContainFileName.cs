@@ -40,7 +40,7 @@
         private const string Title = "File header must contain file name";
         private const string MessageFormat = "File header must contain file name";
         private const string Description = "The file header at the top of a C# code file is missing the file name.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1637.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1637.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

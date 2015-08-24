@@ -43,7 +43,7 @@
         private const string Title = "Enumeration items must be documented";
         private const string MessageFormat = "Enumeration items must be documented";
         private const string Description = "An item within a C# enumeration is missing an Xml documentation header.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1602.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1602.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
