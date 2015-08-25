@@ -251,7 +251,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to The file header at the top of a C# code file does not contain a filled-in summary tag..
         /// </summary>
         internal static string SA1639Description {
             get {
@@ -260,7 +260,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to File header must have summary.
         /// </summary>
         internal static string SA1639MessageFormat {
             get {
@@ -269,7 +269,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to File header must have summary.
         /// </summary>
         internal static string SA1639Title {
             get {
