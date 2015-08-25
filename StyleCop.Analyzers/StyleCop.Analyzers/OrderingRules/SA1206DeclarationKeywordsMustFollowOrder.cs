@@ -35,7 +35,7 @@
         private const string Title = "Declaration keywords must follow order";
         private const string MessageFormat = "The '{0}' modifier must appear before '{1}'";
         private const string Description = "The keywords within the declaration of an element do not follow a standard ordering scheme.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1206.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1206.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

@@ -41,7 +41,7 @@
         private const string Title = "Element documentation headers must not be followed by blank line";
         private const string MessageFormat = "Element documentation headers must not be followed by blank line";
         private const string Description = "An element documentation header above a C# element is followed by a blank line.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1506.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1506.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

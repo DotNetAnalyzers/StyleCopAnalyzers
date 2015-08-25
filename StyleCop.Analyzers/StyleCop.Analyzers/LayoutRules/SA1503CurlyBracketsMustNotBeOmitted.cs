@@ -60,7 +60,7 @@
         private const string Title = "Curly brackets must not be omitted";
         private const string MessageFormat = "Curly brackets must not be omitted";
         private const string Description = "The opening and closing curly brackets for a C# statement have been omitted.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1503.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1503.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

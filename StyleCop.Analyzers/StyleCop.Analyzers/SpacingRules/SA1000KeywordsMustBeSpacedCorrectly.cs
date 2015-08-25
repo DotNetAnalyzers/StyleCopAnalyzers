@@ -35,7 +35,7 @@
         private const string Title = "Keywords must be spaced correctly";
         private const string MessageFormat = "The keyword '{0}' must{1} be followed by a space.";
         private const string Description = "The spacing around a C# keyword is incorrect.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1000.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1000.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

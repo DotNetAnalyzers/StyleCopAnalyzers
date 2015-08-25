@@ -28,7 +28,7 @@
         private const string Title = "Element documentation must have summary";
         private const string MessageFormat = "Element documentation must have summary";
         private const string Description = "The XML header documentation for a C# element is missing a <summary> tag.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1604.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1604.md";
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
