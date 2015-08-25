@@ -82,7 +82,8 @@
         {
             ExpressionSyntax outermostExpression = this.FindOutermostExpression(literalExpression);
 
-            if (outermostExpression.Parent.IsKind(SyntaxKind.AttributeArgument))
+            if (outermostExpression.Parent.IsKind(SyntaxKind.AttributeArgument)
+                || outermostExpression.Parent.IsKind(SyntaxKind.CaseSwitchLabel))
             {
                 return true;
             }
