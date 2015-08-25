@@ -277,6 +277,8 @@ public class TestClass
         {
         case """":
             break;
+        case ("""" + ""a""):
+            break;
         }
     }
 }
