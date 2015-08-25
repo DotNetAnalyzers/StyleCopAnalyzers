@@ -7,6 +7,7 @@
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// A C# partial element is missing a documentation header.
@@ -97,48 +98,103 @@
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
+            Analyzer analyzer = new Analyzer(context.Options);
+            context.RegisterSyntaxNodeActionHonorExclusions(analyzer.HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(analyzer.HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(analyzer.HandleTypeDeclaration, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(analyzer.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
         }
 
-        private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
+        private class Analyzer
         {
-            if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+            private readonly DocumentationSettings documentationSettings;
+
+            public Analyzer(AnalyzerOptions options)
             {
-                return;
+                StyleCopSettings settings = options.GetStyleCopSettings();
+                this.documentationSettings = settings.DocumentationRules;
             }
 
-            TypeDeclarationSyntax typeDeclaration = context.Node as TypeDeclarationSyntax;
-            if (typeDeclaration != null)
+            public void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
             {
-                if (typeDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+                if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
                 {
-                    if (!XmlCommentHelper.HasDocumentation(typeDeclaration))
+                    return;
+                }
+
+                BaseTypeDeclarationSyntax declaration = (BaseTypeDeclarationSyntax)context.Node;
+                if (!declaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+                {
+                    return;
+                }
+
+                Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+                Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+                if (this.NeedsComment(declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
+                {
+                    if (!XmlCommentHelper.HasDocumentation(declaration))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, typeDeclaration.Identifier.GetLocation()));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
                     }
                 }
             }
-        }
 
-        private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+            public void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
             {
-                return;
+                if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+                {
+                    return;
+                }
+
+                MethodDeclarationSyntax declaration = (MethodDeclarationSyntax)context.Node;
+                if (!declaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+                {
+                    return;
+                }
+
+                Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+                Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+                if (this.NeedsComment(declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
+                {
+                    if (!XmlCommentHelper.HasDocumentation(declaration))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
+                    }
+                }
             }
 
-            MethodDeclarationSyntax methodDeclaration = context.Node as MethodDeclarationSyntax;
-            if (methodDeclaration != null)
+            private bool NeedsComment(SyntaxKind syntaxKind, SyntaxKind parentSyntaxKind, Accessibility declaredAccessibility, Accessibility effectiveAccessibility)
             {
-                if (methodDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+                if (this.documentationSettings.DocumentInterfaces
+                    && (syntaxKind == SyntaxKind.InterfaceDeclaration || parentSyntaxKind == SyntaxKind.InterfaceDeclaration))
                 {
-                    if (!XmlCommentHelper.HasDocumentation(methodDeclaration))
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, methodDeclaration.Identifier.GetLocation()));
-                    }
+                    // DocumentInterfaces => all interfaces must be documented
+                    return true;
+                }
+
+                if (this.documentationSettings.DocumentPrivateMembers)
+                {
+                    // DocumentPrivateMembers => everything except declared private fields must be documented
+                    return true;
+                }
+
+                switch (effectiveAccessibility)
+                {
+                case Accessibility.Public:
+                case Accessibility.Protected:
+                case Accessibility.ProtectedOrInternal:
+                    // These items are part of the public API surface => always document
+                    return true;
+
+                case Accessibility.ProtectedAndInternal:
+                case Accessibility.Internal:
+                    // These items are part of the internal API surface => document if configured
+                    return this.documentationSettings.DocumentInternalMembers;
+
+                case Accessibility.NotApplicable:
+                case Accessibility.Private:
+                default:
+                    return false;
                 }
             }
         }
