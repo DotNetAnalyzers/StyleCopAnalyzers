@@ -36,20 +36,27 @@
                 return null;
             }
 
-            return CodeAction.Create(string.Format(MaintainabilityResources.SA1412CodeFix, await SA1412CodeFixProvider.GetEncodingNameForDocumentAsync(fixAllContext.Document).ConfigureAwait(false)), token => Task.FromResult(newSolution));
+            return CodeAction.Create(
+                string.Format(MaintainabilityResources.SA1412CodeFix, fixAllContext.CodeActionEquivalenceKey.Substring(fixAllContext.CodeActionEquivalenceKey.IndexOf('.') + 1)),
+                token => Task.FromResult(newSolution));
         }
 
         private static async Task<Solution> FixDocumentAsync(FixAllContext fixAllContext, Document document)
         {
             Solution solution = document.Project.Solution;
             var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
-
-            if (diagnostics.Length == 0 || fixAllContext.CodeActionEquivalenceKey != await SA1412CodeFixProvider.GetEquivalenceKeyForDocumentAsync(document).ConfigureAwait(false))
+            if (diagnostics.Length == 0)
             {
                 return solution;
             }
 
-            return await SA1412CodeFixProvider.GetTransformedSolutionAsync(document).ConfigureAwait(false);
+            string equivalenceKey = nameof(SA1412CodeFixProvider) + "." + diagnostics[0].Properties[SA1412StoreFilesAsUtf8.EncodingProperty];
+            if (fixAllContext.CodeActionEquivalenceKey != equivalenceKey)
+            {
+                return solution;
+            }
+
+            return await SA1412CodeFixProvider.GetTransformedSolutionAsync(document, fixAllContext.CancellationToken).ConfigureAwait(false);
         }
 
         private static async Task<Solution> GetProjectFixesAsync(FixAllContext fixAllContext, Project project)
