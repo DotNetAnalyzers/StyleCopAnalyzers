@@ -317,6 +317,11 @@
             return declaredSymbol?.DeclaredAccessibility ?? Accessibility.NotApplicable;
         }
 
+        internal static Accessibility GetDeclaredAccessibility(this EnumMemberDeclarationSyntax syntax)
+        {
+            return Accessibility.Public;
+        }
+
         internal static Accessibility GetDeclaredAccessibility(this DelegateDeclarationSyntax syntax, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             if (syntax == null)
@@ -447,6 +452,25 @@
             {
                 return declaredAccessibility;
             }
+
+            BaseTypeDeclarationSyntax enclosingType = (BaseTypeDeclarationSyntax)syntax.Parent;
+            Accessibility enclosingAccessibility = enclosingType.GetEffectiveAccessibility(semanticModel, cancellationToken);
+            return CombineEffectiveAccessibility(declaredAccessibility, enclosingAccessibility);
+        }
+
+        internal static Accessibility GetEffectiveAccessibility(this EnumMemberDeclarationSyntax syntax, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            if (syntax == null)
+            {
+                throw new ArgumentNullException(nameof(syntax));
+            }
+
+            if (semanticModel == null)
+            {
+                throw new ArgumentNullException(nameof(semanticModel));
+            }
+
+            Accessibility declaredAccessibility = Accessibility.Public;
 
             BaseTypeDeclarationSyntax enclosingType = (BaseTypeDeclarationSyntax)syntax.Parent;
             Accessibility enclosingAccessibility = enclosingType.GetEffectiveAccessibility(semanticModel, cancellationToken);
