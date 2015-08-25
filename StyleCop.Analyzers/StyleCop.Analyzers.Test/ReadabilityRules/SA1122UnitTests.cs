@@ -274,11 +274,11 @@ public class TestClass
     public void TestMethod()
     {
         switch (""Test string"")
-{
-    case "":
-        break;
-            }
+        {
+        case """":
+            break;
         }
+    }
 }
 ";
 
