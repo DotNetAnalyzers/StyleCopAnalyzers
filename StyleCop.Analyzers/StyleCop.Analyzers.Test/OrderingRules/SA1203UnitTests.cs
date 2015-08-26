@@ -292,6 +292,57 @@ public class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that the code fix will move the non constant fields before the constant ones leaving the comments in the proper place.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestCodeFixWithCommentsAsync()
+        {
+            var testCode = @"public class Foo
+{
+    private const string Before1 = ""test"";
+
+    public const string Before2 = ""test"";
+
+    private int field1;
+
+    //Comment on this field
+    private const string After1 = ""test"";
+
+    public int between;
+
+    public const string After2 = ""test"";
+}
+";
+
+            var fixedTestCode = @"public class Foo
+{
+    private const string Before1 = ""test"";
+
+    public const string Before2 = ""test"";
+
+    //Comment on this field
+    private const string After1 = ""test"";
+
+    public const string After2 = ""test"";
+
+    private int field1;
+
+    public int between;
+}
+";
+
+            var diagnosticResults = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(10, 26).WithArguments("private"),
+                this.CSharpDiagnostic().WithLocation(14, 25).WithArguments("public")
+            };
+            await this.VerifyCSharpDiagnosticAsync(testCode, diagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1203ConstantsMustAppearBeforeFields();

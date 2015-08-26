@@ -7,15 +7,15 @@
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// Helper class for dealing with member priority.
+    /// Helper for dealing with member priority.
     /// </summary>
-    public class MemberOrderHelper
+    public struct MemberOrderHelper
     {
         private readonly ModifierFlags modifierFlags;
         private readonly AccessLevel accessibilty;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MemberOrderHelper"/> class.
+        /// Initializes a new instance of the <see cref="MemberOrderHelper"/> struct.
         /// </summary>
         /// <param name="member">The member to wrap.</param>
         public MemberOrderHelper(MemberDeclarationSyntax member)
@@ -24,7 +24,7 @@
             var modifiers = member.GetModifiers();
 
             this.modifierFlags = GetModifierFlags(modifiers);
-            this.accessibilty = GetAccessibilityFlags(modifiers);
+            this.accessibilty = AccessLevelHelper.GetAccessLevel(modifiers);
         }
 
         [Flags]
@@ -83,31 +83,6 @@
         /// The priority for this member.
         /// </value>
         public int ModifierPriority => (int)this.modifierFlags;
-
-        private static AccessLevel GetAccessibilityFlags(SyntaxTokenList syntax)
-        {
-            if (syntax.Any(SyntaxKind.PublicKeyword))
-            {
-                return AccessLevel.Public;
-            }
-
-            if (syntax.Any(SyntaxKind.InternalKeyword) && syntax.Any(SyntaxKind.ProtectedKeyword))
-            {
-                return AccessLevel.ProtectedInternal;
-            }
-
-            if (syntax.Any(SyntaxKind.InternalKeyword))
-            {
-                return AccessLevel.Internal;
-            }
-
-            if (syntax.Any(SyntaxKind.ProtectedKeyword))
-            {
-                return AccessLevel.Protected;
-            }
-
-            return AccessLevel.Private;
-        }
 
         private static ModifierFlags GetModifierFlags(SyntaxTokenList syntax)
         {
