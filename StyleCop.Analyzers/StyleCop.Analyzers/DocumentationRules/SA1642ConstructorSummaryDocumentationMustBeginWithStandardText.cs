@@ -98,7 +98,7 @@
         private const string Title = "Constructor summary documentation must begin with standard text";
         private const string MessageFormat = "Constructor summary documentation must begin with standard text";
         private const string Description = "The XML documentation header for a C# constructor does not contain the appropriate summary text.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1642.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1642.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

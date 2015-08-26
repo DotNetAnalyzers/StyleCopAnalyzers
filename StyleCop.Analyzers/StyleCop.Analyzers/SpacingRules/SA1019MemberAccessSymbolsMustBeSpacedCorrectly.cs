@@ -25,7 +25,7 @@
         private const string Title = "Member access symbols must be spaced correctly";
         private const string MessageFormat = "Member access symbol '{0}' must not be {1} by a space.";
         private const string Description = "The spacing around a member access symbol is incorrect, within a C# code file.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1019.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1019.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

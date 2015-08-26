@@ -1,6 +1,7 @@
 ﻿namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Collections.Generic;
+    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -57,7 +58,7 @@
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestMtulipleWhitespaceInNamespaceDeclarationAsync()
+        public async Task TestMultipleWhitespaceInNamespaceDeclarationAsync()
         {
             var testCode = @"namespace  TestNamespace
 {
@@ -389,6 +390,130 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TrailingWhitespaceAfterStatementAsync()
+        {
+            string testCode = new StringBuilder()
+                .AppendLine("class ClassName")
+                .AppendLine("{")
+                .AppendLine("    void MethodName()")
+                .AppendLine("    {")
+                .AppendLine("        System.Console.WriteLine();  ")
+                .AppendLine("    }")
+                .AppendLine("}")
+                .ToString();
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TrailingWhitespaceAfterDeclarationAsync()
+        {
+            string testCode = new StringBuilder()
+                .AppendLine("class ClassName      ")
+                .AppendLine("{")
+                .AppendLine("}")
+                .ToString();
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TrailingWhitespaceAfterSingleLineCommentAsync()
+        {
+            string testCode = new StringBuilder()
+                .AppendLine("// hi there    ")
+                .ToString();
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TrailingWhitespaceInsideMultiLineCommentAsync()
+        {
+            string testCode = new StringBuilder()
+                .AppendLine("/*      ")
+                .AppendLine(" foo   ")
+                .AppendLine("  bar   ")
+                .AppendLine("*/  ")
+                .ToString();
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TrailingWhitespaceInsideXmlDocCommentAsync()
+        {
+            string testCode = new StringBuilder()
+                .AppendLine("/// <summary>  ")
+                .AppendLine("/// Some description    ")
+                .AppendLine("/// </summary>  ")
+                .AppendLine("class Foo { }")
+                .ToString();
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TrailingWhitespaceWithinAndAfterHereStringAsync()
+        {
+            string testCode = new StringBuilder()
+                .AppendLine("class ClassName")
+                .AppendLine("{")
+                .AppendLine("    string foo = @\"      ")
+                .AppendLine("more text    ")
+                .AppendLine("\";  ")
+                .AppendLine("}")
+                .ToString();
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TrailingWhitespaceAfterDirectivesAsync()
+        {
+            string testCode = new StringBuilder()
+                .AppendLine("#define Zoot  ")
+                .AppendLine("#undef Zoot2  ")
+                .AppendLine("using System;  ")
+                .AppendLine("#if Foo  ")
+                .AppendLine("#elif Bar  ")
+                .AppendLine("#else  ")
+                .AppendLine("#endif ")
+                .AppendLine("#warning Some warning  ")
+                .AppendLine("#region Some region  ")
+                .AppendLine("#endregion  ")
+                .ToString();
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TrailingWhitespaceFoundWithinFalseConditionalDirectiveBlocksAsync()
+        {
+            string testCode = new StringBuilder()
+                .AppendLine("#if false")
+                .AppendLine("using System;  ")
+                .AppendLine("#endif")
+                .ToString();
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task NoTrailingWhitespaceAfterBlockCommentAsync()
+        {
+            string testCode = new StringBuilder()
+                .AppendLine("class Program    /* some block comment that follows several spaces */")
+                .AppendLine("{")
+                .AppendLine("}")
+                .ToString();
+
+            var expected = this.CSharpDiagnostic().WithLocation(1, 14);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

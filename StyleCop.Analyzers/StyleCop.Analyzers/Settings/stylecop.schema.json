@@ -1,0 +1,46 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema",
+  "id": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+  "title": "StyleCop Analyzers Configuration",
+  "description": "Configuration file for StyleCop Analyzers",
+  "type": "object",
+  "properties": {
+    "settings": {
+      "type": "object",
+      "description": "The top-level object containing configuration properties for built-in rules.",
+      "properties": {
+        "documentationRules": {
+          "type": "object",
+          "description": "Configuration for documentation rules (SA1600-)",
+          "properties": {
+            "companyName": {
+              "type": "string",
+              "description": "The name of the company which appears in file headers.",
+              "default": "PlaceholderCompany"
+            },
+            "copyrightText": {
+              "type": "string",
+              "description": "The copyright text which should appear in file headers.",
+              "default": "Copyright (c) {companyName}. All rights reserved."
+            },
+            "variables": {
+              "type": "object",
+              "description": "Replacement variables which may be used in the 'copyrightText' value.",
+              "patternProperties": {
+                "^[a-zA-Z0-9]+$": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false
+            },
+            "xmlHeader": {
+              "type": "boolean",
+              "description": "Determines whether the file header should be wrapped in the StyleCop-standard XML structure.",
+              "default": true
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -32,7 +32,7 @@
         private const string Title = "Documentation must contain valid XML";
         private const string MessageFormat = "The documentation header is composed of invalid XML: {0}";
         private const string Description = "The XML within a C# element’s document header is badly formed.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1603.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1603.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

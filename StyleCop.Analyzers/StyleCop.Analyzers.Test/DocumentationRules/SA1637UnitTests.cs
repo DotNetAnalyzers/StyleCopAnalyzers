@@ -1,14 +1,12 @@
 ﻿namespace StyleCop.Analyzers.Test.DocumentationRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
     using Xunit;
 
     /// <summary>
-    /// Unit tests for the <see cref="SA1637FileHeaderMustContainFileName"/> analyzer.
+    /// Unit tests for the SA1637 diagnostic.
     /// </summary>
     public class SA1637UnitTests : FileHeaderTestBase
     {
@@ -28,14 +26,8 @@ namespace Bar
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(1, 4);
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1637Descriptor).WithLocation(1, 4);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1637FileHeaderMustContainFileName();
         }
     }
 }

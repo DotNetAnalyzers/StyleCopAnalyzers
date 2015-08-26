@@ -41,7 +41,7 @@
         private const string Title = "Documentation text must end with a period";
         private const string MessageFormat = "TODO: Message format";
         private const string Description = "A section of the XML header documentation for a C# element does not end with a period.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1629.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1629.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);

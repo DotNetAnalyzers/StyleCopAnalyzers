@@ -126,6 +126,90 @@
   <data name="SA1633CodeFix" xml:space="preserve">
     <value>Add Fileheader</value>
   </data>
+  <data name="SA1633Description" xml:space="preserve">
+    <value>A C# code file is missing a standard file header.</value>
+  </data>
+  <data name="SA1633MessageFormatMalformed" xml:space="preserve">
+    <value>The file header XML is invalid.</value>
+  </data>
+  <data name="SA1633MessageFormatMissing" xml:space="preserve">
+    <value>The file header is missing or not located at the top of the file.</value>
+  </data>
+  <data name="SA1633Title" xml:space="preserve">
+    <value>File must have header</value>
+  </data>
+  <data name="SA1634Description" xml:space="preserve">
+    <value>The file header at the top of a C# code file is missing a copyright tag.</value>
+  </data>
+  <data name="SA1634MessageFormat" xml:space="preserve">
+    <value>The file header must contain a copyright tag.</value>
+  </data>
+  <data name="SA1634Title" xml:space="preserve">
+    <value>File header must show copyright</value>
+  </data>
+  <data name="SA1635Description" xml:space="preserve">
+    <value>The file header at the top of a C# code file is missing copyright text.</value>
+  </data>
+  <data name="SA1635MessageFormat" xml:space="preserve">
+    <value>File header must have copyright text</value>
+  </data>
+  <data name="SA1635Title" xml:space="preserve">
+    <value>File header must have copyright text</value>
+  </data>
+  <data name="SA1636Description" xml:space="preserve">
+    <value>The file header at the top of a C# code file does not contain the appropriate copyright text.</value>
+  </data>
+  <data name="SA1636MessageFormat" xml:space="preserve">
+    <value>The file header copyright text must match the copyright text from the settings.</value>
+  </data>
+  <data name="SA1636Title" xml:space="preserve">
+    <value>File header copyright text must match</value>
+  </data>
+  <data name="SA1637Description" xml:space="preserve">
+    <value>The file header at the top of a C# code file is missing the file name.</value>
+  </data>
+  <data name="SA1637MessageFormat" xml:space="preserve">
+    <value>File header must contain file name.</value>
+  </data>
+  <data name="SA1637Title" xml:space="preserve">
+    <value>File header must contain file name</value>
+  </data>
+  <data name="SA1638Description" xml:space="preserve">
+    <value>The file attribute within copyright tag of the file header at the top of a C# code file does not contain the name of the file.</value>
+  </data>
+  <data name="SA1638MessageFormat" xml:space="preserve">
+    <value>File header file name documentation must match file name.</value>
+  </data>
+  <data name="SA1638Title" xml:space="preserve">
+    <value>File header file name documentation must match file name</value>
+  </data>
+  <data name="SA1639Description" xml:space="preserve">
+    <value>The file header at the top of a C# code file does not contain a filled-in summary tag.</value>
+  </data>
+  <data name="SA1639MessageFormat" xml:space="preserve">
+    <value>File header must have summary</value>
+  </data>
+  <data name="SA1639Title" xml:space="preserve">
+    <value>File header must have summary</value>
+  </data>
+  <data name="SA1640Description" xml:space="preserve">
+    <value>The file header at the top of a C# code file does not contain company name text.</value>
+  </data>
+  <data name="SA1640MessageFormat" xml:space="preserve">
+    <value>The copyright tag must contain a non-empty company attribute.</value>
+  </data>
+  <data name="SA1640Title" xml:space="preserve">
+    <value>File header must have valid company text</value>
+  </data>
+  <data name="SA1641Description" xml:space="preserve">
+    <value>The file header at the top of a C# code file does not contain the appropriate company name text.</value>
+  </data>
+  <data name="SA1641MessageFormat" xml:space="preserve">
+    <value>The file header company name must match the company name from the settings.</value>
+  </data>
+  <data name="SA1641Title" xml:space="preserve">
+    <value>File header company name text must match</value>
+  </data>
   <data name="SA1642SA1643CodeFix" xml:space="preserve">
     <value>Add standard text</value>
   </data>

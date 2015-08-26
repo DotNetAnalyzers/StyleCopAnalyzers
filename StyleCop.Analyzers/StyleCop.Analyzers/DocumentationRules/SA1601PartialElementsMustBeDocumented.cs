@@ -72,7 +72,7 @@
         private const string Title = "Partial elements must be documented";
         private const string MessageFormat = "Partial elements must be documented";
         private const string Description = "A C# partial element is missing a documentation header.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1601.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1601.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

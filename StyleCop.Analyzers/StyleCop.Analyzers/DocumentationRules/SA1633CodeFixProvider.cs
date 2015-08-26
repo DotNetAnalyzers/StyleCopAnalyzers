@@ -12,7 +12,7 @@
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// Implements a code fix for <see cref="SA1633FileMustHaveHeader"/>.
+    /// Implements a code fix for SA1633.
     /// </summary>
     /// <remarks>
     /// <para>To fix a violation of this rule, remove the <c>&lt;returns&gt;</c> tag from the element.</para>
@@ -24,7 +24,7 @@
         private const string CompanyName = "FooCorp"; // Should come from settings.
 
         private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1633FileMustHaveHeader.DiagnosticId);
+            ImmutableArray.Create(FileHeaderAnalyzers.SA1633Identifier);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;

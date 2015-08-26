@@ -31,7 +31,7 @@
         private const string Title = "Elements must be documented";
         private const string MessageFormat = "Elements must be documented";
         private const string Description = "A C# code element is missing a documentation header.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1600.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1600.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

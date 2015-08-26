@@ -25,7 +25,7 @@
         private const string Title = "Commas must be spaced correctly";
         private const string MessageFormat = "Commas must{0} be {1} by a space.";
         private const string Description = "The spacing around a comma is incorrect, within a C# code file.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1001.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1001.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

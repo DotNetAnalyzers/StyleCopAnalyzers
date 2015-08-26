@@ -89,6 +89,258 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A C# code file is missing a standard file header..
+        /// </summary>
+        internal static string SA1633Description {
+            get {
+                return ResourceManager.GetString("SA1633Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file header XML is invalid..
+        /// </summary>
+        internal static string SA1633MessageFormatMalformed {
+            get {
+                return ResourceManager.GetString("SA1633MessageFormatMalformed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file header is missing or not located at the top of the file..
+        /// </summary>
+        internal static string SA1633MessageFormatMissing {
+            get {
+                return ResourceManager.GetString("SA1633MessageFormatMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File must have header.
+        /// </summary>
+        internal static string SA1633Title {
+            get {
+                return ResourceManager.GetString("SA1633Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file header at the top of a C# code file is missing a copyright tag..
+        /// </summary>
+        internal static string SA1634Description {
+            get {
+                return ResourceManager.GetString("SA1634Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file header must contain a copyright tag..
+        /// </summary>
+        internal static string SA1634MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1634MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File header must show copyright.
+        /// </summary>
+        internal static string SA1634Title {
+            get {
+                return ResourceManager.GetString("SA1634Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file header at the top of a C# code file is missing copyright text..
+        /// </summary>
+        internal static string SA1635Description {
+            get {
+                return ResourceManager.GetString("SA1635Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File header must have copyright text.
+        /// </summary>
+        internal static string SA1635MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1635MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File header must have copyright text.
+        /// </summary>
+        internal static string SA1635Title {
+            get {
+                return ResourceManager.GetString("SA1635Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file header at the top of a C# code file does not contain the appropriate copyright text..
+        /// </summary>
+        internal static string SA1636Description {
+            get {
+                return ResourceManager.GetString("SA1636Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file header copyright text must match the copyright text from the settings..
+        /// </summary>
+        internal static string SA1636MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1636MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File header copyright text must match.
+        /// </summary>
+        internal static string SA1636Title {
+            get {
+                return ResourceManager.GetString("SA1636Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file header at the top of a C# code file is missing the file name..
+        /// </summary>
+        internal static string SA1637Description {
+            get {
+                return ResourceManager.GetString("SA1637Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File header must contain file name..
+        /// </summary>
+        internal static string SA1637MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1637MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File header must contain file name.
+        /// </summary>
+        internal static string SA1637Title {
+            get {
+                return ResourceManager.GetString("SA1637Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file attribute within copyright tag of the file header at the top of a C# code file does not contain the name of the file..
+        /// </summary>
+        internal static string SA1638Description {
+            get {
+                return ResourceManager.GetString("SA1638Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File header file name documentation must match file name..
+        /// </summary>
+        internal static string SA1638MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1638MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File header file name documentation must match file name.
+        /// </summary>
+        internal static string SA1638Title {
+            get {
+                return ResourceManager.GetString("SA1638Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file header at the top of a C# code file does not contain a filled-in summary tag..
+        /// </summary>
+        internal static string SA1639Description {
+            get {
+                return ResourceManager.GetString("SA1639Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File header must have summary.
+        /// </summary>
+        internal static string SA1639MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1639MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File header must have summary.
+        /// </summary>
+        internal static string SA1639Title {
+            get {
+                return ResourceManager.GetString("SA1639Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file header at the top of a C# code file does not contain company name text..
+        /// </summary>
+        internal static string SA1640Description {
+            get {
+                return ResourceManager.GetString("SA1640Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The copyright tag must contain a non-empty company attribute..
+        /// </summary>
+        internal static string SA1640MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1640MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File header must have valid company text.
+        /// </summary>
+        internal static string SA1640Title {
+            get {
+                return ResourceManager.GetString("SA1640Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file header at the top of a C# code file does not contain the appropriate company name text..
+        /// </summary>
+        internal static string SA1641Description {
+            get {
+                return ResourceManager.GetString("SA1641Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file header company name must match the company name from the settings..
+        /// </summary>
+        internal static string SA1641MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1641MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File header company name text must match.
+        /// </summary>
+        internal static string SA1641Title {
+            get {
+                return ResourceManager.GetString("SA1641Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add standard text.
         /// </summary>
         internal static string SA1642SA1643CodeFix {

@@ -51,7 +51,7 @@
         private const string Title = "Single-line comments must not use documentation style slashes";
         private const string MessageFormat = "Single-line comments must not use documentation style slashes";
         private const string Description = "The C# code contains a single-line comment which begins with three forward slashes in a row.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1626.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1626.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

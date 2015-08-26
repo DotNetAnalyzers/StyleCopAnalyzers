@@ -44,7 +44,7 @@
         private const string Title = "Code must not contain multiple blank lines in a row";
         private const string MessageFormat = "Code must not contain multiple blank lines in a row";
         private const string Description = "The C# code contains multiple blank lines in a row.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1507.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1507.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
