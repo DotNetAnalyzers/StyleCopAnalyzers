@@ -1,10 +1,9 @@
-﻿using Microsoft.CodeAnalysis.CodeFixes;
-
-namespace StyleCop.Analyzers.Test.OrderingRules
+﻿namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.OrderingRules;
     using TestHelper;
@@ -12,6 +11,67 @@ namespace StyleCop.Analyzers.Test.OrderingRules
 
     public class SA1212UnitTests : CodeFixVerifier
     {
+        [Fact]
+        public async Task TestPropertyWithDocumentationAsync()
+        {
+            var testCode = @"
+public class Foo
+{
+    private int i = 0;
+
+    public int Prop
+    {
+        /// <summary>
+        /// The setter documentation
+        /// </summary>
+        set
+        {
+            i = value;
+        }
+
+        /// <summary>
+        /// The getter documentation
+        /// </summary>
+        get
+        {
+            return i;
+        }
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(11, 9);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixTestCode = @"
+public class Foo
+{
+    private int i = 0;
+
+    public int Prop
+    {
+        /// <summary>
+        /// The getter documentation
+        /// </summary>
+        get
+        {
+            return i;
+        }
+
+        /// <summary>
+        /// The setter documentation
+        /// </summary>
+        set
+        {
+            i = value;
+        }
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestPropertyWithBackingFieldDeclarationSetterBeforeGetterAsync()
         {
@@ -49,6 +109,7 @@ public class Foo
         {
             return i;
         }
+
         set
         {
             i = value;
@@ -192,6 +253,7 @@ public class Foo
         {
             return field;
         }
+
         set
         {
             field = value;
