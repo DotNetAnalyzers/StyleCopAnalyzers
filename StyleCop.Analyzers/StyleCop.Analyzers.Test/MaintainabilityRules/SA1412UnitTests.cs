@@ -77,9 +77,11 @@
             var document = project.Documents.First();
 
             // Create a diagnostic for the document to fix
+            var properties = ImmutableDictionary<string, string>.Empty.SetItem(SA1412StoreFilesAsUtf8.EncodingProperty, this.fileEncoding.WebName);
             var diagnostic = Diagnostic.Create(
                 this.GetCSharpDiagnosticAnalyzers().First().SupportedDiagnostics.First(),
-                Location.Create(await document.GetSyntaxTreeAsync().ConfigureAwait(false), TextSpan.FromBounds(0, 0)));
+                Location.Create(await document.GetSyntaxTreeAsync().ConfigureAwait(false), TextSpan.FromBounds(0, 0)),
+                properties);
 
             await codeFixer.RegisterCodeFixesAsync(new CodeFixContext(document, diagnostic, (ca, d) =>
             {
@@ -161,9 +163,11 @@
             foreach (var document in project.Documents)
             {
                 // Create a diagnostic for the document to fix
+                var properties = ImmutableDictionary<string, string>.Empty.SetItem(SA1412StoreFilesAsUtf8.EncodingProperty, (await document.GetTextAsync().ConfigureAwait(false)).Encoding.WebName);
                 var diagnostic = Diagnostic.Create(
                     descriptor,
-                    Location.Create(await document.GetSyntaxTreeAsync().ConfigureAwait(false), TextSpan.FromBounds(0, 0)));
+                    Location.Create(await document.GetSyntaxTreeAsync().ConfigureAwait(false), TextSpan.FromBounds(0, 0)),
+                    properties);
                 diagnostics.Add(diagnostic);
             }
 
@@ -225,9 +229,11 @@
             foreach (var document in project.Documents)
             {
                 // Create a diagnostic for the document to fix
+                var properties = ImmutableDictionary<string, string>.Empty.SetItem(SA1412StoreFilesAsUtf8.EncodingProperty, (await document.GetTextAsync().ConfigureAwait(false)).Encoding.WebName);
                 var diagnostic = Diagnostic.Create(
                     descriptor,
-                    Location.Create(await document.GetSyntaxTreeAsync().ConfigureAwait(false), TextSpan.FromBounds(0, 0)));
+                    Location.Create(await document.GetSyntaxTreeAsync().ConfigureAwait(false), TextSpan.FromBounds(0, 0)),
+                    properties);
                 diagnostics.Add(diagnostic);
             }
 
@@ -246,7 +252,7 @@
             operation.Apply(workspace, CancellationToken.None);
 
             // project should now have the "fixed document" in it.
-            // Because of limitations in roslyn the fixed document should
+            // Because of limitations in Roslyn the fixed document should
             // have a different DocumentId then the broken document
             project = workspace.CurrentSolution.Projects.First();
 

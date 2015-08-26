@@ -51,8 +51,19 @@
         private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, Diagnostic diagnostic)
         {
             var token = root.FindToken(diagnostic.Location.SourceSpan.Start, findInsideTrivia: true);
-            var updatedDocument = document.WithSyntaxRoot(root.ReplaceToken(token, token.WithLeadingTrivia(token.LeadingTrivia.Add(SyntaxFactory.Space))));
+            SyntaxToken updatedToken;
+            switch (token.Kind())
+            {
+            case SyntaxKind.XmlTextLiteralToken:
+                updatedToken = XmlSyntaxFactory.TextLiteral(" " + token.Text.TrimStart(' ')).WithTriviaFrom(token);
+                break;
 
+            default:
+                updatedToken = token.WithLeadingTrivia(token.LeadingTrivia.Add(SyntaxFactory.Space));
+                break;
+            }
+
+            Document updatedDocument = document.WithSyntaxRoot(root.ReplaceToken(token, updatedToken));
             return Task.FromResult(updatedDocument);
         }
     }

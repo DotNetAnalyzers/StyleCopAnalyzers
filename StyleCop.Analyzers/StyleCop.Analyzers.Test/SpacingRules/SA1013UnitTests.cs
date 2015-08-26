@@ -362,6 +362,25 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that the analyzer will properly handle end of file without a new line.
+        /// This is a regression test for <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/685">DotNetAnalyzers/StyleCopAnalyzers#685</see>
+        /// </summary>
+        /// <param name="declarationType">The declaration type.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("namespace")]
+        [InlineData("class")]
+        [InlineData("interface")]
+        [InlineData("struct")]
+        [InlineData("enum")]
+        public async Task TestEndOfFileWithoutNewLineAsync(string declarationType)
+        {
+            var testCode = $"{declarationType} TestItem {{ }}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {

@@ -1,28 +1,29 @@
 ﻿namespace StyleCop.Analyzers.Test.DocumentationRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
-    using TestHelper;
     using Xunit;
 
     /// <summary>
-    /// Unit tests for the <see cref="SA1633FileMustHaveHeader"/> analyzer.
+    /// Unit tests for the SA1633 diagnostic.
     /// </summary>
     public class SA1633UnitTests : FileHeaderTestBase
     {
-        /// <inheritdoc/>
-        protected override DiagnosticResult[] NoFileHeaderDiagnostics
+        /// <summary>
+        /// Verifies that the analyzer will report the correct diagnostics (none for the default case) for a file without a header.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public virtual async Task TestNoFileHeaderAsync()
         {
-            get
-            {
-                return new[]
-                {
-                    this.CSharpDiagnostic().WithLocation(1, 1).WithArguments("is missing or not located at the top of the file.")
-                };
-            }
+            var testCode = @"namespace Foo
+{
+}
+";
+
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -32,7 +33,7 @@
         [Fact]
         public async Task TestValidFileHeaderNoContentAsync()
         {
-            var testCode = @"// <copyright file=""test0.cs"" company=""FooCorp"">
+            var testCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
 //   Copyright (c) FooCorp. All rights reserved.
 // </copyright>
 ";
@@ -51,7 +52,7 @@
 #if (IGNORE_FILE_HEADERS)
 #pragma warning disable SA1633
 #endif
-// <copyright file=""test0.cs"" company=""FooCorp"">
+// <copyright file=""Test0.cs"" company=""FooCorp"">
 //   Copyright (c) FooCorp. All rights reserved.
 // </copyright>
 
@@ -70,7 +71,7 @@ namespace Bar
         [Fact]
         public async Task TestValidFileHeaderWithWhitespaceAsync()
         {
-            var testCode = @"    // <copyright file=""test0.cs"" company=""FooCorp"">
+            var testCode = @"    // <copyright file=""Test0.cs"" company=""FooCorp"">
     //   Copyright (c) FooCorp. All rights reserved.
     // </copyright>
 
@@ -96,7 +97,7 @@ namespace Foo
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(1, 1).WithArguments("is missing or not located at the top of the file.");
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -114,7 +115,7 @@ namespace Foo
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(1, 1).WithArguments("XML is invalid.");
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMalformed).WithLocation(1, 1);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -125,7 +126,7 @@ namespace Foo
         [Fact]
         public async Task TestInvalidXmlFileHeaderAsync()
         {
-            var testCode = @"// <copyright file=""test0.cs"" company=""FooCorp"">
+            var testCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
 //   Copyright (c) FooCorp. All rights reserved.
 
 namespace Foo
@@ -133,14 +134,8 @@ namespace Foo
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(1, 1).WithArguments("XML is invalid.");
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMalformed).WithLocation(1, 1);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1633FileMustHaveHeader();
         }
     }
 }

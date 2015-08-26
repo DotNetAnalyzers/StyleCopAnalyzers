@@ -1,14 +1,12 @@
 ﻿namespace StyleCop.Analyzers.Test.DocumentationRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
     using Xunit;
 
     /// <summary>
-    /// Unit tests for the <see cref="SA1640FileHeaderMustHaveValidCompanyText"/> analyzer.
+    /// Unit tests for the SA1640 diagnostic.
     /// </summary>
     public class SA1640UnitTests : FileHeaderTestBase
     {
@@ -19,7 +17,7 @@
         [Fact]
         public async Task TestCopyrightElementWithoutCompanyAttributeAsync()
         {
-            var testCode = @"// <copyright file=""test0.cs"">
+            var testCode = @"// <copyright file=""Test0.cs"">
 //   Copyright (c) FooCorp. All rights reserved.
 // </copyright>
 
@@ -28,7 +26,7 @@ namespace Bar
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(1, 4);
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1640Descriptor).WithLocation(1, 4);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -39,7 +37,7 @@ namespace Bar
         [Fact]
         public async Task TestCopyrightElementWithEmptyCompanyAttributeAsync()
         {
-            var testCode = @"// <copyright file=""test0.cs"" company="""">
+            var testCode = @"// <copyright file=""Test0.cs"" company="""">
 //   Copyright (c) FooCorp. All rights reserved.
 // </copyright>
 
@@ -48,7 +46,7 @@ namespace Bar
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(1, 4);
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1640Descriptor).WithLocation(1, 4);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -59,7 +57,7 @@ namespace Bar
         [Fact]
         public async Task TestCopyrightElementWithWhitespaceOnlyCompanyAttributeAsync()
         {
-            var testCode = @"// <copyright file=""test0.cs"" company=""   "">
+            var testCode = @"// <copyright file=""Test0.cs"" company=""   "">
 //   Copyright (c) FooCorp. All rights reserved.
 // </copyright>
 
@@ -68,14 +66,8 @@ namespace Bar
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(1, 4);
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1640Descriptor).WithLocation(1, 4);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1640FileHeaderMustHaveValidCompanyText();
         }
     }
 }

@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -23,12 +24,12 @@
 
         public override Task<IEnumerable<Diagnostic>> GetDocumentDiagnosticsAsync(Document document, CancellationToken cancellationToken)
         {
-            return Task.FromResult<IEnumerable<Diagnostic>>(this.diagnostics);
+            return Task.FromResult(this.diagnostics.Where(i => i.Location.GetLineSpan().Path == document.Name));
         }
 
         public override Task<IEnumerable<Diagnostic>> GetProjectDiagnosticsAsync(Project project, CancellationToken cancellationToken)
         {
-            return Task.FromResult<IEnumerable<Diagnostic>>(this.diagnostics);
+            return Task.FromResult(this.diagnostics.Where(i => !i.Location.IsInSource));
         }
 
         internal static TestDiagnosticProvider Create(ImmutableArray<Diagnostic> diagnostics)

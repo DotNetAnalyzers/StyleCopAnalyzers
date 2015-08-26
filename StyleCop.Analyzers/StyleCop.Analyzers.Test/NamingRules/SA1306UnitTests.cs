@@ -18,10 +18,21 @@
         [InlineData("protected const")]
         [InlineData("protected internal const")]
         [InlineData("internal readonly")]
+        [InlineData("public const")]
         [InlineData("protected readonly")]
         [InlineData("protected internal readonly")]
+        [InlineData("public readonly")]
         [InlineData("public")]
         [InlineData("internal")]
+        [InlineData("protected internal")]
+        [InlineData("public static")]
+        [InlineData("internal static")]
+        [InlineData("protected internal static")]
+        [InlineData("public static readonly")]
+        [InlineData("internal static readonly")]
+        [InlineData("protected internal static readonly")]
+        [InlineData("protected static readonly")]
+        [InlineData("private static readonly")]
         public async Task TestThatDiagnosticIsNotReportedAsync(string modifiers)
         {
             var testCode = @"public class Foo
@@ -38,6 +49,9 @@ string Bar = """", car = """", Dar = """";
         [InlineData("readonly")]
         [InlineData("private")]
         [InlineData("private readonly")]
+        [InlineData("static")]
+        [InlineData("private static")]
+        [InlineData("protected static")]
         public async Task TestThatDiagnosticIsReported_SingleFieldAsync(string modifiers)
         {
             var testCode = @"public class Foo
@@ -76,6 +90,9 @@ string dar;
         [InlineData("readonly")]
         [InlineData("private")]
         [InlineData("private readonly")]
+        [InlineData("static")]
+        [InlineData("private static")]
+        [InlineData("protected static")]
         public async Task TestThatDiagnosticIsReported_MultipleFieldsAsync(string modifiers)
         {
             var testCode = @"public class Foo

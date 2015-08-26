@@ -48,7 +48,12 @@
                     continue;
                 }
 
-                var nullableType = (NullableTypeSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
+                var nullableType = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) as NullableTypeSyntax;
+                if (nullableType == null)
+                {
+                    continue;
+                }
+
                 var questionToken = nullableType.QuestionToken;
                 var precedingToken = questionToken.GetPreviousToken();
                 var triviaList = precedingToken.TrailingTrivia.AddRange(questionToken.LeadingTrivia);

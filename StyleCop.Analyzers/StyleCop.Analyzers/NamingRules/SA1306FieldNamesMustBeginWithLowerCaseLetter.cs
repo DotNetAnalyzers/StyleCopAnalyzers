@@ -32,7 +32,7 @@
         private const string Title = "Field names must begin with lower-case letter";
         private const string MessageFormat = "Field '{0}' must begin with lower-case letter";
         private const string Description = "The name of a field or variable in C# does not begin with a lower-case letter.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1306.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1306.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

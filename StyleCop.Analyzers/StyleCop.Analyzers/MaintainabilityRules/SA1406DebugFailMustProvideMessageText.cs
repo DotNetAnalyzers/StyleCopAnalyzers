@@ -28,7 +28,7 @@
         private const string Title = "Debug.Fail must provide message text";
         private const string MessageFormat = "Debug.Fail must provide message text";
         private const string Description = "A call to Debug.Fail in C# code does not include a descriptive message.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1406.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1406.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

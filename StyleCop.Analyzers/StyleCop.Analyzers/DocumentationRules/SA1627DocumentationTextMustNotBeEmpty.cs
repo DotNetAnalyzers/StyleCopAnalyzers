@@ -41,7 +41,7 @@
         private const string Title = "Documentation text must not be empty";
         private const string MessageFormat = "TODO: Message format";
         private const string Description = "The XML header documentation for a C# code element contains an empty tag.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1627.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1627.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);

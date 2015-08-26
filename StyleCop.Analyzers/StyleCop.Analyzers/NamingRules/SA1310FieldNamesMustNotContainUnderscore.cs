@@ -32,7 +32,7 @@
         private const string Title = "Field names must not contain underscore";
         private const string MessageFormat = "Field '{0}' must not contain an underscore";
         private const string Description = "A field name in C# contains an underscore.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1310.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1310.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
