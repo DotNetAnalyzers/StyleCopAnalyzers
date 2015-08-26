@@ -31,7 +31,7 @@
         private const string Title = "Using directives must be ordered alphabetically by namespace";
         private const string MessageFormat = "Using directives must be ordered alphabetically by the namespaces.";
         private const string Description = "The using directives within a C# code file are not sorted alphabetically by namespace.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1210.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1210.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

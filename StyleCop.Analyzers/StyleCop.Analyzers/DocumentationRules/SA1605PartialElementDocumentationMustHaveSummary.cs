@@ -75,7 +75,7 @@
         private const string Title = "Partial element documentation must have summary";
         private const string MessageFormat = "Partial element documentation must have summary";
         private const string Description = "The <summary> or <content> tag within the documentation header for a C# code element is missing or empty.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1605.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1605.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

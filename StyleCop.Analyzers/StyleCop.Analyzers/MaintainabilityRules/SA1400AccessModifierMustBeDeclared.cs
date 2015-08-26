@@ -27,7 +27,7 @@
         private const string Title = "Access modifier must be declared";
         private const string MessageFormat = "Element '{0}' must declare an access modifier";
         private const string Description = "The access modifier for a C# element has not been explicitly defined.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1400.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1400.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

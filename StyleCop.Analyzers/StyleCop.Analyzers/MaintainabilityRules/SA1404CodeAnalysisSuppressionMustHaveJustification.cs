@@ -28,6 +28,11 @@
     public class SA1404CodeAnalysisSuppressionMustHaveJustification : DiagnosticAnalyzer
     {
         /// <summary>
+        /// The placeholder to insert as part of the code fix.
+        /// </summary>
+        public const string JustificationPlaceholder = "<Pending>";
+
+        /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1404CodeAnalysisSuppressionMustHaveJustification"/>
         /// analyzer.
         /// </summary>
@@ -35,7 +40,7 @@
         private const string Title = "Code analysis suppression must have justification";
         private const string MessageFormat = "Code analysis suppression must have justification";
         private const string Description = "A Code Analysis SuppressMessage attribute does not include a justification.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1404.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1404.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -115,12 +120,12 @@
                                 var value = context.SemanticModel.GetConstantValue(attributeArgument.Expression);
 
                                 // If value does not have a value the expression is not constant -> Compilation error
-                                if (!value.HasValue || !string.IsNullOrWhiteSpace(value.Value as string))
+                                if (!value.HasValue || (!string.IsNullOrWhiteSpace(value.Value as string) && (value.Value as string) != JustificationPlaceholder))
                                 {
                                     return;
                                 }
 
-                                // Empty, Whitespace or null justification provided
+                                // Empty, Whitespace, placeholder, or null justification provided
                                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, attributeArgument.GetLocation()));
                                 return;
                             }

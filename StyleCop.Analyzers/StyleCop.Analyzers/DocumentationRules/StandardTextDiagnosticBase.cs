@@ -81,10 +81,6 @@
 
                 if (firstTextPartSyntax != null && classReferencePart != null && secondTextParSyntaxt != null)
                 {
-                    // Check text parts
-                    var firstText = XmlCommentHelper.GetText(firstTextPartSyntax);
-                    var secondText = XmlCommentHelper.GetText(secondTextParSyntaxt);
-
                     if (TextPartsMatch(firstTextPart, secondTextPart, firstTextPartSyntax, secondTextParSyntaxt)
                         && SeeTagIsCorrect(context, classReferencePart, declarationSyntax))
                     {

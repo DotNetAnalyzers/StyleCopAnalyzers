@@ -28,7 +28,7 @@
         private const string Title = "Opening square brackets must be spaced correctly";
         private const string MessageFormat = "Opening square brackets must {0} by a space.";
         private const string Description = "An opening square bracket within a C# statement is not spaced correctly.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1010.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1010.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

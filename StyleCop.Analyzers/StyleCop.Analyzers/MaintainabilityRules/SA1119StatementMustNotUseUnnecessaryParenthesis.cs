@@ -51,7 +51,7 @@
         private const string Title = "Statement must not use unnecessary parenthesis";
         private const string MessageFormat = "Statement must not use unnecessary parenthesis";
         private const string Description = "A C# statement contains parenthesis which are unnecessary and should be removed.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1119.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1119.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

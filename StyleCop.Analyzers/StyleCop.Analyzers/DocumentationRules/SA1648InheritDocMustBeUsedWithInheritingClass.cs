@@ -28,7 +28,7 @@
         private const string Title = "inheritdoc must be used with inheriting class";
         private const string MessageFormat = "inheritdoc must be used with inheriting class";
         private const string Description = "<inheritdoc> has been used on an element that doesn't inherit from a base class or implement an interface.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1648.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1648.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

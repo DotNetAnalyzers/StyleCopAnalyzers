@@ -24,7 +24,7 @@
         private const string Title = "Semicolons must be spaced correctly";
         private const string MessageFormat = "Semicolons must{0} be {1} by a space.";
         private const string Description = "The spacing around a semicolon is incorrect, within a C# code file.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1002.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1002.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

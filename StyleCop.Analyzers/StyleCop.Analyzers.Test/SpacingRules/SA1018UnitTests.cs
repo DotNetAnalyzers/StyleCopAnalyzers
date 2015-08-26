@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.SpacingRules;
@@ -105,6 +106,41 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, fixedExpectedResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1256.
+        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1256
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestSyntaxErrorAtEndOfFileAsync()
+        {
+            string testCode = @"namespace StyleCopAnalyzers_Test
+{
+    public class Class1
+    {
+        private void Test()
+        {
+            var hello = ""world"";
+        }
+    }
+}
+?
+";
+
+            DiagnosticResult[] expected =
+            {
+                new DiagnosticResult
+                {
+                    Id = "CS1031",
+                    Message = "Type expected",
+                    Severity = DiagnosticSeverity.Error,
+                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 10, 2) }
+                }
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

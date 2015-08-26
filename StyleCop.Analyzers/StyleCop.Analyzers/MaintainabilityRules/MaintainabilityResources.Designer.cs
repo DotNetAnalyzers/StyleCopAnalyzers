@@ -89,6 +89,15 @@ namespace StyleCop.Analyzers.MaintainabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fix justification.
+        /// </summary>
+        internal static string SA1404CodeFix {
+            get {
+                return ResourceManager.GetString("SA1404CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add parentheses.
         /// </summary>
         internal static string SA1407SA1408CodeFix {

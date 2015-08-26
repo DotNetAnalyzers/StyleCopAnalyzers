@@ -196,7 +196,7 @@
         private const string Title = "Property summary documentation must match accessors";
         private const string MessageFormat = "TODO: Message format";
         private const string Description = "The documentation text within a C# property’s &lt;summary&gt; tag does not match the accessors within the property.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1623.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1623.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);

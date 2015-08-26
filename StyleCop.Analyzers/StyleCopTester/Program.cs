@@ -18,7 +18,7 @@
     /// diagnostics it could find. This is useful to easily test performance without having the overhead of visual
     /// studio running.
     /// </summary>
-    internal class Program
+    internal static class Program
     {
         private static void Main(string[] args)
         {
@@ -62,7 +62,7 @@
 
                 stopwatch.Restart();
 
-                var diagnostics = GetAnalyzerDiagnosticsAsync(solution, solutionPath, analyzers).Result;
+                var diagnostics = GetAnalyzerDiagnosticsAsync(solution, analyzers).Result;
 
                 Console.WriteLine($"Found {diagnostics.Count} diagnostics in {stopwatch.ElapsedMilliseconds}ms");
 
@@ -158,7 +158,7 @@
             return analyzers.ToImmutableArray();
         }
 
-        private static async Task<ImmutableList<Diagnostic>> GetAnalyzerDiagnosticsAsync(Solution solution, string solutionPath, ImmutableArray<DiagnosticAnalyzer> analyzers)
+        private static async Task<ImmutableList<Diagnostic>> GetAnalyzerDiagnosticsAsync(Solution solution, ImmutableArray<DiagnosticAnalyzer> analyzers)
         {
             List<Task<ImmutableArray<Diagnostic>>> projectDiagnosticTasks = new List<Task<ImmutableArray<Diagnostic>>>();
 

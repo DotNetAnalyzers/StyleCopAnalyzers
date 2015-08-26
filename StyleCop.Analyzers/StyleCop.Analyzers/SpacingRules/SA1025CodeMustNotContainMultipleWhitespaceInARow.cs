@@ -1,7 +1,6 @@
 ﻿namespace StyleCop.Analyzers.SpacingRules
 {
     using System.Collections.Immutable;
-    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -25,7 +24,7 @@
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1025Title), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(SpacingResources.SA1025MessageFormat), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1025Description), SpacingResources.ResourceManager, typeof(SpacingResources));
-        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1025.html";
+        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1025.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -80,15 +79,21 @@
             SyntaxToken token = trivia.Token;
             SyntaxToken precedingToken;
             SyntaxToken followingToken;
-            if (token.LeadingTrivia.Contains(trivia))
+
+            int index;
+            SyntaxTriviaList list;
+
+            if ((index = token.LeadingTrivia.IndexOf(trivia)) >= 0)
             {
                 precedingToken = token.GetPreviousToken();
                 followingToken = token;
+                list = token.LeadingTrivia;
             }
-            else if (token.TrailingTrivia.Contains(trivia))
+            else if ((index = token.TrailingTrivia.IndexOf(trivia)) >= 0)
             {
                 precedingToken = token;
                 followingToken = precedingToken.GetNextToken();
+                list = token.TrailingTrivia;
             }
             else
             {
@@ -96,7 +101,12 @@
                 return;
             }
 
-            if (precedingToken.IsKind(SyntaxKind.CommaToken) || precedingToken.IsKind(SyntaxKind.SemicolonToken))
+            var followingTrivia = index + 1 < list.Count ? list[index + 1] : default(SyntaxTrivia);
+
+            if (precedingToken.IsKind(SyntaxKind.CommaToken)
+                || precedingToken.IsKind(SyntaxKind.SemicolonToken)
+                || followingTrivia.IsKind(SyntaxKind.EndOfLineTrivia)
+                || followingToken.IsKind(SyntaxKind.EndOfFileToken))
             {
                 return;
             }

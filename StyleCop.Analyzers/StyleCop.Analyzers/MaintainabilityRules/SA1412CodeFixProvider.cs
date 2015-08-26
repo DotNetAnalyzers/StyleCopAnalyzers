@@ -3,7 +3,9 @@
     using System.Collections.Immutable;
     using System.Composition;
     using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
+    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -32,7 +34,7 @@
         }
 
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             foreach (var diagnostic in context.Diagnostics)
             {
@@ -41,30 +43,22 @@
                     continue;
                 }
 
-                string usedEncoding = await GetEncodingNameForDocumentAsync(context.Document).ConfigureAwait(false);
+                string usedEncoding = diagnostic.Properties[SA1412StoreFilesAsUtf8.EncodingProperty];
 
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         string.Format(MaintainabilityResources.SA1412CodeFix, usedEncoding),
-                        token => GetTransformedSolutionAsync(context.Document),
-                        equivalenceKey: await GetEquivalenceKeyForDocumentAsync(context.Document).ConfigureAwait(false)), diagnostic);
+                        cancellationToken => GetTransformedSolutionAsync(context.Document, cancellationToken),
+                        equivalenceKey: nameof(SA1412CodeFixProvider) + "." + usedEncoding),
+                    diagnostic);
             }
+
+            return SpecializedTasks.CompletedTask;
         }
 
-        internal static async Task<string> GetEncodingNameForDocumentAsync(Document document)
+        internal static async Task<Solution> GetTransformedSolutionAsync(Document document, CancellationToken cancellationToken)
         {
-            return (await document.GetTextAsync().ConfigureAwait(false)).Encoding?.WebName ?? "<null>";
-        }
-
-        internal static async Task<string> GetEquivalenceKeyForDocumentAsync(Document document)
-        {
-            string usedEncoding = await GetEncodingNameForDocumentAsync(document).ConfigureAwait(false);
-            return nameof(SA1412CodeFixProvider) + "." + usedEncoding;
-        }
-
-        internal static async Task<Solution> GetTransformedSolutionAsync(Document document)
-        {
-            SourceText text = await document.GetTextAsync().ConfigureAwait(false);
+            SourceText text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
 
             string actualSourceText = text.ToString();
 

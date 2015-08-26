@@ -55,7 +55,7 @@
         private const string Title = "Colons Must Be Spaced Correctly";
         private const string MessageFormat = "Colon must{0} be {1}{2} by a space.";
         private const string Description = "A colon within a C# element is not spaced correctly.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1024.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1024.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
