@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace StyleCop.Analyzers.OrderingRules
+﻿namespace StyleCop.Analyzers.OrderingRules
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -67,7 +65,7 @@ namespace StyleCop.Analyzers.OrderingRules
             if (secondAccessor.GetFirstToken().HasLeadingBlankLines())
             {
                 var newFirstAccessor = trackedFirstAccessor.WithLeadingTrivia(
-                    TriviaHelper.MergeTriviaLists(new[] { SyntaxFactory.CarriageReturnLineFeed}, trackedFirstAccessor.GetLeadingTrivia()));
+                    TriviaHelper.MergeTriviaLists(new[] { SyntaxFactory.CarriageReturnLineFeed }, trackedFirstAccessor.GetLeadingTrivia()));
                 syntaxRoot = syntaxRoot.ReplaceNode(trackedFirstAccessor, newFirstAccessor);
             }
 
@@ -80,7 +78,6 @@ namespace StyleCop.Analyzers.OrderingRules
 
             return document.WithSyntaxRoot(syntaxRoot);
         }
-
 
         private static bool AccessorsAreOnTheSameLine(AccessorDeclarationSyntax firstAccesor, AccessorDeclarationSyntax secondAccessor)
         {
