@@ -160,7 +160,7 @@
                 return;
             }
 
-            switch (identifierNameSyntax.Identifier.Text)
+            switch (identifierNameSyntax.Identifier.ValueText)
             {
             case "bool":
             case "byte":
@@ -193,7 +193,7 @@
             // if the identifier name doesn't match the name of a special type
             if (!identifierNameSyntax.SyntaxTree.ContainsUsingAlias())
             {
-                switch (identifierNameSyntax.Identifier.Text)
+                switch (identifierNameSyntax.Identifier.ValueText)
                 {
                 case nameof(Boolean):
                 case nameof(Byte):
