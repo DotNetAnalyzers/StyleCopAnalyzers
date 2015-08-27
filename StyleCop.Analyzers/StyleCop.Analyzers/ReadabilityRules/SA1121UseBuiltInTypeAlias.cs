@@ -149,8 +149,8 @@
 
         private void HandleIdentifierNameSyntax(SyntaxNodeAnalysisContext context)
         {
-            IdentifierNameSyntax identifierNameSyntax = context.Node as IdentifierNameSyntax;
-            if (identifierNameSyntax == null || identifierNameSyntax.IsVar)
+            IdentifierNameSyntax identifierNameSyntax = (IdentifierNameSyntax)context.Node;
+            if (identifierNameSyntax.IsVar)
             {
                 return;
             }
@@ -272,10 +272,6 @@
         {
             // The only time a type name can appear as an argument is for the invocation expression created for the
             // nameof keyword. This assumption is the foundation of the following simple analysis algorithm.
-            if (identifierNameSyntax.Parent == null)
-            {
-                return false;
-            }
 
             // This covers the case nameof(Int32)
             if (identifierNameSyntax.Parent is ArgumentSyntax)
