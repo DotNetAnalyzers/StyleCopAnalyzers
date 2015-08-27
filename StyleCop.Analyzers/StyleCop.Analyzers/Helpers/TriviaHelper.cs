@@ -313,20 +313,9 @@
 
         private static bool HasBuiltinEndLine(this SyntaxTrivia trivia)
         {
-            switch (trivia.Kind())
-            {
-            case SyntaxKind.SingleLineDocumentationCommentTrivia:
-            case SyntaxKind.PragmaWarningDirectiveTrivia:
-            case SyntaxKind.PragmaChecksumDirectiveTrivia:
-            case SyntaxKind.IfDirectiveTrivia:
-            case SyntaxKind.ElseDirectiveTrivia:
-            case SyntaxKind.EndIfDirectiveTrivia:
-            case SyntaxKind.BadDirectiveTrivia:
-            case SyntaxKind.EndOfLineTrivia:
-                return true;
-            default:
-                return false;
-            }
+            return trivia.IsDirective
+                || trivia.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia)
+                || trivia.IsKind(SyntaxKind.EndOfLineTrivia);
         }
 
         private static int BinarySearch(SyntaxTriviaList leadingTrivia, SyntaxTrivia trivia)
