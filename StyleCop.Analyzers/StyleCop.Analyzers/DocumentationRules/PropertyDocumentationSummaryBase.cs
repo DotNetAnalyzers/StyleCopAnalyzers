@@ -28,8 +28,8 @@
 
         private void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var node = context.Node as PropertyDeclarationSyntax;
-            if (node == null || node.Identifier.IsMissing)
+            var node = (PropertyDeclarationSyntax)context.Node;
+            if (node.Identifier.IsMissing)
             {
                 return;
             }
