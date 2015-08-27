@@ -73,6 +73,44 @@
             Assert.Equal("Copyright (c) TestCompany. All rights reserved.", styleCopSettings.DocumentationRules.CopyrightText);
         }
 
+        [Fact]
+        public async Task VerifyCircularReferenceBehaviorAsync()
+        {
+            var settings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""copyrightText"": ""{copyrightText}""
+    }
+  }
+}
+";
+            var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettings();
+
+            Assert.Equal("[CircularReference]", styleCopSettings.DocumentationRules.CopyrightText);
+        }
+
+        [Fact]
+        public async Task VerifyInvalidReferenceBehaviorAsync()
+        {
+            var settings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""copyrightText"": ""{variable}""
+    }
+  }
+}
+";
+            var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettings();
+
+            Assert.Equal("[InvalidReference]", styleCopSettings.DocumentationRules.CopyrightText);
+        }
+
         private static async Task<SyntaxTreeAnalysisContext> CreateAnalysisContextAsync(string stylecopJSON)
         {
             var projectId = ProjectId.CreateNewId();
