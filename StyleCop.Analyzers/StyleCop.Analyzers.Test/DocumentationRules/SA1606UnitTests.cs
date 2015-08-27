@@ -11,7 +11,7 @@
     /// <summary>
     /// This class contains unit tests for <see cref="SA1606ElementDocumentationMustHaveSummaryText"/>.
     /// </summary>
-    public class SA1606UnitTests : CodeFixVerifier
+    public class SA1606UnitTests : DiagnosticVerifier
     {
         [Theory]
         [InlineData("enum")]

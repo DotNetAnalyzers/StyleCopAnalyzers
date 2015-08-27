@@ -11,7 +11,7 @@
     /// <summary>
     /// This class contains unit tests for <see cref="SA1602EnumerationItemsMustBeDocumented"/>.
     /// </summary>
-    public class SA1602UnitTests : CodeFixVerifier
+    public class SA1602UnitTests : DiagnosticVerifier
     {
         [Fact]
         public async Task TestEnumWithDocumentationAsync()
