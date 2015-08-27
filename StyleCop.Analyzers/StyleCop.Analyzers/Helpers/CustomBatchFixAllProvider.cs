@@ -235,7 +235,7 @@
                     .Where(p => p.Language == project.Language)
                     .ToImmutableArray();
 
-                var diagnostics = new ConcurrentBag<Diagnostic>();
+                var diagnostics = new ConcurrentDictionary<ProjectId, ImmutableArray<Diagnostic>>();
                 var tasks = new Task[projectsToFix.Length];
                 for (int i = 0; i < projectsToFix.Length; i++)
                 {
@@ -245,16 +245,12 @@
                         async () =>
                         {
                             var projectDiagnostics = await fixAllContext.GetAllDiagnosticsAsync(projectToFix).ConfigureAwait(false);
-                            foreach (var diagnostic in projectDiagnostics)
-                            {
-                                fixAllContext.CancellationToken.ThrowIfCancellationRequested();
-                                diagnostics.Add(diagnostic);
-                            }
+                            diagnostics.TryAdd(projectToFix.Id, projectDiagnostics);
                         }, fixAllContext.CancellationToken);
                 }
 
                 await Task.WhenAll(tasks).ConfigureAwait(false);
-                allDiagnostics = allDiagnostics.AddRange(diagnostics);
+                allDiagnostics = allDiagnostics.AddRange(diagnostics.SelectMany(i => i.Value));
                 break;
             }
 
