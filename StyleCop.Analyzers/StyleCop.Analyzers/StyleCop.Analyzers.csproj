@@ -297,6 +297,7 @@
     <Compile Include="ReadabilityRules\SA1113CommaMustBeOnSameLineAsPreviousParameter.cs" />
     <Compile Include="ReadabilityRules\SA1114ParameterListMustFollowDeclaration.cs" />
     <Compile Include="ReadabilityRules\SA1115ParameterMustFollowComma.cs" />
+    <Compile Include="ReadabilityRules\SA1127CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1116CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1116SplitParametersMustStartOnLineAfterDeclaration.cs" />
     <Compile Include="ReadabilityRules\SA1117ParametersMustBeOnSameLineOrSeparateLines.cs" />
@@ -313,6 +314,7 @@
     <Compile Include="ReadabilityRules\SA1125UseShorthandForNullableTypes.cs" />
     <Compile Include="ReadabilityRules\SA1126PrefixCallsCorrectly.cs" />
     <Compile Include="ReadabilityRules\SA1102CodeFixProvider.cs" />
+    <Compile Include="ReadabilityRules\SA1127GenericTypeConstraintsMustBeOnOwnLine.cs" />
     <Compile Include="Settings\SettingsFileCodeFixProvider.cs" />
     <Compile Include="Settings\SettingsHelper.cs" />
     <Compile Include="Settings\SettingsResources.Designer.cs">
