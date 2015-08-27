@@ -11,7 +11,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace"/>.
     /// </summary>
-    public class SA1210UnitTests : CodeFixVerifier
+    public class SA1210UnitTests : DiagnosticVerifier
     {
         [Fact]
         public async Task TestProperOrderedUsingDirectivesInCompilationUnitAsync()

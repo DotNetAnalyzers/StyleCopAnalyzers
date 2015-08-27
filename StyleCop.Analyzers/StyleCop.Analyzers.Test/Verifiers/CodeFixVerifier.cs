@@ -58,10 +58,7 @@
         /// Returns the code fix being tested (C#) - to be implemented in non-abstract class.
         /// </summary>
         /// <returns>The <see cref="CodeFixProvider"/> to be used for C# code.</returns>
-        protected virtual CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return null;
-        }
+        protected abstract CodeFixProvider GetCSharpCodeFixProvider();
 
         /// <summary>
         /// Called to test a C# code fix when applied on the input source as a string.

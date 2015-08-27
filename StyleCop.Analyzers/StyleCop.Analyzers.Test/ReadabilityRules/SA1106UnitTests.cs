@@ -8,7 +8,7 @@
     using TestHelper;
     using Xunit;
 
-    public class SA1106UnitTests : CodeFixVerifier
+    public class SA1106UnitTests : DiagnosticVerifier
     {
         [Fact]
         public async Task TestEmptyStatementAsBlockAsync()

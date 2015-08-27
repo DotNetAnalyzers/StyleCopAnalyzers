@@ -1,10 +1,12 @@
 ﻿namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.MaintainabilityRules;
     using TestHelper;
@@ -65,6 +67,11 @@
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1406DebugFailMustProvideMessageText();
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            throw new NotSupportedException();
         }
     }
 }
