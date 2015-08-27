@@ -111,6 +111,19 @@
             Assert.Equal("[InvalidReference]", styleCopSettings.DocumentationRules.CopyrightText);
         }
 
+        [Fact]
+        public async Task VerifyInvalidJsonBehaviorAsync()
+        {
+            var settings = @"This is not a JSON file.";
+            var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettings();
+
+            // The result is the same as the default settings.
+            Assert.Equal("PlaceholderCompany", styleCopSettings.DocumentationRules.CompanyName);
+            Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.CopyrightText);
+        }
+
         private static async Task<SyntaxTreeAnalysisContext> CreateAnalysisContextAsync(string stylecopJSON)
         {
             var projectId = ProjectId.CreateNewId();
