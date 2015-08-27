@@ -172,7 +172,7 @@
                 }
                 else if (currentNode is AssignmentExpressionSyntax)
                 {
-                    // We have to use parenthesis of the conditional access is in an interpolation inside an assignment
+                    // We have to use parenthesis if the conditional access is in an interpolation inside an assignment.
                     var assignment = currentNode as AssignmentExpressionSyntax;
                     expressionToCheck.Enqueue(assignment.Left);
                     expressionToCheck.Enqueue(assignment.Right);
