@@ -384,4 +384,16 @@
   <data name="SA1126Title" xml:space="preserve">
     <value>Prefix calls correctly</value>
   </data>
+  <data name="SA1127CodeFix" xml:space="preserve">
+    <value>Place each type constraint on a new line</value>
+  </data>
+  <data name="SA1127Description" xml:space="preserve">
+    <value>Each type constraint clause for a generic type parameter should be listed on a line of code by itself.</value>
+  </data>
+  <data name="SA1127MessageFormat" xml:space="preserve">
+    <value>Generic type constraints must be on their own line</value>
+  </data>
+  <data name="SA1127Title" xml:space="preserve">
+    <value>Generic type constraints must be on their own line</value>
+  </data>
 </root>
