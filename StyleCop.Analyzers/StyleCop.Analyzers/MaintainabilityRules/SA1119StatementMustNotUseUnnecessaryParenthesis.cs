@@ -111,6 +111,12 @@
                 }
                 else
                 {
+                    if (node.Parent.IsKind(SyntaxKind.Interpolation))
+                    {
+                        // Parenthesis can't be removed here
+                        return;
+                    }
+
                     if (!(node.Parent is ExpressionSyntax)
                         || node.Parent is CheckedExpressionSyntax
                         || node.Parent is MemberAccessExpressionSyntax)

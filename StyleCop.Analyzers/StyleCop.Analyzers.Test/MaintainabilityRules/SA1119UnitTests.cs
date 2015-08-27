@@ -1053,6 +1053,22 @@ public class Foo
         }
 
         [Fact]
+        public async Task TestParenthesisInInterpolatedStringAsync()
+        {
+            // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1284
+            string testCode = @"class Foo
+{
+    public void Bar()
+    {
+        bool flag = false;
+        string data = $""{ (flag ? ""yep"" : ""nope"")}"";
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestCodeFixDoesNotRemoveSpacesAsync()
         {
             var testCode = @"public class Foo
