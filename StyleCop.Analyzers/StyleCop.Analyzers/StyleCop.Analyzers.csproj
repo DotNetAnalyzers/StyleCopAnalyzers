@@ -216,18 +216,17 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>NamingResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="NamingRules\RenameToUpperCaseCodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1300ElementMustBeginWithUpperCaseLetter.cs" />
     <Compile Include="NamingRules\SA1301ElementMustBeginWithLowerCaseLetter.cs" />
     <Compile Include="NamingRules\SA1302CodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1302InterfaceNamesMustBeginWithI.cs" />
     <Compile Include="NamingRules\SA1303ConstFieldNamesMustBeginWithUpperCaseLetter.cs" />
     <Compile Include="NamingRules\SA1304NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter.cs" />
-    <Compile Include="NamingRules\SA1304SA1311CodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1305FieldNamesMustNotUseHungarianNotation.cs" />
     <Compile Include="NamingRules\SA1306CodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1306FieldNamesMustBeginWithLowerCaseLetter.cs" />
     <Compile Include="NamingRules\SA1307AccessibleFieldsMustBeginWithUpperCaseLetter.cs" />
-    <Compile Include="NamingRules\SA1307CodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1308CodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1308VariableNamesMustNotBePrefixed.cs" />
     <Compile Include="NamingRules\SA1309CodeFixProvider.cs" />
