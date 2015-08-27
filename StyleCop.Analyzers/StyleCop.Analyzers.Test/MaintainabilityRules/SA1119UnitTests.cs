@@ -1053,7 +1053,29 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestParenthesisInInterpolatedStringAsync()
+        public async Task TestParenthesisInInterpolatedStringThatShouldBeRemovedAsync()
+        {
+            // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1284
+            string testCode = @"class Foo
+{
+    public void Bar()
+    {
+        bool flag = false;
+        string data = $""{(flag)}"";
+    }
+}";
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 26),
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 26),
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 31)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestParenthesisInInterpolatedStringThatShouldNotBeRemovedAsync()
         {
             // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1284
             string testCode = @"class Foo
@@ -1062,6 +1084,25 @@ public class Foo
     {
         bool flag = false;
         string data = $""{ (flag ? ""yep"" : ""nope"")}"";
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestParenthesisInInterpolatedStringThatShouldNotBeRemovedWithAssignmentAsync()
+        {
+            // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1284
+            string testCode = @"class Foo
+{
+    public void Bar()
+    {
+        bool flag = false;
+        string foo;
+        string data = $""{ (foo = flag ? ""yep"" : ""nope"")}"";
+        data = $""{ (foo = foo += flag ? ""yep"" : ""nope"")}"";
+        data = $""{ (foo += foo += foo += foo += foo += flag ? ""yep"" : ""nope"")}"";
     }
 }";
 
