@@ -296,7 +296,7 @@
 
                 default:
                     // include the first end of line (as it is part of the non blank line trivia)
-                    while (!triviaList[blankLinesStart].IsKind(SyntaxKind.EndOfLineTrivia))
+                    while (!triviaList[blankLinesStart].HasBuiltinEndLine())
                     {
                         blankLinesStart++;
                     }
@@ -309,6 +309,24 @@
 
             var newLeadingTrivia = SyntaxFactory.TriviaList(triviaList.Take(blankLinesStart).Concat(triviaList.Skip(leadingWhitespaceStart)));
             return token.WithLeadingTrivia(newLeadingTrivia);
+        }
+
+        private static bool HasBuiltinEndLine(this SyntaxTrivia trivia)
+        {
+            switch (trivia.Kind())
+            {
+            case SyntaxKind.SingleLineDocumentationCommentTrivia:
+            case SyntaxKind.PragmaWarningDirectiveTrivia:
+            case SyntaxKind.PragmaChecksumDirectiveTrivia:
+            case SyntaxKind.IfDirectiveTrivia:
+            case SyntaxKind.ElseDirectiveTrivia:
+            case SyntaxKind.EndIfDirectiveTrivia:
+            case SyntaxKind.BadDirectiveTrivia:
+            case SyntaxKind.EndOfLineTrivia:
+                return true;
+            default:
+                return false;
+            }
         }
 
         private static int BinarySearch(SyntaxTriviaList leadingTrivia, SyntaxTrivia trivia)

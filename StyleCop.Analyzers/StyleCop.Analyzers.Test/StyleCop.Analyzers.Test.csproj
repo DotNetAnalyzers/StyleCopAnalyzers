@@ -333,6 +333,7 @@
     <Compile Include="SpacingRules\SA1026UnitTests.cs" />
     <Compile Include="SpacingRules\SA1027UnitTests.cs" />
     <Compile Include="SpacingRules\SA1028UnitTests.cs" />
+    <Compile Include="HelperTests\TriviaHelperTests.cs" />
     <Compile Include="Verifiers\CodeFixVerifier.cs" />
     <Compile Include="Verifiers\DiagnosticVerifier.cs" />
   </ItemGroup>
