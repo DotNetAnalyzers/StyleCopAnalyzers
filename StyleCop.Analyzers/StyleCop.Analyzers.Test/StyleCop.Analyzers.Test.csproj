@@ -228,6 +228,7 @@
     <Compile Include="LayoutRules\SA1518UnitTests.cs" />
     <Compile Include="LayoutRules\SA1519UnitTests.cs" />
     <Compile Include="LayoutRules\SA1520UnitTests.cs" />
+    <Compile Include="LinqHelpers\SyntaxTriviaListEnumerableTests.cs" />
     <Compile Include="MaintainabilityRules\DebugMessagesUnitTestsBase.cs" />
     <Compile Include="MaintainabilityRules\FileMayOnlyContainTestBase.cs" />
     <Compile Include="MaintainabilityRules\SA1119UnitTests.cs" />
