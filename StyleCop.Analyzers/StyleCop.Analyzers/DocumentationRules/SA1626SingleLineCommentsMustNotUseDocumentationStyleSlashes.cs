@@ -71,21 +71,17 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(this.HandleCompilationStart);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleSingleLineDocumentationTrivia, SyntaxKind.SingleLineDocumentationCommentTrivia);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleSingleLineDocumentationTrivia, SyntaxKind.SingleLineDocumentationCommentTrivia);
         }
 
-        private void HandleSingleLineDocumentationTrivia(SyntaxNodeAnalysisContext context)
+        private static void HandleSingleLineDocumentationTrivia(SyntaxNodeAnalysisContext context)
         {
-            var node = context.Node as DocumentationCommentTriviaSyntax;
-            if (node == null)
-            {
-                return;
-            }
+            var node = (DocumentationCommentTriviaSyntax)context.Node;
 
             // Check if the comment is not multi line
             if (node.Content.All(x => x.IsKind(SyntaxKind.XmlText)))

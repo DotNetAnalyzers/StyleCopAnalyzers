@@ -87,51 +87,51 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(this.HandleCompilationStart);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleArgumentList, SyntaxKind.ArgumentList, SyntaxKind.BracketedArgumentList);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleAttributeArgumentList, SyntaxKind.AttributeArgumentList);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleArgumentList, SyntaxKind.ArgumentList, SyntaxKind.BracketedArgumentList);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleAttributeArgumentList, SyntaxKind.AttributeArgumentList);
         }
 
-        private void HandleAttributeArgumentList(SyntaxNodeAnalysisContext context)
+        private static void HandleAttributeArgumentList(SyntaxNodeAnalysisContext context)
         {
             var attributeArgumentList = (AttributeArgumentListSyntax)context.Node;
 
             for (int i = 1; i < attributeArgumentList.Arguments.Count; i++)
             {
                 var argument = attributeArgumentList.Arguments[i];
-                if (this.CheckIfArgumentIsMultiline(argument))
+                if (CheckIfArgumentIsMultiline(argument))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation()));
                 }
             }
         }
 
-        private void HandleArgumentList(SyntaxNodeAnalysisContext context)
+        private static void HandleArgumentList(SyntaxNodeAnalysisContext context)
         {
             var argumentListSyntax = (BaseArgumentListSyntax)context.Node;
 
             for (int i = 1; i < argumentListSyntax.Arguments.Count; i++)
             {
                 var argument = argumentListSyntax.Arguments[i];
-                if (this.CheckIfArgumentIsMultiline(argument)
-                    && !this.IsArgumentOnExceptionList(argument.Expression))
+                if (CheckIfArgumentIsMultiline(argument)
+                    && !IsArgumentOnExceptionList(argument.Expression))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation()));
                 }
             }
         }
 
-        private bool CheckIfArgumentIsMultiline(CSharpSyntaxNode argument)
+        private static bool CheckIfArgumentIsMultiline(CSharpSyntaxNode argument)
         {
             var lineSpan = argument.GetLineSpan();
             return lineSpan.EndLinePosition.Line > lineSpan.StartLinePosition.Line;
         }
 
-        private bool IsArgumentOnExceptionList(ExpressionSyntax argumentExpresson)
+        private static bool IsArgumentOnExceptionList(ExpressionSyntax argumentExpresson)
         {
             return argumentExpresson != null
                 && ArgumentExceptionSyntaxKinds.Any(argumentExpresson.IsKind);

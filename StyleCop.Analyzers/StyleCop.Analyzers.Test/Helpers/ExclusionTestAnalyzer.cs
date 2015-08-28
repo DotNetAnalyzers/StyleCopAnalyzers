@@ -37,15 +37,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(this.HandleCompilationStart);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.AnalyzeTree);
+            context.RegisterSyntaxTreeActionHonorExclusions(AnalyzeTree);
         }
 
-        private void AnalyzeTree(SyntaxTreeAnalysisContext context)
+        private static void AnalyzeTree(SyntaxTreeAnalysisContext context)
         {
             // Report a diagnostic if we got called
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Tree.GetLocation(TextSpan.FromBounds(0, 0))));

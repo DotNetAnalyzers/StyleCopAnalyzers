@@ -59,15 +59,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(this.HandleCompilationStart);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDocumentation, SyntaxKind.SingleLineDocumentationCommentTrivia, SyntaxKind.MultiLineDocumentationCommentTrivia);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleDocumentation, SyntaxKind.SingleLineDocumentationCommentTrivia, SyntaxKind.MultiLineDocumentationCommentTrivia);
         }
 
-        private void HandleDocumentation(SyntaxNodeAnalysisContext context)
+        private static void HandleDocumentation(SyntaxNodeAnalysisContext context)
         {
             var documentationTrivia = context.Node as DocumentationCommentTriviaSyntax;
 

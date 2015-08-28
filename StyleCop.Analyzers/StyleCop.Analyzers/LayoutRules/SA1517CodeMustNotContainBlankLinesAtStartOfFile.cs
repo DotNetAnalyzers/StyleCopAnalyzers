@@ -45,15 +45,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(this.HandleCompilationStart);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTreeAnalysis);
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTreeAnalysis);
         }
 
-        private void HandleSyntaxTreeAnalysis(SyntaxTreeAnalysisContext context)
+        private static void HandleSyntaxTreeAnalysis(SyntaxTreeAnalysisContext context)
         {
             var firstToken = context.Tree.GetRoot().GetFirstToken(includeZeroWidth: true);
 

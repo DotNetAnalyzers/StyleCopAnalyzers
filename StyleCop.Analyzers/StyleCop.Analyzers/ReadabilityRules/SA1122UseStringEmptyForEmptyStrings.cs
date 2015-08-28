@@ -53,39 +53,36 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(this.HandleCompilationStart);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleStringLiteral, SyntaxKind.StringLiteralExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleStringLiteral, SyntaxKind.StringLiteralExpression);
         }
 
-        private void HandleStringLiteral(SyntaxNodeAnalysisContext context)
+        private static void HandleStringLiteral(SyntaxNodeAnalysisContext context)
         {
-            LiteralExpressionSyntax literalExpression = context.Node as LiteralExpressionSyntax;
+            LiteralExpressionSyntax literalExpression = (LiteralExpressionSyntax)context.Node;
 
-            if (literalExpression != null)
+            var token = literalExpression.Token;
+            if (token.IsKind(SyntaxKind.StringLiteralToken))
             {
-                var token = literalExpression.Token;
-                if (token.IsKind(SyntaxKind.StringLiteralToken))
+                if (HasToBeConstant(literalExpression))
                 {
-                    if (this.HasToBeConstant(literalExpression))
-                    {
-                        return;
-                    }
+                    return;
+                }
 
-                    if (token.ValueText == string.Empty)
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, literalExpression.GetLocation()));
-                    }
+                if (token.ValueText == string.Empty)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, literalExpression.GetLocation()));
                 }
             }
         }
 
-        private bool HasToBeConstant(LiteralExpressionSyntax literalExpression)
+        private static bool HasToBeConstant(LiteralExpressionSyntax literalExpression)
         {
-            ExpressionSyntax outermostExpression = this.FindOutermostExpression(literalExpression);
+            ExpressionSyntax outermostExpression = FindOutermostExpression(literalExpression);
 
             if (outermostExpression.Parent.IsKind(SyntaxKind.AttributeArgument)
                 || outermostExpression.Parent.IsKind(SyntaxKind.CaseSwitchLabel))
@@ -125,7 +122,7 @@
             return false;
         }
 
-        private ExpressionSyntax FindOutermostExpression(ExpressionSyntax node)
+        private static ExpressionSyntax FindOutermostExpression(ExpressionSyntax node)
         {
             while (true)
             {

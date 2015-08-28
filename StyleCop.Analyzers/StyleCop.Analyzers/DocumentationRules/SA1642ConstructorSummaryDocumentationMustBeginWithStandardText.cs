@@ -160,52 +160,43 @@
         }
 
         /// <inheritdoc/>
-        protected override DiagnosticDescriptor DiagnosticDescriptor
-        {
-            get
-            {
-                return Descriptor;
-            }
-        }
-
-        /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(this.HandleCompilationStart);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
         }
 
-        private void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var constructorDeclarationSyntax = context.Node as ConstructorDeclarationSyntax;
+            var constructorDeclarationSyntax = (ConstructorDeclarationSyntax)context.Node;
 
             bool isStruct = constructorDeclarationSyntax.Parent?.IsKind(SyntaxKind.StructDeclaration) ?? false;
 
             if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword))
             {
                 string secondPartText = isStruct ? " struct." : " class.";
-                this.HandleDeclaration(context, StaticConstructorStandardText, secondPartText, true);
+                HandleDeclaration(context, StaticConstructorStandardText, secondPartText, Descriptor);
             }
             else if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.PrivateKeyword))
             {
                 string typeKindText = isStruct ? " struct" : " class";
 
-                if (this.HandleDeclaration(context, PrivateConstructorStandardText[0], typeKindText + PrivateConstructorStandardText[1], false) == MatchResult.FoundMatch)
+                if (HandleDeclaration(context, PrivateConstructorStandardText[0], typeKindText + PrivateConstructorStandardText[1], null) == MatchResult.FoundMatch)
                 {
                     return;
                 }
 
                 // also allow the non-private wording for private constructors
-                this.HandleDeclaration(context, NonPrivateConstructorStandardText, typeKindText, true);
+                HandleDeclaration(context, NonPrivateConstructorStandardText, typeKindText, Descriptor);
             }
             else
             {
                 string typeKindText = isStruct ? " struct" : " class";
-                this.HandleDeclaration(context, NonPrivateConstructorStandardText, typeKindText, true);
+                HandleDeclaration(context, NonPrivateConstructorStandardText, typeKindText, Descriptor);
             }
         }
     }

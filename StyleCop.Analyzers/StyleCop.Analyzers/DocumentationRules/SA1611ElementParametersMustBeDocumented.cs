@@ -53,18 +53,18 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(this.HandleCompilationStart);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleSyntaxNode, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleSyntaxNode, SyntaxKind.ConstructorDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleSyntaxNode, SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleSyntaxNode, SyntaxKind.IndexerDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleSyntaxNode, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleSyntaxNode, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleSyntaxNode, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleSyntaxNode, SyntaxKind.IndexerDeclaration);
         }
 
-        private void HandleSyntaxNode(SyntaxNodeAnalysisContext context)
+        private static void HandleSyntaxNode(SyntaxNodeAnalysisContext context)
         {
             var node = context.Node;
 
@@ -72,7 +72,7 @@
 
             if (documentation != null)
             {
-                IEnumerable<ParameterSyntax> parameterList = this.GetParameters(node);
+                IEnumerable<ParameterSyntax> parameterList = GetParameters(node);
 
                 if (parameterList == null)
                 {
@@ -100,7 +100,7 @@
             }
         }
 
-        private IEnumerable<ParameterSyntax> GetParameters(SyntaxNode node)
+        private static IEnumerable<ParameterSyntax> GetParameters(SyntaxNode node)
         {
             return (node as BaseMethodDeclarationSyntax)?.ParameterList?.Parameters
                 ?? (node as IndexerDeclarationSyntax)?.ParameterList?.Parameters

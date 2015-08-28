@@ -43,22 +43,22 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(this.HandleCompilationStart);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleEmptyStatementSyntax, SyntaxKind.EmptyStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeSyntax, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeSyntax, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeSyntax, SyntaxKind.InterfaceDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeSyntax, SyntaxKind.EnumDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleNamespaceSyntax, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleEmptyStatementSyntax, SyntaxKind.EmptyStatement);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeSyntax, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeSyntax, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeSyntax, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeSyntax, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleNamespaceSyntax, SyntaxKind.NamespaceDeclaration);
         }
 
-        private void HandleTypeSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleTypeSyntax(SyntaxNodeAnalysisContext context)
         {
-            var declaration = context.Node as BaseTypeDeclarationSyntax;
+            var declaration = (BaseTypeDeclarationSyntax)context.Node;
 
             if (declaration.SemicolonToken.IsKind(SyntaxKind.SemicolonToken))
             {
@@ -66,9 +66,9 @@
             }
         }
 
-        private void HandleNamespaceSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleNamespaceSyntax(SyntaxNodeAnalysisContext context)
         {
-            var declaration = context.Node as NamespaceDeclarationSyntax;
+            var declaration = (NamespaceDeclarationSyntax)context.Node;
 
             if (declaration.SemicolonToken.IsKind(SyntaxKind.SemicolonToken))
             {
@@ -76,13 +76,9 @@
             }
         }
 
-        private void HandleEmptyStatementSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleEmptyStatementSyntax(SyntaxNodeAnalysisContext context)
         {
-            EmptyStatementSyntax syntax = context.Node as EmptyStatementSyntax;
-            if (syntax == null)
-            {
-                return;
-            }
+            EmptyStatementSyntax syntax = (EmptyStatementSyntax)context.Node;
 
             LabeledStatementSyntax labeledStatementSyntax = syntax.Parent as LabeledStatementSyntax;
             if (labeledStatementSyntax != null)

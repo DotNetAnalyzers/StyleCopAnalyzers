@@ -52,17 +52,17 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(this.HandleCompilationStart);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleXmlElement, SyntaxKind.XmlElement);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleXmlEmptyElement, SyntaxKind.XmlEmptyElement);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleXmlCDataSection, SyntaxKind.XmlCDataSection);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleXmlElement, SyntaxKind.XmlElement);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleXmlEmptyElement, SyntaxKind.XmlEmptyElement);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleXmlCDataSection, SyntaxKind.XmlCDataSection);
         }
 
-        private void HandleXmlElement(SyntaxNodeAnalysisContext context)
+        private static void HandleXmlElement(SyntaxNodeAnalysisContext context)
         {
             var xmlElementSyntax = context.Node as XmlElementSyntax;
 
@@ -111,7 +111,7 @@
             }
         }
 
-        private void HandleXmlCDataSection(SyntaxNodeAnalysisContext context)
+        private static void HandleXmlCDataSection(SyntaxNodeAnalysisContext context)
         {
             var xmlCDataSection = context.Node as XmlCDataSectionSyntax;
 
@@ -138,7 +138,7 @@
             }
         }
 
-        private void HandleXmlEmptyElement(SyntaxNodeAnalysisContext context)
+        private static void HandleXmlEmptyElement(SyntaxNodeAnalysisContext context)
         {
             var xmlEmptyElement = context.Node as XmlEmptyElementSyntax;
 

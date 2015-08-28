@@ -46,21 +46,17 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(this.HandleCompilationStart);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleGenericNameSyntax, SyntaxKind.GenericName);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleGenericNameSyntax, SyntaxKind.GenericName);
         }
 
-        private void HandleGenericNameSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleGenericNameSyntax(SyntaxNodeAnalysisContext context)
         {
-            GenericNameSyntax genericNameSyntax = context.Node as GenericNameSyntax;
-            if (genericNameSyntax == null)
-            {
-                return;
-            }
+            GenericNameSyntax genericNameSyntax = (GenericNameSyntax)context.Node;
 
             if (genericNameSyntax.Identifier.IsMissing || genericNameSyntax.Identifier.Text != "Nullable")
             {

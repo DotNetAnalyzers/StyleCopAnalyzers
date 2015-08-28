@@ -44,15 +44,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(this.HandleCompilationStart);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleFieldDeclarationm, SyntaxKind.FieldDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleFieldDeclarationm, SyntaxKind.FieldDeclaration);
         }
 
-        private void HandleFieldDeclarationm(SyntaxNodeAnalysisContext context)
+        private static void HandleFieldDeclarationm(SyntaxNodeAnalysisContext context)
         {
             var fieldDeclaration = context.Node as FieldDeclarationSyntax;
             if (fieldDeclaration == null)

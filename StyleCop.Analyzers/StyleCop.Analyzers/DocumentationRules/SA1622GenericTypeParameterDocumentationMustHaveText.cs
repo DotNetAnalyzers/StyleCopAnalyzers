@@ -51,32 +51,32 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(this.HandleCompilationStart);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleXmlElement, SyntaxKind.XmlElement);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleXmlEmptyElement, SyntaxKind.XmlEmptyElement);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleXmlElement, SyntaxKind.XmlElement);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleXmlEmptyElement, SyntaxKind.XmlEmptyElement);
         }
 
-        private void HandleXmlElement(SyntaxNodeAnalysisContext context)
+        private static void HandleXmlElement(SyntaxNodeAnalysisContext context)
         {
-            XmlElementSyntax emptyElement = context.Node as XmlElementSyntax;
+            XmlElementSyntax element = (XmlElementSyntax)context.Node;
 
-            var name = emptyElement?.StartTag?.Name;
+            var name = element.StartTag?.Name;
 
-            if (string.Equals(name.ToString(), XmlCommentHelper.TypeParamXmlTag) && XmlCommentHelper.IsConsideredEmpty(emptyElement))
+            if (string.Equals(name.ToString(), XmlCommentHelper.TypeParamXmlTag) && XmlCommentHelper.IsConsideredEmpty(element))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, emptyElement.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, element.GetLocation()));
             }
         }
 
-        private void HandleXmlEmptyElement(SyntaxNodeAnalysisContext context)
+        private static void HandleXmlEmptyElement(SyntaxNodeAnalysisContext context)
         {
-            XmlEmptyElementSyntax emptyElement = context.Node as XmlEmptyElementSyntax;
+            XmlEmptyElementSyntax emptyElement = (XmlEmptyElementSyntax)context.Node;
 
-            if (string.Equals(emptyElement?.Name.ToString(), XmlCommentHelper.TypeParamXmlTag))
+            if (string.Equals(emptyElement.Name.ToString(), XmlCommentHelper.TypeParamXmlTag))
             {
                 // <typeparam .../> is empty.
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, emptyElement.GetLocation()));
