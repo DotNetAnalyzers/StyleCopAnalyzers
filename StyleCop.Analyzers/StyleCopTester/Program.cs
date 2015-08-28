@@ -102,9 +102,26 @@
 
                 stopwatch.Restart();
 
+                object lockObject = new object();
+
                 Parallel.ForEach(fixes, fix =>
                 {
-                    fix.GetOperationsAsync(CancellationToken.None).GetAwaiter().GetResult();
+                    try
+                    {
+                        fix.GetOperationsAsync(CancellationToken.None).GetAwaiter().GetResult();
+                    }
+                    catch (Exception ex)
+                    {
+                        // Report thrown exceptions
+                        lock (lockObject)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.WriteLine($"The fix '{fix.Title} 'threw an exception:");
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine(ex);
+                            Console.ResetColor();
+                        }
+                    }
                 });
 
                 Console.WriteLine($"Calculating changes completed in {stopwatch.ElapsedMilliseconds}ms");
