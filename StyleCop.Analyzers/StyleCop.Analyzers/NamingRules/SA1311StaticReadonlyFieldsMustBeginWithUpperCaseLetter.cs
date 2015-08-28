@@ -44,6 +44,11 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.RegisterCompilationStartAction(this.HandleCompilationStart);
+        }
+
+        private void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleFieldDeclarationm, SyntaxKind.FieldDeclaration);
         }
 

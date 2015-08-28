@@ -87,7 +87,7 @@
                         return;
                     }
 
-                    if (location.SourceTree.IsGeneratedDocument(context.CancellationToken))
+                    if (location.SourceTree.IsGeneratedDocument(context.Compilation, context.CancellationToken))
                     {
                         return;
                     }

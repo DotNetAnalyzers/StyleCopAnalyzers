@@ -55,6 +55,11 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.RegisterCompilationStartAction(this.HandleCompilationStart);
+        }
+
+        private void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
             // Note: Interfaces are handled by SA1302
             // Note: Fields are handled by SA1303 through SA1311
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleNamespaceDeclarationSyntax, SyntaxKind.NamespaceDeclaration);

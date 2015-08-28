@@ -65,6 +65,11 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.RegisterCompilationStartAction(this.HandleCompilationStart);
+        }
+
+        private void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMathExpression, SyntaxKind.AddExpression);
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMathExpression, SyntaxKind.SubtractExpression);
             context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMathExpression, SyntaxKind.MultiplyExpression);

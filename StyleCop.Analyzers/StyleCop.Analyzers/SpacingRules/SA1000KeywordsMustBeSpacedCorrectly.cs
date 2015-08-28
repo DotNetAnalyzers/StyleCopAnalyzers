@@ -55,6 +55,11 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.RegisterCompilationStartAction(this.HandleCompilationStart);
+        }
+
+        private void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
             // handle everything except nameof
             context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
 
