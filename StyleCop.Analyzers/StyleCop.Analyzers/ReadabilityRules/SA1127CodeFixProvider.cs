@@ -9,6 +9,9 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp;
+    using System.Collections.Generic;
+    using SpacingRules;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1127GenericTypeConstraintsMustBeOnOwnLine"/>.
@@ -54,7 +57,41 @@
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var whereToken = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
+            var endToken = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.End);
+            var precedingToken = whereToken.GetPreviousToken();
+
+            var parentIndentation = GetParentIndentation(whereToken);
+            var indentationOptions = IndentationOptions.FromDocument(document);
+            var indentationTrivia = SyntaxFactory.Whitespace(parentIndentation + IndentationHelper.GenerateIndentationString(indentationOptions, 1));
+
+            var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>()
+            {
+                [precedingToken] = precedingToken.WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed),
+                [whereToken] = whereToken.WithLeadingTrivia(indentationTrivia),
+                [endToken] = endToken.WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed),
+            };
+
+            var newSyntaxRoot = syntaxRoot.ReplaceTokens(replaceMap.Keys, (t1, t2) => replaceMap[t1]).WithoutFormatting();
+            return document.WithSyntaxRoot(newSyntaxRoot);
+        }
+
+        private static string GetParentIndentation(SyntaxToken token)
+        {
+            var parentLine = token.Parent.Parent;
+            var parentIndentation = string.Empty;
+            var parentTrivia = parentLine.GetLeadingTrivia();
+            foreach (var trivia in parentTrivia)
+            {
+                if (trivia.IsKind(SyntaxKind.WhitespaceTrivia))
+                {
+                    parentIndentation = parentLine.ParentTrivia.ToString();
+                }
+            }
+
+            return parentIndentation;
         }
     }
+
 }

@@ -21,14 +21,14 @@
 
         public static IEnumerable<object[]> GetTypeDeclarationTests()
         {
-            yield return new object[] { $"class Foo<T> where T : class {{}}", $"class Foo<T>\r\n    where T : class {{}}", 14 };
-            yield return new object[] { $"interface Foo<T> where T : class {{}}", $"interface Foo<T>\r\n    where T : class {{}}", 18 };
-            yield return new object[] { $"struct Foo<T> where T : class {{}}", $"struct Foo<T>\r\n    where T : class {{}}", 15 };
+            yield return new object[] { $"class Foo<T> where T : class {{}}", $"class Foo<T>\r\n    where T : class\r\n{{}}", 14 };
+            yield return new object[] { $"interface Foo<T> where T : class {{}}", $"interface Foo<T>\r\n    where T : class\r\n{{}}", 18 };
+            yield return new object[] { $"struct Foo<T> where T : class {{}}", $"struct Foo<T>\r\n    where T : class\r\n{{}}", 15 };
         }
 
         public static IEnumerable<object[]> GetMethodDeclarationTests()
         {
-            yield return new object[] { $"private void Method<T>() where T : class {{ }}", $"private void Method<T>()\r\n    where T : class {{ }}", 30 };
+            yield return new object[] { $"private void Method<T>() where T : class {{ }}", $"private void Method<T>()\r\n    where T : class\r\n{{ }}", 30 };
             yield return new object[] { $"private string Method<T>() where T : class => typeof(T).Name;", $"private string Method<T>()\r\n    where T : class\r\n    => typeof(T).Name;", 32 };
         }
 
@@ -75,7 +75,7 @@ class Foo
         }
 
         [Fact]
-        public async Task SuperSimpleCodeFixAsync()
+        public async Task SimpleCodeFixAsync()
         {
             var testCode = "class Foo<T> where T : class {{}}";
             var fixedCode = "class Foo<T>\r\n    where T : class\r\n{{}}";
@@ -122,7 +122,7 @@ class Foo<T, R>
         }
 
         [Fact]
-        public async Task TestViolationWithClassAndTwoTypeConstraintsWithFirstOnSingleLineAsync()
+        public async Task TestViolationWithClassAndTwoTypeConstraintsAndFirstOnSingleLineAsync()
         {
             var testCode = $@"
 class Foo<T, R> where T : class
