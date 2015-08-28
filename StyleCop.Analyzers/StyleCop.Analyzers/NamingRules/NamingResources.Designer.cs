@@ -69,5 +69,32 @@ namespace StyleCop.Analyzers.NamingRules {
                 return ResourceManager.GetString("RenameToCodeFix", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The name of a variable in C# does not begin with a lower-case letter..
+        /// </summary>
+        internal static string SA1312Description {
+            get {
+                return ResourceManager.GetString("SA1312Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Variable &apos;{0}&apos; must begin with lower-case letter.
+        /// </summary>
+        internal static string SA1312MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1312MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Variable names must begin with lower-case letter.
+        /// </summary>
+        internal static string SA1312Title {
+            get {
+                return ResourceManager.GetString("SA1312Title", resourceCulture);
+            }
+        }
     }
 }
