@@ -129,4 +129,13 @@
   <data name="SA1312Title" xml:space="preserve">
     <value>Variable names must begin with lower-case letter</value>
   </data>
+  <data name="SA1313Description" xml:space="preserve">
+    <value>The name of a parameter in C# does not begin with a lower-case letter.</value>
+  </data>
+  <data name="SA1313MessageFormat" xml:space="preserve">
+    <value>Parameter '{0}' must begin with lower-case letter</value>
+  </data>
+  <data name="SA1313Title" xml:space="preserve">
+    <value>Parameter names must begin with lower-case letter</value>
+  </data>
 </root>

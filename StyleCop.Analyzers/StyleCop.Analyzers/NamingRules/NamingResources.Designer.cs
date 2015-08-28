@@ -96,5 +96,32 @@ namespace StyleCop.Analyzers.NamingRules {
                 return ResourceManager.GetString("SA1312Title", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The name of a parameter in C# does not begin with a lower-case letter..
+        /// </summary>
+        internal static string SA1313Description {
+            get {
+                return ResourceManager.GetString("SA1313Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Parameter &apos;{0}&apos; must begin with lower-case letter.
+        /// </summary>
+        internal static string SA1313MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1313MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Parameter names must begin with lower-case letter.
+        /// </summary>
+        internal static string SA1313Title {
+            get {
+                return ResourceManager.GetString("SA1313Title", resourceCulture);
+            }
+        }
     }
 }

@@ -22,7 +22,8 @@
         private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(
                 SA1306FieldNamesMustBeginWithLowerCaseLetter.DiagnosticId,
-                SA1312VariableNamesMustBeginWithLowerCaseLetter.DiagnosticId);
+                SA1312VariableNamesMustBeginWithLowerCaseLetter.DiagnosticId,
+                SA1313ParameterNamesMustBeginWithLowerCaseLetter.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
