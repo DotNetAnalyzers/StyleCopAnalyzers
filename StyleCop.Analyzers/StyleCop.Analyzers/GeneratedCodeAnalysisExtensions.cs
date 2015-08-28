@@ -179,7 +179,7 @@ namespace StyleCop.Analyzers
         {
             return Regex.IsMatch(
                 Path.GetFileName(filePath),
-                @"\.designer\.cs$",
+                @"(\.designer\.cs$)|(\.generated\.cs$)|(\.g\.cs$)|(\.g\.i\.cs$)|(\.AssemblyAttributes\.cs)|(^AssemblyInfo\.cs$)|(TemporaryGeneratedFile_.*\.cs$)",
                 RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
         }
 
