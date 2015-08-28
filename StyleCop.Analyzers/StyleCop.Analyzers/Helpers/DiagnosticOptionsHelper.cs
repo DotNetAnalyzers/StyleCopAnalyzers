@@ -37,12 +37,30 @@ namespace StyleCop.Analyzers.Helpers
         /// <summary>
         /// Determines if the diagnostic identified by the given identifier is currently suppressed.
         /// </summary>
+        /// <param name="context">The context that will be used to determine if the diagnostic is currently suppressed.</param>
+        /// <param name="diagnosticId">The diagnostic identifier to check.</param>
+        /// <param name="enabledByDefault">true to enabled by default.</param>
+        /// <returns>
+        /// True if the diagnostic is currently suppressed.
+        /// </returns>
+        internal static bool IsAnalyzerSuppressed(this SymbolAnalysisContext context, string diagnosticId, bool enabledByDefault)
+        {
+            return context.Compilation.IsAnalyzerSuppressed(diagnosticId, enabledByDefault);
+        }
+
+        /// <summary>
+        /// Determines if the diagnostic identified by the given identifier is currently suppressed.
+        /// </summary>
         /// <param name="compilation">The compilation that will be used to determine if the diagnostic is currently suppressed.</param>
         /// <param name="diagnosticId">The diagnostic identifier to check.</param>
-        /// <returns>True if the diagnostic is currently suppressed.</returns>
-        internal static bool IsAnalyzerSuppressed(this Compilation compilation, string diagnosticId)
+        /// <param name="enabledByDefault">true to enabled by default.</param>
+        /// <returns>
+        /// True if the diagnostic is currently suppressed.
+        /// </returns>
+        internal static bool IsAnalyzerSuppressed(this Compilation compilation, string diagnosticId, bool enabledByDefault = true)
         {
-            return compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(diagnosticId, ReportDiagnostic.Default) == ReportDiagnostic.Suppress;
+            var reportDiagnostic = compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(diagnosticId, ReportDiagnostic.Default);
+            return reportDiagnostic == ReportDiagnostic.Default ? !enabledByDefault : reportDiagnostic == ReportDiagnostic.Suppress;
         }
 
         /// <summary>
