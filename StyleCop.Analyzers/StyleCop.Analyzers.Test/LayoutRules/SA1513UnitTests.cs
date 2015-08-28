@@ -643,6 +643,37 @@ public class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies the analyzer will properly handle an object initializer without assignment.
+        /// This is a regression test for <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1301">DotNetAnalyzers/StyleCopAnalyzers#1301</see>.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestObjectInitializerWithoutAssignmentAsync()
+        {
+            var testCode = @"using System.Collections.Generic;
+public class TestClass
+{
+    public int X { get; set; }
+
+    public void TestMethod()
+    {
+        new List<int>
+        {
+            1
+        };
+
+        new TestClass
+        {
+            X = 1
+        };
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
