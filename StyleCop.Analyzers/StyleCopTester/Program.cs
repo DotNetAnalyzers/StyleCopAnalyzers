@@ -82,6 +82,11 @@
                     }
                 }
 
+                if (args.Contains("/nocf"))
+                {
+                    return;
+                }
+
                 Console.WriteLine("Calculating fixes");
 
                 List<CodeAction> fixes = new List<CodeAction>();
@@ -284,6 +289,7 @@
             Console.WriteLine("Options:");
             Console.WriteLine("/all     Run all StyleCopAnalyzers analyzers, including ones that are disabled by default");
             Console.WriteLine("/nostats Disable the display of statistics");
+            Console.WriteLine("/nostats Disable the calculation of code fixes");
             Console.WriteLine("/id:<id> Enable analyzer with diagnostic ID < id > (when this is specified, only this analyzer is enabled)");
         }
     }
