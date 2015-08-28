@@ -404,7 +404,7 @@ public class Foo
         public async Task TestInvalidAsync()
         {
             var testCode = @"using System;
-
+using System.Collections.Generic;
 public class Foo
 {
     private int x;
@@ -479,6 +479,21 @@ public class Foo
             break;
         }
     }
+
+    public void Example()
+    {
+        new List<Action>
+        {
+            () =>
+            {
+                if (true)
+                {
+                    return;
+                }
+                return;
+            }
+        };
+    }
 }
 ";
             var expected = new[]
@@ -502,7 +517,10 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(65, 14),
 
                 // Invalid #7
-                this.CSharpDiagnostic().WithLocation(73, 14)
+                this.CSharpDiagnostic().WithLocation(73, 14),
+
+                // Invalid #8
+                this.CSharpDiagnostic().WithLocation(87, 18)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -572,6 +590,21 @@ public class Foo
             this.x = 0;
         }
     }
+
+    public void Example()
+    {
+        new List<Action>
+        {
+            () =>
+            {
+                if (true)
+                {
+                    return;
+                }
+                return;
+            }
+        };
+    }
 }
 ";
 
@@ -636,6 +669,22 @@ public class Foo
         {
             this.x = 0;
         }
+    }
+
+    public void Example()
+    {
+        new List<Action>
+        {
+            () =>
+            {
+                if (true)
+                {
+                    return;
+                }
+
+                return;
+            }
+        };
     }
 }
 ";
