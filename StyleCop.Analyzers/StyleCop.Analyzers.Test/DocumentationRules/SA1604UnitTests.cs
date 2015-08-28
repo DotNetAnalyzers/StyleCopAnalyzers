@@ -78,6 +78,22 @@ TypeName
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Theory]
+        [InlineData("partial class")]
+        [InlineData("partial struct")]
+        [InlineData("partial interface")]
+        public async Task TestPartialTypeWithoutDocumentationAsync(string typeName)
+        {
+            var testCode = @"
+///
+{0}
+TypeName
+{{
+}}";
+
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestDelegateNoDocumentationAsync()
         {
@@ -184,6 +200,22 @@ public class ClassName
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 17);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestPartialMethodWithoutDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// 
+/// </summary>
+public partial class ClassName
+{
+    ///
+    partial void Test();
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]

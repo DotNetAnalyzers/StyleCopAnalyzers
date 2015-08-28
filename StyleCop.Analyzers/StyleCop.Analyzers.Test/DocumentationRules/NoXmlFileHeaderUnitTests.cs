@@ -32,6 +32,23 @@
 ";
 
         /// <summary>
+        /// Verifies that the analyzer will report <see cref="FileHeaderAnalyzers.SA1633DescriptorMissing"/> for
+        /// projects not using XML headers when the file is completely missing a header.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public virtual async Task TestNoFileHeaderAsync()
+        {
+            var testCode = @"namespace Foo
+{
+}
+";
+
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that a file header with an auto-generated comment will not produce a diagnostic message.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
