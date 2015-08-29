@@ -116,7 +116,7 @@
                     var newTextTokens = xmlNode.TextTokens;
                     foreach (var textToken in newTextTokens)
                     {
-                        if (textToken.Span.IntersectsWith(diagnosticSpan))
+                        if (textToken.Span.Contains(diagnosticSpan))
                         {
                             diagnosticSpanWithinTrivia = TextSpan.FromBounds(diagnosticSpan.Start - textToken.Span.Start, diagnosticSpan.End - textToken.Span.Start);
                             oldTriviaContent = textToken.ValueText;

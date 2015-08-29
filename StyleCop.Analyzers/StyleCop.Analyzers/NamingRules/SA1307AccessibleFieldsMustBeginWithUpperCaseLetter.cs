@@ -65,9 +65,9 @@
             FieldDeclarationSyntax declaration = (FieldDeclarationSyntax)context.Node;
             if (declaration.Declaration != null)
             {
-                if (declaration.Modifiers.Any(SyntaxKind.ConstKeyword) || declaration.Modifiers.Any(SyntaxKind.ReadOnlyKeyword))
+                if (declaration.Modifiers.Any(SyntaxKind.ConstKeyword))
                 {
-                    // These are reported as SA1303 or SA1304, respectively
+                    // These are reported as SA1303.
                     return;
                 }
 

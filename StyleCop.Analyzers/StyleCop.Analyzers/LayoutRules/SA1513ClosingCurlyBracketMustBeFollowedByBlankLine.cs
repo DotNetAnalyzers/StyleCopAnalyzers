@@ -231,7 +231,8 @@
                          IsPartOf<ArrowExpressionClauseSyntax>(token) ||
                          IsPartOf<EqualsValueClauseSyntax>(token) ||
                          IsPartOf<AssignmentExpressionSyntax>(token) ||
-                         IsPartOf<ReturnStatementSyntax>(token)))
+                         IsPartOf<ReturnStatementSyntax>(token) ||
+                         IsPartOf<ObjectCreationExpressionSyntax>(token)))
                     {
                         // the close brace is part of a variable initialization statement or a return statement
                         return;
