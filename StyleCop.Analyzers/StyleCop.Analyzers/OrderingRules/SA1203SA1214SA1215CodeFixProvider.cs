@@ -90,7 +90,7 @@
             var firstNonConstTracked = trackedRoot.GetCurrentNode(firstNonConst);
             if (!fieldToMove.HasLeadingTrivia)
             {
-                fieldToMove = fieldToMove.WithLeadingTrivia(firstNonConstTracked.GetLeadingTrivia());
+                fieldToMove = fieldToMove.WithLeadingTrivia(firstNonConstTracked.GetLeadingTrivia().Where(x => x.IsKind(SyntaxKind.WhitespaceTrivia)).LastOrDefault());
             }
 
             root = trackedRoot.InsertNodesBefore(firstNonConstTracked, new[] { fieldToMove });

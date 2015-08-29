@@ -343,6 +343,42 @@ public class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Test comments not being moved.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestOnlyLeadingWhitespaceIsMovedAsync()
+        {
+            var testCode = @"class Foo
+{
+    /// <summary>
+    /// Bar
+    /// </summary>
+    string bar;
+const string foo = ""a"";
+}
+";
+
+            var diagnosticResults = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(7, 14).WithArguments("private"),
+            };
+            await this.VerifyCSharpDiagnosticAsync(testCode, diagnosticResults, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedTestCode = @"class Foo
+{
+    const string foo = ""a"";
+    /// <summary>
+    /// Bar
+    /// </summary>
+    string bar;
+}
+";
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1203ConstantsMustAppearBeforeFields();
