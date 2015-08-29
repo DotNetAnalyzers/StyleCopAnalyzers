@@ -136,7 +136,7 @@
         /// <c>&lt;see&gt;</c> element targeting the containing type, then by <c>class</c> or <c>struct</c> as
         /// appropriate for the containing type, and finally followed by the second element of this array.
         /// </value>
-        public static ImmutableArray<string> PrivateConstructorStandardText { get; } = ImmutableArray.Create("Prevents a default instance of the ", " from being created.");
+        public static ImmutableArray<string> PrivateConstructorStandardText { get; } = ImmutableArray.Create("Prevents a default instance of the ", " from being created");
 
         /// <summary>
         /// Gets the standard text which is expected to appear at the beginning of the <c>&lt;summary&gt;</c>
