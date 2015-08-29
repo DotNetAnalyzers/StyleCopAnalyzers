@@ -82,19 +82,19 @@
             return AccessLevelNames[accessLevel];
         }
 
-        internal static Accessibility GetDeclaredAccessibility(this BaseTypeDeclarationSyntax syntax, SemanticModel semanticModel, CancellationToken cancellationToken)
+        /// <summary>
+        /// Gets the <see cref="Accessibility"/> corresponding to a specified <see cref="AccessLevel"/> value.
+        /// </summary>
+        /// <param name="accessLevel">The <see cref="AccessLevel"/> to convert.</param>
+        /// <returns>
+        /// The <see cref="Accessibility"/> associated with the specified <see cref="AccessLevel"/> value.
+        /// </returns>
+        /// <exception cref="ArgumentException">
+        /// If <paramref name="accessLevel"/> is <see cref="AccessLevel.NotSpecified"/> or does not map directly to any
+        /// <see cref="Accessibility"/> value.
+        /// </exception>
+        internal static Accessibility ToAccessibility(this AccessLevel accessLevel)
         {
-            if (syntax == null)
-            {
-                throw new ArgumentNullException(nameof(syntax));
-            }
-
-            if (semanticModel == null)
-            {
-                throw new ArgumentNullException(nameof(semanticModel));
-            }
-
-            AccessLevel accessLevel = GetAccessLevel(syntax.Modifiers);
             switch (accessLevel)
             {
             case AccessLevel.Public:
@@ -114,7 +114,26 @@
 
             case AccessLevel.NotSpecified:
             default:
-                break;
+                throw new ArgumentException($"'AccessLevel.{accessLevel}' does not have a corresponding 'Accessibility' value.");
+            }
+        }
+
+        internal static Accessibility GetDeclaredAccessibility(this BaseTypeDeclarationSyntax syntax, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            if (syntax == null)
+            {
+                throw new ArgumentNullException(nameof(syntax));
+            }
+
+            if (semanticModel == null)
+            {
+                throw new ArgumentNullException(nameof(semanticModel));
+            }
+
+            AccessLevel accessLevel = GetAccessLevel(syntax.Modifiers);
+            if (accessLevel != AccessLevel.NotSpecified)
+            {
+                return accessLevel.ToAccessibility();
             }
 
             if (!syntax.Modifiers.Any(SyntaxKind.PartialKeyword))
@@ -140,26 +159,9 @@
             }
 
             AccessLevel accessLevel = GetAccessLevel(syntax.Modifiers);
-            switch (accessLevel)
+            if (accessLevel != AccessLevel.NotSpecified)
             {
-            case AccessLevel.Public:
-                return Accessibility.Public;
-
-            case AccessLevel.Internal:
-                return Accessibility.Internal;
-
-            case AccessLevel.ProtectedInternal:
-                return Accessibility.ProtectedOrInternal;
-
-            case AccessLevel.Protected:
-                return Accessibility.Protected;
-
-            case AccessLevel.Private:
-                return Accessibility.Private;
-
-            case AccessLevel.NotSpecified:
-            default:
-                break;
+                return accessLevel.ToAccessibility();
             }
 
             if (syntax.Modifiers.Any(SyntaxKind.PartialKeyword))
@@ -202,26 +204,9 @@
             }
 
             AccessLevel accessLevel = GetAccessLevel(syntax.Modifiers);
-            switch (accessLevel)
+            if (accessLevel != AccessLevel.NotSpecified)
             {
-            case AccessLevel.Public:
-                return Accessibility.Public;
-
-            case AccessLevel.Internal:
-                return Accessibility.Internal;
-
-            case AccessLevel.ProtectedInternal:
-                return Accessibility.ProtectedOrInternal;
-
-            case AccessLevel.Protected:
-                return Accessibility.Protected;
-
-            case AccessLevel.Private:
-                return Accessibility.Private;
-
-            case AccessLevel.NotSpecified:
-            default:
-                break;
+                return accessLevel.ToAccessibility();
             }
 
             PropertyDeclarationSyntax propertyDeclarationSyntax = syntax as PropertyDeclarationSyntax;
@@ -280,26 +265,9 @@
             }
 
             AccessLevel accessLevel = GetAccessLevel(syntax.Modifiers);
-            switch (accessLevel)
+            if (accessLevel != AccessLevel.NotSpecified)
             {
-            case AccessLevel.Public:
-                return Accessibility.Public;
-
-            case AccessLevel.Internal:
-                return Accessibility.Internal;
-
-            case AccessLevel.ProtectedInternal:
-                return Accessibility.ProtectedOrInternal;
-
-            case AccessLevel.Protected:
-                return Accessibility.Protected;
-
-            case AccessLevel.Private:
-                return Accessibility.Private;
-
-            case AccessLevel.NotSpecified:
-            default:
-                break;
+                return accessLevel.ToAccessibility();
             }
 
             if (syntax.IsKind(SyntaxKind.FieldDeclaration) || syntax.IsKind(SyntaxKind.EventFieldDeclaration))
@@ -335,26 +303,9 @@
             }
 
             AccessLevel accessLevel = GetAccessLevel(syntax.Modifiers);
-            switch (accessLevel)
+            if (accessLevel != AccessLevel.NotSpecified)
             {
-            case AccessLevel.Public:
-                return Accessibility.Public;
-
-            case AccessLevel.Internal:
-                return Accessibility.Internal;
-
-            case AccessLevel.ProtectedInternal:
-                return Accessibility.ProtectedOrInternal;
-
-            case AccessLevel.Protected:
-                return Accessibility.Protected;
-
-            case AccessLevel.Private:
-                return Accessibility.Private;
-
-            case AccessLevel.NotSpecified:
-            default:
-                break;
+                return accessLevel.ToAccessibility();
             }
 
             BaseTypeDeclarationSyntax enclosingType = syntax.Parent as BaseTypeDeclarationSyntax;
