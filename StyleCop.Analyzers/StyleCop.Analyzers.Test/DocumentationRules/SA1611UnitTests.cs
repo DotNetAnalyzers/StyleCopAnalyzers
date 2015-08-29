@@ -11,7 +11,7 @@
     /// <summary>
     /// This class contains unit tests for <see cref="SA1611ElementParametersMustBeDocumented"/>.
     /// </summary>
-    public class SA1611UnitTests : CodeFixVerifier
+    public class SA1611UnitTests : DiagnosticVerifier
     {
         public static IEnumerable<object[]> Data
         {

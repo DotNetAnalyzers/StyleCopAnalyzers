@@ -10,7 +10,7 @@
     /// <summary>
     /// Unit tests for testing exclusion of auto generated files.
     /// </summary>
-    public class ExclusionTests : CodeFixVerifier
+    public class ExclusionTests : DiagnosticVerifier
     {
         /// <summary>
         /// Gets the statements that will be used in the theory test cases.

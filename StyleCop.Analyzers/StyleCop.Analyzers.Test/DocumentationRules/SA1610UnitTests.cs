@@ -61,6 +61,25 @@ public class ClassName
         }
 
         [Fact]
+        public async Task TestPropertySummaryOnlyAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Gets or sets something.
+    /// </summary>
+    public ClassName Property { get; set; }
+}";
+
+            // Reported by SA1609 instead.
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestPropertyWithEmptyDocumentationNoSummaryAsync()
         {
             var testCode = @"

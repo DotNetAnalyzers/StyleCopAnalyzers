@@ -6,11 +6,8 @@
     {
         internal static Task CompletedTask { get; } = Task.FromResult(default(VoidResult));
 
-        private sealed class VoidResult
+        private struct VoidResult
         {
-            private VoidResult()
-            {
-            }
         }
     }
 }

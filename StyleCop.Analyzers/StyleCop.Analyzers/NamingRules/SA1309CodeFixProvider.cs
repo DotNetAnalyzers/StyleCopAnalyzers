@@ -61,7 +61,7 @@
                         continue;
                     }
 
-                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.SA1309CodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken), equivalenceKey: nameof(SA1309CodeFixProvider)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.RenameToCodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken), equivalenceKey: nameof(SA1309CodeFixProvider)), diagnostic);
                 }
             }
         }

@@ -20,11 +20,6 @@
 
         internal static bool ContainsUsingAlias(this SyntaxTree tree)
         {
-            if (tree == null)
-            {
-                return false;
-            }
-
             StrongBox<bool?> cachedResult = UsingAliasPresentCheck.GetOrCreateValue(tree);
             if (cachedResult.Value.HasValue)
             {

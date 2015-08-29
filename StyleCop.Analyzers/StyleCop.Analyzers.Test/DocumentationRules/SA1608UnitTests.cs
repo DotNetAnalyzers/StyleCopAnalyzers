@@ -11,7 +11,7 @@
     /// <summary>
     /// This class contains unit tests for <see cref="SA1608ElementDocumentationMustNotHaveDefaultSummary"/>.
     /// </summary>
-    public class SA1608UnitTests : CodeFixVerifier
+    public class SA1608UnitTests : DiagnosticVerifier
     {
         [Theory]
         [InlineData("class")]

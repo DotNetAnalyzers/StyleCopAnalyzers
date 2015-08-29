@@ -115,6 +115,7 @@
     <Compile Include="Helpers\DeclarationModifiersHelper.cs" />
     <Compile Include="Helpers\DiagnosticOptionsHelper.cs" />
     <Compile Include="Helpers\DocumentationCommentExtensions.cs" />
+    <Compile Include="Helpers\DocumentBasedFixAllProvider.cs" />
     <Compile Include="Helpers\FileHeader.cs" />
     <Compile Include="Helpers\FileHeaderHelpers.cs" />
     <Compile Include="Helpers\HelpersResources.Designer.cs">
@@ -216,18 +217,17 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>NamingResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="NamingRules\RenameToLowerCaseCodeFixProvider.cs" />
+    <Compile Include="NamingRules\RenameToUpperCaseCodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1300ElementMustBeginWithUpperCaseLetter.cs" />
     <Compile Include="NamingRules\SA1301ElementMustBeginWithLowerCaseLetter.cs" />
     <Compile Include="NamingRules\SA1302CodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1302InterfaceNamesMustBeginWithI.cs" />
     <Compile Include="NamingRules\SA1303ConstFieldNamesMustBeginWithUpperCaseLetter.cs" />
     <Compile Include="NamingRules\SA1304NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter.cs" />
-    <Compile Include="NamingRules\SA1304SA1311CodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1305FieldNamesMustNotUseHungarianNotation.cs" />
-    <Compile Include="NamingRules\SA1306CodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1306FieldNamesMustBeginWithLowerCaseLetter.cs" />
     <Compile Include="NamingRules\SA1307AccessibleFieldsMustBeginWithUpperCaseLetter.cs" />
-    <Compile Include="NamingRules\SA1307CodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1308CodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1308VariableNamesMustNotBePrefixed.cs" />
     <Compile Include="NamingRules\SA1309CodeFixProvider.cs" />
@@ -235,6 +235,8 @@
     <Compile Include="NamingRules\SA1310CodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1310FieldNamesMustNotContainUnderscore.cs" />
     <Compile Include="NamingRules\SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter.cs" />
+    <Compile Include="NamingRules\SA1312VariableNamesMustBeginWithLowerCaseLetter.cs" />
+    <Compile Include="NamingRules\SA1313ParameterNamesMustBeginWithLowerCaseLetter.cs" />
     <Compile Include="NamingRules\SX1309CodeFixProvider.cs" />
     <Compile Include="NamingRules\SX1309FieldNamesMustBeginWithUnderscore.cs" />
     <Compile Include="NamingRules\SX1309SStaticFieldNamesMustBeginWithUnderscore.cs" />
@@ -273,6 +275,7 @@
       <DependentUpon>ReadabilityResources.resx</DependentUpon>
     </Compile>
     <Compile Include="ReadabilityRules\RemoveRegionCodeFixProvider.cs" />
+    <Compile Include="ReadabilityRules\RemoveRegionFixAllProvider.cs" />
     <Compile Include="ReadabilityRules\SA1100CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists.cs" />
     <Compile Include="ReadabilityRules\SA1101CodeFixProvider.cs" />

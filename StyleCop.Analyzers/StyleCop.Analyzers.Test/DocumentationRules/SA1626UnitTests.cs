@@ -8,7 +8,7 @@
     using TestHelper;
     using Xunit;
 
-    public class SA1626UnitTests : CodeFixVerifier
+    public class SA1626UnitTests : DiagnosticVerifier
     {
         private const string DiagnosticId = SA1626SingleLineCommentsMustNotUseDocumentationStyleSlashes.DiagnosticId;
 

@@ -14,7 +14,8 @@
     public class SA1633UnitTests : FileHeaderTestBase
     {
         /// <summary>
-        /// Verifies that the analyzer will report the correct diagnostics (none for the default case) for a file without a header.
+        /// Verifies that the analyzer will report <see cref="FileHeaderAnalyzers.SA1633DescriptorMissing"/> for
+        /// projects using XML headers (the default) when the file is completely missing a header.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]

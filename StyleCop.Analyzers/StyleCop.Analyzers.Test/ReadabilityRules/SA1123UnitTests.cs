@@ -41,6 +41,7 @@
 }";
 
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await this.VerifyCSharpFixAllFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -139,6 +140,44 @@
 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestFixAllProviderAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    void MethodName()
+    {
+        #region Foo
+        #region Foo
+        #region Foo
+        #endregion
+        #endregion
+        #endregion
+        #region Foo
+        #region Foo
+        #region Foo
+        // Test
+        #endregion
+        #endregion
+        #endregion
+    }
+}
+";
+
+            string fixedCode = @"
+class ClassName
+{
+    void MethodName()
+    {
+        // Test
+    }
+}
+";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAllFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

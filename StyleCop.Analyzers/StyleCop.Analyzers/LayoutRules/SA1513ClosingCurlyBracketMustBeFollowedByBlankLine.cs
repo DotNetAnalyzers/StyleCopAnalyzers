@@ -169,7 +169,8 @@
                          this.IsPartOf<ArrowExpressionClauseSyntax>(token) ||
                          this.IsPartOf<EqualsValueClauseSyntax>(token) ||
                          this.IsPartOf<AssignmentExpressionSyntax>(token) ||
-                         this.IsPartOf<ReturnStatementSyntax>(token)))
+                         this.IsPartOf<ReturnStatementSyntax>(token) ||
+                         this.IsPartOf<ObjectCreationExpressionSyntax>(token)))
                     {
                         // the close brace is part of a variable initialization statement or a return statement
                         return;
