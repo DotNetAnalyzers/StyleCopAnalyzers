@@ -62,6 +62,15 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insert paragraph element.
+        /// </summary>
+        internal static string BlockLevelDocumentationCodeFix {
+            get {
+                return ResourceManager.GetString("BlockLevelDocumentationCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Document value from summary.
         /// </summary>
         internal static string SA1609SA1610CodeFix {

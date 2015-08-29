@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="BlockLevelDocumentationCodeFix" xml:space="preserve">
+    <value>Insert paragraph element</value>
+  </data>
   <data name="SA1609SA1610CodeFix" xml:space="preserve">
     <value>Document value from summary</value>
   </data>
