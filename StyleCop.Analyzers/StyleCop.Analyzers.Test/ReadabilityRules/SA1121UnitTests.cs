@@ -140,6 +140,31 @@ public class Foo
 
         [Theory]
         [MemberData(nameof(AllTypes))]
+        public async Task TestEscapedVariableDeclarationAsync(string predefined, string fullName)
+        {
+            if (fullName.IndexOf('.') >= 0)
+            {
+                return;
+            }
+
+            string testSource = @"namespace NotSystem {{
+public class ClassName
+{{
+    public void Bar()
+    {{
+        @{0} test;
+    }}
+
+    public struct @{0} {{ }}
+}}
+}}";
+
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testSource, predefined), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testSource, fullName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(AllTypes))]
         public async Task TestVariableDeclarationCodeFixAsync(string predefined, string fullName)
         {
             string testSource = @"namespace System {{

@@ -135,33 +135,5 @@
 
             return true;
         }
-
-        private static bool TypeParameterNamesMatch(BaseTypeDeclarationSyntax baseTypeDeclarationSyntax, TypeSyntax name)
-        {
-            TypeParameterListSyntax typeParameterList;
-            if (baseTypeDeclarationSyntax.IsKind(SyntaxKind.ClassDeclaration))
-            {
-                typeParameterList = (baseTypeDeclarationSyntax as ClassDeclarationSyntax)?.TypeParameterList;
-            }
-            else
-            {
-                typeParameterList = (baseTypeDeclarationSyntax as StructDeclarationSyntax)?.TypeParameterList;
-            }
-
-            var genericName = name as GenericNameSyntax;
-            if (genericName != null)
-            {
-                var genericNameArgumentNames = genericName.TypeArgumentList.Arguments.Cast<SimpleNameSyntax>().Select(p => p.Identifier.ToString());
-                var classParameterNames = typeParameterList?.Parameters.Select(p => p.Identifier.ToString()) ?? Enumerable.Empty<string>();
-
-                // Make sure the names match up
-                return genericNameArgumentNames.SequenceEqual(classParameterNames);
-            }
-            else
-            {
-                return typeParameterList == null
-                    || !typeParameterList.Parameters.Any();
-            }
-        }
     }
 }

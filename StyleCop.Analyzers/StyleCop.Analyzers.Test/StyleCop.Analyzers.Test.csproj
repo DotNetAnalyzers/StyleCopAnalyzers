@@ -177,6 +177,7 @@
     <Compile Include="Helpers\DiagnosticVerifier.Helper.cs" />
     <Compile Include="Helpers\ExclusionTestAnalyzer.cs" />
     <Compile Include="Helpers\TestDiagnosticProvider.cs" />
+    <Compile Include="HelperTests\TriviaHelperTests.cs" />
     <Compile Include="LayoutRules\SA1500\SA1500UnitTests.Blocks.cs" />
     <Compile Include="LayoutRules\SA1500\SA1500UnitTests.Classes.cs" />
     <Compile Include="LayoutRules\SA1500\SA1500UnitTests.Constructors.cs" />
@@ -228,6 +229,7 @@
     <Compile Include="LayoutRules\SA1518UnitTests.cs" />
     <Compile Include="LayoutRules\SA1519UnitTests.cs" />
     <Compile Include="LayoutRules\SA1520UnitTests.cs" />
+    <Compile Include="LinqHelpers\SyntaxTriviaListEnumerableTests.cs" />
     <Compile Include="MaintainabilityRules\DebugMessagesUnitTestsBase.cs" />
     <Compile Include="MaintainabilityRules\FileMayOnlyContainTestBase.cs" />
     <Compile Include="MaintainabilityRules\SA1119UnitTests.cs" />
@@ -255,6 +257,8 @@
     <Compile Include="NamingRules\SA1309UnitTests.cs" />
     <Compile Include="NamingRules\SA1310UnitTests.cs" />
     <Compile Include="NamingRules\SA1311UnitTests.cs" />
+    <Compile Include="NamingRules\SA1312UnitTests.cs" />
+    <Compile Include="NamingRules\SA1313UnitTests.cs" />
     <Compile Include="NamingRules\SX1309SUnitTests.cs" />
     <Compile Include="NamingRules\SX1309UnitTests.cs" />
     <Compile Include="OrderingRules\SA1200UnitTests.cs" />

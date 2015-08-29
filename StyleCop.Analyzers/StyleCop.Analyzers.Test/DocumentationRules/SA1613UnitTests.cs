@@ -11,7 +11,7 @@
     /// <summary>
     /// This class contains unit tests for <see cref="SA1613ElementParameterDocumentationMustDeclareParameterName"/>.
     /// </summary>
-    public class SA1613UnitTests : CodeFixVerifier
+    public class SA1613UnitTests : DiagnosticVerifier
     {
         public static IEnumerable<object[]> Declarations
         {

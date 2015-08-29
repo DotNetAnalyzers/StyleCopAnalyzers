@@ -11,7 +11,7 @@
     /// <summary>
     /// This class contains unit tests for <see cref="SA1603DocumentationMustContainValidXml"/>.
     /// </summary>
-    public class SA1603UnitTests : CodeFixVerifier
+    public class SA1603UnitTests : DiagnosticVerifier
     {
         [Fact]
         public async Task TestTextDocumentationAsync()

@@ -11,7 +11,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1216UsingStaticDirectivesMustBePlacedAfterOtherUsingDirectives"/>.
     /// </summary>
-    public class SA1216UnitTests : CodeFixVerifier
+    public class SA1216UnitTests : DiagnosticVerifier
     {
         /// <summary>
         /// Verifies that the analyzer will not produce diagnostics for correctly ordered using directives inside a namespace.

@@ -12,7 +12,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1206DeclarationKeywordsMustFollowOrder"/>.
     /// </summary>
-    public class SA1206UnitTests : CodeFixVerifier
+    public class SA1206UnitTests : DiagnosticVerifier
     {
         [Fact]
         public async Task TestKeywordsInClassDeclarationAsync()

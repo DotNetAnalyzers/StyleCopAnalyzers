@@ -127,7 +127,7 @@
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1304SA1311CodeFixProvider();
+            return new RenameToUpperCaseCodeFixProvider();
         }
     }
 }

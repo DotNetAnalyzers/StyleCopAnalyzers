@@ -77,6 +77,7 @@
 }";
 
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await this.VerifyCSharpFixAllFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -113,6 +114,7 @@
 }";
 
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await this.VerifyCSharpFixAllFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -141,6 +143,7 @@
 }";
 
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await this.VerifyCSharpFixAllFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -169,6 +172,7 @@
 }";
 
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await this.VerifyCSharpFixAllFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -197,6 +201,7 @@
 }";
 
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await this.VerifyCSharpFixAllFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
