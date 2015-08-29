@@ -275,10 +275,7 @@
                 .AppendLine("/// </summary>")
                 .ToString();
 
-            DiagnosticResult[] expected =
-            {
-                this.CSharpDiagnostic().WithLocation(2, 10),
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 10);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
