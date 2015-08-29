@@ -4,6 +4,7 @@
 namespace StyleCop.Analyzers.OrderingRules
 {
     using System;
+    using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -14,8 +15,26 @@ namespace StyleCop.Analyzers.OrderingRules
     /// </summary>
     internal struct MemberOrderHelper
     {
+        private static readonly ImmutableArray<SyntaxKind> TypeMemberOrder = ImmutableArray.Create(
+            SyntaxKind.ClassDeclaration,
+            SyntaxKind.StructDeclaration,
+            SyntaxKind.MethodDeclaration,
+            SyntaxKind.OperatorDeclaration,
+            SyntaxKind.ConversionOperatorDeclaration,
+            SyntaxKind.IndexerDeclaration,
+            SyntaxKind.PropertyDeclaration,
+            SyntaxKind.InterfaceDeclaration,
+            SyntaxKind.EnumDeclaration,
+            SyntaxKind.EventDeclaration,
+            SyntaxKind.DelegateDeclaration,
+            SyntaxKind.DestructorDeclaration,
+            SyntaxKind.ConstructorDeclaration,
+            SyntaxKind.FieldDeclaration,
+            SyntaxKind.NamespaceDeclaration);
+
         private readonly ModifierFlags modifierFlags;
         private readonly AccessLevel accessibilty;
+        private readonly int elementPriority;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MemberOrderHelper"/> struct.
@@ -25,9 +44,33 @@ namespace StyleCop.Analyzers.OrderingRules
         {
             this.Member = member;
             var modifiers = member.GetModifiers();
+            var type = member.Kind();
+            type = type == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : type;
 
+            this.elementPriority = TypeMemberOrder.IndexOf(type);
             this.modifierFlags = GetModifierFlags(modifiers);
-            this.accessibilty = AccessLevelHelper.GetAccessLevel(modifiers);
+            if ((type == SyntaxKind.ConstructorDeclaration && this.modifierFlags.HasFlag(ModifierFlags.Static))
+                || (type == SyntaxKind.MethodDeclaration && (member as MethodDeclarationSyntax)?.ExplicitInterfaceSpecifier != null)
+                || (type == SyntaxKind.PropertyDeclaration && (member as PropertyDeclarationSyntax)?.ExplicitInterfaceSpecifier != null)
+                || (type == SyntaxKind.IndexerDeclaration && (member as IndexerDeclarationSyntax)?.ExplicitInterfaceSpecifier != null))
+            {
+                this.accessibilty = AccessLevel.Public;
+            }
+            else
+            {
+                this.accessibilty = AccessLevelHelper.GetAccessLevel(modifiers);
+                if (this.accessibilty == AccessLevel.NotSpecified)
+                {
+                    if (member.Parent.IsKind(SyntaxKind.CompilationUnit) || member.Parent.IsKind(SyntaxKind.NamespaceDeclaration))
+                    {
+                        this.accessibilty = AccessLevel.Internal;
+                    }
+                    else
+                    {
+                        this.accessibilty = AccessLevel.Private;
+                    }
+                }
+            }
         }
 
         [Flags]
@@ -68,14 +111,23 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <value>
         /// The priority for this member.
         /// </value>
-        public int Priority =>
-            (int)this.modifierFlags +
-            (
-                /*the * 100 ensures the accesibility is more important than the modifier*/
-                (int)this.accessibilty * 100);
+        public int Priority
+        {
+            get
+            {
+                var priority = this.ModifierPriority;
+
+                // accessibility is more important than the modifiers
+                priority += (this.AccessibilityPriority + 1) * 100;
+
+                // element type is more important than accessibility
+                priority += (this.elementPriority + 1) * 1000;
+                return priority;
+            }
+        }
 
         /// <summary>
-        /// The priority for this member only from accesibility.
+        /// The priority for this member only from accessibility.
         /// </summary>
         /// <value>
         /// The priority for this member.

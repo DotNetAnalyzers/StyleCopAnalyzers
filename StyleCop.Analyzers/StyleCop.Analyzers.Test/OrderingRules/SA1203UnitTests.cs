@@ -271,13 +271,13 @@ public class Foo
 
             var fixedTestCode = @"public class Foo
 {
+
+    public const string After2 = ""test"";
     private const string Before1 = ""test"";
 
     public const string Before2 = ""test"";
 
     private const string After1 = ""test"";
-
-    public const string After2 = ""test"";
 
     private int field1;
 
@@ -321,14 +321,14 @@ public class Foo
 
             var fixedTestCode = @"public class Foo
 {
+
+    public const string After2 = ""test"";
     private const string Before1 = ""test"";
 
     public const string Before2 = ""test"";
 
     //Comment on this field
     private const string After1 = ""test"";
-
-    public const string After2 = ""test"";
 
     private int field1;
 
@@ -389,7 +389,7 @@ const string foo = ""a"";
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1203SA1214SA1215CodeFixProvider();
+            return new ElementOrderCodeFixProvider();
         }
     }
 }

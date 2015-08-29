@@ -62,11 +62,11 @@ namespace StyleCop.Analyzers.OrderingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Order constants and fields.
+        ///   Looks up a localized string similar to Fix element order.
         /// </summary>
-        internal static string SA1203CodeFix {
+        internal static string ElementOrderCodeFix {
             get {
-                return ResourceManager.GetString("SA1203CodeFix", resourceCulture);
+                return ResourceManager.GetString("ElementOrderCodeFix", resourceCulture);
             }
         }
         
