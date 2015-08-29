@@ -260,6 +260,31 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TrailingWhitespaceAfterTextTokenAsync()
+        {
+            string testCode = new StringBuilder()
+                .AppendLine("/// <summary>")
+                .AppendLine("/// &amp; ")
+                .AppendLine("/// </summary>")
+                .ToString();
+
+            string fixedCode = new StringBuilder()
+                .AppendLine("/// <summary>")
+                .AppendLine("/// &amp;")
+                .AppendLine("/// </summary>")
+                .ToString();
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(2, 10),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1028CodeMustNotContainTrailingWhitespace();
