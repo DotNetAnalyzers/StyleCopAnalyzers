@@ -44,6 +44,31 @@ string Bar = """", car = """", Dar = """";
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// This test ensures the implementation of <see cref="SA1306FieldNamesMustBeginWithLowerCaseLetter"/> is
+        /// correct with respect to the documented behavior for parameters and local variables (including local
+        /// constants).
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestThatDiagnosticIsNotReportedForParametersAndLocalsAsync()
+        {
+            var testCode = @"public class TypeName
+{
+    public void MethodName(string Parameter1, string parameter2)
+    {
+        const int Constant = 1;
+        const int constant = 1;
+        int Variable;
+        int variable;
+        int Variable1, Variable2;
+        int variable1, variable2;
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Theory]
         [InlineData("")]
         [InlineData("readonly")]
@@ -82,6 +107,7 @@ string car;
 string dar;
 }}";
 
+            await this.VerifyCSharpDiagnosticAsync(string.Format(fixedCode, modifiers), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers)).ConfigureAwait(false);
         }
 
@@ -159,7 +185,7 @@ string bar, car, dar;
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1306CodeFixProvider();
+            return new RenameToLowerCaseCodeFixProvider();
         }
     }
 }

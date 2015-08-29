@@ -9,18 +9,21 @@
     using Microsoft.CodeAnalysis.CodeFixes;
 
     /// <summary>
-    /// Implements a code fix for <see cref="SA1306FieldNamesMustBeginWithLowerCaseLetter"/>.
+    /// Implements a code fix for diagnostics which are fixed by renaming a symbol to start with a lower case letter.
     /// </summary>
     /// <remarks>
     /// <para>To fix a violation of this rule, change the name of the field or variable so that it begins with a
     /// lower-case letter, or place the item within a <c>NativeMethods</c> class if appropriate.</para>
     /// </remarks>
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1306CodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RenameToLowerCaseCodeFixProvider))]
     [Shared]
-    public class SA1306CodeFixProvider : CodeFixProvider
+    public class RenameToLowerCaseCodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1306FieldNamesMustBeginWithLowerCaseLetter.DiagnosticId);
+            ImmutableArray.Create(
+                SA1306FieldNamesMustBeginWithLowerCaseLetter.DiagnosticId,
+                SA1312VariableNamesMustBeginWithLowerCaseLetter.DiagnosticId,
+                SA1313ParameterNamesMustBeginWithLowerCaseLetter.DiagnosticId);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
@@ -39,7 +42,7 @@
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!diagnostic.Id.Equals(SA1306FieldNamesMustBeginWithLowerCaseLetter.DiagnosticId))
+                if (!this.FixableDiagnosticIds.Contains(diagnostic.Id))
                 {
                     continue;
                 }
@@ -53,7 +56,7 @@
                 if (!string.IsNullOrEmpty(token.ValueText))
                 {
                     var newName = char.ToLower(token.ValueText[0]) + token.ValueText.Substring(1);
-                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.RenameToCodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken), equivalenceKey: nameof(SA1306CodeFixProvider)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.RenameToCodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken), equivalenceKey: nameof(RenameToLowerCaseCodeFixProvider)), diagnostic);
                 }
             }
         }
