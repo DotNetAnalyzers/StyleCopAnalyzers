@@ -33,8 +33,8 @@
 
         private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var node = context.Node as BaseTypeDeclarationSyntax;
-            if (node == null || node.Identifier.IsMissing)
+            var node = (BaseTypeDeclarationSyntax)context.Node;
+            if (node.Identifier.IsMissing)
             {
                 return;
             }
@@ -50,8 +50,8 @@
 
         private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var node = context.Node as MethodDeclarationSyntax;
-            if (node == null || node.Identifier.IsMissing)
+            var node = (MethodDeclarationSyntax)context.Node;
+            if (node.Identifier.IsMissing)
             {
                 return;
             }

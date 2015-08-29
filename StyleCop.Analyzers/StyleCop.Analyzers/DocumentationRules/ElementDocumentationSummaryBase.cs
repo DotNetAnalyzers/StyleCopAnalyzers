@@ -41,8 +41,8 @@
 
         private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var node = context.Node as BaseTypeDeclarationSyntax;
-            if (node == null || node.Identifier.IsMissing)
+            var node = (BaseTypeDeclarationSyntax)context.Node;
+            if (node.Identifier.IsMissing)
             {
                 return;
             }
@@ -58,8 +58,8 @@
 
         private void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var node = context.Node as DelegateDeclarationSyntax;
-            if (node == null || node.Identifier.IsMissing)
+            var node = (DelegateDeclarationSyntax)context.Node;
+            if (node.Identifier.IsMissing)
             {
                 return;
             }
@@ -69,8 +69,8 @@
 
         private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var node = context.Node as MethodDeclarationSyntax;
-            if (node == null || node.Identifier.IsMissing)
+            var node = (MethodDeclarationSyntax)context.Node;
+            if (node.Identifier.IsMissing)
             {
                 return;
             }
@@ -86,8 +86,8 @@
 
         private void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var node = context.Node as ConstructorDeclarationSyntax;
-            if (node == null || node.Identifier.IsMissing)
+            var node = (ConstructorDeclarationSyntax)context.Node;
+            if (node.Identifier.IsMissing)
             {
                 return;
             }
@@ -97,8 +97,8 @@
 
         private void HandleDestructorDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var node = context.Node as DestructorDeclarationSyntax;
-            if (node == null || node.Identifier.IsMissing)
+            var node = (DestructorDeclarationSyntax)context.Node;
+            if (node.Identifier.IsMissing)
             {
                 return;
             }
@@ -108,8 +108,8 @@
 
         private void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var node = context.Node as PropertyDeclarationSyntax;
-            if (node == null || node.Identifier.IsMissing)
+            var node = (PropertyDeclarationSyntax)context.Node;
+            if (node.Identifier.IsMissing)
             {
                 return;
             }
@@ -119,8 +119,8 @@
 
         private void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var node = context.Node as IndexerDeclarationSyntax;
-            if (node == null || node.ThisKeyword.IsMissing)
+            var node = (IndexerDeclarationSyntax)context.Node;
+            if (node.ThisKeyword.IsMissing)
             {
                 return;
             }
@@ -130,8 +130,8 @@
 
         private void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var node = context.Node as BaseFieldDeclarationSyntax;
-            if (node == null || node.Declaration == null)
+            var node = (BaseFieldDeclarationSyntax)context.Node;
+            if (node.Declaration == null)
             {
                 return;
             }
@@ -147,8 +147,8 @@
 
         private void HandleEventDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var node = context.Node as EventDeclarationSyntax;
-            if (node == null || node.Identifier.IsMissing)
+            var node = (EventDeclarationSyntax)context.Node;
+            if (node.Identifier.IsMissing)
             {
                 return;
             }

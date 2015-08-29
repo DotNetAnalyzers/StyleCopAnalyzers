@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.NamingRules;
     using TestHelper;
@@ -13,7 +14,7 @@
         [Fact]
         public async Task TestUpperCaseNamespaceAsync()
         {
-            var testCode = @"namespace Test 
+            var testCode = @"namespace Test
 { 
 
 }";
@@ -24,7 +25,12 @@
         [Fact]
         public async Task TestLowerCaseNamespaceAsync()
         {
-            var testCode = @"namespace test 
+            var testCode = @"namespace test
+{ 
+
+}";
+
+            var fixedCode = @"namespace Test
 { 
 
 }";
@@ -32,12 +38,45 @@
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("test").WithLocation(1, 11);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestLowerCaseComlicatedNamespaceAsync()
+        {
+            var testCode = @"namespace test.foo.bar
+{
+
+}";
+
+            var fixedCode = @"namespace Test.Foo.Bar
+{
+
+}";
+
+            DiagnosticResult[] expected = new[]
+            {
+                this.CSharpDiagnostic().WithArguments("test").WithLocation(1, 11),
+                this.CSharpDiagnostic().WithArguments("test").WithLocation(1, 11),
+                this.CSharpDiagnostic().WithArguments("test").WithLocation(1, 11),
+                this.CSharpDiagnostic().WithArguments("foo").WithLocation(1, 16),
+                this.CSharpDiagnostic().WithArguments("foo").WithLocation(1, 16),
+                this.CSharpDiagnostic().WithArguments("foo").WithLocation(1, 16),
+                this.CSharpDiagnostic().WithArguments("bar").WithLocation(1, 20),
+                this.CSharpDiagnostic().WithArguments("bar").WithLocation(1, 20),
+                this.CSharpDiagnostic().WithArguments("bar").WithLocation(1, 20)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestUpperCaseClassAsync()
         {
-            var testCode = @"public class Test 
+            var testCode = @"public class Test
 { 
 
 }";
@@ -48,7 +87,11 @@
         [Fact]
         public async Task TestLowerCaseClassAsync()
         {
-            var testCode = @"public class test 
+            var testCode = @"public class test
+{ 
+
+}";
+            var fixedCode = @"public class Test
 { 
 
 }";
@@ -56,6 +99,8 @@
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("test").WithLocation(1, 14);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -99,10 +144,16 @@
 { 
 
 }";
+            var fixedCode = @"public struct Test 
+{ 
+
+}";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("test").WithLocation(1, 15);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -123,10 +174,16 @@
 { 
 
 }";
+            var fixedCode = @"public enum Test 
+{ 
+
+}";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("test").WithLocation(1, 13);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -147,10 +204,16 @@ public delegate void Test();
 { 
 public delegate void test();
 }";
+            var fixedCode = @"public class TestClass
+{ 
+public delegate void Test();
+}";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("test").WithLocation(3, 22);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -195,10 +258,28 @@ public delegate void test();
         }
     }
 }";
+            var fixedCode = @"public class TestClass
+{
+    public delegate void Test();
+    Test _testEvent;
+    public event Test TestEvent
+    {
+        add
+        {
+            _testEvent += value;
+        }
+        remove
+        {
+            _testEvent -= value;
+        }
+    }
+}";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("testEvent").WithLocation(5, 23);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -221,10 +302,17 @@ public delegate void test();
     public delegate void Test();
     public event Test testEvent;
 }";
+            var fixedCode = @"public class TestClass
+{
+    public delegate void Test();
+    public event Test TestEvent;
+}";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("testEvent").WithLocation(4, 23);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -249,10 +337,18 @@ public void test()
 {
 }
 }";
+            var fixedCode = @"public class TestClass
+{
+public void Test()
+{
+}
+}";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("test").WithLocation(3, 13);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -273,10 +369,16 @@ public string Test { get; set; }
 {
 public string test { get; set; }
 }";
+            var fixedCode = @"public class TestClass
+{
+public string Test { get; set; }
+}";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("test").WithLocation(3, 15);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -435,6 +537,34 @@ public abstract class BaseClass
     public abstract int bar { get; }
     public abstract event System.EventHandler fooBar;
 }";
+            var fixedCode = @"public class TestClass : BaseClass
+{
+    public override int Bar
+    {
+        get
+        {
+            return 0;
+        }
+    }
+
+    public override event System.EventHandler FooBar
+    {
+        add { }
+        remove { }
+    }
+
+    public override void Foo()
+    {
+
+    }
+}
+
+public abstract class BaseClass
+{
+    public abstract void Foo();
+    public abstract int Bar { get; }
+    public abstract event System.EventHandler FooBar;
+}";
 
             var expected = new[]
             {
@@ -444,6 +574,8 @@ public abstract class BaseClass
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -477,6 +609,34 @@ public interface IInterface
     int bar { get; }
     event System.EventHandler fooBar;
 }";
+            var fixedCode = @"public class TestClass : IInterface
+{
+    public int Bar
+    {
+        get
+        {
+            return 0;
+        }
+    }
+
+    public event System.EventHandler FooBar
+    {
+        add { }
+        remove { }
+    }
+
+    public void Foo()
+    {
+
+    }
+}
+
+public interface IInterface
+{
+    void Foo();
+    int Bar { get; }
+    event System.EventHandler FooBar;
+}";
 
             var expected = new[]
             {
@@ -486,11 +646,18 @@ public interface IInterface
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1300ElementMustBeginWithUpperCaseLetter();
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new RenameToUpperCaseCodeFixProvider();
         }
     }
 }

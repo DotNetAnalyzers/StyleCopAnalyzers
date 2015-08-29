@@ -8,7 +8,7 @@
     using TestHelper;
     using Xunit;
 
-    public class SA1208UnitTests : CodeFixVerifier
+    public class SA1208UnitTests : DiagnosticVerifier
     {
         [Fact]
         public async Task TestWhenSystemUsingDirectivesAreOnTopAsync()
