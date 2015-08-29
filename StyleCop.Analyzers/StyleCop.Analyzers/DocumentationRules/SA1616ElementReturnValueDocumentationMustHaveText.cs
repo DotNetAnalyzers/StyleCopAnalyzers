@@ -51,11 +51,16 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleXmlElement, SyntaxKind.XmlElement);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleXmlEmptyElement, SyntaxKind.XmlEmptyElement);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleXmlElement(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleXmlElement, SyntaxKind.XmlElement);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleXmlEmptyElement, SyntaxKind.XmlEmptyElement);
+        }
+
+        private static void HandleXmlElement(SyntaxNodeAnalysisContext context)
         {
             XmlElementSyntax emptyElement = context.Node as XmlElementSyntax;
 
@@ -67,7 +72,7 @@
             }
         }
 
-        private void HandleXmlEmptyElement(SyntaxNodeAnalysisContext context)
+        private static void HandleXmlEmptyElement(SyntaxNodeAnalysisContext context)
         {
             XmlEmptyElementSyntax emptyElement = context.Node as XmlEmptyElementSyntax;
 

@@ -61,6 +61,11 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.RegisterCompilationStartAction(HandleCompilationStart);
+        }
+
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
             context.RegisterSyntaxNodeActionHonorExclusions(
                 HandleBaseMethodDeclaration,
                 new[] { SyntaxKind.ConstructorDeclaration, SyntaxKind.MethodDeclaration, SyntaxKind.OperatorDeclaration });

@@ -63,14 +63,19 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleEventDeclaration, SyntaxKind.EventDeclaration);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleEventDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleEventDeclaration, SyntaxKind.EventDeclaration);
+        }
+
+        private static void HandleEventDeclaration(SyntaxNodeAnalysisContext context)
         {
             var eventDeclaration = (EventDeclarationSyntax)context.Node;
 
-            if (eventDeclaration?.AccessorList == null)
+            if (eventDeclaration.AccessorList == null)
             {
                 return;
             }

@@ -80,6 +80,11 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.RegisterCompilationStartAction(HandleCompilationStart);
+        }
+
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
             context.RegisterSyntaxNodeActionHonorExclusions(HandleIfStatement, SyntaxKind.IfStatement);
             context.RegisterSyntaxNodeActionHonorExclusions(ctx => CheckChildStatement(ctx, ((DoStatementSyntax)ctx.Node).Statement), SyntaxKind.DoStatement);
             context.RegisterSyntaxNodeActionHonorExclusions(ctx => CheckChildStatement(ctx, ((WhileStatementSyntax)ctx.Node).Statement), SyntaxKind.WhileStatement);

@@ -86,10 +86,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleAccessorListDeclaration, SyntaxKind.AccessorList);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleAccessorListDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleAccessorListDeclaration, SyntaxKind.AccessorList);
+        }
+
+        private static void HandleAccessorListDeclaration(SyntaxNodeAnalysisContext context)
         {
             var accessorList = (AccessorListSyntax)context.Node;
 

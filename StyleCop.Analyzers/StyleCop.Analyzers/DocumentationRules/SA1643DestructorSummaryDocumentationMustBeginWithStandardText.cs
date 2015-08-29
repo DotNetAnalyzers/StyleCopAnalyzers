@@ -84,27 +84,23 @@
         }
 
         /// <inheritdoc/>
-        protected override DiagnosticDescriptor DiagnosticDescriptor
-        {
-            get
-            {
-                return Descriptor;
-            }
-        }
-
-        /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDestructor, SyntaxKind.DestructorDeclaration);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleDestructor(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleDestructor, SyntaxKind.DestructorDeclaration);
+        }
+
+        private static void HandleDestructor(SyntaxNodeAnalysisContext context)
         {
             var destructorDeclaration = context.Node as DestructorDeclarationSyntax;
 
             if (destructorDeclaration != null)
             {
-                this.HandleDeclaration(context, DestructorStandardText[0], DestructorStandardText[1], true);
+                HandleDeclaration(context, DestructorStandardText[0], DestructorStandardText[1], Descriptor);
             }
         }
     }
