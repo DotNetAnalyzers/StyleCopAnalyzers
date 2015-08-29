@@ -9,7 +9,7 @@
     using TestHelper;
     using Xunit;
 
-    public class SA1214UnitTests : DiagnosticVerifier
+    public class SA1214UnitTests : CodeFixVerifier
     {
         [Fact]
         public async Task TestValidOrderingAsync()
