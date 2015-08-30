@@ -20,7 +20,7 @@
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1127Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1127MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1127Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
-        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1127.html";
+        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1127.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -40,35 +40,40 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
+            context.RegisterCompilationStartAction(this.HandleCompilationStart);
         }
 
-        private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
+        private void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
+        }
+
+        private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
             var declaration = (MethodDeclarationSyntax)context.Node;
             var declarationLineSpan = declaration.GetLineSpan();
 
             if (declaration.TypeParameterList?.Parameters.Count > 0)
             {
-                Analyze(context, declarationLineSpan, declaration.ConstraintClauses);
+                this.Analyze(context, declarationLineSpan, declaration.ConstraintClauses);
             }
         }
 
-        private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
+        private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
             var declaration = (TypeDeclarationSyntax)context.Node;
             var declarationLineSpan = declaration.GetLineSpan();
 
             if (declaration.TypeParameterList?.Parameters.Count > 0)
             {
-                Analyze(context, declarationLineSpan, declaration.ConstraintClauses);
+                this.Analyze(context, declarationLineSpan, declaration.ConstraintClauses);
             }
         }
 
-        private static void Analyze(
+        private void Analyze(
             SyntaxNodeAnalysisContext context,
             FileLinePositionSpan declarationLineSpan,
             SyntaxList<TypeParameterConstraintClauseSyntax> constraintClauses)
