@@ -108,3 +108,30 @@ When the `xmlHeader` property is explicitly set to **false**, StyleCop Analyzers
 ```csharp
 // {copyrightText}
 ```
+
+### Documentation Requirements
+
+StyleCop Analyzers includes rules which require developers to document the majority of a code base by default. This requirement can easily overwhelm a team which did not use StyleCop for the entire development process. To help guide developers towards a properly documented code base, several properties are available in **stylecop.json** to progressively increase the documentation requirements.
+
+| Property | Default Value | Summary |
+| --- | --- | --- |
+| `documentInterfaces` | **true** | Specifies whether interface members need to be documented. When true, all interface members require documentation, regardless of accessibility. |
+| `documentInternalMembers` | **true** | Specifies whether internal members need to be documented. When true, all internally-exposed types and members require documentation. |
+| `documentPrivateMembers` | **false** | Specifies whether private members need to be documented. When true, all types and members except for declared private fields require documentation. |
+| `documentPrivateFields` | **false** | Specifies whether private fields need to be documented. When true, all fields require documentation, regardless of accessibility. |
+
+The following example shows a configuration file which requires developers to document all publicly-accessible members and all interfaces (regardless of accessibility), but does not require other internal or private members to be documented.
+
+> :memo: Documenting interfaces is a low-effort task compared to documenting an entire code base, but provides high value in the fact that it covers the sections of code most likely to impact cross-team usage scenarios.
+
+
+```json
+{
+  "settings": {
+    "documentationRules": {
+      "documentInterfaces": true,
+      "documentInternalMembers": false
+    }
+  }
+}
+```
