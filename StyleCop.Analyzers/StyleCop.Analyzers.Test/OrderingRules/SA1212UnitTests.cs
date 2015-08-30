@@ -9,7 +9,7 @@
     using TestHelper;
     using Xunit;
 
-    public class SA1212UnitTests : DiagnosticVerifier
+    public class SA1212UnitTests : CodeFixVerifier
     {
         [Fact]
         public async Task TestPropertyWithDocumentationAsync()

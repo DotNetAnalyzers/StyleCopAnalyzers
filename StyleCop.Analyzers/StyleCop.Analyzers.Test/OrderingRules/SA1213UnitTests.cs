@@ -9,7 +9,7 @@
     using TestHelper;
     using Xunit;
 
-    public class SA1213UnitTests : DiagnosticVerifier
+    public class SA1213UnitTests : CodeFixVerifier
     {
         [Fact]
         public async Task TestAddAccessorAfterRemoveAccessorAsync()

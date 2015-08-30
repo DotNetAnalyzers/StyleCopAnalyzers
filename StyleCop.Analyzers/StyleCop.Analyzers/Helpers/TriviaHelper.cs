@@ -225,17 +225,13 @@
                 index--;
             }
 
-            if ((index < 0) || !triviaList[index].IsKind(SyntaxKind.EndOfLineTrivia))
-            {
-                return false;
-            }
-
             var blankLineCount = -1;
             while (index >= 0)
             {
                 switch (triviaList[index].Kind())
                 {
                 case SyntaxKind.WhitespaceTrivia:
+                case SyntaxKind.SingleLineDocumentationCommentTrivia:
                     // ignore;
                     break;
                 case SyntaxKind.EndOfLineTrivia:
