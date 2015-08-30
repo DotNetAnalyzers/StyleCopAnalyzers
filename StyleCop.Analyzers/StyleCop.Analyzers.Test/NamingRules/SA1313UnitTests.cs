@@ -12,6 +12,37 @@
     public class SA1313UnitTests : CodeFixVerifier
     {
         [Fact]
+        public async Task TestThatDiagnosticIsNotReportedForFieldsAsync()
+        {
+            var testCode = @"public class TypeName
+{
+    const string bar = nameof(bar);
+    const string Bar = nameof(Bar);
+    string car = nameof(car);
+    string Car = nameof(Car);
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestThatDiagnosticIsNotReportedForVariablesAsync()
+        {
+            var testCode = @"public class TypeName
+{
+    public void MethodName()
+    {
+        const string bar = nameof(bar);
+        const string Bar = nameof(Bar);
+        string car = nameof(car);
+        string Car = nameof(Car);
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestThatDiagnosticIsReported_SingleParameterAsync()
         {
             var testCode = @"public class TypeName
