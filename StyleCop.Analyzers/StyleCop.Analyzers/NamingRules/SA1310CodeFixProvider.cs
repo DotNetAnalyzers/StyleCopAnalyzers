@@ -55,7 +55,7 @@
                 string proposedName = BuildProposedName(currentName);
                 if (proposedName != currentName)
                 {
-                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.RenameToCodeFix, proposedName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, proposedName, cancellationToken), equivalenceKey: nameof(SA1310CodeFixProvider)), diagnostic);
+                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.SA1310CodeFix, proposedName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, proposedName, cancellationToken), equivalenceKey: nameof(SA1310CodeFixProvider)), diagnostic);
                 }
             }
         }

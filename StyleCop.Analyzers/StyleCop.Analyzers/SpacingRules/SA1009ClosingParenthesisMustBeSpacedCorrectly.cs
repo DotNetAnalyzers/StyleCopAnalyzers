@@ -33,7 +33,7 @@
         private const string Title = "Closing parenthesis must be spaced correctly";
         private const string MessageFormat = "Closing parenthesis must{0} be {1} by a space.";
         private const string Description = "A closing parenthesis within a C# statement is not spaced correctly.";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1009.md";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1009.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -52,11 +52,6 @@
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
-        {
-            context.RegisterCompilationStartAction(HandleCompilationStart);
-        }
-
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
             context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
         }

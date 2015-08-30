@@ -53,7 +53,7 @@
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1108Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1108MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1108Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
-        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1108.md";
+        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1108.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -61,7 +61,7 @@
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
 
-        private static readonly SyntaxKind[] SupportedKinds =
+        private readonly SyntaxKind[] supportedKinds =
         {
             SyntaxKind.ForEachStatement,
             SyntaxKind.ForStatement,
@@ -84,16 +84,11 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(HandleCompilationStart);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.AnalyzeBlock, SyntaxKind.Block);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.AnalyzeSwitch, SyntaxKind.SwitchStatement);
         }
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(AnalyzeBlock, SyntaxKind.Block);
-            context.RegisterSyntaxNodeActionHonorExclusions(AnalyzeSwitch, SyntaxKind.SwitchStatement);
-        }
-
-        private static void AnalyzeSwitch(SyntaxNodeAnalysisContext context)
+        private void AnalyzeSwitch(SyntaxNodeAnalysisContext context)
         {
             var switchStatement = (SwitchStatementSyntax)context.Node;
             var openBraceToken = switchStatement.OpenBraceToken;
@@ -104,13 +99,13 @@
 
             var previousToken = openBraceToken.GetPreviousToken();
 
-            FindAllComments(context, previousToken, openBraceToken);
+            this.FindAllComments(context, previousToken, openBraceToken);
         }
 
-        private static void AnalyzeBlock(SyntaxNodeAnalysisContext context)
+        private void AnalyzeBlock(SyntaxNodeAnalysisContext context)
         {
             var block = (BlockSyntax)context.Node;
-            if (!SupportedKinds.Any(block.Parent.IsKind))
+            if (!this.supportedKinds.Any(block.Parent.IsKind))
             {
                 return;
             }
@@ -127,20 +122,20 @@
                 return;
             }
 
-            FindAllComments(context, previousToken, openBraceToken);
+            this.FindAllComments(context, previousToken, openBraceToken);
         }
 
-        private static void FindAllComments(SyntaxNodeAnalysisContext context, SyntaxToken previousToken, SyntaxToken openBraceToken)
+        private void FindAllComments(SyntaxNodeAnalysisContext context, SyntaxToken previousToken, SyntaxToken openBraceToken)
         {
-            var comments = previousToken.TrailingTrivia.Where(IsComment)
-                .Concat(openBraceToken.LeadingTrivia.Where(IsComment));
+            var comments = previousToken.TrailingTrivia.Where(this.IsComment)
+                .Concat(openBraceToken.LeadingTrivia.Where(this.IsComment));
             foreach (var comment in comments)
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, comment.GetLocation()));
             }
         }
 
-        private static bool IsComment(SyntaxTrivia syntaxTrivia)
+        private bool IsComment(SyntaxTrivia syntaxTrivia)
         {
             var isSingleLineComment = syntaxTrivia.IsKind(SyntaxKind.SingleLineCommentTrivia)
                 && !syntaxTrivia.ToFullString().StartsWith(@"////", StringComparison.Ordinal);

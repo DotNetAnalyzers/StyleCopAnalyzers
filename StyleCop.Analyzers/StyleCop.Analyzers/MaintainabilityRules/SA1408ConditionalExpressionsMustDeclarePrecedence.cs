@@ -57,7 +57,7 @@
         private const string Title = "Conditional expressions must declare precedence";
         private const string MessageFormat = "Conditional expressions must declare precedence";
         private const string Description = "A C# statement contains a complex conditional expression which omits parenthesis around operators.";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1408.md";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1408.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -77,47 +77,45 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(HandleCompilationStart);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleLogicalExpression, SyntaxKind.LogicalAndExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleLogicalExpression, SyntaxKind.LogicalOrExpression);
         }
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private void HandleLogicalExpression(SyntaxNodeAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleLogicalExpression, SyntaxKind.LogicalAndExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleLogicalExpression, SyntaxKind.LogicalOrExpression);
-        }
+            BinaryExpressionSyntax binSyntax = context.Node as BinaryExpressionSyntax;
 
-        private static void HandleLogicalExpression(SyntaxNodeAnalysisContext context)
-        {
-            BinaryExpressionSyntax binSyntax = (BinaryExpressionSyntax)context.Node;
-
-            if (binSyntax.Left is BinaryExpressionSyntax)
+            if (binSyntax != null)
             {
-                // Check if the operations are of the same kind
-                var left = (BinaryExpressionSyntax)binSyntax.Left;
-                if (left.OperatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken) || left.OperatorToken.IsKind(SyntaxKind.BarBarToken))
+                if (binSyntax.Left is BinaryExpressionSyntax)
                 {
-                    if (!IsSameFamily(binSyntax.OperatorToken, left.OperatorToken))
+                    // Check if the operations are of the same kind
+                    var left = (BinaryExpressionSyntax)binSyntax.Left;
+                    if (left.OperatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken) || left.OperatorToken.IsKind(SyntaxKind.BarBarToken))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, left.GetLocation()));
+                        if (!this.IsSameFamily(binSyntax.OperatorToken, left.OperatorToken))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, left.GetLocation()));
+                        }
+                    }
+                }
+
+                if (binSyntax.Right is BinaryExpressionSyntax)
+                {
+                    // Check if the operations are of the same kind
+                    var right = (BinaryExpressionSyntax)binSyntax.Right;
+                    if (right.OperatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken) || right.OperatorToken.IsKind(SyntaxKind.BarBarToken))
+                    {
+                        if (!this.IsSameFamily(binSyntax.OperatorToken, right.OperatorToken))
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, right.GetLocation()));
+                        }
                     }
                 }
             }
-
-            if (binSyntax.Right is BinaryExpressionSyntax)
-            {
-                // Check if the operations are of the same kind
-                var right = (BinaryExpressionSyntax)binSyntax.Right;
-                if (right.OperatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken) || right.OperatorToken.IsKind(SyntaxKind.BarBarToken))
-                {
-                    if (!IsSameFamily(binSyntax.OperatorToken, right.OperatorToken))
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, right.GetLocation()));
-                    }
-                }
-            }
         }
 
-        private static bool IsSameFamily(SyntaxToken operatorToken1, SyntaxToken operatorToken2)
+        private bool IsSameFamily(SyntaxToken operatorToken1, SyntaxToken operatorToken2)
         {
             return (operatorToken1.IsKind(SyntaxKind.AmpersandAmpersandToken) && operatorToken2.IsKind(SyntaxKind.AmpersandAmpersandToken))
              || (operatorToken1.IsKind(SyntaxKind.BarBarToken) && operatorToken2.IsKind(SyntaxKind.BarBarToken));

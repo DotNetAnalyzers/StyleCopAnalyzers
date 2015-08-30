@@ -19,26 +19,25 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA110xQueryClauses : DiagnosticAnalyzer
     {
-        private const string SA1102Identifier = "SA1102";
-        private const string SA1103Identifier = "SA1103";
-        private const string SA1104Identifier = "SA1104";
-        private const string SA1105Identifier = "SA1105";
-
+        private static readonly string SA1102Identifier = "SA1102";
         private static readonly LocalizableString SA1102Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1102Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString SA1102MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1102MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString SA1102Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1102Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly string SA1102HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1102.md";
 
+        private static readonly string SA1103Identifier = "SA1103";
         private static readonly LocalizableString SA1103Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1103Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString SA1103MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1103MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString SA1103Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1103Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly string SA1103HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1103.md";
 
+        private static readonly string SA1104Identifier = "SA1104";
         private static readonly LocalizableString SA1104Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1104Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString SA1104MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1104MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString SA1104Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1104Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly string SA1104HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1104.md";
 
+        private static readonly string SA1105Identifier = "SA1105";
         private static readonly LocalizableString SA1105Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1105Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString SA1105MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1105MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString SA1105Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1105Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
@@ -78,11 +77,6 @@
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
-        {
-            context.RegisterCompilationStartAction(HandleCompilationStart);
-        }
-
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
             context.RegisterSyntaxNodeActionHonorExclusions(HandleQueryExpression, SyntaxKind.QueryExpression);
         }

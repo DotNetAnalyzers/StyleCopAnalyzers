@@ -44,7 +44,7 @@
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1114Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1114MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1114Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
-        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1114.md";
+        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1114.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -63,11 +63,6 @@
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
-        {
-            context.RegisterCompilationStartAction(HandleCompilationStart);
-        }
-
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
             context.RegisterSyntaxNodeActionHonorExclusions(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleMethodInvocation, SyntaxKind.InvocationExpression);

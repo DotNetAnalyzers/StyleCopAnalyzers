@@ -33,7 +33,7 @@
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1122Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1122MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1122Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
-        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1122.md";
+        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1122.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -53,39 +53,36 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(HandleCompilationStart);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleStringLiteral, SyntaxKind.StringLiteralExpression);
         }
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private void HandleStringLiteral(SyntaxNodeAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleStringLiteral, SyntaxKind.StringLiteralExpression);
-        }
+            LiteralExpressionSyntax literalExpression = context.Node as LiteralExpressionSyntax;
 
-        private static void HandleStringLiteral(SyntaxNodeAnalysisContext context)
-        {
-            LiteralExpressionSyntax literalExpression = (LiteralExpressionSyntax)context.Node;
-
-            var token = literalExpression.Token;
-            if (token.IsKind(SyntaxKind.StringLiteralToken))
+            if (literalExpression != null)
             {
-                if (HasToBeConstant(literalExpression))
+                var token = literalExpression.Token;
+                if (token.IsKind(SyntaxKind.StringLiteralToken))
                 {
-                    return;
-                }
+                    if (this.HasToBeConstant(literalExpression))
+                    {
+                        return;
+                    }
 
-                if (token.ValueText == string.Empty)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, literalExpression.GetLocation()));
+                    if (token.ValueText == string.Empty)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, literalExpression.GetLocation()));
+                    }
                 }
             }
         }
 
-        private static bool HasToBeConstant(LiteralExpressionSyntax literalExpression)
+        private bool HasToBeConstant(LiteralExpressionSyntax literalExpression)
         {
-            ExpressionSyntax outermostExpression = FindOutermostExpression(literalExpression);
+            ExpressionSyntax outermostExpression = this.FindOutermostExpression(literalExpression);
 
-            if (outermostExpression.Parent.IsKind(SyntaxKind.AttributeArgument)
-                || outermostExpression.Parent.IsKind(SyntaxKind.CaseSwitchLabel))
+            if (outermostExpression.Parent.IsKind(SyntaxKind.AttributeArgument))
             {
                 return true;
             }
@@ -122,7 +119,7 @@
             return false;
         }
 
-        private static ExpressionSyntax FindOutermostExpression(ExpressionSyntax node)
+        private ExpressionSyntax FindOutermostExpression(ExpressionSyntax node)
         {
             while (true)
             {

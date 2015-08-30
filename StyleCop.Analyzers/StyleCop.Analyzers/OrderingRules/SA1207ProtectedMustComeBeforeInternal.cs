@@ -27,7 +27,7 @@
         private const string Title = "Protected must come before internal";
         private const string MessageFormat = "The keyword 'protected' must come before 'internal'.";
         private const string Description = "The keyword 'protected' is positioned after the keyword 'internal' within the declaration of a protected internal C# element.";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1207.md";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1207.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -46,11 +46,6 @@
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
-        {
-            context.RegisterCompilationStartAction(HandleCompilationStart);
-        }
-
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
             context.RegisterSyntaxNodeActionHonorExclusions(
                 HandleDeclaration,

@@ -58,7 +58,7 @@
         private const string Title = "Remove unnecessary code";
         private const string MessageFormat = "TODO: Message format";
         private const string Description = "A C# file contains code which is unnecessary and can be removed without changing the overall logic of the code.";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1409.md";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1409.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledByDefault, Description, HelpLink, WellKnownDiagnosticTags.NotConfigurable);

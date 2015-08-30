@@ -25,7 +25,7 @@
         private const string Title = "Member access symbols must be spaced correctly";
         private const string MessageFormat = "Member access symbol '{0}' must not be {1} by a space.";
         private const string Description = "The spacing around a member access symbol is incorrect, within a C# code file.";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1019.md";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1019.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -45,15 +45,10 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(HandleCompilationStart);
+            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
         }
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
-        }
-
-        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
@@ -61,12 +56,12 @@
                 switch (token.Kind())
                 {
                 case SyntaxKind.DotToken:
-                    HandleDotToken(context, token);
+                    this.HandleDotToken(context, token);
                     break;
 
                 // This case handles the new ?. and ?[ operators
                 case SyntaxKind.QuestionToken:
-                    HandleQuestionToken(context, token);
+                    this.HandleQuestionToken(context, token);
                     break;
 
                 default:
@@ -75,17 +70,17 @@
             }
         }
 
-        private static void HandleDotToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private void HandleDotToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
             {
                 return;
             }
 
-            HandleMemberAccessSymbol(context, token);
+            this.HandleMemberAccessSymbol(context, token);
         }
 
-        private static void HandleQuestionToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private void HandleQuestionToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
             {
@@ -97,10 +92,10 @@
                 return;
             }
 
-            HandleMemberAccessSymbol(context, token);
+            this.HandleMemberAccessSymbol(context, token);
         }
 
-        private static void HandleMemberAccessSymbol(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private void HandleMemberAccessSymbol(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             bool firstInLine = token.IsFirstInLine();
             bool precededBySpace = firstInLine || token.IsPrecededByWhitespace();

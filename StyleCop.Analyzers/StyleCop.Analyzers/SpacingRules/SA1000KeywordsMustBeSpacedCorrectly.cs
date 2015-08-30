@@ -35,7 +35,7 @@
         private const string Title = "Keywords must be spaced correctly";
         private const string MessageFormat = "The keyword '{0}' must{1} be followed by a space.";
         private const string Description = "The spacing around a C# keyword is incorrect.";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1000.md";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1000.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -55,19 +55,14 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(HandleCompilationStart);
-        }
-
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
             // handle everything except nameof
-            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
+            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
 
             // handle nameof (which appears as an invocation expression??)
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleInvocationExpressionSyntax, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleInvocationExpressionSyntax, SyntaxKind.InvocationExpression);
         }
 
-        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
@@ -96,18 +91,18 @@
                 case SyntaxKind.WhereKeyword:
                 case SyntaxKind.WhileKeyword:
                 case SyntaxKind.YieldKeyword:
-                    HandleRequiredSpaceToken(context, token);
+                    this.HandleRequiredSpaceToken(context, token);
                     break;
 
                 case SyntaxKind.CheckedKeyword:
                 case SyntaxKind.UncheckedKeyword:
                     if (token.GetNextToken().IsKind(SyntaxKind.OpenBraceToken))
                     {
-                        HandleRequiredSpaceToken(context, token);
+                        this.HandleRequiredSpaceToken(context, token);
                     }
                     else
                     {
-                        HandleDisallowedSpaceToken(context, token);
+                        this.HandleDisallowedSpaceToken(context, token);
                     }
 
                     break;
@@ -116,19 +111,19 @@
                 case SyntaxKind.NameOfKeyword:
                 case SyntaxKind.SizeOfKeyword:
                 case SyntaxKind.TypeOfKeyword:
-                    HandleDisallowedSpaceToken(context, token);
+                    this.HandleDisallowedSpaceToken(context, token);
                     break;
 
                 case SyntaxKind.NewKeyword:
-                    HandleNewKeywordToken(context, token);
+                    this.HandleNewKeywordToken(context, token);
                     break;
 
                 case SyntaxKind.ReturnKeyword:
-                    HandleReturnKeywordToken(context, token);
+                    this.HandleReturnKeywordToken(context, token);
                     break;
 
                 case SyntaxKind.ThrowKeyword:
-                    HandleThrowKeywordToken(context, token);
+                    this.HandleThrowKeywordToken(context, token);
                     break;
 
                 default:
@@ -137,7 +132,7 @@
             }
         }
 
-        private static void HandleInvocationExpressionSyntax(SyntaxNodeAnalysisContext context)
+        private void HandleInvocationExpressionSyntax(SyntaxNodeAnalysisContext context)
         {
             InvocationExpressionSyntax invocationExpressionSyntax = (InvocationExpressionSyntax)context.Node;
             IdentifierNameSyntax identifierNameSyntax = invocationExpressionSyntax.Expression as IdentifierNameSyntax;
@@ -160,11 +155,11 @@
             if (constantValue.HasValue && !string.IsNullOrEmpty(constantValue.Value as string))
             {
                 // this is a nameof expression
-                HandleDisallowedSpaceToken(context, identifierNameSyntax.Identifier);
+                this.HandleDisallowedSpaceToken(context, identifierNameSyntax.Identifier);
             }
         }
 
-        private static void HandleRequiredSpaceToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private void HandleRequiredSpaceToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
             {
@@ -187,7 +182,7 @@
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), token.Text, string.Empty));
         }
 
-        private static void HandleDisallowedSpaceToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private void HandleDisallowedSpaceToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing || !token.HasTrailingTrivia)
             {
@@ -202,7 +197,7 @@
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), token.Text, " not"));
         }
 
-        private static void HandleDisallowedSpaceToken(SyntaxNodeAnalysisContext context, SyntaxToken token)
+        private void HandleDisallowedSpaceToken(SyntaxNodeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing || !token.HasTrailingTrivia)
             {
@@ -217,7 +212,7 @@
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), token.Text, " not"));
         }
 
-        private static void HandleNewKeywordToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private void HandleNewKeywordToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
             {
@@ -234,15 +229,15 @@
                     return;
                 }
 
-                HandleDisallowedSpaceToken(context, token);
+                this.HandleDisallowedSpaceToken(context, token);
                 return;
             }
 
             // otherwise treat as required
-            HandleRequiredSpaceToken(context, token);
+            this.HandleRequiredSpaceToken(context, token);
         }
 
-        private static void HandleReturnKeywordToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private void HandleReturnKeywordToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
             {
@@ -256,15 +251,15 @@
             SyntaxToken nextToken = token.GetNextToken();
             if (nextToken.IsKind(SyntaxKind.SemicolonToken) || nextToken.IsKind(SyntaxKind.ColonToken))
             {
-                HandleDisallowedSpaceToken(context, token);
+                this.HandleDisallowedSpaceToken(context, token);
                 return;
             }
 
             // otherwise treat as required
-            HandleRequiredSpaceToken(context, token);
+            this.HandleRequiredSpaceToken(context, token);
         }
 
-        private static void HandleThrowKeywordToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private void HandleThrowKeywordToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
             {
@@ -277,12 +272,12 @@
             SyntaxToken nextToken = token.GetNextToken();
             if (nextToken.IsKind(SyntaxKind.SemicolonToken))
             {
-                HandleDisallowedSpaceToken(context, token);
+                this.HandleDisallowedSpaceToken(context, token);
                 return;
             }
 
             // otherwise treat as required
-            HandleRequiredSpaceToken(context, token);
+            this.HandleRequiredSpaceToken(context, token);
         }
     }
 }

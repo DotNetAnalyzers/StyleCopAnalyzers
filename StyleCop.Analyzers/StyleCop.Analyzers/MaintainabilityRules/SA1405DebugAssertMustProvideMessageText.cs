@@ -28,7 +28,7 @@
         private const string Title = "Debug.Assert must provide message text";
         private const string MessageFormat = "Debug.Assert must provide message text";
         private const string Description = "A call to Debug.Assert in C# code does not include a descriptive message.";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1405.md";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1405.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -48,17 +48,12 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(HandleCompilationStart);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMethodCall, SyntaxKind.InvocationExpression);
         }
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private void HandleMethodCall(SyntaxNodeAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleMethodCall, SyntaxKind.InvocationExpression);
-        }
-
-        private static void HandleMethodCall(SyntaxNodeAnalysisContext context)
-        {
-            HandleMethodCall(context, nameof(Debug.Assert), 1, Descriptor);
+            this.HandleMethodCall(context, nameof(Debug.Assert), 1, Descriptor);
         }
     }
 }

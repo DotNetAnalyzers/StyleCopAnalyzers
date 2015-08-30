@@ -61,15 +61,10 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(HandleCompilationStart);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleIfStatement, SyntaxKind.IfStatement);
         }
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleIfStatement, SyntaxKind.IfStatement);
-        }
-
-        private static void HandleIfStatement(SyntaxNodeAnalysisContext context)
+        private void HandleIfStatement(SyntaxNodeAnalysisContext context)
         {
             var ifStatement = (IfStatementSyntax)context.Node;
             if (ifStatement.Parent.IsKind(SyntaxKind.ElseClause))
@@ -102,11 +97,11 @@
 
             foreach (StatementSyntax clause in clauses)
             {
-                CheckChildStatement(context, clause);
+                this.CheckChildStatement(context, clause);
             }
         }
 
-        private static void CheckChildStatement(SyntaxNodeAnalysisContext context, StatementSyntax childStatement)
+        private void CheckChildStatement(SyntaxNodeAnalysisContext context, StatementSyntax childStatement)
         {
             if (childStatement is BlockSyntax)
             {

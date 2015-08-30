@@ -53,15 +53,10 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(HandleCompilationStart);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleFieldDeclarationSyntax, SyntaxKind.FieldDeclaration);
         }
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleFieldDeclarationSyntax, SyntaxKind.FieldDeclaration);
-        }
-
-        private static void HandleFieldDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private void HandleFieldDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
             FieldDeclarationSyntax syntax = (FieldDeclarationSyntax)context.Node;
             foreach (SyntaxToken token in syntax.Modifiers)

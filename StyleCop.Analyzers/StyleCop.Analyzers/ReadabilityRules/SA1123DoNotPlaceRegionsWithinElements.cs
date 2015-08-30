@@ -27,7 +27,7 @@
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1123Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1123MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1123Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
-        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1123.md";
+        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1123.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -47,7 +47,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(HandleCompilationStart);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleRegionDirectiveTrivia, SyntaxKind.RegionDirectiveTrivia);
         }
 
         /// <summary>
@@ -88,16 +88,11 @@
             return true;
         }
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private void HandleRegionDirectiveTrivia(SyntaxNodeAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleRegionDirectiveTrivia, SyntaxKind.RegionDirectiveTrivia);
-        }
+            RegionDirectiveTriviaSyntax regionSyntax = context.Node as RegionDirectiveTriviaSyntax;
 
-        private static void HandleRegionDirectiveTrivia(SyntaxNodeAnalysisContext context)
-        {
-            RegionDirectiveTriviaSyntax regionSyntax = (RegionDirectiveTriviaSyntax)context.Node;
-
-            if (IsCompletelyContainedInBody(regionSyntax))
+            if (regionSyntax != null && IsCompletelyContainedInBody(regionSyntax))
             {
                 // Region must not be located within a code element.
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, regionSyntax.GetLocation()));

@@ -34,7 +34,7 @@
         private const string Title = "Attribute constructor must not use unnecessary parenthesis";
         private const string MessageFormat = "Attribute constructor must not use unnecessary parenthesis";
         private const string Description = "TODO.";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1411.md";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1411.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);
@@ -54,17 +54,12 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(HandleCompilationStart);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleAttributeArgumentListSyntax, SyntaxKind.AttributeArgumentList);
         }
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private void HandleAttributeArgumentListSyntax(SyntaxNodeAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleAttributeArgumentListSyntax, SyntaxKind.AttributeArgumentList);
-        }
-
-        private static void HandleAttributeArgumentListSyntax(SyntaxNodeAnalysisContext context)
-        {
-            AttributeArgumentListSyntax syntax = (AttributeArgumentListSyntax)context.Node;
+            AttributeArgumentListSyntax syntax = context.Node as AttributeArgumentListSyntax;
             if (syntax.Arguments.Count != 0)
             {
                 return;

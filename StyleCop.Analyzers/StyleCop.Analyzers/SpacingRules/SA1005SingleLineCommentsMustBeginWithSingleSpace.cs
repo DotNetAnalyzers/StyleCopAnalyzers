@@ -54,7 +54,7 @@
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1005Title), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(SpacingResources.SA1005MessageFormat), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1005Description), SpacingResources.ResourceManager, typeof(SpacingResources));
-        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1005.md";
+        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1005.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -74,15 +74,10 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(HandleCompilationStart);
+            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
         }
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
-        }
-
-        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
 
@@ -94,7 +89,7 @@
                 switch (trivia.Kind())
                 {
                 case SyntaxKind.SingleLineCommentTrivia:
-                    HandleSingleLineCommentTrivia(context, trivia, isFirstSingleLineTrivia);
+                    this.HandleSingleLineCommentTrivia(context, trivia, isFirstSingleLineTrivia);
                     isFirstSingleLineTrivia = false;
                     newLineCount = 0;
                     break;
@@ -119,7 +114,7 @@
             }
         }
 
-        private static void HandleSingleLineCommentTrivia(SyntaxTreeAnalysisContext context, SyntaxTrivia trivia, bool isFirstSingleLineTrivia)
+        private void HandleSingleLineCommentTrivia(SyntaxTreeAnalysisContext context, SyntaxTrivia trivia, bool isFirstSingleLineTrivia)
         {
             string text = trivia.ToFullString();
             if (text.Equals(@"//"))

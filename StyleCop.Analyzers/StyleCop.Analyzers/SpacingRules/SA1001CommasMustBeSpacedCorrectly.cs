@@ -25,7 +25,7 @@
         private const string Title = "Commas must be spaced correctly";
         private const string MessageFormat = "Commas must{0} be {1} by a space.";
         private const string Description = "The spacing around a comma is incorrect, within a C# code file.";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1001.md";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1001.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -45,15 +45,10 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(HandleCompilationStart);
+            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
         }
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
-        }
-
-        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
@@ -61,7 +56,7 @@
                 switch (token.Kind())
                 {
                 case SyntaxKind.CommaToken:
-                    HandleCommaToken(context, token);
+                    this.HandleCommaToken(context, token);
                     break;
 
                 default:
@@ -70,7 +65,7 @@
             }
         }
 
-        private static void HandleCommaToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private void HandleCommaToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
             {

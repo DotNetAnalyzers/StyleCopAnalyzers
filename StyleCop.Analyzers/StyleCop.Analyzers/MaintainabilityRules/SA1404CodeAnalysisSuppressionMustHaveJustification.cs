@@ -40,7 +40,7 @@
         private const string Title = "Code analysis suppression must have justification";
         private const string MessageFormat = "Code analysis suppression must have justification";
         private const string Description = "A Code Analysis SuppressMessage attribute does not include a justification.";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1404.md";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1404.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

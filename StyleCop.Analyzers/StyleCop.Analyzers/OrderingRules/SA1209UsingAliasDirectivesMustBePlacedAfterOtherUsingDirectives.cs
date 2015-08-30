@@ -27,7 +27,7 @@
         private const string Title = "Using alias directives must be placed after other using directives";
         private const string MessageFormat = "Using alias directives must be placed after all using namespace directives.";
         private const string Description = "A using-alias directive is positioned before a regular using directive.";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1209.md";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1209.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -46,11 +46,6 @@
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
-        {
-            context.RegisterCompilationStartAction(HandleCompilationStart);
-        }
-
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
             context.RegisterSyntaxNodeActionHonorExclusions(HandleCompilationUnit, SyntaxKind.CompilationUnit);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleNamespaceDeclaration, SyntaxKind.NamespaceDeclaration);

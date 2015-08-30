@@ -45,7 +45,7 @@
         private const string Title = "Dereference and access of symbols must be spaced correctly";
         private const string MessageFormat = "Dereference symbol '*' must {0}.";
         private const string Description = "A dereference symbol or an access-of symbol within a C# element is not spaced correctly.";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1023.md";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1023.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -64,11 +64,6 @@
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
-        {
-            context.RegisterCompilationStartAction(HandleCompilationStart);
-        }
-
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
             context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
         }

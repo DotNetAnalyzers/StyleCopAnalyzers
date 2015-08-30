@@ -45,7 +45,7 @@
         private const string Title = "Arithmetic expressions must declare precedence";
         private const string MessageFormat = "Arithmetic expressions must declare precedence";
         private const string Description = "A C# statement contains a complex arithmetic expression which omits parenthesis around operators.";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1407.md";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1407.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -65,48 +65,46 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(HandleCompilationStart);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMathExpression, SyntaxKind.AddExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMathExpression, SyntaxKind.SubtractExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMathExpression, SyntaxKind.MultiplyExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMathExpression, SyntaxKind.DivideExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMathExpression, SyntaxKind.ModuloExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMathExpression, SyntaxKind.LeftShiftExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMathExpression, SyntaxKind.RightShiftExpression);
         }
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private void HandleMathExpression(SyntaxNodeAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleMathExpression, SyntaxKind.AddExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleMathExpression, SyntaxKind.SubtractExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleMathExpression, SyntaxKind.MultiplyExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleMathExpression, SyntaxKind.DivideExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleMathExpression, SyntaxKind.ModuloExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleMathExpression, SyntaxKind.LeftShiftExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleMathExpression, SyntaxKind.RightShiftExpression);
-        }
+            BinaryExpressionSyntax binSyntax = context.Node as BinaryExpressionSyntax;
 
-        private static void HandleMathExpression(SyntaxNodeAnalysisContext context)
-        {
-            BinaryExpressionSyntax binSyntax = (BinaryExpressionSyntax)context.Node;
-
-            if (binSyntax.Left is BinaryExpressionSyntax)
+            if (binSyntax != null)
             {
-                // Check if the operations are of the same kind
-                var left = (BinaryExpressionSyntax)binSyntax.Left;
-
-                if (!IsSameFamily(binSyntax.OperatorToken, left.OperatorToken))
+                if (binSyntax.Left is BinaryExpressionSyntax)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, left.GetLocation()));
+                    // Check if the operations are of the same kind
+                    var left = (BinaryExpressionSyntax)binSyntax.Left;
+
+                    if (!this.IsSameFamily(binSyntax.OperatorToken, left.OperatorToken))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, left.GetLocation()));
+                    }
+                }
+
+                if (binSyntax.Right is BinaryExpressionSyntax)
+                {
+                    // Check if the operations are of the same kind
+                    var right = (BinaryExpressionSyntax)binSyntax.Right;
+
+                    if (!this.IsSameFamily(binSyntax.OperatorToken, right.OperatorToken))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, right.GetLocation()));
+                    }
                 }
             }
-
-            if (binSyntax.Right is BinaryExpressionSyntax)
-            {
-                // Check if the operations are of the same kind
-                var right = (BinaryExpressionSyntax)binSyntax.Right;
-
-                if (!IsSameFamily(binSyntax.OperatorToken, right.OperatorToken))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, right.GetLocation()));
-                }
-            }
         }
 
-        private static bool IsSameFamily(SyntaxToken operatorToken1, SyntaxToken operatorToken2)
+        private bool IsSameFamily(SyntaxToken operatorToken1, SyntaxToken operatorToken2)
         {
             bool isSameFamily = false;
             isSameFamily |= (operatorToken1.IsKind(SyntaxKind.PlusToken) || operatorToken1.IsKind(SyntaxKind.MinusToken))

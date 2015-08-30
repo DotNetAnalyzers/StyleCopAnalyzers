@@ -1,6 +1,5 @@
 ﻿namespace StyleCop.Analyzers.MaintainabilityRules
 {
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -52,7 +51,7 @@
         private const string Title = "Statement must not use unnecessary parenthesis";
         private const string MessageFormat = "Statement must not use unnecessary parenthesis";
         private const string Description = "A C# statement contains parenthesis which are unnecessary and should be removed.";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1119.md";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1119.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -112,13 +111,6 @@
                 }
                 else
                 {
-                    if (node.Parent is InterpolationSyntax
-                        && IsConditionalAccessInInterpolation(node.Expression))
-                    {
-                        // Parenthesis can't be removed here
-                        return;
-                    }
-
                     if (!(node.Parent is ExpressionSyntax)
                         || node.Parent is CheckedExpressionSyntax
                         || node.Parent is MemberAccessExpressionSyntax)
@@ -154,32 +146,6 @@
                     }
                 }
             }
-        }
-
-        private static bool IsConditionalAccessInInterpolation(ExpressionSyntax node)
-        {
-            Queue<ExpressionSyntax> expressionToCheck = new Queue<ExpressionSyntax>();
-            expressionToCheck.Enqueue(node);
-
-            ExpressionSyntax currentNode;
-            while (expressionToCheck.Count > 0)
-            {
-                currentNode = expressionToCheck.Dequeue();
-
-                if (currentNode.IsKind(SyntaxKind.ConditionalExpression))
-                {
-                    return true;
-                }
-                else if (currentNode is AssignmentExpressionSyntax)
-                {
-                    // We have to use parenthesis if the conditional access is in an interpolation inside an assignment.
-                    var assignment = currentNode as AssignmentExpressionSyntax;
-                    expressionToCheck.Enqueue(assignment.Left);
-                    expressionToCheck.Enqueue(assignment.Right);
-                }
-            }
-
-            return false;
         }
 
         private static void ReportDiagnostic(SyntaxNodeAnalysisContext context, ParenthesizedExpressionSyntax node)

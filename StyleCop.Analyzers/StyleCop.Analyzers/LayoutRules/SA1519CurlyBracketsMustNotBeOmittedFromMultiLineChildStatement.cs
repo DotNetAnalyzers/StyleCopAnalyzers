@@ -55,59 +55,68 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(HandleCompilationStart);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleIfStatement, SyntaxKind.IfStatement);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDoStatement, SyntaxKind.DoStatement);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleWhileStatement, SyntaxKind.WhileStatement);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleForStatement, SyntaxKind.ForStatement);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleForEachStatement, SyntaxKind.ForEachStatement);
         }
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private void HandleIfStatement(SyntaxNodeAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleIfStatement, SyntaxKind.IfStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleDoStatement, SyntaxKind.DoStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleWhileStatement, SyntaxKind.WhileStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleForStatement, SyntaxKind.ForStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleForEachStatement, SyntaxKind.ForEachStatement);
-        }
-
-        private static void HandleIfStatement(SyntaxNodeAnalysisContext context)
-        {
-            var ifStatement = (IfStatementSyntax)context.Node;
-
-            CheckChildStatement(context, ifStatement.Statement);
-
-            if (ifStatement.Else != null)
+            var ifStatement = context.Node as IfStatementSyntax;
+            if (ifStatement != null)
             {
-                // an 'else' directly followed by an 'if' should not trigger this diagnostic.
-                if (!ifStatement.Else.Statement.IsKind(SyntaxKind.IfStatement))
+                this.CheckChildStatement(context, ifStatement.Statement);
+
+                if (ifStatement.Else != null)
                 {
-                    CheckChildStatement(context, ifStatement.Else.Statement);
+                    // an 'else' directly followed by an 'if' should not trigger this diagnostic.
+                    if (!ifStatement.Else.Statement.IsKind(SyntaxKind.IfStatement))
+                    {
+                        this.CheckChildStatement(context, ifStatement.Else.Statement);
+                    }
                 }
             }
         }
 
-        private static void HandleDoStatement(SyntaxNodeAnalysisContext context)
+        private void HandleDoStatement(SyntaxNodeAnalysisContext context)
         {
-            var doStatement = (DoStatementSyntax)context.Node;
-            CheckChildStatement(context, doStatement.Statement);
+            var doStatement = context.Node as DoStatementSyntax;
+            if (doStatement != null)
+            {
+                this.CheckChildStatement(context, doStatement.Statement);
+            }
         }
 
-        private static void HandleWhileStatement(SyntaxNodeAnalysisContext context)
+        private void HandleWhileStatement(SyntaxNodeAnalysisContext context)
         {
-            var whileStatement = (WhileStatementSyntax)context.Node;
-            CheckChildStatement(context, whileStatement.Statement);
+            var whileStatement = context.Node as WhileStatementSyntax;
+            if (whileStatement != null)
+            {
+                this.CheckChildStatement(context, whileStatement.Statement);
+            }
         }
 
-        private static void HandleForStatement(SyntaxNodeAnalysisContext context)
+        private void HandleForStatement(SyntaxNodeAnalysisContext context)
         {
-            var forStatement = (ForStatementSyntax)context.Node;
-            CheckChildStatement(context, forStatement.Statement);
+            var forStatement = context.Node as ForStatementSyntax;
+            if (forStatement != null)
+            {
+                this.CheckChildStatement(context, forStatement.Statement);
+            }
         }
 
-        private static void HandleForEachStatement(SyntaxNodeAnalysisContext context)
+        private void HandleForEachStatement(SyntaxNodeAnalysisContext context)
         {
-            var forEachStatement = (ForEachStatementSyntax)context.Node;
-            CheckChildStatement(context, forEachStatement.Statement);
+            var forEachStatement = context.Node as ForEachStatementSyntax;
+            if (forEachStatement != null)
+            {
+                this.CheckChildStatement(context, forEachStatement.Statement);
+            }
         }
 
-        private static void CheckChildStatement(SyntaxNodeAnalysisContext context, StatementSyntax childStatement)
+        private void CheckChildStatement(SyntaxNodeAnalysisContext context, StatementSyntax childStatement)
         {
             if (childStatement is BlockSyntax)
             {

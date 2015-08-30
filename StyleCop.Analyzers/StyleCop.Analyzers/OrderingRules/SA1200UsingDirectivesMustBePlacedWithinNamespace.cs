@@ -155,7 +155,7 @@
         private const string Title = "Using directives must be placed within namespace";
         private const string MessageFormat = "Using directive must appear within a namespace declaration";
         private const string Description = "A C# using directive is placed outside of a namespace element.";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1200.md";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1200.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -175,17 +175,16 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(HandleCompilationStart);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleCompilationUnitSyntax, SyntaxKind.CompilationUnit);
         }
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private void HandleCompilationUnitSyntax(SyntaxNodeAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleCompilationUnitSyntax, SyntaxKind.CompilationUnit);
-        }
-
-        private static void HandleCompilationUnitSyntax(SyntaxNodeAnalysisContext context)
-        {
-            CompilationUnitSyntax syntax = (CompilationUnitSyntax)context.Node;
+            CompilationUnitSyntax syntax = context.Node as CompilationUnitSyntax;
+            if (syntax == null)
+            {
+                return;
+            }
 
             List<SyntaxNode> usingDirectives = new List<SyntaxNode>();
             foreach (SyntaxNode child in syntax.ChildNodes())

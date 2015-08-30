@@ -37,7 +37,7 @@
         private const string Title = "Field names must not begin with underscore";
         private const string MessageFormat = "Field '{0}' must not begin with an underscore";
         private const string Description = "A field name in C# begins with an underscore.";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1309.md";
+        private const string HelpLink = "http://www.stylecop.com/docs/SA1309.html";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -57,15 +57,10 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(HandleCompilationStart);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleFieldDeclarationSyntax, SyntaxKind.FieldDeclaration);
         }
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleFieldDeclarationSyntax, SyntaxKind.FieldDeclaration);
-        }
-
-        private static void HandleFieldDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private void HandleFieldDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
             FieldDeclarationSyntax syntax = (FieldDeclarationSyntax)context.Node;
             if (NamedTypeHelpers.IsContainedInNativeMethodsClass(syntax))

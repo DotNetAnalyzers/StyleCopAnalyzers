@@ -37,14 +37,6 @@
 
         private static byte[] utf8Preamble = Encoding.UTF8.GetPreamble();
 
-        /// <summary>
-        /// Gets the key for the detected encoding name in the <see cref="Diagnostic.Properties"/> collection.
-        /// </summary>
-        /// <value>
-        /// The key for the detected encoding name in the <see cref="Diagnostic.Properties"/> collection.
-        /// </value>
-        public static string EncodingProperty { get; } = "Encoding";
-
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -57,11 +49,6 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(HandleCompilationStart);
-        }
-
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
             context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
         }
 
@@ -71,8 +58,7 @@
 
             if (!IsUtf8Preamble(preamble))
             {
-                ImmutableDictionary<string, string> properties = ImmutableDictionary<string, string>.Empty.SetItem(EncodingProperty, context.Tree.Encoding?.WebName ?? "<null>");
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, TextSpan.FromBounds(0, 0)), properties));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, TextSpan.FromBounds(0, 0))));
             }
         }
 
