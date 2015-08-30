@@ -16,10 +16,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
+            context.RegisterCompilationStartAction(this.HandleCompilationStart);
         }
 
         /// <summary>
@@ -31,10 +28,18 @@
         /// <param name="diagnosticLocations">The location(s) where diagnostics, if any, should be reported.</param>
         protected abstract void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, params Location[] diagnosticLocations);
 
+        private void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
+        }
+
         private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var node = context.Node as BaseTypeDeclarationSyntax;
-            if (node == null || node.Identifier.IsMissing)
+            var node = (BaseTypeDeclarationSyntax)context.Node;
+            if (node.Identifier.IsMissing)
             {
                 return;
             }
@@ -50,8 +55,8 @@
 
         private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var node = context.Node as MethodDeclarationSyntax;
-            if (node == null || node.Identifier.IsMissing)
+            var node = (MethodDeclarationSyntax)context.Node;
+            if (node.Identifier.IsMissing)
             {
                 return;
             }

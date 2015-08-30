@@ -8,7 +8,7 @@
     using TestHelper;
     using Xunit;
 
-    public class SA1209UnitTests : CodeFixVerifier
+    public class SA1209UnitTests : DiagnosticVerifier
     {
         [Fact]
         public async Task TestWhenAliasUsingDirectivesArePlacedCorrectlyAsync()

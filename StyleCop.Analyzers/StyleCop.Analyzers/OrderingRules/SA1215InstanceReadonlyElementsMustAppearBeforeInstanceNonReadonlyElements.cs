@@ -25,7 +25,7 @@
         private const string Title = "Instance readonly elements must appear before instance non-readonly elements";
         private const string MessageFormat = "All {0} readonly fields must appear before {0} non-readonly fields.";
         private const string Description = "An instance readonly element is positioned beneath an instance non-readonly element of the same type.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1215.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1215.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -44,6 +44,11 @@
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterCompilationStartAction(HandleCompilationStart);
+        }
+
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
             context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration);
         }

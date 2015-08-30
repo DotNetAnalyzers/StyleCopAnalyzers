@@ -20,8 +20,8 @@
         {
             var styleCopSettings = SettingsHelper.GetStyleCopSettings(default(SyntaxTreeAnalysisContext));
 
-            Assert.Equal("PlaceHolderCompany", styleCopSettings.CompanyName);
-            Assert.Equal("Copyright (c) PlaceHolderCompany. All rights reserved.", styleCopSettings.CopyrightText);
+            Assert.Equal("PlaceholderCompany", styleCopSettings.DocumentationRules.CompanyName);
+            Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.CopyrightText);
         }
 
         /// <summary>
@@ -45,8 +45,8 @@
 
             var styleCopSettings = context.GetStyleCopSettings();
 
-            Assert.Equal("TestCompany", styleCopSettings.CompanyName);
-            Assert.Equal("Custom copyright text.", styleCopSettings.CopyrightText);
+            Assert.Equal("TestCompany", styleCopSettings.DocumentationRules.CompanyName);
+            Assert.Equal("Custom copyright text.", styleCopSettings.DocumentationRules.CopyrightText);
         }
 
         /// <summary>
@@ -69,8 +69,59 @@
 
             var styleCopSettings = context.GetStyleCopSettings();
 
-            Assert.Equal("TestCompany", styleCopSettings.CompanyName);
-            Assert.Equal("Copyright (c) TestCompany. All rights reserved.", styleCopSettings.CopyrightText);
+            Assert.Equal("TestCompany", styleCopSettings.DocumentationRules.CompanyName);
+            Assert.Equal("Copyright (c) TestCompany. All rights reserved.", styleCopSettings.DocumentationRules.CopyrightText);
+        }
+
+        [Fact]
+        public async Task VerifyCircularReferenceBehaviorAsync()
+        {
+            var settings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""copyrightText"": ""{copyrightText}""
+    }
+  }
+}
+";
+            var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettings();
+
+            Assert.Equal("[CircularReference]", styleCopSettings.DocumentationRules.CopyrightText);
+        }
+
+        [Fact]
+        public async Task VerifyInvalidReferenceBehaviorAsync()
+        {
+            var settings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""copyrightText"": ""{variable}""
+    }
+  }
+}
+";
+            var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettings();
+
+            Assert.Equal("[InvalidReference]", styleCopSettings.DocumentationRules.CopyrightText);
+        }
+
+        [Fact]
+        public async Task VerifyInvalidJsonBehaviorAsync()
+        {
+            var settings = @"This is not a JSON file.";
+            var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettings();
+
+            // The result is the same as the default settings.
+            Assert.Equal("PlaceholderCompany", styleCopSettings.DocumentationRules.CompanyName);
+            Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.CopyrightText);
         }
 
         private static async Task<SyntaxTreeAnalysisContext> CreateAnalysisContextAsync(string stylecopJSON)

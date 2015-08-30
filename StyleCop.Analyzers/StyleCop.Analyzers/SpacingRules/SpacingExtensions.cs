@@ -17,11 +17,6 @@
                 || token.IsMissing;
         }
 
-        public static string GetTextBetweenTokens(this SourceText text, SyntaxToken token1, SyntaxToken token2)
-        {
-            return (token1.RawKind == 0) ? text.ToString(TextSpan.FromBounds(0, token2.SpanStart)) : text.ToString(TextSpan.FromBounds(token1.Span.End, token2.SpanStart));
-        }
-
         public static SyntaxToken WithoutLeadingWhitespace(this SyntaxToken token, bool removeEndOfLineTrivia = false)
         {
             if (!token.HasLeadingTrivia)
@@ -40,11 +35,6 @@
             }
 
             return token.WithTrailingTrivia(token.TrailingTrivia.WithoutWhitespace(removeEndOfLineTrivia));
-        }
-
-        public static SyntaxToken WithoutWhitespace(this SyntaxToken token, bool removeEndOfLineTrivia = false)
-        {
-            return token.WithoutLeadingWhitespace(removeEndOfLineTrivia).WithoutTrailingWhitespace(removeEndOfLineTrivia);
         }
 
         public static SyntaxTriviaList WithoutWhitespace(this SyntaxTriviaList syntaxTriviaList, bool removeEndOfLineTrivia = false)

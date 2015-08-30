@@ -54,7 +54,7 @@
         private const string Title = "Destructor summary documentation must begin with standard text";
         private const string MessageFormat = "Destructor summary documentation must begin with standard text";
         private const string Description = "The XML documentation header for a C# finalizer does not contain the appropriate summary text.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1643.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1643.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -84,27 +84,23 @@
         }
 
         /// <inheritdoc/>
-        protected override DiagnosticDescriptor DiagnosticDescriptor
-        {
-            get
-            {
-                return Descriptor;
-            }
-        }
-
-        /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDestructor, SyntaxKind.DestructorDeclaration);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleDestructor(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleDestructor, SyntaxKind.DestructorDeclaration);
+        }
+
+        private static void HandleDestructor(SyntaxNodeAnalysisContext context)
         {
             var destructorDeclaration = context.Node as DestructorDeclarationSyntax;
 
             if (destructorDeclaration != null)
             {
-                this.HandleDeclaration(context, DestructorStandardText[0], DestructorStandardText[1], true);
+                HandleDeclaration(context, DestructorStandardText[0], DestructorStandardText[1], Descriptor);
             }
         }
     }

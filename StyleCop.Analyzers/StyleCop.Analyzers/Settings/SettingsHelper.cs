@@ -5,7 +5,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// Class that manages the settings files for StyleCopAnalyzers.
@@ -13,15 +13,9 @@
     internal static class SettingsHelper
     {
         private const string SettingsFileName = "stylecop.json";
-        private const string DefaultCompanyName = "PlaceHolderCompany";
-
-        private const string SettingsToken = "settings";
-        private const string DocumentationRulesToken = "documentationRules";
-        private const string CompanyNameToken = "companyName";
-        private const string CopyrightTextToken = "copyrightText";
 
         /// <summary>
-        /// Gets the stylecop settings.
+        /// Gets the StyleCop settings.
         /// </summary>
         /// <param name="context">The context that will be used to determine the StyleCop settings.</param>
         /// <returns>A <see cref="StyleCopSettings"/> instance that represents the StyleCop settings for the given context.</returns>
@@ -38,12 +32,8 @@
                 {
                     if (Path.GetFileName(additionalFile.Path).ToLowerInvariant() == SettingsFileName)
                     {
-                        var root = JObject.Parse(additionalFile.GetText().ToString());
-
-                        var companyName = (string)root.SelectToken($"{SettingsToken}.{DocumentationRulesToken}.{CompanyNameToken}") ?? DefaultCompanyName;
-                        var copyrightText = (string)root.SelectToken($"{SettingsToken}.{DocumentationRulesToken}.{CopyrightTextToken}") ?? GenerateDefaultCopyrightText(companyName);
-
-                        return new StyleCopSettings(companyName, copyrightText ?? GenerateDefaultCopyrightText(companyName));
+                        var root = JsonConvert.DeserializeObject<SettingsFile>(additionalFile.GetText().ToString());
+                        return root.Settings;
                     }
                 }
             }
@@ -52,12 +42,7 @@
                 // The settings file is invalid -> return the default settings.
             }
 
-            return new StyleCopSettings(DefaultCompanyName, GenerateDefaultCopyrightText(DefaultCompanyName));
-        }
-
-        private static string GenerateDefaultCopyrightText(string companyName)
-        {
-            return $"Copyright (c) {companyName}. All rights reserved.";
+            return new StyleCopSettings();
         }
     }
 }

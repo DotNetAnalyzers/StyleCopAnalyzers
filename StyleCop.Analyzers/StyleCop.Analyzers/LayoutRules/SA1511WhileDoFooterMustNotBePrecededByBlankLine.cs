@@ -38,7 +38,7 @@
         private const string Title = "While-do footer must not be preceded by blank line";
         private const string MessageFormat = "While-do footer must not be preceded by blank line";
         private const string Description = "The while footer at the bottom of a do-while statement is separated from the statement by a blank line.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1511.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1511.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -52,10 +52,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDoStatement, SyntaxKind.DoStatement);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleDoStatement(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleDoStatement, SyntaxKind.DoStatement);
+        }
+
+        private static void HandleDoStatement(SyntaxNodeAnalysisContext context)
         {
             var doStatement = (DoStatementSyntax)context.Node;
             var whileKeyword = doStatement.WhileKeyword;

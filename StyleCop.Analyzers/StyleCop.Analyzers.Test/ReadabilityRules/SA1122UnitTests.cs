@@ -260,6 +260,33 @@ class ClassName
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies the analyzer will properly handle an empty string in a case label.
+        /// This is a regression test for <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1281">DotNetAnalyzers/StyleCopAnalyzers#1281</see>
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestEmptyStringInCaseLabelNotReportedAsync()
+        {
+            string testCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        switch (""Test string"")
+        {
+        case """":
+            break;
+        case ("""" + ""a""):
+            break;
+        }
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1122UseStringEmptyForEmptyStrings();

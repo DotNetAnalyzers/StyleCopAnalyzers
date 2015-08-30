@@ -43,7 +43,7 @@
         private const string Title = "Chained statement blocks must not be preceded by blank line";
         private const string MessageFormat = "'{0}' statement must not be preceded by a blank line";
         private const string Description = "Chained C# statements are separated by a blank line.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1510.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1510.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -63,12 +63,17 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleElseStatement, SyntaxKind.ElseClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleCatchClause, SyntaxKind.CatchClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleFinallyClause, SyntaxKind.FinallyClause);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleElseStatement(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleElseStatement, SyntaxKind.ElseClause);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleCatchClause, SyntaxKind.CatchClause);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleFinallyClause, SyntaxKind.FinallyClause);
+        }
+
+        private static void HandleElseStatement(SyntaxNodeAnalysisContext context)
         {
             var elseClause = (ElseClauseSyntax)context.Node;
             var elseKeyword = elseClause.ElseKeyword;
@@ -81,7 +86,7 @@
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, elseKeyword.GetLocation(), elseKeyword.ToString()));
         }
 
-        private void HandleCatchClause(SyntaxNodeAnalysisContext context)
+        private static void HandleCatchClause(SyntaxNodeAnalysisContext context)
         {
             var catchClause = (CatchClauseSyntax)context.Node;
             var catchKeyword = catchClause.CatchKeyword;
@@ -94,7 +99,7 @@
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, catchKeyword.GetLocation(), catchKeyword.ToString()));
         }
 
-        private void HandleFinallyClause(SyntaxNodeAnalysisContext context)
+        private static void HandleFinallyClause(SyntaxNodeAnalysisContext context)
         {
             var finallyClause = (FinallyClauseSyntax)context.Node;
             var finallyKeyword = finallyClause.FinallyKeyword;

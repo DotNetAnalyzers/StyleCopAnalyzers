@@ -66,7 +66,7 @@
         private const string Title = "All accessors must be single-line or multi-line";
         private const string MessageFormat = "All accessors must be single-line or multi-line";
         private const string Description = "Within a C# property, indexer or event, at least one of the child accessors is written on a single line, and at least one of the child accessors is written across multiple lines.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1504.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1504.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -86,10 +86,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleAccessorListDeclaration, SyntaxKind.AccessorList);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleAccessorListDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleAccessorListDeclaration, SyntaxKind.AccessorList);
+        }
+
+        private static void HandleAccessorListDeclaration(SyntaxNodeAnalysisContext context)
         {
             var accessorList = (AccessorListSyntax)context.Node;
 

@@ -25,7 +25,7 @@
         private const string Title = "Code must not contain blank lines at start of file";
         private const string MessageFormat = "Code must not contain blank lines at start of file";
         private const string Description = "The code file has blank lines at the start.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1517.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1517.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -45,10 +45,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTreeAnalysis);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleSyntaxTreeAnalysis(SyntaxTreeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTreeAnalysis);
+        }
+
+        private static void HandleSyntaxTreeAnalysis(SyntaxTreeAnalysisContext context)
         {
             var firstToken = context.Tree.GetRoot().GetFirstToken(includeZeroWidth: true);
 

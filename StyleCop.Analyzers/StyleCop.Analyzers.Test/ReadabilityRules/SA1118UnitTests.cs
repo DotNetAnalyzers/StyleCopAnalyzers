@@ -8,7 +8,7 @@
     using TestHelper;
     using Xunit;
 
-    public class SA1118UnitTests : CodeFixVerifier
+    public class SA1118UnitTests : DiagnosticVerifier
     {
         [Fact]
         public async Task TestMethodCallWithTwoParametersSecondSpansMoreThanOneLineAsync()

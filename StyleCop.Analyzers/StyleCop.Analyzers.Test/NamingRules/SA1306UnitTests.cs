@@ -18,10 +18,21 @@
         [InlineData("protected const")]
         [InlineData("protected internal const")]
         [InlineData("internal readonly")]
+        [InlineData("public const")]
         [InlineData("protected readonly")]
         [InlineData("protected internal readonly")]
+        [InlineData("public readonly")]
         [InlineData("public")]
         [InlineData("internal")]
+        [InlineData("protected internal")]
+        [InlineData("public static")]
+        [InlineData("internal static")]
+        [InlineData("protected internal static")]
+        [InlineData("public static readonly")]
+        [InlineData("internal static readonly")]
+        [InlineData("protected internal static readonly")]
+        [InlineData("protected static readonly")]
+        [InlineData("private static readonly")]
         public async Task TestThatDiagnosticIsNotReportedAsync(string modifiers)
         {
             var testCode = @"public class Foo
@@ -33,11 +44,69 @@ string Bar = """", car = """", Dar = """";
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestThatDiagnosticIsNotReportedForParametersAsync()
+        {
+            var testCode = @"public class TypeName
+{
+    public void MethodName(string bar, string Car)
+    {
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestThatDiagnosticIsNotReportedForVariablesAsync()
+        {
+            var testCode = @"public class TypeName
+{
+    public void MethodName()
+    {
+        const string bar = nameof(bar);
+        const string Bar = nameof(Bar);
+        string car = nameof(car);
+        string Car = nameof(Car);
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// This test ensures the implementation of <see cref="SA1306FieldNamesMustBeginWithLowerCaseLetter"/> is
+        /// correct with respect to the documented behavior for parameters and local variables (including local
+        /// constants).
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestThatDiagnosticIsNotReportedForParametersAndLocalsAsync()
+        {
+            var testCode = @"public class TypeName
+{
+    public void MethodName(string Parameter1, string parameter2)
+    {
+        const int Constant = 1;
+        const int constant = 1;
+        int Variable;
+        int variable;
+        int Variable1, Variable2;
+        int variable1, variable2;
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Theory]
         [InlineData("")]
         [InlineData("readonly")]
         [InlineData("private")]
         [InlineData("private readonly")]
+        [InlineData("static")]
+        [InlineData("private static")]
+        [InlineData("protected static")]
         public async Task TestThatDiagnosticIsReported_SingleFieldAsync(string modifiers)
         {
             var testCode = @"public class Foo
@@ -68,6 +137,7 @@ string car;
 string dar;
 }}";
 
+            await this.VerifyCSharpDiagnosticAsync(string.Format(fixedCode, modifiers), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers)).ConfigureAwait(false);
         }
 
@@ -76,6 +146,9 @@ string dar;
         [InlineData("readonly")]
         [InlineData("private")]
         [InlineData("private readonly")]
+        [InlineData("static")]
+        [InlineData("private static")]
+        [InlineData("protected static")]
         public async Task TestThatDiagnosticIsReported_MultipleFieldsAsync(string modifiers)
         {
             var testCode = @"public class Foo
@@ -142,7 +215,7 @@ string bar, car, dar;
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1306CodeFixProvider();
+            return new RenameToLowerCaseCodeFixProvider();
         }
     }
 }

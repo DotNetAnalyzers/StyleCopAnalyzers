@@ -31,7 +31,7 @@
         private const string Title = "Accessible fields must begin with upper-case letter";
         private const string MessageFormat = "Field '{0}' must begin with upper-case letter";
         private const string Description = "The name of a public or internal field in C# does not begin with an upper-case letter.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1307.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1307.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -51,18 +51,23 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleFieldDeclaration, SyntaxKind.FieldDeclaration);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleFieldDeclaration, SyntaxKind.FieldDeclaration);
+        }
+
+        private static void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
         {
             // To improve performance we are looking for the field instead of the declarator directly. That way we don't get called for local variables.
-            FieldDeclarationSyntax declaration = context.Node as FieldDeclarationSyntax;
-            if (declaration != null && declaration.Declaration != null)
+            FieldDeclarationSyntax declaration = (FieldDeclarationSyntax)context.Node;
+            if (declaration.Declaration != null)
             {
-                if (declaration.Modifiers.Any(SyntaxKind.ConstKeyword) || declaration.Modifiers.Any(SyntaxKind.ReadOnlyKeyword))
+                if (declaration.Modifiers.Any(SyntaxKind.ConstKeyword))
                 {
-                    // These are reported as SA1303 or SA1304, respectively
+                    // These are reported as SA1303.
                     return;
                 }
 

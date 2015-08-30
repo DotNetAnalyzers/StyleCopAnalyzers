@@ -11,7 +11,7 @@
     /// <summary>
     /// This class contains unit tests for <see cref="SA1604ElementDocumentationMustHaveSummary"/>.
     /// </summary>
-    public class SA1604UnitTests : CodeFixVerifier
+    public class SA1604UnitTests : DiagnosticVerifier
     {
         [Theory]
         [InlineData("enum")]
@@ -76,6 +76,22 @@ TypeName
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 1);
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("partial class")]
+        [InlineData("partial struct")]
+        [InlineData("partial interface")]
+        public async Task TestPartialTypeWithoutDocumentationAsync(string typeName)
+        {
+            var testCode = @"
+///
+{0}
+TypeName
+{{
+}}";
+
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -184,6 +200,22 @@ public class ClassName
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 17);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestPartialMethodWithoutDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// 
+/// </summary>
+public partial class ClassName
+{
+    ///
+    partial void Test();
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]

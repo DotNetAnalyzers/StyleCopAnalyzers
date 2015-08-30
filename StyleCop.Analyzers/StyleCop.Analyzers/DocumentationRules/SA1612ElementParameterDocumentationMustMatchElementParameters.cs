@@ -33,7 +33,7 @@
         public const string DiagnosticId = "SA1612";
         private const string Title = "Element parameter documentation must match element parameters";
         private const string Description = "The documentation describing the parameters to a C# method, constructor, delegate or indexer element does not match the actual parameters on the element.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1612.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1612.md";
 
         private const string MissingParamForDocumentationMessageFormat = "The parameter '{0}' does not exist.";
         private const string ParamWrongOrderMessageFormat = "The parameter documentation for '{0}' should be at position {1}.";
@@ -58,6 +58,11 @@
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterCompilationStartAction(HandleCompilationStart);
+        }
+
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
             context.RegisterSyntaxNodeActionHonorExclusions(HandleDocumentationTrivia, SyntaxKind.SingleLineDocumentationCommentTrivia);
         }

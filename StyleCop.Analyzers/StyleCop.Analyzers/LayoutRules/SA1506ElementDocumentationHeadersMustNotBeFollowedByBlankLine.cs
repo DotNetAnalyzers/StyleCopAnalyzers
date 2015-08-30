@@ -41,7 +41,7 @@
         private const string Title = "Element documentation headers must not be followed by blank line";
         private const string MessageFormat = "Element documentation headers must not be followed by blank line";
         private const string Description = "An element documentation header above a C# element is followed by a blank line.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1506.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1506.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -55,8 +55,13 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.RegisterCompilationStartAction(HandleCompilationStart);
+        }
+
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
             context.RegisterSyntaxNodeActionHonorExclusions(
-                this.HandleDeclaration,
+                HandleDeclaration,
                 SyntaxKind.ClassDeclaration,
                 SyntaxKind.StructDeclaration,
                 SyntaxKind.InterfaceDeclaration,
@@ -72,7 +77,7 @@
                 SyntaxKind.EventFieldDeclaration);
         }
 
-        private void HandleDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
         {
             var triviaList = context.Node.GetLeadingTrivia();
 

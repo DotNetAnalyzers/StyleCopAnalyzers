@@ -31,7 +31,7 @@
         private const string Title = "Elements must be documented";
         private const string MessageFormat = "Elements must be documented";
         private const string Description = "A C# code element is missing a documentation header.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1600.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1600.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -51,22 +51,27 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.EnumDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDestructorDeclaration, SyntaxKind.DestructorDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandlePropertyDeclaration, SyntaxKind.PropertyDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleFieldDeclaration, SyntaxKind.FieldDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleEventDeclaration, SyntaxKind.EventDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleEventFieldDeclaration, SyntaxKind.EventFieldDeclaration);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleDestructorDeclaration, SyntaxKind.DestructorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandlePropertyDeclaration, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleFieldDeclaration, SyntaxKind.FieldDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleEventDeclaration, SyntaxKind.EventDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleEventFieldDeclaration, SyntaxKind.EventFieldDeclaration);
+        }
+
+        private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
             if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
             {
@@ -75,9 +80,9 @@
 
             BaseTypeDeclarationSyntax declaration = context.Node as BaseTypeDeclarationSyntax;
 
-            bool isNestedInClassOrStruct = this.IsNestedType(declaration);
+            bool isNestedInClassOrStruct = IsNestedType(declaration);
 
-            if (declaration != null && this.NeedsComment(declaration.Modifiers, isNestedInClassOrStruct ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword))
+            if (declaration != null && NeedsComment(declaration.Modifiers, isNestedInClassOrStruct ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword))
             {
                 if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
@@ -86,7 +91,7 @@
             }
         }
 
-        private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
             if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
             {
@@ -96,12 +101,12 @@
             MethodDeclarationSyntax declaration = context.Node as MethodDeclarationSyntax;
             SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
 
-            if (this.IsInterfaceMemberDeclaration(declaration) || declaration.ExplicitInterfaceSpecifier != null)
+            if (IsInterfaceMemberDeclaration(declaration) || declaration.ExplicitInterfaceSpecifier != null)
             {
                 defaultVisibility = SyntaxKind.PublicKeyword;
             }
 
-            if (declaration != null && this.NeedsComment(declaration.Modifiers, defaultVisibility))
+            if (declaration != null && NeedsComment(declaration.Modifiers, defaultVisibility))
             {
                 if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
@@ -110,7 +115,7 @@
             }
         }
 
-        private void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
         {
             if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
             {
@@ -119,7 +124,7 @@
 
             ConstructorDeclarationSyntax declaration = context.Node as ConstructorDeclarationSyntax;
 
-            if (declaration != null && this.NeedsComment(declaration.Modifiers, SyntaxKind.PrivateKeyword))
+            if (declaration != null && NeedsComment(declaration.Modifiers, SyntaxKind.PrivateKeyword))
             {
                 if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
@@ -128,7 +133,7 @@
             }
         }
 
-        private void HandleDestructorDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleDestructorDeclaration(SyntaxNodeAnalysisContext context)
         {
             if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
             {
@@ -146,7 +151,7 @@
             }
         }
 
-        private void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
         {
             if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
             {
@@ -156,12 +161,12 @@
             PropertyDeclarationSyntax declaration = context.Node as PropertyDeclarationSyntax;
             SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
 
-            if (this.IsInterfaceMemberDeclaration(declaration) || declaration.ExplicitInterfaceSpecifier != null)
+            if (IsInterfaceMemberDeclaration(declaration) || declaration.ExplicitInterfaceSpecifier != null)
             {
                 defaultVisibility = SyntaxKind.PublicKeyword;
             }
 
-            if (declaration != null && this.NeedsComment(declaration.Modifiers, defaultVisibility))
+            if (declaration != null && NeedsComment(declaration.Modifiers, defaultVisibility))
             {
                 if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
@@ -170,7 +175,7 @@
             }
         }
 
-        private void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)
         {
             if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
             {
@@ -180,12 +185,12 @@
             IndexerDeclarationSyntax declaration = context.Node as IndexerDeclarationSyntax;
             SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
 
-            if (this.IsInterfaceMemberDeclaration(declaration) || declaration.ExplicitInterfaceSpecifier != null)
+            if (IsInterfaceMemberDeclaration(declaration) || declaration.ExplicitInterfaceSpecifier != null)
             {
                 defaultVisibility = SyntaxKind.PublicKeyword;
             }
 
-            if (declaration != null && this.NeedsComment(declaration.Modifiers, defaultVisibility))
+            if (declaration != null && NeedsComment(declaration.Modifiers, defaultVisibility))
             {
                 if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
@@ -194,7 +199,7 @@
             }
         }
 
-        private void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
         {
             if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
             {
@@ -204,7 +209,7 @@
             FieldDeclarationSyntax declaration = context.Node as FieldDeclarationSyntax;
             var variableDeclaration = declaration?.Declaration;
 
-            if (variableDeclaration != null && this.NeedsComment(declaration.Modifiers, SyntaxKind.PrivateKeyword))
+            if (variableDeclaration != null && NeedsComment(declaration.Modifiers, SyntaxKind.PrivateKeyword))
             {
                 if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
@@ -217,7 +222,7 @@
             }
         }
 
-        private void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
         {
             if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
             {
@@ -226,9 +231,9 @@
 
             DelegateDeclarationSyntax declaration = context.Node as DelegateDeclarationSyntax;
 
-            bool isNestedInClassOrStruct = this.IsNestedType(declaration);
+            bool isNestedInClassOrStruct = IsNestedType(declaration);
 
-            if (declaration != null && this.NeedsComment(declaration.Modifiers, isNestedInClassOrStruct ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword))
+            if (declaration != null && NeedsComment(declaration.Modifiers, isNestedInClassOrStruct ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword))
             {
                 if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
@@ -237,7 +242,7 @@
             }
         }
 
-        private void HandleEventDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleEventDeclaration(SyntaxNodeAnalysisContext context)
         {
             if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
             {
@@ -252,7 +257,7 @@
                 defaultVisibility = SyntaxKind.PublicKeyword;
             }
 
-            if (declaration != null && this.NeedsComment(declaration.Modifiers, defaultVisibility))
+            if (declaration != null && NeedsComment(declaration.Modifiers, defaultVisibility))
             {
                 if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
@@ -261,7 +266,7 @@
             }
         }
 
-        private void HandleEventFieldDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleEventFieldDeclaration(SyntaxNodeAnalysisContext context)
         {
             if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
             {
@@ -271,14 +276,14 @@
             EventFieldDeclarationSyntax declaration = context.Node as EventFieldDeclarationSyntax;
             SyntaxKind defaultVisibility = SyntaxKind.PrivateKeyword;
 
-            if (this.IsInterfaceMemberDeclaration(declaration))
+            if (IsInterfaceMemberDeclaration(declaration))
             {
                 defaultVisibility = SyntaxKind.PublicKeyword;
             }
 
             var variableDeclaration = declaration?.Declaration;
 
-            if (variableDeclaration != null && this.NeedsComment(declaration.Modifiers, defaultVisibility))
+            if (variableDeclaration != null && NeedsComment(declaration.Modifiers, defaultVisibility))
             {
                 if (!XmlCommentHelper.HasDocumentation(declaration))
                 {
@@ -291,7 +296,7 @@
             }
         }
 
-        private bool NeedsComment(SyntaxTokenList modifiers, SyntaxKind defaultModifier)
+        private static bool NeedsComment(SyntaxTokenList modifiers, SyntaxKind defaultModifier)
         {
             if (!(modifiers.Any(SyntaxKind.PublicKeyword)
                 || modifiers.Any(SyntaxKind.ProtectedKeyword)
@@ -307,17 +312,17 @@
             return !modifiers.Any(SyntaxKind.PartialKeyword);
         }
 
-        private bool IsNestedType(BaseTypeDeclarationSyntax typeDeclaration)
+        private static bool IsNestedType(BaseTypeDeclarationSyntax typeDeclaration)
         {
             return typeDeclaration?.Parent is BaseTypeDeclarationSyntax;
         }
 
-        private bool IsNestedType(DelegateDeclarationSyntax delegateDeclaration)
+        private static bool IsNestedType(DelegateDeclarationSyntax delegateDeclaration)
         {
             return delegateDeclaration?.Parent is BaseTypeDeclarationSyntax;
         }
 
-        private bool IsInterfaceMemberDeclaration(SyntaxNode declaration)
+        private static bool IsInterfaceMemberDeclaration(SyntaxNode declaration)
         {
             return declaration?.Parent is InterfaceDeclarationSyntax;
         }

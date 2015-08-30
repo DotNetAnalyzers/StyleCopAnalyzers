@@ -33,7 +33,7 @@
         private const string Title = "Element parameters must be documented";
         private const string MessageFormat = "The documentation for parameter '{0}' is missing";
         private const string Description = "A C# method, constructor, delegate or indexer element is missing documentation for one or more of its parameters.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1611.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1611.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -53,13 +53,18 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleSyntaxNode, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleSyntaxNode, SyntaxKind.ConstructorDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleSyntaxNode, SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleSyntaxNode, SyntaxKind.IndexerDeclaration);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleSyntaxNode(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleSyntaxNode, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleSyntaxNode, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleSyntaxNode, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleSyntaxNode, SyntaxKind.IndexerDeclaration);
+        }
+
+        private static void HandleSyntaxNode(SyntaxNodeAnalysisContext context)
         {
             var node = context.Node;
 
@@ -67,7 +72,7 @@
 
             if (documentation != null)
             {
-                IEnumerable<ParameterSyntax> parameterList = this.GetParameters(node);
+                IEnumerable<ParameterSyntax> parameterList = GetParameters(node);
 
                 if (parameterList == null)
                 {
@@ -95,7 +100,7 @@
             }
         }
 
-        private IEnumerable<ParameterSyntax> GetParameters(SyntaxNode node)
+        private static IEnumerable<ParameterSyntax> GetParameters(SyntaxNode node)
         {
             return (node as BaseMethodDeclarationSyntax)?.ParameterList?.Parameters
                 ?? (node as IndexerDeclarationSyntax)?.ParameterList?.Parameters

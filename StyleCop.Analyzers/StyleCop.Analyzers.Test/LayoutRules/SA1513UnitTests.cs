@@ -404,7 +404,7 @@ public class Foo
         public async Task TestInvalidAsync()
         {
             var testCode = @"using System;
-
+using System.Collections.Generic;
 public class Foo
 {
     private int x;
@@ -479,6 +479,21 @@ public class Foo
             break;
         }
     }
+
+    public void Example()
+    {
+        new List<Action>
+        {
+            () =>
+            {
+                if (true)
+                {
+                    return;
+                }
+                return;
+            }
+        };
+    }
 }
 ";
             var expected = new[]
@@ -502,7 +517,10 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(65, 14),
 
                 // Invalid #7
-                this.CSharpDiagnostic().WithLocation(73, 14)
+                this.CSharpDiagnostic().WithLocation(73, 14),
+
+                // Invalid #8
+                this.CSharpDiagnostic().WithLocation(87, 18)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -572,6 +590,21 @@ public class Foo
             this.x = 0;
         }
     }
+
+    public void Example()
+    {
+        new List<Action>
+        {
+            () =>
+            {
+                if (true)
+                {
+                    return;
+                }
+                return;
+            }
+        };
+    }
 }
 ";
 
@@ -637,10 +670,57 @@ public class Foo
             this.x = 0;
         }
     }
+
+    public void Example()
+    {
+        new List<Action>
+        {
+            () =>
+            {
+                if (true)
+                {
+                    return;
+                }
+
+                return;
+            }
+        };
+    }
 }
 ";
 
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies the analyzer will properly handle an object initializer without assignment.
+        /// This is a regression test for <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1301">DotNetAnalyzers/StyleCopAnalyzers#1301</see>.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestObjectInitializerWithoutAssignmentAsync()
+        {
+            var testCode = @"using System.Collections.Generic;
+public class TestClass
+{
+    public int X { get; set; }
+
+    public void TestMethod()
+    {
+        new List<int>
+        {
+            1
+        };
+
+        new TestClass
+        {
+            X = 1
+        };
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

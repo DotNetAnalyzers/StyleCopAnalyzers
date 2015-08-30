@@ -14,7 +14,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandlePropertyDeclaration, SyntaxKind.PropertyDeclaration);
+            context.RegisterCompilationStartAction(this.HandleCompilationStart);
         }
 
         /// <summary>
@@ -26,10 +26,15 @@
         /// <param name="diagnosticLocations">The location(s) where diagnostics, if any, should be reported.</param>
         protected abstract void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, params Location[] diagnosticLocations);
 
+        private void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(this.HandlePropertyDeclaration, SyntaxKind.PropertyDeclaration);
+        }
+
         private void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var node = context.Node as PropertyDeclarationSyntax;
-            if (node == null || node.Identifier.IsMissing)
+            var node = (PropertyDeclarationSyntax)context.Node;
+            if (node.Identifier.IsMissing)
             {
                 return;
             }

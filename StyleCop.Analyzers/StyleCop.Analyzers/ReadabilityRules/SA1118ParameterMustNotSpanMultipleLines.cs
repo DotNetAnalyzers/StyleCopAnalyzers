@@ -60,7 +60,7 @@
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1118Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1118MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1118Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
-        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1118.html";
+        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1118.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -87,46 +87,51 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleArgumentList, SyntaxKind.ArgumentList, SyntaxKind.BracketedArgumentList);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleAttributeArgumentList, SyntaxKind.AttributeArgumentList);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleAttributeArgumentList(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleArgumentList, SyntaxKind.ArgumentList, SyntaxKind.BracketedArgumentList);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleAttributeArgumentList, SyntaxKind.AttributeArgumentList);
+        }
+
+        private static void HandleAttributeArgumentList(SyntaxNodeAnalysisContext context)
         {
             var attributeArgumentList = (AttributeArgumentListSyntax)context.Node;
 
             for (int i = 1; i < attributeArgumentList.Arguments.Count; i++)
             {
                 var argument = attributeArgumentList.Arguments[i];
-                if (this.CheckIfArgumentIsMultiline(argument))
+                if (CheckIfArgumentIsMultiline(argument))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation()));
                 }
             }
         }
 
-        private void HandleArgumentList(SyntaxNodeAnalysisContext context)
+        private static void HandleArgumentList(SyntaxNodeAnalysisContext context)
         {
             var argumentListSyntax = (BaseArgumentListSyntax)context.Node;
 
             for (int i = 1; i < argumentListSyntax.Arguments.Count; i++)
             {
                 var argument = argumentListSyntax.Arguments[i];
-                if (this.CheckIfArgumentIsMultiline(argument)
-                    && !this.IsArgumentOnExceptionList(argument.Expression))
+                if (CheckIfArgumentIsMultiline(argument)
+                    && !IsArgumentOnExceptionList(argument.Expression))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, argument.GetLocation()));
                 }
             }
         }
 
-        private bool CheckIfArgumentIsMultiline(CSharpSyntaxNode argument)
+        private static bool CheckIfArgumentIsMultiline(CSharpSyntaxNode argument)
         {
             var lineSpan = argument.GetLineSpan();
             return lineSpan.EndLinePosition.Line > lineSpan.StartLinePosition.Line;
         }
 
-        private bool IsArgumentOnExceptionList(ExpressionSyntax argumentExpresson)
+        private static bool IsArgumentOnExceptionList(ExpressionSyntax argumentExpresson)
         {
             return argumentExpresson != null
                 && ArgumentExceptionSyntaxKinds.Any(argumentExpresson.IsKind);

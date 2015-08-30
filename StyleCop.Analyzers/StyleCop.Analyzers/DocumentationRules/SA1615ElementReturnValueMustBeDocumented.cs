@@ -30,7 +30,7 @@
         private const string Title = "Element return value must be documented";
         private const string MessageFormat = "Element return value must be documented";
         private const string Description = "A C# element is missing documentation for its return value.";
-        private const string HelpLink = "http://www.stylecop.com/docs/SA1615.html";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1615.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -50,25 +50,30 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            var node = context.Node as MethodDeclarationSyntax;
-
-            this.HandleDeclaration(context, node.ReturnType);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
         }
 
-        private void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var node = context.Node as DelegateDeclarationSyntax;
+            var node = (MethodDeclarationSyntax)context.Node;
 
-            this.HandleDeclaration(context, node.ReturnType);
+            HandleDeclaration(context, node.ReturnType);
         }
 
-        private void HandleDeclaration(SyntaxNodeAnalysisContext context, TypeSyntax returnType)
+        private static void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var node = (DelegateDeclarationSyntax)context.Node;
+
+            HandleDeclaration(context, node.ReturnType);
+        }
+
+        private static void HandleDeclaration(SyntaxNodeAnalysisContext context, TypeSyntax returnType)
         {
             var predefinedType = returnType as PredefinedTypeSyntax;
 
