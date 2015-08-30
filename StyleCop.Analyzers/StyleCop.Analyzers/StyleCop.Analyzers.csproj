@@ -54,6 +54,7 @@
     </Compile>
     <Compile Include="DocumentationRules\ElementDocumentationSummaryBase.cs" />
     <Compile Include="DocumentationRules\FileHeaderAnalyzers.cs" />
+    <Compile Include="DocumentationRules\InheritdocCodeFixProvider.cs" />
     <Compile Include="DocumentationRules\PartialElementDocumentationSummaryBase.cs" />
     <Compile Include="DocumentationRules\PropertyDocumentationSummaryBase.cs" />
     <Compile Include="DocumentationRules\SA1600ElementsMustBeDocumented.cs" />
