@@ -11,6 +11,7 @@
     using Microsoft.CodeAnalysis.CodeFixes;
     using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// Implements a code fix that will generate a StyleCop settings file if it does not exist yet.
@@ -24,7 +25,7 @@
   ""$schema"": ""https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json"",
   ""settings"": {
     ""documentationRules"": {
-      ""companyName"": ""PlaceholderCompany""
+      ""companyName"": """ + DocumentationSettings.DefaultCompanyName + @"""
     }
   }
 }
@@ -33,15 +34,15 @@
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(
-                SA1633FileMustHaveHeader.DiagnosticId,
-                SA1634FileHeaderMustShowCopyright.DiagnosticId,
-                SA1635FileHeaderMustHaveCopyrightText.DiagnosticId,
-                SA1636FileHeaderCopyrightTextMustMatch.DiagnosticId,
-                SA1637FileHeaderMustContainFileName.DiagnosticId,
-                SA1638FileHeaderFileNameDocumentationMustMatchFileName.DiagnosticId,
-                SA1639FileHeaderMustHaveSummary.DiagnosticId,
-                SA1640FileHeaderMustHaveValidCompanyText.DiagnosticId,
-                SA1641FileHeaderCompanyNameTextMustMatch.DiagnosticId,
+                FileHeaderAnalyzers.SA1633DescriptorMissing.Id,
+                FileHeaderAnalyzers.SA1634Descriptor.Id,
+                FileHeaderAnalyzers.SA1635Descriptor.Id,
+                FileHeaderAnalyzers.SA1636Descriptor.Id,
+                FileHeaderAnalyzers.SA1637Descriptor.Id,
+                FileHeaderAnalyzers.SA1638Descriptor.Id,
+                FileHeaderAnalyzers.SA1639Descriptor.Id,
+                FileHeaderAnalyzers.SA1640Descriptor.Id,
+                FileHeaderAnalyzers.SA1641Descriptor.Id,
                 SA1649FileHeaderFileNameDocumentationMustMatchTypeName.DiagnosticId);
 
         /// <inheritdoc/>

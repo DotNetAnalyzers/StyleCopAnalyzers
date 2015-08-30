@@ -861,41 +861,5 @@ namespace StyleCop.Analyzers.ReadabilityRules {
                 return ResourceManager.GetString("SA1126Title", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Place each type constraint on a new line.
-        /// </summary>
-        internal static string SA1127CodeFix {
-            get {
-                return ResourceManager.GetString("SA1127CodeFix", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Each type constraint clause for a generic type parameter should be listed on a line of code by itself..
-        /// </summary>
-        internal static string SA1127Description {
-            get {
-                return ResourceManager.GetString("SA1127Description", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Generic type constraints must be on their own line.
-        /// </summary>
-        internal static string SA1127MessageFormat {
-            get {
-                return ResourceManager.GetString("SA1127MessageFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Generic type constraints must be on their own line.
-        /// </summary>
-        internal static string SA1127Title {
-            get {
-                return ResourceManager.GetString("SA1127Title", resourceCulture);
-            }
-        }
     }
 }

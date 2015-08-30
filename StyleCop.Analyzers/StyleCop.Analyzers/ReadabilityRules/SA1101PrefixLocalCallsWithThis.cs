@@ -36,7 +36,7 @@
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1101Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1101MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1101Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
-        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1101.html";
+        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1101.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -56,8 +56,13 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMemberAccessExpression, SyntaxKind.SimpleMemberAccessExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleIdentifierName, SyntaxKind.IdentifierName);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
+        }
+
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleMemberAccessExpression, SyntaxKind.SimpleMemberAccessExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleIdentifierName, SyntaxKind.IdentifierName);
         }
 
         /// <summary>
@@ -65,14 +70,14 @@
         /// the expression <c>X.Y.Z.A.B.C</c>.
         /// </summary>
         /// <param name="context">The analysis context for a <see cref="SyntaxNode"/>.</param>
-        private void HandleMemberAccessExpression(SyntaxNodeAnalysisContext context)
+        private static void HandleMemberAccessExpression(SyntaxNodeAnalysisContext context)
         {
             MemberAccessExpressionSyntax syntax = (MemberAccessExpressionSyntax)context.Node;
             IdentifierNameSyntax nameExpression = syntax.Expression as IdentifierNameSyntax;
-            this.HandleIdentifierNameImpl(context, nameExpression);
+            HandleIdentifierNameImpl(context, nameExpression);
         }
 
-        private void HandleIdentifierName(SyntaxNodeAnalysisContext context)
+        private static void HandleIdentifierName(SyntaxNodeAnalysisContext context)
         {
             switch (context.Node?.Parent?.Kind() ?? SyntaxKind.None)
             {
@@ -127,17 +132,17 @@
                 break;
             }
 
-            this.HandleIdentifierNameImpl(context, (IdentifierNameSyntax)context.Node);
+            HandleIdentifierNameImpl(context, (IdentifierNameSyntax)context.Node);
         }
 
-        private void HandleIdentifierNameImpl(SyntaxNodeAnalysisContext context, IdentifierNameSyntax nameExpression)
+        private static void HandleIdentifierNameImpl(SyntaxNodeAnalysisContext context, IdentifierNameSyntax nameExpression)
         {
             if (nameExpression == null)
             {
                 return;
             }
 
-            if (!this.HasThis(nameExpression))
+            if (!HasThis(nameExpression))
             {
                 return;
             }
@@ -187,7 +192,7 @@
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, nameExpression.GetLocation()));
         }
 
-        private bool HasThis(SyntaxNode node)
+        private static bool HasThis(SyntaxNode node)
         {
             for (; node != null; node = node.Parent)
             {

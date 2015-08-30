@@ -124,7 +124,7 @@
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1121Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1121MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1121Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
-        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1121.html";
+        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1121.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);
@@ -144,13 +144,18 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleIdentifierNameSyntax, SyntaxKind.IdentifierName);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleIdentifierNameSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            IdentifierNameSyntax identifierNameSyntax = context.Node as IdentifierNameSyntax;
-            if (identifierNameSyntax == null || identifierNameSyntax.IsVar)
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleIdentifierNameSyntax, SyntaxKind.IdentifierName);
+        }
+
+        private static void HandleIdentifierNameSyntax(SyntaxNodeAnalysisContext context)
+        {
+            IdentifierNameSyntax identifierNameSyntax = (IdentifierNameSyntax)context.Node;
+            if (identifierNameSyntax.IsVar)
             {
                 return;
             }
@@ -160,7 +165,7 @@
                 return;
             }
 
-            switch (identifierNameSyntax.Identifier.Text)
+            switch (identifierNameSyntax.Identifier.ValueText)
             {
             case "bool":
             case "byte":
@@ -193,7 +198,7 @@
             // if the identifier name doesn't match the name of a special type
             if (!identifierNameSyntax.SyntaxTree.ContainsUsingAlias())
             {
-                switch (identifierNameSyntax.Identifier.Text)
+                switch (identifierNameSyntax.Identifier.ValueText)
                 {
                 case nameof(Boolean):
                 case nameof(Byte):
@@ -259,7 +264,7 @@
             }
 
             // Allow nameof
-            if (this.IsNameInNameOfExpression(identifierNameSyntax))
+            if (IsNameInNameOfExpression(identifierNameSyntax))
             {
                 return;
             }
@@ -268,14 +273,10 @@
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, locationNode.GetLocation()));
         }
 
-        private bool IsNameInNameOfExpression(IdentifierNameSyntax identifierNameSyntax)
+        private static bool IsNameInNameOfExpression(IdentifierNameSyntax identifierNameSyntax)
         {
             // The only time a type name can appear as an argument is for the invocation expression created for the
             // nameof keyword. This assumption is the foundation of the following simple analysis algorithm.
-            if (identifierNameSyntax.Parent == null)
-            {
-                return false;
-            }
 
             // This covers the case nameof(Int32)
             if (identifierNameSyntax.Parent is ArgumentSyntax)

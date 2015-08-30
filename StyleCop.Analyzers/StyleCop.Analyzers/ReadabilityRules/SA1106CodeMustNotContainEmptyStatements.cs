@@ -23,7 +23,7 @@
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1106Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1106MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1106Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
-        private static readonly string HelpLink = "http://www.stylecop.com/docs/SA1106.html";
+        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1106.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);
@@ -43,17 +43,22 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleEmptyStatementSyntax, SyntaxKind.EmptyStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeSyntax, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeSyntax, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeSyntax, SyntaxKind.InterfaceDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeSyntax, SyntaxKind.EnumDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleNamespaceSyntax, SyntaxKind.NamespaceDeclaration);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleTypeSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            var declaration = context.Node as BaseTypeDeclarationSyntax;
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleEmptyStatementSyntax, SyntaxKind.EmptyStatement);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeSyntax, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeSyntax, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeSyntax, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeSyntax, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleNamespaceSyntax, SyntaxKind.NamespaceDeclaration);
+        }
+
+        private static void HandleTypeSyntax(SyntaxNodeAnalysisContext context)
+        {
+            var declaration = (BaseTypeDeclarationSyntax)context.Node;
 
             if (declaration.SemicolonToken.IsKind(SyntaxKind.SemicolonToken))
             {
@@ -61,9 +66,9 @@
             }
         }
 
-        private void HandleNamespaceSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleNamespaceSyntax(SyntaxNodeAnalysisContext context)
         {
-            var declaration = context.Node as NamespaceDeclarationSyntax;
+            var declaration = (NamespaceDeclarationSyntax)context.Node;
 
             if (declaration.SemicolonToken.IsKind(SyntaxKind.SemicolonToken))
             {
@@ -71,13 +76,9 @@
             }
         }
 
-        private void HandleEmptyStatementSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleEmptyStatementSyntax(SyntaxNodeAnalysisContext context)
         {
-            EmptyStatementSyntax syntax = context.Node as EmptyStatementSyntax;
-            if (syntax == null)
-            {
-                return;
-            }
+            EmptyStatementSyntax syntax = (EmptyStatementSyntax)context.Node;
 
             LabeledStatementSyntax labeledStatementSyntax = syntax.Parent as LabeledStatementSyntax;
             if (labeledStatementSyntax != null)
