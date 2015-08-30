@@ -13,19 +13,19 @@
           "type": "object",
           "description": "Configuration for documentation rules (SA1600-)",
           "properties": {
-            "documentExposedMembers": {
+            "documentExposedElements": {
               "type": "boolean",
-              "description": "Specifies whether exposed members need to be documented. When true, all publicly-exposed types and members require documentation.",
+              "description": "Specifies whether exposed elements need to be documented. When true, all publicly-exposed types and members require documentation.",
               "default": true
             },
-            "documentInternalMembers": {
+            "documentInternalElements": {
               "type": "boolean",
-              "description": "Specifies whether internal members need to be documented. When true, all internally-exposed types and members require documentation.",
+              "description": "Specifies whether internal elements need to be documented. When true, all internally-exposed types and members require documentation.",
               "default": true
             },
-            "documentPrivateMembers": {
+            "documentPrivateElements": {
               "type": "boolean",
-              "description": "Specifies whether private members need to be documented. When true, all types and members except for declared private fields require documentation.",
+              "description": "Specifies whether private elements need to be documented. When true, all types and members except for declared private fields require documentation.",
               "default": false
             },
             "documentInterfaces": {

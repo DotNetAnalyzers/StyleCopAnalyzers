@@ -313,7 +313,7 @@
                     return true;
                 }
 
-                if (this.documentationSettings.DocumentPrivateMembers)
+                if (this.documentationSettings.DocumentPrivateElements)
                 {
                     if (syntaxKind == SyntaxKind.FieldDeclaration && declaredAccessibility == Accessibility.Private)
                     {
@@ -331,12 +331,12 @@
                 case Accessibility.Protected:
                 case Accessibility.ProtectedOrInternal:
                     // These items are part of the exposed API surface => document if configured
-                    return this.documentationSettings.DocumentExposedMembers;
+                    return this.documentationSettings.DocumentExposedElements;
 
                 case Accessibility.ProtectedAndInternal:
                 case Accessibility.Internal:
                     // These items are part of the internal API surface => document if configured
-                    return this.documentationSettings.DocumentInternalMembers;
+                    return this.documentationSettings.DocumentInternalElements;
 
                 case Accessibility.NotApplicable:
                 case Accessibility.Private:

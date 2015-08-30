@@ -116,9 +116,9 @@ StyleCop Analyzers includes rules which require developers to document the major
 | Property | Default Value | Summary |
 | --- | --- | --- |
 | `documentInterfaces` | **true** | Specifies whether interface members need to be documented. When true, all interface members require documentation, regardless of accessibility. |
-| `documentExposedMembers` | **true** | Specifies whether exposed members need to be documented. When true, all publicly-exposed types and members require documentation. |
-| `documentInternalMembers` | **true** | Specifies whether internal members need to be documented. When true, all internally-exposed types and members require documentation. |
-| `documentPrivateMembers` | **false** | Specifies whether private members need to be documented. When true, all types and members except for declared private fields require documentation. |
+| `documentExposedElements` | **true** | Specifies whether exposed elements need to be documented. When true, all publicly-exposed types and members require documentation. |
+| `documentInternalElements` | **true** | Specifies whether internal elements need to be documented. When true, all internally-exposed types and members require documentation. |
+| `documentPrivateElements` | **false** | Specifies whether private elements need to be documented. When true, all types and members except for declared private fields require documentation. |
 | `documentPrivateFields` | **false** | Specifies whether private fields need to be documented. When true, all fields require documentation, regardless of accessibility. |
 
 The following example shows a configuration file which requires developers to document all publicly-accessible members and all interfaces (regardless of accessibility), but does not require other internal or private members to be documented.

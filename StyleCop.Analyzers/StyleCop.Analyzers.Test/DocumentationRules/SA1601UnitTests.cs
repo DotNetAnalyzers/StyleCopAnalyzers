@@ -19,7 +19,7 @@
 {
   ""settings"": {
     ""documentationRules"": {
-      ""documentPrivateMembers"": true
+      ""documentPrivateElements"": true
     }
   }
 }

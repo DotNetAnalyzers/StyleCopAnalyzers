@@ -42,22 +42,22 @@
         private bool xmlHeader;
 
         /// <summary>
-        /// This is the backing field for the <see cref="DocumentExposedMembers"/> property.
+        /// This is the backing field for the <see cref="DocumentExposedElements"/> property.
         /// </summary>
-        [JsonProperty("documentExposedMembers", DefaultValueHandling = DefaultValueHandling.Include)]
-        private bool documentExposedMembers;
+        [JsonProperty("documentExposedElements", DefaultValueHandling = DefaultValueHandling.Include)]
+        private bool documentExposedElements;
 
         /// <summary>
-        /// This is the backing field for the <see cref="DocumentInternalMembers"/> property.
+        /// This is the backing field for the <see cref="DocumentInternalElements"/> property.
         /// </summary>
-        [JsonProperty("documentInternalMembers", DefaultValueHandling = DefaultValueHandling.Include)]
-        private bool documentInternalMembers;
+        [JsonProperty("documentInternalElements", DefaultValueHandling = DefaultValueHandling.Include)]
+        private bool documentInternalElements;
 
         /// <summary>
-        /// This is the backing field for the <see cref="DocumentPrivateMembers"/> property.
+        /// This is the backing field for the <see cref="DocumentPrivateElements"/> property.
         /// </summary>
-        [JsonProperty("documentPrivateMembers", DefaultValueHandling = DefaultValueHandling.Include)]
-        private bool documentPrivateMembers;
+        [JsonProperty("documentPrivateElements", DefaultValueHandling = DefaultValueHandling.Include)]
+        private bool documentPrivateElements;
 
         /// <summary>
         /// This is the backing field for the <see cref="DocumentInterfaces"/> property.
@@ -82,9 +82,9 @@
             this.variables = ImmutableDictionary<string, string>.Empty;
             this.xmlHeader = true;
 
-            this.documentExposedMembers = true;
-            this.documentInternalMembers = true;
-            this.documentPrivateMembers = false;
+            this.documentExposedElements = true;
+            this.documentInternalElements = true;
+            this.documentPrivateElements = false;
             this.documentInterfaces = true;
             this.documentPrivateFields = false;
         }
@@ -147,14 +147,14 @@
             }
         }
 
-        public bool DocumentExposedMembers =>
-            this.documentExposedMembers;
+        public bool DocumentExposedElements =>
+            this.documentExposedElements;
 
-        public bool DocumentInternalMembers =>
-            this.documentInternalMembers;
+        public bool DocumentInternalElements =>
+            this.documentInternalElements;
 
-        public bool DocumentPrivateMembers =>
-            this.documentPrivateMembers;
+        public bool DocumentPrivateElements =>
+            this.documentPrivateElements;
 
         public bool DocumentInterfaces =>
             this.documentInterfaces;

@@ -110,7 +110,7 @@
                     return true;
                 }
 
-                if (this.documentationSettings.DocumentPrivateMembers)
+                if (this.documentationSettings.DocumentPrivateElements)
                 {
                     // DocumentPrivateMembers => everything except declared private fields must be documented
                     return true;
@@ -122,12 +122,12 @@
                 case Accessibility.Protected:
                 case Accessibility.ProtectedOrInternal:
                     // These items are part of the exposed API surface => document if configured
-                    return this.documentationSettings.DocumentExposedMembers;
+                    return this.documentationSettings.DocumentExposedElements;
 
                 case Accessibility.ProtectedAndInternal:
                 case Accessibility.Internal:
                     // These items are part of the internal API surface => document if configured
-                    return this.documentationSettings.DocumentInternalMembers;
+                    return this.documentationSettings.DocumentInternalElements;
 
                 case Accessibility.NotApplicable:
                 case Accessibility.Private:
