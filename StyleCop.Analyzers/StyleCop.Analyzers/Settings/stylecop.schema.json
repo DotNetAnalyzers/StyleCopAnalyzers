@@ -13,6 +13,11 @@
           "type": "object",
           "description": "Configuration for documentation rules (SA1600-)",
           "properties": {
+            "documentExposedMembers": {
+              "type": "boolean",
+              "description": "Specifies whether exposed members need to be documented. When true, all publicly-exposed types and members require documentation.",
+              "default": true
+            },
             "documentInternalMembers": {
               "type": "boolean",
               "description": "Specifies whether internal members need to be documented. When true, all internally-exposed types and members require documentation.",

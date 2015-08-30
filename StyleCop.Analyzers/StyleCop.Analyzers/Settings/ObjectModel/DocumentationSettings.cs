@@ -42,6 +42,12 @@
         private bool xmlHeader;
 
         /// <summary>
+        /// This is the backing field for the <see cref="DocumentExposedMembers"/> property.
+        /// </summary>
+        [JsonProperty("documentExposedMembers", DefaultValueHandling = DefaultValueHandling.Include)]
+        private bool documentExposedMembers;
+
+        /// <summary>
         /// This is the backing field for the <see cref="DocumentInternalMembers"/> property.
         /// </summary>
         [JsonProperty("documentInternalMembers", DefaultValueHandling = DefaultValueHandling.Include)]
@@ -76,6 +82,7 @@
             this.variables = ImmutableDictionary<string, string>.Empty;
             this.xmlHeader = true;
 
+            this.documentExposedMembers = true;
             this.documentInternalMembers = true;
             this.documentPrivateMembers = false;
             this.documentInterfaces = true;
@@ -139,6 +146,9 @@
                 return this.xmlHeader;
             }
         }
+
+        public bool DocumentExposedMembers =>
+            this.documentExposedMembers;
 
         public bool DocumentInternalMembers =>
             this.documentInternalMembers;

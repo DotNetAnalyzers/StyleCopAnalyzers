@@ -121,8 +121,8 @@
                 case Accessibility.Public:
                 case Accessibility.Protected:
                 case Accessibility.ProtectedOrInternal:
-                    // These items are part of the public API surface => always document
-                    return true;
+                    // These items are part of the exposed API surface => document if configured
+                    return this.documentationSettings.DocumentExposedMembers;
 
                 case Accessibility.ProtectedAndInternal:
                 case Accessibility.Internal:

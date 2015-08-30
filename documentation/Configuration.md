@@ -116,6 +116,7 @@ StyleCop Analyzers includes rules which require developers to document the major
 | Property | Default Value | Summary |
 | --- | --- | --- |
 | `documentInterfaces` | **true** | Specifies whether interface members need to be documented. When true, all interface members require documentation, regardless of accessibility. |
+| `documentExposedMembers` | **true** | Specifies whether exposed members need to be documented. When true, all publicly-exposed types and members require documentation. |
 | `documentInternalMembers` | **true** | Specifies whether internal members need to be documented. When true, all internally-exposed types and members require documentation. |
 | `documentPrivateMembers` | **false** | Specifies whether private members need to be documented. When true, all types and members except for declared private fields require documentation. |
 | `documentPrivateFields` | **false** | Specifies whether private fields need to be documented. When true, all fields require documentation, regardless of accessibility. |
