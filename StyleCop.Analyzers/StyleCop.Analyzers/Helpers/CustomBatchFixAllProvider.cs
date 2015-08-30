@@ -161,12 +161,11 @@
             }
 
             var solution = fixAllContext.Solution;
-            var cancellationToken = fixAllContext.CancellationToken;
-            var newSolution = await this.TryMergeFixesAsync(solution, batchOfFixes, cancellationToken).ConfigureAwait(false);
+            var newSolution = await this.TryMergeFixesAsync(solution, batchOfFixes, fixAllContext.CancellationToken).ConfigureAwait(false);
             if (newSolution != null && newSolution != solution)
             {
                 var title = this.GetFixAllTitle(fixAllContext);
-                return CodeAction.Create(title, _ => Task.FromResult(newSolution));
+                return CodeAction.Create(title, cancellationToken => Task.FromResult(newSolution));
             }
 
             return null;
