@@ -86,6 +86,7 @@
                 .Select(t => Activator.CreateInstance(t, true))
                 .OfType<CodeFixProvider>()
                 .Where(x => x != null)
+                .Where(x => x.GetType().Name != "SettingsFileCodeFixProvider")
                 .ToArray());
         }
 
