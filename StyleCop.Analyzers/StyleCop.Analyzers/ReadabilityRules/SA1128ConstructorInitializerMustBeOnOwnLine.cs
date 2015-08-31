@@ -41,24 +41,24 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(this.HandleCompilationStart);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleConstructor, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleConstructor, SyntaxKind.ConstructorDeclaration);
         }
 
-        private void HandleConstructor(SyntaxNodeAnalysisContext context)
+        private static void HandleConstructor(SyntaxNodeAnalysisContext context)
         {
             var constructor = (ConstructorDeclarationSyntax)context.Node;
             if (constructor.Initializer != null)
             {
-                this.Analyze(context, constructor);
+                Analyze(context, constructor);
             }
         }
 
-        private void Analyze(
+        private static void Analyze(
             SyntaxNodeAnalysisContext context,
             ConstructorDeclarationSyntax constructor)
         {
