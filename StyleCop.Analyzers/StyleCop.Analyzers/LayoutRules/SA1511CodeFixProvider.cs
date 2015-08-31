@@ -46,7 +46,7 @@
 
             var whileToken = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
 
-            var newSyntaxRoot = syntaxRoot.ReplaceToken(whileToken, whileToken.WithoutLeadingBlankLines());
+            var newSyntaxRoot = syntaxRoot.ReplaceToken(whileToken, whileToken.WithoutBlankLines());
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
     }
