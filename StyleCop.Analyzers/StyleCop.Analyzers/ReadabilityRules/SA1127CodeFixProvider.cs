@@ -66,7 +66,7 @@
             {
                 [precedingToken] = precedingToken.WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed),
                 [whereToken] = whereToken.WithLeadingTrivia(indentationTrivia),
-                [endToken] = endToken.WithTrailingTrivia(RemoveUnnecessaryWhitespace(endToken).Add(SyntaxFactory.CarriageReturnLineFeed)),
+                [endToken] = endToken.WithTrailingTrivia(RemoveUnnecessaryWhitespaceTrivia(endToken).Add(SyntaxFactory.CarriageReturnLineFeed)),
             };
 
             if (afterEndToken.IsKind(SyntaxKind.EqualsGreaterThanToken))
@@ -104,7 +104,14 @@
 
         // This function will remove any unnecessary whitespace or end-of-line trivia from a token.
         // If there is trailing comment trivia, it is preserved along with whitespace *before* it.
-        private static SyntaxTriviaList RemoveUnnecessaryWhitespace(SyntaxToken token)
+
+        /// <summary>
+        /// Removes any unnecessary whitespace and end-of-line trivia from a token, but leaves comments.
+        /// If a comment is encountered, whitespace trivia before the comment is preserved.
+        /// </summary>
+        /// <param name="token">Token to remove trivia from.</param>
+        /// <returns>Token with whitespace and end-of-line trivia removed.</returns>
+        private static SyntaxTriviaList RemoveUnnecessaryWhitespaceTrivia(SyntaxToken token)
         {
             if (!token.HasTrailingTrivia)
             {

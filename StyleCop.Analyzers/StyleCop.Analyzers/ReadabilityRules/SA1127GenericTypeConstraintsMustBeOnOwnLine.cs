@@ -8,8 +8,11 @@
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
-    /// Todo
+    /// Generic type constraints must be on their own line.
     /// </summary>
+    /// <remarks>
+    /// <para>A violation of this rule occurs when one or more generic type constraints following the <c>where</c> keyword are on the same line.</para>
+    /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class SA1127GenericTypeConstraintsMustBeOnOwnLine : DiagnosticAnalyzer
     {
@@ -40,40 +43,40 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(this.HandleCompilationStart);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
         }
 
-        private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
             var declaration = (MethodDeclarationSyntax)context.Node;
             var declarationLineSpan = declaration.GetLineSpan();
 
             if (declaration.TypeParameterList?.Parameters.Count > 0)
             {
-                this.Analyze(context, declarationLineSpan, declaration.ConstraintClauses);
+                Analyze(context, declarationLineSpan, declaration.ConstraintClauses);
             }
         }
 
-        private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
             var declaration = (TypeDeclarationSyntax)context.Node;
             var declarationLineSpan = declaration.GetLineSpan();
 
             if (declaration.TypeParameterList?.Parameters.Count > 0)
             {
-                this.Analyze(context, declarationLineSpan, declaration.ConstraintClauses);
+                Analyze(context, declarationLineSpan, declaration.ConstraintClauses);
             }
         }
 
-        private void Analyze(
+        private static void Analyze(
             SyntaxNodeAnalysisContext context,
             FileLinePositionSpan declarationLineSpan,
             SyntaxList<TypeParameterConstraintClauseSyntax> constraintClauses)
