@@ -45,6 +45,21 @@ string Bar = """", car = """", Dar = """";
         }
 
         [Fact]
+        public async Task TestThatDiagnosticIsNotReportedForEventFieldsAsync()
+        {
+            var testCode = @"using System;
+public class TypeName
+{
+    static event EventHandler bar;
+    static event EventHandler Bar;
+    event EventHandler car;
+    event EventHandler Car;
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestThatDiagnosticIsNotReportedForParametersAsync()
         {
             var testCode = @"public class TypeName

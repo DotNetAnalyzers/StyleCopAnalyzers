@@ -60,7 +60,8 @@
         private static void HandleVariableDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
             VariableDeclarationSyntax syntax = (VariableDeclarationSyntax)context.Node;
-            if (syntax.Parent.IsKind(SyntaxKind.FieldDeclaration))
+            if (syntax.Parent.IsKind(SyntaxKind.FieldDeclaration)
+                || syntax.Parent.IsKind(SyntaxKind.EventFieldDeclaration))
             {
                 // This diagnostic is only for local variables.
                 return;
