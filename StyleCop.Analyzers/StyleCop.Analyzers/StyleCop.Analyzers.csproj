@@ -283,6 +283,7 @@
     <Compile Include="ReadabilityRules\SA1101PrefixLocalCallsWithThis.cs" />
     <Compile Include="ReadabilityRules\SA1103CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1104SA1105CodeFixProvider.cs" />
+    <Compile Include="ReadabilityRules\SA1106CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1106CodeMustNotContainEmptyStatements.cs" />
     <Compile Include="ReadabilityRules\SA1107CodeMustNotContainMultipleStatementsOnOneLine.cs" />
     <Compile Include="ReadabilityRules\SA1107FixAllProvider.cs" />
