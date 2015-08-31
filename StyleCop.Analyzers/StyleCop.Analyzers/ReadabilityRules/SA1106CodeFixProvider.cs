@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace StyleCop.Analyzers.ReadabilityRules
+﻿namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
@@ -60,7 +58,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 {
                     context.RegisterCodeFix(CodeAction.Create(ReadabilityResources.SA1106CodeFix, token => RemoveSemicolonFromTypeAsync(context.Document, root, typeDeclaration), nameof(SA1106CodeFixProvider)), diagnostic);
                 }
-
             }
         }
 
@@ -84,7 +81,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
             else if (node.Parent.IsKind(SyntaxKind.LabeledStatement))
             {
-                var labeledStatement = (LabeledStatementSyntax) node.Parent;
+                var labeledStatement = (LabeledStatementSyntax)node.Parent;
                 var parentBlock = labeledStatement.Parent as BlockSyntax;
                 var index = parentBlock.Statements.IndexOf(labeledStatement);
                 var newStatements = parentBlock.Statements.Take(index)
@@ -92,13 +89,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     .Concat(parentBlock.Statements.Skip(index + 2));
                 var newParentBlock = parentBlock.WithStatements(SyntaxFactory.List(newStatements));
                 newRoot = root.ReplaceNode(parentBlock, newParentBlock);
-            }
-            else
-            {
-                if (Debugger.IsAttached)
-                {
-                    Debugger.Break();
-                }
             }
 
             return Task.FromResult(document.WithSyntaxRoot(newRoot));
