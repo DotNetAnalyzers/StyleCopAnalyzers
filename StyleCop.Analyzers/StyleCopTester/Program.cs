@@ -82,55 +82,106 @@
                     }
                 }
 
-                if (args.Contains("/nocf"))
+                if (args.Contains("/codefixes"))
                 {
-                    return;
+                    TestCodeFixes(stopwatch, solution, diagnostics);
                 }
 
-                Console.WriteLine("Calculating fixes");
-
-                List<CodeAction> fixes = new List<CodeAction>();
-
-                var codeFixers = GetAllCodeFixers();
-
-                foreach (var item in diagnostics)
+                if (args.Contains("/fixall"))
                 {
-                    foreach (var codeFixer in codeFixers.GetValueOrDefault(item.Id, ImmutableList.Create<CodeFixProvider>()))
-                    {
-                        fixes.AddRange(GetFixesAsync(solution, codeFixer, item).GetAwaiter().GetResult());
-                    }
+                    TestFixAll(stopwatch, solution, diagnostics);
+                }
+            }
+        }
+
+        private static void TestFixAll(Stopwatch stopwatch, Solution solution, ImmutableList<Diagnostic> diagnostics)
+        {
+            Console.WriteLine("Calculating fixes");
+
+            var codeFixers = GetAllCodeFixers().SelectMany(x => x.Value);
+
+            var equivalenceGroups = new List<CodeFixEquivalenceGroup>();
+
+            foreach (var codeFixer in codeFixers)
+            {
+                equivalenceGroups.AddRange(CodeFixEquivalenceGroup.CreateAsync(codeFixer, diagnostics, solution).GetAwaiter().GetResult());
             }
 
-                Console.WriteLine($"Found {fixes.Count} potential code fixes");
+            Console.WriteLine($"Found {equivalenceGroups.Count} equivalence groups.");
 
-                Console.WriteLine("Calculating changes");
+            Console.WriteLine("Calculating changes");
 
-                stopwatch.Restart();
-
-                object lockObject = new object();
-
-                Parallel.ForEach(fixes, fix =>
+            foreach (var fix in equivalenceGroups)
+            {
+                try
                 {
-                    try
-                    {
-                        fix.GetOperationsAsync(CancellationToken.None).GetAwaiter().GetResult();
-                    }
-                    catch (Exception ex)
-                    {
-                        // Report thrown exceptions
-                        lock (lockObject)
-                        {
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine($"The fix '{fix.Title} 'threw an exception:");
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine(ex);
-                            Console.ResetColor();
-                        }
-                    }
-                });
-
-                Console.WriteLine($"Calculating changes completed in {stopwatch.ElapsedMilliseconds}ms");
+                    stopwatch.Restart();
+                    Console.WriteLine($"Calculating fix for {fix.CodeFixEquivalenceKey}.");
+                    fix.GetOperationsAsync(CancellationToken.None).GetAwaiter().GetResult();
+                    WriteLine($"Calculating changes completed in {stopwatch.ElapsedMilliseconds}ms", ConsoleColor.Yellow);
+                }
+                catch (Exception ex)
+                {
+                    // Report thrown exceptions
+                    WriteLine($"The fix {fix.CodeFixEquivalenceKey} threw an exception:", ConsoleColor.Yellow);
+                    WriteLine(ex.ToString(), ConsoleColor.Yellow);
+                }
             }
+
+        }
+
+        private static void WriteLine(string text, ConsoleColor color)
+        {
+            Console.ForegroundColor = color;
+            Console.WriteLine(text);
+            Console.ResetColor();
+        }
+
+        private static void TestCodeFixes(Stopwatch stopwatch, Solution solution, ImmutableList<Diagnostic> diagnostics)
+        {
+            Console.WriteLine("Calculating fixes");
+
+            List<CodeAction> fixes = new List<CodeAction>();
+
+            var codeFixers = GetAllCodeFixers();
+
+            foreach (var item in diagnostics)
+            {
+                foreach (var codeFixer in codeFixers.GetValueOrDefault(item.Id, ImmutableList.Create<CodeFixProvider>()))
+                {
+                    fixes.AddRange(GetFixesAsync(solution, codeFixer, item).GetAwaiter().GetResult());
+                }
+            }
+
+            Console.WriteLine($"Found {fixes.Count} potential code fixes");
+
+            Console.WriteLine("Calculating changes");
+
+            stopwatch.Restart();
+
+            object lockObject = new object();
+
+            Parallel.ForEach(fixes, fix =>
+            {
+                try
+                {
+                    fix.GetOperationsAsync(CancellationToken.None).GetAwaiter().GetResult();
+                }
+                catch (Exception ex)
+                {
+                    // Report thrown exceptions
+                    lock (lockObject)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine($"The fix '{fix.Title} 'threw an exception:");
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine(ex);
+                        Console.ResetColor();
+                    }
+                }
+            });
+
+            Console.WriteLine($"Calculating changes completed in {stopwatch.ElapsedMilliseconds}ms");
         }
 
         private static async Task<IEnumerable<CodeAction>> GetFixesAsync(Solution solution, CodeFixProvider codeFixProvider, Diagnostic diagnostic)
@@ -222,13 +273,13 @@
         {
             Assembly assembly = typeof(StyleCop.Analyzers.NoCodeFixAttribute).Assembly;
 
-            var diagnosticAnalyzerType = typeof(CodeFixProvider);
+            var codeFixProviderType = typeof(CodeFixProvider);
 
             Dictionary<string, ImmutableList<CodeFixProvider>> providers = new Dictionary<string, ImmutableList<CodeFixProvider>>();
 
             foreach (var type in assembly.GetTypes())
             {
-                if (type.IsSubclassOf(diagnosticAnalyzerType) && !type.IsAbstract)
+                if (type.IsSubclassOf(codeFixProviderType) && !type.IsAbstract)
                 {
                     var codeFixProvider = (CodeFixProvider)Activator.CreateInstance(type);
 
@@ -240,6 +291,23 @@
             }
 
             return providers.ToImmutableDictionary();
+        }
+
+        private static ImmutableDictionary<FixAllProvider, ImmutableHashSet<string>> GetAllFixAllProviders(IEnumerable<CodeFixProvider> providers)
+        {
+            Dictionary<FixAllProvider, ImmutableHashSet<string>> fixAllProviders = new Dictionary<FixAllProvider, ImmutableHashSet<string>>();
+
+            foreach (var provider in providers)
+            {
+                var fixAllProvider = provider.GetFixAllProvider();
+                var supportedDiagnosticIds = fixAllProvider.GetSupportedFixAllDiagnosticIds(provider);
+                foreach (var id in supportedDiagnosticIds)
+                {
+                    fixAllProviders.AddToInnerList(fixAllProvider, id);
+                }
+            }
+
+            return fixAllProviders.ToImmutableDictionary();
         }
 
         private static async Task<ImmutableList<Diagnostic>> GetAnalyzerDiagnosticsAsync(Solution solution, string solutionPath, ImmutableArray<DiagnosticAnalyzer> analyzers)
@@ -289,7 +357,8 @@
             Console.WriteLine("Options:");
             Console.WriteLine("/all     Run all StyleCopAnalyzers analyzers, including ones that are disabled by default");
             Console.WriteLine("/nostats Disable the display of statistics");
-            Console.WriteLine("/nostats Disable the calculation of code fixes");
+            Console.WriteLine("/codefixes Test single code fixes");
+            Console.WriteLine("/fixall Test fix all providers");
             Console.WriteLine("/id:<id> Enable analyzer with diagnostic ID < id > (when this is specified, only this analyzer is enabled)");
         }
     }

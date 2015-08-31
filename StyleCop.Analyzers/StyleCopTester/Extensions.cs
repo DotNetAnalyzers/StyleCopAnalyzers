@@ -18,5 +18,19 @@
                 dictionary.Add(key, ImmutableList.Create(item));
             }
         }
+
+        internal static void AddToInnerList<TKey, TValue>(this IDictionary<TKey, ImmutableHashSet<TValue>> dictionary, TKey key, TValue item)
+        {
+            ImmutableHashSet<TValue> items;
+
+            if (dictionary.TryGetValue(key, out items))
+            {
+                dictionary[key] = items.Add(item);
+            }
+            else
+            {
+                dictionary.Add(key, ImmutableHashSet.Create(item));
+            }
+        }
     }
 }
