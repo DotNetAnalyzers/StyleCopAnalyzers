@@ -10,6 +10,7 @@
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// Implements a code fix for SA1633.
@@ -21,8 +22,6 @@
     [Shared]
     public class SA1633CodeFixProvider : CodeFixProvider
     {
-        private const string CompanyName = "FooCorp"; // Should come from settings.
-
         private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(FileHeaderAnalyzers.SA1633Identifier);
 
@@ -49,30 +48,23 @@
         private static async Task<Document> GetTransformedDocumentAsync(Document document, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var settings = document.Project.AnalyzerOptions.GetStyleCopSettings();
 
             var fileHeader = FileHeaderHelpers.ParseFileHeader(root);
-            SyntaxNode newSyntaxRoot;
-            if (fileHeader.IsMissing)
-            {
-                newSyntaxRoot = AddHeader(root, document.Name);
-            }
-            else
-            {
-                newSyntaxRoot = ReplaceHeader(document, root);
-            }
+            var newSyntaxRoot = fileHeader.IsMissing ? AddHeader(root, document.Name, settings) : ReplaceHeader(document, root, settings);
 
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
 
-        private static SyntaxNode ReplaceHeader(Document document, SyntaxNode root)
+        private static SyntaxNode ReplaceHeader(Document document, SyntaxNode root, StyleCopSettings settings)
         {
             var existingTrivia = root.GetLeadingTrivia().Where(x => !x.IsKind(SyntaxKind.EndOfLineTrivia) && !x.IsKind(SyntaxKind.SingleLineCommentTrivia));
-            return root.WithLeadingTrivia(CreateNewHeader(document.Name).AddRange(existingTrivia).Add(SyntaxFactory.CarriageReturnLineFeed));
+            return root.WithLeadingTrivia(CreateNewHeader(document.Name, settings).AddRange(existingTrivia).Add(SyntaxFactory.CarriageReturnLineFeed));
         }
 
-        private static SyntaxNode AddHeader(SyntaxNode root, string name)
+        private static SyntaxNode AddHeader(SyntaxNode root, string name, StyleCopSettings settings)
         {
-            var newTrivia = CreateNewHeader(name).AddRange(root.GetLeadingTrivia());
+            var newTrivia = CreateNewHeader(name, settings).AddRange(root.GetLeadingTrivia());
             if (!newTrivia.Last().IsKind(SyntaxKind.EndOfLineTrivia))
             {
                 newTrivia = newTrivia.Add(SyntaxFactory.CarriageReturnLineFeed);
@@ -81,9 +73,9 @@
             return root.WithLeadingTrivia(newTrivia);
         }
 
-        private static SyntaxTriviaList CreateNewHeader(string name)
+        private static SyntaxTriviaList CreateNewHeader(string name, StyleCopSettings setttings)
         {
-            return SyntaxFactory.ParseLeadingTrivia($@"// <copyright file=""{name}"" company=""{CompanyName}"">
+            return SyntaxFactory.ParseLeadingTrivia($@"// <copyright file=""{name}"" company=""{setttings.DocumentationRules.CompanyName}"">
 //   Copyright (c) FooCorp. All rights reserved.
 // </copyright>
 ");
