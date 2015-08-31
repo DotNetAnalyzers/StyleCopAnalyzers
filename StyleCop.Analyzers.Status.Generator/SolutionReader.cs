@@ -130,7 +130,12 @@
                 // Check if this syntax tree represents a diagnostic
                 SyntaxNode syntaxRoot = await syntaxTree.GetRootAsync();
                 SemanticModel semanticModel = this.compilation.GetSemanticModel(syntaxTree);
-                SyntaxNode classSyntaxNode = syntaxRoot.DescendantNodes().First(x => x.IsKind(SyntaxKind.ClassDeclaration));
+                SyntaxNode classSyntaxNode = syntaxRoot.DescendantNodes().FirstOrDefault(x => x.IsKind(SyntaxKind.ClassDeclaration));
+
+                if (classSyntaxNode == null)
+                {
+                    continue;
+                }
 
                 INamedTypeSymbol classSymbol = semanticModel.GetDeclaredSymbol(classSyntaxNode) as INamedTypeSymbol;
 
