@@ -127,7 +127,6 @@
                     WriteLine(ex.ToString(), ConsoleColor.Yellow);
                 }
             }
-
         }
 
         private static void WriteLine(string text, ConsoleColor color)

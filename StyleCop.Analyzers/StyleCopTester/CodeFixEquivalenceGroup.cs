@@ -35,20 +35,6 @@
 
         internal ImmutableArray<Diagnostic> DiagnosticsToFix { get; }
 
-        internal async Task<ImmutableArray<CodeActionOperation>> GetOperationsAsync(CancellationToken cancellationToken = default(CancellationToken))
-        {
-            Diagnostic diagnostic = this.DiagnosticsToFix.First();
-            Document document = this.Solution.GetDocument(diagnostic.Location.SourceTree);
-
-            var diagnosticsProvider = TesterDiagnosticProvider.Create(this.DiagnosticsToFix);
-
-            var context = new FixAllContext(document, this.CodeFixProvider, FixAllScope.Solution, this.CodeFixEquivalenceKey, this.DiagnosticsToFix.Select(x => x.Id), diagnosticsProvider, cancellationToken);
-
-            CodeAction action = await this.FixAllProvider.GetFixAsync(context).ConfigureAwait(false);
-
-            return await action.GetOperationsAsync(cancellationToken).ConfigureAwait(false);
-        }
-
         internal static async Task<ImmutableList<CodeFixEquivalenceGroup>> CreateAsync(CodeFixProvider codeFixProvider, IEnumerable<Diagnostic> allDiagnostics, Solution solution)
         {
             var fixAllProvider = codeFixProvider.GetFixAllProvider();
@@ -75,6 +61,20 @@
             }
 
             return groups.ToImmutableList();
+        }
+
+        internal async Task<ImmutableArray<CodeActionOperation>> GetOperationsAsync(CancellationToken cancellationToken = default(CancellationToken))
+        {
+            Diagnostic diagnostic = this.DiagnosticsToFix.First();
+            Document document = this.Solution.GetDocument(diagnostic.Location.SourceTree);
+
+            var diagnosticsProvider = TesterDiagnosticProvider.Create(this.DiagnosticsToFix);
+
+            var context = new FixAllContext(document, this.CodeFixProvider, FixAllScope.Solution, this.CodeFixEquivalenceKey, this.DiagnosticsToFix.Select(x => x.Id), diagnosticsProvider, cancellationToken);
+
+            CodeAction action = await this.FixAllProvider.GetFixAsync(context).ConfigureAwait(false);
+
+            return await action.GetOperationsAsync(cancellationToken).ConfigureAwait(false);
         }
 
         private static async Task<IEnumerable<CodeAction>> GetFixesAsync(Solution solution, CodeFixProvider codeFixProvider, Diagnostic diagnostic)
