@@ -225,6 +225,11 @@
                 index--;
             }
 
+            if ((index < 0) || !triviaList[index].HasBuiltinEndLine())
+            {
+                return false;
+            }
+
             var blankLineCount = -1;
             while (index >= 0)
             {

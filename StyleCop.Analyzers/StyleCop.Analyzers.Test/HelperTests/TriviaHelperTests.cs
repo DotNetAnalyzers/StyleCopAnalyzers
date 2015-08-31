@@ -1,11 +1,10 @@
-﻿using System.Linq;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-
-namespace StyleCop.Analyzers.Test.HelperTests
+﻿namespace StyleCop.Analyzers.Test.HelperTests
 {
+    using System.Linq;
     using Analyzers.Helpers;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Xunit;
 
     public class TriviaHelperTests
@@ -81,23 +80,6 @@ public class Foo
     public int Prop
     {
 
-        set
-        {
-            i = value;
-        }
-    }
-}");
-            CanRemoveLeadingBlankLines(@"
-public class Foo
-{
-    private int i = 0;
-
-    public int Prop
-    {
-
-        /// <summary>
-        /// The setter documentation
-        /// </summary>
         set
         {
             i = value;

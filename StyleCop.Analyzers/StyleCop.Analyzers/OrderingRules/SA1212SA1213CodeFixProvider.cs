@@ -87,7 +87,7 @@
 
         private static AccessorDeclarationSyntax GetNewAccessor(AccessorListSyntax accessorList, AccessorDeclarationSyntax firstAccessor, AccessorDeclarationSyntax secondAccessor)
         {
-            var newLeadingTrivia = secondAccessor.GetFirstToken().WithoutLeadingBlankLines().LeadingTrivia;
+            var newLeadingTrivia = GetLeadingTriviaWithoutLaedingBlankLines(secondAccessor);
             if (AccessorsAreOnTheSameLine(firstAccessor, secondAccessor))
             {
                 var leadingWhitespace = firstAccessor.GetLeadingTrivia().Where(x => x.IsKind(SyntaxKind.WhitespaceTrivia)).ToList();
@@ -104,6 +104,29 @@
             }
 
             return newAccessor;
+        }
+
+        private static SyntaxTriviaList GetLeadingTriviaWithoutLaedingBlankLines(AccessorDeclarationSyntax secondAccessor)
+        {
+            var leadingTrivia = secondAccessor.GetLeadingTrivia();
+
+            var skipIndex = 0;
+            for (var i = 0; i < leadingTrivia.Count; i++)
+            {
+                var currentTrivia = leadingTrivia[i];
+                if (currentTrivia.IsKind(SyntaxKind.EndOfLineTrivia))
+                {
+                    skipIndex = i + 1;
+                }
+                else if (!currentTrivia.IsKind(SyntaxKind.WhitespaceTrivia))
+                {
+                    // Preceded by whitespace
+                    skipIndex = i > 0 && leadingTrivia[i - 1].IsKind(SyntaxKind.WhitespaceTrivia) ? i - 1 : i;
+                    break;
+                }
+            }
+
+            return SyntaxFactory.TriviaList(leadingTrivia.Skip(skipIndex));
         }
     }
 }
