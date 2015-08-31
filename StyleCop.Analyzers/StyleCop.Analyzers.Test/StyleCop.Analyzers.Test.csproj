@@ -305,6 +305,7 @@
     <Compile Include="ReadabilityRules\SA1124UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1125UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1126UnitTests.cs" />
+    <Compile Include="ReadabilityRules\SA1128UnitTests.cs" />
     <Compile Include="Settings\SettingsFileCodeFixProviderUnitTests.cs" />
     <Compile Include="Settings\SettingsUnitTests.cs" />
     <Compile Include="SpacingRules\NumberSignSpacingTestBase.cs" />

@@ -861,5 +861,32 @@ namespace StyleCop.Analyzers.ReadabilityRules {
                 return ResourceManager.GetString("SA1126Title", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A constructor initializer, including the colon character, should be on its own line..
+        /// </summary>
+        internal static string SA1128Description {
+            get {
+                return ResourceManager.GetString("SA1128Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Put constructor initializers on their own line.
+        /// </summary>
+        internal static string SA1128MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1128MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Put constructor initializers on their own line.
+        /// </summary>
+        internal static string SA1128Title {
+            get {
+                return ResourceManager.GetString("SA1128Title", resourceCulture);
+            }
+        }
     }
 }
