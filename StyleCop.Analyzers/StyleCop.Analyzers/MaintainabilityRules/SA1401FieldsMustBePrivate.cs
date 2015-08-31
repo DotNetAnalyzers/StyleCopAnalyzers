@@ -64,7 +64,7 @@
                         return;
                     }
 
-                    if (location.SourceTree.IsGeneratedDocument(symbolAnalysisContext.CancellationToken))
+                    if (location.SourceTree.IsGeneratedDocument(symbolAnalysisContext.Compilation, symbolAnalysisContext.CancellationToken))
                     {
                         return;
                     }

@@ -48,12 +48,17 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMethodCall, SyntaxKind.InvocationExpression);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleMethodCall(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            this.HandleMethodCall(context, nameof(Debug.Assert), 1, Descriptor);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleMethodCall, SyntaxKind.InvocationExpression);
+        }
+
+        private static void HandleMethodCall(SyntaxNodeAnalysisContext context)
+        {
+            HandleMethodCall(context, nameof(Debug.Assert), 1, Descriptor);
         }
     }
 }

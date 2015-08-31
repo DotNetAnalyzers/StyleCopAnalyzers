@@ -47,7 +47,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleRegionDirectiveTrivia, SyntaxKind.RegionDirectiveTrivia);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
         /// <summary>
@@ -88,11 +88,16 @@
             return true;
         }
 
-        private void HandleRegionDirectiveTrivia(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            RegionDirectiveTriviaSyntax regionSyntax = context.Node as RegionDirectiveTriviaSyntax;
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleRegionDirectiveTrivia, SyntaxKind.RegionDirectiveTrivia);
+        }
 
-            if (regionSyntax != null && IsCompletelyContainedInBody(regionSyntax))
+        private static void HandleRegionDirectiveTrivia(SyntaxNodeAnalysisContext context)
+        {
+            RegionDirectiveTriviaSyntax regionSyntax = (RegionDirectiveTriviaSyntax)context.Node;
+
+            if (IsCompletelyContainedInBody(regionSyntax))
             {
                 // Region must not be located within a code element.
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, regionSyntax.GetLocation()));

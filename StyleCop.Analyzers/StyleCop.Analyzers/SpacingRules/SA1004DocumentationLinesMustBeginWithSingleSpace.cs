@@ -68,10 +68,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
+        }
+
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var trivia in root.DescendantTrivia(descendIntoTrivia: true))
@@ -79,7 +84,7 @@
                 switch (trivia.Kind())
                 {
                 case SyntaxKind.DocumentationCommentExteriorTrivia:
-                    this.HandleDocumentationCommentExteriorTrivia(context, trivia);
+                    HandleDocumentationCommentExteriorTrivia(context, trivia);
                     break;
 
                 default:
@@ -88,7 +93,7 @@
             }
         }
 
-        private void HandleDocumentationCommentExteriorTrivia(SyntaxTreeAnalysisContext context, SyntaxTrivia trivia)
+        private static void HandleDocumentationCommentExteriorTrivia(SyntaxTreeAnalysisContext context, SyntaxTrivia trivia)
         {
             SyntaxToken token = trivia.Token;
             if (token.IsMissing)

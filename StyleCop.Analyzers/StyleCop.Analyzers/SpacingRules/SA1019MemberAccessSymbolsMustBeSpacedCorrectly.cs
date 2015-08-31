@@ -45,10 +45,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
+        }
+
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
@@ -56,12 +61,12 @@
                 switch (token.Kind())
                 {
                 case SyntaxKind.DotToken:
-                    this.HandleDotToken(context, token);
+                    HandleDotToken(context, token);
                     break;
 
                 // This case handles the new ?. and ?[ operators
                 case SyntaxKind.QuestionToken:
-                    this.HandleQuestionToken(context, token);
+                    HandleQuestionToken(context, token);
                     break;
 
                 default:
@@ -70,17 +75,17 @@
             }
         }
 
-        private void HandleDotToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private static void HandleDotToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
             {
                 return;
             }
 
-            this.HandleMemberAccessSymbol(context, token);
+            HandleMemberAccessSymbol(context, token);
         }
 
-        private void HandleQuestionToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private static void HandleQuestionToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
             {
@@ -92,10 +97,10 @@
                 return;
             }
 
-            this.HandleMemberAccessSymbol(context, token);
+            HandleMemberAccessSymbol(context, token);
         }
 
-        private void HandleMemberAccessSymbol(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private static void HandleMemberAccessSymbol(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             bool firstInLine = token.IsFirstInLine();
             bool precededBySpace = firstInLine || token.IsPrecededByWhitespace();

@@ -44,6 +44,36 @@ string Bar = """", car = """", Dar = """";
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestThatDiagnosticIsNotReportedForParametersAsync()
+        {
+            var testCode = @"public class TypeName
+{
+    public void MethodName(string bar, string Car)
+    {
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestThatDiagnosticIsNotReportedForVariablesAsync()
+        {
+            var testCode = @"public class TypeName
+{
+    public void MethodName()
+    {
+        const string bar = nameof(bar);
+        const string Bar = nameof(Bar);
+        string car = nameof(car);
+        string Car = nameof(Car);
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// This test ensures the implementation of <see cref="SA1306FieldNamesMustBeginWithLowerCaseLetter"/> is
         /// correct with respect to the documented behavior for parameters and local variables (including local

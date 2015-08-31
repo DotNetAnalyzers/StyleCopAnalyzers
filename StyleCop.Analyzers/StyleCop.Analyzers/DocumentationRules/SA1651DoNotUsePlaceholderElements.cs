@@ -57,11 +57,16 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleXmlElement, SyntaxKind.XmlElement);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleXmlEmptyElement, SyntaxKind.XmlEmptyElement);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleXmlElement(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleXmlElement, SyntaxKind.XmlElement);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleXmlEmptyElement, SyntaxKind.XmlEmptyElement);
+        }
+
+        private static void HandleXmlElement(SyntaxNodeAnalysisContext context)
         {
             XmlElementSyntax syntax = (XmlElementSyntax)context.Node;
             if (!string.Equals("placeholder", syntax.StartTag?.Name?.ToString(), StringComparison.Ordinal))
@@ -72,7 +77,7 @@
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.GetLocation()));
         }
 
-        private void HandleXmlEmptyElement(SyntaxNodeAnalysisContext context)
+        private static void HandleXmlEmptyElement(SyntaxNodeAnalysisContext context)
         {
             XmlEmptyElementSyntax syntax = (XmlEmptyElementSyntax)context.Node;
             if (!string.Equals("placeholder", syntax.Name?.ToString(), StringComparison.Ordinal))

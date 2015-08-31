@@ -48,10 +48,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
+        }
+
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
@@ -59,7 +64,7 @@
                 switch (token.Kind())
                 {
                 case SyntaxKind.MinusToken:
-                    this.HandleMinusToken(context, token);
+                    HandleMinusToken(context, token);
                     break;
 
                 default:
@@ -68,7 +73,7 @@
             }
         }
 
-        private void HandleMinusToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private static void HandleMinusToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
             {

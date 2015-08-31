@@ -136,7 +136,7 @@
         /// <c>&lt;see&gt;</c> element targeting the containing type, then by <c>class</c> or <c>struct</c> as
         /// appropriate for the containing type, and finally followed by the second element of this array.
         /// </value>
-        public static ImmutableArray<string> PrivateConstructorStandardText { get; } = ImmutableArray.Create("Prevents a default instance of the ", " from being created.");
+        public static ImmutableArray<string> PrivateConstructorStandardText { get; } = ImmutableArray.Create("Prevents a default instance of the ", " from being created");
 
         /// <summary>
         /// Gets the standard text which is expected to appear at the beginning of the <c>&lt;summary&gt;</c>
@@ -160,47 +160,43 @@
         }
 
         /// <inheritdoc/>
-        protected override DiagnosticDescriptor DiagnosticDescriptor
-        {
-            get
-            {
-                return Descriptor;
-            }
-        }
-
-        /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            var constructorDeclarationSyntax = context.Node as ConstructorDeclarationSyntax;
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
+        }
+
+        private static void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var constructorDeclarationSyntax = (ConstructorDeclarationSyntax)context.Node;
 
             bool isStruct = constructorDeclarationSyntax.Parent?.IsKind(SyntaxKind.StructDeclaration) ?? false;
 
             if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword))
             {
                 string secondPartText = isStruct ? " struct." : " class.";
-                this.HandleDeclaration(context, StaticConstructorStandardText, secondPartText, true);
+                HandleDeclaration(context, StaticConstructorStandardText, secondPartText, Descriptor);
             }
             else if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.PrivateKeyword))
             {
                 string typeKindText = isStruct ? " struct" : " class";
 
-                if (this.HandleDeclaration(context, PrivateConstructorStandardText[0], typeKindText + PrivateConstructorStandardText[1], false) == MatchResult.FoundMatch)
+                if (HandleDeclaration(context, PrivateConstructorStandardText[0], typeKindText + PrivateConstructorStandardText[1], null) == MatchResult.FoundMatch)
                 {
                     return;
                 }
 
                 // also allow the non-private wording for private constructors
-                this.HandleDeclaration(context, NonPrivateConstructorStandardText, typeKindText, true);
+                HandleDeclaration(context, NonPrivateConstructorStandardText, typeKindText, Descriptor);
             }
             else
             {
                 string typeKindText = isStruct ? " struct" : " class";
-                this.HandleDeclaration(context, NonPrivateConstructorStandardText, typeKindText, true);
+                HandleDeclaration(context, NonPrivateConstructorStandardText, typeKindText, Descriptor);
             }
         }
     }

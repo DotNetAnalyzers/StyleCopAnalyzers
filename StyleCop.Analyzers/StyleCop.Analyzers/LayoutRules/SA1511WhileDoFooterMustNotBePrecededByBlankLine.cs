@@ -52,10 +52,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDoStatement, SyntaxKind.DoStatement);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleDoStatement(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleDoStatement, SyntaxKind.DoStatement);
+        }
+
+        private static void HandleDoStatement(SyntaxNodeAnalysisContext context)
         {
             var doStatement = (DoStatementSyntax)context.Node;
             var whileKeyword = doStatement.WhileKeyword;

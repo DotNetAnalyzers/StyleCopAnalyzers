@@ -63,10 +63,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleEnumMember, SyntaxKind.EnumMemberDeclaration);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleEnumMember(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleEnumMember, SyntaxKind.EnumMemberDeclaration);
+        }
+
+        private static void HandleEnumMember(SyntaxNodeAnalysisContext context)
         {
             if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
             {

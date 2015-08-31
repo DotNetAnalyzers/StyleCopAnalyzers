@@ -47,10 +47,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleQuestionToken, SyntaxKind.NullableType);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleQuestionToken(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleQuestionToken, SyntaxKind.NullableType);
+        }
+
+        private static void HandleQuestionToken(SyntaxNodeAnalysisContext context)
         {
             var nullableType = (NullableTypeSyntax)context.Node;
             var questionToken = nullableType.QuestionToken;

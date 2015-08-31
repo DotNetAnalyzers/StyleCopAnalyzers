@@ -144,10 +144,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleIdentifierNameSyntax, SyntaxKind.IdentifierName);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleIdentifierNameSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleIdentifierNameSyntax, SyntaxKind.IdentifierName);
+        }
+
+        private static void HandleIdentifierNameSyntax(SyntaxNodeAnalysisContext context)
         {
             IdentifierNameSyntax identifierNameSyntax = (IdentifierNameSyntax)context.Node;
             if (identifierNameSyntax.IsVar)
@@ -259,7 +264,7 @@
             }
 
             // Allow nameof
-            if (this.IsNameInNameOfExpression(identifierNameSyntax))
+            if (IsNameInNameOfExpression(identifierNameSyntax))
             {
                 return;
             }
@@ -268,7 +273,7 @@
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, locationNode.GetLocation()));
         }
 
-        private bool IsNameInNameOfExpression(IdentifierNameSyntax identifierNameSyntax)
+        private static bool IsNameInNameOfExpression(IdentifierNameSyntax identifierNameSyntax)
         {
             // The only time a type name can appear as an argument is for the invocation expression created for the
             // nameof keyword. This assumption is the foundation of the following simple analysis algorithm.
