@@ -108,6 +108,14 @@
                     && !node.Expression.IsKind(SyntaxKind.AwaitExpression)
                     && !node.IsKind(SyntaxKind.ConstructorDeclaration))
                 {
+                    if (node.Expression.IsKind(SyntaxKind.ConditionalAccessExpression)
+                        && (node.Parent is ElementAccessExpressionSyntax
+                        || node.Parent is MemberAccessExpressionSyntax
+                        || node.Parent is ConditionalAccessExpressionSyntax))
+                    {
+                        return;
+                    }
+
                     ReportDiagnostic(context, node);
                 }
                 else
