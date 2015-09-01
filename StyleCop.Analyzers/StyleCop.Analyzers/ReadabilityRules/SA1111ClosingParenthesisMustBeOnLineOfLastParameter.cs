@@ -347,13 +347,8 @@
                 closeParenLine.IsValid &&
                 closeParenLine.StartLinePosition.Line != lastParameterLine.EndLinePosition.Line)
             {
-                var properties = new Dictionary<string, string>
-                {
-                    [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationPreceding,
-                    [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove,
-                    [OpenCloseSpacingCodeFixProvider.LayoutKey] = OpenCloseSpacingCodeFixProvider.LayoutPack
-                };
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, closeToken.GetLocation(), properties.ToImmutableDictionary()));
+                var properties = OpenCloseSpacingCodeFixProvider.RemovePreceding;
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, closeToken.GetLocation(), properties));
             }
         }
     }
