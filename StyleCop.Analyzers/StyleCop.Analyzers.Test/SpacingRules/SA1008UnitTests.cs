@@ -1660,7 +1660,7 @@
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1008CodeFixProvider();
+            return new OpenCloseSpacingCodeFixProvider();
         }
     }
 }
