@@ -92,23 +92,15 @@
             if (!firstInLine && precededBySpace)
             {
                 // Opening generic brackets must not be {preceded} by a space.
-                var properties = new Dictionary<string, string>
-                {
-                    [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationPreceding,
-                    [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove
-                };
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), "preceded"));
+                var properties = OpenCloseSpacingCodeFixProvider.RemovePreceding;
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, "preceded"));
             }
 
             if (followedBySpace)
             {
                 // Opening generic brackets must not be {followed} by a space.
-                var properties = new Dictionary<string, string>
-                {
-                    [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationFollowing,
-                    [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove
-                };
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), "followed"));
+                var properties = OpenCloseSpacingCodeFixProvider.RemoveFollowing;
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, "followed"));
             }
         }
     }

@@ -20,15 +20,15 @@
     [Shared]
     public class OpenCloseSpacingCodeFixProvider : CodeFixProvider
     {
-        internal const string LocationKey = "location";
-        internal const string ActionKey = "action";
-        internal const string LayoutKey = "layout";
-        internal const string LocationPreceding = "preceding";
-        internal const string LocationFollowing = "following";
-        internal const string ActionInsert = "insert";
-        internal const string ActionRemove = "remove";
-        internal const string LayoutPack = "pack";
-        internal const string LayoutPreserve = "preserve";
+        private const string LocationKey = "location";
+        private const string ActionKey = "action";
+        private const string LayoutKey = "layout";
+        private const string LocationPreceding = "preceding";
+        private const string LocationFollowing = "following";
+        private const string ActionInsert = "insert";
+        private const string ActionRemove = "remove";
+        private const string LayoutPack = "pack";
+        private const string LayoutPreserve = "preserve";
 
         private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(
@@ -48,6 +48,33 @@
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+
+        internal static ImmutableDictionary<string, string> InsertPreceding { get; } =
+            ImmutableDictionary<string, string>.Empty
+                .SetItem(LocationKey, LocationPreceding)
+                .SetItem(ActionKey, ActionInsert);
+
+        internal static ImmutableDictionary<string, string> RemovePreceding { get; } =
+            ImmutableDictionary<string, string>.Empty
+                .SetItem(LocationKey, LocationPreceding)
+                .SetItem(ActionKey, ActionRemove)
+                .SetItem(LayoutKey, LayoutPack);
+
+        internal static ImmutableDictionary<string, string> RemovePrecedingPreserveLayout { get; } =
+            ImmutableDictionary<string, string>.Empty
+                .SetItem(LocationKey, LocationPreceding)
+                .SetItem(ActionKey, ActionRemove)
+                .SetItem(LayoutKey, LayoutPreserve);
+
+        internal static ImmutableDictionary<string, string> InsertFollowing { get; } =
+            ImmutableDictionary<string, string>.Empty
+                .SetItem(LocationKey, LocationFollowing)
+                .SetItem(ActionKey, ActionInsert);
+
+        internal static ImmutableDictionary<string, string> RemoveFollowing { get; } =
+            ImmutableDictionary<string, string>.Empty
+                .SetItem(LocationKey, LocationFollowing)
+                .SetItem(ActionKey, ActionRemove);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()

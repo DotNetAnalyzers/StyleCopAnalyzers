@@ -109,23 +109,15 @@
             if (!firstInLine && precededBySpace)
             {
                 // Member access symbol '{.}' must not be {preceded} by a space.
-                var properties = new Dictionary<string, string>
-                {
-                    [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationPreceding,
-                    [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove,
-                };
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), token.Text, "preceded"));
+                var properties = OpenCloseSpacingCodeFixProvider.RemovePreceding;
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, token.Text, "preceded"));
             }
 
             if (followedBySpace)
             {
                 // Member access symbol '{.}' must not be {followed} by a space.
-                var properties = new Dictionary<string, string>
-                {
-                    [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationFollowing,
-                    [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove,
-                };
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), token.Text, "followed"));
+                var properties = OpenCloseSpacingCodeFixProvider.RemoveFollowing;
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, token.Text, "followed"));
             }
         }
     }

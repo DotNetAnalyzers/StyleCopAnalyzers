@@ -185,12 +185,8 @@
             if (precededBySpace)
             {
                 // Closing parenthesis must{ not} be {preceded} by a space.
-                var properties = new Dictionary<string, string>
-                {
-                    [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationPreceding,
-                    [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove
-                };
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), " not", "preceded"));
+                var properties = OpenCloseSpacingCodeFixProvider.RemovePreceding;
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, " not", "preceded"));
             }
 
             if (!suppressFollowingSpaceError)
@@ -198,22 +194,14 @@
                 if (!precedesStickyCharacter && !followedBySpace && !lastInLine)
                 {
                     // Closing parenthesis must{} be {followed} by a space.
-                    var properties = new Dictionary<string, string>
-                    {
-                        [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationFollowing,
-                        [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionInsert
-                    };
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), string.Empty, "followed"));
+                    var properties = OpenCloseSpacingCodeFixProvider.InsertFollowing;
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, string.Empty, "followed"));
                 }
                 else if (precedesStickyCharacter && followedBySpace && (!lastInLine || !allowEndOfLine))
                 {
                     // Closing parenthesis must{ not} be {followed} by a space.
-                    var properties = new Dictionary<string, string>
-                    {
-                        [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationFollowing,
-                        [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove
-                    };
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), " not", "followed"));
+                    var properties = OpenCloseSpacingCodeFixProvider.RemoveFollowing;
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, " not", "followed"));
                 }
             }
         }
