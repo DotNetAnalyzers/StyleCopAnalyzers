@@ -47,7 +47,7 @@
 
             foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, true, true) as StatementSyntax;
+                var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, false, true) as StatementSyntax;
                 if (node == null || node.IsMissing)
                 {
                     continue;
