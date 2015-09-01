@@ -98,7 +98,7 @@
         {
             Console.WriteLine("Calculating fixes");
 
-            var codeFixers = GetAllCodeFixers().SelectMany(x => x.Value);
+            var codeFixers = GetAllCodeFixers().SelectMany(x => x.Value).Distinct();
 
             var equivalenceGroups = new List<CodeFixEquivalenceGroup>();
 
