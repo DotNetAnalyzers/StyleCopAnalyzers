@@ -10,6 +10,8 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CodeActions;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.MSBuild;
 
@@ -62,7 +64,7 @@
 
                 stopwatch.Restart();
 
-                var diagnostics = GetAnalyzerDiagnosticsAsync(solution, analyzers).Result;
+                var diagnostics = GetAnalyzerDiagnosticsAsync(solution, solutionPath, analyzers).Result;
 
                 Console.WriteLine($"Found {diagnostics.Count} diagnostics in {stopwatch.ElapsedMilliseconds}ms");
 
@@ -79,7 +81,112 @@
                         }
                     }
                 }
+
+                if (args.Contains("/codefixes"))
+                {
+                    TestCodeFixes(stopwatch, solution, diagnostics);
+                }
+
+                if (args.Contains("/fixall"))
+                {
+                    TestFixAll(stopwatch, solution, diagnostics);
+                }
             }
+        }
+
+        private static void TestFixAll(Stopwatch stopwatch, Solution solution, ImmutableList<Diagnostic> diagnostics)
+        {
+            Console.WriteLine("Calculating fixes");
+
+            var codeFixers = GetAllCodeFixers().SelectMany(x => x.Value);
+
+            var equivalenceGroups = new List<CodeFixEquivalenceGroup>();
+
+            foreach (var codeFixer in codeFixers)
+            {
+                equivalenceGroups.AddRange(CodeFixEquivalenceGroup.CreateAsync(codeFixer, diagnostics, solution).GetAwaiter().GetResult());
+            }
+
+            Console.WriteLine($"Found {equivalenceGroups.Count} equivalence groups.");
+
+            Console.WriteLine("Calculating changes");
+
+            foreach (var fix in equivalenceGroups)
+            {
+                try
+                {
+                    stopwatch.Restart();
+                    Console.WriteLine($"Calculating fix for {fix.CodeFixEquivalenceKey}.");
+                    fix.GetOperationsAsync(CancellationToken.None).GetAwaiter().GetResult();
+                    WriteLine($"Calculating changes completed in {stopwatch.ElapsedMilliseconds}ms", ConsoleColor.Yellow);
+                }
+                catch (Exception ex)
+                {
+                    // Report thrown exceptions
+                    WriteLine($"The fix '{fix.CodeFixEquivalenceKey}' threw an exception:", ConsoleColor.Yellow);
+                    WriteLine(ex.ToString(), ConsoleColor.Yellow);
+                }
+            }
+        }
+
+        private static void WriteLine(string text, ConsoleColor color)
+        {
+            Console.ForegroundColor = color;
+            Console.WriteLine(text);
+            Console.ResetColor();
+        }
+
+        private static void TestCodeFixes(Stopwatch stopwatch, Solution solution, ImmutableList<Diagnostic> diagnostics)
+        {
+            Console.WriteLine("Calculating fixes");
+
+            List<CodeAction> fixes = new List<CodeAction>();
+
+            var codeFixers = GetAllCodeFixers();
+
+            foreach (var item in diagnostics)
+            {
+                foreach (var codeFixer in codeFixers.GetValueOrDefault(item.Id, ImmutableList.Create<CodeFixProvider>()))
+                {
+                    fixes.AddRange(GetFixesAsync(solution, codeFixer, item).GetAwaiter().GetResult());
+                }
+            }
+
+            Console.WriteLine($"Found {fixes.Count} potential code fixes");
+
+            Console.WriteLine("Calculating changes");
+
+            stopwatch.Restart();
+
+            object lockObject = new object();
+
+            Parallel.ForEach(fixes, fix =>
+            {
+                try
+                {
+                    fix.GetOperationsAsync(CancellationToken.None).GetAwaiter().GetResult();
+                }
+                catch (Exception ex)
+                {
+                    // Report thrown exceptions
+                    lock (lockObject)
+                    {
+                        WriteLine($"The fix '{fix.Title}' threw an exception:", ConsoleColor.Yellow);
+                        WriteLine(ex.ToString(), ConsoleColor.Red);
+                    }
+                }
+            });
+
+            Console.WriteLine($"Calculating changes completed in {stopwatch.ElapsedMilliseconds}ms");
+        }
+
+        private static async Task<IEnumerable<CodeAction>> GetFixesAsync(Solution solution, CodeFixProvider codeFixProvider, Diagnostic diagnostic)
+        {
+            List<CodeAction> codeActions = new List<CodeAction>();
+
+            await codeFixProvider.RegisterCodeFixesAsync(new CodeFixContext(solution.GetDocument(diagnostic.Location.SourceTree), diagnostic, (a, d) => codeActions.Add(a), CancellationToken.None));
+
+            return codeActions;
         }
 
         private static Statistic GetAnalyzerStatistics(IEnumerable<Project> projects)
@@ -158,7 +265,48 @@
             return analyzers.ToImmutableArray();
         }
 
-        private static async Task<ImmutableList<Diagnostic>> GetAnalyzerDiagnosticsAsync(Solution solution, ImmutableArray<DiagnosticAnalyzer> analyzers)
+        private static ImmutableDictionary<string, ImmutableList<CodeFixProvider>> GetAllCodeFixers()
+        {
+            Assembly assembly = typeof(StyleCop.Analyzers.NoCodeFixAttribute).Assembly;
+
+            var codeFixProviderType = typeof(CodeFixProvider);
+
+            Dictionary<string, ImmutableList<CodeFixProvider>> providers = new Dictionary<string, ImmutableList<CodeFixProvider>>();
+
+            foreach (var type in assembly.GetTypes())
+            {
+                if (type.IsSubclassOf(codeFixProviderType) && !type.IsAbstract)
+                {
+                    var codeFixProvider = (CodeFixProvider)Activator.CreateInstance(type);
+
+                    foreach (var diagnosticId in codeFixProvider.FixableDiagnosticIds)
+                    {
+                        providers.AddToInnerList(diagnosticId, codeFixProvider);
+                    }
+                }
+            }
+
+            return providers.ToImmutableDictionary();
+        }
+
+        private static ImmutableDictionary<FixAllProvider, ImmutableHashSet<string>> GetAllFixAllProviders(IEnumerable<CodeFixProvider> providers)
+        {
+            Dictionary<FixAllProvider, ImmutableHashSet<string>> fixAllProviders = new Dictionary<FixAllProvider, ImmutableHashSet<string>>();
+
+            foreach (var provider in providers)
+            {
+                var fixAllProvider = provider.GetFixAllProvider();
+                var supportedDiagnosticIds = fixAllProvider.GetSupportedFixAllDiagnosticIds(provider);
+                foreach (var id in supportedDiagnosticIds)
+                {
+                    fixAllProviders.AddToInnerSet(fixAllProvider, id);
+                }
+            }
+
+            return fixAllProviders.ToImmutableDictionary();
+        }
+
+        private static async Task<ImmutableList<Diagnostic>> GetAnalyzerDiagnosticsAsync(Solution solution, string solutionPath, ImmutableArray<DiagnosticAnalyzer> analyzers)
         {
             List<Task<ImmutableArray<Diagnostic>>> projectDiagnosticTasks = new List<Task<ImmutableArray<Diagnostic>>>();
 
@@ -203,9 +351,11 @@
         {
             Console.WriteLine("Usage: StyleCopTester [options] <Solution>");
             Console.WriteLine("Options:");
-            Console.WriteLine("/all     Run all StyleCopAnalyzers analyzers, including ones that are disabled by default");
-            Console.WriteLine("/nostats Disable the display of statistics");
-            Console.WriteLine("/id:<id> Enable analyzer with diagnostic ID < id > (when this is specified, only this analyzer is enabled)");
+            Console.WriteLine("/all       Run all StyleCopAnalyzers analyzers, including ones that are disabled by default");
+            Console.WriteLine("/nostats   Disable the display of statistics");
+            Console.WriteLine("/codefixes Test single code fixes");
+            Console.WriteLine("/fixall    Test fix all providers");
+            Console.WriteLine("/id:<id>   Enable analyzer with diagnostic ID < id > (when this is specified, only this analyzer is enabled)");
         }
     }
 }
