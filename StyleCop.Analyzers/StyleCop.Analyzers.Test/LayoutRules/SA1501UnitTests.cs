@@ -964,19 +964,13 @@ public class TypeName
             return new SA1501CodeFixProvider();
         }
 
-        protected override Solution CreateSolution(ProjectId projectId, string language)
+        /// <inheritdoc/>
+        protected override IEnumerable<string> GetDisabledDiagnostics()
         {
-            Solution solution = base.CreateSolution(projectId, language);
             if (this.suppressSA1503)
             {
-                Project project = solution.GetProject(projectId);
-                CompilationOptions options = project.CompilationOptions;
-                ImmutableDictionary<string, ReportDiagnostic> specificOptions = options.SpecificDiagnosticOptions;
-                options = options.WithSpecificDiagnosticOptions(specificOptions.Add(SA1503CurlyBracketsMustNotBeOmitted.DiagnosticId, ReportDiagnostic.Suppress));
-                solution = solution.WithProjectCompilationOptions(projectId, options);
+                yield return SA1503CurlyBracketsMustNotBeOmitted.DiagnosticId;
             }
-
-            return solution;
         }
 
         /// <summary>

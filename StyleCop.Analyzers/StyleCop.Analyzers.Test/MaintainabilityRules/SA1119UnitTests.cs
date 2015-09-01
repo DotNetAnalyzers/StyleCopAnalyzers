@@ -1150,7 +1150,6 @@ public class Foo
         [Fact]
         public async Task TestMemberAccessExpressionAroundConditionalMemberAccessExpressionAsync()
         {
-
             string testCode = @"class Foo
 {
     public void Bar()
@@ -1278,7 +1277,6 @@ public class Foo
         [Fact]
         public async Task TestMemberAccessExpressionAroundConditionalElementAccessExpressionAsync()
         {
-
             string testCode = @"class Foo
 {
     public void Bar()
@@ -1400,34 +1398,25 @@ public class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
+        /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1119StatementMustNotUseUnnecessaryParenthesis();
         }
 
+        /// <inheritdoc/>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new SA1119CodeFixProvider();
         }
 
-        protected override Solution CreateSolution(ProjectId projectId, string language)
+        /// <inheritdoc/>
+        protected override IEnumerable<string> GetDisabledDiagnostics()
         {
-            Solution solution = base.CreateSolution(projectId, language);
-
             if (this.mainDiagnosticShouldBeDisabled)
             {
-                Project project = solution.GetProject(projectId);
-
-                CompilationOptions options = project.CompilationOptions;
-
-                ImmutableDictionary<string, ReportDiagnostic> specificOptions = options.SpecificDiagnosticOptions;
-
-                options = options.WithSpecificDiagnosticOptions(specificOptions.Add(DiagnosticId, ReportDiagnostic.Suppress));
-
-                solution = solution.WithProjectCompilationOptions(projectId, options);
+                yield return DiagnosticId;
             }
-
-            return solution;
         }
     }
 }

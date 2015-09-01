@@ -133,11 +133,9 @@ public partial class TypeName
         }
 
         /// <inheritdoc/>
-        protected override Solution CreateSolution(ProjectId projectId, string language)
+        protected override string GetSettings()
         {
-            var solution = base.CreateSolution(projectId, language);
-            var documentId = DocumentId.CreateNewId(projectId);
-            return solution.AddAdditionalDocument(documentId, SettingsFileName, TestSettings);
+            return TestSettings;
         }
 
         /// <inheritdoc/>
