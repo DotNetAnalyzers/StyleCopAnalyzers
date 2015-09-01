@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.LayoutRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
@@ -37,7 +38,7 @@
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return FixAll.Instance;
         }
 
         /// <inheritdoc/>
@@ -54,7 +55,7 @@
                 }
 
                 // If the parent of the statement contains a conditional directive, stuff will be really hard to fix correctly, so don't offer a code fix.
-                if (this.ContainsConditionalDirectiveTrivia(node.Parent))
+                if (ContainsConditionalDirectiveTrivia(node.Parent))
                 {
                     continue;
                 }
@@ -69,7 +70,7 @@
             return Task.FromResult(document.WithSyntaxRoot(newSyntaxRoot));
         }
 
-        private bool ContainsConditionalDirectiveTrivia(SyntaxNode node)
+        private static bool ContainsConditionalDirectiveTrivia(SyntaxNode node)
         {
             for (var currentDirective = node.GetFirstDirective(); currentDirective != null && node.Contains(currentDirective); currentDirective = currentDirective.GetNextDirective())
             {
@@ -84,6 +85,41 @@
             }
 
             return false;
+        }
+
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; } =
+                new FixAll();
+
+            protected override string CodeActionTitle =>
+                LayoutResources.SA1503CodeFix;
+
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            {
+                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
+                SyntaxNode syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
+                List<SyntaxNode> nodesNeedingBlocks = new List<SyntaxNode>(diagnostics.Length);
+
+                foreach (Diagnostic diagnostic in diagnostics)
+                {
+                    var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, false, true) as StatementSyntax;
+                    if (node == null || node.IsMissing)
+                    {
+                        continue;
+                    }
+
+                    // If the parent of the statement contains a conditional directive, stuff will be really hard to fix correctly, so don't offer a code fix.
+                    if (ContainsConditionalDirectiveTrivia(node.Parent))
+                    {
+                        continue;
+                    }
+
+                    nodesNeedingBlocks.Add(node);
+                }
+
+                return syntaxRoot.ReplaceNodes(nodesNeedingBlocks, (originalNode, rewrittenNode) => SyntaxFactory.Block((StatementSyntax)rewrittenNode));
+            }
         }
     }
 }
