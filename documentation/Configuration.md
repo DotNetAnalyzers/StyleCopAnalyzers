@@ -121,6 +121,12 @@ StyleCop Analyzers includes rules which require developers to document the major
 | `documentPrivateElements` | **false** | Specifies whether private elements need to be documented. When true, all types and members except for declared private fields require documentation. |
 | `documentPrivateFields` | **false** | Specifies whether private fields need to be documented. When true, all fields require documentation, regardless of accessibility. |
 
+These properties affect the behavior of the following rules which report missing documentation. Rules which report incorrect or incomplete documentation continue to apply to all documentation comments in the code.
+
+* [SA1600 Elements must be documented](SA1600.md)
+* [SA1601 Partial elements must be documented](SA1601.md)
+* [SA1602 Enumeration items must be documented](SA1602.md)
+
 The following example shows a configuration file which requires developers to document all publicly-accessible members and all interfaces (regardless of accessibility), but does not require other internal or private members to be documented.
 
 > :memo: Documenting interfaces is a low-effort task compared to documenting an entire code base, but provides high value in the fact that it covers the sections of code most likely to impact cross-team usage scenarios.
