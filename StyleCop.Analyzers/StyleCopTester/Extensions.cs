@@ -19,7 +19,7 @@
             }
         }
 
-        internal static void AddToInnerList<TKey, TValue>(this IDictionary<TKey, ImmutableHashSet<TValue>> dictionary, TKey key, TValue item)
+        internal static void AddToInnerSet<TKey, TValue>(this IDictionary<TKey, ImmutableHashSet<TValue>> dictionary, TKey key, TValue item)
         {
             ImmutableHashSet<TValue> items;
 

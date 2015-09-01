@@ -123,7 +123,7 @@
                 catch (Exception ex)
                 {
                     // Report thrown exceptions
-                    WriteLine($"The fix {fix.CodeFixEquivalenceKey} threw an exception:", ConsoleColor.Yellow);
+                    WriteLine($"The fix '{fix.CodeFixEquivalenceKey}' threw an exception:", ConsoleColor.Yellow);
                     WriteLine(ex.ToString(), ConsoleColor.Yellow);
                 }
             }
@@ -171,11 +171,8 @@
                     // Report thrown exceptions
                     lock (lockObject)
                     {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine($"The fix '{fix.Title} 'threw an exception:");
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine(ex);
-                        Console.ResetColor();
+                        WriteLine($"The fix '{fix.Title}' threw an exception:", ConsoleColor.Yellow);
+                        WriteLine(ex.ToString(), ConsoleColor.Red);
                     }
                 }
             });
@@ -302,7 +299,7 @@
                 var supportedDiagnosticIds = fixAllProvider.GetSupportedFixAllDiagnosticIds(provider);
                 foreach (var id in supportedDiagnosticIds)
                 {
-                    fixAllProviders.AddToInnerList(fixAllProvider, id);
+                    fixAllProviders.AddToInnerSet(fixAllProvider, id);
                 }
             }
 
@@ -354,11 +351,11 @@
         {
             Console.WriteLine("Usage: StyleCopTester [options] <Solution>");
             Console.WriteLine("Options:");
-            Console.WriteLine("/all     Run all StyleCopAnalyzers analyzers, including ones that are disabled by default");
-            Console.WriteLine("/nostats Disable the display of statistics");
+            Console.WriteLine("/all       Run all StyleCopAnalyzers analyzers, including ones that are disabled by default");
+            Console.WriteLine("/nostats   Disable the display of statistics");
             Console.WriteLine("/codefixes Test single code fixes");
-            Console.WriteLine("/fixall Test fix all providers");
-            Console.WriteLine("/id:<id> Enable analyzer with diagnostic ID < id > (when this is specified, only this analyzer is enabled)");
+            Console.WriteLine("/fixall    Test fix all providers");
+            Console.WriteLine("/id:<id>   Enable analyzer with diagnostic ID < id > (when this is specified, only this analyzer is enabled)");
         }
     }
 }
