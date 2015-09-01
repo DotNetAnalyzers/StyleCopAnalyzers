@@ -34,6 +34,9 @@
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(
+                SA1600ElementsMustBeDocumented.DiagnosticId,
+                SA1601PartialElementsMustBeDocumented.DiagnosticId,
+                SA1602EnumerationItemsMustBeDocumented.DiagnosticId,
                 FileHeaderAnalyzers.SA1633DescriptorMissing.Id,
                 FileHeaderAnalyzers.SA1634Descriptor.Id,
                 FileHeaderAnalyzers.SA1635Descriptor.Id,
