@@ -57,7 +57,6 @@ public class Foo
         {
             return i;
         }
-
         /// <summary>
         /// The setter documentation
         /// </summary>

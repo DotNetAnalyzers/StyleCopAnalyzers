@@ -233,22 +233,22 @@
             var blankLineCount = -1;
             while (index >= 0)
             {
+                if (triviaList[index].HasBuiltinEndLine() && !triviaList[index].IsKind(SyntaxKind.EndOfLineTrivia))
+                {
+                    blankLineCount++;
+                    return blankLineCount > 0;
+                }
+
                 switch (triviaList[index].Kind())
                 {
                 case SyntaxKind.WhitespaceTrivia:
-                case SyntaxKind.SingleLineDocumentationCommentTrivia:
                     // ignore;
                     break;
+
                 case SyntaxKind.EndOfLineTrivia:
                     blankLineCount++;
                     break;
-                case SyntaxKind.IfDirectiveTrivia:
-                case SyntaxKind.ElifDirectiveTrivia:
-                case SyntaxKind.ElseDirectiveTrivia:
-                case SyntaxKind.EndIfDirectiveTrivia:
-                    // directive trivia have an embedded end of line
-                    blankLineCount++;
-                    return blankLineCount > 0;
+
                 default:
                     return blankLineCount > 0;
                 }
