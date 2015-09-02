@@ -61,6 +61,122 @@ public class Foo
         }
 
         [Fact]
+        public async Task TestAddAccessorAfterRemoveAccessorWithLineCommentAsync()
+        {
+            var testCode = @"
+using System;
+public class Foo
+{
+    private EventHandler nameChanged;
+
+    public event EventHandler NameChanged
+    {
+        // This is the remove accessor.
+        remove
+        {
+            this.nameChanged -= value;
+        }
+
+        // This is the add accessor.
+        add
+        {
+            this.nameChanged += value;
+        }
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 9);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System;
+public class Foo
+{
+    private EventHandler nameChanged;
+
+    public event EventHandler NameChanged
+    {
+        // This is the add accessor.
+        add
+        {
+            this.nameChanged += value;
+        }
+        // This is the remove accessor.
+        remove
+        {
+            this.nameChanged -= value;
+        }
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestAddAccessorAfterRemoveAccessorWithBlockCommentAsync()
+        {
+            var testCode = @"
+using System;
+public class Foo
+{
+    private EventHandler nameChanged;
+
+    public event EventHandler NameChanged
+    {
+        /*
+         * This is the remove accessor.
+         */
+        remove
+        {
+            this.nameChanged -= value;
+        }
+
+        /*
+         * This is the add accessor.
+         */
+        add
+        {
+            this.nameChanged += value;
+        }
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(12, 9);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedCode = @"
+using System;
+public class Foo
+{
+    private EventHandler nameChanged;
+
+    public event EventHandler NameChanged
+    {
+        /*
+         * This is the add accessor.
+         */
+        add
+        {
+            this.nameChanged += value;
+        }
+        /*
+         * This is the remove accessor.
+         */
+        remove
+        {
+            this.nameChanged -= value;
+        }
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestAddAccessorAfterRemoveAccessorSameLineAsync()
         {
             var testCode = @"
