@@ -66,7 +66,7 @@ public class Foo
 }");
 
             var accessor = tree.GetRoot().DescendantNodes().OfType<AccessorDeclarationSyntax>().Single();
-            Assert.True(accessor.GetFirstToken().HasLeadingBlankLines());
+            Assert.False(accessor.GetFirstToken().HasLeadingBlankLines());
         }
 
         [Fact]

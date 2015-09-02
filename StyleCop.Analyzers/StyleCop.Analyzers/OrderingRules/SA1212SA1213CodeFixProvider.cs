@@ -62,14 +62,6 @@
 
             syntaxRoot = trackedRoot.InsertNodesBefore(trackedFirstAccessor, new[] { newAccessor });
 
-            trackedFirstAccessor = syntaxRoot.GetCurrentNode(firstAccesor);
-            if (secondAccessor.GetFirstToken().HasLeadingBlankLines())
-            {
-                var newFirstAccessor = trackedFirstAccessor.WithLeadingTrivia(
-                    TriviaHelper.MergeTriviaLists(new[] { SyntaxFactory.CarriageReturnLineFeed }, trackedFirstAccessor.GetLeadingTrivia()));
-                syntaxRoot = syntaxRoot.ReplaceNode(trackedFirstAccessor, newFirstAccessor);
-            }
-
             var trackedLastAccessor = syntaxRoot.GetCurrentNode(secondAccessor);
             var keepTriviaOptions = AccessorsAreOnTheSameLine(firstAccesor, secondAccessor)
                 ? SyntaxRemoveOptions.KeepEndOfLine
@@ -82,8 +74,7 @@
 
         private static bool AccessorsAreOnTheSameLine(AccessorDeclarationSyntax firstAccesor, AccessorDeclarationSyntax secondAccessor)
         {
-            return firstAccesor.GetLocation().GetLineSpan().EndLinePosition.Line ==
-                   secondAccessor.GetLocation().GetLineSpan().EndLinePosition.Line;
+            return firstAccesor.GetEndLine() == secondAccessor.GetEndLine();
         }
 
         private static AccessorDeclarationSyntax GetNewAccessor(AccessorListSyntax accessorList, AccessorDeclarationSyntax firstAccessor, AccessorDeclarationSyntax secondAccessor)
@@ -101,7 +92,7 @@
 
             if (secondAccessor.GetFirstToken().HasLeadingBlankLines())
             {
-                newAccessor.WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.CarriageReturnLineFeed);
+                newAccessor = newAccessor.WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.CarriageReturnLineFeed);
             }
 
             return newAccessor;
