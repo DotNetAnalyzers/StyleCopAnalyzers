@@ -82,8 +82,7 @@
 
         private static bool AccessorsAreOnTheSameLine(AccessorDeclarationSyntax firstAccesor, AccessorDeclarationSyntax secondAccessor)
         {
-            return firstAccesor.GetLocation().GetLineSpan().EndLinePosition.Line ==
-                   secondAccessor.GetLocation().GetLineSpan().EndLinePosition.Line;
+            return firstAccesor.GetEndLine() == secondAccessor.GetEndLine();
         }
 
         private static AccessorDeclarationSyntax GetNewAccessor(AccessorListSyntax accessorList, AccessorDeclarationSyntax firstAccessor, AccessorDeclarationSyntax secondAccessor)
