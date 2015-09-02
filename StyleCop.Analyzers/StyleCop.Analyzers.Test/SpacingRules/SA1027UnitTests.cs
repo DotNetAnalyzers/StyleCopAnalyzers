@@ -107,8 +107,8 @@ public  class   Foo
                 "\t{\r\n" +
                 "\t\tpublic void Bar()\r\n" +
                 "\t\t{\r\n" +
-                "\t\t\t// Comment 1\r\n" +
-                "\t\t\t// Comment 2\r\n" +
+                "\t\t\t//\tComment 1\r\n" +
+                "\t\t\t// Comment\t2\r\n" +
                 "\t\t\tDebug.Indent();\r\n" +
                 "\t\t}\r\n" +
                 "\t}\r\n";
@@ -122,8 +122,8 @@ public  class   Foo
     {
         public void Bar()
         {
-            // Comment 1
-            // Comment 2
+            //  Comment 1
+            // Comment  2
             Debug.Indent();
         }
     }
@@ -140,7 +140,9 @@ public  class   Foo
                 this.CSharpDiagnostic().WithLocation(8, 1),
                 this.CSharpDiagnostic().WithLocation(9, 1),
                 this.CSharpDiagnostic().WithLocation(10, 1),
+                this.CSharpDiagnostic().WithLocation(10, 4),
                 this.CSharpDiagnostic().WithLocation(11, 1),
+                this.CSharpDiagnostic().WithLocation(11, 4),
                 this.CSharpDiagnostic().WithLocation(12, 1),
                 this.CSharpDiagnostic().WithLocation(13, 1),
                 this.CSharpDiagnostic().WithLocation(14, 1),
@@ -150,7 +152,7 @@ public  class   Foo
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
-        
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {

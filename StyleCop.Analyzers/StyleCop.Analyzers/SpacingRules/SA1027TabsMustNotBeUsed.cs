@@ -67,6 +67,7 @@
                 {
                     case SyntaxKind.WhitespaceTrivia:
                     case SyntaxKind.DocumentationCommentExteriorTrivia:
+                    case SyntaxKind.SingleLineCommentTrivia:
                         HandleWhitespaceTrivia(context, trivia);
                         break;
 
@@ -86,6 +87,5 @@
             // Tabs must not be used.
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, trivia.GetLocation()));
         }
-
     }
 }
