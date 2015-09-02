@@ -1,7 +1,10 @@
 ﻿namespace StyleCop.Analyzers.Test.HelperTests
 {
+    using System.Linq;
     using Analyzers.Helpers;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Xunit;
 
     public class TriviaHelperTests
@@ -39,6 +42,58 @@
             {
                 token.WithoutLeadingBlankLines();
             }
+        }
+
+        [Fact]
+        public void TestHasLeadingBlankLines()
+        {
+            var tree = CSharpSyntaxTree.ParseText(@"
+public class Foo
+{
+    private int i = 0;
+
+    public int Prop
+    {
+
+        /// <summary>
+        /// The setter documentation
+        /// </summary>
+        set
+        {
+            i = value;
+        }
+    }
+}");
+
+            var accessor = tree.GetRoot().DescendantNodes().OfType<AccessorDeclarationSyntax>().Single();
+            Assert.True(accessor.GetFirstToken().HasLeadingBlankLines());
+        }
+
+        [Fact]
+        public void TestWithoutLeadingBlankLines()
+        {
+            CanRemoveLeadingBlankLines(@"
+public class Foo
+{
+    private int i = 0;
+
+    public int Prop
+    {
+
+        set
+        {
+            i = value;
+        }
+    }
+}");
+        }
+
+        private static void CanRemoveLeadingBlankLines(string code)
+        {
+            var tree = CSharpSyntaxTree.ParseText(code);
+
+            var accessor = tree.GetRoot().DescendantNodes().OfType<AccessorDeclarationSyntax>().Single();
+            Assert.False(accessor.GetFirstToken().WithoutLeadingBlankLines().LeadingTrivia.First().IsKind(SyntaxKind.EndOfLineTrivia));
         }
     }
 }

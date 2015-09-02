@@ -225,7 +225,7 @@
                 index--;
             }
 
-            if ((index < 0) || !triviaList[index].IsKind(SyntaxKind.EndOfLineTrivia))
+            if ((index < 0) || !triviaList[index].HasBuiltinEndLine())
             {
                 return false;
             }
@@ -236,6 +236,7 @@
                 switch (triviaList[index].Kind())
                 {
                 case SyntaxKind.WhitespaceTrivia:
+                case SyntaxKind.SingleLineDocumentationCommentTrivia:
                     // ignore;
                     break;
                 case SyntaxKind.EndOfLineTrivia:
