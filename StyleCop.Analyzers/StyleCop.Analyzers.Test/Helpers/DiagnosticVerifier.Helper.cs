@@ -17,6 +17,8 @@
     /// </summary>
     public abstract partial class DiagnosticVerifier
     {
+        private const string SettingsFileName = "stylecop.json";
+
         private static readonly MetadataReference CorlibReference = MetadataReference.CreateFromFile(typeof(object).Assembly.Location).WithAliases(ImmutableArray.Create("global", "corlib"));
         private static readonly MetadataReference SystemReference = MetadataReference.CreateFromFile(typeof(System.Diagnostics.Debug).Assembly.Location).WithAliases(ImmutableArray.Create("global", "system"));
         private static readonly MetadataReference SystemCoreReference = MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location);
@@ -120,18 +122,49 @@
         /// <returns>The created solution.</returns>
         protected virtual Solution CreateSolution(ProjectId projectId, string language)
         {
+            var compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true);
+
+            var additionalDiagnosticOptions = this.GetDisabledDiagnostics().Select(id => new KeyValuePair<string, ReportDiagnostic>(id, ReportDiagnostic.Suppress));
+            var newSpecificOptions = compilationOptions.SpecificDiagnosticOptions.AddRange(additionalDiagnosticOptions);
+            compilationOptions = compilationOptions.WithSpecificDiagnosticOptions(newSpecificOptions);
+
             Solution solution = new AdhocWorkspace()
                 .CurrentSolution
                 .AddProject(projectId, TestProjectName, TestProjectName, language)
-                .WithProjectCompilationOptions(projectId, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true))
+                .WithProjectCompilationOptions(projectId, compilationOptions)
                 .AddMetadataReference(projectId, CorlibReference)
                 .AddMetadataReference(projectId, SystemReference)
                 .AddMetadataReference(projectId, SystemCoreReference)
                 .AddMetadataReference(projectId, CSharpSymbolsReference)
                 .AddMetadataReference(projectId, CodeAnalysisReference);
 
+            var settings = this.GetSettings();
+            if (!string.IsNullOrEmpty(settings))
+            {
+                var documentId = DocumentId.CreateNewId(projectId);
+                solution = solution.AddAdditionalDocument(documentId, SettingsFileName, settings);
+            }
+
             ParseOptions parseOptions = solution.GetProject(projectId).ParseOptions;
             return solution.WithProjectParseOptions(projectId, parseOptions.WithDocumentationMode(DocumentationMode.Diagnose));
+        }
+
+        /// <summary>
+        /// Gets the diagnostics that will be suppressed.
+        /// </summary>
+        /// <returns>A collection of diagnostic identifiers.</returns>
+        protected virtual IEnumerable<string> GetDisabledDiagnostics()
+        {
+            return Enumerable.Empty<string>();
+        }
+
+        /// <summary>
+        /// Gets the content of the settings file to use.
+        /// </summary>
+        /// <returns>The contents of the settings file to use.</returns>
+        protected virtual string GetSettings()
+        {
+            return null;
         }
 
         protected DiagnosticResult CSharpDiagnostic(string diagnosticId = null)
