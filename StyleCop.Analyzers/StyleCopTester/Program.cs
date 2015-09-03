@@ -9,6 +9,7 @@
     using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
+    using System.Windows.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -23,6 +24,35 @@
     internal static class Program
     {
         private static void Main(string[] args)
+        {
+            CancellationTokenSource cts = new CancellationTokenSource();
+            Console.CancelKeyPress +=
+                (sender, e) =>
+                {
+                    e.Cancel = true;
+                    cts.Cancel();
+                };
+
+            SynchronizationContext previousContext = SynchronizationContext.Current;
+            try
+            {
+                var context = new DispatcherSynchronizationContext();
+                SynchronizationContext.SetSynchronizationContext(context);
+
+                DispatcherFrame dispatcherFrame = new DispatcherFrame();
+                Task mainTask = MainAsync(args, cts.Token);
+                mainTask.ContinueWith(task => dispatcherFrame.Continue = false);
+
+                Dispatcher.PushFrame(dispatcherFrame);
+                mainTask.GetAwaiter().GetResult();
+            }
+            finally
+            {
+                SynchronizationContext.SetSynchronizationContext(previousContext);
+            }
+        }
+
+        private static async Task MainAsync(string[] args, CancellationToken cancellationToken)
         {
             // A valid call must have at least one parameter (a solution file). Optionally it can include /all or /id:SAXXXX.
             if (args.Length < 1)
@@ -44,7 +74,7 @@
 
                 MSBuildWorkspace workspace = MSBuildWorkspace.Create();
                 string solutionPath = args.SingleOrDefault(i => !i.StartsWith("/", StringComparison.Ordinal));
-                Solution solution = workspace.OpenSolutionAsync(solutionPath).Result;
+                Solution solution = workspace.OpenSolutionAsync(solutionPath, cancellationToken).Result;
 
                 Console.WriteLine($"Loaded solution in {stopwatch.ElapsedMilliseconds}ms");
 
@@ -55,7 +85,7 @@
                     Console.WriteLine("Number of projects:\t\t" + csharpProjects.Count);
                     Console.WriteLine("Number of documents:\t\t" + csharpProjects.Sum(x => x.DocumentIds.Count));
 
-                    var statistics = GetAnalyzerStatistics(csharpProjects);
+                    var statistics = await GetAnalyzerStatisticsAsync(csharpProjects, cancellationToken).ConfigureAwait(true);
 
                     Console.WriteLine("Number of syntax nodes:\t\t" + statistics.NumberofNodes);
                     Console.WriteLine("Number of syntax tokens:\t" + statistics.NumberOfTokens);
@@ -64,7 +94,7 @@
 
                 stopwatch.Restart();
 
-                var diagnostics = GetAnalyzerDiagnosticsAsync(solution, solutionPath, analyzers).Result;
+                var diagnostics = await GetAnalyzerDiagnosticsAsync(solution, solutionPath, analyzers, cancellationToken).ConfigureAwait(true);
 
                 Console.WriteLine($"Found {diagnostics.Count} diagnostics in {stopwatch.ElapsedMilliseconds}ms");
 
@@ -84,17 +114,17 @@
 
                 if (args.Contains("/codefixes"))
                 {
-                    TestCodeFixes(stopwatch, solution, diagnostics);
+                    await TestCodeFixesAsync(stopwatch, solution, diagnostics, cancellationToken).ConfigureAwait(true);
                 }
 
                 if (args.Contains("/fixall"))
                 {
-                    TestFixAll(stopwatch, solution, diagnostics);
+                    await TestFixAllAsync(stopwatch, solution, diagnostics, cancellationToken).ConfigureAwait(true);
                 }
             }
         }
 
-        private static void TestFixAll(Stopwatch stopwatch, Solution solution, ImmutableList<Diagnostic> diagnostics)
+        private static async Task TestFixAllAsync(Stopwatch stopwatch, Solution solution, ImmutableList<Diagnostic> diagnostics, CancellationToken cancellationToken)
         {
             Console.WriteLine("Calculating fixes");
 
@@ -104,7 +134,7 @@
 
             foreach (var codeFixer in codeFixers)
             {
-                equivalenceGroups.AddRange(CodeFixEquivalenceGroup.CreateAsync(codeFixer, diagnostics, solution).GetAwaiter().GetResult());
+                equivalenceGroups.AddRange(await CodeFixEquivalenceGroup.CreateAsync(codeFixer, diagnostics, solution, cancellationToken).ConfigureAwait(true));
             }
 
             Console.WriteLine($"Found {equivalenceGroups.Count} equivalence groups.");
@@ -117,7 +147,7 @@
                 {
                     stopwatch.Restart();
                     Console.WriteLine($"Calculating fix for {fix.CodeFixEquivalenceKey}.");
-                    fix.GetOperationsAsync(CancellationToken.None).GetAwaiter().GetResult();
+                    await fix.GetOperationsAsync(cancellationToken).ConfigureAwait(true);
                     WriteLine($"Calculating changes completed in {stopwatch.ElapsedMilliseconds}ms", ConsoleColor.Yellow);
                 }
                 catch (Exception ex)
@@ -136,7 +166,7 @@
             Console.ResetColor();
         }
 
-        private static void TestCodeFixes(Stopwatch stopwatch, Solution solution, ImmutableList<Diagnostic> diagnostics)
+        private static async Task TestCodeFixesAsync(Stopwatch stopwatch, Solution solution, ImmutableList<Diagnostic> diagnostics, CancellationToken cancellationToken)
         {
             Console.WriteLine("Calculating fixes");
 
@@ -148,7 +178,7 @@
             {
                 foreach (var codeFixer in codeFixers.GetValueOrDefault(item.Id, ImmutableList.Create<CodeFixProvider>()))
                 {
-                    fixes.AddRange(GetFixesAsync(solution, codeFixer, item).GetAwaiter().GetResult());
+                    fixes.AddRange(await GetFixesAsync(solution, codeFixer, item, cancellationToken).ConfigureAwait(false));
                 }
             }
 
@@ -164,7 +194,7 @@
             {
                 try
                 {
-                    fix.GetOperationsAsync(CancellationToken.None).GetAwaiter().GetResult();
+                    fix.GetOperationsAsync(cancellationToken).GetAwaiter().GetResult();
                 }
                 catch (Exception ex)
                 {
@@ -180,34 +210,34 @@
             Console.WriteLine($"Calculating changes completed in {stopwatch.ElapsedMilliseconds}ms");
         }
 
-        private static async Task<IEnumerable<CodeAction>> GetFixesAsync(Solution solution, CodeFixProvider codeFixProvider, Diagnostic diagnostic)
+        private static async Task<IEnumerable<CodeAction>> GetFixesAsync(Solution solution, CodeFixProvider codeFixProvider, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             List<CodeAction> codeActions = new List<CodeAction>();
 
-            await codeFixProvider.RegisterCodeFixesAsync(new CodeFixContext(solution.GetDocument(diagnostic.Location.SourceTree), diagnostic, (a, d) => codeActions.Add(a), CancellationToken.None));
+            await codeFixProvider.RegisterCodeFixesAsync(new CodeFixContext(solution.GetDocument(diagnostic.Location.SourceTree), diagnostic, (a, d) => codeActions.Add(a), cancellationToken)).ConfigureAwait(false);
 
             return codeActions;
         }
 
-        private static Statistic GetAnalyzerStatistics(IEnumerable<Project> projects)
+        private static Task<Statistic> GetAnalyzerStatisticsAsync(IEnumerable<Project> projects, CancellationToken cancellationToken)
         {
             ConcurrentBag<Statistic> sums = new ConcurrentBag<Statistic>();
 
             Parallel.ForEach(projects.SelectMany(i => i.Documents), document =>
             {
-                var documentStatistics = GetAnalyzerStatistics(document).ConfigureAwait(false).GetAwaiter().GetResult();
+                var documentStatistics = GetAnalyzerStatisticsAsync(document, cancellationToken).ConfigureAwait(false).GetAwaiter().GetResult();
                 sums.Add(documentStatistics);
             });
 
             Statistic sum = sums.Aggregate(new Statistic(0, 0, 0), (currentResult, value) => currentResult + value);
-            return sum;
+            return Task.FromResult(sum);
         }
 
-        private static async Task<Statistic> GetAnalyzerStatistics(Document document)
+        private static async Task<Statistic> GetAnalyzerStatisticsAsync(Document document, CancellationToken cancellationToken)
         {
-            SyntaxTree tree = await document.GetSyntaxTreeAsync().ConfigureAwait(false);
+            SyntaxTree tree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
 
-            SyntaxNode root = await tree.GetRootAsync().ConfigureAwait(false);
+            SyntaxNode root = await tree.GetRootAsync(cancellationToken).ConfigureAwait(false);
 
             var tokensAndNodes = root.DescendantNodesAndTokensAndSelf(descendIntoTrivia: true);
 
@@ -306,7 +336,7 @@
             return fixAllProviders.ToImmutableDictionary();
         }
 
-        private static async Task<ImmutableList<Diagnostic>> GetAnalyzerDiagnosticsAsync(Solution solution, string solutionPath, ImmutableArray<DiagnosticAnalyzer> analyzers)
+        private static async Task<ImmutableList<Diagnostic>> GetAnalyzerDiagnosticsAsync(Solution solution, string solutionPath, ImmutableArray<DiagnosticAnalyzer> analyzers, CancellationToken cancellationToken)
         {
             List<Task<ImmutableArray<Diagnostic>>> projectDiagnosticTasks = new List<Task<ImmutableArray<Diagnostic>>>();
 
@@ -318,7 +348,7 @@
                     continue;
                 }
 
-                projectDiagnosticTasks.Add(GetProjectAnalyzerDiagnostics(analyzers, project));
+                projectDiagnosticTasks.Add(GetProjectAnalyzerDiagnosticsAsync(analyzers, project, cancellationToken));
             }
 
             ImmutableList<Diagnostic>.Builder diagnosticBuilder = ImmutableList.CreateBuilder<Diagnostic>();
@@ -335,11 +365,12 @@
         /// </summary>
         /// <param name="analyzers">The list of analyzers that should be used</param>
         /// <param name="project">The project that should be analyzed</param>
+        /// <param name="cancellationToken">The cancellation token that the task will observe.</param>
         /// <returns>A list of diagnostics inside the project</returns>
-        private static async Task<ImmutableArray<Diagnostic>> GetProjectAnalyzerDiagnostics(ImmutableArray<DiagnosticAnalyzer> analyzers, Project project)
+        private static async Task<ImmutableArray<Diagnostic>> GetProjectAnalyzerDiagnosticsAsync(ImmutableArray<DiagnosticAnalyzer> analyzers, Project project, CancellationToken cancellationToken)
         {
-            Compilation compilation = await project.GetCompilationAsync().ConfigureAwait(false);
-            CompilationWithAnalyzers compilationWithAnalyzers = compilation.WithAnalyzers(analyzers);
+            Compilation compilation = await project.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
+            CompilationWithAnalyzers compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, cancellationToken: cancellationToken);
 
             var allDiagnostics = await compilationWithAnalyzers.GetAllDiagnosticsAsync().ConfigureAwait(false);
 

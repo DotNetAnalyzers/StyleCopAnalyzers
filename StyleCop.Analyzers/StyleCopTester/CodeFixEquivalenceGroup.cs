@@ -35,7 +35,7 @@
 
         internal ImmutableArray<Diagnostic> DiagnosticsToFix { get; }
 
-        internal static async Task<ImmutableList<CodeFixEquivalenceGroup>> CreateAsync(CodeFixProvider codeFixProvider, IEnumerable<Diagnostic> allDiagnostics, Solution solution)
+        internal static async Task<ImmutableList<CodeFixEquivalenceGroup>> CreateAsync(CodeFixProvider codeFixProvider, IEnumerable<Diagnostic> allDiagnostics, Solution solution, CancellationToken cancellationToken)
         {
             var fixAllProvider = codeFixProvider.GetFixAllProvider();
 
@@ -50,7 +50,7 @@
 
             foreach (var diagnostic in relevantDiagnostics)
             {
-                actions.AddRange(await GetFixesAsync(solution, codeFixProvider, diagnostic).ConfigureAwait(false));
+                actions.AddRange(await GetFixesAsync(solution, codeFixProvider, diagnostic, cancellationToken).ConfigureAwait(false));
             }
 
             List<CodeFixEquivalenceGroup> groups = new List<CodeFixEquivalenceGroup>();
@@ -63,7 +63,7 @@
             return groups.ToImmutableList();
         }
 
-        internal async Task<ImmutableArray<CodeActionOperation>> GetOperationsAsync(CancellationToken cancellationToken = default(CancellationToken))
+        internal async Task<ImmutableArray<CodeActionOperation>> GetOperationsAsync(CancellationToken cancellationToken)
         {
             Diagnostic diagnostic = this.DiagnosticsToFix.First();
             Document document = this.Solution.GetDocument(diagnostic.Location.SourceTree);
@@ -77,11 +77,11 @@
             return await action.GetOperationsAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        private static async Task<IEnumerable<CodeAction>> GetFixesAsync(Solution solution, CodeFixProvider codeFixProvider, Diagnostic diagnostic)
+        private static async Task<IEnumerable<CodeAction>> GetFixesAsync(Solution solution, CodeFixProvider codeFixProvider, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             List<CodeAction> codeActions = new List<CodeAction>();
 
-            await codeFixProvider.RegisterCodeFixesAsync(new CodeFixContext(solution.GetDocument(diagnostic.Location.SourceTree), diagnostic, (a, d) => codeActions.Add(a), CancellationToken.None));
+            await codeFixProvider.RegisterCodeFixesAsync(new CodeFixContext(solution.GetDocument(diagnostic.Location.SourceTree), diagnostic, (a, d) => codeActions.Add(a), cancellationToken)).ConfigureAwait(false);
 
             return codeActions;
         }
