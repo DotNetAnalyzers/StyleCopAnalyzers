@@ -1,5 +1,7 @@
 ﻿namespace StyleCop.Analyzers.ReadabilityRules
 {
+    using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
@@ -22,6 +24,7 @@
     [Shared]
     public class SA1101CodeFixProvider : CodeFixProvider
     {
+        private static readonly ThisExpressionSyntax ThisExpressionSyntax = SyntaxFactory.ThisExpression();
         private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1101PrefixLocalCallsWithThis.DiagnosticId);
 
@@ -31,7 +34,7 @@
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return FixAll.Instance;
         }
 
         /// <inheritdoc/>
@@ -59,13 +62,46 @@
         private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SimpleNameSyntax node)
         {
             var qualifiedExpression =
-                SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, SyntaxFactory.ThisExpression(), node.WithoutTrivia().WithoutFormatting())
+                SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, ThisExpressionSyntax, node.WithoutTrivia().WithoutFormatting())
                 .WithTriviaFrom(node)
                 .WithoutFormatting();
 
             var newSyntaxRoot = root.ReplaceNode(node, qualifiedExpression);
 
             return Task.FromResult(document.WithSyntaxRoot(newSyntaxRoot));
+        }
+
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; } =
+                   new FixAll();
+
+            protected override string CodeActionTitle =>
+                ReadabilityResources.SA1101CodeFix;
+
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            {
+                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
+
+                SyntaxNode syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
+                List<SyntaxNode> nodesNeedingQualification = new List<SyntaxNode>(diagnostics.Length);
+
+                foreach (Diagnostic diagnostic in diagnostics)
+                {
+                    var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, false, true) as SimpleNameSyntax;
+                    if (node == null || node.IsMissing)
+                    {
+                        continue;
+                    }
+
+                    nodesNeedingQualification.Add(node);
+                }
+
+                return syntaxRoot.ReplaceNodes(nodesNeedingQualification, (originalNode, rewrittenNode) =>
+                SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, ThisExpressionSyntax, (SimpleNameSyntax)rewrittenNode.WithoutTrivia().WithoutFormatting())
+                .WithTriviaFrom(rewrittenNode)
+                .WithoutFormatting());
+            }
         }
     }
 }
