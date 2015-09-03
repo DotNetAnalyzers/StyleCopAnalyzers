@@ -1,5 +1,6 @@
 ﻿namespace StyleCopTester
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
@@ -16,13 +17,15 @@
             Solution solution,
             FixAllProvider fixAllProvider,
             CodeFixProvider codeFixProvider,
-            ImmutableArray<Diagnostic> diagnosticsToFix)
+            ImmutableDictionary<string, ImmutableArray<Diagnostic>> documentDiagnosticsToFix,
+            ImmutableDictionary<ProjectId, ImmutableArray<Diagnostic>> projectDiagnosticsToFix)
         {
             this.CodeFixEquivalenceKey = equivalenceKey;
             this.Solution = solution;
             this.FixAllProvider = fixAllProvider;
             this.CodeFixProvider = codeFixProvider;
-            this.DiagnosticsToFix = diagnosticsToFix;
+            this.DocumentDiagnosticsToFix = documentDiagnosticsToFix;
+            this.ProjectDiagnosticsToFix = projectDiagnosticsToFix;
         }
 
         internal string CodeFixEquivalenceKey { get; }
@@ -33,44 +36,91 @@
 
         internal CodeFixProvider CodeFixProvider { get; }
 
-        internal ImmutableArray<Diagnostic> DiagnosticsToFix { get; }
+        internal ImmutableDictionary<string, ImmutableArray<Diagnostic>> DocumentDiagnosticsToFix { get; }
 
-        internal static async Task<ImmutableList<CodeFixEquivalenceGroup>> CreateAsync(CodeFixProvider codeFixProvider, IEnumerable<Diagnostic> allDiagnostics, Solution solution, CancellationToken cancellationToken)
+        internal ImmutableDictionary<ProjectId, ImmutableArray<Diagnostic>> ProjectDiagnosticsToFix { get; }
+
+        internal static async Task<ImmutableArray<CodeFixEquivalenceGroup>> CreateAsync(CodeFixProvider codeFixProvider, ImmutableDictionary<ProjectId, ImmutableArray<Diagnostic>> allDiagnostics, Solution solution, CancellationToken cancellationToken)
         {
             var fixAllProvider = codeFixProvider.GetFixAllProvider();
-
-            var relevantDiagnostics = allDiagnostics.Where(diagnostic => codeFixProvider.FixableDiagnosticIds.Contains(diagnostic.Id)).ToImmutableArray();
-
             if (fixAllProvider == null)
             {
-                return ImmutableList.Create<CodeFixEquivalenceGroup>();
+                return ImmutableArray.Create<CodeFixEquivalenceGroup>();
             }
 
-            List<CodeAction> actions = new List<CodeAction>();
+            Dictionary<string, List<Diagnostic>> relevantDocumentDiagnostics =
+                new Dictionary<string, List<Diagnostic>>(StringComparer.OrdinalIgnoreCase);
+            Dictionary<ProjectId, List<Diagnostic>> relevantProjectDiagnostics =
+                new Dictionary<ProjectId, List<Diagnostic>>();
 
-            foreach (var diagnostic in relevantDiagnostics)
+            foreach (var projectDiagnostics in allDiagnostics)
             {
-                actions.AddRange(await GetFixesAsync(solution, codeFixProvider, diagnostic, cancellationToken).ConfigureAwait(false));
+                foreach (var diagnostic in projectDiagnostics.Value)
+                {
+                    if (!codeFixProvider.FixableDiagnosticIds.Contains(diagnostic.Id))
+                    {
+                        continue;
+                    }
+
+                    if (diagnostic.Location.IsInSource)
+                    {
+                        string sourcePath = diagnostic.Location.GetLineSpan().Path;
+
+                        List<Diagnostic> diagnosticsInFile;
+                        if (!relevantDocumentDiagnostics.TryGetValue(sourcePath, out diagnosticsInFile))
+                        {
+                            diagnosticsInFile = new List<Diagnostic>();
+                            relevantDocumentDiagnostics.Add(sourcePath, diagnosticsInFile);
+                        }
+
+                        diagnosticsInFile.Add(diagnostic);
+                    }
+                    else
+                    {
+                        List<Diagnostic> diagnosticsInProject;
+                        if (!relevantProjectDiagnostics.TryGetValue(projectDiagnostics.Key, out diagnosticsInProject))
+                        {
+                            diagnosticsInProject = new List<Diagnostic>();
+                            relevantProjectDiagnostics.Add(projectDiagnostics.Key, diagnosticsInProject);
+                        }
+
+                        diagnosticsInProject.Add(diagnostic);
+                    }
+                }
+            }
+
+            ImmutableDictionary<string, ImmutableArray<Diagnostic>> documentDiagnosticsToFix =
+                relevantDocumentDiagnostics.ToImmutableDictionary(i => i.Key, i => i.Value.ToImmutableArray(), StringComparer.OrdinalIgnoreCase);
+            ImmutableDictionary<ProjectId, ImmutableArray<Diagnostic>> projectDiagnosticsToFix =
+                relevantProjectDiagnostics.ToImmutableDictionary(i => i.Key, i => i.Value.ToImmutableArray());
+
+            HashSet<string> equivalenceKeys = new HashSet<string>();
+            foreach (var diagnostic in relevantDocumentDiagnostics.Values.SelectMany(i => i).Concat(relevantProjectDiagnostics.Values.SelectMany(i => i)))
+            {
+                foreach (var codeAction in await GetFixesAsync(solution, codeFixProvider, diagnostic, cancellationToken).ConfigureAwait(false))
+                {
+                    equivalenceKeys.Add(codeAction.EquivalenceKey);
+                }
             }
 
             List<CodeFixEquivalenceGroup> groups = new List<CodeFixEquivalenceGroup>();
-
-            foreach (var item in actions.GroupBy(x => x.EquivalenceKey))
+            foreach (var equivalenceKey in equivalenceKeys)
             {
-                groups.Add(new CodeFixEquivalenceGroup(item.Key, solution, fixAllProvider, codeFixProvider, relevantDiagnostics));
+                groups.Add(new CodeFixEquivalenceGroup(equivalenceKey, solution, fixAllProvider, codeFixProvider, documentDiagnosticsToFix, projectDiagnosticsToFix));
             }
 
-            return groups.ToImmutableList();
+            return groups.ToImmutableArray();
         }
 
         internal async Task<ImmutableArray<CodeActionOperation>> GetOperationsAsync(CancellationToken cancellationToken)
         {
-            Diagnostic diagnostic = this.DiagnosticsToFix.First();
+            Diagnostic diagnostic = this.DocumentDiagnosticsToFix.Values.Concat(this.ProjectDiagnosticsToFix.Values).First().First();
             Document document = this.Solution.GetDocument(diagnostic.Location.SourceTree);
+            HashSet<string> diagnosticIds = new HashSet<string>(this.DocumentDiagnosticsToFix.Values.Concat(this.ProjectDiagnosticsToFix.Values).SelectMany(i => i.Select(j => j.Id)));
 
-            var diagnosticsProvider = TesterDiagnosticProvider.Create(this.DiagnosticsToFix);
+            var diagnosticsProvider = new TesterDiagnosticProvider(this.DocumentDiagnosticsToFix, this.ProjectDiagnosticsToFix);
 
-            var context = new FixAllContext(document, this.CodeFixProvider, FixAllScope.Solution, this.CodeFixEquivalenceKey, this.DiagnosticsToFix.Select(x => x.Id), diagnosticsProvider, cancellationToken);
+            var context = new FixAllContext(document, this.CodeFixProvider, FixAllScope.Solution, this.CodeFixEquivalenceKey, diagnosticIds, diagnosticsProvider, cancellationToken);
 
             CodeAction action = await this.FixAllProvider.GetFixAsync(context).ConfigureAwait(false);
 
