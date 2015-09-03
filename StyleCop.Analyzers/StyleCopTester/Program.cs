@@ -95,10 +95,11 @@
                 stopwatch.Restart();
 
                 var diagnostics = await GetAnalyzerDiagnosticsAsync(solution, solutionPath, analyzers, cancellationToken).ConfigureAwait(true);
+                var allDiagnostics = diagnostics.SelectMany(i => i.Value).ToImmutableArray();
 
-                Console.WriteLine($"Found {diagnostics.Count} diagnostics in {stopwatch.ElapsedMilliseconds}ms");
+                Console.WriteLine($"Found {allDiagnostics.Length} diagnostics in {stopwatch.ElapsedMilliseconds}ms");
 
-                foreach (var group in diagnostics.GroupBy(i => i.Id).OrderBy(i => i.Key, StringComparer.OrdinalIgnoreCase))
+                foreach (var group in allDiagnostics.GroupBy(i => i.Id).OrderBy(i => i.Key, StringComparer.OrdinalIgnoreCase))
                 {
                     Console.WriteLine($"  {group.Key}: {group.Count()} instances");
 
@@ -114,7 +115,7 @@
 
                 if (args.Contains("/codefixes"))
                 {
-                    await TestCodeFixesAsync(stopwatch, solution, diagnostics, cancellationToken).ConfigureAwait(true);
+                    await TestCodeFixesAsync(stopwatch, solution, allDiagnostics, cancellationToken).ConfigureAwait(true);
                 }
 
                 if (args.Contains("/fixall"))
@@ -124,7 +125,7 @@
             }
         }
 
-        private static async Task TestFixAllAsync(Stopwatch stopwatch, Solution solution, ImmutableList<Diagnostic> diagnostics, CancellationToken cancellationToken)
+        private static async Task TestFixAllAsync(Stopwatch stopwatch, Solution solution, ImmutableDictionary<ProjectId, ImmutableArray<Diagnostic>> diagnostics, CancellationToken cancellationToken)
         {
             Console.WriteLine("Calculating fixes");
 
@@ -166,7 +167,7 @@
             Console.ResetColor();
         }
 
-        private static async Task TestCodeFixesAsync(Stopwatch stopwatch, Solution solution, ImmutableList<Diagnostic> diagnostics, CancellationToken cancellationToken)
+        private static async Task TestCodeFixesAsync(Stopwatch stopwatch, Solution solution, ImmutableArray<Diagnostic> diagnostics, CancellationToken cancellationToken)
         {
             Console.WriteLine("Calculating fixes");
 
@@ -336,9 +337,9 @@
             return fixAllProviders.ToImmutableDictionary();
         }
 
-        private static async Task<ImmutableList<Diagnostic>> GetAnalyzerDiagnosticsAsync(Solution solution, string solutionPath, ImmutableArray<DiagnosticAnalyzer> analyzers, CancellationToken cancellationToken)
+        private static async Task<ImmutableDictionary<ProjectId, ImmutableArray<Diagnostic>>> GetAnalyzerDiagnosticsAsync(Solution solution, string solutionPath, ImmutableArray<DiagnosticAnalyzer> analyzers, CancellationToken cancellationToken)
         {
-            List<Task<ImmutableArray<Diagnostic>>> projectDiagnosticTasks = new List<Task<ImmutableArray<Diagnostic>>>();
+            List<KeyValuePair<ProjectId, Task<ImmutableArray<Diagnostic>>>> projectDiagnosticTasks = new List<KeyValuePair<ProjectId, Task<ImmutableArray<Diagnostic>>>>();
 
             // Make sure we analyze the projects in parallel
             foreach (var project in solution.Projects)
@@ -348,16 +349,16 @@
                     continue;
                 }
 
-                projectDiagnosticTasks.Add(GetProjectAnalyzerDiagnosticsAsync(analyzers, project, cancellationToken));
+                projectDiagnosticTasks.Add(new KeyValuePair<ProjectId, Task<ImmutableArray<Diagnostic>>>(project.Id, GetProjectAnalyzerDiagnosticsAsync(analyzers, project, cancellationToken)));
             }
 
-            ImmutableList<Diagnostic>.Builder diagnosticBuilder = ImmutableList.CreateBuilder<Diagnostic>();
+            ImmutableDictionary<ProjectId, ImmutableArray<Diagnostic>>.Builder projectDiagnosticBuilder = ImmutableDictionary.CreateBuilder<ProjectId, ImmutableArray<Diagnostic>>();
             foreach (var task in projectDiagnosticTasks)
             {
-                diagnosticBuilder.AddRange(await task.ConfigureAwait(false));
+                projectDiagnosticBuilder.Add(task.Key, await task.Value.ConfigureAwait(false));
             }
 
-            return diagnosticBuilder.ToImmutable();
+            return projectDiagnosticBuilder.ToImmutable();
         }
 
         /// <summary>
