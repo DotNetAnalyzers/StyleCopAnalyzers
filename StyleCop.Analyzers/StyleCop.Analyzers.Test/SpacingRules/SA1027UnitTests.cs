@@ -95,36 +95,58 @@ public  class   Foo
         }
 
         [Fact]
-        public async Task TestInvalidTabsInCommentsAsync()
+        public async Task TestInvalidTabsInDocumentationCommentsAsync()
         {
             var testCode =
-                "\tusing System.Diagnostics;\r\n" +
-                "\r\n" +
                 "\t/// <summary>\r\n" +
                 "\t/// foo bar\r\n" +
                 "\t/// </summary>\r\n" +
                 "\tpublic class Foo\r\n" +
                 "\t{\r\n" +
-                "\t\tpublic void Bar()\r\n" +
-                "\t\t{\r\n" +
-                "\t\t \t//\tComment 1\r\n" +
-                "\t  \t\t// Comment\t2\r\n" +
-                "   \t\t\tDebug.Indent();\r\n" +
-                "\t\t}\r\n" +
                 "\t}\r\n";
 
-            var fixedTestCode = @"    using System.Diagnostics;
-
-    /// <summary>
+            var fixedTestCode = @"    /// <summary>
     /// foo bar
     /// </summary>
     public class Foo
     {
+    }
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(1, 1),
+                this.CSharpDiagnostic().WithLocation(2, 1),
+                this.CSharpDiagnostic().WithLocation(3, 1),
+                this.CSharpDiagnostic().WithLocation(4, 1),
+                this.CSharpDiagnostic().WithLocation(5, 1),
+                this.CSharpDiagnostic().WithLocation(6, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestInvalidTabsInCommentsAsync()
+        {
+            var testCode =
+                "\tpublic class Foo\r\n" +
+                "\t{\r\n" +
+                "\t\tpublic void Bar()\r\n" +
+                "\t\t{\r\n" +
+                "\t\t \t//\tComment\t\t1\r\n" +
+                "\t  \t\t// Comment 2\r\n" +
+                "\t\t}\r\n" +
+                "\t}\r\n";
+
+            var fixedTestCode = @"    public class Foo
+    {
         public void Bar()
         {
-            //  Comment 1
-            // Comment  2
-            Debug.Indent();
+            //  Comment     1
+            // Comment 2
         }
     }
 ";
@@ -132,20 +154,14 @@ public  class   Foo
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(1, 1),
+                this.CSharpDiagnostic().WithLocation(2, 1),
                 this.CSharpDiagnostic().WithLocation(3, 1),
                 this.CSharpDiagnostic().WithLocation(4, 1),
                 this.CSharpDiagnostic().WithLocation(5, 1),
+                this.CSharpDiagnostic().WithLocation(5, 5),
                 this.CSharpDiagnostic().WithLocation(6, 1),
                 this.CSharpDiagnostic().WithLocation(7, 1),
                 this.CSharpDiagnostic().WithLocation(8, 1),
-                this.CSharpDiagnostic().WithLocation(9, 1),
-                this.CSharpDiagnostic().WithLocation(10, 1),
-                this.CSharpDiagnostic().WithLocation(10, 5),
-                this.CSharpDiagnostic().WithLocation(11, 1),
-                this.CSharpDiagnostic().WithLocation(11, 6),
-                this.CSharpDiagnostic().WithLocation(12, 1),
-                this.CSharpDiagnostic().WithLocation(13, 1),
-                this.CSharpDiagnostic().WithLocation(14, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
