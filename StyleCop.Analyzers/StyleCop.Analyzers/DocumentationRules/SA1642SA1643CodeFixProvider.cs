@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
+    using System.Text.RegularExpressions;
     using System.Threading.Tasks;
     using Helpers;
     using Microsoft.CodeAnalysis;
@@ -119,9 +120,13 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             string newLineText = document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp);
-            var list = BuildStandardText(typeDeclaration.Identifier, typeParameterList, newLineText, standardText[0], standardText[1]);
 
-            var newContent = node.Content.InsertRange(0, list);
+            string trailingString = string.Empty;
+
+            var newContent = RemoveMalformattedStandardText(node.Content, typeDeclaration.Identifier, standardText[0], standardText[1], ref trailingString);
+
+            var list = BuildStandardText(typeDeclaration.Identifier, typeParameterList, newLineText, standardText[0], standardText[1] + trailingString);
+            newContent = newContent.InsertRange(0, list);
             var newNode = node.WithContent(newContent).AdjustDocumentationCommentNewLineTrivia();
 
             var newRoot = root.ReplaceNode(node, newNode);
@@ -129,6 +134,77 @@ namespace StyleCop.Analyzers.DocumentationRules
             var newDocument = document.WithSyntaxRoot(newRoot);
 
             return Task.FromResult(newDocument);
+        }
+
+        private static SyntaxList<XmlNodeSyntax> RemoveMalformattedStandardText(SyntaxList<XmlNodeSyntax> content, SyntaxToken identifier, string preText, string postText, ref string trailingString)
+        {
+            var regex = new Regex(@"^\s*" + Regex.Escape(preText) + "[^ ]+" + Regex.Escape(postText));
+            var item = content.OfType<XmlTextSyntax>().FirstOrDefault();
+
+            if (item == null)
+            {
+                return content;
+            }
+
+            int index = -1;
+            foreach (var token in item.TextTokens)
+            {
+                index++;
+
+                if (token.IsKind(SyntaxKind.XmlTextLiteralNewLineToken))
+                {
+                    continue;
+                }
+                else if (token.IsKind(SyntaxKind.XmlTextLiteralToken))
+                {
+                    string value = token.ValueText.Trim(null);
+
+                    Match match = regex.Match(value);
+
+                    if (!match.Success)
+                    {
+                        return content;
+                    }
+                    else if (match.Length == value.Length)
+                    {
+                        // Remove the token
+                        var tokens = item.TextTokens;
+
+                        while (index >= 0)
+                        {
+                            tokens = tokens.RemoveAt(0);
+                            index--;
+                        }
+
+                        var newContent = item.WithTextTokens(tokens);
+
+                        return content.Replace(item, newContent);
+                    }
+                    else
+                    {
+                        // Remove the tokens before
+                        var tokens = item.TextTokens;
+
+                        while (index >= 0)
+                        {
+                            tokens = tokens.RemoveAt(0);
+                            index--;
+                        }
+
+                        trailingString = value.Substring(match.Length);
+
+                        var newContent = item.WithTextTokens(tokens);
+
+                        return content.Replace(item, newContent);
+                    }
+                }
+                else
+                {
+                    return content;
+                }
+            }
+
+            return content;
         }
 
         private static SyntaxList<XmlNodeSyntax> BuildStandardText(SyntaxToken identifier, TypeParameterListSyntax typeParameters, string newLineText, string preText, string postText)
