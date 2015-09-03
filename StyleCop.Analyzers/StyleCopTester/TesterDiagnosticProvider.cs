@@ -24,7 +24,7 @@
 
         public override Task<IEnumerable<Diagnostic>> GetDocumentDiagnosticsAsync(Document document, CancellationToken cancellationToken)
         {
-            return Task.FromResult(this.diagnostics.Where(i => i.Location.GetLineSpan().Path == document.Name));
+            return Task.FromResult(this.diagnostics.Where(i => i.Location.GetLineSpan().Path == document.FilePath));
         }
 
         public override Task<IEnumerable<Diagnostic>> GetProjectDiagnosticsAsync(Project project, CancellationToken cancellationToken)
