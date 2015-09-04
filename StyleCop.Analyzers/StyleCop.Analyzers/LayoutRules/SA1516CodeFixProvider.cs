@@ -4,6 +4,7 @@
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Helpers;
     using Microsoft.CodeAnalysis;
@@ -38,18 +39,18 @@
 
             foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1516CodeFix, token => GetTransformedDocumentAsync(context, syntaxRoot, diagnostic), equivalenceKey: nameof(SA1516CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1516CodeFix, token => GetTransformedDocumentAsync(context.Document, syntaxRoot, diagnostic, context.CancellationToken), equivalenceKey: nameof(SA1516CodeFixProvider)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocumentAsync(CodeFixContext context, SyntaxNode syntaxRoot, Diagnostic diagnostic)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode syntaxRoot, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
             node = GetRelevantNode(node);
 
             if (node == null)
             {
-                return Task.FromResult(context.Document);
+                return Task.FromResult(document);
             }
 
             var leadingTrivia = node.GetLeadingTrivia();
@@ -59,7 +60,7 @@
 
             var newNode = node.WithLeadingTrivia(newTriviaList);
             var newSyntaxRoot = syntaxRoot.ReplaceNode(node, newNode);
-            var newDocument = context.Document.WithSyntaxRoot(newSyntaxRoot);
+            var newDocument = document.WithSyntaxRoot(newSyntaxRoot);
 
             return Task.FromResult(newDocument);
         }
