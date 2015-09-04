@@ -17,7 +17,7 @@
             Solution solution,
             FixAllProvider fixAllProvider,
             CodeFixProvider codeFixProvider,
-            ImmutableDictionary<string, ImmutableArray<Diagnostic>> documentDiagnosticsToFix,
+            ImmutableDictionary<ProjectId, ImmutableDictionary<string, ImmutableArray<Diagnostic>>> documentDiagnosticsToFix,
             ImmutableDictionary<ProjectId, ImmutableArray<Diagnostic>> projectDiagnosticsToFix)
         {
             this.CodeFixEquivalenceKey = equivalenceKey;
@@ -36,7 +36,7 @@
 
         internal CodeFixProvider CodeFixProvider { get; }
 
-        internal ImmutableDictionary<string, ImmutableArray<Diagnostic>> DocumentDiagnosticsToFix { get; }
+        internal ImmutableDictionary<ProjectId, ImmutableDictionary<string, ImmutableArray<Diagnostic>>> DocumentDiagnosticsToFix { get; }
 
         internal ImmutableDictionary<ProjectId, ImmutableArray<Diagnostic>> ProjectDiagnosticsToFix { get; }
 
@@ -48,8 +48,8 @@
                 return ImmutableArray.Create<CodeFixEquivalenceGroup>();
             }
 
-            Dictionary<string, List<Diagnostic>> relevantDocumentDiagnostics =
-                new Dictionary<string, List<Diagnostic>>(StringComparer.OrdinalIgnoreCase);
+            Dictionary<ProjectId, Dictionary<string, List<Diagnostic>>> relevantDocumentDiagnostics =
+                new Dictionary<ProjectId, Dictionary<string, List<Diagnostic>>>();
             Dictionary<ProjectId, List<Diagnostic>> relevantProjectDiagnostics =
                 new Dictionary<ProjectId, List<Diagnostic>>();
 
@@ -66,11 +66,18 @@
                     {
                         string sourcePath = diagnostic.Location.GetLineSpan().Path;
 
+                        Dictionary<string, List<Diagnostic>> projectDocumentDiagnostics;
+                        if (!relevantDocumentDiagnostics.TryGetValue(projectDiagnostics.Key, out projectDocumentDiagnostics))
+                        {
+                            projectDocumentDiagnostics = new Dictionary<string, List<Diagnostic>>();
+                            relevantDocumentDiagnostics.Add(projectDiagnostics.Key, projectDocumentDiagnostics);
+                        }
+
                         List<Diagnostic> diagnosticsInFile;
-                        if (!relevantDocumentDiagnostics.TryGetValue(sourcePath, out diagnosticsInFile))
+                        if (!projectDocumentDiagnostics.TryGetValue(sourcePath, out diagnosticsInFile))
                         {
                             diagnosticsInFile = new List<Diagnostic>();
-                            relevantDocumentDiagnostics.Add(sourcePath, diagnosticsInFile);
+                            projectDocumentDiagnostics.Add(sourcePath, diagnosticsInFile);
                         }
 
                         diagnosticsInFile.Add(diagnostic);
@@ -89,13 +96,13 @@
                 }
             }
 
-            ImmutableDictionary<string, ImmutableArray<Diagnostic>> documentDiagnosticsToFix =
-                relevantDocumentDiagnostics.ToImmutableDictionary(i => i.Key, i => i.Value.ToImmutableArray(), StringComparer.OrdinalIgnoreCase);
+            ImmutableDictionary<ProjectId, ImmutableDictionary<string, ImmutableArray<Diagnostic>>> documentDiagnosticsToFix =
+                relevantDocumentDiagnostics.ToImmutableDictionary(i => i.Key, i => i.Value.ToImmutableDictionary(j => j.Key, j => j.Value.ToImmutableArray(), StringComparer.OrdinalIgnoreCase));
             ImmutableDictionary<ProjectId, ImmutableArray<Diagnostic>> projectDiagnosticsToFix =
                 relevantProjectDiagnostics.ToImmutableDictionary(i => i.Key, i => i.Value.ToImmutableArray());
 
             HashSet<string> equivalenceKeys = new HashSet<string>();
-            foreach (var diagnostic in relevantDocumentDiagnostics.Values.SelectMany(i => i).Concat(relevantProjectDiagnostics.Values.SelectMany(i => i)))
+            foreach (var diagnostic in relevantDocumentDiagnostics.Values.SelectMany(i => i.Values).SelectMany(i => i).Concat(relevantProjectDiagnostics.Values.SelectMany(i => i)))
             {
                 foreach (var codeAction in await GetFixesAsync(solution, codeFixProvider, diagnostic, cancellationToken).ConfigureAwait(false))
                 {
@@ -114,9 +121,9 @@
 
         internal async Task<ImmutableArray<CodeActionOperation>> GetOperationsAsync(CancellationToken cancellationToken)
         {
-            Diagnostic diagnostic = this.DocumentDiagnosticsToFix.Values.Concat(this.ProjectDiagnosticsToFix.Values).First().First();
+            Diagnostic diagnostic = this.DocumentDiagnosticsToFix.Values.SelectMany(i => i.Values).Concat(this.ProjectDiagnosticsToFix.Values).First().First();
             Document document = this.Solution.GetDocument(diagnostic.Location.SourceTree);
-            HashSet<string> diagnosticIds = new HashSet<string>(this.DocumentDiagnosticsToFix.Values.Concat(this.ProjectDiagnosticsToFix.Values).SelectMany(i => i.Select(j => j.Id)));
+            HashSet<string> diagnosticIds = new HashSet<string>(this.DocumentDiagnosticsToFix.Values.SelectMany(i => i.Values).Concat(this.ProjectDiagnosticsToFix.Values).SelectMany(i => i.Select(j => j.Id)));
 
             var diagnosticsProvider = new TesterDiagnosticProvider(this.DocumentDiagnosticsToFix, this.ProjectDiagnosticsToFix);
 
