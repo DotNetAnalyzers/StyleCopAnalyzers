@@ -80,6 +80,8 @@
                     changes.Add(new TextChange(diagnostic.Location.SourceSpan, string.Empty));
                 }
 
+                changes.Sort((left, right) => left.Span.Start.CompareTo(right.Span.Start));
+
                 var tree = await document.GetSyntaxTreeAsync().ConfigureAwait(false);
                 return await tree.WithChangedText(text.WithChanges(changes)).GetRootAsync().ConfigureAwait(false);
             }
