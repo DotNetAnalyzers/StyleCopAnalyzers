@@ -10,10 +10,10 @@
 
     internal sealed class TesterDiagnosticProvider : FixAllContext.DiagnosticProvider
     {
-        private readonly ImmutableDictionary<string, ImmutableArray<Diagnostic>> documentDiagnostics;
+        private readonly ImmutableDictionary<ProjectId, ImmutableDictionary<string, ImmutableArray<Diagnostic>>> documentDiagnostics;
         private readonly ImmutableDictionary<ProjectId, ImmutableArray<Diagnostic>> projectDiagnostics;
 
-        public TesterDiagnosticProvider(ImmutableDictionary<string, ImmutableArray<Diagnostic>> documentDiagnostics, ImmutableDictionary<ProjectId, ImmutableArray<Diagnostic>> projectDiagnostics)
+        public TesterDiagnosticProvider(ImmutableDictionary<ProjectId, ImmutableDictionary<string, ImmutableArray<Diagnostic>>> documentDiagnostics, ImmutableDictionary<ProjectId, ImmutableArray<Diagnostic>> projectDiagnostics)
         {
             this.documentDiagnostics = documentDiagnostics;
             this.projectDiagnostics = projectDiagnostics;
@@ -21,13 +21,19 @@
 
         public override Task<IEnumerable<Diagnostic>> GetAllDiagnosticsAsync(Project project, CancellationToken cancellationToken)
         {
-            return Task.FromResult(this.projectDiagnostics.Values.SelectMany(i => i).Concat(this.documentDiagnostics.Values.SelectMany(i => i)));
+            return Task.FromResult(this.projectDiagnostics.Values.SelectMany(i => i).Concat(this.documentDiagnostics.Values.SelectMany(i => i.Values).SelectMany(i => i)));
         }
 
         public override Task<IEnumerable<Diagnostic>> GetDocumentDiagnosticsAsync(Document document, CancellationToken cancellationToken)
         {
+            ImmutableDictionary<string, ImmutableArray<Diagnostic>> projectDocumentDiagnostics;
+            if (!this.documentDiagnostics.TryGetValue(document.Project.Id, out projectDocumentDiagnostics))
+            {
+                return Task.FromResult(Enumerable.Empty<Diagnostic>());
+            }
+
             ImmutableArray<Diagnostic> diagnostics;
-            if (!this.documentDiagnostics.TryGetValue(document.FilePath, out diagnostics))
+            if (!projectDocumentDiagnostics.TryGetValue(document.FilePath, out diagnostics))
             {
                 return Task.FromResult(Enumerable.Empty<Diagnostic>());
             }
