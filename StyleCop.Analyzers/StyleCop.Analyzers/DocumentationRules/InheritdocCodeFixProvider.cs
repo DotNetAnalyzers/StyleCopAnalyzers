@@ -83,6 +83,9 @@
 
                     break;
 
+                case SyntaxKind.IndexerDeclaration:
+                    break;
+
                 default:
                     continue;
                 }
@@ -110,6 +113,9 @@
 
             case SyntaxKind.VariableDeclarator:
                 return GetTransformedDocumentForEventFieldDeclaration(document, diagnostic, root, semanticModel, (EventFieldDeclarationSyntax)identifierToken.Parent.Parent.Parent, cancellationToken);
+
+            case SyntaxKind.IndexerDeclaration:
+                return GetTransformedDocumentForIndexerDeclaration(document, diagnostic, root, semanticModel, (IndexerDeclarationSyntax)identifierToken.Parent, cancellationToken);
 
             default:
                 return document;
@@ -162,6 +168,20 @@
             }
 
             return InsertInheritdocComment(document, diagnostic, root, eventFieldDeclaration, cancellationToken);
+        }
+
+        private static Document GetTransformedDocumentForIndexerDeclaration(Document document, Diagnostic diagnostic, SyntaxNode root, SemanticModel semanticModel, IndexerDeclarationSyntax indexerDeclaration, CancellationToken cancellationToken)
+        {
+            if (indexerDeclaration.ExplicitInterfaceSpecifier == null && !indexerDeclaration.Modifiers.Any(SyntaxKind.OverrideKeyword))
+            {
+                ISymbol declaredSymbol = semanticModel.GetDeclaredSymbol(indexerDeclaration, cancellationToken);
+                if (declaredSymbol == null || !NamedTypeHelpers.IsImplementingAnInterfaceMember(declaredSymbol))
+                {
+                    return document;
+                }
+            }
+
+            return InsertInheritdocComment(document, diagnostic, root, indexerDeclaration, cancellationToken);
         }
 
         private static Document InsertInheritdocComment(Document document, Diagnostic diagnostic, SyntaxNode root, SyntaxNode syntaxNode, CancellationToken cancellationToken)
