@@ -47,36 +47,55 @@
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
             var singleLineComment = syntaxRoot.FindTrivia(diagnostic.Location.SourceSpan.Start);
+            var commentArray = new[] { singleLineComment };
 
-            var newSyntaxRoot = ProcessTriviaList(syntaxRoot, singleLineComment.Token.LeadingTrivia, singleLineComment)
-                                ?? ProcessTriviaList(syntaxRoot, singleLineComment.Token.TrailingTrivia, singleLineComment);
+            var leadingTrivia = FixTriviaList(singleLineComment.Token.LeadingTrivia, commentArray);
+            var trailingTrivia = FixTriviaList(singleLineComment.Token.TrailingTrivia, commentArray);
+
+            var newToken = singleLineComment.Token
+                .WithLeadingTrivia(leadingTrivia)
+                .WithTrailingTrivia(trailingTrivia);
+
+            var newSyntaxRoot = syntaxRoot.ReplaceToken(singleLineComment.Token, newToken);
 
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
 
-        private static SyntaxNode ProcessTriviaList(SyntaxNode syntaxRoot, SyntaxTriviaList triviaList, SyntaxTrivia singleLineComment)
+        private static SyntaxTriviaList FixTriviaList(SyntaxTriviaList triviaList, IEnumerable<SyntaxTrivia> commentTrivias)
         {
-            var index = triviaList.IndexOf(singleLineComment);
-            if (index == -1)
+            foreach (var singleLineComment in commentTrivias)
             {
-                return null;
-            }
-
-            index--;
-            while (index >= 0)
-            {
-                switch (triviaList[index].Kind())
+                var index = triviaList.IndexOf(singleLineComment);
+                if (index == -1)
                 {
-                case SyntaxKind.WhitespaceTrivia:
-                    index--;
-                    break;
+                    continue;
+                }
 
-                default:
-                    return syntaxRoot.ReplaceTrivia(triviaList[index], new[] { triviaList[index], SyntaxFactory.CarriageReturnLineFeed });
+                index--;
+                while (index >= 0)
+                {
+                    switch (triviaList[index].Kind())
+                    {
+                    case SyntaxKind.WhitespaceTrivia:
+                        index--;
+                        break;
+
+                    default:
+                        triviaList = triviaList.ReplaceRange(triviaList[index], new[] { triviaList[index], SyntaxFactory.CarriageReturnLineFeed });
+
+                        // We found the trivia so we don't have to loop any longer
+                        index = -2;
+                        break;
+                    }
+                }
+
+                if (index == -1)
+                {
+                    triviaList = triviaList.ReplaceRange(triviaList[0], new[] { SyntaxFactory.CarriageReturnLineFeed, triviaList[0] });
                 }
             }
 
-            return syntaxRoot.ReplaceTrivia(triviaList[0], new[] { SyntaxFactory.CarriageReturnLineFeed, triviaList[0] });
+            return triviaList;
         }
 
         private class FixAll : DocumentBasedFixAllProvider
@@ -112,44 +131,7 @@
                     replacements.Add(token, token.WithLeadingTrivia(newLeadingTrivia).WithTrailingTrivia(newTrailingTrivia));
                 }
 
-                return syntaxRoot.ReplaceTokens(replacements.Select(x => x.Key), (oldToken, newToken) => replacements[oldToken]);
-            }
-
-            private static SyntaxTriviaList FixTriviaList(SyntaxTriviaList triviaList, IEnumerable<SyntaxTrivia> commentTrivias)
-            {
-                foreach (var singleLineComment in commentTrivias)
-                {
-                    var index = triviaList.IndexOf(singleLineComment);
-                    if (index == -1)
-                    {
-                        continue;
-                    }
-
-                    index--;
-                    while (index >= 0)
-                    {
-                        switch (triviaList[index].Kind())
-                        {
-                        case SyntaxKind.WhitespaceTrivia:
-                            index--;
-                            break;
-
-                        default:
-                            triviaList = triviaList.ReplaceRange(triviaList[index], new[] { triviaList[index], SyntaxFactory.CarriageReturnLineFeed });
-
-                            // We found the trivia so we don't have to loop any longer
-                            index = -2;
-                            break;
-                        }
-                    }
-
-                    if (index == -1)
-                    {
-                        triviaList = triviaList.ReplaceRange(triviaList[0], new[] { SyntaxFactory.CarriageReturnLineFeed, triviaList[0] });
-                    }
-                }
-
-                return triviaList;
+                return syntaxRoot.ReplaceTokens(replacements.Keys, (oldToken, newToken) => replacements[oldToken]);
             }
         }
     }
