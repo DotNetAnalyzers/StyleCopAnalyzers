@@ -148,6 +148,12 @@
 
                 previousTrivia = trivia;
             }
+
+            if (previousTrivia.IsKind(SyntaxKind.WhitespaceTrivia))
+            {
+                // Report whitespace at the end of the last line in the document
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, previousTrivia.GetLocation()));
+            }
         }
 
         private static TextSpan FindTrailingWhitespace(SourceText text, TextSpan within)

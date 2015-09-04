@@ -185,6 +185,34 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1373 "SA1028 does not appear to catch single
+        /// space after final closing brace":
+        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1373
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TrailingWhitespaceAfterClosingBraceAsync()
+        {
+            string testCode = new StringBuilder()
+                .AppendLine("class ClassName")
+                .AppendLine("{")
+                .Append("} ")
+                .ToString();
+
+            string fixedCode = new StringBuilder()
+                .AppendLine("class ClassName")
+                .AppendLine("{")
+                .Append("}")
+                .ToString();
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 2);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TrailingWhitespaceAfterDirectivesAsync()
         {
