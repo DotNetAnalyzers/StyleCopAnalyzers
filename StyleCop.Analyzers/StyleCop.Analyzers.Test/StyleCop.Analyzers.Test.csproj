@@ -114,6 +114,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DocumentationRules\FileHeaderTestBase.cs" />
+    <Compile Include="DocumentationRules\InheritdocCodeFixProviderUnitTests.cs" />
     <Compile Include="DocumentationRules\NoXmlFileHeaderUnitTests.cs" />
     <Compile Include="DocumentationRules\SA1600UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1601UnitTests.cs" />

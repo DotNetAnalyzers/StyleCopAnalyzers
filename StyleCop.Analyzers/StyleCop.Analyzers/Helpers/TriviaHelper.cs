@@ -312,7 +312,7 @@
             return token.WithLeadingTrivia(newLeadingTrivia);
         }
 
-        private static bool HasBuiltinEndLine(this SyntaxTrivia trivia)
+        internal static bool HasBuiltinEndLine(this SyntaxTrivia trivia)
         {
             return trivia.IsDirective
                 || trivia.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia)
