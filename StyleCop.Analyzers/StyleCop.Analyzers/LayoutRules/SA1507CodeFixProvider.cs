@@ -45,28 +45,12 @@
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken token)
         {
+            var newLine = document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp);
+
             var sourceText = await document.GetTextAsync(token).ConfigureAwait(false);
+            var textChange = new TextChange(diagnostic.Location.SourceSpan, newLine);
 
-            var startIndex = sourceText.Lines.IndexOf(diagnostic.Location.SourceSpan.Start);
-            int endIndex = startIndex;
-
-            for (var i = startIndex + 1; i < sourceText.Lines.Count; i++)
-            {
-                if (!string.IsNullOrWhiteSpace(sourceText.Lines[i].ToString()))
-                {
-                    endIndex = i - 1;
-                    break;
-                }
-            }
-
-            if (endIndex >= (startIndex + 1))
-            {
-                var replaceSpan = TextSpan.FromBounds(sourceText.Lines[startIndex + 1].SpanIncludingLineBreak.Start, sourceText.Lines[endIndex].SpanIncludingLineBreak.End);
-                var newSourceText = sourceText.Replace(replaceSpan, string.Empty);
-                return document.WithText(newSourceText);
-            }
-
-            return document;
+            return document.WithText(sourceText.WithChanges(textChange));
         }
 
         private class FixAll : DocumentBasedFixAllProvider
