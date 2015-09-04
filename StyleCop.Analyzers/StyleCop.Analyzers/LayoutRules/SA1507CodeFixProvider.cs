@@ -1,15 +1,17 @@
 ﻿namespace StyleCop.Analyzers.LayoutRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Formatting;
     using Microsoft.CodeAnalysis.Text;
-    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1507CodeMustNotContainMultipleBlankLinesInARow"/>.
@@ -27,7 +29,7 @@
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return FixAll.Instance;
         }
 
         /// <inheritdoc/>
@@ -43,28 +45,39 @@
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken token)
         {
+            var newLine = document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp);
+
             var sourceText = await document.GetTextAsync(token).ConfigureAwait(false);
+            var textChange = new TextChange(diagnostic.Location.SourceSpan, newLine);
 
-            var startIndex = sourceText.Lines.IndexOf(diagnostic.Location.SourceSpan.Start);
-            int endIndex = startIndex;
+            return document.WithText(sourceText.WithChanges(textChange));
+        }
 
-            for (var i = startIndex + 1; i < sourceText.Lines.Count; i++)
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; } =
+                new FixAll();
+
+            protected override string CodeActionTitle =>
+                LayoutResources.SA1507CodeFix;
+
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
             {
-                if (!string.IsNullOrWhiteSpace(sourceText.Lines[i].ToString()))
+                var newLine = fixAllContext.Document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp);
+                var text = await document.GetTextAsync().ConfigureAwait(false);
+
+                List<TextChange> changes = new List<TextChange>();
+
+                foreach (var diagnostic in await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false))
                 {
-                    endIndex = i - 1;
-                    break;
+                    changes.Add(new TextChange(diagnostic.Location.SourceSpan, newLine));
                 }
-            }
 
-            if (endIndex >= (startIndex + 1))
-            {
-                var replaceSpan = TextSpan.FromBounds(sourceText.Lines[startIndex + 1].SpanIncludingLineBreak.Start, sourceText.Lines[endIndex].SpanIncludingLineBreak.End);
-                var newSourceText = sourceText.Replace(replaceSpan, string.Empty);
-                return document.WithText(newSourceText);
-            }
+                changes.Sort((left, right) => left.Span.Start.CompareTo(right.Span.Start));
 
-            return document;
+                var tree = await document.GetSyntaxTreeAsync().ConfigureAwait(false);
+                return await tree.WithChangedText(text.WithChanges(changes)).GetRootAsync().ConfigureAwait(false);
+            }
         }
     }
 }
