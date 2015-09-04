@@ -34,22 +34,26 @@
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
             foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-
-                var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
-                node = GetRelevantNode(node);
-                var leadingTrivia = node?.GetLeadingTrivia();
-                if (leadingTrivia != null)
-                {
-                    context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1516CodeFix, token => GetTransformedDocumentAsync(context, syntaxRoot, node, (SyntaxTriviaList)leadingTrivia), equivalenceKey: nameof(SA1516CodeFixProvider)), diagnostic);
-                }
+                context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1516CodeFix, token => GetTransformedDocumentAsync(context, syntaxRoot, diagnostic), equivalenceKey: nameof(SA1516CodeFixProvider)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocumentAsync(CodeFixContext context, SyntaxNode syntaxRoot, SyntaxNode node, SyntaxTriviaList leadingTrivia)
+        private static Task<Document> GetTransformedDocumentAsync(CodeFixContext context, SyntaxNode syntaxRoot, Diagnostic diagnostic)
         {
+            var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
+            node = GetRelevantNode(node);
+
+            if (node == null)
+            {
+                return Task.FromResult(context.Document);
+            }
+
+            var leadingTrivia = node.GetLeadingTrivia();
+
             var newTriviaList = leadingTrivia;
             newTriviaList = newTriviaList.Insert(0, SyntaxFactory.CarriageReturnLineFeed);
 
@@ -115,7 +119,11 @@
                 {
                     var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
                     node = GetRelevantNode(node);
-                    nodes.Add(node);
+
+                    if (node != null)
+                    {
+                        nodes.Add(node);
+                    }
                 }
 
                 return syntaxRoot.ReplaceNodes(nodes, (oldNode, newNode) =>
