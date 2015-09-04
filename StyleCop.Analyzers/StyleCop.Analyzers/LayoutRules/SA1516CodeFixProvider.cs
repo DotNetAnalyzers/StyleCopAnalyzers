@@ -1,5 +1,6 @@
 ﻿namespace StyleCop.Analyzers.LayoutRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
@@ -27,7 +28,7 @@
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return FixAll.Instance;
         }
 
         /// <inheritdoc/>
@@ -38,7 +39,7 @@
                 var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
                 var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
-                node = this.GetRelevantNode(node);
+                node = GetRelevantNode(node);
                 var leadingTrivia = node?.GetLeadingTrivia();
                 if (leadingTrivia != null)
                 {
@@ -59,7 +60,7 @@
             return Task.FromResult(newDocument);
         }
 
-        private SyntaxNode GetRelevantNode(SyntaxNode innerNode)
+        private static SyntaxNode GetRelevantNode(SyntaxNode innerNode)
         {
             SyntaxNode currentNode = innerNode;
             while (currentNode != null)
@@ -93,6 +94,38 @@
             }
 
             return null;
+        }
+
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; } =
+                new FixAll();
+
+            protected override string CodeActionTitle =>
+                LayoutResources.SA1516CodeFix;
+
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            {
+                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
+                var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
+
+                List<SyntaxNode> nodes = new List<SyntaxNode>();
+
+                foreach (var diagnostic in diagnostics)
+                {
+                    var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
+                    node = GetRelevantNode(node);
+                    nodes.Add(node);
+                }
+
+                return syntaxRoot.ReplaceNodes(nodes, (oldNode, newNode) =>
+                {
+                    var newTriviaList = newNode.GetLeadingTrivia();
+                    newTriviaList = newTriviaList.Insert(0, SyntaxFactory.CarriageReturnLineFeed);
+
+                    return newNode.WithLeadingTrivia(newTriviaList);
+                });
+            }
         }
     }
 }
