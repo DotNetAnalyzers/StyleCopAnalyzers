@@ -1,15 +1,17 @@
 ﻿namespace StyleCop.Analyzers.LayoutRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Formatting;
     using Microsoft.CodeAnalysis.Text;
-    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1507CodeMustNotContainMultipleBlankLinesInARow"/>.
@@ -27,7 +29,7 @@
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return FixAll.Instance;
         }
 
         /// <inheritdoc/>
@@ -65,6 +67,33 @@
             }
 
             return document;
+        }
+
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; } =
+                new FixAll();
+
+            protected override string CodeActionTitle =>
+                LayoutResources.SA1507CodeFix;
+
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            {
+                var newLine = fixAllContext.Document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp);
+                var text = await document.GetTextAsync().ConfigureAwait(false);
+
+                List<TextChange> changes = new List<TextChange>();
+
+                foreach (var diagnostic in await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false))
+                {
+                    changes.Add(new TextChange(diagnostic.Location.SourceSpan, newLine));
+                }
+
+                changes.Sort((left, right) => left.Span.Start.CompareTo(right.Span.Start));
+
+                var tree = await document.GetSyntaxTreeAsync().ConfigureAwait(false);
+                return await tree.WithChangedText(text.WithChanges(changes)).GetRootAsync().ConfigureAwait(false);
+            }
         }
     }
 }
