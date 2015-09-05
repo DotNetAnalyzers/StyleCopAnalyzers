@@ -12,7 +12,7 @@
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1001CommasMustBeSpacedCorrectly"/> and
-    /// <see cref="SA1001CodeFixProvider"/>.
+    /// <see cref="OpenCloseSpacingCodeFixProvider"/>.
     /// </summary>
     public class SA1001UnitTests : CodeFixVerifier
     {
@@ -151,6 +151,21 @@
             await this.TestCommaInStatementOrDeclAsync(statement, expected, fixedStatement).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestSpaceOnlyBeforeCommaAsync()
+        {
+            string spaceOnlyBeforeComma = @"f(a ,b);";
+            string spaceOnlyAfterComma = @"f(a, b);";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 17),
+                this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 17)
+            };
+
+            await this.TestCommaInStatementOrDeclAsync(spaceOnlyBeforeComma, expected, spaceOnlyAfterComma).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1001CommasMustBeSpacedCorrectly();
@@ -158,7 +173,7 @@
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1001CodeFixProvider();
+            return new OpenCloseSpacingCodeFixProvider();
         }
 
         private Task TestCommaInStatementOrDeclAsync(string originalStatement, DiagnosticResult expected, string fixedStatement)
