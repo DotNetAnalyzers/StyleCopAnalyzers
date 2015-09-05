@@ -379,15 +379,6 @@ namespace StyleCop.Analyzers.SpacingRules {
         /// <summary>
         ///   Looks up a localized string similar to Fix spacing.
         /// </summary>
-        internal static string SA1022CodeFix {
-            get {
-                return ResourceManager.GetString("SA1022CodeFix", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Fix spacing.
-        /// </summary>
         internal static string SA1024CodeFix {
             get {
                 return ResourceManager.GetString("SA1024CodeFix", resourceCulture);
