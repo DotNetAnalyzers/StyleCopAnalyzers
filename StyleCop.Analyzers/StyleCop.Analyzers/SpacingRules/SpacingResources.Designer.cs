@@ -206,15 +206,6 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Fix spacing.
-        /// </summary>
-        internal static string SA1007CodeFix {
-            get {
-                return ResourceManager.GetString("SA1007CodeFix", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The operator keyword within a C# operator overload method is not followed by any whitespace..
         /// </summary>
         internal static string SA1007Description {

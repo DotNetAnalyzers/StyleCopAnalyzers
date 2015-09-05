@@ -165,9 +165,6 @@
   <data name="SA1006Title" xml:space="preserve">
     <value>Preprocessor keywords must not be preceded by space</value>
   </data>
-  <data name="SA1007CodeFix" xml:space="preserve">
-    <value>Fix spacing</value>
-  </data>
   <data name="SA1007Description" xml:space="preserve">
     <value>The operator keyword within a C# operator overload method is not followed by any whitespace.</value>
   </data>
