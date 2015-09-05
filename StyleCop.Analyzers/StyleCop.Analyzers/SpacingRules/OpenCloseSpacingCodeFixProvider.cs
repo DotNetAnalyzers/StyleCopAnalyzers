@@ -33,6 +33,7 @@
         private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(
                 SA1000KeywordsMustBeSpacedCorrectly.DiagnosticId,
+                SA1006PreprocessorKeywordsMustNotBePrecededBySpace.DiagnosticId,
                 SA1008OpeningParenthesisMustBeSpacedCorrectly.DiagnosticId,
                 SA1009ClosingParenthesisMustBeSpacedCorrectly.DiagnosticId,
                 SA1011ClosingSquareBracketsMustBeSpacedCorrectly.DiagnosticId,
@@ -100,7 +101,7 @@
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>();
-            var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
+            var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start, findInsideTrivia: true);
 
             UpdateReplaceMap(replaceMap, token, diagnostic);
 
@@ -256,7 +257,7 @@
 
                 foreach (var diagnostic in diagnostics)
                 {
-                    var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
+                    var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start, findInsideTrivia: true);
                     UpdateReplaceMap(replaceMap, token, diagnostic);
                 }
 

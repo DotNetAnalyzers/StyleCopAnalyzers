@@ -110,7 +110,7 @@ more invalid text
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1006CodeFixProvider();
+            return new OpenCloseSpacingCodeFixProvider();
         }
     }
 }

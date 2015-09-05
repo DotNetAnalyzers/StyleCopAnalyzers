@@ -97,7 +97,7 @@
             }
 
             // Preprocessor keyword '{keyword}' must not be preceded by a space.
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, targetToken.GetLocation(), targetToken.Text));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, targetToken.GetLocation(), OpenCloseSpacingCodeFixProvider.RemovePreceding, targetToken.Text));
         }
     }
 }
