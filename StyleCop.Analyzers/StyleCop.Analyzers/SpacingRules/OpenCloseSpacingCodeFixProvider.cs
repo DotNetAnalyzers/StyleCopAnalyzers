@@ -52,6 +52,7 @@
                 SA1022PositiveSignsMustBeSpacedCorrectly.DiagnosticId,
                 SA1023DereferenceAndAccessOfSymbolsMustBeSpacedCorrectly.DiagnosticId,
                 SA1024ColonsMustBeSpacedCorrectly.DiagnosticId,
+                SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation.DiagnosticId,
                 SA1110OpeningParenthesisMustBeOnDeclarationLine.DiagnosticId,
                 SA1111ClosingParenthesisMustBeOnLineOfLastParameter.DiagnosticId,
                 SA1112ClosingParenthesisMustBeOnLineOfOpeningParenthesis.DiagnosticId,
@@ -241,7 +242,7 @@
                     triviaList = token.TrailingTrivia.AddRange(nextToken.LeadingTrivia);
 
                     replaceMap[token] = token.WithTrailingTrivia();
-                    replaceMap[nextToken] = nextToken.WithLeadingTrivia(triviaList.WithoutLeadingWhitespace());
+                    replaceMap[nextToken] = nextToken.WithLeadingTrivia(triviaList.WithoutLeadingWhitespace(true));
                     break;
                 }
 

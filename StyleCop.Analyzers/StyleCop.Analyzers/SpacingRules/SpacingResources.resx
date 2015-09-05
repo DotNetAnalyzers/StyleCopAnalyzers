@@ -213,9 +213,6 @@
   <data name="SA1025Title" xml:space="preserve">
     <value>Code must not contain multiple whitespace in a row</value>
   </data>
-  <data name="SA1026CodeFix" xml:space="preserve">
-    <value>Fix spacing</value>
-  </data>
   <data name="SA1026Description" xml:space="preserve">
     <value>An implicitly typed new array allocation within a C# code file is not spaced correctly.</value>
   </data>

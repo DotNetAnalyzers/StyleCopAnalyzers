@@ -57,7 +57,7 @@
         /// <inheritdoc/>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1026CodeFixProvider();
+            return new OpenCloseSpacingCodeFixProvider();
         }
     }
 }

@@ -74,7 +74,7 @@
 
                 if (token.IsFollowedByWhitespace() || token.IsLastInLine())
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), OpenCloseSpacingCodeFixProvider.RemoveFollowing));
                 }
             }
         }
