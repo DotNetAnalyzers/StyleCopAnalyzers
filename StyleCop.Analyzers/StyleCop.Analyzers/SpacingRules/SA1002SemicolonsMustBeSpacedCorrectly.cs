@@ -122,13 +122,13 @@
             if (missingFollowingSpace)
             {
                 // semicolon must{} be {followed} by a space
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "followed"));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), OpenCloseSpacingCodeFixProvider.InsertFollowing, string.Empty, "followed"));
             }
 
             if (hasPrecedingSpace && !ignorePrecedingSpace)
             {
                 // semicolon must{ not} be {preceded} by a space
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), " not", "preceded"));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), OpenCloseSpacingCodeFixProvider.RemovePreceding, " not", "preceded"));
             }
         }
     }

@@ -11,7 +11,7 @@
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1002SemicolonsMustBeSpacedCorrectly"/> and
-    /// <see cref="SA1002CodeFixProvider"/>.
+    /// <see cref="OpenCloseSpacingCodeFixProvider"/>.
     /// </summary>
     public class SA1002UnitTests : CodeFixVerifier
     {
@@ -309,7 +309,7 @@ class ClassName
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1002CodeFixProvider();
+            return new OpenCloseSpacingCodeFixProvider();
         }
     }
 }
