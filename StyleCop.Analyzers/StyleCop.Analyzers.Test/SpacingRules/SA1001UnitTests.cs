@@ -151,6 +151,21 @@
             await this.TestCommaInStatementOrDeclAsync(statement, expected, fixedStatement).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestSpaceOnlyBeforeCommaAsync()
+        {
+            string spaceOnlyBeforeComma = @"f(a ,b);";
+            string spaceOnlyAfterComma = @"f(a, b);";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 17),
+                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 17)
+            };
+
+            await this.TestCommaInStatementOrDeclAsync(spaceOnlyBeforeComma, expected, spaceOnlyAfterComma).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1001CommasMustBeSpacedCorrectly();
