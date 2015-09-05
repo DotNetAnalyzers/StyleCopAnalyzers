@@ -153,7 +153,7 @@
         internal static SyntaxTriviaList WithoutLeadingWhitespace(this SyntaxTriviaList triviaList, bool endOfLineIsWhitespace = true)
         {
             var nonWhitespaceIndex = IndexOfFirstNonWhitespaceTrivia(triviaList, endOfLineIsWhitespace);
-            return (nonWhitespaceIndex >= 0) ? SyntaxFactory.TriviaList(triviaList.Take(nonWhitespaceIndex)) : SyntaxFactory.TriviaList();
+            return (nonWhitespaceIndex >= 0) ? SyntaxFactory.TriviaList(triviaList.Skip(nonWhitespaceIndex)) : SyntaxFactory.TriviaList();
         }
 
         /// <summary>

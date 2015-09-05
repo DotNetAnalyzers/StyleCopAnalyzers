@@ -40,6 +40,7 @@
                 SA1013ClosingCurlyBracketsMustBeSpacedCorrectly.DiagnosticId,
                 SA1014OpeningGenericBracketsMustBeSpacedCorrectly.DiagnosticId,
                 SA1015ClosingGenericBracketsMustBeSpacedCorrectly.DiagnosticId,
+                SA1016OpeningAttributeBracketsMustBeSpacedCorrectly.DiagnosticId,
                 SA1019MemberAccessSymbolsMustBeSpacedCorrectly.DiagnosticId,
                 SA1020IncrementDecrementSymbolsMustBeSpacedCorrectly.DiagnosticId,
                 SA1023DereferenceAndAccessOfSymbolsMustBeSpacedCorrectly.DiagnosticId,

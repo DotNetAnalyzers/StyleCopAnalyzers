@@ -183,9 +183,6 @@
   <data name="SA1010CodeFix" xml:space="preserve">
     <value>Fix spacing</value>
   </data>
-  <data name="SA1016CodeFix" xml:space="preserve">
-    <value>Fix spacing</value>
-  </data>
   <data name="SA1016Description" xml:space="preserve">
     <value>An opening attribute bracket within a C# element is not spaced correctly.</value>
   </data>
