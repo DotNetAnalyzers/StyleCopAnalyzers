@@ -120,9 +120,6 @@
   <data name="OpenCloseSpacingCodeFix" xml:space="preserve">
     <value>Fix spacing</value>
   </data>
-  <data name="SA1000CodeFix" xml:space="preserve">
-    <value>Fix spacing</value>
-  </data>
   <data name="SA1001CodeFix" xml:space="preserve">
     <value>Fix spacing</value>
   </data>
