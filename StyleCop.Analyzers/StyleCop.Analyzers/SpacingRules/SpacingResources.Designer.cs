@@ -170,15 +170,6 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Fix spacing.
-        /// </summary>
-        internal static string SA1006CodeFix {
-            get {
-                return ResourceManager.GetString("SA1006CodeFix", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to A C# preprocessor-type keyword is preceded by space..
         /// </summary>
         internal static string SA1006Description {

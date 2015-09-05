@@ -153,9 +153,6 @@
   <data name="SA1005Title" xml:space="preserve">
     <value>Single line comments must begin with single space</value>
   </data>
-  <data name="SA1006CodeFix" xml:space="preserve">
-    <value>Fix spacing</value>
-  </data>
   <data name="SA1006Description" xml:space="preserve">
     <value>A C# preprocessor-type keyword is preceded by space.</value>
   </data>
