@@ -35,6 +35,7 @@
                 SA1000KeywordsMustBeSpacedCorrectly.DiagnosticId,
                 SA1002SemicolonsMustBeSpacedCorrectly.DiagnosticId,
                 SA1006PreprocessorKeywordsMustNotBePrecededBySpace.DiagnosticId,
+                SA1007OperatorKeywordMustBeFollowedBySpace.DiagnosticId,
                 SA1008OpeningParenthesisMustBeSpacedCorrectly.DiagnosticId,
                 SA1009ClosingParenthesisMustBeSpacedCorrectly.DiagnosticId,
                 SA1011ClosingSquareBracketsMustBeSpacedCorrectly.DiagnosticId,
