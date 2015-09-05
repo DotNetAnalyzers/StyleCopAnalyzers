@@ -251,15 +251,6 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Fix spacing.
-        /// </summary>
-        internal static string SA1010CodeFix {
-            get {
-                return ResourceManager.GetString("SA1010CodeFix", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to An opening attribute bracket within a C# element is not spaced correctly..
         /// </summary>
         internal static string SA1016Description {

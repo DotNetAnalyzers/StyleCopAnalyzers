@@ -35,6 +35,7 @@
                 SA1000KeywordsMustBeSpacedCorrectly.DiagnosticId,
                 SA1008OpeningParenthesisMustBeSpacedCorrectly.DiagnosticId,
                 SA1009ClosingParenthesisMustBeSpacedCorrectly.DiagnosticId,
+                SA1010OpeningSquareBracketsMustBeSpacedCorrectly.DiagnosticId,
                 SA1011ClosingSquareBracketsMustBeSpacedCorrectly.DiagnosticId,
                 SA1012OpeningCurlyBracketsMustBeSpacedCorrectly.DiagnosticId,
                 SA1013ClosingCurlyBracketsMustBeSpacedCorrectly.DiagnosticId,

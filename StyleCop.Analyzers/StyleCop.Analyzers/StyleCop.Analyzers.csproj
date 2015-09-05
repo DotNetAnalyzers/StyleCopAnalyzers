@@ -344,7 +344,6 @@
     <Compile Include="SpacingRules\SA1007OperatorKeywordMustBeFollowedBySpace.cs" />
     <Compile Include="SpacingRules\SA1008OpeningParenthesisMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1009ClosingParenthesisMustBeSpacedCorrectly.cs" />
-    <Compile Include="SpacingRules\SA1010CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1010OpeningSquareBracketsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1011ClosingSquareBracketsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1012OpeningCurlyBracketsMustBeSpacedCorrectly.cs" />
