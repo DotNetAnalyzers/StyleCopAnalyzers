@@ -11,7 +11,7 @@
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1000KeywordsMustBeSpacedCorrectly"/> and
-    /// <see cref="SA1000CodeFixProvider"/>.
+    /// <see cref="OpenCloseSpacingCodeFixProvider"/>.
     /// </summary>
     public class SA1000UnitTests : CodeFixVerifier
     {

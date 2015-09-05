@@ -12,7 +12,7 @@
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1001CommasMustBeSpacedCorrectly"/> and
-    /// <see cref="SA1001CodeFixProvider"/>.
+    /// <see cref="OpenCloseSpacingCodeFixProvider"/>.
     /// </summary>
     public class SA1001UnitTests : CodeFixVerifier
     {
@@ -158,7 +158,7 @@
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1001CodeFixProvider();
+            return new OpenCloseSpacingCodeFixProvider();
         }
 
         private Task TestCommaInStatementOrDeclAsync(string originalStatement, DiagnosticResult expected, string fixedStatement)
