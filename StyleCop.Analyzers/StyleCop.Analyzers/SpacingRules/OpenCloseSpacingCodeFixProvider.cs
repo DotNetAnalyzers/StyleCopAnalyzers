@@ -80,7 +80,7 @@
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return FixAll.Instance;
         }
 
         /// <inheritdoc/>
@@ -97,19 +97,32 @@
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-
+            var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>();
             var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
 
+            UpdateReplaceMap(replaceMap, token, diagnostic);
+
+            if (replaceMap.Any())
+            {
+                var newSyntaxRoot = syntaxRoot.ReplaceTokens(replaceMap.Keys, (t1, t2) => replaceMap[t1]);
+                return document.WithSyntaxRoot(newSyntaxRoot);
+            }
+
+            return document;
+        }
+
+        private static void UpdateReplaceMap(Dictionary<SyntaxToken, SyntaxToken> replaceMap, SyntaxToken token, Diagnostic diagnostic)
+        {
             string location;
             if (!diagnostic.Properties.TryGetValue(LocationKey, out location))
             {
-                return document;
+                return;
             }
 
             string action;
             if (!diagnostic.Properties.TryGetValue(ActionKey, out action))
             {
-                return document;
+                return;
             }
 
             string layout;
@@ -118,25 +131,28 @@
                 layout = LayoutPack;
             }
 
-            var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>();
             SyntaxTriviaList triviaList;
             switch (location)
             {
             case LocationPreceding:
+                var prevToken = token.GetPreviousToken();
                 switch (action)
                 {
                 case ActionInsert:
-                    replaceMap[token] = token.WithLeadingTrivia(token.LeadingTrivia.Add(SyntaxFactory.Space));
+                    if (!replaceMap.ContainsKey(prevToken))
+                    {
+                        replaceMap[token] = token.WithLeadingTrivia(token.LeadingTrivia.Add(SyntaxFactory.Space));
+                    }
+
                     break;
 
                 case ActionRemove:
-                    var prevToken = token.GetPreviousToken();
                     bool tokenIsFirstInLine = token.IsFirstInLine();
                     bool preserveLayout = layout == LayoutPreserve;
                     triviaList = prevToken.TrailingTrivia.AddRange(token.LeadingTrivia);
                     if (triviaList.Any(t => t.IsDirective))
                     {
-                        return document;
+                        break;
                     }
 
                     replaceMap[prevToken] = prevToken.WithTrailingTrivia();
@@ -195,40 +211,55 @@
                     }
 
                     break;
-
-                default:
-                    return document;
                 }
 
                 break;
 
             case LocationFollowing:
+                var nextToken = token.GetNextToken();
                 switch (action)
                 {
                 case ActionInsert:
-                    replaceMap[token] = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, SyntaxFactory.Space));
+                    if (!replaceMap.ContainsKey(nextToken))
+                    {
+                        replaceMap[token] = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, SyntaxFactory.Space));
+                    }
+
                     break;
 
                 case ActionRemove:
-                    var nextToken = token.GetNextToken();
                     triviaList = token.TrailingTrivia.AddRange(nextToken.LeadingTrivia);
 
                     replaceMap[token] = token.WithTrailingTrivia();
                     replaceMap[nextToken] = nextToken.WithLeadingTrivia(triviaList.WithoutLeadingWhitespace());
                     break;
-
-                default:
-                    return document;
                 }
 
                 break;
-
-            default:
-                return document;
             }
+        }
 
-            var newSyntaxRoot = syntaxRoot.ReplaceTokens(replaceMap.Keys, (t1, t2) => replaceMap[t1]);
-            return document.WithSyntaxRoot(newSyntaxRoot);
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; } = new FixAll();
+
+            protected override string CodeActionTitle => SpacingResources.OpenCloseSpacingCodeFix;
+
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            {
+                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
+                var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
+
+                var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>();
+
+                foreach (var diagnostic in diagnostics)
+                {
+                    var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
+                    UpdateReplaceMap(replaceMap, token, diagnostic);
+                }
+
+                return syntaxRoot.ReplaceTokens(replaceMap.Keys, (t1, t2) => replaceMap[t1]);
+            }
         }
     }
 }
