@@ -327,7 +327,6 @@
       <DependentUpon>SettingsResources.resx</DependentUpon>
     </Compile>
     <Compile Include="SpacingRules\OpenCloseSpacingCodeFixProvider.cs" />
-    <Compile Include="SpacingRules\SA1000CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1000KeywordsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1001CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1001CommasMustBeSpacedCorrectly.cs" />

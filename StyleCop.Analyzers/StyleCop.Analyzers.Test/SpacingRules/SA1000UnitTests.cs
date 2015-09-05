@@ -840,7 +840,7 @@ default:
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1000CodeFixProvider();
+            return new OpenCloseSpacingCodeFixProvider();
         }
 
         private Task TestKeywordStatementAsync(string statement, DiagnosticResult expected, string fixedStatement, string returnType = "void", bool asyncMethod = false)
