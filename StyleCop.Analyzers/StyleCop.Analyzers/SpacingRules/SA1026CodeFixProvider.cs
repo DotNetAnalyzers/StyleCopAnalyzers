@@ -75,7 +75,7 @@
         {
             public static FixAllProvider Instance { get; } = new FixAll();
 
-            protected override string CodeActionTitle => SpacingResources.OpenCloseSpacingCodeFix;
+            protected override string CodeActionTitle => SpacingResources.SA1026CodeFix;
 
             protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
             {
