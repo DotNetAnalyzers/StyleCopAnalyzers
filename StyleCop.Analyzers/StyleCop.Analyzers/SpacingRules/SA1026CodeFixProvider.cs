@@ -30,7 +30,7 @@
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return FixAll.Instance;
         }
 
         /// <inheritdoc/>
@@ -69,6 +69,31 @@
                 root.ReplaceTokens(replaceMap.Keys, (origin, maybeRewritten) => replaceMap[origin]));
 
             return updatedDocument;
+        }
+
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; } = new FixAll();
+
+            protected override string CodeActionTitle => SpacingResources.OpenCloseSpacingCodeFix;
+
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            {
+                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
+                var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
+
+                var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>();
+
+                foreach (var diagnostic in diagnostics)
+                {
+                    SyntaxToken newKeywordToken = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
+                    SyntaxToken openBracketToken = newKeywordToken.GetNextToken();
+                    replaceMap[newKeywordToken] = newKeywordToken.WithoutTrailingWhitespace(removeEndOfLineTrivia: true).WithoutFormatting();
+                    replaceMap[openBracketToken] = openBracketToken.WithoutLeadingWhitespace(removeEndOfLineTrivia: true).WithoutFormatting();
+                }
+
+                return syntaxRoot.ReplaceTokens(replaceMap.Keys, (t1, t2) => replaceMap[t1]);
+            }
         }
     }
 }
