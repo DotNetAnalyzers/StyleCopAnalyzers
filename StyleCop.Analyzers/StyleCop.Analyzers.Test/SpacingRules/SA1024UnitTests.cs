@@ -289,11 +289,16 @@ public class Foo<T>:object where T:IFormattable
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(3, 20).WithArguments(string.Empty, "preceded", " and followed"),
-                this.CSharpDiagnostic().WithLocation(3, 35).WithArguments(string.Empty, "preceded", " and followed"),
-                this.CSharpDiagnostic().WithLocation(5, 27).WithArguments(string.Empty, "preceded", " and followed"),
-                this.CSharpDiagnostic().WithLocation(8, 22).WithArguments(string.Empty, "preceded", " and followed"),
-                this.CSharpDiagnostic().WithLocation(10, 29).WithArguments(string.Empty, "preceded", " and followed"),
+                this.CSharpDiagnostic().WithLocation(3, 20).WithArguments(string.Empty, "preceded", string.Empty),
+                this.CSharpDiagnostic().WithLocation(3, 20).WithArguments(string.Empty, "followed", string.Empty),
+                this.CSharpDiagnostic().WithLocation(3, 35).WithArguments(string.Empty, "preceded", string.Empty),
+                this.CSharpDiagnostic().WithLocation(3, 35).WithArguments(string.Empty, "followed", string.Empty),
+                this.CSharpDiagnostic().WithLocation(5, 27).WithArguments(string.Empty, "preceded", string.Empty),
+                this.CSharpDiagnostic().WithLocation(5, 27).WithArguments(string.Empty, "followed", string.Empty),
+                this.CSharpDiagnostic().WithLocation(8, 22).WithArguments(string.Empty, "preceded", string.Empty),
+                this.CSharpDiagnostic().WithLocation(8, 22).WithArguments(string.Empty, "followed", string.Empty),
+                this.CSharpDiagnostic().WithLocation(10, 29).WithArguments(string.Empty, "preceded", string.Empty),
+                this.CSharpDiagnostic().WithLocation(10, 29).WithArguments(string.Empty, "followed", string.Empty),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -309,7 +314,7 @@ public class Foo<T>:object where T:IFormattable
         /// <inheritdoc/>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1024CodeFixProvider();
+            return new OpenCloseSpacingCodeFixProvider();
         }
     }
 }

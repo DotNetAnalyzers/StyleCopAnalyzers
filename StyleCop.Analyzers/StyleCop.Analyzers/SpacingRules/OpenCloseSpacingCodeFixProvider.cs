@@ -50,6 +50,7 @@
                 SA1021NegativeSignsMustBeSpacedCorrectly.DiagnosticId,
                 SA1022PositiveSignsMustBeSpacedCorrectly.DiagnosticId,
                 SA1023DereferenceAndAccessOfSymbolsMustBeSpacedCorrectly.DiagnosticId,
+                SA1024ColonsMustBeSpacedCorrectly.DiagnosticId,
                 SA1110OpeningParenthesisMustBeOnDeclarationLine.DiagnosticId,
                 SA1111ClosingParenthesisMustBeOnLineOfLastParameter.DiagnosticId,
                 SA1112ClosingParenthesisMustBeOnLineOfOpeningParenthesis.DiagnosticId,
