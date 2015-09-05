@@ -97,19 +97,32 @@
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-
+            var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>();
             var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
 
+            UpdateReplaceMap(replaceMap, token, diagnostic);
+
+            if (replaceMap.Any())
+            {
+                var newSyntaxRoot = syntaxRoot.ReplaceTokens(replaceMap.Keys, (t1, t2) => replaceMap[t1]);
+                return document.WithSyntaxRoot(newSyntaxRoot);
+            }
+
+            return document;
+        }
+
+        private static void UpdateReplaceMap(Dictionary<SyntaxToken, SyntaxToken> replaceMap, SyntaxToken token, Diagnostic diagnostic)
+        {
             string location;
             if (!diagnostic.Properties.TryGetValue(LocationKey, out location))
             {
-                return document;
+                return;
             }
 
             string action;
             if (!diagnostic.Properties.TryGetValue(ActionKey, out action))
             {
-                return document;
+                return;
             }
 
             string layout;
@@ -118,25 +131,28 @@
                 layout = LayoutPack;
             }
 
-            var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>();
             SyntaxTriviaList triviaList;
             switch (location)
             {
             case LocationPreceding:
+                var prevToken = token.GetPreviousToken();
                 switch (action)
                 {
                 case ActionInsert:
-                    replaceMap[token] = token.WithLeadingTrivia(token.LeadingTrivia.Add(SyntaxFactory.Space));
+                    if (!replaceMap.ContainsKey(prevToken))
+                    {
+                        replaceMap[token] = token.WithLeadingTrivia(token.LeadingTrivia.Add(SyntaxFactory.Space));
+                    }
+
                     break;
 
                 case ActionRemove:
-                    var prevToken = token.GetPreviousToken();
                     bool tokenIsFirstInLine = token.IsFirstInLine();
                     bool preserveLayout = layout == LayoutPreserve;
                     triviaList = prevToken.TrailingTrivia.AddRange(token.LeadingTrivia);
                     if (triviaList.Any(t => t.IsDirective))
                     {
-                        return document;
+                        break;
                     }
 
                     replaceMap[prevToken] = prevToken.WithTrailingTrivia();
@@ -195,40 +211,32 @@
                     }
 
                     break;
-
-                default:
-                    return document;
                 }
 
                 break;
 
             case LocationFollowing:
+                var nextToken = token.GetNextToken();
                 switch (action)
                 {
                 case ActionInsert:
-                    replaceMap[token] = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, SyntaxFactory.Space));
+                    if (!replaceMap.ContainsKey(nextToken))
+                    {
+                        replaceMap[token] = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, SyntaxFactory.Space));
+                    }
+
                     break;
 
                 case ActionRemove:
-                    var nextToken = token.GetNextToken();
                     triviaList = token.TrailingTrivia.AddRange(nextToken.LeadingTrivia);
 
                     replaceMap[token] = token.WithTrailingTrivia();
                     replaceMap[nextToken] = nextToken.WithLeadingTrivia(triviaList.WithoutLeadingWhitespace());
                     break;
-
-                default:
-                    return document;
                 }
 
                 break;
-
-            default:
-                return document;
             }
-
-            var newSyntaxRoot = syntaxRoot.ReplaceTokens(replaceMap.Keys, (t1, t2) => replaceMap[t1]);
-            return document.WithSyntaxRoot(newSyntaxRoot);
         }
 
         private class FixAll : DocumentBasedFixAllProvider
@@ -247,131 +255,7 @@
                 foreach (var diagnostic in diagnostics)
                 {
                     var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-
-                    string location;
-                    if (!diagnostic.Properties.TryGetValue(LocationKey, out location))
-                    {
-                        continue;
-                    }
-
-                    string action;
-                    if (!diagnostic.Properties.TryGetValue(ActionKey, out action))
-                    {
-                        continue;
-                    }
-
-                    string layout;
-                    if (!diagnostic.Properties.TryGetValue(LayoutKey, out layout))
-                    {
-                        layout = LayoutPack;
-                    }
-
-                    SyntaxTriviaList triviaList;
-                    switch (location)
-                    {
-                    case LocationPreceding:
-                        var prevToken = token.GetPreviousToken();
-                        switch (action)
-                        {
-                        case ActionInsert:
-                            if (!replaceMap.ContainsKey(prevToken))
-                            {
-                                replaceMap[token] = token.WithLeadingTrivia(token.LeadingTrivia.Add(SyntaxFactory.Space));
-                            }
-
-                            break;
-
-                        case ActionRemove:
-                            bool tokenIsFirstInLine = token.IsFirstInLine();
-                            bool preserveLayout = layout == LayoutPreserve;
-                            triviaList = prevToken.TrailingTrivia.AddRange(token.LeadingTrivia);
-                            if (triviaList.Any(t => t.IsDirective))
-                            {
-                                break;
-                            }
-
-                            replaceMap[prevToken] = prevToken.WithTrailingTrivia();
-                            if ((!preserveLayout || !tokenIsFirstInLine)
-                                && triviaList.All(i => i.IsKind(SyntaxKind.WhitespaceTrivia) || i.IsKind(SyntaxKind.EndOfLineTrivia)))
-                            {
-                                replaceMap[token] = token.WithLeadingTrivia();
-                            }
-                            else if (tokenIsFirstInLine && token.IsLastInLine())
-                            {
-                                /* This block covers the case where `token` is the only non-trivia token on its line. However,
-                                 * the line may still contain non-whitespace trivia which we want the removal process to
-                                 * preserve. This code fix only removes the whitespace surrounding `token` if it is the only
-                                 * non-whitespace token on the line.
-                                 */
-                                int lastNewLineLeading = token.LeadingTrivia.LastIndexOf(SyntaxKind.EndOfLineTrivia);
-                                int firstNewLineFollowing = token.TrailingTrivia.IndexOf(SyntaxKind.EndOfLineTrivia);
-                                bool onlyWhitespace = true;
-                                for (int i = lastNewLineLeading + 1; i < token.LeadingTrivia.Count; i++)
-                                {
-                                    onlyWhitespace &= token.LeadingTrivia[i].IsKind(SyntaxKind.WhitespaceTrivia);
-                                }
-
-                                firstNewLineFollowing = firstNewLineFollowing == -1 ? token.TrailingTrivia.Count : firstNewLineFollowing;
-                                for (int i = 0; i < firstNewLineFollowing; i++)
-                                {
-                                    onlyWhitespace &= token.TrailingTrivia[i].IsKind(SyntaxKind.WhitespaceTrivia);
-                                }
-
-                                if (onlyWhitespace)
-                                {
-                                    // Move the token, and remove the other tokens from its line. Keep all other surrounding
-                                    // trivia. Keep the last newline that precedes token, but not the first that follows it.
-                                    SyntaxTriviaList trailingTrivia = prevToken.TrailingTrivia;
-                                    if (lastNewLineLeading >= 0)
-                                    {
-                                        trailingTrivia = trailingTrivia.AddRange(token.LeadingTrivia.Take(lastNewLineLeading + 1));
-                                    }
-
-                                    // firstNewLineFollowing was adjusted above to account for the missing case.
-                                    trailingTrivia = trailingTrivia.AddRange(token.TrailingTrivia.Take(firstNewLineFollowing));
-
-                                    replaceMap[token] = token.WithLeadingTrivia().WithTrailingTrivia(trailingTrivia);
-                                }
-                                else
-                                {
-                                    // Just move the token and keep all surrounding trivia.
-                                    SyntaxTriviaList trailingTrivia = triviaList.AddRange(token.TrailingTrivia);
-                                    replaceMap[token] = token.WithLeadingTrivia().WithTrailingTrivia(trailingTrivia);
-                                }
-                            }
-                            else
-                            {
-                                SyntaxTriviaList trailingTrivia = triviaList.AddRange(token.TrailingTrivia.WithoutLeadingWhitespace(endOfLineIsWhitespace: false));
-                                replaceMap[token] = token.WithLeadingTrivia().WithTrailingTrivia(trailingTrivia);
-                            }
-
-                            break;
-                        }
-
-                        break;
-
-                    case LocationFollowing:
-                        var nextToken = token.GetNextToken();
-                        switch (action)
-                        {
-                        case ActionInsert:
-                            if (!replaceMap.ContainsKey(nextToken))
-                            {
-                                replaceMap[token] = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, SyntaxFactory.Space));
-                            }
-
-                            break;
-
-                        case ActionRemove:
-                            triviaList = token.TrailingTrivia.AddRange(nextToken.LeadingTrivia);
-
-                            replaceMap[token] = token.WithTrailingTrivia();
-                            replaceMap[nextToken] = nextToken.WithLeadingTrivia(triviaList.WithoutLeadingWhitespace());
-                            break;
-                        }
-
-                        break;
-                    }
+                    UpdateReplaceMap(replaceMap, token, diagnostic);
                 }
 
                 return syntaxRoot.ReplaceTokens(replaceMap.Keys, (t1, t2) => replaceMap[t1]);
