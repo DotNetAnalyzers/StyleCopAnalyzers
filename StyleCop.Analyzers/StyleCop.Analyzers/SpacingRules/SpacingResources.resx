@@ -207,9 +207,6 @@
   <data name="SA1018Title" xml:space="preserve">
     <value>Nullable type symbols must be spaced correctly</value>
   </data>
-  <data name="SA1022CodeFix" xml:space="preserve">
-    <value>Fix spacing</value>
-  </data>
   <data name="SA1024CodeFix" xml:space="preserve">
     <value>Fix spacing</value>
   </data>
