@@ -62,6 +62,10 @@
 
         private static SyntaxToken RewriteBaseAsThis(SyntaxToken token)
         {
+            // By creating a `base` token with the literal text `this`, we can replace a token with the code fix instead
+            // of replacing an entire syntax node. This improves the performance of the code fix, but the resulting tree
+            // could be considered in a bad state. However, this is not a problem under any interpretation of the result
+            // because SA1100 is only reported in cases where `base.` and `this.` have the same meaning.
             return SyntaxFactory.Token(token.LeadingTrivia, SyntaxKind.BaseKeyword, "this", "this", token.TrailingTrivia);
         }
 
