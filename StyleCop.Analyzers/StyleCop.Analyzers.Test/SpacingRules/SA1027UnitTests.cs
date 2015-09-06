@@ -103,6 +103,8 @@ public  class   Foo
                 "\t/// </summary>\r\n" +
                 "\tpublic class Foo\r\n" +
                 "\t{\r\n" +
+                "\t \t/// <MyElement> Value </MyElement>\r\n" +
+                "\t\t/// <MyElement> Value </MyElement>\r\n" +
                 "\t}\r\n";
 
             var fixedTestCode = @"    /// <summary>
@@ -110,18 +112,22 @@ public  class   Foo
     /// </summary>
     public class Foo
     {
+        /// <MyElement> Value </MyElement>
+        /// <MyElement> Value </MyElement>
     }
 ";
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(1, 1),
-                this.CSharpDiagnostic().WithLocation(2, 1),
-                this.CSharpDiagnostic().WithLocation(3, 1),
-                this.CSharpDiagnostic().WithLocation(4, 1),
-                this.CSharpDiagnostic().WithLocation(5, 1),
-                this.CSharpDiagnostic().WithLocation(6, 1),
-            };
+                        this.CSharpDiagnostic().WithLocation(1, 1),
+                        this.CSharpDiagnostic().WithLocation(2, 1),
+                        this.CSharpDiagnostic().WithLocation(3, 1),
+                        this.CSharpDiagnostic().WithLocation(4, 1),
+                        this.CSharpDiagnostic().WithLocation(5, 1),
+                        this.CSharpDiagnostic().WithLocation(6, 1),
+                        this.CSharpDiagnostic().WithLocation(7, 1),
+                        this.CSharpDiagnostic().WithLocation(8, 1),
+                    };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);

@@ -51,7 +51,7 @@
             // Find trivia at specific location of diagnostic. We do not need the token whose full span
             // includes the trivia, e.g. when looking for DocummentationCommentExteriorTrivia which can be
             // part of SingleLineDocumentationTrivia. This would lead to incorrect replacements of tabs here.
-            // So we are looking for tokens that are part of the trivia.
+            // So we are looking for the trivia also inside of trivias.
             var violatingTrivia = syntaxRoot.FindTrivia(diagnostic.Location.SourceSpan.Start, true);
 
             var stringBuilder = new StringBuilder();
