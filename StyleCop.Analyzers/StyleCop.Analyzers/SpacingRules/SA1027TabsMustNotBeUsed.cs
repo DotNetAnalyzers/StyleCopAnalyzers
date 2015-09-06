@@ -4,6 +4,7 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using System.Linq;
 
     /// <summary>
     /// The C# code contains a tab character.
@@ -59,16 +60,19 @@
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
+
             foreach (var trivia in root.DescendantTrivia(descendIntoTrivia: true))
             {
                 switch (trivia.Kind())
                 {
-                case SyntaxKind.WhitespaceTrivia:
-                    HandleWhitespaceTrivia(context, trivia);
-                    break;
+                    case SyntaxKind.WhitespaceTrivia:
+                    case SyntaxKind.DocumentationCommentExteriorTrivia:
+                    case SyntaxKind.SingleLineCommentTrivia:
+                        HandleWhitespaceTrivia(context, trivia);
+                        break;
 
-                default:
-                    break;
+                    default:
+                        break;
                 }
             }
         }

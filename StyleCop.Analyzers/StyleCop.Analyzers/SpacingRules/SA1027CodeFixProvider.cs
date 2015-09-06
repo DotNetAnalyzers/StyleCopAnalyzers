@@ -48,7 +48,11 @@
             var indentationOptions = IndentationOptions.FromDocument(document);
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
-            var violatingTrivia = syntaxRoot.FindTrivia(diagnostic.Location.SourceSpan.Start);
+            // Find trivia at specific location of diagnostic. We do not need the token whose full span
+            // includes the trivia, e.g. when looking for DocummentationCommentExteriorTrivia which can be
+            // part of SingleLineDocumentationTrivia. This would lead to incorrect replacements of tabs here.
+            // So we are looking for the trivia also inside of trivias.
+            var violatingTrivia = syntaxRoot.FindTrivia(diagnostic.Location.SourceSpan.Start, true);
 
             var stringBuilder = new StringBuilder();
 
@@ -64,7 +68,11 @@
                 relevantText = sourceText.ToString(new TextSpan(violatingTrivia.FullSpan.Start - firstTriviaIndex, firstTriviaIndex + violatingTrivia.FullSpan.Length));
             }
 
+            // The column is used to count characters before a tab occurs. The tab will then be replaced by that number
+            // of whitespaces, that results from the tab size reduced by the number of preceding characters (column).
+            // So it will be ensured, that tab indention is always of consistent length.
             int column = 0;
+
             for (int i = 0; i < relevantText.Length; i++)
             {
                 char c = relevantText[i];
