@@ -350,15 +350,6 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Fix spacing.
-        /// </summary>
-        internal static string SA1026CodeFix {
-            get {
-                return ResourceManager.GetString("SA1026CodeFix", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to An implicitly typed new array allocation within a C# code file is not spaced correctly..
         /// </summary>
         internal static string SA1026Description {
