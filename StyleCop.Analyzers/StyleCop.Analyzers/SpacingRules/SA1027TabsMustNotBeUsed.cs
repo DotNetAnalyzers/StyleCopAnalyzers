@@ -68,6 +68,7 @@
                     case SyntaxKind.WhitespaceTrivia:
                     case SyntaxKind.DocumentationCommentExteriorTrivia:
                     case SyntaxKind.SingleLineCommentTrivia:
+                    case SyntaxKind.MultiLineCommentTrivia:
                         HandleWhitespaceTrivia(context, trivia);
                         break;
 
