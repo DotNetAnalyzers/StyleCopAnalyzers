@@ -41,10 +41,9 @@ The easiest way to add a **stylecop.json** configuration file to a new project i
 
 This section describes the features of documentation rules which can be configured in **stylecop.json**. Each of the described properties are configured in the `documentationRules` object, which is shown in the following sample file.
 
-Note when editing this file in Visual Studio, you may insert this URL in the Schema bar across the top of the file, which gives you Intellisense and schema validation: `https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json`
-
 ```json
 {
+  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
   "settings": {
     "documentationRules": {
     }
