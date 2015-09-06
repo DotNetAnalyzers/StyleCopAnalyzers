@@ -34,7 +34,7 @@
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return FixAll.Instance;
         }
 
         /// <inheritdoc/>
@@ -58,21 +58,31 @@
                 return document;
             }
 
-            var parentDeclaration = memberDeclaration.Parent;
-            if (parentDeclaration is TypeDeclarationSyntax)
-            {
-                syntaxRoot = HandleTypeDeclaration(memberDeclaration, (TypeDeclarationSyntax)parentDeclaration, syntaxRoot);
-            }
-            else if (parentDeclaration is NamespaceDeclarationSyntax)
-            {
-                syntaxRoot = HandleNamespaceDeclaration(memberDeclaration, (NamespaceDeclarationSyntax)parentDeclaration, syntaxRoot);
-            }
-            else if (parentDeclaration is CompilationUnitSyntax)
-            {
-                syntaxRoot = HandleCompilationUnitDeclaration(memberDeclaration, (CompilationUnitSyntax)parentDeclaration, syntaxRoot);
-            }
+            syntaxRoot = UpdateSyntaxRoot(memberDeclaration, syntaxRoot);
 
             return document.WithSyntaxRoot(syntaxRoot);
+        }
+
+        private static SyntaxNode UpdateSyntaxRoot(MemberDeclarationSyntax memberDeclaration, SyntaxNode syntaxRoot)
+        {
+            var parentDeclaration = memberDeclaration.Parent;
+
+            if (parentDeclaration is TypeDeclarationSyntax)
+            {
+                return HandleTypeDeclaration(memberDeclaration, (TypeDeclarationSyntax)parentDeclaration, syntaxRoot);
+            }
+
+            if (parentDeclaration is NamespaceDeclarationSyntax)
+            {
+                return HandleNamespaceDeclaration(memberDeclaration, (NamespaceDeclarationSyntax)parentDeclaration, syntaxRoot);
+            }
+
+            if (parentDeclaration is CompilationUnitSyntax)
+            {
+                return HandleCompilationUnitDeclaration(memberDeclaration, (CompilationUnitSyntax)parentDeclaration, syntaxRoot);
+            }
+
+            return syntaxRoot;
         }
 
         private static SyntaxNode HandleTypeDeclaration(MemberDeclarationSyntax memberDeclaration, TypeDeclarationSyntax typeDeclarationNode, SyntaxNode syntaxRoot)
@@ -121,6 +131,32 @@
             root = trackedRoot.InsertNodesBefore(firstNonConstTracked, new[] { fieldToMove });
             var fieldToMoveTracked = root.GetCurrentNodes(field).Last();
             return root.RemoveNode(fieldToMoveTracked, SyntaxRemoveOptions.KeepNoTrivia);
+        }
+
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; } = new FixAll();
+
+            protected override string CodeActionTitle => OrderingResources.ElementOrderCodeFix;
+
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            {
+                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
+                var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
+
+                foreach (var diagnostic in diagnostics)
+                {
+                    var memberDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<MemberDeclarationSyntax>();
+                    if (memberDeclaration == null)
+                    {
+                        continue;
+                    }
+
+                    syntaxRoot = UpdateSyntaxRoot(memberDeclaration, syntaxRoot);
+                }
+
+                return syntaxRoot;
+            }
         }
     }
 }
