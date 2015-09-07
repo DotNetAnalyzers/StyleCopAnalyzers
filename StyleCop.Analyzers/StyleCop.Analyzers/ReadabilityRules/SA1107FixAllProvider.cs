@@ -14,6 +14,12 @@
 
         protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
         {
+            var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
+            if (diagnostics.IsEmpty)
+            {
+                return null;
+            }
+
             DocumentEditor editor = await DocumentEditor.CreateAsync(document, fixAllContext.CancellationToken).ConfigureAwait(false);
 
             SyntaxNode root = editor.GetChangedRoot();
@@ -21,7 +27,7 @@
             ImmutableList<SyntaxNode> nodesToChange = ImmutableList.Create<SyntaxNode>();
 
             // Make sure all nodes we care about are tracked
-            foreach (var diagnostic in await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false))
+            foreach (var diagnostic in diagnostics)
             {
                 var location = diagnostic.Location;
                 var syntaxNode = root.FindNode(location.SourceSpan);

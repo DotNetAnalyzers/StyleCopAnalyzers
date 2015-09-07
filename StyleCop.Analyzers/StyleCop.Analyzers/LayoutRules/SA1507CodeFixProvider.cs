@@ -63,12 +63,18 @@
 
             protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
             {
+                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
+                if (diagnostics.IsEmpty)
+                {
+                    return null;
+                }
+
                 var newLine = fixAllContext.Document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp);
                 var text = await document.GetTextAsync().ConfigureAwait(false);
 
                 List<TextChange> changes = new List<TextChange>();
 
-                foreach (var diagnostic in await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false))
+                foreach (var diagnostic in diagnostics)
                 {
                     changes.Add(new TextChange(diagnostic.Location.SourceSpan, newLine));
                 }
