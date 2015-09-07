@@ -14,7 +14,7 @@ StyleCop Analyzers is configured using two separate mechanisms: code analysis ru
 
 Code analysis rule sets are the standard way to configure most diagnostic analyzers within Visual Studio 2015. Information about creating and customizing these files can be found in the [Using Rule Sets to Group Code Analysis Rules](https://msdn.microsoft.com/en-us/library/dd264996.aspx) documentation on MSDN.
 
-## Getting started with **stylecop.json**
+## Getting Started with **stylecop.json**
 
 The easiest way to add a **stylecop.json** configuration file to a new project is using a code fix provided by the project. To invoke the code fix, open any file where SA1633 is reported¹ and press Ctrl+. to bring up the Quick Fix menu. From the menu, select **Add StyleCop settings file to the project**.
 
@@ -36,6 +36,16 @@ The easiest way to add a **stylecop.json** configuration file to a new project i
 
 > 5. Save and close the project file.
 > 6. Right click the unloaded project in **Solution Explorer** and select **Reload Project**.
+
+### Source Control
+
+For best results, **stylecop.json** should be included in source control. This will automatically propagate the expected settings to all team members working on the project.
+
+> :warning: If you are working in Git, make sure your **.gitignore** file *does not* contain the following line. This line should be removed if present.
+>
+> ```
+> [Ss]tyle[Cc]op.*
+> ```
 
 ## Documentation Rules
 
