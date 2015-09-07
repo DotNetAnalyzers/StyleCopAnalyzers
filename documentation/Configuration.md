@@ -37,6 +37,18 @@ The easiest way to add a **stylecop.json** configuration file to a new project i
 > 5. Save and close the project file.
 > 6. Right click the unloaded project in **Solution Explorer** and select **Reload Project**.
 
+### JSON Schema for IntelliSense
+
+A JSON schema is available for **stylecop.json**. By including a reference in **stylecop.json** to this schema, Visual Studio will offer IntelliSense functionality (code completion, quick info, etc.) while editing this file. The schema may be configured by adding the following top-level property in **stylecop.json**:
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json"
+}
+```
+
+> :bulb: The code fix described previously automatically configures **stylecop.json** to reference the schema.
+
 ### Source Control
 
 For best results, **stylecop.json** should be included in source control. This will automatically propagate the expected settings to all team members working on the project.
