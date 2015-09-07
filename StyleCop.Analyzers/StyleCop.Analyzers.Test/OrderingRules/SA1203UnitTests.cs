@@ -4,8 +4,10 @@
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.OrderingRules;
@@ -14,6 +16,8 @@ namespace StyleCop.Analyzers.Test.OrderingRules
 
     public class SA1203UnitTests : CodeFixVerifier
     {
+        private bool suppressSA1202 = false;
+
         [Fact]
         public async Task TestNoDiagnosticAsync()
         {
@@ -382,6 +386,57 @@ const string foo = ""a"";
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that the code fix will move the non constant fields before the constant ones with SA1202 suppressed.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestCodeFixWithSA1202SuppressedAsync()
+        {
+            this.suppressSA1202 = true;
+
+            var testCode = @"public class Foo
+{
+    private const string Before1 = ""test"";
+
+    public const string Before2 = ""test"";
+
+    private int field1;
+
+    private const string After1 = ""test"";
+
+    public int between;
+
+    public const string After2 = ""test"";
+}
+";
+
+            var fixedTestCode = @"public class Foo
+{
+    private const string Before1 = ""test"";
+
+    public const string Before2 = ""test"";
+
+    private const string After1 = ""test"";
+
+    public const string After2 = ""test"";
+
+    private int field1;
+
+    public int between;
+}
+";
+
+            var diagnosticResults = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(9, 26).WithArguments("private"),
+                this.CSharpDiagnostic().WithLocation(13, 25).WithArguments("public")
+            };
+            await this.VerifyCSharpDiagnosticAsync(testCode, diagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1203ConstantsMustAppearBeforeFields();
@@ -390,6 +445,21 @@ const string foo = ""a"";
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new ElementOrderCodeFixProvider();
+        }
+
+        protected override Solution CreateSolution(ProjectId projectId, string language)
+        {
+            Solution solution = base.CreateSolution(projectId, language);
+            if (this.suppressSA1202)
+            {
+                Project project = solution.GetProject(projectId);
+                CompilationOptions options = project.CompilationOptions;
+                ImmutableDictionary<string, ReportDiagnostic> specificOptions = options.SpecificDiagnosticOptions;
+                options = options.WithSpecificDiagnosticOptions(specificOptions.Add(SA1202ElementsMustBeOrderedByAccess.DiagnosticId, ReportDiagnostic.Suppress));
+                solution = solution.WithProjectCompilationOptions(projectId, options);
+            }
+
+            return solution;
         }
     }
 }

@@ -35,41 +35,55 @@ namespace StyleCop.Analyzers.OrderingRules
         private readonly ModifierFlags modifierFlags;
         private readonly AccessLevel accessibilty;
         private readonly int elementPriority;
+        private readonly bool prioritizeAccess;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MemberOrderHelper"/> struct.
         /// </summary>
         /// <param name="member">The member to wrap.</param>
-        public MemberOrderHelper(MemberDeclarationSyntax member)
+        /// <param name="prioritizeType">Indicates whether to prioritize element type.</param>
+        /// <param name="prioritizeAccess">Indicates whether to prioritize access level.</param>
+        /// <param name="prioritizeConst">Indicates whether to prioritize constants.</param>
+        /// <param name="prioritizeStatic">Indicates whether to prioritize static elements.</param>
+        /// <param name="prioritizeReadonly">Indicates whether to prioritize readonly elements.</param>
+        public MemberOrderHelper(MemberDeclarationSyntax member, bool prioritizeType = true, bool prioritizeAccess = true, bool prioritizeConst = true, bool prioritizeStatic = true, bool prioritizeReadonly = true)
         {
             this.Member = member;
+            this.prioritizeAccess = prioritizeAccess;
             var modifiers = member.GetModifiers();
             var type = member.Kind();
             type = type == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : type;
 
-            this.elementPriority = TypeMemberOrder.IndexOf(type);
-            this.modifierFlags = GetModifierFlags(modifiers);
-            if ((type == SyntaxKind.ConstructorDeclaration && this.modifierFlags.HasFlag(ModifierFlags.Static))
-                || (type == SyntaxKind.MethodDeclaration && (member as MethodDeclarationSyntax)?.ExplicitInterfaceSpecifier != null)
-                || (type == SyntaxKind.PropertyDeclaration && (member as PropertyDeclarationSyntax)?.ExplicitInterfaceSpecifier != null)
-                || (type == SyntaxKind.IndexerDeclaration && (member as IndexerDeclarationSyntax)?.ExplicitInterfaceSpecifier != null))
+            this.elementPriority = prioritizeType ? TypeMemberOrder.IndexOf(type) : 0;
+            this.modifierFlags = GetModifierFlags(modifiers, prioritizeConst, prioritizeStatic, prioritizeReadonly);
+            if (prioritizeAccess)
             {
-                this.accessibilty = AccessLevel.Public;
+                if ((type == SyntaxKind.ConstructorDeclaration && this.modifierFlags.HasFlag(ModifierFlags.Static))
+                    || (type == SyntaxKind.MethodDeclaration && (member as MethodDeclarationSyntax)?.ExplicitInterfaceSpecifier != null)
+                    || (type == SyntaxKind.PropertyDeclaration && (member as PropertyDeclarationSyntax)?.ExplicitInterfaceSpecifier != null)
+                    || (type == SyntaxKind.IndexerDeclaration && (member as IndexerDeclarationSyntax)?.ExplicitInterfaceSpecifier != null))
+                {
+                    this.accessibilty = AccessLevel.Public;
+                }
+                else
+                {
+                    this.accessibilty = AccessLevelHelper.GetAccessLevel(modifiers);
+                    if (this.accessibilty == AccessLevel.NotSpecified)
+                    {
+                        if (member.Parent.IsKind(SyntaxKind.CompilationUnit) || member.Parent.IsKind(SyntaxKind.NamespaceDeclaration))
+                        {
+                            this.accessibilty = AccessLevel.Internal;
+                        }
+                        else
+                        {
+                            this.accessibilty = AccessLevel.Private;
+                        }
+                    }
+                }
             }
             else
             {
-                this.accessibilty = AccessLevelHelper.GetAccessLevel(modifiers);
-                if (this.accessibilty == AccessLevel.NotSpecified)
-                {
-                    if (member.Parent.IsKind(SyntaxKind.CompilationUnit) || member.Parent.IsKind(SyntaxKind.NamespaceDeclaration))
-                    {
-                        this.accessibilty = AccessLevel.Internal;
-                    }
-                    else
-                    {
-                        this.accessibilty = AccessLevel.Private;
-                    }
-                }
+                this.accessibilty = AccessLevel.Public;
             }
         }
 
@@ -142,27 +156,27 @@ namespace StyleCop.Analyzers.OrderingRules
         /// </value>
         public int ModifierPriority => (int)this.modifierFlags;
 
-        private static ModifierFlags GetModifierFlags(SyntaxTokenList syntax)
+        private static ModifierFlags GetModifierFlags(SyntaxTokenList syntax, bool prioritizeConst, bool prioritizeStatic, bool prioritizeReadonly)
         {
-            ModifierFlags flags = 0;
-            if (syntax.Any(SyntaxKind.ConstKeyword))
+            var flags = ModifierFlags.None;
+            if (prioritizeConst && syntax.Any(SyntaxKind.ConstKeyword))
             {
                 flags |= ModifierFlags.Const;
             }
             else
             {
-                if (syntax.Any(SyntaxKind.StaticKeyword))
+                if (prioritizeStatic && syntax.Any(SyntaxKind.StaticKeyword))
                 {
                     flags |= ModifierFlags.Static;
                 }
 
-                if (syntax.Any(SyntaxKind.ReadOnlyKeyword))
+                if (prioritizeReadonly && syntax.Any(SyntaxKind.ReadOnlyKeyword))
                 {
                     flags |= ModifierFlags.Readonly;
                 }
             }
 
-            return flags == 0 ? ModifierFlags.None : flags;
+            return flags;
         }
     }
 }
