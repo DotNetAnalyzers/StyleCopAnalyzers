@@ -1652,6 +1652,78 @@
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that interpolations are handled properly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestInterpolationCorrectSpacingAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    using System;
+
+    public class TestClass
+    {
+        public void TestMethod()
+        {
+            string fileName = ""Foo"";
+            var FileContainer = new { HasContentChanged = true };
+            var fileTitle = $""{fileName}{(FileContainer.HasContentChanged ? ""*"" : String.Empty)}"";
+        }
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that interpolations are handled properly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestInterpolationWrongSpacingAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    using System;
+
+    public class TestClass
+    {
+        public void TestMethod()
+        {
+            string fileName = ""Foo"";
+            var FileContainer = new { HasContentChanged = true };
+            var fileTitle = $""{fileName}{ (FileContainer.HasContentChanged ? ""*"" : String.Empty)}"";
+        }
+    }
+}";
+
+            var fixedTestCode = @"namespace TestNamespace
+{
+    using System;
+
+    public class TestClass
+    {
+        public void TestMethod()
+        {
+            string fileName = ""Foo"";
+            var FileContainer = new { HasContentChanged = true };
+            var fileTitle = $""{fileName}{(FileContainer.HasContentChanged ? ""*"" : String.Empty)}"";
+        }
+    }
+}";
+
+            DiagnosticResult[] expectedDiagnostics =
+            {
+                this.CSharpDiagnostic(DescriptorNotPreceded).WithLocation(11, 43)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {

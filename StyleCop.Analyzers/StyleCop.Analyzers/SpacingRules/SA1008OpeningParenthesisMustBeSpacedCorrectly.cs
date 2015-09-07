@@ -153,6 +153,12 @@
                 break;
 
             case SyntaxKind.ParenthesizedExpression:
+                if (prevToken.Parent.IsKind(SyntaxKind.Interpolation))
+                {
+                    haveLeadingSpace = false;
+                    break;
+                }
+
                 partOfUnaryExpression = prevToken.Parent is PrefixUnaryExpressionSyntax;
                 startOfIndexer = prevToken.IsKind(SyntaxKind.OpenBracketToken);
                 var partOfCastExpression = prevToken.IsKind(SyntaxKind.CloseParenToken) && prevToken.Parent.IsKind(SyntaxKind.CastExpression);
