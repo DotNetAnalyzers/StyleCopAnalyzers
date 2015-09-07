@@ -50,11 +50,26 @@
             return Task.FromResult(fixAction);
         }
 
+        /// <summary>
+        /// Fixes all occurrences of a diagnostic in a specific document.
+        /// </summary>
+        /// <param name="fixAllContext">The context for the Fix All operation.</param>
+        /// <param name="document">The document to fix.</param>
+        /// <returns>
+        /// <para>The new <see cref="SyntaxNode"/> representing the root of the fixed document.</para>
+        /// <para>-or-</para>
+        /// <para><see langword="null"/>, if no changes were made to the document.</para>
+        /// </returns>
         protected abstract Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document);
 
         private async Task<Document> GetDocumentFixesAsync(FixAllContext fixAllContext)
         {
             var newRoot = await this.FixAllInDocumentAsync(fixAllContext, fixAllContext.Document).ConfigureAwait(false);
+            if (newRoot == null)
+            {
+                return fixAllContext.Document;
+            }
+
             return fixAllContext.Document.WithSyntaxRoot(newRoot);
         }
 
@@ -70,6 +85,11 @@
             for (int i = 0; i < documents.Length; i++)
             {
                 var newDocumentRoot = await newDocuments[i].ConfigureAwait(false);
+                if (newDocumentRoot == null)
+                {
+                    continue;
+                }
+
                 solution = solution.WithDocumentSyntaxRoot(documents[i].Id, newDocumentRoot);
             }
 
