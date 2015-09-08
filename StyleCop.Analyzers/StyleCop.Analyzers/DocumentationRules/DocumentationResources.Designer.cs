@@ -89,7 +89,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add Fileheader.
+        ///   Looks up a localized string similar to Add file header.
         /// </summary>
         internal static string SA1633CodeFix {
             get {

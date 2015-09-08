@@ -23,7 +23,7 @@
     public class SA1633CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(FileHeaderAnalyzers.SA1633Identifier);
+            ImmutableArray.Create(FileHeaderAnalyzers.SA1633DescriptorMissing.Id);
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
@@ -73,10 +73,10 @@
             return root.WithLeadingTrivia(newTrivia);
         }
 
-        private static SyntaxTriviaList CreateNewHeader(string name, StyleCopSettings setttings)
+        private static SyntaxTriviaList CreateNewHeader(string filename, StyleCopSettings settings)
         {
-            return SyntaxFactory.ParseLeadingTrivia($@"// <copyright file=""{name}"" company=""{setttings.DocumentationRules.CompanyName}"">
-//   Copyright (c) FooCorp. All rights reserved.
+            return SyntaxFactory.ParseLeadingTrivia($@"// <copyright file=""{filename}"" company=""{settings.DocumentationRules.CompanyName}"">
+//   {settings.DocumentationRules.CopyrightText}
 // </copyright>
 ");
         }

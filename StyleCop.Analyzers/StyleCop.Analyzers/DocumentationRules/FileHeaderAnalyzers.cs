@@ -25,7 +25,7 @@
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class FileHeaderAnalyzers : DiagnosticAnalyzer
     {
-        internal const string SA1633Identifier = "SA1633";
+        private const string SA1633Identifier = "SA1633";
         private const string SA1634Identifier = "SA1634";
         private const string SA1635Identifier = "SA1635";
         private const string SA1636Identifier = "SA1636";
