@@ -90,7 +90,7 @@
                     return;
                 }
 
-                BaseTypeDeclarationSyntax declaration = context.Node as BaseTypeDeclarationSyntax;
+                BaseTypeDeclarationSyntax declaration = (BaseTypeDeclarationSyntax)context.Node;
                 if (declaration == null)
                 {
                     return;
