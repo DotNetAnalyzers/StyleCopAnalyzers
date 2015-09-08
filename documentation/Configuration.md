@@ -14,7 +14,7 @@ StyleCop Analyzers is configured using two separate mechanisms: code analysis ru
 
 Code analysis rule sets are the standard way to configure most diagnostic analyzers within Visual Studio 2015. Information about creating and customizing these files can be found in the [Using Rule Sets to Group Code Analysis Rules](https://msdn.microsoft.com/en-us/library/dd264996.aspx) documentation on MSDN.
 
-## Getting started with **stylecop.json**
+## Getting Started with **stylecop.json**
 
 The easiest way to add a **stylecop.json** configuration file to a new project is using a code fix provided by the project. To invoke the code fix, open any file where SA1633 is reported¹ and press Ctrl+. to bring up the Quick Fix menu. From the menu, select **Add StyleCop settings file to the project**.
 
@@ -36,6 +36,28 @@ The easiest way to add a **stylecop.json** configuration file to a new project i
 
 > 5. Save and close the project file.
 > 6. Right click the unloaded project in **Solution Explorer** and select **Reload Project**.
+
+### JSON Schema for IntelliSense
+
+A JSON schema is available for **stylecop.json**. By including a reference in **stylecop.json** to this schema, Visual Studio will offer IntelliSense functionality (code completion, quick info, etc.) while editing this file. The schema may be configured by adding the following top-level property in **stylecop.json**:
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json"
+}
+```
+
+> :bulb: The code fix described previously automatically configures **stylecop.json** to reference the schema.
+
+### Source Control
+
+For best results, **stylecop.json** should be included in source control. This will automatically propagate the expected settings to all team members working on the project.
+
+> :warning: If you are working in Git, make sure your **.gitignore** file *does not* contain the following line. This line should be removed if present.
+>
+> ```
+> [Ss]tyle[Cc]op.*
+> ```
 
 ## Documentation Rules
 
@@ -107,4 +129,38 @@ When the `xmlHeader` property is explicitly set to **false**, StyleCop Analyzers
 
 ```csharp
 // {copyrightText}
+```
+
+### Documentation Requirements
+
+StyleCop Analyzers includes rules which require developers to document the majority of a code base by default. This requirement can easily overwhelm a team which did not use StyleCop for the entire development process. To help guide developers towards a properly documented code base, several properties are available in **stylecop.json** to progressively increase the documentation requirements.
+
+| Property | Default Value | Summary |
+| --- | --- | --- |
+| `documentInterfaces` | **true** | Specifies whether interface members need to be documented. When true, all interface members require documentation, regardless of accessibility. |
+| `documentExposedElements` | **true** | Specifies whether exposed elements need to be documented. When true, all publicly-exposed types and members require documentation. |
+| `documentInternalElements` | **true** | Specifies whether internal elements need to be documented. When true, all internally-exposed types and members require documentation. |
+| `documentPrivateElements` | **false** | Specifies whether private elements need to be documented. When true, all types and members except for declared private fields require documentation. |
+| `documentPrivateFields` | **false** | Specifies whether private fields need to be documented. When true, all fields require documentation, regardless of accessibility. |
+
+These properties affect the behavior of the following rules which report missing documentation. Rules which report incorrect or incomplete documentation continue to apply to all documentation comments in the code.
+
+* [SA1600 Elements must be documented](SA1600.md)
+* [SA1601 Partial elements must be documented](SA1601.md)
+* [SA1602 Enumeration items must be documented](SA1602.md)
+
+The following example shows a configuration file which requires developers to document all publicly-accessible members and all interfaces (regardless of accessibility), but does not require other internal or private members to be documented.
+
+> :memo: Documenting interfaces is a low-effort task compared to documenting an entire code base, but provides high value in the fact that it covers the sections of code most likely to impact cross-team usage scenarios.
+
+
+```json
+{
+  "settings": {
+    "documentationRules": {
+      "documentInterfaces": true,
+      "documentInternalMembers": false
+    }
+  }
+}
 ```

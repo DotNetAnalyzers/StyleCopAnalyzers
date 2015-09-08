@@ -312,6 +312,12 @@
                 return;
             }
 
+            if (string.Equals(settings.DocumentationRules.CopyrightText, DocumentationSettings.DefaultCopyrightText, StringComparison.OrdinalIgnoreCase))
+            {
+                // The copyright text is meaningless until the company name is configured by the user.
+                return;
+            }
+
             if (string.CompareOrdinal(copyrightText.Trim(' ', '\r', '\n'), settings.DocumentationRules.CopyrightText) != 0)
             {
                 var location = fileHeader.GetElementLocation(context.Tree, copyrightElement);
@@ -331,6 +337,12 @@
 
             if (compilation.IsAnalyzerSuppressed(SA1641Identifier))
             {
+                return;
+            }
+
+            if (string.Equals(settings.DocumentationRules.CompanyName, DocumentationSettings.DefaultCompanyName, StringComparison.OrdinalIgnoreCase))
+            {
+                // The company name is meaningless until configured by the user.
                 return;
             }
 

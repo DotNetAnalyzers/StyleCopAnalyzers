@@ -13,6 +13,31 @@
           "type": "object",
           "description": "Configuration for documentation rules (SA1600-)",
           "properties": {
+            "documentExposedElements": {
+              "type": "boolean",
+              "description": "Specifies whether exposed elements need to be documented. When true, all publicly-exposed types and members require documentation.",
+              "default": true
+            },
+            "documentInternalElements": {
+              "type": "boolean",
+              "description": "Specifies whether internal elements need to be documented. When true, all internally-exposed types and members require documentation.",
+              "default": true
+            },
+            "documentPrivateElements": {
+              "type": "boolean",
+              "description": "Specifies whether private elements need to be documented. When true, all types and members except for declared private fields require documentation.",
+              "default": false
+            },
+            "documentInterfaces": {
+              "type": "boolean",
+              "description": "Specifies whether interface members need to be documented. When true, all interface members require documentation, regardless of accessibility.",
+              "default": true
+            },
+            "documentPrivateFields": {
+              "type": "boolean",
+              "description": "Specifies whether private fields need to be documented. When true, all fields require documentation, regardless of accessibility.",
+              "default": false
+            },
             "companyName": {
               "type": "string",
               "description": "The name of the company which appears in file headers.",

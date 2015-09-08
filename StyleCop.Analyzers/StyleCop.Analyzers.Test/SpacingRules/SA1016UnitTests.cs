@@ -96,7 +96,7 @@ class ClassName2
 {
 }
 
-[/*comment*/System.Obsolete]
+[/*comment*/ System.Obsolete]
 class ClassName3
 {
 }
@@ -123,7 +123,7 @@ class ClassName3
         /// <inheritdoc/>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1016CodeFixProvider();
+            return new OpenCloseSpacingCodeFixProvider();
         }
     }
 }

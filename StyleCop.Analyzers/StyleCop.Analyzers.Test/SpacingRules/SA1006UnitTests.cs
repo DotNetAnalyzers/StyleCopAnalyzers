@@ -11,7 +11,7 @@
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1006PreprocessorKeywordsMustNotBePrecededBySpace"/> and
-    /// <see cref="SA1006CodeFixProvider"/>.
+    /// <see cref="OpenCloseSpacingCodeFixProvider"/>.
     /// </summary>
     public class SA1006UnitTests : CodeFixVerifier
     {
@@ -110,7 +110,7 @@ more invalid text
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1006CodeFixProvider();
+            return new OpenCloseSpacingCodeFixProvider();
         }
     }
 }

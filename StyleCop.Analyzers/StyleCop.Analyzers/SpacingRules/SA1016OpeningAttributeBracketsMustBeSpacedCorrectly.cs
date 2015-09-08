@@ -100,7 +100,7 @@
             }
 
             // Opening attribute brackets must not be followed by a space.
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), OpenCloseSpacingCodeFixProvider.RemoveFollowing));
         }
     }
 }

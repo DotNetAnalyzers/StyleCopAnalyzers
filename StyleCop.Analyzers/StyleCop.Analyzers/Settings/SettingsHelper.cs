@@ -21,7 +21,17 @@
         /// <returns>A <see cref="StyleCopSettings"/> instance that represents the StyleCop settings for the given context.</returns>
         internal static StyleCopSettings GetStyleCopSettings(this SyntaxTreeAnalysisContext context)
         {
-            return GetStyleCopSettings(context.Options != null ? context.Options.AdditionalFiles : ImmutableArray.Create<AdditionalText>());
+            return context.Options.GetStyleCopSettings();
+        }
+
+        /// <summary>
+        /// Gets the StyleCop settings.
+        /// </summary>
+        /// <param name="options">The analyzer options that will be used to determine the StyleCop settings.</param>
+        /// <returns>A <see cref="StyleCopSettings"/> instance that represents the StyleCop settings for the given context.</returns>
+        internal static StyleCopSettings GetStyleCopSettings(this AnalyzerOptions options)
+        {
+            return GetStyleCopSettings(options != null ? options.AdditionalFiles : ImmutableArray.Create<AdditionalText>());
         }
 
         private static StyleCopSettings GetStyleCopSettings(ImmutableArray<AdditionalText> additionalFiles)

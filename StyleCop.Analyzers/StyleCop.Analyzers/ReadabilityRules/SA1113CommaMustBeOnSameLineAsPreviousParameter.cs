@@ -247,13 +247,8 @@
 
                     if (previousNode.GetEndLine() < nodeOrToken.GetLineSpan().StartLinePosition.Line)
                     {
-                        var properties = new Dictionary<string, string>
-                        {
-                            [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationPreceding,
-                            [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove,
-                            [OpenCloseSpacingCodeFixProvider.LayoutKey] = OpenCloseSpacingCodeFixProvider.LayoutPreserve
-                        };
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, nodeOrToken.GetLocation(), properties.ToImmutableDictionary()));
+                        var properties = OpenCloseSpacingCodeFixProvider.RemovePrecedingPreserveLayout;
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, nodeOrToken.GetLocation(), properties));
                     }
                 }
             }

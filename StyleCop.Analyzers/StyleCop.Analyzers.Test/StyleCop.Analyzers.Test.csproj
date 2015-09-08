@@ -26,7 +26,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
-    <CodeAnalysisRuleSet>..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -36,18 +35,10 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
-    <CodeAnalysisRuleSet>..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
-    <!--
-      Make sure any documentation comments which are included in code get checked for syntax during the build, but do
-      not report warnings for missing comments.
-
-      CS1573: Parameter 'parameter' has no matching param tag in the XML comment for 'parameter' (but other parameters do)
-      CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member'
-    -->
     <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
-    <NoWarn>$(NoWarn),1573,1591</NoWarn>
+    <CodeAnalysisRuleSet>..\StyleCop.Analyzers.Internal.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -123,6 +114,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DocumentationRules\FileHeaderTestBase.cs" />
+    <Compile Include="DocumentationRules\InheritdocCodeFixProviderUnitTests.cs" />
     <Compile Include="DocumentationRules\NoXmlFileHeaderUnitTests.cs" />
     <Compile Include="DocumentationRules\SA1600UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1601UnitTests.cs" />
@@ -305,6 +297,7 @@
     <Compile Include="ReadabilityRules\SA1124UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1125UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1126UnitTests.cs" />
+    <Compile Include="ReadabilityRules\SA1127UnitTests.cs" />
     <Compile Include="Settings\SettingsFileCodeFixProviderUnitTests.cs" />
     <Compile Include="Settings\SettingsUnitTests.cs" />
     <Compile Include="SpacingRules\NumberSignSpacingTestBase.cs" />
@@ -344,6 +337,9 @@
     <None Include="..\..\build\keys\TestingKey.snk">
       <Link>TestingKey.snk</Link>
     </None>
+    <None Include="..\StyleCop.Analyzers.Internal.ruleset">
+      <Link>StyleCop.Analyzers.Internal.ruleset</Link>
+    </None>
     <None Include="..\StyleCop.Analyzers.ruleset">
       <Link>StyleCop.Analyzers.ruleset</Link>
     </None>
@@ -359,7 +355,8 @@
     <Analyzer Include="..\..\packages\AsyncUsageAnalyzers.1.0.0-alpha003\analyzers\dotnet\AsyncUsageAnalyzers.dll" />
     <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
-    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0-beta008\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0-beta009\analyzers\dotnet\cs\Newtonsoft.Json.dll" />
+    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0-beta009\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

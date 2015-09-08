@@ -138,13 +138,20 @@ public class Foo
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(5, 21).WithArguments("neither preceded nor followed"),
-                this.CSharpDiagnostic().WithLocation(9, 17).WithArguments("neither preceded nor followed"),
-                this.CSharpDiagnostic().WithLocation(9, 21).WithArguments("neither preceded nor followed"),
-                this.CSharpDiagnostic().WithLocation(9, 40).WithArguments("neither preceded nor followed"),
-                this.CSharpDiagnostic().WithLocation(12, 27).WithArguments("neither preceded nor followed"),
-                this.CSharpDiagnostic().WithLocation(15, 25).WithArguments("neither preceded nor followed"),
-                this.CSharpDiagnostic().WithLocation(15, 30).WithArguments("neither preceded nor followed"),
+                this.CSharpDiagnostic().WithLocation(5, 21).WithArguments("not be preceded"),
+                this.CSharpDiagnostic().WithLocation(5, 21).WithArguments("not be followed"),
+                this.CSharpDiagnostic().WithLocation(9, 17).WithArguments("not be preceded"),
+                this.CSharpDiagnostic().WithLocation(9, 17).WithArguments("not be followed"),
+                this.CSharpDiagnostic().WithLocation(9, 21).WithArguments("not be preceded"),
+                this.CSharpDiagnostic().WithLocation(9, 21).WithArguments("not be followed"),
+                this.CSharpDiagnostic().WithLocation(9, 40).WithArguments("not be preceded"),
+                this.CSharpDiagnostic().WithLocation(9, 40).WithArguments("not be followed"),
+                this.CSharpDiagnostic().WithLocation(12, 27).WithArguments("not be preceded"),
+                this.CSharpDiagnostic().WithLocation(12, 27).WithArguments("not be followed"),
+                this.CSharpDiagnostic().WithLocation(15, 25).WithArguments("not be preceded"),
+                this.CSharpDiagnostic().WithLocation(15, 25).WithArguments("not be followed"),
+                this.CSharpDiagnostic().WithLocation(15, 30).WithArguments("not be preceded"),
+                this.CSharpDiagnostic().WithLocation(15, 30).WithArguments("not be followed"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -160,7 +167,7 @@ public class Foo
         /// <inheritdoc/>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1010CodeFixProvider();
+            return new OpenCloseSpacingCodeFixProvider();
         }
     }
 }
