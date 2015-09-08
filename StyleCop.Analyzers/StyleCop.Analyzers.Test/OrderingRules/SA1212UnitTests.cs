@@ -82,16 +82,12 @@ public class Foo
 
     public int Prop
     {
-        /// <summary>
         /// The setter documentation
-        /// </summary>
         set
         {
             i = value;
         }
-        /// <summary>
         /// The getter documentation
-        /// </summary>
         get
         {
             return i;
@@ -99,7 +95,7 @@ public class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(11, 9);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(9, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
@@ -110,16 +106,12 @@ public class Foo
 
     public int Prop
     {
-        /// <summary>
         /// The getter documentation
-        /// </summary>
         get
         {
             return i;
         }
-        /// <summary>
         /// The setter documentation
-        /// </summary>
         set
         {
             i = value;
