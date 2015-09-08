@@ -81,8 +81,7 @@
             case SyntaxKind.Block:
             case SyntaxKind.SwitchSection:
                 // empty statements in a block or switch section can be removed
-                newRoot = root.RemoveNode(node, SyntaxRemoveOptions.KeepNoTrivia);
-                return document.WithSyntaxRoot(newRoot);
+                return await RemoveSemicolonTextAsync(document, node.SemicolonToken, cancellationToken).ConfigureAwait(false);
 
             case SyntaxKind.IfStatement:
             case SyntaxKind.ElseClause:
