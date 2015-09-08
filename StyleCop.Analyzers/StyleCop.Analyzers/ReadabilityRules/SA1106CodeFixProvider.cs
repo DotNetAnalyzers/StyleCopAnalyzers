@@ -11,6 +11,7 @@
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.SpacingRules;
 
@@ -34,10 +35,8 @@
         }
 
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1106CodeMustNotContainEmptyStatements.DiagnosticId))
@@ -45,53 +44,80 @@
                     continue;
                 }
 
-                var node = root?.FindNode(diagnostic.Location.SourceSpan);
-                var emptyStatement = node as EmptyStatementSyntax;
-                if (emptyStatement != null)
-                {
-                    context.RegisterCodeFix(CodeAction.Create(ReadabilityResources.SA1106CodeFix, token => RemoveEmptyStatementAsync(context.Document, root, emptyStatement), nameof(SA1106CodeFixProvider)), diagnostic);
-                    continue;
-                }
-
-                var typeDeclaration = node as TypeDeclarationSyntax;
-                if (typeDeclaration != null && typeDeclaration.SemicolonToken != null)
-                {
-                    context.RegisterCodeFix(CodeAction.Create(ReadabilityResources.SA1106CodeFix, token => RemoveSemicolonFromTypeAsync(context.Document, root, typeDeclaration), nameof(SA1106CodeFixProvider)), diagnostic);
-                }
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        ReadabilityResources.SA1106CodeFix,
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
+                        nameof(SA1106CodeFixProvider)),
+                    diagnostic);
             }
+
+            return SpecializedTasks.CompletedTask;
         }
 
-        private static Task<Document> RemoveSemicolonFromTypeAsync(Document document, SyntaxNode root, TypeDeclarationSyntax typeDeclaration)
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
-            return Task.FromResult(document.WithSyntaxRoot(root.ReplaceNode(typeDeclaration, typeDeclaration.WithoutTrailingTrivia())));
-        }
-
-        private static Task<Document> RemoveEmptyStatementAsync(Document document, SyntaxNode root, EmptyStatementSyntax node)
-        {
-            var newRoot = root;
-
-            if (node.Parent.IsKind(SyntaxKind.Block))
+            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
+            if (token.IsMissingOrDefault())
             {
+                return document;
+            }
+
+            if (!token.Parent.IsKind(SyntaxKind.EmptyStatement))
+            {
+                return await RemoveSemicolonTextAsync(document, token, cancellationToken).ConfigureAwait(false);
+            }
+
+            return await RemoveEmptyStatementAsync(document, root, (EmptyStatementSyntax)token.Parent, cancellationToken).ConfigureAwait(false);
+        }
+
+        private static async Task<Document> RemoveEmptyStatementAsync(Document document, SyntaxNode root, EmptyStatementSyntax node, CancellationToken cancellationToken)
+        {
+            SyntaxNode newRoot;
+
+            switch (node.Parent.Kind())
+            {
+            case SyntaxKind.Block:
+            case SyntaxKind.SwitchSection:
+                // empty statements in a block or switch section can be removed
                 newRoot = root.RemoveNode(node, SyntaxRemoveOptions.KeepNoTrivia);
-            }
-            else if (node.Parent.IsKind(SyntaxKind.ForStatement))
-            {
-                var forNode = (ForStatementSyntax)node.Parent;
-                newRoot = root.ReplaceNode(forNode, forNode.WithStatement(SyntaxFactory.Block()));
-            }
-            else if (node.Parent.IsKind(SyntaxKind.LabeledStatement))
-            {
-                var labeledStatement = (LabeledStatementSyntax)node.Parent;
-                var parentBlock = labeledStatement.Parent as BlockSyntax;
-                var index = parentBlock.Statements.IndexOf(labeledStatement);
-                var newStatements = parentBlock.Statements.Take(index)
-                    .Concat(new[] { labeledStatement.WithStatement(parentBlock.Statements.Skip(index + 1).FirstOrDefault()) })
-                    .Concat(parentBlock.Statements.Skip(index + 2));
-                var newParentBlock = parentBlock.WithStatements(SyntaxFactory.List(newStatements));
-                newRoot = root.ReplaceNode(parentBlock, newParentBlock);
-            }
+                return document.WithSyntaxRoot(newRoot);
 
-            return Task.FromResult(document.WithSyntaxRoot(newRoot));
+            case SyntaxKind.IfStatement:
+            case SyntaxKind.ElseClause:
+            case SyntaxKind.ForStatement:
+            case SyntaxKind.WhileStatement:
+            case SyntaxKind.DoStatement:
+                // these cases are always replaced with an empty block
+                newRoot = root.ReplaceNode(node, SyntaxFactory.Block().WithTriviaFrom(node));
+                return document.WithSyntaxRoot(newRoot);
+
+            case SyntaxKind.LabeledStatement:
+                // handle this case as a text manipulation for simplicity
+                return await RemoveSemicolonTextAsync(document, node.SemicolonToken, cancellationToken).ConfigureAwait(false);
+
+            default:
+                return document;
+            }
+        }
+
+        private static async Task<Document> RemoveSemicolonTextAsync(Document document, SyntaxToken token, CancellationToken cancellationToken)
+        {
+            SourceText sourceText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+            TextLine line = sourceText.Lines.GetLineFromPosition(token.SpanStart);
+            if (sourceText.ToString(line.Span).Trim() == token.Text)
+            {
+                // remove the line containing the semicolon token
+                TextChange textChange = new TextChange(line.SpanIncludingLineBreak, string.Empty);
+                return document.WithText(sourceText.WithChanges(textChange));
+            }
+            else
+            {
+                // remove just the semicolon
+                TextChange textChange = new TextChange(token.Span, string.Empty);
+                return document.WithText(sourceText.WithChanges(textChange));
+            }
         }
     }
 }
