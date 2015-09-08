@@ -90,7 +90,7 @@
                 .WithBody(secondAccessor.Body)
                 .WithLeadingTrivia(newLeadingTrivia);
 
-            if (secondAccessor.GetFirstToken().HasLeadingBlankLines())
+            if (secondAccessor.GetFirstToken().IsPrecededByBlankLines())
             {
                 newAccessor = newAccessor.WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.CarriageReturnLineFeed);
             }
