@@ -57,6 +57,7 @@ public class Foo
         {
             return i;
         }
+
         /// <summary>
         /// The setter documentation
         /// </summary>
@@ -111,6 +112,7 @@ public class Foo
         {
             return i;
         }
+
         // The setter documentation
         set
         {
@@ -169,6 +171,7 @@ public class Foo
         {
             return i;
         }
+
         /*
          * The setter documentation
          */
