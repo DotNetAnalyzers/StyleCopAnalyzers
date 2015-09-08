@@ -28,12 +28,6 @@
                 SA1214StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements.DiagnosticId,
                 SA1215InstanceReadonlyElementsMustAppearBeforeInstanceNonReadonlyElements.DiagnosticId);
 
-        private static bool checkElementType;
-        private static bool checkAccessLevel;
-        private static bool checkConst;
-        private static bool checkStatic;
-        private static bool checkReadonly;
-
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
 
@@ -46,18 +40,6 @@
         /// <inheritdoc/>
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            SemanticModel semanticModel;
-            context.Document.TryGetSemanticModel(out semanticModel);
-            if (semanticModel != null)
-            {
-                checkElementType = !semanticModel.Compilation.IsAnalyzerSuppressed(SA1201ElementsMustAppearInTheCorrectOrder.DiagnosticId);
-                checkAccessLevel = !semanticModel.Compilation.IsAnalyzerSuppressed(SA1202ElementsMustBeOrderedByAccess.DiagnosticId);
-                checkConst = !semanticModel.Compilation.IsAnalyzerSuppressed(SA1203ConstantsMustAppearBeforeFields.DiagnosticId);
-                checkStatic = !semanticModel.Compilation.IsAnalyzerSuppressed(SA1204StaticElementsMustAppearBeforeInstanceElements.DiagnosticId);
-                checkReadonly = !semanticModel.Compilation.IsAnalyzerSuppressed(SA1214StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements.DiagnosticId)
-                    || !semanticModel.Compilation.IsAnalyzerSuppressed(SA1215InstanceReadonlyElementsMustAppearBeforeInstanceNonReadonlyElements.DiagnosticId);
-            }
-
             foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
                 context.RegisterCodeFix(CodeAction.Create(OrderingResources.ElementOrderCodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token), equivalenceKey: nameof(ElementOrderCodeFixProvider)), diagnostic);
@@ -68,6 +50,7 @@
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
+            var orderingChecks = await GetEnabledRulesForDocumentAsync(document, cancellationToken).ConfigureAwait(false);
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
             var memberDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<MemberDeclarationSyntax>();
@@ -76,54 +59,66 @@
                 return document;
             }
 
-            syntaxRoot = UpdateSyntaxRoot(memberDeclaration, syntaxRoot);
+            syntaxRoot = UpdateSyntaxRoot(memberDeclaration, orderingChecks, syntaxRoot);
 
             return document.WithSyntaxRoot(syntaxRoot);
         }
 
-        private static SyntaxNode UpdateSyntaxRoot(MemberDeclarationSyntax memberDeclaration, SyntaxNode syntaxRoot)
+        private static async Task<ElementOrderingChecks> GetEnabledRulesForDocumentAsync(Document document, CancellationToken cancellationToken)
+        {
+            SemanticModel semanticModel;
+            document.TryGetSemanticModel(out semanticModel);
+            if (semanticModel == null)
+            {
+                semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+            }
+
+            return ElementOrderingChecks.GetElementOrderingChecksForSemanticModel(semanticModel);
+        }
+
+        private static SyntaxNode UpdateSyntaxRoot(MemberDeclarationSyntax memberDeclaration, ElementOrderingChecks checks, SyntaxNode syntaxRoot)
         {
             var parentDeclaration = memberDeclaration.Parent;
-            var memberToMove = new MemberOrderHelper(memberDeclaration, checkElementType, checkAccessLevel, checkConst, checkStatic, checkReadonly);
+            var memberToMove = new MemberOrderHelper(memberDeclaration, checks);
 
             if (parentDeclaration is TypeDeclarationSyntax)
             {
-                return HandleTypeDeclaration(memberToMove, (TypeDeclarationSyntax)parentDeclaration, syntaxRoot);
+                return HandleTypeDeclaration(memberToMove, (TypeDeclarationSyntax)parentDeclaration, checks, syntaxRoot);
             }
 
             if (parentDeclaration is NamespaceDeclarationSyntax)
             {
-                return HandleNamespaceDeclaration(memberToMove, (NamespaceDeclarationSyntax)parentDeclaration, syntaxRoot);
+                return HandleNamespaceDeclaration(memberToMove, (NamespaceDeclarationSyntax)parentDeclaration, checks, syntaxRoot);
             }
 
             if (parentDeclaration is CompilationUnitSyntax)
             {
-                return HandleCompilationUnitDeclaration(memberToMove, (CompilationUnitSyntax)parentDeclaration, syntaxRoot);
+                return HandleCompilationUnitDeclaration(memberToMove, (CompilationUnitSyntax)parentDeclaration, checks, syntaxRoot);
             }
 
             return syntaxRoot;
         }
 
-        private static SyntaxNode HandleTypeDeclaration(MemberOrderHelper memberOrder, TypeDeclarationSyntax typeDeclarationNode, SyntaxNode syntaxRoot)
+        private static SyntaxNode HandleTypeDeclaration(MemberOrderHelper memberOrder, TypeDeclarationSyntax typeDeclarationNode, ElementOrderingChecks checks, SyntaxNode syntaxRoot)
         {
-            return MoveMember(memberOrder, typeDeclarationNode.Members, syntaxRoot);
+            return MoveMember(memberOrder, typeDeclarationNode.Members, checks, syntaxRoot);
         }
 
-        private static SyntaxNode HandleCompilationUnitDeclaration(MemberOrderHelper memberOrder, CompilationUnitSyntax compilationUnitDeclaration, SyntaxNode syntaxRoot)
+        private static SyntaxNode HandleCompilationUnitDeclaration(MemberOrderHelper memberOrder, CompilationUnitSyntax compilationUnitDeclaration, ElementOrderingChecks checks, SyntaxNode syntaxRoot)
         {
-            return MoveMember(memberOrder, compilationUnitDeclaration.Members, syntaxRoot);
+            return MoveMember(memberOrder, compilationUnitDeclaration.Members, checks, syntaxRoot);
         }
 
-        private static SyntaxNode HandleNamespaceDeclaration(MemberOrderHelper memberOrder, NamespaceDeclarationSyntax namespaceDeclaration, SyntaxNode syntaxRoot)
+        private static SyntaxNode HandleNamespaceDeclaration(MemberOrderHelper memberOrder, NamespaceDeclarationSyntax namespaceDeclaration, ElementOrderingChecks checks, SyntaxNode syntaxRoot)
         {
-            return MoveMember(memberOrder, namespaceDeclaration.Members, syntaxRoot);
+            return MoveMember(memberOrder, namespaceDeclaration.Members, checks, syntaxRoot);
         }
 
-        private static SyntaxNode MoveMember(MemberOrderHelper memberOrder, SyntaxList<MemberDeclarationSyntax> members, SyntaxNode syntaxRoot)
+        private static SyntaxNode MoveMember(MemberOrderHelper memberOrder, SyntaxList<MemberDeclarationSyntax> members, ElementOrderingChecks checks, SyntaxNode syntaxRoot)
         {
             foreach (var member in members)
             {
-                var orderHelper = new MemberOrderHelper(member, checkElementType, checkAccessLevel, checkConst, checkStatic, checkReadonly);
+                var orderHelper = new MemberOrderHelper(member, checks);
 
                 if (orderHelper.Priority < memberOrder.Priority)
                 {
@@ -164,17 +159,7 @@
                     return null;
                 }
 
-                SemanticModel semanticModel;
-                document.TryGetSemanticModel(out semanticModel);
-                if (semanticModel != null)
-                {
-                    checkElementType = !semanticModel.Compilation.IsAnalyzerSuppressed(SA1201ElementsMustAppearInTheCorrectOrder.DiagnosticId);
-                    checkAccessLevel = !semanticModel.Compilation.IsAnalyzerSuppressed(SA1202ElementsMustBeOrderedByAccess.DiagnosticId);
-                    checkConst = !semanticModel.Compilation.IsAnalyzerSuppressed(SA1203ConstantsMustAppearBeforeFields.DiagnosticId);
-                    checkStatic = !semanticModel.Compilation.IsAnalyzerSuppressed(SA1204StaticElementsMustAppearBeforeInstanceElements.DiagnosticId);
-                    checkReadonly = !semanticModel.Compilation.IsAnalyzerSuppressed(SA1214StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements.DiagnosticId)
-                    || !semanticModel.Compilation.IsAnalyzerSuppressed(SA1215InstanceReadonlyElementsMustAppearBeforeInstanceNonReadonlyElements.DiagnosticId);
-                }
+                var orderingChecks = await GetEnabledRulesForDocumentAsync(document, fixAllContext.CancellationToken).ConfigureAwait(false);
 
                 var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
 
@@ -186,7 +171,7 @@
                         continue;
                     }
 
-                    syntaxRoot = UpdateSyntaxRoot(memberDeclaration, syntaxRoot);
+                    syntaxRoot = UpdateSyntaxRoot(memberDeclaration, orderingChecks, syntaxRoot);
                 }
 
                 return syntaxRoot;

@@ -33,30 +33,24 @@ namespace StyleCop.Analyzers.OrderingRules
             SyntaxKind.NamespaceDeclaration);
 
         private readonly ModifierFlags modifierFlags;
-        private readonly AccessLevel accessibilty;
         private readonly int elementPriority;
-        private readonly bool prioritizeAccess;
+        private readonly AccessLevel accessibilty;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MemberOrderHelper"/> struct.
         /// </summary>
         /// <param name="member">The member to wrap.</param>
-        /// <param name="prioritizeType">Indicates whether to prioritize element type.</param>
-        /// <param name="prioritizeAccess">Indicates whether to prioritize access level.</param>
-        /// <param name="prioritizeConst">Indicates whether to prioritize constants.</param>
-        /// <param name="prioritizeStatic">Indicates whether to prioritize static elements.</param>
-        /// <param name="prioritizeReadonly">Indicates whether to prioritize readonly elements.</param>
-        public MemberOrderHelper(MemberDeclarationSyntax member, bool prioritizeType = true, bool prioritizeAccess = true, bool prioritizeConst = true, bool prioritizeStatic = true, bool prioritizeReadonly = true)
+        /// <param name="checks">The element ordering checks.</param>
+        internal MemberOrderHelper(MemberDeclarationSyntax member, ElementOrderingChecks checks)
         {
             this.Member = member;
-            this.prioritizeAccess = prioritizeAccess;
             var modifiers = member.GetModifiers();
             var type = member.Kind();
             type = type == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : type;
 
-            this.elementPriority = prioritizeType ? TypeMemberOrder.IndexOf(type) : 0;
-            this.modifierFlags = GetModifierFlags(modifiers, prioritizeConst, prioritizeStatic, prioritizeReadonly);
-            if (prioritizeAccess)
+            this.elementPriority = checks.ElementType ? TypeMemberOrder.IndexOf(type) : 0;
+            this.modifierFlags = GetModifierFlags(modifiers, checks);
+            if (checks.AccessLevel)
             {
                 if ((type == SyntaxKind.ConstructorDeclaration && this.modifierFlags.HasFlag(ModifierFlags.Static))
                     || (type == SyntaxKind.MethodDeclaration && (member as MethodDeclarationSyntax)?.ExplicitInterfaceSpecifier != null)
@@ -117,7 +111,7 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <value>
         /// The wrapped member.
         /// </value>
-        public MemberDeclarationSyntax Member { get; }
+        internal MemberDeclarationSyntax Member { get; }
 
         /// <summary>
         /// The priority for this member.
@@ -125,7 +119,7 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <value>
         /// The priority for this member.
         /// </value>
-        public int Priority
+        internal int Priority
         {
             get
             {
@@ -146,7 +140,7 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <value>
         /// The priority for this member.
         /// </value>
-        public int AccessibilityPriority => (int)this.accessibilty;
+        internal int AccessibilityPriority => (int)this.accessibilty;
 
         /// <summary>
         /// The priority for this member only from modifiers.
@@ -154,23 +148,23 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <value>
         /// The priority for this member.
         /// </value>
-        public int ModifierPriority => (int)this.modifierFlags;
+        internal int ModifierPriority => (int)this.modifierFlags;
 
-        private static ModifierFlags GetModifierFlags(SyntaxTokenList syntax, bool prioritizeConst, bool prioritizeStatic, bool prioritizeReadonly)
+        private static ModifierFlags GetModifierFlags(SyntaxTokenList syntax, ElementOrderingChecks checks)
         {
             var flags = ModifierFlags.None;
-            if (prioritizeConst && syntax.Any(SyntaxKind.ConstKeyword))
+            if (checks.Const && syntax.Any(SyntaxKind.ConstKeyword))
             {
                 flags |= ModifierFlags.Const;
             }
             else
             {
-                if (prioritizeStatic && syntax.Any(SyntaxKind.StaticKeyword))
+                if (checks.Static && syntax.Any(SyntaxKind.StaticKeyword))
                 {
                     flags |= ModifierFlags.Static;
                 }
 
-                if (prioritizeReadonly && syntax.Any(SyntaxKind.ReadOnlyKeyword))
+                if (checks.Readonly && syntax.Any(SyntaxKind.ReadOnlyKeyword))
                 {
                     flags |= ModifierFlags.Readonly;
                 }
