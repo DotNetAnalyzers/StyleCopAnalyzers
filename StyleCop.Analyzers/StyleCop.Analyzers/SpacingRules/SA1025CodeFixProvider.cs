@@ -75,6 +75,11 @@
             protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
             {
                 var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
+                if (diagnostics.IsEmpty)
+                {
+                    return null;
+                }
+
                 var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
 
                 List<SyntaxTrivia> tokensToFix = new List<SyntaxTrivia>();

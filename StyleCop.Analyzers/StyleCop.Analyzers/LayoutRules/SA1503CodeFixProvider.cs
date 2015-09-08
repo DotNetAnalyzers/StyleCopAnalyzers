@@ -98,6 +98,11 @@
             protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
             {
                 var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
+                if (diagnostics.IsEmpty)
+                {
+                    return null;
+                }
+
                 SyntaxNode syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
                 List<SyntaxNode> nodesNeedingBlocks = new List<SyntaxNode>(diagnostics.Length);
 
