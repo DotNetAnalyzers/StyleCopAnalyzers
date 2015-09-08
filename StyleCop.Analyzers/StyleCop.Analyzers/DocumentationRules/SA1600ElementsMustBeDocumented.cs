@@ -90,7 +90,12 @@
                     return;
                 }
 
-                BaseTypeDeclarationSyntax declaration = (BaseTypeDeclarationSyntax)context.Node;
+                BaseTypeDeclarationSyntax declaration = context.Node as BaseTypeDeclarationSyntax;
+                if (declaration == null)
+                {
+                    return;
+                }
+
                 if (declaration.Modifiers.Any(SyntaxKind.PartialKeyword))
                 {
                     // Handled by SA1601
@@ -116,6 +121,10 @@
                 }
 
                 MethodDeclarationSyntax declaration = (MethodDeclarationSyntax)context.Node;
+                if (!(declaration.Parent is BaseTypeDeclarationSyntax))
+                {
+                    return;
+                }
 
                 Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
                 Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);

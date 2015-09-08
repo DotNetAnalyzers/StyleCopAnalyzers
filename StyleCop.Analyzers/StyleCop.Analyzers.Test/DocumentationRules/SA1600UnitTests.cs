@@ -1,4 +1,6 @@
-﻿namespace StyleCop.Analyzers.Test.DocumentationRules
+﻿using Microsoft.CodeAnalysis;
+
+namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Collections.Generic;
     using System.Threading;
@@ -13,6 +15,26 @@
     /// </summary>
     public class SA1600UnitTests : DiagnosticVerifier
     {
+        [Fact]
+        public async Task TestRegressionMethodGlobalNamespaceAsync()
+        {
+            // This test is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1416
+            var testCode = @"
+public void Test()
+{
+
+}";
+
+            var expected = new DiagnosticResult
+            {
+                Id = "CS0116",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] {new DiagnosticResultLocation("Test0.cs", 2, 13)},
+                Message = "A namespace cannot directly contain members such as fields or methods"
+            };
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestClassWithoutDocumentationAsync()
         {
