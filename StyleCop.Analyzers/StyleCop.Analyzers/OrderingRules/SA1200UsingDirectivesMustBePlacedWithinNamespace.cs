@@ -175,16 +175,17 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleCompilationUnitSyntax, SyntaxKind.CompilationUnit);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleCompilationUnitSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            CompilationUnitSyntax syntax = context.Node as CompilationUnitSyntax;
-            if (syntax == null)
-            {
-                return;
-            }
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleCompilationUnitSyntax, SyntaxKind.CompilationUnit);
+        }
+
+        private static void HandleCompilationUnitSyntax(SyntaxNodeAnalysisContext context)
+        {
+            CompilationUnitSyntax syntax = (CompilationUnitSyntax)context.Node;
 
             List<SyntaxNode> usingDirectives = new List<SyntaxNode>();
             foreach (SyntaxNode child in syntax.ChildNodes())

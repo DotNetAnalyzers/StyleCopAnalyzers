@@ -43,6 +43,11 @@
         /// <inheritdoc />
         public override void Initialize(AnalysisContext context)
         {
+            context.RegisterCompilationStartAction(HandleCompilationStart);
+        }
+
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
             context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
         }
 
@@ -55,50 +60,37 @@
             var root = context.Tree.GetRoot(context.CancellationToken);
             var text = context.Tree.GetText(context.CancellationToken);
 
+            SyntaxTrivia previousTrivia = default(SyntaxTrivia);
             foreach (var trivia in root.DescendantTrivia(descendIntoTrivia: true))
             {
                 switch (trivia.Kind())
                 {
                 case SyntaxKind.WhitespaceTrivia:
-                    bool reportWarning = false;
-                    var token = trivia.Token;
-                    SyntaxTriviaList triviaList;
-                    if (token.LeadingTrivia.Contains(trivia))
+                    break;
+
+                case SyntaxKind.EndOfLineTrivia:
+                    if (previousTrivia.Span.End < trivia.SpanStart)
                     {
-                        triviaList = token.LeadingTrivia;
-                    }
-                    else
-                    {
-                        triviaList = token.TrailingTrivia;
-                    }
-
-                    bool foundWhitespace = false;
-                    foreach (var innerTrivia in triviaList)
-                    {
-                        if (!foundWhitespace)
-                        {
-                            if (innerTrivia.Equals(trivia))
-                            {
-                                foundWhitespace = true;
-                            }
-
-                            continue;
-                        }
-
-                        if (innerTrivia.IsKind(SyntaxKind.EndOfLineTrivia))
-                        {
-                            reportWarning = true;
-                        }
-
+                        // Some token appeared between the previous trivia and the end of the line.
                         break;
                     }
 
-                    if (reportWarning)
+                    if (previousTrivia.IsKind(SyntaxKind.WhitespaceTrivia))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, trivia.GetLocation()));
+                        // Report warning for whitespace token followed by the end of a line
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, previousTrivia.GetLocation()));
+                    }
+                    else if (previousTrivia.IsKind(SyntaxKind.PreprocessingMessageTrivia))
+                    {
+                        TextSpan trailinMessageWhitespace = FindTrailingWhitespace(text, previousTrivia.Span);
+                        if (!trailinMessageWhitespace.IsEmpty)
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, trailinMessageWhitespace)));
+                        }
                     }
 
                     break;
+
                 case SyntaxKind.SingleLineCommentTrivia:
                     TextSpan trailingWhitespace = FindTrailingWhitespace(text, trivia.Span);
                     if (!trailingWhitespace.IsEmpty)
@@ -107,10 +99,10 @@
                     }
 
                     break;
+
                 case SyntaxKind.MultiLineCommentTrivia:
-                case SyntaxKind.SingleLineDocumentationCommentTrivia:
                     var line = text.Lines.GetLineFromPosition(trivia.Span.Start);
-                    do
+                    while (line.End <= trivia.Span.End)
                     {
                         trailingWhitespace = FindTrailingWhitespace(text, line.Span);
                         if (!trailingWhitespace.IsEmpty)
@@ -126,29 +118,41 @@
 
                         line = text.Lines.GetLineFromPosition(line.EndIncludingLineBreak + 1);
                     }
-                    while (line.End <= trivia.Span.End);
 
                     break;
-                case SyntaxKind.IfDirectiveTrivia:
-                case SyntaxKind.ElifDirectiveTrivia:
-                case SyntaxKind.ElseDirectiveTrivia:
-                case SyntaxKind.EndIfDirectiveTrivia:
-                case SyntaxKind.DefineDirectiveTrivia:
-                case SyntaxKind.UndefDirectiveTrivia:
-                case SyntaxKind.WarningDirectiveTrivia:
-                case SyntaxKind.ErrorDirectiveTrivia:
-                case SyntaxKind.RegionDirectiveTrivia:
-                case SyntaxKind.EndRegionDirectiveTrivia:
-                    trailingWhitespace = FindTrailingWhitespace(text, trivia.Span);
-                    if (!trailingWhitespace.IsEmpty)
+
+                case SyntaxKind.SingleLineDocumentationCommentTrivia:
+                case SyntaxKind.MultiLineDocumentationCommentTrivia:
+                    SyntaxToken previousToken = default(SyntaxToken);
+                    foreach (var token in trivia.GetStructure().DescendantTokens(descendIntoTrivia: true))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, trailingWhitespace)));
+                        if (token.IsKind(SyntaxKind.XmlTextLiteralNewLineToken)
+                            && previousToken.IsKind(SyntaxKind.XmlTextLiteralToken)
+                            && previousToken.Span.End == token.SpanStart)
+                        {
+                            trailingWhitespace = FindTrailingWhitespace(text, previousToken.Span);
+                            if (!trailingWhitespace.IsEmpty)
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, trailingWhitespace)));
+                            }
+                        }
+
+                        previousToken = token;
                     }
 
                     break;
+
                 default:
                     break;
                 }
+
+                previousTrivia = trivia;
+            }
+
+            if (previousTrivia.IsKind(SyntaxKind.WhitespaceTrivia))
+            {
+                // Report whitespace at the end of the last line in the document
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, previousTrivia.GetLocation()));
             }
         }
 

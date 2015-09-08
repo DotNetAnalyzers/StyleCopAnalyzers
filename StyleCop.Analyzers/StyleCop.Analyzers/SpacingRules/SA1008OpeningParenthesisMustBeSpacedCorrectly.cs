@@ -27,14 +27,6 @@
         /// The ID for diagnostics produced by the <see cref="SA1008OpeningParenthesisMustBeSpacedCorrectly"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1008";
-
-        internal const string LocationKey = "location";
-        internal const string ActionKey = "action";
-        internal const string LocationPreceding = "preceding";
-        internal const string LocationFollowing = "following";
-        internal const string ActionInsert = "insert";
-        internal const string ActionRemove = "remove";
-
         private const string Title = "Opening parenthesis must be spaced correctly";
         private const string Description = "An opening parenthesis within a C# statement is not spaced correctly.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1008.md";
@@ -70,6 +62,11 @@
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterCompilationStartAction(HandleCompilationStart);
+        }
+
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
             context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
         }
@@ -156,6 +153,12 @@
                 break;
 
             case SyntaxKind.ParenthesizedExpression:
+                if (prevToken.Parent.IsKind(SyntaxKind.Interpolation))
+                {
+                    haveLeadingSpace = false;
+                    break;
+                }
+
                 partOfUnaryExpression = prevToken.Parent is PrefixUnaryExpressionSyntax;
                 startOfIndexer = prevToken.IsKind(SyntaxKind.OpenBracketToken);
                 var partOfCastExpression = prevToken.IsKind(SyntaxKind.CloseParenToken) && prevToken.Parent.IsKind(SyntaxKind.CastExpression);
@@ -191,21 +194,20 @@
 
                 if (!isFirstOnLine && !hasLeadingComment && (haveLeadingSpace != hasLeadingSpace))
                 {
-                    var properties = ImmutableDictionary.Create<string, string>()
-                        .Add(LocationKey, LocationPreceding)
-                        .Add(ActionKey, haveLeadingSpace ? ActionInsert : ActionRemove);
-
-                    context.ReportDiagnostic(Diagnostic.Create(haveLeadingSpace ? DescriptorPreceded : DescriptorNotPreceded, token.GetLocation(), properties.ToImmutableDictionary()));
+                    if (haveLeadingSpace)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(DescriptorPreceded, token.GetLocation(), OpenCloseSpacingCodeFixProvider.InsertPreceding));
+                    }
+                    else
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(DescriptorNotPreceded, token.GetLocation(), OpenCloseSpacingCodeFixProvider.RemovePreceding));
+                    }
                 }
             }
 
             if (token.IsFollowedByWhitespace())
             {
-                var properties = ImmutableDictionary.Create<string, string>()
-                    .Add(LocationKey, LocationFollowing)
-                    .Add(ActionKey, ActionRemove);
-
-                context.ReportDiagnostic(Diagnostic.Create(DescriptorNotFollowed, token.GetLocation(), properties.ToImmutableDictionary()));
+                context.ReportDiagnostic(Diagnostic.Create(DescriptorNotFollowed, token.GetLocation(), OpenCloseSpacingCodeFixProvider.RemoveFollowing));
             }
         }
     }

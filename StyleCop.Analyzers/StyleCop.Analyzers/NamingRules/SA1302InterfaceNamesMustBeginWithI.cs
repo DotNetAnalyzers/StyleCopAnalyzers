@@ -51,10 +51,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleInterfaceDeclarationSyntax, SyntaxKind.InterfaceDeclaration);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleInterfaceDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleInterfaceDeclarationSyntax, SyntaxKind.InterfaceDeclaration);
+        }
+
+        private static void HandleInterfaceDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
             var interfaceDeclaration = (InterfaceDeclarationSyntax)context.Node;
             if (interfaceDeclaration.Identifier.IsMissing)

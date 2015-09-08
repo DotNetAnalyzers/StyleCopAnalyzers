@@ -44,10 +44,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTreeAction);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleSyntaxTreeAction(SyntaxTreeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTreeAction);
+        }
+
+        private static void HandleSyntaxTreeAction(SyntaxTreeAnalysisContext context)
         {
             var lastToken = context.Tree.GetRoot().GetLastToken(includeZeroWidth: true);
 

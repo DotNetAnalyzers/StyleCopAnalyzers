@@ -50,10 +50,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
+        }
+
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
 

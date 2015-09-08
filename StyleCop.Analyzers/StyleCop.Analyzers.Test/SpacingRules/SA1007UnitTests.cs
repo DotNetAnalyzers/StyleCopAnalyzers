@@ -11,7 +11,7 @@
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1007OperatorKeywordMustBeFollowedBySpace"/> and
-    /// <see cref="SA1007CodeFixProvider"/>.
+    /// <see cref="OpenCloseSpacingCodeFixProvider"/>.
     /// </summary>
     public class SA1007UnitTests : CodeFixVerifier
     {
@@ -57,7 +57,7 @@ class ClassName
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1007CodeFixProvider();
+            return new OpenCloseSpacingCodeFixProvider();
         }
     }
 }

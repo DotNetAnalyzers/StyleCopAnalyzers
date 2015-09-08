@@ -48,13 +48,18 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMethodCall, SyntaxKind.InvocationExpression);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleMethodCall(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            // Debug.Fail is not availible in a portable library. So no nameof(Debug.Fail) here
-            this.HandleMethodCall(context, "Fail", 0, Descriptor);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleMethodCall, SyntaxKind.InvocationExpression);
+        }
+
+        private static void HandleMethodCall(SyntaxNodeAnalysisContext context)
+        {
+            // Debug.Fail is not available in a portable library. So no nameof(Debug.Fail) here
+            HandleMethodCall(context, "Fail", 0, Descriptor);
         }
     }
 }

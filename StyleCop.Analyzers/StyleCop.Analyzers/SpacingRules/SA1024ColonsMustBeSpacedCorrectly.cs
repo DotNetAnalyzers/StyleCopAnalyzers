@@ -75,6 +75,11 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.RegisterCompilationStartAction(HandleCompilationStart);
+        }
+
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
             context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
         }
 
@@ -146,20 +151,17 @@
                 }
             }
 
-            if (missingFollowingSpace && requireBefore && !hasPrecedingSpace)
-            {
-                // colon must{} be {preceded}{ and followed} by a space
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "preceded", " and followed"));
-            }
-            else if (missingFollowingSpace)
-            {
-                // colon must{} be {followed}{} by a space
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "followed", string.Empty));
-            }
-            else if (hasPrecedingSpace != requireBefore)
+            if (hasPrecedingSpace != requireBefore)
             {
                 // colon must{ not}? be {preceded}{} by a space
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), requireBefore ? string.Empty : " not", "preceded", string.Empty));
+                var properties = requireBefore ? OpenCloseSpacingCodeFixProvider.InsertPreceding : OpenCloseSpacingCodeFixProvider.RemovePreceding;
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, requireBefore ? string.Empty : " not", "preceded", string.Empty));
+            }
+
+            if (missingFollowingSpace)
+            {
+                // colon must{} be {followed}{} by a space
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), OpenCloseSpacingCodeFixProvider.InsertFollowing, string.Empty, "followed", string.Empty));
             }
         }
     }

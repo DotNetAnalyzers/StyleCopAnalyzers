@@ -22,7 +22,7 @@
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1021CodeFixProvider();
+            return new OpenCloseSpacingCodeFixProvider();
         }
     }
 }

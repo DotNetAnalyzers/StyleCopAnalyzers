@@ -86,31 +86,16 @@ namespace Bar
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// Gets the disabled diagnostics for the test environment
-        /// </summary>
-        /// <returns>The list of identifiers that should be disabled.</returns>
-        protected virtual IEnumerable<string> GetDisabledDiagnostics()
+        /// <inheritdoc/>
+        protected override IEnumerable<string> GetDisabledDiagnostics()
         {
             yield return FileHeaderAnalyzers.SA1639Descriptor.Id;
         }
 
         /// <inheritdoc/>
-        protected override Solution CreateSolution(ProjectId projectId, string language)
+        protected override string GetSettings()
         {
-            var solution = base.CreateSolution(projectId, language);
-            var project = solution.GetProject(projectId);
-            var options = project.CompilationOptions;
-            var specificOptions = options.SpecificDiagnosticOptions;
-
-            var additionalDiagnosticOptions = this.GetDisabledDiagnostics().Select(id => new KeyValuePair<string, ReportDiagnostic>(id, ReportDiagnostic.Suppress));
-            var newSpecificOptions = specificOptions.AddRange(additionalDiagnosticOptions);
-            var newOptions = options.WithSpecificDiagnosticOptions(newSpecificOptions);
-
-            var documentId = DocumentId.CreateNewId(projectId);
-            return solution
-                .AddAdditionalDocument(documentId, SettingsFileName, TestSettings)
-                .WithProjectCompilationOptions(projectId, newOptions);
+            return TestSettings;
         }
 
         /// <inheritdoc/>

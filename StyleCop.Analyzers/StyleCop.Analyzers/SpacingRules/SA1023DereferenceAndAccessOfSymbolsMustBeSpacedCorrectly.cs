@@ -65,6 +65,11 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.RegisterCompilationStartAction(HandleCompilationStart);
+        }
+
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
             context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
         }
 
@@ -142,54 +147,34 @@
             if (!allowAtLineStart && firstInLine)
             {
                 // Dereference symbol '*' must {not appear at the beginning of a line}.
-                var properties = new Dictionary<string, string>
-                {
-                    [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationPreceding,
-                    [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove
-                };
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), "not appear at the beginning of a line"));
+                var properties = OpenCloseSpacingCodeFixProvider.RemovePreceding;
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, "not appear at the beginning of a line"));
             }
             else if (!allowPrecedingSpace && precededBySpace)
             {
                 // Dereference symbol '*' must {not be preceded by a space}.
-                var properties = new Dictionary<string, string>
-                {
-                    [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationPreceding,
-                    [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove
-                };
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), "not be preceded by a space"));
+                var properties = OpenCloseSpacingCodeFixProvider.RemovePreceding;
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, "not be preceded by a space"));
             }
 
             if (!allowAtLineEnd && lastInLine)
             {
                 // Dereference symbol '*' must {not appear at the end of a line}.
-                var properties = new Dictionary<string, string>
-                {
-                    [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationFollowing,
-                    [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove
-                };
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), "not appear at the end of a line"));
+                var properties = OpenCloseSpacingCodeFixProvider.RemoveFollowing;
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, "not appear at the end of a line"));
             }
             else if (!allowTrailingSpace && followedBySpace)
             {
                 // Dereference symbol '*' must {not be followed by a space}.
-                var properties = new Dictionary<string, string>
-                {
-                    [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationFollowing,
-                    [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove
-                };
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), "not be followed by a space"));
+                var properties = OpenCloseSpacingCodeFixProvider.RemoveFollowing;
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, "not be followed by a space"));
             }
 
             if (!followedBySpace && allowTrailingSpace)
             {
                 // Dereference symbol '*' must {be followed by a space}.
-                var properties = new Dictionary<string, string>
-                {
-                    [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationFollowing,
-                    [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionInsert
-                };
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), "be followed by a space"));
+                var properties = OpenCloseSpacingCodeFixProvider.InsertFollowing;
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, "be followed by a space"));
             }
         }
     }

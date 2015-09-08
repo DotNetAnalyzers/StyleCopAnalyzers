@@ -52,10 +52,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleFieldDeclarationSyntax, SyntaxKind.FieldDeclaration);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleFieldDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleFieldDeclarationSyntax, SyntaxKind.FieldDeclaration);
+        }
+
+        private static void HandleFieldDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
             FieldDeclarationSyntax syntax = (FieldDeclarationSyntax)context.Node;
             if (NamedTypeHelpers.IsContainedInNativeMethodsClass(syntax))

@@ -47,10 +47,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
+        }
+
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
@@ -59,7 +64,7 @@
                 {
                 case SyntaxKind.MinusMinusToken:
                 case SyntaxKind.PlusPlusToken:
-                    this.HandleIncrementDecrementToken(context, token);
+                    HandleIncrementDecrementToken(context, token);
                     break;
 
                 default:
@@ -68,7 +73,7 @@
             }
         }
 
-        private void HandleIncrementDecrementToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private static void HandleIncrementDecrementToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
             {
@@ -92,12 +97,8 @@
                     }
 
                     // {Increment|Decrement} symbol '{++|--}' must not be {followed} by a space.
-                    var properties = new Dictionary<string, string>
-                    {
-                        [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationFollowing,
-                        [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove,
-                    };
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), symbolName, token.Text, "followed"));
+                    var properties = OpenCloseSpacingCodeFixProvider.RemoveFollowing;
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, symbolName, token.Text, "followed"));
                 }
 
                 break;
@@ -118,12 +119,8 @@
                     }
 
                     // {Increment|Decrement} symbol '{++|--}' must not be {preceded} by a space.
-                    var properties = new Dictionary<string, string>
-                    {
-                        [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationPreceding,
-                        [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove,
-                    };
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), symbolName, token.Text, "preceded"));
+                    var properties = OpenCloseSpacingCodeFixProvider.RemovePreceding;
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, symbolName, token.Text, "preceded"));
                 }
 
                 break;

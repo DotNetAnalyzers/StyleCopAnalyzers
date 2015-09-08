@@ -11,7 +11,7 @@
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1000KeywordsMustBeSpacedCorrectly"/> and
-    /// <see cref="SA1000CodeFixProvider"/>.
+    /// <see cref="OpenCloseSpacingCodeFixProvider"/>.
     /// </summary>
     public class SA1000UnitTests : CodeFixVerifier
     {
@@ -840,7 +840,7 @@ default:
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1000CodeFixProvider();
+            return new OpenCloseSpacingCodeFixProvider();
         }
 
         private Task TestKeywordStatementAsync(string statement, DiagnosticResult expected, string fixedStatement, string returnType = "void", bool asyncMethod = false)

@@ -48,6 +48,11 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.RegisterCompilationStartAction(HandleCompilationStart);
+        }
+
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
             context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
         }
 
@@ -84,20 +89,16 @@
             bool followedBySpace = token.IsFollowedByWhitespace();
             bool lastInLine = token.IsLastInLine();
 
-            if (!firstInLine && precededBySpace && !ignorePrecedingSpaceProblem && !lastInLine && followedBySpace)
-            {
-                // Opening square bracket must {neither preceded nor followed} by a space.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), "neither preceded nor followed"));
-            }
-            else if (!firstInLine && precededBySpace && !ignorePrecedingSpaceProblem)
+            if (!firstInLine && precededBySpace && !ignorePrecedingSpaceProblem)
             {
                 // Opening square bracket must {not be preceded} by a space.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), "not be preceded"));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), OpenCloseSpacingCodeFixProvider.RemovePreceding, "not be preceded"));
             }
-            else if (!lastInLine && followedBySpace)
+
+            if (!lastInLine && followedBySpace)
             {
                 // Opening square bracket must {not be followed} by a space.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), "not be followed"));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), OpenCloseSpacingCodeFixProvider.RemoveFollowing, "not be followed"));
             }
         }
     }

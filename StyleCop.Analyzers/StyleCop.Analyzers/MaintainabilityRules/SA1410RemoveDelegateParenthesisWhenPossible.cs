@@ -57,10 +57,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleAnonymousMethodExpressionSyntax, SyntaxKind.AnonymousMethodExpression);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleAnonymousMethodExpressionSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleAnonymousMethodExpressionSyntax, SyntaxKind.AnonymousMethodExpression);
+        }
+
+        private static void HandleAnonymousMethodExpressionSyntax(SyntaxNodeAnalysisContext context)
         {
             AnonymousMethodExpressionSyntax syntax = context.Node as AnonymousMethodExpressionSyntax;
             if (syntax == null)

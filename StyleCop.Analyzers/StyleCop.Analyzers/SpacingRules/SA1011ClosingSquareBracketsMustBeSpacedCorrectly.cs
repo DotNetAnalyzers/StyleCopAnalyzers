@@ -52,6 +52,11 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.RegisterCompilationStartAction(HandleCompilationStart);
+        }
+
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
             context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
         }
 
@@ -135,12 +140,8 @@
             if (!firstInLine && precededBySpace)
             {
                 // Closing square bracket must{ not} be {preceded} by a space.
-                var properties = new Dictionary<string, string>
-                {
-                    [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationPreceding,
-                    [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove
-                };
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), " not", "preceded"));
+                var properties = OpenCloseSpacingCodeFixProvider.RemovePreceding;
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, " not", "preceded"));
             }
 
             if (!lastInLine)
@@ -148,22 +149,14 @@
                 if (!precedesSpecialCharacter && !followedBySpace)
                 {
                     // Closing square bracket must{} be {followed} by a space.
-                    var properties = new Dictionary<string, string>
-                    {
-                        [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationFollowing,
-                        [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionInsert
-                    };
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), string.Empty, "followed"));
+                    var properties = OpenCloseSpacingCodeFixProvider.InsertFollowing;
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, string.Empty, "followed"));
                 }
                 else if (precedesSpecialCharacter && followedBySpace && !suppressFollowingSpaceError)
                 {
                     // Closing square brackets must {not} be {followed} by a space
-                    var properties = new Dictionary<string, string>
-                    {
-                        [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationFollowing,
-                        [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove
-                    };
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties.ToImmutableDictionary(), " not", "followed"));
+                    var properties = OpenCloseSpacingCodeFixProvider.RemoveFollowing;
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, " not", "followed"));
                 }
             }
         }

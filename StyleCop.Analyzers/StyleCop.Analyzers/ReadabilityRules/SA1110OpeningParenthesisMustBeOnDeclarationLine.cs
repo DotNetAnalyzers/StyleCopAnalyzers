@@ -62,6 +62,11 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.RegisterCompilationStartAction(HandleCompilationStart);
+        }
+
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
             context.RegisterSyntaxNodeActionHonorExclusions(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleInvocationExpression, SyntaxKind.InvocationExpression);
@@ -316,13 +321,8 @@
                 openParenLine.IsValid &&
                 openParenLine.StartLinePosition.Line != prevTokenLine.StartLinePosition.Line)
             {
-                var properties = new Dictionary<string, string>
-                {
-                    [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationPreceding,
-                    [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove,
-                    [OpenCloseSpacingCodeFixProvider.LayoutKey] = preserveLayout ? OpenCloseSpacingCodeFixProvider.LayoutPreserve : OpenCloseSpacingCodeFixProvider.LayoutPack
-                };
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, openToken.GetLocation(), properties.ToImmutableDictionary()));
+                var properties = preserveLayout ? OpenCloseSpacingCodeFixProvider.RemovePrecedingPreserveLayout : OpenCloseSpacingCodeFixProvider.RemovePreceding;
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, openToken.GetLocation(), properties));
             }
         }
     }

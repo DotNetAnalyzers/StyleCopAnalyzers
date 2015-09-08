@@ -43,7 +43,7 @@ public class Foo
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
-            var fixTestCode = @"
+            var fixedCode = @"
 public class Foo
 {
     private int i = 0;
@@ -57,7 +57,6 @@ public class Foo
         {
             return i;
         }
-
         /// <summary>
         /// The setter documentation
         /// </summary>
@@ -68,8 +67,120 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestPropertyWithLineCommentAsync()
+        {
+            var testCode = @"
+public class Foo
+{
+    private int i = 0;
+
+    public int Prop
+    {
+        // The setter documentation
+        set
+        {
+            i = value;
+        }
+
+        // The getter documentation
+        get
+        {
+            return i;
+        }
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(9, 9);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedCode = @"
+public class Foo
+{
+    private int i = 0;
+
+    public int Prop
+    {
+        // The getter documentation
+        get
+        {
+            return i;
+        }
+        // The setter documentation
+        set
+        {
+            i = value;
+        }
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestPropertyWithBlockCommentAsync()
+        {
+            var testCode = @"
+public class Foo
+{
+    private int i = 0;
+
+    public int Prop
+    {
+        /*
+         * The setter documentation
+         */
+        set
+        {
+            i = value;
+        }
+
+        /*
+         * The getter documentation
+         */
+        get
+        {
+            return i;
+        }
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(11, 9);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedCode = @"
+public class Foo
+{
+    private int i = 0;
+
+    public int Prop
+    {
+        /*
+         * The getter documentation
+         */
+        get
+        {
+            return i;
+        }
+        /*
+         * The setter documentation
+         */
+        set
+        {
+            i = value;
+        }
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -98,7 +209,7 @@ public class Foo
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
-            var fixTestCode = @"
+            var fixedCode = @"
 public class Foo
 {
     private int i = 0;
@@ -117,8 +228,8 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -202,7 +313,7 @@ public class Foo
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
-            var fixTestCode = @"
+            var fixedCode = @"
 public class Foo
 {
     public int Prop
@@ -212,8 +323,8 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -242,7 +353,7 @@ public class Foo
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
-            var fixTestCode = @"
+            var fixedCode = @"
 public class Foo
 {
     private int field;
@@ -261,8 +372,8 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -351,6 +462,7 @@ public class Foo
             yield return new SA1212PropertyAccessorsMustFollowOrder();
         }
 
+        /// <inheritdoc/>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new SA1212SA1213CodeFixProvider();

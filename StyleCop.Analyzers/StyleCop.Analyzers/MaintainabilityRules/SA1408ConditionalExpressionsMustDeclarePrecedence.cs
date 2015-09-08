@@ -77,45 +77,47 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleLogicalExpression, SyntaxKind.LogicalAndExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleLogicalExpression, SyntaxKind.LogicalOrExpression);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleLogicalExpression(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            BinaryExpressionSyntax binSyntax = context.Node as BinaryExpressionSyntax;
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleLogicalExpression, SyntaxKind.LogicalAndExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleLogicalExpression, SyntaxKind.LogicalOrExpression);
+        }
 
-            if (binSyntax != null)
+        private static void HandleLogicalExpression(SyntaxNodeAnalysisContext context)
+        {
+            BinaryExpressionSyntax binSyntax = (BinaryExpressionSyntax)context.Node;
+
+            if (binSyntax.Left is BinaryExpressionSyntax)
             {
-                if (binSyntax.Left is BinaryExpressionSyntax)
+                // Check if the operations are of the same kind
+                var left = (BinaryExpressionSyntax)binSyntax.Left;
+                if (left.OperatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken) || left.OperatorToken.IsKind(SyntaxKind.BarBarToken))
                 {
-                    // Check if the operations are of the same kind
-                    var left = (BinaryExpressionSyntax)binSyntax.Left;
-                    if (left.OperatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken) || left.OperatorToken.IsKind(SyntaxKind.BarBarToken))
+                    if (!IsSameFamily(binSyntax.OperatorToken, left.OperatorToken))
                     {
-                        if (!this.IsSameFamily(binSyntax.OperatorToken, left.OperatorToken))
-                        {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, left.GetLocation()));
-                        }
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, left.GetLocation()));
                     }
                 }
+            }
 
-                if (binSyntax.Right is BinaryExpressionSyntax)
+            if (binSyntax.Right is BinaryExpressionSyntax)
+            {
+                // Check if the operations are of the same kind
+                var right = (BinaryExpressionSyntax)binSyntax.Right;
+                if (right.OperatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken) || right.OperatorToken.IsKind(SyntaxKind.BarBarToken))
                 {
-                    // Check if the operations are of the same kind
-                    var right = (BinaryExpressionSyntax)binSyntax.Right;
-                    if (right.OperatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken) || right.OperatorToken.IsKind(SyntaxKind.BarBarToken))
+                    if (!IsSameFamily(binSyntax.OperatorToken, right.OperatorToken))
                     {
-                        if (!this.IsSameFamily(binSyntax.OperatorToken, right.OperatorToken))
-                        {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, right.GetLocation()));
-                        }
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, right.GetLocation()));
                     }
                 }
             }
         }
 
-        private bool IsSameFamily(SyntaxToken operatorToken1, SyntaxToken operatorToken2)
+        private static bool IsSameFamily(SyntaxToken operatorToken1, SyntaxToken operatorToken2)
         {
             return (operatorToken1.IsKind(SyntaxKind.AmpersandAmpersandToken) && operatorToken2.IsKind(SyntaxKind.AmpersandAmpersandToken))
              || (operatorToken1.IsKind(SyntaxKind.BarBarToken) && operatorToken2.IsKind(SyntaxKind.BarBarToken));

@@ -74,10 +74,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
+        }
+
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
 
@@ -89,7 +94,7 @@
                 switch (trivia.Kind())
                 {
                 case SyntaxKind.SingleLineCommentTrivia:
-                    this.HandleSingleLineCommentTrivia(context, trivia, isFirstSingleLineTrivia);
+                    HandleSingleLineCommentTrivia(context, trivia, isFirstSingleLineTrivia);
                     isFirstSingleLineTrivia = false;
                     newLineCount = 0;
                     break;
@@ -114,7 +119,7 @@
             }
         }
 
-        private void HandleSingleLineCommentTrivia(SyntaxTreeAnalysisContext context, SyntaxTrivia trivia, bool isFirstSingleLineTrivia)
+        private static void HandleSingleLineCommentTrivia(SyntaxTreeAnalysisContext context, SyntaxTrivia trivia, bool isFirstSingleLineTrivia)
         {
             string text = trivia.ToFullString();
             if (text.Equals(@"//"))

@@ -153,7 +153,7 @@
         internal static SyntaxTriviaList WithoutLeadingWhitespace(this SyntaxTriviaList triviaList, bool endOfLineIsWhitespace = true)
         {
             var nonWhitespaceIndex = IndexOfFirstNonWhitespaceTrivia(triviaList, endOfLineIsWhitespace);
-            return (nonWhitespaceIndex >= 0) ? SyntaxFactory.TriviaList(triviaList.Take(nonWhitespaceIndex)) : SyntaxFactory.TriviaList();
+            return (nonWhitespaceIndex >= 0) ? SyntaxFactory.TriviaList(triviaList.Skip(nonWhitespaceIndex)) : SyntaxFactory.TriviaList();
         }
 
         /// <summary>
@@ -233,22 +233,22 @@
             var blankLineCount = -1;
             while (index >= 0)
             {
+                if (triviaList[index].HasBuiltinEndLine() && !triviaList[index].IsKind(SyntaxKind.EndOfLineTrivia))
+                {
+                    blankLineCount++;
+                    return blankLineCount > 0;
+                }
+
                 switch (triviaList[index].Kind())
                 {
                 case SyntaxKind.WhitespaceTrivia:
-                case SyntaxKind.SingleLineDocumentationCommentTrivia:
                     // ignore;
                     break;
+
                 case SyntaxKind.EndOfLineTrivia:
                     blankLineCount++;
                     break;
-                case SyntaxKind.IfDirectiveTrivia:
-                case SyntaxKind.ElifDirectiveTrivia:
-                case SyntaxKind.ElseDirectiveTrivia:
-                case SyntaxKind.EndIfDirectiveTrivia:
-                    // directive trivia have an embedded end of line
-                    blankLineCount++;
-                    return blankLineCount > 0;
+
                 default:
                     return blankLineCount > 0;
                 }
@@ -335,7 +335,7 @@
             return token.WithLeadingTrivia(leadingTrivia.Skip(skipIndex));
         }
 
-        private static bool HasBuiltinEndLine(this SyntaxTrivia trivia)
+        internal static bool HasBuiltinEndLine(this SyntaxTrivia trivia)
         {
             return trivia.IsDirective
                 || trivia.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia)

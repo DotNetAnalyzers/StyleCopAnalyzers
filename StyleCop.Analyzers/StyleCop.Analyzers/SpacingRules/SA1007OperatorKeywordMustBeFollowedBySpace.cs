@@ -49,10 +49,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
+        }
+
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
@@ -60,7 +65,7 @@
                 switch (token.Kind())
                 {
                 case SyntaxKind.OperatorKeyword:
-                    this.HandleRequiredSpaceToken(context, token);
+                    HandleRequiredSpaceToken(context, token);
                     break;
 
                 default:
@@ -69,7 +74,7 @@
             }
         }
 
-        private void HandleRequiredSpaceToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private static void HandleRequiredSpaceToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
             {
@@ -89,7 +94,7 @@
                 }
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), OpenCloseSpacingCodeFixProvider.InsertFollowing));
         }
     }
 }

@@ -62,6 +62,15 @@ namespace StyleCop.Analyzers.OrderingRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Order constants and fields.
+        /// </summary>
+        internal static string SA1203CodeFix {
+            get {
+                return ResourceManager.GetString("SA1203CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add access modifier.
         /// </summary>
         internal static string SA1205CodeFix {

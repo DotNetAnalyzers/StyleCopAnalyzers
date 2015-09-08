@@ -63,12 +63,17 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleElseStatement, SyntaxKind.ElseClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleCatchClause, SyntaxKind.CatchClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleFinallyClause, SyntaxKind.FinallyClause);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleElseStatement(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleElseStatement, SyntaxKind.ElseClause);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleCatchClause, SyntaxKind.CatchClause);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleFinallyClause, SyntaxKind.FinallyClause);
+        }
+
+        private static void HandleElseStatement(SyntaxNodeAnalysisContext context)
         {
             var elseClause = (ElseClauseSyntax)context.Node;
             var elseKeyword = elseClause.ElseKeyword;
@@ -81,7 +86,7 @@
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, elseKeyword.GetLocation(), elseKeyword.ToString()));
         }
 
-        private void HandleCatchClause(SyntaxNodeAnalysisContext context)
+        private static void HandleCatchClause(SyntaxNodeAnalysisContext context)
         {
             var catchClause = (CatchClauseSyntax)context.Node;
             var catchKeyword = catchClause.CatchKeyword;
@@ -94,7 +99,7 @@
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, catchKeyword.GetLocation(), catchKeyword.ToString()));
         }
 
-        private void HandleFinallyClause(SyntaxNodeAnalysisContext context)
+        private static void HandleFinallyClause(SyntaxNodeAnalysisContext context)
         {
             var finallyClause = (FinallyClauseSyntax)context.Node;
             var finallyKeyword = finallyClause.FinallyKeyword;

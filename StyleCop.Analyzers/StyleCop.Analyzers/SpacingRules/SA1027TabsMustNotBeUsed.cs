@@ -48,10 +48,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
+        }
+
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var trivia in root.DescendantTrivia(descendIntoTrivia: true))
@@ -59,7 +64,7 @@
                 switch (trivia.Kind())
                 {
                 case SyntaxKind.WhitespaceTrivia:
-                    this.HandleWhitespaceTrivia(context, trivia);
+                    HandleWhitespaceTrivia(context, trivia);
                     break;
 
                 default:
@@ -68,7 +73,7 @@
             }
         }
 
-        private void HandleWhitespaceTrivia(SyntaxTreeAnalysisContext context, SyntaxTrivia trivia)
+        private static void HandleWhitespaceTrivia(SyntaxTreeAnalysisContext context, SyntaxTrivia trivia)
         {
             if (trivia.ToFullString().IndexOf('\t') < 0)
             {

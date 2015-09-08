@@ -66,7 +66,7 @@ public class Foo
 }");
 
             var accessor = tree.GetRoot().DescendantNodes().OfType<AccessorDeclarationSyntax>().Single();
-            Assert.True(accessor.GetFirstToken().HasLeadingBlankLines());
+            Assert.False(accessor.GetFirstToken().HasLeadingBlankLines());
         }
 
         [Fact]
@@ -93,8 +93,7 @@ public class Foo
             var tree = CSharpSyntaxTree.ParseText(code);
 
             var accessor = tree.GetRoot().DescendantNodes().OfType<AccessorDeclarationSyntax>().Single();
-            Assert.False(
-                accessor.GetFirstToken().WithoutLeadingBlankLines().LeadingTrivia.First().IsKind(SyntaxKind.EndOfLineTrivia));
+            Assert.False(accessor.GetFirstToken().WithoutLeadingBlankLines().LeadingTrivia.First().IsKind(SyntaxKind.EndOfLineTrivia));
         }
     }
 }

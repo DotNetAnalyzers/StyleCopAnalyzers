@@ -40,7 +40,8 @@
                     CodeAction.Create(
                         OrderingResources.SA1213CodeFix,
                         token => GetTransformedDocumentAsync(context.Document, diagnostic, token),
-                        nameof(SA1212SA1213CodeFixProvider)), diagnostic);
+                        nameof(SA1212SA1213CodeFixProvider)),
+                    diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;
@@ -61,14 +62,6 @@
 
             syntaxRoot = trackedRoot.InsertNodesBefore(trackedFirstAccessor, new[] { newAccessor });
 
-            trackedFirstAccessor = syntaxRoot.GetCurrentNode(firstAccesor);
-            if (secondAccessor.GetFirstToken().HasLeadingBlankLines())
-            {
-                var newFirstAccessor = trackedFirstAccessor.WithLeadingTrivia(
-                    TriviaHelper.MergeTriviaLists(new[] { SyntaxFactory.CarriageReturnLineFeed }, trackedFirstAccessor.GetLeadingTrivia()));
-                syntaxRoot = syntaxRoot.ReplaceNode(trackedFirstAccessor, newFirstAccessor);
-            }
-
             var trackedLastAccessor = syntaxRoot.GetCurrentNode(secondAccessor);
             var keepTriviaOptions = AccessorsAreOnTheSameLine(firstAccesor, secondAccessor)
                 ? SyntaxRemoveOptions.KeepEndOfLine
@@ -81,13 +74,12 @@
 
         private static bool AccessorsAreOnTheSameLine(AccessorDeclarationSyntax firstAccesor, AccessorDeclarationSyntax secondAccessor)
         {
-            return firstAccesor.GetLocation().GetLineSpan().EndLinePosition.Line ==
-                   secondAccessor.GetLocation().GetLineSpan().EndLinePosition.Line;
+            return firstAccesor.GetEndLine() == secondAccessor.GetEndLine();
         }
 
         private static AccessorDeclarationSyntax GetNewAccessor(AccessorListSyntax accessorList, AccessorDeclarationSyntax firstAccessor, AccessorDeclarationSyntax secondAccessor)
         {
-            var newLeadingTrivia = GetLeadingTriviaWithoutLaedingBlankLines(secondAccessor);
+            var newLeadingTrivia = GetLeadingTriviaWithoutLeadingBlankLines(secondAccessor);
             if (AccessorsAreOnTheSameLine(firstAccessor, secondAccessor))
             {
                 var leadingWhitespace = firstAccessor.GetLeadingTrivia().Where(x => x.IsKind(SyntaxKind.WhitespaceTrivia)).ToList();
@@ -100,13 +92,13 @@
 
             if (secondAccessor.GetFirstToken().HasLeadingBlankLines())
             {
-                newAccessor.WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.CarriageReturnLineFeed);
+                newAccessor = newAccessor.WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.CarriageReturnLineFeed);
             }
 
             return newAccessor;
         }
 
-        private static SyntaxTriviaList GetLeadingTriviaWithoutLaedingBlankLines(AccessorDeclarationSyntax secondAccessor)
+        private static SyntaxTriviaList GetLeadingTriviaWithoutLeadingBlankLines(AccessorDeclarationSyntax secondAccessor)
         {
             var leadingTrivia = secondAccessor.GetLeadingTrivia();
 
