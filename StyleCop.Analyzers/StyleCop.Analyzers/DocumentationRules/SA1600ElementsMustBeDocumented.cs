@@ -121,10 +121,6 @@
                 }
 
                 MethodDeclarationSyntax declaration = (MethodDeclarationSyntax)context.Node;
-                if (!(declaration.Parent is BaseTypeDeclarationSyntax))
-                {
-                    return;
-                }
 
                 Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
                 Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
