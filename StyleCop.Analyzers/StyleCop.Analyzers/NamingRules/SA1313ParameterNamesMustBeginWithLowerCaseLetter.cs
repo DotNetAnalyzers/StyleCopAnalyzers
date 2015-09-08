@@ -1,6 +1,7 @@
 ﻿namespace StyleCop.Analyzers.NamingRules
 {
     using System.Collections.Immutable;
+    using System.Linq;
     using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -77,8 +78,55 @@
                 return;
             }
 
+            if (NameMatchesAbstraction(syntax, context.SemanticModel))
+            {
+                return;
+            }
+
             // Parameter names must begin with lower-case letter
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), name));
+        }
+
+        private static bool NameMatchesAbstraction(ParameterSyntax syntax, SemanticModel semanticModel)
+        {
+            var parameterList = (ParameterListSyntax)syntax.Parent;
+            var index = parameterList.Parameters.IndexOf(syntax);
+            var declaringMember = syntax.Parent.Parent;
+
+            if (!declaringMember.IsKind(SyntaxKind.MethodDeclaration))
+            {
+                return false;
+            }
+
+            var methodDeclaration = (MethodDeclarationSyntax)declaringMember;
+            var methodSymbol = semanticModel.GetDeclaredSymbol(methodDeclaration);
+
+            if (methodSymbol.IsOverride)
+            {
+                if (methodSymbol.OverriddenMethod.Parameters[index].Name == syntax.Identifier.ValueText)
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                var implementedInterfaces = methodSymbol.ContainingType.Interfaces;
+                if (implementedInterfaces.Length != 0)
+                {
+                    foreach (var @interface in implementedInterfaces)
+                    {
+                        foreach (var member in @interface.GetMembers(methodSymbol.Name).OfType<IMethodSymbol>())
+                        {
+                            if (methodSymbol.ContainingType.FindImplementationForInterfaceMember(member).Equals(methodSymbol))
+                            {
+                                return member.Parameters[index].Name == syntax.Identifier.ValueText;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return false;
         }
     }
 }
