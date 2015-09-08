@@ -101,20 +101,20 @@
 
         private static SyntaxNode HandleTypeDeclaration(MemberOrderHelper memberOrder, TypeDeclarationSyntax typeDeclarationNode, ElementOrderingChecks checks, SyntaxNode syntaxRoot)
         {
-            return MoveMember(memberOrder, typeDeclarationNode.Members, checks, syntaxRoot);
+            return OrderMember(memberOrder, typeDeclarationNode.Members, checks, syntaxRoot);
         }
 
         private static SyntaxNode HandleCompilationUnitDeclaration(MemberOrderHelper memberOrder, CompilationUnitSyntax compilationUnitDeclaration, ElementOrderingChecks checks, SyntaxNode syntaxRoot)
         {
-            return MoveMember(memberOrder, compilationUnitDeclaration.Members, checks, syntaxRoot);
+            return OrderMember(memberOrder, compilationUnitDeclaration.Members, checks, syntaxRoot);
         }
 
         private static SyntaxNode HandleNamespaceDeclaration(MemberOrderHelper memberOrder, NamespaceDeclarationSyntax namespaceDeclaration, ElementOrderingChecks checks, SyntaxNode syntaxRoot)
         {
-            return MoveMember(memberOrder, namespaceDeclaration.Members, checks, syntaxRoot);
+            return OrderMember(memberOrder, namespaceDeclaration.Members, checks, syntaxRoot);
         }
 
-        private static SyntaxNode MoveMember(MemberOrderHelper memberOrder, SyntaxList<MemberDeclarationSyntax> members, ElementOrderingChecks checks, SyntaxNode syntaxRoot)
+        private static SyntaxNode OrderMember(MemberOrderHelper memberOrder, SyntaxList<MemberDeclarationSyntax> members, ElementOrderingChecks checks, SyntaxNode syntaxRoot)
         {
             foreach (var member in members)
             {
@@ -130,18 +130,18 @@
             return syntaxRoot;
         }
 
-        private static SyntaxNode MoveMember(SyntaxNode root, MemberDeclarationSyntax field, MemberDeclarationSyntax firstNonConst)
+        private static SyntaxNode MoveMember(SyntaxNode root, MemberDeclarationSyntax member, MemberDeclarationSyntax targetMember)
         {
-            var trackedRoot = root.TrackNodes(field, firstNonConst);
-            var fieldToMove = trackedRoot.GetCurrentNode(field);
-            var firstNonConstTracked = trackedRoot.GetCurrentNode(firstNonConst);
-            if (!fieldToMove.HasLeadingTrivia)
+            var trackedRoot = root.TrackNodes(member, targetMember);
+            var memberToMove = trackedRoot.GetCurrentNode(member);
+            var targetMemberTracked = trackedRoot.GetCurrentNode(targetMember);
+            if (!memberToMove.HasLeadingTrivia)
             {
-                fieldToMove = fieldToMove.WithLeadingTrivia(firstNonConstTracked.GetLeadingTrivia().Where(x => x.IsKind(SyntaxKind.WhitespaceTrivia)).LastOrDefault());
+                memberToMove = memberToMove.WithLeadingTrivia(targetMemberTracked.GetLeadingTrivia().Where(x => x.IsKind(SyntaxKind.WhitespaceTrivia)).LastOrDefault());
             }
 
-            root = trackedRoot.InsertNodesBefore(firstNonConstTracked, new[] { fieldToMove });
-            var fieldToMoveTracked = root.GetCurrentNodes(field).Last();
+            root = trackedRoot.InsertNodesBefore(targetMemberTracked, new[] { memberToMove });
+            var fieldToMoveTracked = root.GetCurrentNodes(member).Last();
             return root.RemoveNode(fieldToMoveTracked, SyntaxRemoveOptions.KeepNoTrivia);
         }
 
