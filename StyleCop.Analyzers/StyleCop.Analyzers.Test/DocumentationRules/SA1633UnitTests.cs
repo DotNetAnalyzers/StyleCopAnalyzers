@@ -104,7 +104,7 @@ namespace Foo
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
 
-            var fixCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
+            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
 //   Copyright (c) FooCorp. All rights reserved.
 // </copyright>
 #define MYDEFINE
@@ -114,8 +114,8 @@ namespace Foo
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(fixCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixCode).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -135,7 +135,7 @@ namespace Foo
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMalformed).WithLocation(1, 1);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
 
-            var fixCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
+            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
 //   Copyright (c) FooCorp. All rights reserved.
 // </copyright>
 
@@ -144,8 +144,8 @@ namespace Foo
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(fixCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixCode).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -168,7 +168,7 @@ namespace Foo
                 this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None)
                     .ConfigureAwait(false);
 
-            var fixCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
+            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
 //   Copyright (c) FooCorp. All rights reserved.
 // </copyright>
 
@@ -176,8 +176,8 @@ namespace Foo
 {
 }
 ";
-            await this.VerifyCSharpDiagnosticAsync(fixCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixCode).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -198,7 +198,7 @@ namespace Foo
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMalformed).WithLocation(1, 1);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
 
-            var fixCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
+            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
 //   Copyright (c) FooCorp. All rights reserved.
 // </copyright>
 #define MYDEFINE
@@ -208,8 +208,8 @@ namespace Foo
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(fixCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixCode).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
