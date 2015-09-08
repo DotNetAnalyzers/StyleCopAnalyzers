@@ -973,6 +973,65 @@ public class TestClass
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that documentation of enum members is preceded by a blank line.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestEnumMembersMustBePrecededByDocumentationAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    using System;
+
+    /// <summary>
+    /// some documentation.
+    /// </summary>
+    public enum TestEnum
+    {
+        /// <summary>
+        /// some documentation.
+        /// </summary>
+        Value1,
+        /// <summary>
+        /// some documentation.
+        /// </summary>
+        Value2,
+    }
+}
+";
+            var fixedCode = @"namespace TestNamespace
+{
+    using System;
+
+    /// <summary>
+    /// some documentation.
+    /// </summary>
+    public enum TestEnum
+    {
+        /// <summary>
+        /// some documentation.
+        /// </summary>
+        Value1,
+
+        /// <summary>
+        /// some documentation.
+        /// </summary>
+        Value2,
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(14, 9)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1514ElementDocumentationHeaderMustBePrecededByBlankLine();
