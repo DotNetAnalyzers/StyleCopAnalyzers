@@ -79,7 +79,7 @@
             return document.WithSyntaxRoot(syntaxRoot);
         }
 
-        private static bool HasLeadingBlankLines(AccessorDeclarationSyntax secondAccessor)
+        private static bool HasLeadingBlankLines(SyntaxNode secondAccessor)
         {
             var firstTriviaIgnoringWhitespace = secondAccessor.GetLeadingTrivia().FirstOrDefault(x => !x.IsKind(SyntaxKind.WhitespaceTrivia));
             return firstTriviaIgnoringWhitespace.IsKind(SyntaxKind.EndOfLineTrivia);
@@ -106,7 +106,7 @@
             return newAccessor;
         }
 
-        private static SyntaxTriviaList GetLeadingTriviaWithoutLeadingBlankLines(AccessorDeclarationSyntax secondAccessor)
+        private static SyntaxTriviaList GetLeadingTriviaWithoutLeadingBlankLines(SyntaxNode secondAccessor)
         {
             var leadingTrivia = secondAccessor.GetLeadingTrivia();
 

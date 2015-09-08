@@ -73,6 +73,65 @@ public class Foo
         }
 
         [Fact]
+        public async Task TestPropertyWithDocumentationNoBlankLineAsync()
+        {
+            var testCode = @"
+public class Foo
+{
+    private int i = 0;
+
+    public int Prop
+    {
+        /// <summary>
+        /// The setter documentation
+        /// </summary>
+        set
+        {
+            i = value;
+        }
+        /// <summary>
+        /// The getter documentation
+        /// </summary>
+        get
+        {
+            return i;
+        }
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(11, 9);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedCode = @"
+public class Foo
+{
+    private int i = 0;
+
+    public int Prop
+    {
+        /// <summary>
+        /// The getter documentation
+        /// </summary>
+        get
+        {
+            return i;
+        }
+        /// <summary>
+        /// The setter documentation
+        /// </summary>
+        set
+        {
+            i = value;
+        }
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestPropertyWithLineCommentAsync()
         {
             var testCode = @"
