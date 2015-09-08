@@ -75,10 +75,24 @@
 
         private static SyntaxTriviaList CreateNewHeader(string filename, StyleCopSettings settings)
         {
-            return SyntaxFactory.ParseLeadingTrivia($@"// <copyright file=""{filename}"" company=""{settings.DocumentationRules.CompanyName}"">
-//   {settings.DocumentationRules.CopyrightText}
+            var copyrightText = "// " + GetCopyrightText(settings.DocumentationRules.CopyrightText);
+            var newHeader = settings.DocumentationRules.XmlHeader
+                ? WrapInXmlComment(copyrightText, filename, settings)
+                : copyrightText;
+            return SyntaxFactory.ParseLeadingTrivia(newHeader);
+        }
+
+        private static string WrapInXmlComment(string copyrightText, string filename, StyleCopSettings settings)
+        {
+            return $@"// <copyright file=""{filename}"" company=""{settings.DocumentationRules.CompanyName}"">
+{copyrightText}
 // </copyright>
-");
+";
+        }
+
+        private static string GetCopyrightText(string copyrightText)
+        {
+            return string.Join("\n// ", copyrightText.Split('\n'));
         }
     }
 }

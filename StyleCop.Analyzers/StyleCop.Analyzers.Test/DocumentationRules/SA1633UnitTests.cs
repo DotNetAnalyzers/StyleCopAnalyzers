@@ -105,39 +105,9 @@ namespace Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-//   Copyright (c) FooCorp. All rights reserved.
+// Copyright (c) FooCorp. All rights reserved.
 // </copyright>
 #define MYDEFINE
-
-namespace Foo
-{
-}
-";
-
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Verifies that a file header without XML structure will produce the correct diagnostic message.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestNonXmlFileHeaderAsync()
-        {
-            var testCode = @"// Copyright (c) FooCorp. All rights reserved.
-
-namespace Foo
-{
-}
-";
-
-            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMalformed).WithLocation(1, 1);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-
-            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-//   Copyright (c) FooCorp. All rights reserved.
-// </copyright>
 
 namespace Foo
 {
@@ -156,7 +126,7 @@ namespace Foo
         public async Task TestInvalidXmlFileHeaderAsync()
         {
             var testCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-//   Copyright (c) FooCorp. All rights reserved.
+// Copyright (c) FooCorp. All rights reserved.
 
 namespace Foo
 {
@@ -169,7 +139,7 @@ namespace Foo
                     .ConfigureAwait(false);
 
             var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-//   Copyright (c) FooCorp. All rights reserved.
+// Copyright (c) FooCorp. All rights reserved.
 // </copyright>
 
 namespace Foo
@@ -199,7 +169,7 @@ namespace Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-//   Copyright (c) FooCorp. All rights reserved.
+// Copyright (c) FooCorp. All rights reserved.
 // </copyright>
 #define MYDEFINE
 
