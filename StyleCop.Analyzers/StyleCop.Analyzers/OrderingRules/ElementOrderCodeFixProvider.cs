@@ -67,8 +67,7 @@
         private static async Task<ElementOrderingChecks> GetEnabledRulesForDocumentAsync(Document document, CancellationToken cancellationToken)
         {
             SemanticModel semanticModel;
-            document.TryGetSemanticModel(out semanticModel);
-            if (semanticModel == null)
+            if (!document.TryGetSemanticModel(out semanticModel))
             {
                 semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             }
