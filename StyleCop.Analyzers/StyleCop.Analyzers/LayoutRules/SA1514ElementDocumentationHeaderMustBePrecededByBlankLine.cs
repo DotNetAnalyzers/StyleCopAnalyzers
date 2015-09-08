@@ -90,6 +90,7 @@
                 SyntaxKind.StructDeclaration,
                 SyntaxKind.InterfaceDeclaration,
                 SyntaxKind.EnumDeclaration,
+                SyntaxKind.EnumMemberDeclaration,
                 SyntaxKind.MethodDeclaration,
                 SyntaxKind.ConstructorDeclaration,
                 SyntaxKind.DestructorDeclaration,
