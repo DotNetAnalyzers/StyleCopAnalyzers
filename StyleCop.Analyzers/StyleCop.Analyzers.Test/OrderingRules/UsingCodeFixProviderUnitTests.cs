@@ -48,10 +48,8 @@ namespace Foo
     using System.Collections;
     using System.Collections.Generic;
     using Microsoft.CodeAnalysis;
-
     using MyFunc = System.Func<int,bool>;
     using SystemAction = System.Action;
-
     using static System.Math;
     using static System.String;
 
@@ -95,10 +93,8 @@ namespace Foo
 using System.Collections;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
-
 using MyFunc = System.Func<int,bool>;
 using SystemAction = System.Action;
-
 using static System.Math;
 using static System.String;
 
@@ -149,10 +145,8 @@ namespace TestNamespace2
 using System.Collections;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
-
 using MyFunc = System.Func<int,bool>;
 using SystemAction = System.Action;
-
 using static System.Math;
 using static System.String;
 
@@ -175,10 +169,10 @@ namespace TestNamespace2
                 this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(2, 1),
                 this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(3, 1),
                 this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(4, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(5, 1),
                 this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(6, 1),
                 this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(7, 1),
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(9, 1),
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(10, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(8, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -217,10 +211,8 @@ namespace Foo
 using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
-
 using MyFunc = System.Func<int,bool>;
 using SystemAction = System.Action;
-
 using static System.Math;
 using static System.String;
 

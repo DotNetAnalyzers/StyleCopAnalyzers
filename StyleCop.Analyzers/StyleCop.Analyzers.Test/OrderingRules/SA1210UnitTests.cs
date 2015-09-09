@@ -157,7 +157,6 @@ namespace Foo
     using global::System;
     using global::System.IO;
     using global::System.Linq;
-
     using XYZ = System.IO;
 }";
 
@@ -229,7 +228,6 @@ using A1 = System.Threading;";
 
             var fixedTestCode = @"using System;
 using System.IO;
-
 using A1 = System.Threading;
 using A2 = System.IO;
 ";
@@ -289,7 +287,6 @@ using Microsoft.CodeAnalysis;
 
             var fixedTestCode = @"using System;
 using Microsoft.VisualStudio;
-
 using MyList = System.Collections.Generic.List<int>;
 
 #if true

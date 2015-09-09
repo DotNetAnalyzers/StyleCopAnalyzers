@@ -384,9 +384,9 @@
                 var usingList = new List<UsingDirectiveSyntax>();
                 List<SyntaxTrivia> triviaToMove = new List<SyntaxTrivia>();
 
-                usingList.AddRange(GenerateUsings(this.NamespaceUsings, directiveSpan, indentation, triviaToMove, false));
-                usingList.AddRange(GenerateUsings(this.Aliases, directiveSpan, indentation, triviaToMove, usingList.Any()));
-                usingList.AddRange(GenerateUsings(this.StaticImports, directiveSpan, indentation, triviaToMove, usingList.Any()));
+                usingList.AddRange(GenerateUsings(this.NamespaceUsings, directiveSpan, indentation, triviaToMove));
+                usingList.AddRange(GenerateUsings(this.Aliases, directiveSpan, indentation, triviaToMove));
+                usingList.AddRange(GenerateUsings(this.StaticImports, directiveSpan, indentation, triviaToMove));
 
                 if (triviaToMove.Count > 0)
                 {
@@ -408,9 +408,9 @@
                 var usingList = new List<UsingDirectiveSyntax>();
                 List<SyntaxTrivia> triviaToMove = new List<SyntaxTrivia>();
 
-                usingList.AddRange(this.GenerateUsings(this.NamespaceUsings, usingsList, indentation, triviaToMove, false));
-                usingList.AddRange(this.GenerateUsings(this.Aliases, usingsList, indentation, triviaToMove, usingList.Any()));
-                usingList.AddRange(this.GenerateUsings(this.StaticImports, usingsList, indentation, triviaToMove, usingList.Any()));
+                usingList.AddRange(this.GenerateUsings(this.NamespaceUsings, usingsList, indentation, triviaToMove));
+                usingList.AddRange(this.GenerateUsings(this.Aliases, usingsList, indentation, triviaToMove));
+                usingList.AddRange(this.GenerateUsings(this.StaticImports, usingsList, indentation, triviaToMove));
 
                 if (triviaToMove.Count > 0)
                 {
@@ -427,7 +427,7 @@
                 return SyntaxFactory.List(usingList);
             }
 
-            private static List<UsingDirectiveSyntax> GenerateUsings(Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>> usingsGroup, DirectiveSpan directiveSpan, string indentation, List<SyntaxTrivia> triviaToMove, bool leadingBlankLine)
+            private static List<UsingDirectiveSyntax> GenerateUsings(Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>> usingsGroup, DirectiveSpan directiveSpan, string indentation, List<SyntaxTrivia> triviaToMove)
             {
                 List<UsingDirectiveSyntax> result = new List<UsingDirectiveSyntax>();
                 List<UsingDirectiveSyntax> usingsList;
@@ -437,10 +437,10 @@
                     return result;
                 }
 
-                return GenerateUsings(usingsList, indentation, triviaToMove, leadingBlankLine);
+                return GenerateUsings(usingsList, indentation, triviaToMove);
             }
 
-            private static List<UsingDirectiveSyntax> GenerateUsings(List<UsingDirectiveSyntax> usingsList, string indentation, List<SyntaxTrivia> triviaToMove, bool leadingBlankLine)
+            private static List<UsingDirectiveSyntax> GenerateUsings(List<UsingDirectiveSyntax> usingsList, string indentation, List<SyntaxTrivia> triviaToMove)
             {
                 List<UsingDirectiveSyntax> result = new List<UsingDirectiveSyntax>();
 
@@ -499,11 +499,6 @@
                 }
 
                 result.Sort(CompareUsings);
-
-                if (leadingBlankLine)
-                {
-                    result[0] = result[0].WithLeadingTrivia(result[0].GetLeadingTrivia().Insert(0, SyntaxFactory.CarriageReturnLineFeed));
-                }
 
                 return result;
             }
@@ -576,11 +571,11 @@
                 usingList.Add(usingDirective);
             }
 
-            private List<UsingDirectiveSyntax> GenerateUsings(Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>> usingsGroup, List<UsingDirectiveSyntax> usingsList, string indentation, List<SyntaxTrivia> triviaToMove, bool leadingBlankLine)
+            private List<UsingDirectiveSyntax> GenerateUsings(Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>> usingsGroup, List<UsingDirectiveSyntax> usingsList, string indentation, List<SyntaxTrivia> triviaToMove)
             {
                 var filteredUsingsList = this.FilterRelevantUsings(usingsGroup, usingsList);
 
-                return GenerateUsings(filteredUsingsList, indentation, triviaToMove, leadingBlankLine);
+                return GenerateUsings(filteredUsingsList, indentation, triviaToMove);
             }
 
             private List<UsingDirectiveSyntax> FilterRelevantUsings(Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>> usingsGroup, List<UsingDirectiveSyntax> usingsList)

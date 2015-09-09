@@ -104,18 +104,14 @@ namespace Bar
             var fixedTestCode = @"namespace Foo
 {
     using System;
-
     using Execute = System.Action;
-
     using static System.Math;
 }
 
 namespace Bar
 {
     using System;
-
     using Execute = System.Action;
-
     using static System.Array;
     using static System.Math;
 }
@@ -153,15 +149,12 @@ using System.Threading.Tasks;
 
             var fixedTestCode = @"using System;
 using Microsoft.VisualStudio;
-
 using MyList = System.Collections.Generic.List<int>;
-
 using static System.String;
 
 #if true
 using System.Threading;
 using System.Threading.Tasks;
-
 using static System.Math;
 #else
 using System.Threading;

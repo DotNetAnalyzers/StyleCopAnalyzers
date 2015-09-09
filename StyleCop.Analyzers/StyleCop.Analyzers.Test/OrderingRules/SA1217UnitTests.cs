@@ -107,9 +107,7 @@ namespace Bar
             var fixedTestCode = @"namespace Foo
 {
     using System;
-
     using Execute = System.Action;
-
     using static System.Array;
     using static System.Math;
 }
@@ -117,9 +115,7 @@ namespace Bar
 namespace Bar
 {
     using System;
-
     using Execute = System.Action;
-
     using static System.Array;
     using static System.Math;
 }
@@ -174,9 +170,7 @@ namespace Bar
             var fixedTestCode = @"namespace Foo
 {
     using System;
-
     using Execute = System.Action;
-
     using static global::System.Array;
     using static System.Math;
 }
@@ -212,9 +206,7 @@ using static System.Math;
 
             var fixedTestCode = @"using System;
 using Microsoft.VisualStudio;
-
 using MyList = System.Collections.Generic.List<int>;
-
 using static System.Tuple;
 
 #if true

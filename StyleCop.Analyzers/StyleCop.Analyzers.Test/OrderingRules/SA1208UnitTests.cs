@@ -306,7 +306,6 @@ using System.Collections;
             var fixedTestCode = @"using System;
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio;
-
 using MyList = System.Collections.Generic.List<int>;
 
 #if true

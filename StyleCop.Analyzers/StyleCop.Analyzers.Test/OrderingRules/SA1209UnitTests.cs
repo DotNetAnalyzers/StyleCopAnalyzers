@@ -55,7 +55,6 @@ class A
 using System.IO;
 using System.Linq;
 using System.Net;
-
 using TasksNamespace = System.Threading.Tasks;
 
 class A
@@ -88,7 +87,6 @@ class A
     using System.IO;
     using System.Net;
     using System.Threading;
-
     using L = System.Linq;
     using P = System.Threading.Tasks;
 
@@ -127,7 +125,6 @@ namespace Test
     using global::System;
     using global::System.IO;
     using global::System.Threading.Tasks;
-
     using Name = global::System.Threading;
 
     class A
@@ -181,7 +178,6 @@ namespace Test
     using System;
     using System.IO;
     using /* comment */ System.Text;
-
     using Threads = /* inline comment */ System.Threading;
 
     class A
@@ -215,10 +211,8 @@ namespace Test
 {
     using System;
     using System.Net;
-
     using IO = System.IO;
     using Threads = System.Threading;
-
     using static System.Math;
 
     class A
@@ -251,12 +245,10 @@ using Microsoft.CodeAnalysis;
 
             var fixedTestCode = @"using System;
 using Microsoft.VisualStudio;
-
 using MyList = System.Collections.Generic.List<int>;
 
 #if true
 using Microsoft.CodeAnalysis;
-
 using Threads = System.Threading;
 #else
 using Threads = System.Threading;
