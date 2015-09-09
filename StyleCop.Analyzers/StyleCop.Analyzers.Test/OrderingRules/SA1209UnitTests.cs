@@ -211,9 +211,9 @@ namespace Test
 {
     using System;
     using System.Net;
+    using static System.Math;
     using IO = System.IO;
     using Threads = System.Threading;
-    using static System.Math;
 
     class A
     {

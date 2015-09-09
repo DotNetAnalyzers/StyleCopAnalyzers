@@ -270,7 +270,7 @@
     <Compile Include="OrderingRules\SA1213EventAccessorsMustFollowOrder.cs" />
     <Compile Include="OrderingRules\SA1214StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements.cs" />
     <Compile Include="OrderingRules\SA1215InstanceReadonlyElementsMustAppearBeforeInstanceNonReadonlyElements.cs" />
-    <Compile Include="OrderingRules\SA1216UsingStaticDirectivesMustBePlacedAfterOtherUsingDirectives.cs" />
+    <Compile Include="OrderingRules\SA1216UsingStaticDirectivesMustBePlacedAtTheCorrectLocation.cs" />
     <Compile Include="OrderingRules\SA1217UsingStaticDirectivesMustBeOrderedAlphabetically.cs" />
     <Compile Include="OrderingRules\UsingCodeFixProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

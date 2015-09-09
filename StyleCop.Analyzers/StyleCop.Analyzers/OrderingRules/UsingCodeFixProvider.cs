@@ -32,7 +32,7 @@
                 SA1209UsingAliasDirectivesMustBePlacedAfterOtherUsingDirectives.DiagnosticId,
                 SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace.DiagnosticId,
                 SA1211UsingAliasDirectivesMustBeOrderedAlphabeticallyByAliasName.DiagnosticId,
-                SA1216UsingStaticDirectivesMustBePlacedAfterOtherUsingDirectives.DiagnosticId,
+                SA1216UsingStaticDirectivesMustBePlacedAtTheCorrectLocation.DiagnosticId,
                 SA1217UsingStaticDirectivesMustBeOrderedAlphabetically.DiagnosticId);
 
         /// <inheritdoc/>
@@ -385,8 +385,8 @@
                 List<SyntaxTrivia> triviaToMove = new List<SyntaxTrivia>();
 
                 usingList.AddRange(GenerateUsings(this.NamespaceUsings, directiveSpan, indentation, triviaToMove));
-                usingList.AddRange(GenerateUsings(this.Aliases, directiveSpan, indentation, triviaToMove));
                 usingList.AddRange(GenerateUsings(this.StaticImports, directiveSpan, indentation, triviaToMove));
+                usingList.AddRange(GenerateUsings(this.Aliases, directiveSpan, indentation, triviaToMove));
 
                 if (triviaToMove.Count > 0)
                 {
@@ -409,8 +409,8 @@
                 List<SyntaxTrivia> triviaToMove = new List<SyntaxTrivia>();
 
                 usingList.AddRange(this.GenerateUsings(this.NamespaceUsings, usingsList, indentation, triviaToMove));
-                usingList.AddRange(this.GenerateUsings(this.Aliases, usingsList, indentation, triviaToMove));
                 usingList.AddRange(this.GenerateUsings(this.StaticImports, usingsList, indentation, triviaToMove));
+                usingList.AddRange(this.GenerateUsings(this.Aliases, usingsList, indentation, triviaToMove));
 
                 if (triviaToMove.Count > 0)
                 {

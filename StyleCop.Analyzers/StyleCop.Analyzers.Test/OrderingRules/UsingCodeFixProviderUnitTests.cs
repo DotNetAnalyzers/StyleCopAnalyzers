@@ -48,10 +48,10 @@ namespace Foo
     using System.Collections;
     using System.Collections.Generic;
     using Microsoft.CodeAnalysis;
-    using MyFunc = System.Func<int,bool>;
-    using SystemAction = System.Action;
     using static System.Math;
     using static System.String;
+    using MyFunc = System.Func<int,bool>;
+    using SystemAction = System.Action;
 
     public class Bar
     {
@@ -130,10 +130,10 @@ namespace Foo
 using System.Collections;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
-using MyFunc = System.Func<int,bool>;
-using SystemAction = System.Action;
 using static System.Math;
 using static System.String;
+using MyFunc = System.Func<int,bool>;
+using SystemAction = System.Action;
 
 namespace Foo
 {
@@ -221,10 +221,10 @@ namespace TestNamespace2
 using System.Collections;
 using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
-using MyFunc = System.Func<int,bool>;
-using SystemAction = System.Action;
 using static System.Math;
 using static System.String;
+using MyFunc = System.Func<int,bool>;
+using SystemAction = System.Action;
 
 namespace TestNamespace1
 {
@@ -287,10 +287,10 @@ namespace Foo
 using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.CodeAnalysis;
-using MyFunc = System.Func<int,bool>;
-using SystemAction = System.Action;
 using static System.Math;
 using static System.String;
+using MyFunc = System.Func<int,bool>;
+using SystemAction = System.Action;
 
 [assembly: AssemblyVersion(""1.0.0.0"")]
 
@@ -369,7 +369,7 @@ namespace TestNamespace2
             yield return new SA1209UsingAliasDirectivesMustBePlacedAfterOtherUsingDirectives();
             yield return new SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace();
             yield return new SA1211UsingAliasDirectivesMustBeOrderedAlphabeticallyByAliasName();
-            yield return new SA1216UsingStaticDirectivesMustBePlacedAfterOtherUsingDirectives();
+            yield return new SA1216UsingStaticDirectivesMustBePlacedAtTheCorrectLocation();
             yield return new SA1217UsingStaticDirectivesMustBeOrderedAlphabetically();
         }
 
