@@ -47,7 +47,6 @@ namespace Foo
     using System;
     using System.Collections;
     using System.Collections.Generic;
-
     using Microsoft.CodeAnalysis;
 
     using MyFunc = System.Func<int,bool>;
@@ -95,7 +94,6 @@ namespace Foo
             var fixedTestCode = @"using System;
 using System.Collections;
 using System.Collections.Generic;
-
 using Microsoft.CodeAnalysis;
 
 using MyFunc = System.Func<int,bool>;
@@ -150,7 +148,6 @@ namespace TestNamespace2
             var fixedTestCode = @"using System;
 using System.Collections;
 using System.Collections.Generic;
-
 using Microsoft.CodeAnalysis;
 
 using MyFunc = System.Func<int,bool>;
@@ -171,7 +168,20 @@ namespace TestNamespace2
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            // The code fix is not able to correct all violations due to the use of multiple namespaces in a single file
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(1, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(2, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(3, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(4, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(6, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(7, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(9, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(10, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
@@ -206,7 +216,6 @@ namespace Foo
             var fixedTestCode = @"using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-
 using Microsoft.CodeAnalysis;
 
 using MyFunc = System.Func<int,bool>;
