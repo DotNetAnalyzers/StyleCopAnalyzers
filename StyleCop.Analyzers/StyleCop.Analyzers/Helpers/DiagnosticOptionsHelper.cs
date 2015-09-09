@@ -1,4 +1,7 @@
-﻿// There are no start actions in this file. This warning should not be reported.
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+// There are no start actions in this file. This warning should not be reported.
 #pragma warning disable RS1012 // Start action has no registered actions.
 
 namespace StyleCop.Analyzers.Helpers

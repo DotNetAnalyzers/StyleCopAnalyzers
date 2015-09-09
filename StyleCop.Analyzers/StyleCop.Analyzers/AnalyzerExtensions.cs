@@ -1,7 +1,5 @@
-﻿// This file originally obtained from
-// https://github.com/code-cracker/code-cracker/blob/08c1a01337964924eeed12be8b14c8ce8ec6b626/src/Common/CodeCracker.Common/Extensions/AnalyzerExtensions.cs
-// It is subject to the Apache License 2.0
-// This file has been modified since obtaining it from its original source.
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers
 {
