@@ -1,14 +1,16 @@
 ﻿namespace StyleCop.Analyzers.Test.OrderingRules
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.OrderingRules;
     using TestHelper;
     using Xunit;
 
-    public class SA1209UnitTests : DiagnosticVerifier
+    public class SA1209UnitTests : CodeFixVerifier
     {
         [Fact]
         public async Task TestWhenAliasUsingDirectivesArePlacedCorrectlyAsync()
@@ -58,6 +60,31 @@ class A
     }
 }";
 
+            var fixedTestCodeCompilationUnit = @"using System;
+using System.IO;
+using System.Linq;
+using System.Net;
+
+using TasksNamespace = System.Threading.Tasks;
+
+class A
+{
+}";
+
+            var fixedTestCodeNamespace = @"namespace Test
+{
+    using System.IO;
+    using System.Net;
+    using System.Threading;
+
+    using L = System.Linq;
+    using P = System.Threading.Tasks;
+
+    class A
+    {
+    }
+}";
+
             DiagnosticResult[] expectedForCompilationUnit =
             {
                 this.CSharpDiagnostic().WithLocation(1, 1)
@@ -70,12 +97,15 @@ class A
 
             await this.VerifyCSharpDiagnosticAsync(testCodeCompilationUnit, expectedForCompilationUnit, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(testCodeNamespace, expectedForNamespaceDeclaration, CancellationToken.None).ConfigureAwait(false);
+
+            await this.VerifyCSharpFixAsync(testCodeCompilationUnit, fixedTestCodeCompilationUnit).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCodeNamespace, fixedTestCodeNamespace).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestUsingAliasDirectivesWithGlobalContextualKeywordAsync()
         {
-            var compilationUnit = @"using global::System.Threading.Tasks;
+            var testCode = @"using global::System.Threading.Tasks;
 using Name = global::System.Threading;
 using global::System.IO;
 namespace Test
@@ -88,12 +118,28 @@ namespace Test
     }
 }";
 
+            var fixedTestCode = @"namespace Test
+{
+    using global::System;
+    using global::System.IO;
+    using System.Text;
+    using System.Threading;
+    using global::System.Threading.Tasks;
+
+    using Name = global::System.Threading;
+
+    class A
+    {
+    }
+}";
+
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation("Test0.cs", 2, 1),
+                this.CSharpDiagnostic().WithLocation("Test0.cs", 2, 1)
             };
 
-            await this.VerifyCSharpDiagnosticAsync(compilationUnit, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -119,7 +165,7 @@ namespace Test
         [Fact]
         public async Task TestWithInlineCommentsInUsingAliasDirectivesAsync()
         {
-            var namespaceDeclaration = @"namespace Test
+            var testCode = @"namespace Test
 {
     using System;
     using Threads = /* inline comment */ System.Threading;
@@ -130,18 +176,32 @@ namespace Test
     }
 }";
 
+            var fixedTestCode = @"namespace Test
+{
+    using System;
+    using System.IO;
+    using /* comment */ System.Text;
+
+    using Threads = /* inline comment */ System.Threading;
+
+    class A
+    {
+    }
+}";
+
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation("Test0.cs", 4, 5),
+                this.CSharpDiagnostic().WithLocation("Test0.cs", 4, 5)
             };
 
-            await this.VerifyCSharpDiagnosticAsync(namespaceDeclaration, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestWithUsingStaticAsync()
         {
-            var namespaceDeclaration = @"namespace Test
+            var testCode = @"namespace Test
 {
     using System;
     using IO = System.IO;
@@ -153,12 +213,28 @@ namespace Test
     }
 }";
 
+            var fixedTestCode = @"namespace Test
+{
+    using System;
+    using System.Net;
+
+    using IO = System.IO;
+    using Threads = System.Threading;
+
+    using static System.Math;
+
+    class A
+    {
+    }
+}";
+
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation("Test0.cs", 4, 5),
+                this.CSharpDiagnostic().WithLocation("Test0.cs", 4, 5)
             };
 
-            await this.VerifyCSharpDiagnosticAsync(namespaceDeclaration, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -177,15 +253,38 @@ using Threads = System.Threading;
 using Microsoft.CodeAnalysis;
 #endif";
 
+            var fixedTestCode = @"using System;
+
+using Microsoft.VisualStudio;
+
+using MyList = System.Collections.Generic.List<int>;
+
+#if true
+using Microsoft.CodeAnalysis;
+
+using Threads = System.Threading;
+#else
+using Threads = System.Threading;
+using Microsoft.CodeAnalysis;
+#endif";
+
             // else block is skipped
             var expected = this.CSharpDiagnostic().WithLocation(7, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1209UsingAliasDirectivesMustBePlacedAfterOtherUsingDirectives();
+        }
+
+        /// <inheritdoc/>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new UsingCodeFixProvider();
         }
     }
 }

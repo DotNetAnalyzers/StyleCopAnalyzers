@@ -43,6 +43,16 @@
             return false;
         }
 
+        /// <summary>
+        /// Check if the name of using directive contains a namespace alias qualifier.
+        /// </summary>
+        /// <param name="usingDirective">The <see cref="UsingDirectiveSyntax"/> that will be checked.</param>
+        /// <returns>
+        /// <see langword="true"/> if the <see cref="UsingDirectiveSyntax"/> contains a namespace alias qualifier;
+        /// otherwise, <see langword="false"/>.
+        /// </returns>
+        internal static bool HasNamespaceAliasQualifier(this UsingDirectiveSyntax usingDirective) => usingDirective.DescendantNodes().Any(node => node.IsKind(SyntaxKind.AliasQualifiedName));
+
         private static bool ExcludeGlobalKeyword(IdentifierNameSyntax token) => !token.Identifier.IsKind(SyntaxKind.GlobalKeyword);
 
         private static SyntaxToken? GetFirstIdentifierInUsingDirective(UsingDirectiveSyntax usingDirective) => usingDirective.DescendantNodes().OfType<IdentifierNameSyntax>().FirstOrDefault(ExcludeGlobalKeyword)?.Identifier;

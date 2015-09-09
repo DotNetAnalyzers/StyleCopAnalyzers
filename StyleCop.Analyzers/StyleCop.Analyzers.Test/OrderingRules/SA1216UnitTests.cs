@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.OrderingRules;
     using TestHelper;
@@ -11,7 +12,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1216UsingStaticDirectivesMustBePlacedAfterOtherUsingDirectives"/>.
     /// </summary>
-    public class SA1216UnitTests : DiagnosticVerifier
+    public class SA1216UnitTests : CodeFixVerifier
     {
         /// <summary>
         /// Verifies that the analyzer will not produce diagnostics for correctly ordered using directives inside a namespace.
@@ -100,6 +101,26 @@ namespace Bar
 }
 ";
 
+            var fixedTestCode = @"namespace Foo
+{
+    using System;
+
+    using Execute = System.Action;
+
+    using static System.Math;
+}
+
+namespace Bar
+{
+    using System;
+
+    using Execute = System.Action;
+
+    using static System.Array;
+    using static System.Math;
+}
+";
+
             DiagnosticResult[] expectedDiagnostics =
             {
                 this.CSharpDiagnostic().WithLocation(3, 5),
@@ -107,6 +128,7 @@ namespace Bar
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -128,16 +150,42 @@ using static System.Math;
 using System.Threading.Tasks;
 #endif";
 
+            var fixedTestCode = @"using System;
+
+using Microsoft.VisualStudio;
+
+using MyList = System.Collections.Generic.List<int>;
+
+using static System.String;
+
+#if true
+using System.Threading;
+using System.Threading.Tasks;
+
+using static System.Math;
+#else
+using System.Threading;
+using static System.Math;
+using System.Threading.Tasks;
+#endif";
+
             // else block is skipped
             var expected = this.CSharpDiagnostic().WithLocation(9, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1216UsingStaticDirectivesMustBePlacedAfterOtherUsingDirectives();
+        }
+
+        /// <inheritdoc/>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new UsingCodeFixProvider();
         }
     }
 }

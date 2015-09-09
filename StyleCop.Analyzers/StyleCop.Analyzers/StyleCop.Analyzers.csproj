@@ -271,6 +271,7 @@
     <Compile Include="OrderingRules\SA1215InstanceReadonlyElementsMustAppearBeforeInstanceNonReadonlyElements.cs" />
     <Compile Include="OrderingRules\SA1216UsingStaticDirectivesMustBePlacedAfterOtherUsingDirectives.cs" />
     <Compile Include="OrderingRules\SA1217UsingStaticDirectivesMustBeOrderedAlphabetically.cs" />
+    <Compile Include="OrderingRules\UsingCodeFixProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReadabilityRules\QueryIndentationHelpers.cs" />
     <Compile Include="ReadabilityRules\ReadabilityResources.Designer.cs">
@@ -287,6 +288,7 @@
     <Compile Include="ReadabilityRules\SA1102CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1103CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1104SA1105CodeFixProvider.cs" />
+    <Compile Include="ReadabilityRules\SA1106CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1106CodeMustNotContainEmptyStatements.cs" />
     <Compile Include="ReadabilityRules\SA1107CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1107CodeMustNotContainMultipleStatementsOnOneLine.cs" />

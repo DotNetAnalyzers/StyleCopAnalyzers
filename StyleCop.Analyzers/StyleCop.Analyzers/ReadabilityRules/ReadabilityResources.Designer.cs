@@ -278,6 +278,15 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Remove empty statement.
+        /// </summary>
+        internal static string SA1106CodeFix {
+            get {
+                return ResourceManager.GetString("SA1106CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The C# code contains an extra semicolon..
         /// </summary>
         internal static string SA1106Description {

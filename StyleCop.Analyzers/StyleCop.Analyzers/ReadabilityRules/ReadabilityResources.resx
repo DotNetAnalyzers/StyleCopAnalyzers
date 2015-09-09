@@ -189,6 +189,9 @@
   <data name="SA1105Title" xml:space="preserve">
     <value>Query clauses spanning multiple lines must begin on own line</value>
   </data>
+  <data name="SA1106CodeFix" xml:space="preserve">
+    <value>Remove empty statement</value>
+  </data>
   <data name="SA1106Description" xml:space="preserve">
     <value>The C# code contains an extra semicolon.</value>
   </data>

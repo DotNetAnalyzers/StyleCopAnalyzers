@@ -62,6 +62,13 @@
 
             syntaxRoot = trackedRoot.InsertNodesBefore(trackedFirstAccessor, new[] { newAccessor });
 
+            if (HasLeadingBlankLines(secondAccessor))
+            {
+                trackedFirstAccessor = syntaxRoot.GetCurrentNode(firstAccesor);
+                var newFirstAccessor = trackedFirstAccessor.WithLeadingTrivia(new[] { SyntaxFactory.CarriageReturnLineFeed }.Concat(firstAccesor.GetFirstToken().WithoutLeadingBlankLines().LeadingTrivia));
+                syntaxRoot = syntaxRoot.ReplaceNode(trackedFirstAccessor, newFirstAccessor);
+            }
+
             var trackedLastAccessor = syntaxRoot.GetCurrentNode(secondAccessor);
             var keepTriviaOptions = AccessorsAreOnTheSameLine(firstAccesor, secondAccessor)
                 ? SyntaxRemoveOptions.KeepEndOfLine
@@ -70,6 +77,12 @@
             syntaxRoot = syntaxRoot.RemoveNode(trackedLastAccessor, keepTriviaOptions);
 
             return document.WithSyntaxRoot(syntaxRoot);
+        }
+
+        private static bool HasLeadingBlankLines(SyntaxNode node)
+        {
+            var firstTriviaIgnoringWhitespace = node.GetLeadingTrivia().FirstOrDefault(x => !x.IsKind(SyntaxKind.WhitespaceTrivia));
+            return firstTriviaIgnoringWhitespace.IsKind(SyntaxKind.EndOfLineTrivia);
         }
 
         private static bool AccessorsAreOnTheSameLine(AccessorDeclarationSyntax firstAccesor, AccessorDeclarationSyntax secondAccessor)
@@ -89,11 +102,6 @@
             var newAccessor = accessorList.Accessors[1]
                 .WithBody(secondAccessor.Body)
                 .WithLeadingTrivia(newLeadingTrivia);
-
-            if (secondAccessor.GetFirstToken().HasLeadingBlankLines())
-            {
-                newAccessor = newAccessor.WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed, SyntaxFactory.CarriageReturnLineFeed);
-            }
 
             return newAccessor;
         }

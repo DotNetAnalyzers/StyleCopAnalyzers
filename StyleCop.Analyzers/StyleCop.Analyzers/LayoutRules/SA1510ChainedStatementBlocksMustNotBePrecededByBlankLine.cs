@@ -78,7 +78,7 @@
             var elseClause = (ElseClauseSyntax)context.Node;
             var elseKeyword = elseClause.ElseKeyword;
 
-            if (!elseKeyword.HasLeadingBlankLines())
+            if (!elseKeyword.IsPrecededByBlankLines())
             {
                 return;
             }
@@ -91,7 +91,7 @@
             var catchClause = (CatchClauseSyntax)context.Node;
             var catchKeyword = catchClause.CatchKeyword;
 
-            if (!catchKeyword.HasLeadingBlankLines())
+            if (!catchKeyword.IsPrecededByBlankLines())
             {
                 return;
             }
@@ -104,7 +104,7 @@
             var finallyClause = (FinallyClauseSyntax)context.Node;
             var finallyKeyword = finallyClause.FinallyKeyword;
 
-            if (!finallyKeyword.HasLeadingBlankLines())
+            if (!finallyKeyword.IsPrecededByBlankLines())
             {
                 return;
             }

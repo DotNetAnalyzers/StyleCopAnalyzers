@@ -102,6 +102,7 @@ public class Foo
         {
             this.nameChanged += value;
         }
+
         // This is the remove accessor.
         remove
         {
@@ -162,6 +163,7 @@ public class Foo
         {
             this.nameChanged += value;
         }
+
         /*
          * This is the remove accessor.
          */

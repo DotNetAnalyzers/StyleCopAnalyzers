@@ -258,6 +258,107 @@ public class TypeName
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestNoViolationOnInterfaceParameterNameAsync()
+        {
+            var testCode = @"
+public interface ITest
+{
+    void Method(int Param1, int param2, int Param3);
+}
+
+public class Test : ITest
+{
+    public void Method(int Param1, int param2, int param3)
+    {
+    }
+}";
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(4, 21).WithArguments("Param1"),
+                this.CSharpDiagnostic().WithLocation(4, 45).WithArguments("Param3"),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestViolationOnRenamedInterfaceParameterNameAsync()
+        {
+            var testCode = @"
+public interface ITest
+{
+    void Method(int Param1, int param2, int Param3);
+}
+
+public class Test : ITest
+{
+    public void Method(int Param1, int param2, int Other)
+    {
+    }
+}";
+
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(4, 21).WithArguments("Param1"),
+                this.CSharpDiagnostic().WithLocation(4, 45).WithArguments("Param3"),
+                this.CSharpDiagnostic().WithLocation(9, 52).WithArguments("Other")
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestNoViolationOnAbstractParameterNameAsync()
+        {
+            var testCode = @"
+public abstract class TestBase
+{
+    public abstract void Method(int Param1, int param2, int Param3);
+}
+
+public class Test : TestBase
+{
+    public override void Method(int Param1, int param2, int param3)
+    {
+    }
+}";
+
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(4, 37).WithArguments("Param1"),
+                this.CSharpDiagnostic().WithLocation(4, 61).WithArguments("Param3"),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestViolationOnRenamedAbstractParameterNameAsync()
+        {
+            var testCode = @"
+public abstract class Testbase
+{
+    public abstract void Method(int Param1, int param2, int Param3);
+}
+
+public class Test : Testbase
+{
+    public override void Method(int Param1, int param2, int Other)
+    {
+    }
+}";
+
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(4, 37).WithArguments("Param1"),
+                this.CSharpDiagnostic().WithLocation(4, 61).WithArguments("Param3"),
+                this.CSharpDiagnostic().WithLocation(9, 61).WithArguments("Other")
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1313ParameterNamesMustBeginWithLowerCaseLetter();
