@@ -449,7 +449,6 @@
     <EmbeddedResource Include="DocumentationRules\DocumentationResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>DocumentationResources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Helpers\HelpersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
