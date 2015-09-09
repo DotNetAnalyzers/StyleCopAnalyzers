@@ -183,7 +183,8 @@
             return result;
         }
 
-        internal static T GetFirstAttributeOrDefault<T>(XmlNodeSyntax nodeSyntax) where T : XmlAttributeSyntax
+        internal static T GetFirstAttributeOrDefault<T>(XmlNodeSyntax nodeSyntax)
+            where T : XmlAttributeSyntax
         {
             var emptyElementSyntax = nodeSyntax as XmlEmptyElementSyntax;
 
