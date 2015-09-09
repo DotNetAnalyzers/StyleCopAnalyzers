@@ -1,14 +1,16 @@
 ﻿namespace StyleCop.Analyzers.Test.OrderingRules
 {
+    using System;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Analyzers.OrderingRules;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using TestHelper;
     using Xunit;
 
-    public class SA1208UnitTests : DiagnosticVerifier
+    public class SA1208UnitTests : CodeFixVerifier
     {
         [Fact]
         public async Task TestWhenSystemUsingDirectivesAreOnTopAsync()
@@ -276,31 +278,66 @@ namespace Test
         [Fact]
         public async Task TestPreprocessorDirectivesAsync()
         {
-            var testCode = @"
-using System;
+            var testCode = @"using System;
 using Microsoft.VisualStudio;
 using MyList = System.Collections.Generic.List<int>;
 using Microsoft.CodeAnalysis;
 
 #if true
-using System.Collections;
-using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using System.Threading;
+using System.Collections;
+#if true
+using System.Collections.Generic;
+#endif
 #else
-using System.Collections;
-using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using System.Threading;
+using System.Collections;
+#endif";
+
+            var fixedTestCode = @"using System;
+
+using Microsoft.CodeAnalysis;
+using Microsoft.VisualStudio;
+
+using MyList = System.Collections.Generic.List<int>;
+
+#if true
+using System.Collections;
+using System.Threading;
+
+using Microsoft.CodeAnalysis.CSharp;
+#if true
+using System.Collections.Generic;
+#endif
+#else
+using Microsoft.CodeAnalysis.CSharp;
+using System.Threading;
+using System.Collections;
 #endif";
 
             // else block is skipped
-            var expected = this.CSharpDiagnostic().WithLocation(10, 1).WithArguments("System.Threading", "Microsoft.CodeAnalysis");
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(8, 1).WithArguments("System.Threading", "Microsoft.CodeAnalysis.CSharp"),
+                this.CSharpDiagnostic().WithLocation(9, 1).WithArguments("System.Collections", "Microsoft.CodeAnalysis.CSharp")
+            };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives();
+        }
+
+        /// <inheritdoc/>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new UsingCodeFixProvider();
         }
     }
 }

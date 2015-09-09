@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.OrderingRules;
     using TestHelper;
@@ -11,7 +12,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1217UsingStaticDirectivesMustBeOrderedAlphabetically"/>.
     /// </summary>
-    public class SA1217UnitTests : DiagnosticVerifier
+    public class SA1217UnitTests : CodeFixVerifier
     {
         /// <summary>
         /// Verifies that the analyzer will not produce diagnostics for correctly ordered using directives inside a namespace.
@@ -103,6 +104,27 @@ namespace Bar
 }
 ";
 
+            var fixedTestCode = @"namespace Foo
+{
+    using System;
+
+    using Execute = System.Action;
+
+    using static System.Array;
+    using static System.Math;
+}
+
+namespace Bar
+{
+    using System;
+
+    using Execute = System.Action;
+
+    using static System.Array;
+    using static System.Math;
+}
+";
+
             DiagnosticResult[] expectedDiagnostics =
             {
                 this.CSharpDiagnostic().WithLocation(5, 5).WithArguments("System.Math", "System.Array"),
@@ -110,6 +132,7 @@ namespace Bar
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -147,9 +170,21 @@ namespace Bar
 }
 ";
 
+            var fixedTestCode = @"namespace Foo
+{
+    using System;
+
+    using Execute = System.Action;
+
+    using static global::System.Array;
+    using static System.Math;
+}
+";
+
             var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(5, 5).WithArguments("System.Math", "System.Array");
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -173,16 +208,39 @@ using static System.String;
 using static System.Math;
 #endif";
 
+            var fixedTestCode = @"using System;
+
+using Microsoft.VisualStudio;
+
+using MyList = System.Collections.Generic.List<int>;
+
+using static System.Tuple;
+
+#if true
+using static System.Math;
+using static System.String;
+#else
+using static System.String;
+using static System.Math;
+#endif";
+
             // else block is skipped
             var expected = this.CSharpDiagnostic().WithLocation(8, 1).WithArguments("System.String", "System.Math");
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1217UsingStaticDirectivesMustBeOrderedAlphabetically();
+        }
+
+        /// <inheritdoc/>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new UsingCodeFixProvider();
         }
     }
 }

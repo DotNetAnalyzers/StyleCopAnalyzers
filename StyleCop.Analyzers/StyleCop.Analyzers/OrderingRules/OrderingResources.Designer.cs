@@ -96,5 +96,14 @@ namespace StyleCop.Analyzers.OrderingRules {
                 return ResourceManager.GetString("SA1213CodeFix", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Reorder using statements.
+        /// </summary>
+        internal static string UsingCodeFix {
+            get {
+                return ResourceManager.GetString("UsingCodeFix", resourceCulture);
+            }
+        }
     }
 }
