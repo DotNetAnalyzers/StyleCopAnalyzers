@@ -501,7 +501,7 @@
             {
                 if ((left.Alias != null) && (right.Alias != null))
                 {
-                    return string.CompareOrdinal(left.Alias.Name.Identifier.ValueText, right.Alias.Name.Identifier.ValueText);
+                    return string.Compare(left.Alias.Name.Identifier.ValueText, right.Alias.Name.Identifier.ValueText, StringComparison.OrdinalIgnoreCase);
                 }
 
                 bool leftIsSystem = IsSeparatedSystemUsing(left);
@@ -511,7 +511,7 @@
                     return leftIsSystem ? -1 : 1;
                 }
 
-                return string.CompareOrdinal(left.Name.ToUnaliasedString(), right.Name.ToUnaliasedString());
+                return string.Compare(left.Name.ToUnaliasedString(), right.Name.ToUnaliasedString(), StringComparison.OrdinalIgnoreCase);
             }
 
             private static bool IsSeparatedSystemUsing(UsingDirectiveSyntax syntax)
