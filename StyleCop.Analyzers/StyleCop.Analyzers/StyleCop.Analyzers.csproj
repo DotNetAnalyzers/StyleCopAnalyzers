@@ -55,6 +55,7 @@
     </Compile>
     <Compile Include="DocumentationRules\ElementDocumentationSummaryBase.cs" />
     <Compile Include="DocumentationRules\FileHeaderAnalyzers.cs" />
+    <Compile Include="DocumentationRules\FileHeaderCodeFixProvider.cs" />
     <Compile Include="DocumentationRules\InheritdocCodeFixProvider.cs" />
     <Compile Include="DocumentationRules\PartialElementDocumentationSummaryBase.cs" />
     <Compile Include="DocumentationRules\PropertyDocumentationSummaryBase.cs" />
@@ -94,7 +95,6 @@
     <Compile Include="DocumentationRules\SA1630DocumentationTextMustContainWhitespace.cs" />
     <Compile Include="DocumentationRules\SA1631DocumentationMustMeetCharacterPercentage.cs" />
     <Compile Include="DocumentationRules\SA1632DocumentationTextMustMeetMinimumCharacterLength.cs" />
-    <Compile Include="DocumentationRules\SA1633CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.cs" />
     <Compile Include="DocumentationRules\SA1642SA1643CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1643DestructorSummaryDocumentationMustBeginWithStandardText.cs" />

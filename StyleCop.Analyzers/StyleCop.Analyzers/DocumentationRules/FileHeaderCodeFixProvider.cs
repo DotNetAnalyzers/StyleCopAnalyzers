@@ -13,18 +13,20 @@
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
-    /// Implements a code fix for SA1633.
+    /// Implements a code fix for file header diagnostics.
     /// </summary>
     /// <remarks>
     /// <para>To fix a violation of this rule, add a standard file header at the top of the file.</para>
     /// </remarks>
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1633CodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(FileHeaderCodeFixProvider))]
     [Shared]
-    public class SA1633CodeFixProvider : CodeFixProvider
+    public class FileHeaderCodeFixProvider : CodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; }
-            = ImmutableArray.Create(FileHeaderAnalyzers.SA1633DescriptorMissing.Id);
+            = ImmutableArray.Create(
+                FileHeaderAnalyzers.SA1633DescriptorMissing.Id,
+                FileHeaderAnalyzers.SA1636Descriptor.Id);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -37,7 +39,7 @@
         {
             foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => this.FixableDiagnosticIds.Contains(d.Id)))
             {
-                context.RegisterCodeFix(CodeAction.Create(DocumentationResources.SA1633CodeFix, token => GetTransformedDocumentAsync(context.Document, token), equivalenceKey: nameof(SA1633CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(DocumentationResources.SA1633CodeFix, token => GetTransformedDocumentAsync(context.Document, token), equivalenceKey: nameof(FileHeaderCodeFixProvider)), diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;

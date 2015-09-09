@@ -206,7 +206,7 @@ namespace Foo
         /// <inheritdoc/>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1633CodeFixProvider();
+            return new FileHeaderCodeFixProvider();
         }
     }
 }
