@@ -142,15 +142,19 @@
         private static SyntaxNode ReAddFileHeader(SyntaxNode syntaxRoot, SyntaxNode newSyntaxRoot)
         {
             var oldFirstToken = syntaxRoot.GetFirstToken();
-            if (oldFirstToken.HasLeadingTrivia)
+            if (!oldFirstToken.HasLeadingTrivia)
             {
-                var newFirstToken = newSyntaxRoot.GetFirstToken();
-                newSyntaxRoot = newSyntaxRoot.ReplaceToken(
-                    newFirstToken,
-                    newFirstToken.WithLeadingTrivia(oldFirstToken.LeadingTrivia));
+                return newSyntaxRoot;
             }
 
-            return newSyntaxRoot;
+            var fileHeader = UsingsHelper.GetFileHeader(oldFirstToken.LeadingTrivia.ToList());
+            if (!fileHeader.Any())
+            {
+                return newSyntaxRoot;
+            }
+
+            var newFirstToken = newSyntaxRoot.GetFirstToken();
+            return newSyntaxRoot.ReplaceToken(newFirstToken, newFirstToken.WithLeadingTrivia(fileHeader));
         }
 
         private static int CountNamespaces(SyntaxList<MemberDeclarationSyntax> members)
@@ -526,24 +530,33 @@
 
             private static List<SyntaxTrivia> StripFileHeader(List<SyntaxTrivia> newLeadingTrivia)
             {
-                var itemsToSkip = 0;
+                var fileHeader = GetFileHeader(newLeadingTrivia);
+                return newLeadingTrivia.Skip(fileHeader.Count).ToList();
+            }
+
+            internal static List<SyntaxTrivia> GetFileHeader(List<SyntaxTrivia> newLeadingTrivia)
+            {
                 var onBlankLine = false;
+                var hasHeader = false;
+                var fileHeader = new List<SyntaxTrivia>();
                 for (var i = 0; i < newLeadingTrivia.Count; i++)
                 {
                     bool done = false;
                     switch (newLeadingTrivia[i].Kind())
                     {
                         case SyntaxKind.SingleLineCommentTrivia:
-                            itemsToSkip++;
+                        case SyntaxKind.MultiLineCommentTrivia:
+                            fileHeader.Add(newLeadingTrivia[i]);
                             onBlankLine = false;
+                            hasHeader = true;
                             break;
 
                         case SyntaxKind.WhitespaceTrivia:
-                            itemsToSkip++;
+                            fileHeader.Add(newLeadingTrivia[i]);
                             break;
 
                         case SyntaxKind.EndOfLineTrivia:
-                            itemsToSkip++;
+                            fileHeader.Add(newLeadingTrivia[i]);
 
                             if (onBlankLine)
                             {
@@ -567,7 +580,7 @@
                     }
                 }
 
-                return newLeadingTrivia.Skip(itemsToSkip).ToList();
+                return hasHeader ? fileHeader : new List<SyntaxTrivia>();
             }
 
             private static int CompareUsings(UsingDirectiveSyntax left, UsingDirectiveSyntax right)
