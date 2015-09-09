@@ -2,6 +2,7 @@
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using StyleCop.Analyzers.DocumentationRules;
     using Xunit;
 
@@ -97,9 +98,21 @@ namespace Foo
 {
 }
 ";
+            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright (c) FooCorp. All rights reserved.
+// </copyright>
+
+#define MYDEFINE
+
+namespace Foo
+{
+}
+";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -115,9 +128,19 @@ namespace Foo
 {
 }
 ";
+            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright (c) FooCorp. All rights reserved.
+// </copyright>
+
+namespace Foo
+{
+}
+";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMalformed).WithLocation(1, 1);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -128,7 +151,46 @@ namespace Foo
         public async Task TestInvalidXmlFileHeaderAsync()
         {
             var testCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-//   Copyright (c) FooCorp. All rights reserved.
+// Copyright (c) FooCorp. All rights reserved.
+
+namespace Foo
+{
+}
+";
+            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright (c) FooCorp. All rights reserved.
+// </copyright>
+
+namespace Foo
+{
+}
+";
+
+            var expected = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMalformed).WithLocation(1, 1);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a file header with an invalid XML structure will produce the correct diagnostic message.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestMalformedHeaderAsync()
+        {
+            var testCode = @"// <copyright test0.cs company=""FooCorp"">
+#define MYDEFINE
+
+namespace Foo
+{
+}
+";
+            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright (c) FooCorp. All rights reserved.
+// </copyright>
+
+#define MYDEFINE
 
 namespace Foo
 {
@@ -137,6 +199,14 @@ namespace Foo
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMalformed).WithLocation(1, 1);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new FileHeaderCodeFixProvider();
         }
     }
 }

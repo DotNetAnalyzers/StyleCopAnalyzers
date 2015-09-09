@@ -2,6 +2,7 @@
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using StyleCop.Analyzers.DocumentationRules;
     using Xunit;
 
@@ -46,6 +47,11 @@ namespace Bar
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1635Descriptor).WithLocation(1, 4);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

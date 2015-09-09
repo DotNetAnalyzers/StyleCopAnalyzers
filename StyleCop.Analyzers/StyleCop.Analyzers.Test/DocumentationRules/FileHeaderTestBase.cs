@@ -13,7 +13,7 @@
     /// <summary>
     /// Base class for file header related unit tests.
     /// </summary>
-    public abstract class FileHeaderTestBase : DiagnosticVerifier
+    public abstract class FileHeaderTestBase : CodeFixVerifier
     {
         private const string SettingsFileName = "stylecop.json";
         private const string TestSettings = @"

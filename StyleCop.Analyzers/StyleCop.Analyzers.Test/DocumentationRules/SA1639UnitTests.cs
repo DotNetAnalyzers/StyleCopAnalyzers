@@ -4,6 +4,7 @@
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using StyleCop.Analyzers.DocumentationRules;
     using Xunit;
 
@@ -87,6 +88,11 @@ namespace Bar
         protected override IEnumerable<string> GetDisabledDiagnostics()
         {
             return Enumerable.Empty<string>();
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

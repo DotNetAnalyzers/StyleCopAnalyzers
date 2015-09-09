@@ -89,6 +89,15 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add file header.
+        /// </summary>
+        internal static string SA1633CodeFix {
+            get {
+                return ResourceManager.GetString("SA1633CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A C# code file is missing a standard file header..
         /// </summary>
         internal static string SA1633Description {

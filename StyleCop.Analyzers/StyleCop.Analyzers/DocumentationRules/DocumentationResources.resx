@@ -126,6 +126,9 @@
   <data name="SA1617CodeFix" xml:space="preserve">
     <value>Remove &lt;returns&gt; XML comment</value>
   </data>
+  <data name="SA1633CodeFix" xml:space="preserve">
+    <value>Add file header</value>
+  </data>
   <data name="SA1633Description" xml:space="preserve">
     <value>A C# code file is missing a standard file header.</value>
   </data>
