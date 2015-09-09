@@ -68,11 +68,16 @@
 
             foreach (var usingDirective in usingDirectives)
             {
+                if (usingDirective.IsPrecededByPreprocessorDirective())
+                {
+                    lastStaticUsingDirective = null;
+                }
+
                 if (usingDirective.StaticKeyword.IsKind(SyntaxKind.StaticKeyword))
                 {
                     lastStaticUsingDirective = usingDirective;
                 }
-                else if (lastStaticUsingDirective != null && !usingDirective.IsPrecededByPreprocessorDirective())
+                else if (lastStaticUsingDirective != null)
                 {
                     // only report a single diagnostic for the last static using directive that is followed by a non-static using directive
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, lastStaticUsingDirective.GetLocation()));

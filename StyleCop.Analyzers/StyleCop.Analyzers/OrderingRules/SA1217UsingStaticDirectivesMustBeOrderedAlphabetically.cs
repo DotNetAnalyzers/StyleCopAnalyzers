@@ -69,9 +69,14 @@
 
             foreach (var usingDirective in usingDirectives)
             {
+                if (usingDirective.IsPrecededByPreprocessorDirective())
+                {
+                    lastStaticUsingDirective = null;
+                }
+
                 if (usingDirective.StaticKeyword.IsKind(SyntaxKind.StaticKeyword))
                 {
-                    if (lastStaticUsingDirective != null && !usingDirective.IsPrecededByPreprocessorDirective())
+                    if (lastStaticUsingDirective != null)
                     {
                         var firstName = lastStaticUsingDirective.Name.ToUnaliasedString();
                         var secondName = usingDirective.Name.ToUnaliasedString();

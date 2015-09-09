@@ -80,17 +80,17 @@
 
             foreach (var usingDirective in usings)
             {
-                if (IsAliasOrStaticUsingDirective(usingDirective))
-                {
-                    continue;
-                }
-
                 if (usingDirective.IsPrecededByPreprocessorDirective())
                 {
                     CheckIncorrectlyOrderedUsingsAndReportDiagnostic(context, usingDirectives);
                     CheckIncorrectlyOrderedUsingsAndReportDiagnostic(context, systemUsingDirectives);
                     usingDirectives.Clear();
                     systemUsingDirectives.Clear();
+                }
+
+                if (IsAliasOrStaticUsingDirective(usingDirective))
+                {
+                    continue;
                 }
 
                 if (usingDirective.HasNamespaceAliasQualifier() || !usingDirective.IsSystemUsingDirective())
