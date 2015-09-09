@@ -527,24 +527,47 @@
             private static List<SyntaxTrivia> StripFileHeader(List<SyntaxTrivia> newLeadingTrivia)
             {
                 var itemsToSkip = 0;
-                var firstTrivia = newLeadingTrivia.FirstOrDefault();
-                if (firstTrivia.IsKind(SyntaxKind.SingleLineCommentTrivia) || firstTrivia.IsKind(SyntaxKind.MultiLineCommentTrivia))
+                var onBlankLine = false;
+                for (var i = 0; i < newLeadingTrivia.Count; i++)
                 {
-                    itemsToSkip++;
-                }
+                    bool done = false;
+                    switch (newLeadingTrivia[i].Kind())
+                    {
+                        case SyntaxKind.SingleLineCommentTrivia:
+                            itemsToSkip++;
+                            onBlankLine = false;
+                            break;
 
-                for (var endofLineIterator = 1; endofLineIterator < newLeadingTrivia.Count; endofLineIterator++)
-                {
-                    if (!newLeadingTrivia[endofLineIterator].IsKind(SyntaxKind.EndOfLineTrivia))
+                        case SyntaxKind.WhitespaceTrivia:
+                            itemsToSkip++;
+                            break;
+
+                        case SyntaxKind.EndOfLineTrivia:
+                            itemsToSkip++;
+
+                            if (onBlankLine)
+                            {
+                                done = true;
+                            }
+                            else
+                            {
+                                onBlankLine = true;
+                            }
+
+                            break;
+
+                        default:
+                            done = true;
+                            break;
+                    }
+
+                    if (done)
                     {
                         break;
                     }
-
-                    itemsToSkip++;
                 }
 
-                newLeadingTrivia = newLeadingTrivia.Skip(itemsToSkip).ToList();
-                return newLeadingTrivia;
+                return newLeadingTrivia.Skip(itemsToSkip).ToList();
             }
 
             private static int CompareUsings(UsingDirectiveSyntax left, UsingDirectiveSyntax right)
