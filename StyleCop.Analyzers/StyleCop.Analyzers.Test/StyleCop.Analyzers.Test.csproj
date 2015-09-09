@@ -348,6 +348,11 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <AdditionalFiles Include="..\stylecop.json">
+      <Link>stylecop.json</Link>
+    </AdditionalFiles>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\StyleCop.Analyzers\StyleCop.Analyzers.csproj">
       <Project>{3B052737-06CE-4182-AE0F-08EB82DFA73E}</Project>
       <Name>StyleCop.Analyzers</Name>
