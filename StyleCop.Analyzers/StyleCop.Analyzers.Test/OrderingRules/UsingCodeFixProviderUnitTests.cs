@@ -67,7 +67,7 @@ namespace Foo
         /// Verifies that the code fix will properly reorder using statements, but will not move a file header comment.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1429")]
+        [Fact]
         public async Task VerifyUsingReorderingWithFileHeaderAsync()
         {
             var testCode = @"// This is a file header.
@@ -153,7 +153,7 @@ namespace Foo
         /// when SA1200 is suppressed. The file header is not moved by the code fix.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1429")]
+        [Fact]
         public async Task VerifyUsingReorderingWithoutMovingWithFileHeaderAsync()
         {
             var testCode = @"// This is a file header.
@@ -170,6 +170,92 @@ namespace Foo
 ";
 
             var fixedTestCode = @"// This is a file header.
+
+using System;
+using Microsoft.CodeAnalysis;
+
+namespace Foo
+{
+    public class Bar
+    {
+    }
+}
+";
+
+            this.suppressSA1200 = true;
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix will properly reorder using statements, without moving them inside a namespace
+        /// when SA1200 is suppressed. The file header is not moved by the code fix.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyUsingReorderingWithoutMovingWithMultiLineFileHeaderAsync()
+        {
+            var testCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
+//   Copyright (c) FooCorp. All rights reserved.
+// </copyright>
+
+using Microsoft.CodeAnalysis;
+using System;
+
+namespace Foo
+{
+    public class Bar
+    {
+    }
+}
+";
+
+            var fixedTestCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
+//   Copyright (c) FooCorp. All rights reserved.
+// </copyright>
+
+using System;
+using Microsoft.CodeAnalysis;
+
+namespace Foo
+{
+    public class Bar
+    {
+    }
+}
+";
+
+            this.suppressSA1200 = true;
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix will properly reorder using statements, without moving them inside a namespace
+        /// when SA1200 is suppressed. The file header is not moved by the code fix.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyUsingReorderingWithoutMovingWithMultiLineCommentAsync()
+        {
+            var testCode = @"/*
+ * Copyright by FooCorp Inc.
+ */
+
+using Microsoft.CodeAnalysis;
+using System;
+
+namespace Foo
+{
+    public class Bar
+    {
+    }
+}
+";
+
+            var fixedTestCode = @"/*
+ * Copyright by FooCorp Inc.
+ */
 
 using System;
 using Microsoft.CodeAnalysis;

@@ -132,9 +132,29 @@
                 newSyntaxRoot = AddUsingsToCompilationRoot(newSyntaxRoot, usingsHelper, usingsIndentation, replaceMap.Any());
             }
 
+            newSyntaxRoot = ReAddFileHeader(syntaxRoot, newSyntaxRoot);
+
             var newDocument = document.WithSyntaxRoot(newSyntaxRoot.WithoutFormatting());
 
             return Task.FromResult(newDocument);
+        }
+
+        private static SyntaxNode ReAddFileHeader(SyntaxNode syntaxRoot, SyntaxNode newSyntaxRoot)
+        {
+            var oldFirstToken = syntaxRoot.GetFirstToken();
+            if (!oldFirstToken.HasLeadingTrivia)
+            {
+                return newSyntaxRoot;
+            }
+
+            var fileHeader = UsingsHelper.GetFileHeader(oldFirstToken.LeadingTrivia.ToList());
+            if (!fileHeader.Any())
+            {
+                return newSyntaxRoot;
+            }
+
+            var newFirstToken = newSyntaxRoot.GetFirstToken();
+            return newSyntaxRoot.ReplaceToken(newFirstToken, newFirstToken.WithLeadingTrivia(fileHeader));
         }
 
         private static int CountNamespaces(SyntaxList<MemberDeclarationSyntax> members)
@@ -427,6 +447,55 @@
                 return SyntaxFactory.List(usingList);
             }
 
+            internal static List<SyntaxTrivia> GetFileHeader(List<SyntaxTrivia> newLeadingTrivia)
+            {
+                var onBlankLine = false;
+                var hasHeader = false;
+                var fileHeader = new List<SyntaxTrivia>();
+                for (var i = 0; i < newLeadingTrivia.Count; i++)
+                {
+                    bool done = false;
+                    switch (newLeadingTrivia[i].Kind())
+                    {
+                    case SyntaxKind.SingleLineCommentTrivia:
+                    case SyntaxKind.MultiLineCommentTrivia:
+                        fileHeader.Add(newLeadingTrivia[i]);
+                        onBlankLine = false;
+                        hasHeader = true;
+                        break;
+
+                    case SyntaxKind.WhitespaceTrivia:
+                        fileHeader.Add(newLeadingTrivia[i]);
+                        break;
+
+                    case SyntaxKind.EndOfLineTrivia:
+                        fileHeader.Add(newLeadingTrivia[i]);
+
+                        if (onBlankLine)
+                        {
+                            done = true;
+                        }
+                        else
+                        {
+                            onBlankLine = true;
+                        }
+
+                        break;
+
+                    default:
+                        done = true;
+                        break;
+                    }
+
+                    if (done)
+                    {
+                        break;
+                    }
+                }
+
+                return hasHeader ? fileHeader : new List<SyntaxTrivia>();
+            }
+
             private static List<UsingDirectiveSyntax> GenerateUsings(Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>> usingsGroup, DirectiveSpan directiveSpan, string indentation, List<SyntaxTrivia> triviaToMove)
             {
                 List<UsingDirectiveSyntax> result = new List<UsingDirectiveSyntax>();
@@ -461,6 +530,11 @@
                         .WithoutLeadingWhitespace()
                         .Where(tr => !tr.IsDirective)
                         .ToList();
+
+                    if (i == 0)
+                    {
+                        newLeadingTrivia = StripFileHeader(newLeadingTrivia);
+                    }
 
                     for (var j = newLeadingTrivia.Count - 1; j >= 0; j--)
                     {
@@ -501,6 +575,12 @@
                 result.Sort(CompareUsings);
 
                 return result;
+            }
+
+            private static List<SyntaxTrivia> StripFileHeader(List<SyntaxTrivia> newLeadingTrivia)
+            {
+                var fileHeader = GetFileHeader(newLeadingTrivia);
+                return newLeadingTrivia.Skip(fileHeader.Count).ToList();
             }
 
             private static int CompareUsings(UsingDirectiveSyntax left, UsingDirectiveSyntax right)
