@@ -318,6 +318,7 @@
     <Compile Include="ReadabilityRules\SA1126PrefixCallsCorrectly.cs" />
     <Compile Include="ReadabilityRules\SA1127CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1127GenericTypeConstraintsMustBeOnOwnLine.cs" />
+    <Compile Include="ReadabilityRules\SA1128ConstructorInitializerMustBeOnOwnLine.cs" />
     <Compile Include="Settings\ObjectModel\DocumentationSettings.cs" />
     <Compile Include="Settings\ObjectModel\SettingsFile.cs" />
     <Compile Include="Settings\ObjectModel\StyleCopSettings.cs" />

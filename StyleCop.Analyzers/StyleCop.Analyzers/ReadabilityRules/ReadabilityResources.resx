@@ -399,4 +399,13 @@
   <data name="SA1127Title" xml:space="preserve">
     <value>Generic type constraints must be on their own line</value>
   </data>
+  <data name="SA1128Description" xml:space="preserve">
+    <value>A constructor initializer, including the colon character, should be on its own line.</value>
+  </data>
+  <data name="SA1128MessageFormat" xml:space="preserve">
+    <value>Put constructor initializers on their own line</value>
+  </data>
+  <data name="SA1128Title" xml:space="preserve">
+    <value>Put constructor initializers on their own line</value>
+  </data>
 </root>
