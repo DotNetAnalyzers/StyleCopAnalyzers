@@ -64,6 +64,43 @@ namespace Foo
         }
 
         /// <summary>
+        /// Verifies that the code fix will properly reorder using statements, but will not move a file header comment.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1429")]
+        public async Task VerifyUsingReorderingWithFileHeaderAsync()
+        {
+            var testCode = @"// This is a file header.
+
+using Microsoft.CodeAnalysis;
+using System;
+
+namespace Foo
+{
+    public class Bar
+    {
+    }
+}
+";
+
+            var fixedTestCode = @"// This is a file header.
+
+namespace Foo
+{
+    using System;
+    using Microsoft.CodeAnalysis;
+
+    public class Bar
+    {
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that the code fix will properly reorder using statements, without moving them inside a namespace when SA1200 is suppressed.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
@@ -97,6 +134,45 @@ using MyFunc = System.Func<int,bool>;
 using SystemAction = System.Action;
 using static System.Math;
 using static System.String;
+
+namespace Foo
+{
+    public class Bar
+    {
+    }
+}
+";
+
+            this.suppressSA1200 = true;
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix will properly reorder using statements, without moving them inside a namespace
+        /// when SA1200 is suppressed. The file header is not moved by the code fix.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1429")]
+        public async Task VerifyUsingReorderingWithoutMovingWithFileHeaderAsync()
+        {
+            var testCode = @"// This is a file header.
+
+using Microsoft.CodeAnalysis;
+using System;
+
+namespace Foo
+{
+    public class Bar
+    {
+    }
+}
+";
+
+            var fixedTestCode = @"// This is a file header.
+
+using System;
+using Microsoft.CodeAnalysis;
 
 namespace Foo
 {
