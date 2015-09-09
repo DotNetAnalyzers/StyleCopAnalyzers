@@ -13,20 +13,20 @@
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
-    /// Implements a code fix for SA1633.
+    /// Implements a code fix for file header diagnostics.
     /// </summary>
     /// <remarks>
-    /// <para>To fix a violation of this rule, remove the <c>&lt;returns&gt;</c> tag from the element.</para>
+    /// <para>To fix a violation of this rule, add a standard file header at the top of the file.</para>
     /// </remarks>
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1633CodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(FileHeaderCodeFixProvider))]
     [Shared]
-    public class SA1633CodeFixProvider : CodeFixProvider
+    public class FileHeaderCodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(FileHeaderAnalyzers.SA1633DescriptorMissing.Id);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; }
+            = ImmutableArray.Create(
+                FileHeaderAnalyzers.SA1633DescriptorMissing.Id,
+                FileHeaderAnalyzers.SA1636Descriptor.Id);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -37,9 +37,9 @@
         /// <inheritdoc/>
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
+            foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => this.FixableDiagnosticIds.Contains(d.Id)))
             {
-                context.RegisterCodeFix(CodeAction.Create(DocumentationResources.SA1633CodeFix, token => GetTransformedDocumentAsync(context.Document, token), equivalenceKey: nameof(SA1633CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(DocumentationResources.SA1633CodeFix, token => GetTransformedDocumentAsync(context.Document, token), equivalenceKey: nameof(FileHeaderCodeFixProvider)), diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;
@@ -58,17 +58,56 @@
 
         private static SyntaxNode ReplaceHeader(Document document, SyntaxNode root, StyleCopSettings settings)
         {
-            var existingTrivia = root.GetLeadingTrivia().Where(x => !x.IsKind(SyntaxKind.EndOfLineTrivia) && !x.IsKind(SyntaxKind.SingleLineCommentTrivia));
-            return root.WithLeadingTrivia(CreateNewHeader(document.Name, settings).AddRange(existingTrivia).Add(SyntaxFactory.CarriageReturnLineFeed));
+            // Skip single line comments, whitespace, and end of line trivia until a blank line is encountered.
+            SyntaxTriviaList trivia = root.GetLeadingTrivia();
+
+            bool onBlankLine = false;
+            while (trivia.Any())
+            {
+                bool done = false;
+                switch (trivia[0].Kind())
+                {
+                case SyntaxKind.SingleLineCommentTrivia:
+                    trivia = trivia.RemoveAt(0);
+                    onBlankLine = false;
+                    break;
+
+                case SyntaxKind.WhitespaceTrivia:
+                    trivia = trivia.RemoveAt(0);
+                    break;
+
+                case SyntaxKind.EndOfLineTrivia:
+                    trivia = trivia.RemoveAt(0);
+
+                    if (onBlankLine)
+                    {
+                        done = true;
+                    }
+                    else
+                    {
+                        onBlankLine = true;
+                    }
+
+                    break;
+
+                default:
+                    done = true;
+                    break;
+                }
+
+                if (done)
+                {
+                    break;
+                }
+            }
+
+            return root.WithLeadingTrivia(CreateNewHeader(document.Name, settings).Add(SyntaxFactory.CarriageReturnLineFeed).Add(SyntaxFactory.CarriageReturnLineFeed).AddRange(trivia));
         }
 
         private static SyntaxNode AddHeader(SyntaxNode root, string name, StyleCopSettings settings)
         {
-            var newTrivia = CreateNewHeader(name, settings).AddRange(root.GetLeadingTrivia());
-            if (!newTrivia.Last().IsKind(SyntaxKind.EndOfLineTrivia))
-            {
-                newTrivia = newTrivia.Add(SyntaxFactory.CarriageReturnLineFeed);
-            }
+            var newTrivia = CreateNewHeader(name, settings).Add(SyntaxFactory.CarriageReturnLineFeed).Add(SyntaxFactory.CarriageReturnLineFeed);
+            newTrivia = newTrivia.AddRange(root.GetLeadingTrivia());
 
             return root.WithLeadingTrivia(newTrivia);
         }
@@ -86,8 +125,7 @@
         {
             return $@"// <copyright file=""{filename}"" company=""{settings.DocumentationRules.CompanyName}"">
 {copyrightText}
-// </copyright>
-";
+// </copyright>";
         }
 
         private static string GetCopyrightText(string copyrightText)
