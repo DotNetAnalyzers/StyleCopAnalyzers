@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Globalization;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -505,7 +506,7 @@
             {
                 if ((left.Alias != null) && (right.Alias != null))
                 {
-                    return string.Compare(left.Alias.Name.Identifier.ValueText, right.Alias.Name.Identifier.ValueText, StringComparison.OrdinalIgnoreCase);
+                    return CultureInfo.InvariantCulture.CompareInfo.Compare(left.Alias.Name.Identifier.ValueText, right.Alias.Name.Identifier.ValueText, CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreWidth);
                 }
 
                 bool leftIsSystem = IsSeparatedSystemUsing(left);
@@ -515,7 +516,7 @@
                     return leftIsSystem ? -1 : 1;
                 }
 
-                return string.Compare(left.Name.ToUnaliasedString(), right.Name.ToUnaliasedString(), StringComparison.OrdinalIgnoreCase);
+                return CultureInfo.InvariantCulture.CompareInfo.Compare(left.Name.ToNormalizedString(), right.Name.ToNormalizedString(), CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreWidth);
             }
 
             private static bool IsSeparatedSystemUsing(UsingDirectiveSyntax syntax)

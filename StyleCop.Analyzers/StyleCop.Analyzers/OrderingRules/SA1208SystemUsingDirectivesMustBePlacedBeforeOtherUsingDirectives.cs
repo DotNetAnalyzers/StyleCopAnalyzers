@@ -91,7 +91,7 @@
                 {
                     if (systemUsingDirectivesShouldBeBeforeThisName != null)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, usingDirective.GetLocation(), usingDirective.Name.ToUnaliasedString(), systemUsingDirectivesShouldBeBeforeThisName));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, usingDirective.GetLocation(), usingDirective.Name.ToNormalizedString(), systemUsingDirectivesShouldBeBeforeThisName));
                         continue;
                     }
 
@@ -99,8 +99,8 @@
 
                     if (!previousUsing.IsSystemUsingDirective() || previousUsing.StaticKeyword.Kind() != SyntaxKind.None)
                     {
-                        systemUsingDirectivesShouldBeBeforeThisName = previousUsing.Name.ToUnaliasedString();
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, usingDirective.GetLocation(), usingDirective.Name.ToUnaliasedString(), systemUsingDirectivesShouldBeBeforeThisName));
+                        systemUsingDirectivesShouldBeBeforeThisName = previousUsing.Name.ToNormalizedString();
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, usingDirective.GetLocation(), usingDirective.Name.ToNormalizedString(), systemUsingDirectivesShouldBeBeforeThisName));
                     }
                 }
             }

@@ -259,8 +259,8 @@ namespace ATestA {}
 
 namespace Test
 {
-    using ATestA;
     using \u0041Test_;
+    using ATestA;
     using Test;
 }";
 

@@ -157,9 +157,9 @@ namespace Test
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation("Test3.cs", 2, 1).WithArguments("System.IO", "AnotherNamespace"),
+                this.CSharpDiagnostic().WithLocation("Test3.cs", 2, 1).WithArguments("global::System.IO", "global::AnotherNamespace"),
                 this.CSharpDiagnostic().WithLocation("Test3.cs", 8, 5).WithArguments("System.Threading", "Xyz"),
-                this.CSharpDiagnostic().WithLocation("Test3.cs", 9, 5).WithArguments("System", "Xyz")
+                this.CSharpDiagnostic().WithLocation("Test3.cs", 9, 5).WithArguments("global::System", "Xyz")
             };
 
             await this.VerifyCSharpDiagnosticAsync(sources, expected, CancellationToken.None).ConfigureAwait(false);
