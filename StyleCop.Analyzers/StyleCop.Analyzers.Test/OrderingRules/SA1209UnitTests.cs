@@ -122,10 +122,10 @@ namespace Test
 
             var fixedTestCode = @"namespace Test
 {
-    using global::System;
-    using global::System.IO;
     using System.Text;
     using System.Threading;
+    using global::System;
+    using global::System.IO;
     using global::System.Threading.Tasks;
 
     using Name = global::System.Threading;
@@ -250,7 +250,6 @@ using Microsoft.CodeAnalysis;
 #endif";
 
             var fixedTestCode = @"using System;
-
 using Microsoft.VisualStudio;
 
 using MyList = System.Collections.Generic.List<int>;

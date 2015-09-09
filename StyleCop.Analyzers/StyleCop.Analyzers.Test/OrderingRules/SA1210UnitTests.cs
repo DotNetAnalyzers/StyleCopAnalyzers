@@ -95,7 +95,6 @@ namespace Bar
 {
     using System;
     using System.Threading;
-
     using Bar;
     using Foo;
 }";
@@ -153,12 +152,11 @@ namespace Foo
 
             var fixedTestCode = @"namespace Foo
 {
+    using System.Threading;
+    using global::Foo;
     using global::System;
     using global::System.IO;
     using global::System.Linq;
-    using System.Threading;
-
-    using global::Foo;
 
     using XYZ = System.IO;
 }";
@@ -188,12 +186,11 @@ namespace Foo
 
             var fixedTestCode = @"namespace Foo
 {
+    using System.Threading;
+    using global::Foo;
     using global::System;
     using global::System.IO;
     using global::System.Linq;
-    using System.Threading;
-
-    using global::Foo;
 }";
 
             DiagnosticResult[] expected =
@@ -291,7 +288,6 @@ using Microsoft.CodeAnalysis;
 #endif";
 
             var fixedTestCode = @"using System;
-
 using Microsoft.VisualStudio;
 
 using MyList = System.Collections.Generic.List<int>;

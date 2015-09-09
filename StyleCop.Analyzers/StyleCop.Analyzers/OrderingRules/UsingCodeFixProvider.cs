@@ -334,9 +334,7 @@
                 this.ProcessMembers(compilationUnit.Members);
             }
 
-            public Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>> SystemUsings { get; } = new Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>>();
-
-            public Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>> OtherUsings { get; } = new Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>>();
+            public Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>> NamespaceUsings { get; } = new Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>>();
 
             public Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>> Aliases { get; } = new Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>>();
 
@@ -352,12 +350,7 @@
                 List<UsingDirectiveSyntax> result = new List<UsingDirectiveSyntax>();
                 List<UsingDirectiveSyntax> usingsList;
 
-                if (this.SystemUsings.TryGetValue(directiveSpan, out usingsList))
-                {
-                    result.AddRange(usingsList);
-                }
-
-                if (this.OtherUsings.TryGetValue(directiveSpan, out usingsList))
+                if (this.NamespaceUsings.TryGetValue(directiveSpan, out usingsList))
                 {
                     result.AddRange(usingsList);
                 }
@@ -380,8 +373,7 @@
                 var usingList = new List<UsingDirectiveSyntax>();
                 List<SyntaxTrivia> triviaToMove = new List<SyntaxTrivia>();
 
-                usingList.AddRange(GenerateUsings(this.SystemUsings, directiveSpan, indentation, triviaToMove, false));
-                usingList.AddRange(GenerateUsings(this.OtherUsings, directiveSpan, indentation, triviaToMove, usingList.Any()));
+                usingList.AddRange(GenerateUsings(this.NamespaceUsings, directiveSpan, indentation, triviaToMove, false));
                 usingList.AddRange(GenerateUsings(this.Aliases, directiveSpan, indentation, triviaToMove, usingList.Any()));
                 usingList.AddRange(GenerateUsings(this.StaticImports, directiveSpan, indentation, triviaToMove, usingList.Any()));
 
@@ -405,8 +397,7 @@
                 var usingList = new List<UsingDirectiveSyntax>();
                 List<SyntaxTrivia> triviaToMove = new List<SyntaxTrivia>();
 
-                usingList.AddRange(this.GenerateUsings(this.SystemUsings, usingsList, indentation, triviaToMove, false));
-                usingList.AddRange(this.GenerateUsings(this.OtherUsings, usingsList, indentation, triviaToMove, usingList.Any()));
+                usingList.AddRange(this.GenerateUsings(this.NamespaceUsings, usingsList, indentation, triviaToMove, false));
                 usingList.AddRange(this.GenerateUsings(this.Aliases, usingsList, indentation, triviaToMove, usingList.Any()));
                 usingList.AddRange(this.GenerateUsings(this.StaticImports, usingsList, indentation, triviaToMove, usingList.Any()));
 
@@ -513,7 +504,22 @@
                     return string.CompareOrdinal(left.Alias.Name.Identifier.ValueText, right.Alias.Name.Identifier.ValueText);
                 }
 
+                bool leftIsSystem = IsSeparatedSystemUsing(left);
+                bool rightIsSystem = IsSeparatedSystemUsing(right);
+                if (leftIsSystem != rightIsSystem)
+                {
+                    return leftIsSystem ? -1 : 1;
+                }
+
                 return string.CompareOrdinal(left.Name.ToUnaliasedString(), right.Name.ToUnaliasedString());
+            }
+
+            private static bool IsSeparatedSystemUsing(UsingDirectiveSyntax syntax)
+            {
+                return syntax.Alias == null
+                    && syntax.IsSystemUsingDirective()
+                    && !syntax.HasNamespaceAliasQualifier()
+                    && syntax.StaticKeyword.IsKind(SyntaxKind.None);
             }
 
             private void ProcessMembers(SyntaxList<MemberDeclarationSyntax> members)
@@ -539,13 +545,9 @@
                     {
                         this.AddUsingDirective(this.StaticImports, usingDirective, owningSpan);
                     }
-                    else if (usingDirective.IsSystemUsingDirective())
-                    {
-                        this.AddUsingDirective(this.SystemUsings, usingDirective, owningSpan);
-                    }
                     else
                     {
-                        this.AddUsingDirective(this.OtherUsings, usingDirective, owningSpan);
+                        this.AddUsingDirective(this.NamespaceUsings, usingDirective, owningSpan);
                     }
                 }
             }
