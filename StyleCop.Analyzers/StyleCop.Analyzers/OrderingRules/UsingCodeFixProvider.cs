@@ -52,13 +52,17 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create(OrderingResources.UsingCodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token), equivalenceKey: nameof(UsingCodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        OrderingResources.UsingCodeFix,
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, syntaxRoot, cancellationToken),
+                        equivalenceKey: nameof(UsingCodeFixProvider)),
+                    diagnostic);
             }
         }
 
-        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode syntaxRoot, CancellationToken cancellationToken)
         {
-            var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var compilationUnit = (CompilationUnitSyntax)syntaxRoot;
 
             var indentationOptions = IndentationOptions.FromDocument(document);
@@ -123,7 +127,7 @@
 
             var newDocument = document.WithSyntaxRoot(newSyntaxRoot.WithoutFormatting());
 
-            return newDocument;
+            return Task.FromResult(newDocument);
         }
 
         private static int CountNamespaces(SyntaxList<MemberDeclarationSyntax> members)
