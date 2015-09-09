@@ -1,6 +1,7 @@
 ﻿namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Collections.Generic;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -46,12 +47,9 @@ namespace Foo
     using System;
     using System.Collections;
     using System.Collections.Generic;
-
     using Microsoft.CodeAnalysis;
-
     using MyFunc = System.Func<int,bool>;
     using SystemAction = System.Action;
-
     using static System.Math;
     using static System.String;
 
@@ -61,6 +59,44 @@ namespace Foo
 }
 ";
 
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix will properly reorder using statements, but will not move a file header comment.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1429")]
+        public async Task VerifyUsingReorderingWithFileHeaderAsync()
+        {
+            var testCode = @"// This is a file header.
+
+using Microsoft.CodeAnalysis;
+using System;
+
+namespace Foo
+{
+    public class Bar
+    {
+    }
+}
+";
+
+            var fixedTestCode = @"// This is a file header.
+
+namespace Foo
+{
+    using System;
+    using Microsoft.CodeAnalysis;
+
+    public class Bar
+    {
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
@@ -93,12 +129,9 @@ namespace Foo
             var fixedTestCode = @"using System;
 using System.Collections;
 using System.Collections.Generic;
-
 using Microsoft.CodeAnalysis;
-
 using MyFunc = System.Func<int,bool>;
 using SystemAction = System.Action;
-
 using static System.Math;
 using static System.String;
 
@@ -111,6 +144,46 @@ namespace Foo
 ";
 
             this.suppressSA1200 = true;
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix will properly reorder using statements, without moving them inside a namespace
+        /// when SA1200 is suppressed. The file header is not moved by the code fix.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1429")]
+        public async Task VerifyUsingReorderingWithoutMovingWithFileHeaderAsync()
+        {
+            var testCode = @"// This is a file header.
+
+using Microsoft.CodeAnalysis;
+using System;
+
+namespace Foo
+{
+    public class Bar
+    {
+    }
+}
+";
+
+            var fixedTestCode = @"// This is a file header.
+
+using System;
+using Microsoft.CodeAnalysis;
+
+namespace Foo
+{
+    public class Bar
+    {
+    }
+}
+";
+
+            this.suppressSA1200 = true;
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
@@ -147,12 +220,9 @@ namespace TestNamespace2
             var fixedTestCode = @"using System;
 using System.Collections;
 using System.Collections.Generic;
-
 using Microsoft.CodeAnalysis;
-
 using MyFunc = System.Func<int,bool>;
 using SystemAction = System.Action;
-
 using static System.Math;
 using static System.String;
 
@@ -168,6 +238,20 @@ namespace TestNamespace2
 }
 ";
 
+            // The code fix is not able to correct all violations due to the use of multiple namespaces in a single file
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(1, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(2, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(3, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(4, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(5, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(6, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(7, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(8, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
@@ -202,12 +286,9 @@ namespace Foo
             var fixedTestCode = @"using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-
 using Microsoft.CodeAnalysis;
-
 using MyFunc = System.Func<int,bool>;
 using SystemAction = System.Action;
-
 using static System.Math;
 using static System.String;
 
@@ -221,6 +302,7 @@ namespace Foo
 }
 ";
 
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 

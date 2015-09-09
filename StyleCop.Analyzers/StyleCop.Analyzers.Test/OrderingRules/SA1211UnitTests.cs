@@ -124,7 +124,6 @@ namespace Spam
             var fixedTestCode = @"namespace Foo
 {
     using System;
-
     using character = System.Char;
     using \u0069nt = System.Int32;
 }
@@ -132,7 +131,6 @@ namespace Spam
 namespace Bar
 {
     using System;
-
     using MemoryStream = System.IO.MemoryStream;
     using Stream = System.IO.Stream;
     using StringBuilder = System.Text.StringBuilder;
@@ -142,7 +140,6 @@ namespace Bar
 namespace Spam
 {
     using System;
-
     using Character = System.Char;
     using @int = System.Int32;
 }
@@ -156,6 +153,7 @@ namespace Spam
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
@@ -176,9 +174,7 @@ using AThing = System.Threading;
 #endif";
 
             var fixedTestCode = @"using System;
-
 using Microsoft.VisualStudio;
-
 using MyList = System.Collections.Generic.List<int>;
 
 #if true
@@ -193,6 +189,7 @@ using AThing = System.Threading;
             var expected = this.CSharpDiagnostic().WithLocation(8, 1).WithArguments("AThing", "BThing");
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 

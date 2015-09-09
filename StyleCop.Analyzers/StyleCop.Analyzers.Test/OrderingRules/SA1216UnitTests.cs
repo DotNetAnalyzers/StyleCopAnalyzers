@@ -104,18 +104,14 @@ namespace Bar
             var fixedTestCode = @"namespace Foo
 {
     using System;
-
     using Execute = System.Action;
-
     using static System.Math;
 }
 
 namespace Bar
 {
     using System;
-
     using Execute = System.Action;
-
     using static System.Array;
     using static System.Math;
 }
@@ -128,6 +124,7 @@ namespace Bar
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
@@ -151,17 +148,13 @@ using System.Threading.Tasks;
 #endif";
 
             var fixedTestCode = @"using System;
-
 using Microsoft.VisualStudio;
-
 using MyList = System.Collections.Generic.List<int>;
-
 using static System.String;
 
 #if true
 using System.Threading;
 using System.Threading.Tasks;
-
 using static System.Math;
 #else
 using System.Threading;
@@ -173,6 +166,7 @@ using System.Threading.Tasks;
             var expected = this.CSharpDiagnostic().WithLocation(9, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 

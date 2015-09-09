@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Globalization;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -38,6 +39,12 @@
         public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
 
         /// <inheritdoc/>
+        public override FixAllProvider GetFixAllProvider()
+        {
+            return FixAll.Instance;
+        }
+
+        /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
@@ -52,13 +59,17 @@
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create(OrderingResources.UsingCodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token), equivalenceKey: nameof(UsingCodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        OrderingResources.UsingCodeFix,
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, syntaxRoot, cancellationToken),
+                        equivalenceKey: nameof(UsingCodeFixProvider)),
+                    diagnostic);
             }
         }
 
-        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode syntaxRoot, CancellationToken cancellationToken)
         {
-            var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var compilationUnit = (CompilationUnitSyntax)syntaxRoot;
 
             var indentationOptions = IndentationOptions.FromDocument(document);
@@ -123,7 +134,7 @@
 
             var newDocument = document.WithSyntaxRoot(newSyntaxRoot.WithoutFormatting());
 
-            return newDocument;
+            return Task.FromResult(newDocument);
         }
 
         private static int CountNamespaces(SyntaxList<MemberDeclarationSyntax> members)
@@ -334,9 +345,7 @@
                 this.ProcessMembers(compilationUnit.Members);
             }
 
-            public Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>> SystemUsings { get; } = new Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>>();
-
-            public Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>> OtherUsings { get; } = new Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>>();
+            public Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>> NamespaceUsings { get; } = new Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>>();
 
             public Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>> Aliases { get; } = new Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>>();
 
@@ -352,12 +361,7 @@
                 List<UsingDirectiveSyntax> result = new List<UsingDirectiveSyntax>();
                 List<UsingDirectiveSyntax> usingsList;
 
-                if (this.SystemUsings.TryGetValue(directiveSpan, out usingsList))
-                {
-                    result.AddRange(usingsList);
-                }
-
-                if (this.OtherUsings.TryGetValue(directiveSpan, out usingsList))
+                if (this.NamespaceUsings.TryGetValue(directiveSpan, out usingsList))
                 {
                     result.AddRange(usingsList);
                 }
@@ -380,10 +384,9 @@
                 var usingList = new List<UsingDirectiveSyntax>();
                 List<SyntaxTrivia> triviaToMove = new List<SyntaxTrivia>();
 
-                usingList.AddRange(GenerateUsings(this.SystemUsings, directiveSpan, indentation, triviaToMove, false));
-                usingList.AddRange(GenerateUsings(this.OtherUsings, directiveSpan, indentation, triviaToMove, usingList.Any()));
-                usingList.AddRange(GenerateUsings(this.Aliases, directiveSpan, indentation, triviaToMove, usingList.Any()));
-                usingList.AddRange(GenerateUsings(this.StaticImports, directiveSpan, indentation, triviaToMove, usingList.Any()));
+                usingList.AddRange(GenerateUsings(this.NamespaceUsings, directiveSpan, indentation, triviaToMove));
+                usingList.AddRange(GenerateUsings(this.Aliases, directiveSpan, indentation, triviaToMove));
+                usingList.AddRange(GenerateUsings(this.StaticImports, directiveSpan, indentation, triviaToMove));
 
                 if (triviaToMove.Count > 0)
                 {
@@ -405,10 +408,9 @@
                 var usingList = new List<UsingDirectiveSyntax>();
                 List<SyntaxTrivia> triviaToMove = new List<SyntaxTrivia>();
 
-                usingList.AddRange(this.GenerateUsings(this.SystemUsings, usingsList, indentation, triviaToMove, false));
-                usingList.AddRange(this.GenerateUsings(this.OtherUsings, usingsList, indentation, triviaToMove, usingList.Any()));
-                usingList.AddRange(this.GenerateUsings(this.Aliases, usingsList, indentation, triviaToMove, usingList.Any()));
-                usingList.AddRange(this.GenerateUsings(this.StaticImports, usingsList, indentation, triviaToMove, usingList.Any()));
+                usingList.AddRange(this.GenerateUsings(this.NamespaceUsings, usingsList, indentation, triviaToMove));
+                usingList.AddRange(this.GenerateUsings(this.Aliases, usingsList, indentation, triviaToMove));
+                usingList.AddRange(this.GenerateUsings(this.StaticImports, usingsList, indentation, triviaToMove));
 
                 if (triviaToMove.Count > 0)
                 {
@@ -425,7 +427,7 @@
                 return SyntaxFactory.List(usingList);
             }
 
-            private static List<UsingDirectiveSyntax> GenerateUsings(Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>> usingsGroup, DirectiveSpan directiveSpan, string indentation, List<SyntaxTrivia> triviaToMove, bool leadingBlankLine)
+            private static List<UsingDirectiveSyntax> GenerateUsings(Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>> usingsGroup, DirectiveSpan directiveSpan, string indentation, List<SyntaxTrivia> triviaToMove)
             {
                 List<UsingDirectiveSyntax> result = new List<UsingDirectiveSyntax>();
                 List<UsingDirectiveSyntax> usingsList;
@@ -435,10 +437,10 @@
                     return result;
                 }
 
-                return GenerateUsings(usingsList, indentation, triviaToMove, leadingBlankLine);
+                return GenerateUsings(usingsList, indentation, triviaToMove);
             }
 
-            private static List<UsingDirectiveSyntax> GenerateUsings(List<UsingDirectiveSyntax> usingsList, string indentation, List<SyntaxTrivia> triviaToMove, bool leadingBlankLine)
+            private static List<UsingDirectiveSyntax> GenerateUsings(List<UsingDirectiveSyntax> usingsList, string indentation, List<SyntaxTrivia> triviaToMove)
             {
                 List<UsingDirectiveSyntax> result = new List<UsingDirectiveSyntax>();
 
@@ -498,11 +500,6 @@
 
                 result.Sort(CompareUsings);
 
-                if (leadingBlankLine)
-                {
-                    result[0] = result[0].WithLeadingTrivia(result[0].GetLeadingTrivia().Insert(0, SyntaxFactory.CarriageReturnLineFeed));
-                }
-
                 return result;
             }
 
@@ -510,10 +507,25 @@
             {
                 if ((left.Alias != null) && (right.Alias != null))
                 {
-                    return string.CompareOrdinal(left.Alias.Name.Identifier.ValueText, right.Alias.Name.Identifier.ValueText);
+                    return CultureInfo.InvariantCulture.CompareInfo.Compare(left.Alias.Name.Identifier.ValueText, right.Alias.Name.Identifier.ValueText, CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreWidth);
                 }
 
-                return string.CompareOrdinal(left.Name.ToUnaliasedString(), right.Name.ToUnaliasedString());
+                bool leftIsSystem = IsSeparatedSystemUsing(left);
+                bool rightIsSystem = IsSeparatedSystemUsing(right);
+                if (leftIsSystem != rightIsSystem)
+                {
+                    return leftIsSystem ? -1 : 1;
+                }
+
+                return CultureInfo.InvariantCulture.CompareInfo.Compare(left.Name.ToNormalizedString(), right.Name.ToNormalizedString(), CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreWidth);
+            }
+
+            private static bool IsSeparatedSystemUsing(UsingDirectiveSyntax syntax)
+            {
+                return syntax.Alias == null
+                    && syntax.IsSystemUsingDirective()
+                    && !syntax.HasNamespaceAliasQualifier()
+                    && syntax.StaticKeyword.IsKind(SyntaxKind.None);
             }
 
             private void ProcessMembers(SyntaxList<MemberDeclarationSyntax> members)
@@ -539,13 +551,9 @@
                     {
                         this.AddUsingDirective(this.StaticImports, usingDirective, owningSpan);
                     }
-                    else if (usingDirective.IsSystemUsingDirective())
-                    {
-                        this.AddUsingDirective(this.SystemUsings, usingDirective, owningSpan);
-                    }
                     else
                     {
-                        this.AddUsingDirective(this.OtherUsings, usingDirective, owningSpan);
+                        this.AddUsingDirective(this.NamespaceUsings, usingDirective, owningSpan);
                     }
                 }
             }
@@ -563,11 +571,11 @@
                 usingList.Add(usingDirective);
             }
 
-            private List<UsingDirectiveSyntax> GenerateUsings(Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>> usingsGroup, List<UsingDirectiveSyntax> usingsList, string indentation, List<SyntaxTrivia> triviaToMove, bool leadingBlankLine)
+            private List<UsingDirectiveSyntax> GenerateUsings(Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>> usingsGroup, List<UsingDirectiveSyntax> usingsList, string indentation, List<SyntaxTrivia> triviaToMove)
             {
                 var filteredUsingsList = this.FilterRelevantUsings(usingsGroup, usingsList);
 
-                return GenerateUsings(filteredUsingsList, indentation, triviaToMove, leadingBlankLine);
+                return GenerateUsings(filteredUsingsList, indentation, triviaToMove);
             }
 
             private List<UsingDirectiveSyntax> FilterRelevantUsings(Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>> usingsGroup, List<UsingDirectiveSyntax> usingsList)
@@ -636,6 +644,29 @@
                 }
 
                 return base.VisitToken(token);
+            }
+        }
+
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; } = new FixAll();
+
+            /// <inheritdoc/>
+            protected override string CodeActionTitle
+                => OrderingResources.UsingCodeFix;
+
+            /// <inheritdoc/>
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            {
+                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
+                if (diagnostics.IsEmpty)
+                {
+                    return null;
+                }
+
+                var syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                Document newDocument = await GetTransformedDocumentAsync(document, syntaxRoot, fixAllContext.CancellationToken).ConfigureAwait(false);
+                return await newDocument.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
             }
         }
     }

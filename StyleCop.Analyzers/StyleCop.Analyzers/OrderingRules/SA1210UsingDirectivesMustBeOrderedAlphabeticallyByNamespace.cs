@@ -80,17 +80,17 @@
 
             foreach (var usingDirective in usings)
             {
-                if (IsAliasOrStaticUsingDirective(usingDirective))
-                {
-                    continue;
-                }
-
                 if (usingDirective.IsPrecededByPreprocessorDirective())
                 {
                     CheckIncorrectlyOrderedUsingsAndReportDiagnostic(context, usingDirectives);
                     CheckIncorrectlyOrderedUsingsAndReportDiagnostic(context, systemUsingDirectives);
                     usingDirectives.Clear();
                     systemUsingDirectives.Clear();
+                }
+
+                if (IsAliasOrStaticUsingDirective(usingDirective))
+                {
+                    continue;
                 }
 
                 if (usingDirective.HasNamespaceAliasQualifier() || !usingDirective.IsSystemUsingDirective())
@@ -115,7 +115,7 @@
             {
                 if (previousUsingDirective != null)
                 {
-                    if (CultureInfo.InvariantCulture.CompareInfo.Compare(previousUsingDirective.Name.ToString(), directive.Name.ToString(), CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreWidth) > 0)
+                    if (CultureInfo.InvariantCulture.CompareInfo.Compare(previousUsingDirective.Name.ToNormalizedString(), directive.Name.ToNormalizedString(), CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreWidth) > 0)
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, previousUsingDirective.GetLocation()));
                     }

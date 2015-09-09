@@ -107,9 +107,7 @@ namespace Bar
             var fixedTestCode = @"namespace Foo
 {
     using System;
-
     using Execute = System.Action;
-
     using static System.Array;
     using static System.Math;
 }
@@ -117,9 +115,7 @@ namespace Bar
 namespace Bar
 {
     using System;
-
     using Execute = System.Action;
-
     using static System.Array;
     using static System.Math;
 }
@@ -132,6 +128,7 @@ namespace Bar
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
@@ -173,17 +170,16 @@ namespace Bar
             var fixedTestCode = @"namespace Foo
 {
     using System;
-
     using Execute = System.Action;
-
     using static global::System.Array;
     using static System.Math;
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(5, 5).WithArguments("System.Math", "System.Array");
+            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(5, 5).WithArguments("System.Math", "global::System.Array");
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
@@ -209,11 +205,8 @@ using static System.Math;
 #endif";
 
             var fixedTestCode = @"using System;
-
 using Microsoft.VisualStudio;
-
 using MyList = System.Collections.Generic.List<int>;
-
 using static System.Tuple;
 
 #if true
@@ -228,6 +221,7 @@ using static System.Math;
             var expected = this.CSharpDiagnostic().WithLocation(8, 1).WithArguments("System.String", "System.Math");
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 

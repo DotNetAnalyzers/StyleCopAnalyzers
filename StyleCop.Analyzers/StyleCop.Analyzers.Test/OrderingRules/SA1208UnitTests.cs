@@ -13,7 +13,7 @@
     public class SA1208UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestWhenSystemUsingDirectivesAreOnTopAsync()
+        public async Task TestWhenSystemUsingDirectivesAreOnTopInCompilationAsync()
         {
             string usingsInCompilationUnit = @"using System;
 using System.IO;
@@ -22,6 +22,12 @@ class A
 {
 }";
 
+            await this.VerifyCSharpDiagnosticAsync(usingsInCompilationUnit, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestWhenSystemUsingDirectivesAreOnTopInNamespaceAsync()
+        {
             string usingsInNamespaceDeclaration = @"namespace Test
 {
     using System;
@@ -32,12 +38,11 @@ class A
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(usingsInCompilationUnit, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(usingsInNamespaceDeclaration, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestWhenSystemUsingDirectivesAreNotOnTopAsync()
+        public async Task TestWhenSystemUsingDirectivesAreNotOnTopInCompilationAsync()
         {
             var usingsInCompilationUnit = new[]
             {
@@ -54,6 +59,19 @@ class A
 }"
             };
 
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation("Test2.cs", 2, 1).WithArguments("System", "Xyz"),
+                this.CSharpDiagnostic().WithLocation("Test2.cs", 3, 1).WithArguments("System.IO", "Xyz"),
+                this.CSharpDiagnostic().WithLocation("Test2.cs", 5, 1).WithArguments("System.Threading.Tasks", "Xyz")
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(usingsInCompilationUnit, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestWhenSystemUsingDirectivesAreNotOnTopInNamespaceAsync()
+        {
             var usingsInNamespaceDeclaration = new[]
             {
                 "namespace Namespace {}",
@@ -71,21 +89,13 @@ class A
 }"
             };
 
-            var expectedForCompilationUnit = new[]
-            {
-                this.CSharpDiagnostic().WithLocation("Test2.cs", 2, 1).WithArguments("System", "Xyz"),
-                this.CSharpDiagnostic().WithLocation("Test2.cs", 3, 1).WithArguments("System.IO", "Xyz"),
-                this.CSharpDiagnostic().WithLocation("Test2.cs", 5, 1).WithArguments("System.Threading.Tasks", "Xyz")
-            };
-
-            var expectedForNamespaceDeclaration = new[]
+            DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation("Test2.cs", 4, 5).WithArguments("System.Threading", "Namespace"),
                 this.CSharpDiagnostic().WithLocation("Test2.cs", 5, 5).WithArguments("System.IO", "Namespace")
             };
 
-            await this.VerifyCSharpDiagnosticAsync(usingsInCompilationUnit, expectedForCompilationUnit, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(usingsInNamespaceDeclaration, expectedForNamespaceDeclaration, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(usingsInNamespaceDeclaration, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -111,7 +121,7 @@ namespace Test
     }
 }" };
 
-            var expected = new[]
+            DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation("Test3.cs", 2, 1).WithArguments("System.IO", "AnotherNamespace"),
                 this.CSharpDiagnostic().WithLocation("Test3.cs", 8, 5).WithArguments("System.Threading", "Xyz"),
@@ -145,11 +155,11 @@ namespace Test
 }"
         };
 
-            var expected = new[]
+            DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation("Test3.cs", 2, 1).WithArguments("System.IO", "AnotherNamespace"),
+                this.CSharpDiagnostic().WithLocation("Test3.cs", 2, 1).WithArguments("global::System.IO", "global::AnotherNamespace"),
                 this.CSharpDiagnostic().WithLocation("Test3.cs", 8, 5).WithArguments("System.Threading", "Xyz"),
-                this.CSharpDiagnostic().WithLocation("Test3.cs", 9, 5).WithArguments("System", "Xyz")
+                this.CSharpDiagnostic().WithLocation("Test3.cs", 9, 5).WithArguments("global::System", "Xyz")
             };
 
             await this.VerifyCSharpDiagnosticAsync(sources, expected, CancellationToken.None).ConfigureAwait(false);
@@ -179,7 +189,7 @@ namespace Test
     }
 }";
 
-            var expected = new[]
+            DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation("Test2.cs", 6, 5).WithArguments("System.IO", "System.IO.Path")
             };
@@ -206,10 +216,7 @@ namespace Test
 using System;
 ";
 
-            var expected = new[]
-            {
-                this.CSharpDiagnostic().WithLocation(2, 1).WithArguments("System", "System.IO.Path")
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 1).WithArguments("System", "System.IO.Path");
 
             await this.VerifyCSharpDiagnosticAsync(namespaceDeclarationWithoutDiagnostic, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(source, expected, CancellationToken.None).ConfigureAwait(false);
@@ -238,7 +245,7 @@ namespace Test
 }"
         };
 
-            var expected = new[]
+            DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation("Test2.cs", 5, 5).WithArguments("System.Threading", "Namespace")
             };
@@ -266,7 +273,7 @@ namespace Test
 }"
             };
 
-            var expected = new[]
+            DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation("Test2.cs", 4, 5).WithArguments("System.Threading", "Namespace"),
                 this.CSharpDiagnostic().WithLocation("Test2.cs", 5, 5).WithArguments("System.IO", "Namespace")
@@ -297,16 +304,13 @@ using System.Collections;
 #endif";
 
             var fixedTestCode = @"using System;
-
 using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio;
-
 using MyList = System.Collections.Generic.List<int>;
 
 #if true
 using System.Collections;
 using System.Threading;
-
 using Microsoft.CodeAnalysis.CSharp;
 #if true
 using System.Collections.Generic;
@@ -325,6 +329,7 @@ using System.Collections;
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 

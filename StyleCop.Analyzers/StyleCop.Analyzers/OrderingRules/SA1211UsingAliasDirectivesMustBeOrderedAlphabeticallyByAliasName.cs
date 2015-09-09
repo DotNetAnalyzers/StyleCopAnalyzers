@@ -86,6 +86,12 @@
 
             foreach (var usingDirective in usingDirectives)
             {
+                if (usingDirective.IsPrecededByPreprocessorDirective())
+                {
+                    usingAliasNames.Clear();
+                    prevAliasUsingDirective = null;
+                }
+
                 // only interested in using alias directives
                 if (usingDirective.Alias?.Name?.IsMissing != false)
                 {
@@ -93,12 +99,6 @@
                 }
 
                 string currentAliasName = usingDirective.Alias.Name.Identifier.ValueText;
-                if (usingDirective.IsPrecededByPreprocessorDirective())
-                {
-                    usingAliasNames.Clear();
-                    prevAliasUsingDirective = null;
-                }
-
                 if (prevAliasUsingDirective != null)
                 {
                     string currentLowerInvariant = currentAliasName.ToLowerInvariant();
