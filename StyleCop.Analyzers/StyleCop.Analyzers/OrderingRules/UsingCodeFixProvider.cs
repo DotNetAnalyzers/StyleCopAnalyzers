@@ -39,6 +39,12 @@
         public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
 
         /// <inheritdoc/>
+        public override FixAllProvider GetFixAllProvider()
+        {
+            return FixAll.Instance;
+        }
+
+        /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
@@ -643,6 +649,29 @@
                 }
 
                 return base.VisitToken(token);
+            }
+        }
+
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; } = new FixAll();
+
+            /// <inheritdoc/>
+            protected override string CodeActionTitle
+                => OrderingResources.UsingCodeFix;
+
+            /// <inheritdoc/>
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            {
+                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
+                if (diagnostics.IsEmpty)
+                {
+                    return null;
+                }
+
+                var syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                Document newDocument = await GetTransformedDocumentAsync(document, syntaxRoot, fixAllContext.CancellationToken).ConfigureAwait(false);
+                return await newDocument.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
             }
         }
     }
