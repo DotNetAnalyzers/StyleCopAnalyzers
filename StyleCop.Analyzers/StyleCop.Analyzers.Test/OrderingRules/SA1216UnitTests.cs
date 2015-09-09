@@ -10,7 +10,7 @@
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1216UsingStaticDirectivesMustBePlacedAfterOtherUsingDirectives"/>.
+    /// Unit tests for <see cref="SA1216UsingStaticDirectivesMustBePlacedAtTheCorrectLocation"/>.
     /// </summary>
     public class SA1216UnitTests : CodeFixVerifier
     {
@@ -24,8 +24,8 @@
             var testCode = @"namespace Foo
 {
     using System;
-    using Execute = System.Action;
     using static System.Math;
+    using Execute = System.Action;
 }
 ";
 
@@ -42,16 +42,16 @@
             var testCode = @"namespace Foo
 {
     using System;
-    using Execute = System.Action;
     using static System.Math;
+    using Execute = System.Action;
 }
 
 namespace Bar
 {
     using System;
-    using Execute = System.Action;
     using static System.Array;
     using static System.Math;
+    using Execute = System.Action;
 }
 ";
 
@@ -66,9 +66,9 @@ namespace Bar
         public async Task TestValidUsingDirectivesInCompilationUnitAsync()
         {
             var testCode = @"using System;
-using Execute = System.Action;
 using static System.Array;
 using static System.Math;
+using Execute = System.Action;
 
 public class Foo
 {
@@ -104,23 +104,23 @@ namespace Bar
             var fixedTestCode = @"namespace Foo
 {
     using System;
-    using Execute = System.Action;
     using static System.Math;
+    using Execute = System.Action;
 }
 
 namespace Bar
 {
     using System;
-    using Execute = System.Action;
     using static System.Array;
     using static System.Math;
+    using Execute = System.Action;
 }
 ";
 
             DiagnosticResult[] expectedDiagnostics =
             {
                 this.CSharpDiagnostic().WithLocation(3, 5),
-                this.CSharpDiagnostic().WithLocation(12, 5)
+                this.CSharpDiagnostic().WithLocation(11, 5)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -134,8 +134,8 @@ namespace Bar
             var testCode = @"
 using System;
 using Microsoft.VisualStudio;
-using MyList = System.Collections.Generic.List<int>;
 using static System.String;
+using MyList = System.Collections.Generic.List<int>;
 
 #if true
 using System.Threading;
@@ -149,8 +149,8 @@ using System.Threading.Tasks;
 
             var fixedTestCode = @"using System;
 using Microsoft.VisualStudio;
-using MyList = System.Collections.Generic.List<int>;
 using static System.String;
+using MyList = System.Collections.Generic.List<int>;
 
 #if true
 using System.Threading;
@@ -173,7 +173,7 @@ using System.Threading.Tasks;
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1216UsingStaticDirectivesMustBePlacedAfterOtherUsingDirectives();
+            yield return new SA1216UsingStaticDirectivesMustBePlacedAtTheCorrectLocation();
         }
 
         /// <inheritdoc/>
