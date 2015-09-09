@@ -3,6 +3,7 @@
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
     using TestHelper;
@@ -13,6 +14,35 @@
     /// </summary>
     public class SA1600UnitTests : DiagnosticVerifier
     {
+        [Theory]
+        [InlineData("public string TestMember;", 15)]
+        [InlineData("public string TestMember { get; set; }", 15)]
+        [InlineData("public void TestMember() { }", 13)]
+        [InlineData("public string this[int a] { get { return \"a\"; } set { } }", 15)]
+        [InlineData("public event EventHandler TestMember { add { } remove { } }", 27)]
+        public async Task TestRegressionMethodGlobalNamespaceAsync(string code, int column)
+        {
+            // This test is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1416
+            var testCode = $@"
+using System;
+
+{code}";
+
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(4, column),
+                new DiagnosticResult
+                {
+                    Id = "CS0116",
+                    Severity = DiagnosticSeverity.Error,
+                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 4, column) },
+                    Message = "A namespace cannot directly contain members such as fields or methods"
+                }
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestClassWithoutDocumentationAsync()
         {

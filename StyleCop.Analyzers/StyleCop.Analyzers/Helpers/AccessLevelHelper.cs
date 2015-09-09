@@ -358,7 +358,12 @@
                 return declaredAccessibility;
             }
 
-            BaseTypeDeclarationSyntax enclosingType = (BaseTypeDeclarationSyntax)syntax.Parent;
+            BaseTypeDeclarationSyntax enclosingType = syntax.Parent as BaseTypeDeclarationSyntax;
+            if (enclosingType == null)
+            {
+                return declaredAccessibility;
+            }
+
             Accessibility enclosingAccessibility = enclosingType.GetEffectiveAccessibility(semanticModel, cancellationToken);
             return CombineEffectiveAccessibility(declaredAccessibility, enclosingAccessibility);
         }
@@ -381,7 +386,12 @@
                 return declaredAccessibility;
             }
 
-            BaseTypeDeclarationSyntax enclosingType = (BaseTypeDeclarationSyntax)syntax.Parent;
+            BaseTypeDeclarationSyntax enclosingType = syntax.Parent as BaseTypeDeclarationSyntax;
+            if (enclosingType == null)
+            {
+                return declaredAccessibility;
+            }
+
             Accessibility enclosingAccessibility = enclosingType.GetEffectiveAccessibility(semanticModel, cancellationToken);
             return CombineEffectiveAccessibility(declaredAccessibility, enclosingAccessibility);
         }
@@ -404,7 +414,12 @@
                 return declaredAccessibility;
             }
 
-            BaseTypeDeclarationSyntax enclosingType = (BaseTypeDeclarationSyntax)syntax.Parent;
+            BaseTypeDeclarationSyntax enclosingType = syntax.Parent as BaseTypeDeclarationSyntax;
+            if (enclosingType == null)
+            {
+                return declaredAccessibility;
+            }
+
             Accessibility enclosingAccessibility = enclosingType.GetEffectiveAccessibility(semanticModel, cancellationToken);
             return CombineEffectiveAccessibility(declaredAccessibility, enclosingAccessibility);
         }
