@@ -65,6 +65,7 @@ class A
             DiagnosticResult expectedForCompilationUnit = this.CSharpDiagnostic().WithLocation(1, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCodeCompilationUnit, expectedForCompilationUnit, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCodeCompilationUnit, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCodeCompilationUnit, fixedTestCodeCompilationUnit).ConfigureAwait(false);
         }
 
@@ -99,6 +100,7 @@ class A
             DiagnosticResult expectedForNamespaceDeclaration = this.CSharpDiagnostic().WithLocation(5, 5);
 
             await this.VerifyCSharpDiagnosticAsync(testCodeNamespace, expectedForNamespaceDeclaration, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCodeNamespace, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCodeNamespace, fixedTestCodeNamespace).ConfigureAwait(false);
         }
 
@@ -136,6 +138,7 @@ namespace Test
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation("Test0.cs", 2, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
@@ -189,6 +192,7 @@ namespace Test
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation("Test0.cs", 4, 5);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
@@ -225,6 +229,7 @@ namespace Test
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation("Test0.cs", 4, 5);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
@@ -263,6 +268,7 @@ using Microsoft.CodeAnalysis;
             var expected = this.CSharpDiagnostic().WithLocation(7, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
