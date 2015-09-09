@@ -56,17 +56,56 @@
 
         private static SyntaxNode ReplaceHeader(Document document, SyntaxNode root, StyleCopSettings settings)
         {
-            var existingTrivia = root.GetLeadingTrivia().Where(x => !x.IsKind(SyntaxKind.EndOfLineTrivia) && !x.IsKind(SyntaxKind.SingleLineCommentTrivia));
-            return root.WithLeadingTrivia(CreateNewHeader(document.Name, settings).AddRange(existingTrivia).Add(SyntaxFactory.CarriageReturnLineFeed));
+            // Skip single line comments, whitespace, and end of line trivia until a blank line is encountered.
+            SyntaxTriviaList trivia = root.GetLeadingTrivia();
+
+            bool onBlankLine = false;
+            while (trivia.Any())
+            {
+                bool done = false;
+                switch (trivia[0].Kind())
+                {
+                case SyntaxKind.SingleLineCommentTrivia:
+                    trivia = trivia.RemoveAt(0);
+                    onBlankLine = false;
+                    break;
+
+                case SyntaxKind.WhitespaceTrivia:
+                    trivia = trivia.RemoveAt(0);
+                    break;
+
+                case SyntaxKind.EndOfLineTrivia:
+                    trivia = trivia.RemoveAt(0);
+
+                    if (onBlankLine)
+                    {
+                        done = true;
+                    }
+                    else
+                    {
+                        onBlankLine = true;
+                    }
+
+                    break;
+
+                default:
+                    done = true;
+                    break;
+                }
+
+                if (done)
+                {
+                    break;
+                }
+            }
+
+            return root.WithLeadingTrivia(CreateNewHeader(document.Name, settings).Add(SyntaxFactory.CarriageReturnLineFeed).Add(SyntaxFactory.CarriageReturnLineFeed).AddRange(trivia));
         }
 
         private static SyntaxNode AddHeader(SyntaxNode root, string name, StyleCopSettings settings)
         {
-            var newTrivia = CreateNewHeader(name, settings).AddRange(root.GetLeadingTrivia());
-            if (!newTrivia.Last().IsKind(SyntaxKind.EndOfLineTrivia))
-            {
-                newTrivia = newTrivia.Add(SyntaxFactory.CarriageReturnLineFeed);
-            }
+            var newTrivia = CreateNewHeader(name, settings).Add(SyntaxFactory.CarriageReturnLineFeed).Add(SyntaxFactory.CarriageReturnLineFeed);
+            newTrivia = newTrivia.AddRange(root.GetLeadingTrivia());
 
             return root.WithLeadingTrivia(newTrivia);
         }
@@ -84,8 +123,7 @@
         {
             return $@"// <copyright file=""{filename}"" company=""{settings.DocumentationRules.CompanyName}"">
 {copyrightText}
-// </copyright>
-";
+// </copyright>";
         }
 
         private static string GetCopyrightText(string copyrightText)
