@@ -132,9 +132,25 @@
                 newSyntaxRoot = AddUsingsToCompilationRoot(newSyntaxRoot, usingsHelper, usingsIndentation, replaceMap.Any());
             }
 
+            newSyntaxRoot = ReAddFileHeader(syntaxRoot, newSyntaxRoot);
+
             var newDocument = document.WithSyntaxRoot(newSyntaxRoot.WithoutFormatting());
 
             return Task.FromResult(newDocument);
+        }
+
+        private static SyntaxNode ReAddFileHeader(SyntaxNode syntaxRoot, SyntaxNode newSyntaxRoot)
+        {
+            var oldFirstToken = syntaxRoot.GetFirstToken();
+            if (oldFirstToken.HasLeadingTrivia)
+            {
+                var newFirstToken = newSyntaxRoot.GetFirstToken();
+                newSyntaxRoot = newSyntaxRoot.ReplaceToken(
+                    newFirstToken,
+                    newFirstToken.WithLeadingTrivia(oldFirstToken.LeadingTrivia));
+            }
+
+            return newSyntaxRoot;
         }
 
         private static int CountNamespaces(SyntaxList<MemberDeclarationSyntax> members)
@@ -462,6 +478,11 @@
                         .Where(tr => !tr.IsDirective)
                         .ToList();
 
+                    if (i == 0)
+                    {
+                        newLeadingTrivia = StripFileHeader(newLeadingTrivia);
+                    }
+
                     for (var j = newLeadingTrivia.Count - 1; j >= 0; j--)
                     {
                         if (newLeadingTrivia[j].IsKind(SyntaxKind.EndOfLineTrivia))
@@ -501,6 +522,29 @@
                 result.Sort(CompareUsings);
 
                 return result;
+            }
+
+            private static List<SyntaxTrivia> StripFileHeader(List<SyntaxTrivia> newLeadingTrivia)
+            {
+                var itemsToSkip = 0;
+                var firstTrivia = newLeadingTrivia.FirstOrDefault();
+                if (firstTrivia.IsKind(SyntaxKind.SingleLineCommentTrivia) || firstTrivia.IsKind(SyntaxKind.MultiLineCommentTrivia))
+                {
+                    itemsToSkip++;
+                }
+
+                for (var endofLineIterator = 1; endofLineIterator < newLeadingTrivia.Count; endofLineIterator++)
+                {
+                    if (!newLeadingTrivia[endofLineIterator].IsKind(SyntaxKind.EndOfLineTrivia))
+                    {
+                        break;
+                    }
+
+                    itemsToSkip++;
+                }
+
+                newLeadingTrivia = newLeadingTrivia.Skip(itemsToSkip).ToList();
+                return newLeadingTrivia;
             }
 
             private static int CompareUsings(UsingDirectiveSyntax left, UsingDirectiveSyntax right)

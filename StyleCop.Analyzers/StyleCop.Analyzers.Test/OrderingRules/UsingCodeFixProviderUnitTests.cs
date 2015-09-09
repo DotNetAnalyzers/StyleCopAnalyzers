@@ -67,7 +67,7 @@ namespace Foo
         /// Verifies that the code fix will properly reorder using statements, but will not move a file header comment.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1429")]
+        [Fact]
         public async Task VerifyUsingReorderingWithFileHeaderAsync()
         {
             var testCode = @"// This is a file header.
@@ -153,7 +153,7 @@ namespace Foo
         /// when SA1200 is suppressed. The file header is not moved by the code fix.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1429")]
+        [Fact]
         public async Task VerifyUsingReorderingWithoutMovingWithFileHeaderAsync()
         {
             var testCode = @"// This is a file header.
