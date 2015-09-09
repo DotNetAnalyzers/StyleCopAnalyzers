@@ -34,14 +34,17 @@
             /// No modifiers
             /// </summary>
             None = 0,
+
             /// <summary>
             /// Readonly modifier
             /// </summary>
             Readonly = 1,
+
             /// <summary>
             /// Static modifier
             /// </summary>
             Static = 1 << 2,
+
             /// <summary>
             /// Const modifier
             /// </summary>

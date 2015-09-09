@@ -52,14 +52,17 @@
             /// Represents default value
             /// </summary>
             None,
+
             /// <summary>
             /// Represents any of access modifiers i.e public, protected, internal, private
             /// </summary>
             Access,
+
             /// <summary>
             /// Represents static modifier
             /// </summary>
             Static,
+
             /// <summary>
             /// Represents other modifiers i.e partial, virtual, abstract, override, extern, unsafe, new, async, const, sealed, readonly, volatile, fixed
             /// </summary>
