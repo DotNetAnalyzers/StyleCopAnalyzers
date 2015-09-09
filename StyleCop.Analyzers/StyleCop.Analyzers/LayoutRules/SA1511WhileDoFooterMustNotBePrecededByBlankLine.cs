@@ -65,7 +65,7 @@
             var doStatement = (DoStatementSyntax)context.Node;
             var whileKeyword = doStatement.WhileKeyword;
 
-            if (!whileKeyword.HasLeadingBlankLines())
+            if (!whileKeyword.IsPrecededByBlankLines())
             {
                 return;
             }

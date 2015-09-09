@@ -205,11 +205,14 @@
         }
 
         /// <summary>
-        /// Determines if the given token has leading blank lines. Leading whitespace on the same line as the token is ignored.
+        /// Determines if the given token is immediately preceded by blank lines. Leading whitespace on the same line as
+        /// the token is ignored.
         /// </summary>
-        /// <param name="token">The token to check for leading blank lines.</param>
-        /// <returns>True if the token has leading blank lines.</returns>
-        internal static bool HasLeadingBlankLines(this SyntaxToken token)
+        /// <param name="token">The token to check for immediately preceding blank lines.</param>
+        /// <returns>
+        /// <see langword="true"/> if the token is immediately preceded by blank lines; otherwise, <see langword="false"/>.
+        /// </returns>
+        internal static bool IsPrecededByBlankLines(this SyntaxToken token)
         {
             if (!token.HasLeadingTrivia)
             {
