@@ -30,6 +30,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         public override ImmutableArray<string> FixableDiagnosticIds { get; }
             = ImmutableArray.Create(
                 FileHeaderAnalyzers.SA1633DescriptorMissing.Id,
+                FileHeaderAnalyzers.SA1635Descriptor.Id,
                 FileHeaderAnalyzers.SA1636Descriptor.Id);
 
         /// <inheritdoc/>
