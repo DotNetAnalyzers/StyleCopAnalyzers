@@ -195,7 +195,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TrailingWhitespaceAfterClosingBraceAsync()
+        public async Task TestTrailingWhitespaceAfterClosingBraceAsync()
         {
             string testCode = new StringBuilder()
                 .AppendLine("class ClassName")
@@ -214,6 +214,24 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1445 "SA1028 falsely reports when
+        /// <c>[assembly: InternalsVisibleTo("...")]</c> is used at the end of file":
+        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1445
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestWhitespaceBeforeClosingBraceAsync()
+        {
+            string testCode = new StringBuilder()
+                .AppendLine("class ClassName")
+                .AppendLine("{")
+                .Append(" }")
+                .ToString();
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
