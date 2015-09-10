@@ -88,6 +88,7 @@
     <Compile Include="DocumentationRules\SA1623PropertySummaryDocumentationMustMatchAccessors.cs" />
     <Compile Include="DocumentationRules\SA1624PropertySummaryDocumentationMustOmitSetAccessorWithRestrictedAccess.cs" />
     <Compile Include="DocumentationRules\SA1625ElementDocumentationMustNotBeCopiedAndPasted.cs" />
+    <Compile Include="DocumentationRules\SA1626CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1626SingleLineCommentsMustNotUseDocumentationStyleSlashes.cs" />
     <Compile Include="DocumentationRules\SA1627DocumentationTextMustNotBeEmpty.cs" />
     <Compile Include="DocumentationRules\SA1628DocumentationTextMustBeginWithACapitalLetter.cs" />

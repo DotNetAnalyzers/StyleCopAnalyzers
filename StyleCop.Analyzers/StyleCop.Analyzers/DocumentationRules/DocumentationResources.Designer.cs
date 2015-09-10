@@ -89,6 +89,15 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Convert to line comment.
+        /// </summary>
+        internal static string SA1626CodeFix {
+            get {
+                return ResourceManager.GetString("SA1626CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add file header.
         /// </summary>
         internal static string SA1633CodeFix {

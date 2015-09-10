@@ -6,12 +6,13 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
     using TestHelper;
     using Xunit;
 
-    public class SA1626UnitTests : DiagnosticVerifier
+    public class SA1626UnitTests : CodeFixVerifier
     {
         private const string DiagnosticId = SA1626SingleLineCommentsMustNotUseDocumentationStyleSlashes.DiagnosticId;
 
@@ -56,12 +57,20 @@ public class TypeName
     }
 }
 ";
-            var expected = new[]
-            {
-                this.CSharpDiagnostic().WithLocation(5, 9)
-            };
+            var fixedCode = @"public class TypeName
+{
+    public void Bar()
+    {
+        // This is a comment
+    }
+}
+";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 9);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -76,12 +85,25 @@ public class TypeName
     }
 }
 ";
-            var expected = new[]
+            var fixedCode = @"public class TypeName
+{
+    public void Bar()
+    {
+        // This is
+        // a comment
+    }
+}
+";
+
+            DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(5, 9)
+                this.CSharpDiagnostic().WithLocation(5, 9),
+                this.CSharpDiagnostic().WithLocation(6, 9),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -112,9 +134,16 @@ public class TypeName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1626SingleLineCommentsMustNotUseDocumentationStyleSlashes();
+        }
+
+        /// <inheritdoc/>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1626CodeFixProvider();
         }
     }
 }

@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Text;
 
     /// <summary>
     /// The C# code contains a single-line comment which begins with three forward slashes in a row.
@@ -89,10 +90,18 @@ namespace StyleCop.Analyzers.DocumentationRules
             // Check if the comment is not multi line
             if (node.Content.All(x => x.IsKind(SyntaxKind.XmlText)))
             {
-                // Add a diagnostic on '///'
-                var trivia = context.Node.GetLeadingTrivia().First();
+                foreach (var trivia in node.DescendantTrivia(descendIntoTrivia: true))
+                {
+                    if (!trivia.IsKind(SyntaxKind.DocumentationCommentExteriorTrivia))
+                    {
+                        continue;
+                    }
 
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, trivia.GetLocation()));
+                    // Add a diagnostic on '///'
+                    TextSpan location = trivia.GetLocation().SourceSpan;
+                    TextSpan slashes = TextSpan.FromBounds(location.End - 3, location.End);
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(trivia.SyntaxTree, slashes)));
+                }
             }
         }
     }
