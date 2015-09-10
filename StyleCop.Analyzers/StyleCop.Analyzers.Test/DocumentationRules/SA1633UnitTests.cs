@@ -47,7 +47,41 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         }
 
         /// <summary>
-        /// Verifies that a valid file header with leading directives will not produce a diagnostic message.
+        /// Verifies that a file with a valid header and no other content will not produce a diagnostic message.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestValidMultilineCommentFileHeadersAsync()
+        {
+            var testCode1 = @"/* <copyright file=""Test0.cs"" company=""FooCorp"">
+  Copyright (c) FooCorp. All rights reserved.
+</copyright> */
+";
+
+            var testCode2 = @"/*
+<copyright file=""Test1.cs"" company=""FooCorp"">
+  Copyright (c) FooCorp. All rights reserved.
+</copyright>
+*/
+";
+
+            var testCode3 = @"/*<copyright file=""Test2.cs"" company=""FooCorp"">
+  Copyright (c) FooCorp. All rights reserved.
+</copyright>*/
+";
+
+            var testCode4 = @"/*
+ * <copyright file=""Test3.cs"" company=""FooCorp"">
+ *   Copyright (c) FooCorp. All rights reserved.
+ * </copyright>
+*/
+";
+
+            await this.VerifyCSharpDiagnosticAsync(new[] { testCode1, testCode2, testCode3, testCode4 }, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a valid file header with leading directives will produce the correct diagnostic message.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -66,7 +100,8 @@ namespace Bar
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            var expected = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
