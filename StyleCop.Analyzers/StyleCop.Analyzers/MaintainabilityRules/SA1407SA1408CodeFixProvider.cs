@@ -23,11 +23,11 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     [Shared]
     public class SA1407SA1408CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1407ArithmeticExpressionsMustDeclarePrecedence.DiagnosticId, SA1408ConditionalExpressionsMustDeclarePrecedence.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(
+                SA1407ArithmeticExpressionsMustDeclarePrecedence.DiagnosticId,
+                SA1408ConditionalExpressionsMustDeclarePrecedence.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -42,11 +42,6 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!this.FixableDiagnosticIds.Contains(diagnostic.Id))
-                {
-                    continue;
-                }
-
                 SyntaxNode node = root.FindNode(diagnostic.Location.SourceSpan);
                 if (node.IsMissing)
                 {
@@ -56,7 +51,12 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 BinaryExpressionSyntax syntax = node as BinaryExpressionSyntax;
                 if (syntax != null)
                 {
-                    context.RegisterCodeFix(CodeAction.Create(MaintainabilityResources.SA1407SA1408CodeFix, token => GetTransformedDocumentAsync(context.Document, root, syntax), equivalenceKey: nameof(SA1407SA1408CodeFixProvider)), diagnostic);
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            MaintainabilityResources.SA1407SA1408CodeFix,
+                            cancellationToken => GetTransformedDocumentAsync(context.Document, root, syntax),
+                            equivalenceKey: nameof(SA1407SA1408CodeFixProvider)),
+                        diagnostic);
                 }
             }
         }

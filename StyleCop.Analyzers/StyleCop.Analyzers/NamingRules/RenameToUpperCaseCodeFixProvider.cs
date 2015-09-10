@@ -28,16 +28,14 @@ namespace StyleCop.Analyzers.NamingRules
     {
         private const string Suffix = "Value";
 
-        private static readonly ImmutableArray<string> FixableDiagnostics =
+        /// <inheritdoc/>
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(
                 SA1300ElementMustBeginWithUpperCaseLetter.DiagnosticId,
                 SA1303ConstFieldNamesMustBeginWithUpperCaseLetter.DiagnosticId,
                 SA1304NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter.DiagnosticId,
                 SA1307AccessibleFieldsMustBeginWithUpperCaseLetter.DiagnosticId,
                 SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter.DiagnosticId);
-
-        /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -53,11 +51,6 @@ namespace StyleCop.Analyzers.NamingRules
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!FixableDiagnostics.Contains(diagnostic.Id))
-                {
-                    continue;
-                }
-
                 var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (token.IsMissing)
                 {
@@ -80,7 +73,12 @@ namespace StyleCop.Analyzers.NamingRules
                         return Task.FromResult(context.Document.WithSyntaxRoot(newRoot));
                     };
 
-                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.RenameToCodeFix, newName), renameNamespace, equivalenceKey: nameof(RenameToUpperCaseCodeFixProvider) + "_" + diagnostic.Id), diagnostic);
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            string.Format(NamingResources.RenameToCodeFix, newName),
+                            renameNamespace,
+                            equivalenceKey: nameof(RenameToUpperCaseCodeFixProvider) + "_" + diagnostic.Id),
+                        diagnostic);
                 }
                 else if (memberSyntax != null)
                 {
@@ -97,7 +95,12 @@ namespace StyleCop.Analyzers.NamingRules
                         newName = newName + Suffix;
                     }
 
-                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.RenameToCodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken), equivalenceKey: nameof(RenameToUpperCaseCodeFixProvider) + "_" + diagnostic.Id), diagnostic);
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            string.Format(NamingResources.RenameToCodeFix, newName),
+                            cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken),
+                            equivalenceKey: nameof(RenameToUpperCaseCodeFixProvider) + "_" + diagnostic.Id),
+                        diagnostic);
                 }
             }
         }

@@ -42,11 +42,6 @@ namespace StyleCop.Analyzers.DocumentationRules
             SyntaxNode root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!this.FixableDiagnosticIds.Contains(diagnostic.Id))
-                {
-                    continue;
-                }
-
                 SyntaxToken identifierToken = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (identifierToken.IsMissingOrDefault())
                 {

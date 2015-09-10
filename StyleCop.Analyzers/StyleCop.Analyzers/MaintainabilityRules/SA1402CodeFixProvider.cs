@@ -25,11 +25,9 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     [Shared]
     public class SA1402CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1402FileMayOnlyContainASingleClass.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(SA1402FileMayOnlyContainASingleClass.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -43,12 +41,12 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!diagnostic.Id.Equals(SA1402FileMayOnlyContainASingleClass.DiagnosticId))
-                {
-                    continue;
-                }
-
-                context.RegisterCodeFix(CodeAction.Create(MaintainabilityResources.SA1402CodeFix, cancellationToken => GetTransformedSolutionAsync(context.Document, diagnostic, cancellationToken), equivalenceKey: nameof(SA1402CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        MaintainabilityResources.SA1402CodeFix,
+                        cancellationToken => GetTransformedSolutionAsync(context.Document, diagnostic, cancellationToken),
+                        equivalenceKey: nameof(SA1402CodeFixProvider)),
+                    diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;

@@ -6,7 +6,6 @@ namespace StyleCop.Analyzers.LayoutRules
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Helpers;
@@ -23,11 +22,9 @@ namespace StyleCop.Analyzers.LayoutRules
     [Shared]
     public class SA1516CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1516ElementsMustBeSeparatedByBlankLine.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(SA1516ElementsMustBeSeparatedByBlankLine.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -36,24 +33,30 @@ namespace StyleCop.Analyzers.LayoutRules
         }
 
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-
-            foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
+            foreach (Diagnostic diagnostic in context.Diagnostics)
             {
-                context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1516CodeFix, token => GetTransformedDocumentAsync(context.Document, syntaxRoot, diagnostic, context.CancellationToken), equivalenceKey: nameof(SA1516CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        LayoutResources.SA1516CodeFix,
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, context.CancellationToken),
+                        equivalenceKey: nameof(SA1516CodeFixProvider)),
+                    diagnostic);
             }
+
+            return SpecializedTasks.CompletedTask;
         }
 
-        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode syntaxRoot, Diagnostic diagnostic, CancellationToken cancellationToken)
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
+            var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
             node = GetRelevantNode(node);
 
             if (node == null)
             {
-                return Task.FromResult(document);
+                return document;
             }
 
             var leadingTrivia = node.GetLeadingTrivia();
@@ -65,7 +68,7 @@ namespace StyleCop.Analyzers.LayoutRules
             var newSyntaxRoot = syntaxRoot.ReplaceNode(node, newNode);
             var newDocument = document.WithSyntaxRoot(newSyntaxRoot);
 
-            return Task.FromResult(newDocument);
+            return newDocument;
         }
 
         private static SyntaxNode GetRelevantNode(SyntaxNode innerNode)

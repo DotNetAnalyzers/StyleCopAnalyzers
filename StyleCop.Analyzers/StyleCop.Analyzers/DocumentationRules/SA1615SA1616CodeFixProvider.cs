@@ -30,11 +30,11 @@ namespace StyleCop.Analyzers.DocumentationRules
     [Shared]
     public class SA1615SA1616CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1615ElementReturnValueMustBeDocumented.DiagnosticId, SA1616ElementReturnValueDocumentationMustHaveText.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(
+                SA1615ElementReturnValueMustBeDocumented.DiagnosticId,
+                SA1616ElementReturnValueDocumentationMustHaveText.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -47,13 +47,12 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!FixableDiagnostics.Contains(diagnostic.Id, StringComparer.Ordinal))
-                {
-                    continue;
-                }
-
-                string description = "Document return value";
-                context.RegisterCodeFix(CodeAction.Create(description, cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken), equivalenceKey: nameof(SA1615SA1616CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        "Document return value",
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
+                        equivalenceKey: nameof(SA1615SA1616CodeFixProvider)),
+                    diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;

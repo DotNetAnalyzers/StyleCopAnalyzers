@@ -3,10 +3,8 @@
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
-    using System;
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Helpers;
@@ -26,11 +24,9 @@ namespace StyleCop.Analyzers.DocumentationRules
     [Shared]
     public class SA1651CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1651DoNotUsePlaceholderElements.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(SA1651DoNotUsePlaceholderElements.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -43,11 +39,6 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!FixableDiagnostics.Contains(diagnostic.Id, StringComparer.Ordinal))
-                {
-                    continue;
-                }
-
                 var documentRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
                 SyntaxNode syntax = documentRoot.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
                 if (syntax == null)
@@ -68,8 +59,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                     continue;
                 }
 
-                string description = DocumentationResources.SA1651CodeFix;
-                context.RegisterCodeFix(CodeAction.Create(description, cancellationToken => this.GetTransformedDocumentAsync(context.Document, xmlElementSyntax, cancellationToken), equivalenceKey: nameof(SA1651CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        DocumentationResources.SA1651CodeFix,
+                        cancellationToken => this.GetTransformedDocumentAsync(context.Document, xmlElementSyntax, cancellationToken),
+                        equivalenceKey: nameof(SA1651CodeFixProvider)),
+                    diagnostic);
             }
         }
 

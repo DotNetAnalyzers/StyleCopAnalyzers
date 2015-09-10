@@ -24,11 +24,9 @@ namespace StyleCop.Analyzers.LayoutRules
     [Shared]
     public class SA1504CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1504AllAccessorsMustBeSingleLineOrMultiLine.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(SA1504AllAccessorsMustBeSingleLineOrMultiLine.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -41,7 +39,7 @@ namespace StyleCop.Analyzers.LayoutRules
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
-            foreach (var diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
+            foreach (var diagnostic in context.Diagnostics)
             {
                 var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
                 var accessorList = GetAccessorList(node);
@@ -84,10 +82,20 @@ namespace StyleCop.Analyzers.LayoutRules
 
                 if (canOfferSingleLineFix)
                 {
-                    context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1504CodeFixSingleLine, token => GetTransformedDocumentForSingleLineAsync(context.Document, diagnostic, token), equivalenceKey: nameof(SA1504CodeFixProvider) + "SingleLine"), diagnostic);
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            LayoutResources.SA1504CodeFixSingleLine,
+                            cancellationToken => GetTransformedDocumentForSingleLineAsync(context.Document, diagnostic, cancellationToken),
+                            equivalenceKey: nameof(SA1504CodeFixProvider) + "SingleLine"),
+                        diagnostic);
                 }
 
-                context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1504CodeFixMultipleLines, token => GetTransformedDocumentForMutipleLinesAsync(context.Document, diagnostic, token), equivalenceKey: nameof(SA1504CodeFixProvider) + "MultipleLines"), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        LayoutResources.SA1504CodeFixMultipleLines,
+                        cancellationToken => GetTransformedDocumentForMutipleLinesAsync(context.Document, diagnostic, cancellationToken),
+                        equivalenceKey: nameof(SA1504CodeFixProvider) + "MultipleLines"),
+                    diagnostic);
             }
         }
 

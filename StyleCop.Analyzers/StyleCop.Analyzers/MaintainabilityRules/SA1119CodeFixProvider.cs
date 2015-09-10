@@ -25,11 +25,9 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     [Shared]
     public class SA1119CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1119StatementMustNotUseUnnecessaryParenthesis.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(SA1119StatementMustNotUseUnnecessaryParenthesis.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -44,11 +42,6 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!diagnostic.Id.Equals(SA1119StatementMustNotUseUnnecessaryParenthesis.DiagnosticId))
-                {
-                    continue;
-                }
-
                 SyntaxNode node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true, findInsideTrivia: true);
                 if (node.IsMissing)
                 {
@@ -56,10 +49,14 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 }
 
                 ParenthesizedExpressionSyntax syntax = node as ParenthesizedExpressionSyntax;
-
                 if (syntax != null)
                 {
-                    context.RegisterCodeFix(CodeAction.Create(MaintainabilityResources.SA1119CodeFix, token => GetTransformedDocumentAsync(context.Document, root, syntax), equivalenceKey: nameof(SA1119CodeFixProvider)), diagnostic);
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            MaintainabilityResources.SA1119CodeFix,
+                            cancellationToken => GetTransformedDocumentAsync(context.Document, root, syntax),
+                            equivalenceKey: nameof(SA1119CodeFixProvider)),
+                        diagnostic);
                 }
             }
         }

@@ -6,7 +6,6 @@ namespace StyleCop.Analyzers.LayoutRules
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Helpers;
@@ -26,17 +25,12 @@ namespace StyleCop.Analyzers.LayoutRules
     [Shared]
     public class SA1503CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1503CurlyBracketsMustNotBeOmitted.DiagnosticId, SA1519CurlyBracketsMustNotBeOmittedFromMultiLineChildStatement.DiagnosticId, SA1520UseCurlyBracketsConsistently.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds
-        {
-            get
-            {
-                return FixableDiagnostics;
-            }
-        }
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(
+                SA1503CurlyBracketsMustNotBeOmitted.DiagnosticId,
+                SA1519CurlyBracketsMustNotBeOmittedFromMultiLineChildStatement.DiagnosticId,
+                SA1520UseCurlyBracketsConsistently.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -49,7 +43,7 @@ namespace StyleCop.Analyzers.LayoutRules
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
-            foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
+            foreach (Diagnostic diagnostic in context.Diagnostics)
             {
                 var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, false, true) as StatementSyntax;
                 if (node == null || node.IsMissing)
@@ -63,7 +57,12 @@ namespace StyleCop.Analyzers.LayoutRules
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1503CodeFix, token => GetTransformedDocumentAsync(context.Document, syntaxRoot, node, token), equivalenceKey: nameof(SA1503CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        LayoutResources.SA1503CodeFix,
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, syntaxRoot, node, cancellationToken),
+                        equivalenceKey: nameof(SA1503CodeFixProvider)),
+                    diagnostic);
             }
         }
 

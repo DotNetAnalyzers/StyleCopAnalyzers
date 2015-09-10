@@ -24,11 +24,9 @@ namespace StyleCop.Analyzers.SpacingRules
     [Shared]
     public class SA1028CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1028CodeMustNotContainTrailingWhitespace.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(SA1028CodeMustNotContainTrailingWhitespace.DiagnosticId);
 
         /// <inheritdoc/>
         public sealed override FixAllProvider GetFixAllProvider()
@@ -45,7 +43,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         SpacingResources.SA1028CodeFix,
-                        ct => RemoveWhitespaceAsync(context.Document, diagnostic, ct),
+                        cancellationToken => RemoveWhitespaceAsync(context.Document, diagnostic, cancellationToken),
                         equivalenceKey: nameof(SA1028CodeFixProvider)),
                     diagnostic);
             }

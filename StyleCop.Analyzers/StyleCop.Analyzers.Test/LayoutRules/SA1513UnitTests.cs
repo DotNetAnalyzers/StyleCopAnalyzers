@@ -537,6 +537,7 @@ public class Foo
         public async Task TestCodeFixAsync()
         {
             var testCode = @"using System;
+using System.Collections.Generic;
 
 public class Foo
 {
@@ -612,6 +613,7 @@ public class Foo
 ";
 
             var fixedTestCode = @"using System;
+using System.Collections.Generic;
 
 public class Foo
 {
