@@ -138,6 +138,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static string GetCopyrightText(string copyrightText, string newLineText)
         {
+            copyrightText = copyrightText.Replace("\r\n", "\n");
             return string.Join(newLineText + "// ", copyrightText.Split('\n'));
         }
     }
