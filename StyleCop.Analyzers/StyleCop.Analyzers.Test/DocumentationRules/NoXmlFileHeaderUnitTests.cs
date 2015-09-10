@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Threading;
     using System.Threading.Tasks;
     using Analyzers.DocumentationRules;
-    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using TestHelper;
     using Xunit;
@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     /// <summary>
     /// Unit tests for file header that do not follow the XML syntax.
     /// </summary>
-    public class NoXmlFileHeaderUnitTests : DiagnosticVerifier
+    public class NoXmlFileHeaderUnitTests : CodeFixVerifier
     {
         private const string SettingsFileName = "stylecop.json";
         private const string TestSettings = @"
@@ -46,9 +46,18 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 {
 }
 ";
+            var fixedCode = @"// Copyright (c) FooCorp. All rights reserved.
+// Licensed under the ??? license. See LICENSE file in the project root for full license information.
+
+namespace Foo
+{
+}
+";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -87,13 +96,13 @@ namespace Bar
         }
 
         /// <summary>
-        /// Verifies that a valid file header built using multi line comments will not produce a diagnostic message.
+        /// Verifies that a valid file header built using multi-line comments will not produce a diagnostic message.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestValidFileHeaderWithMultiLineCommentsAsync()
+        public async Task TestValidFileHeaderWithMultiLineComments1Async()
         {
-            var testCodeFormat1 = @"/* Copyright (c) FooCorp. All rights reserved.
+            var testCode = @"/* Copyright (c) FooCorp. All rights reserved.
  * Licensed under the ??? license. See LICENSE file in the project root for full license information.
  */
 
@@ -102,7 +111,17 @@ namespace Bar
 }
 ";
 
-            var testCodeFormat2 = @"/* Copyright (c) FooCorp. All rights reserved.
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a valid file header built using multi-line comments will not produce a diagnostic message.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestValidFileHeaderWithMultiLineComments2Async()
+        {
+            var testCode = @"/* Copyright (c) FooCorp. All rights reserved.
    Licensed under the ??? license. See LICENSE file in the project root for full license information. */
 
 namespace Bar
@@ -110,25 +129,27 @@ namespace Bar
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCodeFormat1, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(testCodeFormat2, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Verifies that a file header without text / only whitespace will produce the expected diagnostic message.
         /// </summary>
+        /// <param name="comment">The comment text.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestInvalidFileHeaderWithoutTextAsync()
+        [Theory]
+        [InlineData("//")]
+        [InlineData("//    ")]
+        public async Task TestInvalidFileHeaderWithoutTextAsync(string comment)
         {
-            var testCodeFormat1 = @"//
+            var testCode = $@"{comment}
 
 namespace Bar
-{
-}
+{{
+}}
 ";
-
-            var testCodeFormat2 = "//    " + @"
+            var fixedCode = @"// Copyright (c) FooCorp. All rights reserved.
+// Licensed under the ??? license. See LICENSE file in the project root for full license information.
 
 namespace Bar
 {
@@ -136,8 +157,9 @@ namespace Bar
 ";
 
             var expected = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1635Descriptor).WithLocation(1, 1);
-            await this.VerifyCSharpDiagnosticAsync(testCodeFormat1, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(testCodeFormat2, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -154,8 +176,17 @@ namespace Bar
 {
 }
 ";
+            var fixedCode = @"// Copyright (c) FooCorp. All rights reserved.
+// Licensed under the ??? license. See LICENSE file in the project root for full license information.
+
+namespace Bar
+{
+}
+";
             var expected = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(1, 1);
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -168,6 +199,12 @@ namespace Bar
         protected sealed override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new FileHeaderAnalyzers();
+        }
+
+        /// <inheritdoc/>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new FileHeaderCodeFixProvider();
         }
     }
 }

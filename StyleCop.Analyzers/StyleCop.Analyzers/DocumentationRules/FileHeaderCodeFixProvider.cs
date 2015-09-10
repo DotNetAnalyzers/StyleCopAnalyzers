@@ -12,6 +12,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.Formatting;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
@@ -29,6 +30,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         public override ImmutableArray<string> FixableDiagnosticIds { get; }
             = ImmutableArray.Create(
                 FileHeaderAnalyzers.SA1633DescriptorMissing.Id,
+                FileHeaderAnalyzers.SA1635Descriptor.Id,
                 FileHeaderAnalyzers.SA1636Descriptor.Id);
 
         /// <inheritdoc/>
@@ -54,7 +56,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             var settings = document.Project.AnalyzerOptions.GetStyleCopSettings();
 
             var fileHeader = FileHeaderHelpers.ParseFileHeader(root);
-            var newSyntaxRoot = fileHeader.IsMissing ? AddHeader(root, document.Name, settings) : ReplaceHeader(document, root, settings);
+            var newSyntaxRoot = fileHeader.IsMissing ? AddHeader(document, root, document.Name, settings) : ReplaceHeader(document, root, settings);
 
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
@@ -104,36 +106,40 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
             }
 
-            return root.WithLeadingTrivia(CreateNewHeader(document.Name, settings).Add(SyntaxFactory.CarriageReturnLineFeed).Add(SyntaxFactory.CarriageReturnLineFeed).AddRange(trivia));
+            string newLineText = document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp);
+            return root.WithLeadingTrivia(CreateNewHeader(document.Name, settings, newLineText).Add(SyntaxFactory.CarriageReturnLineFeed).Add(SyntaxFactory.CarriageReturnLineFeed).AddRange(trivia));
         }
 
-        private static SyntaxNode AddHeader(SyntaxNode root, string name, StyleCopSettings settings)
+        private static SyntaxNode AddHeader(Document document, SyntaxNode root, string name, StyleCopSettings settings)
         {
-            var newTrivia = CreateNewHeader(name, settings).Add(SyntaxFactory.CarriageReturnLineFeed).Add(SyntaxFactory.CarriageReturnLineFeed);
+            string newLineText = document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp);
+            var newTrivia = CreateNewHeader(name, settings, newLineText).Add(SyntaxFactory.CarriageReturnLineFeed).Add(SyntaxFactory.CarriageReturnLineFeed);
             newTrivia = newTrivia.AddRange(root.GetLeadingTrivia());
 
             return root.WithLeadingTrivia(newTrivia);
         }
 
-        private static SyntaxTriviaList CreateNewHeader(string filename, StyleCopSettings settings)
+        private static SyntaxTriviaList CreateNewHeader(string filename, StyleCopSettings settings, string newLineText)
         {
-            var copyrightText = "// " + GetCopyrightText(settings.DocumentationRules.CopyrightText);
+            var copyrightText = "// " + GetCopyrightText(settings.DocumentationRules.CopyrightText, newLineText);
             var newHeader = settings.DocumentationRules.XmlHeader
-                ? WrapInXmlComment(copyrightText, filename, settings)
+                ? WrapInXmlComment(copyrightText, filename, settings, newLineText)
                 : copyrightText;
             return SyntaxFactory.ParseLeadingTrivia(newHeader);
         }
 
-        private static string WrapInXmlComment(string copyrightText, string filename, StyleCopSettings settings)
+        private static string WrapInXmlComment(string copyrightText, string filename, StyleCopSettings settings, string newLineText)
         {
-            return $@"// <copyright file=""{filename}"" company=""{settings.DocumentationRules.CompanyName}"">
-{copyrightText}
-// </copyright>";
+            return
+                $"// <copyright file=\"{filename}\" company=\"{settings.DocumentationRules.CompanyName}\">" + newLineText
+                + copyrightText + newLineText
+                + "// </copyright>";
         }
 
-        private static string GetCopyrightText(string copyrightText)
+        private static string GetCopyrightText(string copyrightText, string newLineText)
         {
-            return string.Join("\n// ", copyrightText.Split('\n'));
+            copyrightText = copyrightText.Replace("\r\n", "\n");
+            return string.Join(newLineText + "// ", copyrightText.Split('\n'));
         }
     }
 }
