@@ -71,6 +71,64 @@ public class Foo
         [Theory]
         [InlineData("int Prop")]
         [InlineData("int this[int index]")]
+        public async Task TestPropertyGetInOneLineSetInMultipleLinesWithMultipleStatementsAsync(string propertyDeclaration)
+        {
+            var testCode = $@"
+public class Foo
+{{
+    public {propertyDeclaration}
+    {{
+        get {{ return backingField; }}
+        set
+        {{
+            this.backingField = value;
+            this.OnPropertyChanged();
+        }}
+    }}
+
+    private int backingField;
+
+    private void OnPropertyChanged()
+    {{
+
+    }}
+}}";
+            var fixedTestCodeMultiple = $@"
+public class Foo
+{{
+    public {propertyDeclaration}
+    {{
+        get
+        {{
+            return backingField;
+        }}
+
+        set
+        {{
+            this.backingField = value;
+            this.OnPropertyChanged();
+        }}
+    }}
+
+    private int backingField;
+
+    private void OnPropertyChanged()
+    {{
+
+    }}
+}}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 9);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCodeMultiple, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCodeMultiple).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("int Prop")]
+        [InlineData("int this[int index]")]
         public async Task TestPropertyGetAndSetOnOneLineWithCommentsAsync(string propertyDeclaration)
         {
             var testCode = $@"

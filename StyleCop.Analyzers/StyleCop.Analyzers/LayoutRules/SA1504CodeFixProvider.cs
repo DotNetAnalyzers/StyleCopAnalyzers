@@ -253,12 +253,19 @@ namespace StyleCop.Analyzers.LayoutRules
             SyntaxList<StatementSyntax> newStatements;
             if (body.Statements.Count > 0)
             {
-                var reformattedStatement = body.Statements[0]
-                    .WithLeadingTrivia(ReformatTriviaListNoLeadingSpace(body.Statements[0].GetLeadingTrivia()).Insert(0, indentationStatements))
-                    .WithTrailingTrivia(ReformatTriviaListNoTrailingSpace(body.Statements[0].GetTrailingTrivia()).Add(SyntaxFactory.CarriageReturnLineFeed));
+                var statements = new List<StatementSyntax>();
+
+                foreach (var statement in body.Statements)
+                {
+                    var reformattedStatement = statement
+                        .WithLeadingTrivia(ReformatTriviaListNoLeadingSpace(statement.GetLeadingTrivia()).Insert(0, indentationStatements))
+                        .WithTrailingTrivia(ReformatTriviaListNoTrailingSpace(statement.GetTrailingTrivia()).Add(SyntaxFactory.CarriageReturnLineFeed));
+                    statements.Add(reformattedStatement);
+                }
+
+                newStatements = SyntaxFactory.List<StatementSyntax>().AddRange(statements);
 
                 reformattedOpenBraceTrailingTrivia = ReformatTriviaListNoTrailingSpace(body.OpenBraceToken.TrailingTrivia);
-                newStatements = SyntaxFactory.List<StatementSyntax>().Add(reformattedStatement);
                 reformattedCloseBraceLeadingTrivia = ReformatTriviaListNoLeadingSpace(body.CloseBraceToken.LeadingTrivia);
             }
             else
