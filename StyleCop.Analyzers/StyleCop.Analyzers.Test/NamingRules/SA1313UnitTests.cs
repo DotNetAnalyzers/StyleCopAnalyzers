@@ -362,6 +362,118 @@ public class Test : Testbase
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1442:
+        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1442
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        [Fact]
+        public async Task TestSimpleLambaExpressionAsync()
+        {
+            var testCode = @"public class TypeName
+{
+    public void MethodName()
+    {
+        System.Action<int> action = Ignored => { };
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("Ignored").WithLocation(5, 37);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1343:
+        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1343
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        [Fact]
+        public async Task TestLambdaParameterNamedUnderscoreAsync()
+        {
+            var testCode = @"public class TypeName
+{
+    public void MethodName()
+    {
+        System.Action<int> action1 = _ => { };
+        System.Action<int> action2 = (_) => { };
+        System.Action<int> action3 = delegate(int _) { };
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1343:
+        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1343
+        /// </summary>
+        /// <remarks>
+        /// <para>This diagnostic does not check whether or not a parameter named <c>_</c> is being used.</para>
+        /// </remarks>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        [Fact]
+        public async Task TestLambdaParameterNamedUnderscoreUsageAsync()
+        {
+            var testCode = @"public class TypeName
+{
+    public void MethodName()
+    {
+        System.Func<int, int> function1 = _ => _;
+        System.Func<int, int> function2 = (_) => _;
+        System.Func<int, int> function3 = delegate(int _) { return _; };
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1343:
+        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1343
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        [Fact]
+        public async Task TestLambdaParameterMultipleUnderscoresAsync()
+        {
+            var testCode = @"public class TypeName
+{
+    public void MethodName()
+    {
+        System.Action<int> action1 = __ => { };
+        System.Action<int> action2 = (__) => { };
+        System.Action<int> action3 = delegate(int __) { };
+    }
+}";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithArguments("__").WithLocation(5, 38),
+                this.CSharpDiagnostic().WithArguments("__").WithLocation(6, 39),
+                this.CSharpDiagnostic().WithArguments("__").WithLocation(7, 51)
+            };
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1343:
+        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1343
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        [Fact]
+        public async Task TestMethodParameterNamedUnderscoreAsync()
+        {
+            var testCode = @"public class TypeName
+{
+    public void MethodName(int _)
+    {
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("_").WithLocation(3, 32);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1313ParameterNamesMustBeginWithLowerCaseLetter();
