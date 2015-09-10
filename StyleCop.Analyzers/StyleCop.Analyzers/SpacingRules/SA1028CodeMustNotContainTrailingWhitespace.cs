@@ -152,7 +152,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 previousTrivia = trivia;
             }
 
-            if (previousTrivia.IsKind(SyntaxKind.WhitespaceTrivia))
+            if (previousTrivia.IsKind(SyntaxKind.WhitespaceTrivia) && previousTrivia.Span.End == previousTrivia.SyntaxTree.Length)
             {
                 // Report whitespace at the end of the last line in the document
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, previousTrivia.GetLocation()));
