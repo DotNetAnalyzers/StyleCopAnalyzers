@@ -91,7 +91,13 @@ namespace StyleCop.Analyzers.NamingRules
 
         private static bool NameMatchesAbstraction(ParameterSyntax syntax, SemanticModel semanticModel)
         {
-            var parameterList = (ParameterListSyntax)syntax.Parent;
+            var parameterList = syntax.Parent as ParameterListSyntax;
+            if (parameterList == null)
+            {
+                // This occurs for simple lambda expressions (without parentheses)
+                return false;
+            }
+
             var index = parameterList.Parameters.IndexOf(syntax);
             var declaringMember = syntax.Parent.Parent;
 

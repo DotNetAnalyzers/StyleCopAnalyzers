@@ -362,6 +362,27 @@ public class Test : Testbase
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1442:
+        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1442
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        [Fact]
+        public async Task TestSimpleLambaExpressionAsync()
+        {
+            var testCode = @"public class TypeName
+{
+    public void MethodName()
+    {
+        System.Action<int> action = Ignored => { };
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("Ignored").WithLocation(5, 37);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1313ParameterNamesMustBeginWithLowerCaseLetter();
