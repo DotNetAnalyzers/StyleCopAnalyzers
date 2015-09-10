@@ -33,7 +33,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         public const string DiagnosticId = "SA1622";
         private const string Title = "Generic type parameter documentation must have text";
         private const string MessageFormat = "Generic type parameter documentation must have text";
-        private const string Description = "A &lt;typeparam&gt; tag within the Xml header documentation for a generic C# element is empty.";
+        private const string Description = "A <typeparam> tag within the Xml header documentation for a generic C# element is empty.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1622.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
