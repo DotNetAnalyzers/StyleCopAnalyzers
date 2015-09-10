@@ -19,9 +19,9 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         public async Task TestClassWithXmlCommentAsync()
         {
             var testCode = @"/// <summary>
-/// Xml Documentation
+/// XML Documentation
 /// </summary>
-public class Foo
+public class TypeName
 {
     public void Bar()
     {
@@ -34,7 +34,7 @@ public class Foo
         [Fact]
         public async Task TestMethodWithCommentAsync()
         {
-            var testCode = @"public class Foo
+            var testCode = @"public class TypeName
 {
     public void Bar()
     {
@@ -48,7 +48,7 @@ public class Foo
         [Fact]
         public async Task TestMethodWithOneLineThreeSlashCommentAsync()
         {
-            var testCode = @"public class Foo
+            var testCode = @"public class TypeName
 {
     public void Bar()
     {
@@ -67,7 +67,7 @@ public class Foo
         [Fact]
         public async Task TestMethodWithMultiLineThreeSlashCommentAsync()
         {
-            var testCode = @"public class Foo
+            var testCode = @"public class TypeName
 {
     public void Bar()
     {
@@ -87,7 +87,7 @@ public class Foo
         [Fact]
         public async Task TestMethodWithCodeCommentsAsync()
         {
-            var testCode = @"public class Foo
+            var testCode = @"public class TypeName
 {
     public void Bar()
     {
@@ -101,7 +101,7 @@ public class Foo
         [Fact]
         public async Task TestMethodWithSingeLineDocumentationAsync()
         {
-            var testCode = @"public class Foo
+            var testCode = @"public class TypeName
 {
     /// <summary>Summary text</summary>
     public void Bar()
