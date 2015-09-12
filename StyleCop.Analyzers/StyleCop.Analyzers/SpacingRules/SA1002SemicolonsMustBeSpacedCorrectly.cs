@@ -4,6 +4,7 @@
 namespace StyleCop.Analyzers.SpacingRules
 {
     using System.Collections.Immutable;
+    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -105,11 +106,12 @@ namespace StyleCop.Analyzers.SpacingRules
 
             bool hasPrecedingSpace = false;
             bool ignorePrecedingSpace = false;
-            if (!token.HasLeadingTrivia)
+            if (!token.IsFirstInLine())
             {
                 // only the first token on the line has leading trivia, and those are ignored
                 SyntaxToken precedingToken = token.GetPreviousToken();
-                if (precedingToken.HasTrailingTrivia)
+                SyntaxTriviaList trailingTrivia = precedingToken.TrailingTrivia;
+                if (trailingTrivia.Any() && trailingTrivia.Last().IsKind(SyntaxKind.WhitespaceTrivia))
                 {
                     hasPrecedingSpace = true;
                 }
@@ -131,7 +133,7 @@ namespace StyleCop.Analyzers.SpacingRules
             if (hasPrecedingSpace && !ignorePrecedingSpace)
             {
                 // semicolon must{ not} be {preceded} by a space
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), OpenCloseSpacingCodeFixProvider.RemovePreceding, " not", "preceded"));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), OpenCloseSpacingCodeFixProvider.RemoveImmediatePreceding, " not", "preceded"));
             }
         }
     }
