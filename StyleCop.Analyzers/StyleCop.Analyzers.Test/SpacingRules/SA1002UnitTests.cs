@@ -339,6 +339,37 @@ class ClassName
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#403.
+        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/403
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestSemicolonAtBeginningOfLineAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    void MethodName()
+    {
+        // The first one is indented (has leading trivia).
+        bool special = false
+            ;
+
+        // The second one is not indented (no leading trivia).
+        special = true
+;
+
+        // The third one is preceded by non-whitespace trivia.
+        special = false
+/*comment*/;
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1002SemicolonsMustBeSpacedCorrectly();
