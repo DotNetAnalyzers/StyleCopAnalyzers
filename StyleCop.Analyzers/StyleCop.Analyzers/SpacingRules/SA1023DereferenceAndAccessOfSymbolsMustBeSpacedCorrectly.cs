@@ -110,8 +110,11 @@ namespace StyleCop.Analyzers.SpacingRules
                 {
                 case SyntaxKind.OpenBracketToken:
                 case SyntaxKind.OpenParenToken:
+                case SyntaxKind.CloseParenToken:
+                case SyntaxKind.AsteriskToken:
                     allowTrailingSpace = false;
                     break;
+
                 default:
                     allowTrailingSpace = true;
                     break;
