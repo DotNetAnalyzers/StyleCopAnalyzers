@@ -65,8 +65,6 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             context.RegisterSyntaxNodeActionHonorExclusions(HandlePropertyDeclarationSyntax, SyntaxKind.PropertyDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleBaseFieldDeclarationSyntax, SyntaxKind.EventFieldDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleBaseFieldDeclarationSyntax, SyntaxKind.FieldDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleOperatorDeclarationSyntax, SyntaxKind.OperatorDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleConversionOperatorDeclarationSyntax, SyntaxKind.ConversionOperatorDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleIndexerDeclarationSyntax, SyntaxKind.IndexerDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleConstructorDeclarationSyntax, SyntaxKind.ConstructorDeclaration);
         }
@@ -153,18 +151,6 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             }
 
             CheckAccessModifiers(context, declarator.Identifier, syntax.Modifiers, declarator);
-        }
-
-        private static void HandleOperatorDeclarationSyntax(SyntaxNodeAnalysisContext context)
-        {
-            var syntax = (OperatorDeclarationSyntax)context.Node;
-            CheckAccessModifiers(context, syntax.OperatorToken, syntax.Modifiers);
-        }
-
-        private static void HandleConversionOperatorDeclarationSyntax(SyntaxNodeAnalysisContext context)
-        {
-            var syntax = (ConversionOperatorDeclarationSyntax)context.Node;
-            CheckAccessModifiers(context, syntax.Type.GetLastToken(), syntax.Modifiers);
         }
 
         private static void HandleIndexerDeclarationSyntax(SyntaxNodeAnalysisContext context)
