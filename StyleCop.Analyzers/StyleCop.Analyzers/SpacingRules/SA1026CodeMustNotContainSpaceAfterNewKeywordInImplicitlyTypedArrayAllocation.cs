@@ -77,7 +77,7 @@ namespace StyleCop.Analyzers.SpacingRules
 
                 if (token.IsFollowedByWhitespace() || token.IsLastInLine())
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), OpenCloseSpacingCodeFixProvider.RemoveFollowing));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingCodeFixProvider.RemoveFollowing));
                 }
             }
         }

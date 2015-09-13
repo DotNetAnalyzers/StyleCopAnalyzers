@@ -324,7 +324,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 openParenLine.IsValid &&
                 openParenLine.StartLinePosition.Line != prevTokenLine.StartLinePosition.Line)
             {
-                var properties = preserveLayout ? OpenCloseSpacingCodeFixProvider.RemovePrecedingPreserveLayout : OpenCloseSpacingCodeFixProvider.RemovePreceding;
+                var properties = preserveLayout ? TokenSpacingCodeFixProvider.RemovePrecedingPreserveLayout : TokenSpacingCodeFixProvider.RemovePreceding;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, openToken.GetLocation(), properties));
             }
         }

@@ -250,7 +250,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                     if (previousNode.GetEndLine() < nodeOrToken.GetLineSpan().StartLinePosition.Line)
                     {
-                        var properties = OpenCloseSpacingCodeFixProvider.RemovePrecedingPreserveLayout;
+                        var properties = TokenSpacingCodeFixProvider.RemovePrecedingPreserveLayout;
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, nodeOrToken.GetLocation(), properties));
                     }
                 }

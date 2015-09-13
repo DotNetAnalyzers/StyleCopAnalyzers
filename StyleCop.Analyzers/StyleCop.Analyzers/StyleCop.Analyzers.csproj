@@ -331,7 +331,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SettingsResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SpacingRules\OpenCloseSpacingCodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1000KeywordsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1001CommasMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1002SemicolonsMustBeSpacedCorrectly.cs" />
@@ -374,6 +373,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SpacingResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SpacingRules\TokenSpacingCodeFixProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\build\keys\StyleCopAnalyzers.dev.snk">

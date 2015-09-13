@@ -1735,7 +1735,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new OpenCloseSpacingCodeFixProvider();
+            return new TokenSpacingCodeFixProvider();
         }
     }
 }

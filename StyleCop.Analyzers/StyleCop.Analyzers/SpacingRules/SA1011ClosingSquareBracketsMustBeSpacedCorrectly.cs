@@ -143,7 +143,7 @@ namespace StyleCop.Analyzers.SpacingRules
             if (!firstInLine && precededBySpace)
             {
                 // Closing square bracket must{ not} be {preceded} by a space.
-                var properties = OpenCloseSpacingCodeFixProvider.RemovePreceding;
+                var properties = TokenSpacingCodeFixProvider.RemovePreceding;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, " not", "preceded"));
             }
 
@@ -152,13 +152,13 @@ namespace StyleCop.Analyzers.SpacingRules
                 if (!precedesSpecialCharacter && !followedBySpace)
                 {
                     // Closing square bracket must{} be {followed} by a space.
-                    var properties = OpenCloseSpacingCodeFixProvider.InsertFollowing;
+                    var properties = TokenSpacingCodeFixProvider.InsertFollowing;
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, string.Empty, "followed"));
                 }
                 else if (precedesSpecialCharacter && followedBySpace && !suppressFollowingSpaceError)
                 {
                     // Closing square brackets must {not} be {followed} by a space
-                    var properties = OpenCloseSpacingCodeFixProvider.RemoveFollowing;
+                    var properties = TokenSpacingCodeFixProvider.RemoveFollowing;
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, " not", "followed"));
                 }
             }

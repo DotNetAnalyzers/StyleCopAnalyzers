@@ -112,14 +112,14 @@ namespace StyleCop.Analyzers.SpacingRules
             if (!firstInLine && precededBySpace)
             {
                 // Member access symbol '{.}' must not be {preceded} by a space.
-                var properties = OpenCloseSpacingCodeFixProvider.RemovePreceding;
+                var properties = TokenSpacingCodeFixProvider.RemovePreceding;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, token.Text, "preceded"));
             }
 
             if (followedBySpace)
             {
                 // Member access symbol '{.}' must not be {followed} by a space.
-                var properties = OpenCloseSpacingCodeFixProvider.RemoveFollowing;
+                var properties = TokenSpacingCodeFixProvider.RemoveFollowing;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, token.Text, "followed"));
             }
         }

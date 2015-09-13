@@ -64,15 +64,6 @@ namespace StyleCop.Analyzers.SpacingRules {
         /// <summary>
         ///   Looks up a localized string similar to Fix spacing.
         /// </summary>
-        internal static string OpenCloseSpacingCodeFix {
-            get {
-                return ResourceManager.GetString("OpenCloseSpacingCodeFix", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Fix spacing.
-        /// </summary>
         internal static string SA1003CodeFix {
             get {
                 return ResourceManager.GetString("SA1003CodeFix", resourceCulture);
@@ -436,6 +427,15 @@ namespace StyleCop.Analyzers.SpacingRules {
         internal static string SA1028Title {
             get {
                 return ResourceManager.GetString("SA1028Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fix spacing.
+        /// </summary>
+        internal static string TokenSpacingCodeFix {
+            get {
+                return ResourceManager.GetString("TokenSpacingCodeFix", resourceCulture);
             }
         }
     }

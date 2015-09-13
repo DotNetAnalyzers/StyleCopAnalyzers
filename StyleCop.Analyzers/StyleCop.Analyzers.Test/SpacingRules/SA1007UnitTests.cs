@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1007OperatorKeywordMustBeFollowedBySpace"/> and
-    /// <see cref="OpenCloseSpacingCodeFixProvider"/>.
+    /// <see cref="TokenSpacingCodeFixProvider"/>.
     /// </summary>
     public class SA1007UnitTests : CodeFixVerifier
     {
@@ -60,7 +60,7 @@ class ClassName
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new OpenCloseSpacingCodeFixProvider();
+            return new TokenSpacingCodeFixProvider();
         }
     }
 }
