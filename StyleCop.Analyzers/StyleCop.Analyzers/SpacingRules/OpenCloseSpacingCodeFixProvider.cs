@@ -30,6 +30,7 @@ namespace StyleCop.Analyzers.SpacingRules
         private const string LocationFollowing = "following";
         private const string ActionInsert = "insert";
         private const string ActionRemove = "remove";
+        private const string ActionRemoveImmediate = "remove-immediate";
         private const string LayoutPack = "pack";
         private const string LayoutPreserve = "preserve";
 
@@ -68,6 +69,22 @@ namespace StyleCop.Analyzers.SpacingRules
             ImmutableDictionary<string, string>.Empty
                 .SetItem(LocationKey, LocationPreceding)
                 .SetItem(ActionKey, ActionInsert);
+
+        /// <summary>
+        /// Gets a property collection indicating that the code fix should remove any
+        /// <see cref="SyntaxKind.WhitespaceTrivia"/> trivia which <em>immediately</em> precedes the token identified by
+        /// the diagnostic span.
+        /// </summary>
+        /// <value>
+        /// A property collection indicating that the code fix should remove any
+        /// <see cref="SyntaxKind.WhitespaceTrivia"/> trivia which <em>immediately</em> precedes the token identified by
+        /// the diagnostic span.
+        /// </value>
+        internal static ImmutableDictionary<string, string> RemoveImmediatePreceding { get; } =
+            ImmutableDictionary<string, string>.Empty
+                .SetItem(LocationKey, LocationPreceding)
+                .SetItem(ActionKey, ActionRemoveImmediate)
+                .SetItem(LayoutKey, LayoutPack);
 
         internal static ImmutableDictionary<string, string> RemovePreceding { get; } =
             ImmutableDictionary<string, string>.Empty
@@ -222,6 +239,28 @@ namespace StyleCop.Analyzers.SpacingRules
                     {
                         SyntaxTriviaList trailingTrivia = triviaList.AddRange(token.TrailingTrivia.WithoutLeadingWhitespace(endOfLineIsWhitespace: false));
                         replaceMap[token] = token.WithLeadingTrivia().WithTrailingTrivia(trailingTrivia);
+                    }
+
+                    break;
+
+                case ActionRemoveImmediate:
+                    SyntaxTriviaList tokenLeadingTrivia = token.LeadingTrivia;
+                    while (tokenLeadingTrivia.Any() && tokenLeadingTrivia.Last().IsKind(SyntaxKind.WhitespaceTrivia))
+                    {
+                        tokenLeadingTrivia = tokenLeadingTrivia.RemoveAt(tokenLeadingTrivia.Count - 1);
+                    }
+
+                    replaceMap[token] = token.WithLeadingTrivia(tokenLeadingTrivia);
+
+                    if (!tokenLeadingTrivia.Any())
+                    {
+                        SyntaxTriviaList previousTrailingTrivia = prevToken.TrailingTrivia;
+                        while (previousTrailingTrivia.Any() && previousTrailingTrivia.Last().IsKind(SyntaxKind.WhitespaceTrivia))
+                        {
+                            previousTrailingTrivia = previousTrailingTrivia.RemoveAt(previousTrailingTrivia.Count - 1);
+                        }
+
+                        replaceMap[prevToken] = prevToken.WithTrailingTrivia(previousTrailingTrivia);
                     }
 
                     break;
