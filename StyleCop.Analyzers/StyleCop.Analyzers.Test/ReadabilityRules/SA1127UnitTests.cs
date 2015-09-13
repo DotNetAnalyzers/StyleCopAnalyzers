@@ -70,6 +70,64 @@ class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1476:
+        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1476
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestViolationWithObsoleteMethodDeclarationAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    [System.Obsolete]
+    private void Method<T>() where T : class { }
+}";
+            var fixedCode = @"
+class Foo
+{
+    [System.Obsolete]
+    private void Method<T>()
+        where T : class
+    { }
+}";
+            var expected = this.CSharpDiagnostic().WithLocation(5, 30);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1476:
+        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1476
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestViolationWithMethodDeclarationMultiLineParametersAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    private void Method<T>(
+        int a,
+        int b) where T : class { }
+}";
+            var fixedCode = @"
+class Foo
+{
+    private void Method<T>(
+        int a,
+        int b)
+        where T : class
+    { }
+}";
+            var expected = this.CSharpDiagnostic().WithLocation(6, 16);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestViolationWithExpressionBodiedMethodDeclarationAsync()
         {
