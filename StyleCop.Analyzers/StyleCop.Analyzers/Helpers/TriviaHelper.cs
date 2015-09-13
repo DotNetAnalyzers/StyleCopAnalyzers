@@ -113,6 +113,53 @@ namespace StyleCop.Analyzers.Helpers
         }
 
         /// <summary>
+        /// Removes a range of elements from the <see cref="SyntaxTriviaList"/>.
+        /// </summary>
+        /// <param name="list">The list to remove elements from.</param>
+        /// <param name="index">The zero-based starting index of the range of elements to remove.</param>
+        /// <param name="count">The number of elements to remove.</param>
+        /// <returns>A copy of <paramref name="list"/> with the specified range of elements removed.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <para>If <paramref name="index"/> is less than 0.</para>
+        /// <para>-or-</para>
+        /// <para>If <paramref name="count"/> is less than 0.</para>
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// <para>If <paramref name="index"/> and <paramref name="count"/> do not denote a valid range of elements in
+        /// the <see cref="SyntaxTriviaList"/>.</para>
+        /// </exception>
+        internal static SyntaxTriviaList RemoveRange(this SyntaxTriviaList list, int index, int count)
+        {
+            if (index < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index));
+            }
+
+            if (count < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(count));
+            }
+
+            if (index > list.Count - count)
+            {
+                throw new ArgumentException("The specified range of elements does not exist in the list.");
+            }
+
+            SyntaxTrivia[] trivia = new SyntaxTrivia[list.Count - count];
+            for (int i = 0; i < index; i++)
+            {
+                trivia[i] = list[i];
+            }
+
+            for (int i = index; i + count < list.Count; i++)
+            {
+                trivia[i] = list[i + count];
+            }
+
+            return SyntaxFactory.TriviaList(trivia);
+        }
+
+        /// <summary>
         /// Returns the index of the last trivia of a specified kind in the trivia list.
         /// </summary>
         /// <param name="list">The trivia list.</param>

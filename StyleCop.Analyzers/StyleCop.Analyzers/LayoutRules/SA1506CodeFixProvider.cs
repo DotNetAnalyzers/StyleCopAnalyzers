@@ -62,12 +62,8 @@ namespace StyleCop.Analyzers.LayoutRules
                 case SyntaxKind.EndOfLineTrivia:
                     if (onBlankLine)
                     {
-                        for (int i = 0; i < currentIndex - currentLineStart + 1; i++)
-                        {
-                            triviaList = triviaList.RemoveAt(currentLineStart);
-                            currentIndex = currentLineStart - 1;
-                        }
-
+                        triviaList = triviaList.RemoveRange(currentLineStart, currentIndex - currentLineStart + 1);
+                        currentIndex = currentLineStart - 1;
                         continue;
                     }
                     else
