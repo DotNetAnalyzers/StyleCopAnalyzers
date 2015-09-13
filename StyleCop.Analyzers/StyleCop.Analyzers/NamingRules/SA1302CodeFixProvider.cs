@@ -22,11 +22,9 @@ namespace StyleCop.Analyzers.NamingRules
     [Shared]
     public class SA1302CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1302InterfaceNamesMustBeginWithI.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(SA1302InterfaceNamesMustBeginWithI.DiagnosticId);
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -36,11 +34,6 @@ namespace StyleCop.Analyzers.NamingRules
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!diagnostic.Id.Equals(SA1302InterfaceNamesMustBeginWithI.DiagnosticId))
-                {
-                    continue;
-                }
-
                 var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (token.IsMissing)
                 {
@@ -48,7 +41,11 @@ namespace StyleCop.Analyzers.NamingRules
                 }
 
                 var newName = "I" + token.ValueText;
-                context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.RenameToCodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        string.Format(NamingResources.RenameToCodeFix, newName),
+                        cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken)),
+                    diagnostic);
             }
         }
     }

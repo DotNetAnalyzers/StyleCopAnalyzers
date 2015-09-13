@@ -69,9 +69,14 @@ namespace StyleCop.Analyzers.Settings
                 return SpecializedTasks.CompletedTask;
             }
 
-            foreach (var diagnostic in context.Diagnostics.Where(d => this.FixableDiagnosticIds.Contains(d.Id)))
+            foreach (var diagnostic in context.Diagnostics)
             {
-                context.RegisterCodeFix(CodeAction.Create(SettingsResources.SettingsFileCodeFix, token => GetTransformedSolutionAsync(context.Document, diagnostic, token), equivalenceKey: nameof(SettingsFileCodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        SettingsResources.SettingsFileCodeFix,
+                        cancellationToken => GetTransformedSolutionAsync(context.Document, diagnostic, cancellationToken),
+                        equivalenceKey: nameof(SettingsFileCodeFixProvider)),
+                    diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;

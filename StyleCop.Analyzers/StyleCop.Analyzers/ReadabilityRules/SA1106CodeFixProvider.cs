@@ -3,10 +3,8 @@
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -25,11 +23,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
     [Shared]
     public class SA1106CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1106CodeMustNotContainEmptyStatements.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(SA1106CodeMustNotContainEmptyStatements.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -42,11 +38,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!diagnostic.Id.Equals(SA1106CodeMustNotContainEmptyStatements.DiagnosticId))
-                {
-                    continue;
-                }
-
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         ReadabilityResources.SA1106CodeFix,

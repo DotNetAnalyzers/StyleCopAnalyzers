@@ -29,11 +29,11 @@ namespace StyleCop.Analyzers.DocumentationRules
     [Shared]
     public class SA1642SA1643CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.DiagnosticId, SA1643DestructorSummaryDocumentationMustBeginWithStandardText.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(
+                SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.DiagnosticId,
+                SA1643DestructorSummaryDocumentationMustBeginWithStandardText.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -48,18 +48,18 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!FixableDiagnostics.Contains(diagnostic.Id))
-                {
-                    continue;
-                }
-
                 var node = root.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true) as XmlElementSyntax;
                 if (node == null)
                 {
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create(DocumentationResources.SA1642SA1643CodeFix, token => GetTransformedDocumentAsync(context.Document, root, node), equivalenceKey: nameof(SA1642SA1643CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        DocumentationResources.SA1642SA1643CodeFix,
+                        token => GetTransformedDocumentAsync(context.Document, root, node),
+                        equivalenceKey: nameof(SA1642SA1643CodeFixProvider)),
+                    diagnostic);
             }
         }
 

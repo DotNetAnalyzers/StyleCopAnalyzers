@@ -34,7 +34,8 @@ namespace StyleCop.Analyzers.SpacingRules
         private const string LayoutPack = "pack";
         private const string LayoutPreserve = "preserve";
 
-        private static readonly ImmutableArray<string> FixableDiagnostics =
+        /// <inheritdoc/>
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(
                 SA1000KeywordsMustBeSpacedCorrectly.DiagnosticId,
                 SA1001CommasMustBeSpacedCorrectly.DiagnosticId,
@@ -61,9 +62,6 @@ namespace StyleCop.Analyzers.SpacingRules
                 SA1111ClosingParenthesisMustBeOnLineOfLastParameter.DiagnosticId,
                 SA1112ClosingParenthesisMustBeOnLineOfOpeningParenthesis.DiagnosticId,
                 SA1113CommaMustBeOnSameLineAsPreviousParameter.DiagnosticId);
-
-        /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
 
         internal static ImmutableDictionary<string, string> InsertPreceding { get; } =
             ImmutableDictionary<string, string>.Empty
@@ -117,9 +115,14 @@ namespace StyleCop.Analyzers.SpacingRules
         /// <inheritdoc/>
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            foreach (var diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
+            foreach (var diagnostic in context.Diagnostics)
             {
-                context.RegisterCodeFix(CodeAction.Create(SpacingResources.OpenCloseSpacingCodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token), equivalenceKey: nameof(OpenCloseSpacingCodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        SpacingResources.OpenCloseSpacingCodeFix,
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
+                        equivalenceKey: nameof(OpenCloseSpacingCodeFixProvider)),
+                    diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;

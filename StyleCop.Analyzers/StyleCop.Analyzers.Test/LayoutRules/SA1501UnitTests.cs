@@ -496,7 +496,7 @@ class TypeName
 {
     void MethodName()
     {
-        do { Bar(); } while (false);
+        do { MethodName(); } while (false);
 ";
 
             var fixedTestCode = @"using System;
@@ -507,12 +507,12 @@ class TypeName
     {
         do
         {
-            Bar();
+            MethodName();
         }
         while (false);
 ";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, allowUnsupportedDiagnostics: true).ConfigureAwait(false);
         }
 
         /// <summary>

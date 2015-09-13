@@ -3,11 +3,9 @@
 
 namespace StyleCop.Analyzers.SpacingRules
 {
-    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -26,11 +24,9 @@ namespace StyleCop.Analyzers.SpacingRules
     [Shared]
     public class SA1025CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1025CodeMustNotContainMultipleWhitespaceInARow.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(SA1025CodeMustNotContainMultipleWhitespaceInARow.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -41,7 +37,7 @@ namespace StyleCop.Analyzers.SpacingRules
         /// <inheritdoc/>
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            foreach (var diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
+            foreach (var diagnostic in context.Diagnostics)
             {
                 context.RegisterCodeFix(
                     CodeAction.Create(

@@ -23,11 +23,9 @@ namespace StyleCop.Analyzers.NamingRules
     [Shared]
     public class SA1310CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-          ImmutableArray.Create(SA1310FieldNamesMustNotContainUnderscore.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(SA1310FieldNamesMustNotContainUnderscore.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -43,11 +41,6 @@ namespace StyleCop.Analyzers.NamingRules
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!diagnostic.Id.Equals(SA1310FieldNamesMustNotContainUnderscore.DiagnosticId))
-                {
-                    continue;
-                }
-
                 var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (token.IsMissing)
                 {
@@ -58,7 +51,12 @@ namespace StyleCop.Analyzers.NamingRules
                 string proposedName = BuildProposedName(currentName);
                 if (proposedName != currentName)
                 {
-                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.RenameToCodeFix, proposedName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, proposedName, cancellationToken), equivalenceKey: nameof(SA1310CodeFixProvider)), diagnostic);
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            string.Format(NamingResources.RenameToCodeFix, proposedName),
+                            cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, proposedName, cancellationToken),
+                            equivalenceKey: nameof(SA1310CodeFixProvider)),
+                        diagnostic);
                 }
             }
         }

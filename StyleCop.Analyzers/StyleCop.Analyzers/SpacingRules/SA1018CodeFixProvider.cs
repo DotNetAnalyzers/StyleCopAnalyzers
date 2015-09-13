@@ -27,11 +27,9 @@ namespace StyleCop.Analyzers.SpacingRules
     [Shared]
     public class SA1018CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1018NullableTypeSymbolsMustNotBePrecededBySpace.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(SA1018NullableTypeSymbolsMustNotBePrecededBySpace.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -46,11 +44,6 @@ namespace StyleCop.Analyzers.SpacingRules
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!diagnostic.Id.Equals(SA1018NullableTypeSymbolsMustNotBePrecededBySpace.DiagnosticId))
-                {
-                    continue;
-                }
-
                 var nullableType = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) as NullableTypeSyntax;
                 if (nullableType == null)
                 {
@@ -67,7 +60,12 @@ namespace StyleCop.Analyzers.SpacingRules
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1018CodeFix, cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken), equivalenceKey: nameof(SA1018CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        SpacingResources.SA1018CodeFix,
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
+                        equivalenceKey: nameof(SA1018CodeFixProvider)),
+                    diagnostic);
             }
         }
 

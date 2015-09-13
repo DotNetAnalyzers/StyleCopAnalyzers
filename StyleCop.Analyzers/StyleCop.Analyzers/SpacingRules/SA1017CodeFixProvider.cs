@@ -24,11 +24,9 @@ namespace StyleCop.Analyzers.SpacingRules
     [Shared]
     public class SA1017CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1017ClosingAttributeBracketsMustBeSpacedCorrectly.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(SA1017ClosingAttributeBracketsMustBeSpacedCorrectly.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -41,12 +39,12 @@ namespace StyleCop.Analyzers.SpacingRules
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!diagnostic.Id.Equals(SA1017ClosingAttributeBracketsMustBeSpacedCorrectly.DiagnosticId))
-                {
-                    continue;
-                }
-
-                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1017CodeFix, cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken), equivalenceKey: nameof(SA1017CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        SpacingResources.SA1017CodeFix,
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
+                        equivalenceKey: nameof(SA1017CodeFixProvider)),
+                    diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;

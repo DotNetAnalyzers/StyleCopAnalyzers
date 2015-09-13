@@ -28,9 +28,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
     {
         private static readonly SyntaxNode StringEmptyExpression;
 
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1122UseStringEmptyForEmptyStrings.DiagnosticId);
-
         static SA1122CodeFixProvider()
         {
             var identifierNameSyntax = SyntaxFactory.IdentifierName(nameof(string.Empty));
@@ -40,7 +37,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         }
 
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(SA1122UseStringEmptyForEmptyStrings.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -52,13 +50,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!diagnostic.Id.Equals(SA1122UseStringEmptyForEmptyStrings.DiagnosticId))
-                {
-                    continue;
-                }
-
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         ReadabilityResources.SA1122CodeFix,

@@ -28,7 +28,8 @@ namespace StyleCop.Analyzers.OrderingRules
     {
         private static readonly List<UsingDirectiveSyntax> EmptyUsingsList = new List<UsingDirectiveSyntax>();
 
-        private static readonly ImmutableArray<string> FixableDiagnostics =
+        /// <inheritdoc/>
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(
                 SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId,
                 SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives.DiagnosticId,
@@ -37,9 +38,6 @@ namespace StyleCop.Analyzers.OrderingRules
                 SA1211UsingAliasDirectivesMustBeOrderedAlphabeticallyByAliasName.DiagnosticId,
                 SA1216UsingStaticDirectivesMustBePlacedAtTheCorrectLocation.DiagnosticId,
                 SA1217UsingStaticDirectivesMustBeOrderedAlphabetically.DiagnosticId);
-
-        /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -53,7 +51,7 @@ namespace StyleCop.Analyzers.OrderingRules
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             var compilationUnit = (CompilationUnitSyntax)syntaxRoot;
 
-            foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
+            foreach (Diagnostic diagnostic in context.Diagnostics)
             {
                 // do not offer a code fix for SA1200 when there are multiple namespaces in the source file
                 if ((diagnostic.Id == SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId)

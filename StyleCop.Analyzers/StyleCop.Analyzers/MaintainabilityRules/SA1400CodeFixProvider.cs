@@ -25,11 +25,9 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     [Shared]
     public class SA1400CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1400AccessModifierMustBeDeclared.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(SA1400AccessModifierMustBeDeclared.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -43,11 +41,6 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!diagnostic.Id.Equals(SA1400AccessModifierMustBeDeclared.DiagnosticId))
-                {
-                    continue;
-                }
-
                 SyntaxNode node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
                 if (node == null || node.IsMissing)
                 {
@@ -60,7 +53,12 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create(MaintainabilityResources.SA1400CodeFix, token => GetTransformedDocumentAsync(context.Document, root, declarationNode), equivalenceKey: nameof(SA1400CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        MaintainabilityResources.SA1400CodeFix,
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, root, declarationNode),
+                        equivalenceKey: nameof(SA1400CodeFixProvider)),
+                    diagnostic);
             }
         }
 

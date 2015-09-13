@@ -23,11 +23,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
     [Shared]
     public class RemoveRegionCodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1123DoNotPlaceRegionsWithinElements.DiagnosticId, SA1124DoNotUseRegions.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(SA1123DoNotPlaceRegionsWithinElements.DiagnosticId, SA1124DoNotUseRegions.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -41,12 +39,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!this.FixableDiagnosticIds.Contains(diagnostic.Id))
-                {
-                    continue;
-                }
-
-                context.RegisterCodeFix(CodeAction.Create("Remove region", token => GetTransformedDocumentAsync(context.Document, diagnostic), equivalenceKey: nameof(RemoveRegionCodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        "Remove region",
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic),
+                        equivalenceKey: nameof(RemoveRegionCodeFixProvider)),
+                    diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;

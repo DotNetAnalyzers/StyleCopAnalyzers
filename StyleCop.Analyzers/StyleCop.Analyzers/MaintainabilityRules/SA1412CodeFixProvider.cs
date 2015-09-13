@@ -24,11 +24,9 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     [Shared]
     public class SA1412CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1412StoreFilesAsUtf8.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(SA1412StoreFilesAsUtf8.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -41,11 +39,6 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!this.FixableDiagnosticIds.Contains(diagnostic.Id))
-                {
-                    continue;
-                }
-
                 string usedEncoding = diagnostic.Properties[SA1412StoreFilesAsUtf8.EncodingProperty];
 
                 context.RegisterCodeFix(

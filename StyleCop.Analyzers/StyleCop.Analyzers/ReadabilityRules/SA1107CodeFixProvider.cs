@@ -26,11 +26,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
     {
         private static readonly SA1107FixAllProvider FixAllProvider = new SA1107FixAllProvider();
 
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1107CodeMustNotContainMultipleStatementsOnOneLine.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(SA1107CodeMustNotContainMultipleStatementsOnOneLine.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -42,18 +40,18 @@ namespace StyleCop.Analyzers.ReadabilityRules
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!diagnostic.Id.Equals(SA1107CodeMustNotContainMultipleStatementsOnOneLine.DiagnosticId))
-                {
-                    continue;
-                }
-
                 var node = root?.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
-
                 if (node?.Parent as BlockSyntax != null)
                 {
-                    context.RegisterCodeFix(CodeAction.Create(ReadabilityResources.SA1107CodeFix, token => GetTransformedDocumentAsync(context.Document, root, node), equivalenceKey: nameof(SA1107CodeFixProvider)), diagnostic);
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            ReadabilityResources.SA1107CodeFix,
+                            cancellationToken => GetTransformedDocumentAsync(context.Document, root, node),
+                            equivalenceKey: nameof(SA1107CodeFixProvider)),
+                        diagnostic);
                 }
             }
         }

@@ -22,11 +22,9 @@ namespace StyleCop.Analyzers.LayoutRules
     [Shared]
     public class SA1508CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1508ClosingCurlyBracketsMustNotBePrecededByBlankLine.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(SA1508ClosingCurlyBracketsMustNotBePrecededByBlankLine.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -37,9 +35,14 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            foreach (var diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
+            foreach (var diagnostic in context.Diagnostics)
             {
-                context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1508CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token), equivalenceKey: nameof(SA1508CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        LayoutResources.SA1508CodeFix,
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
+                        equivalenceKey: nameof(SA1508CodeFixProvider)),
+                    diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;

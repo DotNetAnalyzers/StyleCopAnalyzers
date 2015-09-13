@@ -23,14 +23,12 @@ namespace StyleCop.Analyzers.OrderingRules
     [Shared]
     public class SA1203SA1214SA1215CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
+        /// <inheritdoc/>
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(
                 SA1203ConstantsMustAppearBeforeFields.DiagnosticId,
                 SA1214StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements.DiagnosticId,
                 SA1215InstanceReadonlyElementsMustAppearBeforeInstanceNonReadonlyElements.DiagnosticId);
-
-        /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -41,9 +39,14 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <inheritdoc/>
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
+            foreach (Diagnostic diagnostic in context.Diagnostics)
             {
-                context.RegisterCodeFix(CodeAction.Create(OrderingResources.SA1203CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token), equivalenceKey: nameof(SA1203SA1214SA1215CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        OrderingResources.SA1203CodeFix,
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
+                        equivalenceKey: nameof(SA1203SA1214SA1215CodeFixProvider)),
+                    diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;

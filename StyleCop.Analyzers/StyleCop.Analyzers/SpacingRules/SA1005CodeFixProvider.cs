@@ -26,11 +26,9 @@ namespace StyleCop.Analyzers.SpacingRules
     [Shared]
     public class SA1005CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1005SingleLineCommentsMustBeginWithSingleSpace.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(SA1005SingleLineCommentsMustBeginWithSingleSpace.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -45,12 +43,12 @@ namespace StyleCop.Analyzers.SpacingRules
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!diagnostic.Id.Equals(SA1005SingleLineCommentsMustBeginWithSingleSpace.DiagnosticId))
-                {
-                    continue;
-                }
-
-                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1005CodeFix, t => GetTransformedDocumentAsync(context.Document, diagnostic.Location, t), equivalenceKey: nameof(SA1005CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        SpacingResources.SA1005CodeFix,
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic.Location, cancellationToken),
+                        equivalenceKey: nameof(SA1005CodeFixProvider)),
+                    diagnostic);
             }
         }
 

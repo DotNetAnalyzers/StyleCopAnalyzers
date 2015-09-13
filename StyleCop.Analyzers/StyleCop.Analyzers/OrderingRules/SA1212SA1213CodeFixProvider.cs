@@ -22,11 +22,11 @@ namespace StyleCop.Analyzers.OrderingRules
     [Shared]
     public class SA1212SA1213CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1212PropertyAccessorsMustFollowOrder.DiagnosticId, SA1213EventAccessorsMustFollowOrder.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(
+                SA1212PropertyAccessorsMustFollowOrder.DiagnosticId,
+                SA1213EventAccessorsMustFollowOrder.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -37,12 +37,12 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <inheritdoc/>
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
+            foreach (Diagnostic diagnostic in context.Diagnostics)
             {
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         OrderingResources.SA1213CodeFix,
-                        token => GetTransformedDocumentAsync(context.Document, diagnostic, token),
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
                         nameof(SA1212SA1213CodeFixProvider)),
                     diagnostic);
             }

@@ -24,11 +24,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
     [Shared]
     public class SA1103CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA110xQueryClauses.SA1103Descriptor.Id);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(SA110xQueryClauses.SA1103Descriptor.Id);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -41,16 +39,26 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
-            foreach (var diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
+            foreach (var diagnostic in context.Diagnostics)
             {
                 var queryExpression = (QueryExpressionSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan).Parent;
 
                 if (queryExpression.DescendantTrivia().All(AcceptableSingleLineTrivia))
                 {
-                    context.RegisterCodeFix(CodeAction.Create(ReadabilityResources.SA1103CodeFixSingleLine, token => GetTransformedDocumentFromSingleLineAsync(context.Document, diagnostic, token), equivalenceKey: nameof(SA1103CodeFixProvider) + "Single"), diagnostic);
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            ReadabilityResources.SA1103CodeFixSingleLine,
+                            cancellationToken => GetTransformedDocumentFromSingleLineAsync(context.Document, diagnostic, cancellationToken),
+                            equivalenceKey: nameof(SA1103CodeFixProvider) + "Single"),
+                        diagnostic);
                 }
 
-                context.RegisterCodeFix(CodeAction.Create(ReadabilityResources.SA1103CodeFixMultipleLines, token => GetTransformedDocumentForMultipleLinesAsync(context.Document, diagnostic, token), equivalenceKey: nameof(SA1103CodeFixProvider) + "Multiple"), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        ReadabilityResources.SA1103CodeFixMultipleLines,
+                        cancellationToken => GetTransformedDocumentForMultipleLinesAsync(context.Document, diagnostic, cancellationToken),
+                        equivalenceKey: nameof(SA1103CodeFixProvider) + "Multiple"),
+                    diagnostic);
             }
         }
 

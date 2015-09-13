@@ -5,7 +5,6 @@ namespace StyleCop.Analyzers.SpacingRules
 {
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Linq;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
@@ -23,11 +22,9 @@ namespace StyleCop.Analyzers.SpacingRules
     [Shared]
     public class SA1027CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1027TabsMustNotBeUsed.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(SA1027TabsMustNotBeUsed.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -38,9 +35,14 @@ namespace StyleCop.Analyzers.SpacingRules
         /// <inheritdoc/>
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
+            foreach (Diagnostic diagnostic in context.Diagnostics)
             {
-                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1027CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token), equivalenceKey: nameof(SA1027CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        SpacingResources.SA1027CodeFix,
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
+                        equivalenceKey: nameof(SA1027CodeFixProvider)),
+                    diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;

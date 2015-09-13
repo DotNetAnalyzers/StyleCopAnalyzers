@@ -22,14 +22,12 @@ namespace StyleCop.Analyzers.NamingRules
     [Shared]
     public class RenameToLowerCaseCodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
+        /// <inheritdoc/>
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(
                 SA1306FieldNamesMustBeginWithLowerCaseLetter.DiagnosticId,
                 SA1312VariableNamesMustBeginWithLowerCaseLetter.DiagnosticId,
                 SA1313ParameterNamesMustBeginWithLowerCaseLetter.DiagnosticId);
-
-        /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -45,11 +43,6 @@ namespace StyleCop.Analyzers.NamingRules
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!this.FixableDiagnosticIds.Contains(diagnostic.Id))
-                {
-                    continue;
-                }
-
                 var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (token.IsMissing)
                 {
@@ -59,7 +52,12 @@ namespace StyleCop.Analyzers.NamingRules
                 if (!string.IsNullOrEmpty(token.ValueText))
                 {
                     var newName = char.ToLower(token.ValueText[0]) + token.ValueText.Substring(1);
-                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.RenameToCodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken), equivalenceKey: nameof(RenameToLowerCaseCodeFixProvider)), diagnostic);
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            string.Format(NamingResources.RenameToCodeFix, newName),
+                            cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken),
+                            equivalenceKey: nameof(RenameToLowerCaseCodeFixProvider)),
+                        diagnostic);
                 }
             }
         }

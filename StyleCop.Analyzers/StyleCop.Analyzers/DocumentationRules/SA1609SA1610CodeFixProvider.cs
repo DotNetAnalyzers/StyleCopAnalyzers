@@ -30,11 +30,11 @@ namespace StyleCop.Analyzers.DocumentationRules
     [Shared]
     public class SA1609SA1610CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1609PropertyDocumentationMustHaveValue.DiagnosticId, SA1610PropertyDocumentationMustHaveValueText.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(
+                SA1609PropertyDocumentationMustHaveValue.DiagnosticId,
+                SA1610PropertyDocumentationMustHaveValueText.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -47,13 +47,12 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!FixableDiagnostics.Contains(diagnostic.Id, StringComparer.Ordinal))
-                {
-                    continue;
-                }
-
-                string description = DocumentationResources.SA1609SA1610CodeFix;
-                context.RegisterCodeFix(CodeAction.Create(description, cancellationToken => this.GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken), equivalenceKey: nameof(SA1609SA1610CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        DocumentationResources.SA1609SA1610CodeFix,
+                        cancellationToken => this.GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
+                        equivalenceKey: nameof(SA1609SA1610CodeFixProvider)),
+                    diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;

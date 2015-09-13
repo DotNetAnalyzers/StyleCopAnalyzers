@@ -5,7 +5,6 @@ namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -27,8 +26,8 @@ namespace StyleCop.Analyzers.DocumentationRules
     public class FileHeaderCodeFixProvider : CodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; }
-            = ImmutableArray.Create(
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(
                 FileHeaderAnalyzers.SA1633DescriptorMissing.Id,
                 FileHeaderAnalyzers.SA1635Descriptor.Id,
                 FileHeaderAnalyzers.SA1636Descriptor.Id);
@@ -42,9 +41,14 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => this.FixableDiagnosticIds.Contains(d.Id)))
+            foreach (Diagnostic diagnostic in context.Diagnostics)
             {
-                context.RegisterCodeFix(CodeAction.Create(DocumentationResources.SA1633CodeFix, token => GetTransformedDocumentAsync(context.Document, token), equivalenceKey: nameof(FileHeaderCodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        DocumentationResources.SA1633CodeFix,
+                        token => GetTransformedDocumentAsync(context.Document, token),
+                        equivalenceKey: nameof(FileHeaderCodeFixProvider)),
+                    diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;

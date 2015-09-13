@@ -24,11 +24,9 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     [Shared]
     public class SA1404CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1404CodeAnalysisSuppressionMustHaveJustification.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(SA1404CodeAnalysisSuppressionMustHaveJustification.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -43,11 +41,6 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!this.FixableDiagnosticIds.Contains(diagnostic.Id))
-                {
-                    continue;
-                }
-
                 var node = root.FindNode(diagnostic.Location.SourceSpan);
 
                 var attribute = node as AttributeSyntax;
@@ -57,7 +50,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                     context.RegisterCodeFix(
                         CodeAction.Create(
                             MaintainabilityResources.SA1404CodeFix,
-                            token => AddJustificationToAttributeAsync(context.Document, root, attribute),
+                            cancellationToken => AddJustificationToAttributeAsync(context.Document, root, attribute),
                             nameof(SA1404CodeFixProvider) + "-Add"), diagnostic);
                     return;
                 }
@@ -68,7 +61,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                     context.RegisterCodeFix(
                         CodeAction.Create(
                             MaintainabilityResources.SA1404CodeFix,
-                            token => UpdateValueOfArgumentAsync(context.Document, root, argument),
+                            cancellationToken => UpdateValueOfArgumentAsync(context.Document, root, argument),
                             nameof(SA1404CodeFixProvider) + "-Update"), diagnostic);
                     return;
                 }

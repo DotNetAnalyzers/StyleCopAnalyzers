@@ -6,7 +6,6 @@ namespace StyleCop.Analyzers.SpacingRules
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Helpers;
@@ -27,8 +26,8 @@ namespace StyleCop.Analyzers.SpacingRules
     public class SA1004CodeFixProvider : CodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; }
-            = ImmutableArray.Create(SA1004DocumentationLinesMustBeginWithSingleSpace.DiagnosticId);
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(SA1004DocumentationLinesMustBeginWithSingleSpace.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -41,11 +40,6 @@ namespace StyleCop.Analyzers.SpacingRules
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!diagnostic.Id.Equals(SA1004DocumentationLinesMustBeginWithSingleSpace.DiagnosticId))
-                {
-                    continue;
-                }
-
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         SpacingResources.SA1004CodeFix,
