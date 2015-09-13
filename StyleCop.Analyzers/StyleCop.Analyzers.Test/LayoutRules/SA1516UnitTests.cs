@@ -52,6 +52,7 @@ namespace Foo
 
         public string FooValue, BarValue;
 
+        [Obsolete]
         public enum TestEnum
         {
             Value1,
@@ -120,6 +121,7 @@ namespace Foo
             }
         }
         public string FooValue, BarValue;
+        [Obsolete]
         public enum TestEnum
         {
             Value1,
@@ -150,10 +152,10 @@ namespace Foot
                 this.CSharpDiagnostic().WithLocation(24, 1),
                 this.CSharpDiagnostic().WithLocation(29, 1),
                 this.CSharpDiagnostic().WithLocation(30, 1),
-                this.CSharpDiagnostic().WithLocation(36, 1),
-                this.CSharpDiagnostic().WithLocation(41, 1),
-                this.CSharpDiagnostic().WithLocation(44, 1),
-                this.CSharpDiagnostic().WithLocation(45, 1)
+                this.CSharpDiagnostic().WithLocation(37, 1),
+                this.CSharpDiagnostic().WithLocation(42, 1),
+                this.CSharpDiagnostic().WithLocation(45, 1),
+                this.CSharpDiagnostic().WithLocation(46, 1)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
