@@ -126,7 +126,7 @@ class ClassName3
         /// <inheritdoc/>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new OpenCloseSpacingCodeFixProvider();
+            return new TokenSpacingCodeFixProvider();
         }
     }
 }

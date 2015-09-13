@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1000KeywordsMustBeSpacedCorrectly"/> and
-    /// <see cref="OpenCloseSpacingCodeFixProvider"/>.
+    /// <see cref="TokenSpacingCodeFixProvider"/>.
     /// </summary>
     public class SA1000UnitTests : CodeFixVerifier
     {
@@ -843,7 +843,7 @@ default:
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new OpenCloseSpacingCodeFixProvider();
+            return new TokenSpacingCodeFixProvider();
         }
 
         private Task TestKeywordStatementAsync(string statement, DiagnosticResult expected, string fixedStatement, string returnType = "void", bool asyncMethod = false)

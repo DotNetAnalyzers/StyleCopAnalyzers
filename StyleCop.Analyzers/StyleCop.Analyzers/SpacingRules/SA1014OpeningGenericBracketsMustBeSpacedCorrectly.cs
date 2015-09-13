@@ -95,14 +95,14 @@ namespace StyleCop.Analyzers.SpacingRules
             if (!firstInLine && precededBySpace)
             {
                 // Opening generic brackets must not be {preceded} by a space.
-                var properties = OpenCloseSpacingCodeFixProvider.RemovePreceding;
+                var properties = TokenSpacingCodeFixProvider.RemovePreceding;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, "preceded"));
             }
 
             if (followedBySpace)
             {
                 // Opening generic brackets must not be {followed} by a space.
-                var properties = OpenCloseSpacingCodeFixProvider.RemoveFollowing;
+                var properties = TokenSpacingCodeFixProvider.RemoveFollowing;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, "followed"));
             }
         }

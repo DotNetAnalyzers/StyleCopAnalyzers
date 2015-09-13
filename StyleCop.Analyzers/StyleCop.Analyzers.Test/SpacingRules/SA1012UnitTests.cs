@@ -230,7 +230,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         /// <inheritdoc/>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new OpenCloseSpacingCodeFixProvider();
+            return new TokenSpacingCodeFixProvider();
         }
     }
 }

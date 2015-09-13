@@ -1050,7 +1050,7 @@ public class TestClass
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new OpenCloseSpacingCodeFixProvider();
+            return new TokenSpacingCodeFixProvider();
         }
     }
 }

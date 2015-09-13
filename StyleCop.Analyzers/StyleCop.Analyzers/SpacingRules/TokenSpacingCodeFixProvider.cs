@@ -19,9 +19,9 @@ namespace StyleCop.Analyzers.SpacingRules
     /// <summary>
     /// Implements a code fix for the opening and closing spacing diagnostics.
     /// </summary>
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(OpenCloseSpacingCodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(TokenSpacingCodeFixProvider))]
     [Shared]
-    public class OpenCloseSpacingCodeFixProvider : CodeFixProvider
+    public class TokenSpacingCodeFixProvider : CodeFixProvider
     {
         private const string LocationKey = "location";
         private const string ActionKey = "action";
@@ -120,7 +120,7 @@ namespace StyleCop.Analyzers.SpacingRules
         {
             foreach (var diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                context.RegisterCodeFix(CodeAction.Create(SpacingResources.OpenCloseSpacingCodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token), equivalenceKey: nameof(OpenCloseSpacingCodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(CodeAction.Create(SpacingResources.TokenSpacingCodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token), equivalenceKey: nameof(TokenSpacingCodeFixProvider)), diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;
@@ -297,7 +297,7 @@ namespace StyleCop.Analyzers.SpacingRules
         {
             public static FixAllProvider Instance { get; } = new FixAll();
 
-            protected override string CodeActionTitle => SpacingResources.OpenCloseSpacingCodeFix;
+            protected override string CodeActionTitle => SpacingResources.TokenSpacingCodeFix;
 
             protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
             {

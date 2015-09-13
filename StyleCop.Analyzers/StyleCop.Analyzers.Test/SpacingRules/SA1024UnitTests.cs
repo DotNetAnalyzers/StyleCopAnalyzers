@@ -317,7 +317,7 @@ public class Foo<T>:object where T:IFormattable
         /// <inheritdoc/>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new OpenCloseSpacingCodeFixProvider();
+            return new TokenSpacingCodeFixProvider();
         }
     }
 }

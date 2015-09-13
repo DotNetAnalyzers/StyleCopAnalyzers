@@ -199,18 +199,18 @@ namespace StyleCop.Analyzers.SpacingRules
                 {
                     if (haveLeadingSpace)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(DescriptorPreceded, token.GetLocation(), OpenCloseSpacingCodeFixProvider.InsertPreceding));
+                        context.ReportDiagnostic(Diagnostic.Create(DescriptorPreceded, token.GetLocation(), TokenSpacingCodeFixProvider.InsertPreceding));
                     }
                     else
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(DescriptorNotPreceded, token.GetLocation(), OpenCloseSpacingCodeFixProvider.RemovePreceding));
+                        context.ReportDiagnostic(Diagnostic.Create(DescriptorNotPreceded, token.GetLocation(), TokenSpacingCodeFixProvider.RemovePreceding));
                     }
                 }
             }
 
             if (token.IsFollowedByWhitespace())
             {
-                context.ReportDiagnostic(Diagnostic.Create(DescriptorNotFollowed, token.GetLocation(), OpenCloseSpacingCodeFixProvider.RemoveFollowing));
+                context.ReportDiagnostic(Diagnostic.Create(DescriptorNotFollowed, token.GetLocation(), TokenSpacingCodeFixProvider.RemoveFollowing));
             }
         }
     }

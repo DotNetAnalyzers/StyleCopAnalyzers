@@ -350,7 +350,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 closeParenLine.IsValid &&
                 closeParenLine.StartLinePosition.Line != lastParameterLine.EndLinePosition.Line)
             {
-                var properties = OpenCloseSpacingCodeFixProvider.RemovePreceding;
+                var properties = TokenSpacingCodeFixProvider.RemovePreceding;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, closeToken.GetLocation(), properties));
             }
         }

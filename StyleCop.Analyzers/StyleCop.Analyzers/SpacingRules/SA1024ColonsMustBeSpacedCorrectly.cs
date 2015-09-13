@@ -157,14 +157,14 @@ namespace StyleCop.Analyzers.SpacingRules
             if (hasPrecedingSpace != requireBefore)
             {
                 // colon must{ not}? be {preceded}{} by a space
-                var properties = requireBefore ? OpenCloseSpacingCodeFixProvider.InsertPreceding : OpenCloseSpacingCodeFixProvider.RemovePreceding;
+                var properties = requireBefore ? TokenSpacingCodeFixProvider.InsertPreceding : TokenSpacingCodeFixProvider.RemovePreceding;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, requireBefore ? string.Empty : " not", "preceded", string.Empty));
             }
 
             if (missingFollowingSpace)
             {
                 // colon must{} be {followed}{} by a space
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), OpenCloseSpacingCodeFixProvider.InsertFollowing, string.Empty, "followed", string.Empty));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingCodeFixProvider.InsertFollowing, string.Empty, "followed", string.Empty));
             }
         }
     }

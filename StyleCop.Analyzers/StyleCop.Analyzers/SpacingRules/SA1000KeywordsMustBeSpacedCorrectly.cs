@@ -187,7 +187,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 }
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), OpenCloseSpacingCodeFixProvider.InsertFollowing, token.Text, string.Empty));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingCodeFixProvider.InsertFollowing, token.Text, string.Empty));
         }
 
         private static void HandleDisallowedSpaceToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
@@ -202,7 +202,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 return;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), OpenCloseSpacingCodeFixProvider.RemoveFollowing, token.Text, " not"));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingCodeFixProvider.RemoveFollowing, token.Text, " not"));
         }
 
         private static void HandleDisallowedSpaceToken(SyntaxNodeAnalysisContext context, SyntaxToken token)
@@ -217,7 +217,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 return;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), OpenCloseSpacingCodeFixProvider.RemoveFollowing, token.Text, " not"));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingCodeFixProvider.RemoveFollowing, token.Text, " not"));
         }
 
         private static void HandleNewKeywordToken(SyntaxTreeAnalysisContext context, SyntaxToken token)

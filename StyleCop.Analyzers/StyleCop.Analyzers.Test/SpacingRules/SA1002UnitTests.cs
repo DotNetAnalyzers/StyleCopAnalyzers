@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1002SemicolonsMustBeSpacedCorrectly"/> and
-    /// <see cref="OpenCloseSpacingCodeFixProvider"/>.
+    /// <see cref="TokenSpacingCodeFixProvider"/>.
     /// </summary>
     public class SA1002UnitTests : CodeFixVerifier
     {
@@ -377,7 +377,7 @@ class ClassName
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new OpenCloseSpacingCodeFixProvider();
+            return new TokenSpacingCodeFixProvider();
         }
     }
 }

@@ -153,33 +153,33 @@ namespace StyleCop.Analyzers.SpacingRules
             if (!allowAtLineStart && firstInLine)
             {
                 // Dereference symbol '*' must {not appear at the beginning of a line}.
-                var properties = OpenCloseSpacingCodeFixProvider.RemovePreceding;
+                var properties = TokenSpacingCodeFixProvider.RemovePreceding;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, "not appear at the beginning of a line"));
             }
             else if (!allowPrecedingSpace && precededBySpace)
             {
                 // Dereference symbol '*' must {not be preceded by a space}.
-                var properties = OpenCloseSpacingCodeFixProvider.RemovePreceding;
+                var properties = TokenSpacingCodeFixProvider.RemovePreceding;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, "not be preceded by a space"));
             }
 
             if (!allowAtLineEnd && lastInLine)
             {
                 // Dereference symbol '*' must {not appear at the end of a line}.
-                var properties = OpenCloseSpacingCodeFixProvider.RemoveFollowing;
+                var properties = TokenSpacingCodeFixProvider.RemoveFollowing;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, "not appear at the end of a line"));
             }
             else if (!allowTrailingSpace && followedBySpace)
             {
                 // Dereference symbol '*' must {not be followed by a space}.
-                var properties = OpenCloseSpacingCodeFixProvider.RemoveFollowing;
+                var properties = TokenSpacingCodeFixProvider.RemoveFollowing;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, "not be followed by a space"));
             }
 
             if (!followedBySpace && allowTrailingSpace)
             {
                 // Dereference symbol '*' must {be followed by a space}.
-                var properties = OpenCloseSpacingCodeFixProvider.InsertFollowing;
+                var properties = TokenSpacingCodeFixProvider.InsertFollowing;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, "be followed by a space"));
             }
         }

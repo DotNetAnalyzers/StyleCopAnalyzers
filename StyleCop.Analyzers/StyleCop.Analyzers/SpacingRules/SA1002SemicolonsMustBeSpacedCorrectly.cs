@@ -127,13 +127,13 @@ namespace StyleCop.Analyzers.SpacingRules
             if (missingFollowingSpace)
             {
                 // semicolon must{} be {followed} by a space
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), OpenCloseSpacingCodeFixProvider.InsertFollowing, string.Empty, "followed"));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingCodeFixProvider.InsertFollowing, string.Empty, "followed"));
             }
 
             if (hasPrecedingSpace && !ignorePrecedingSpace)
             {
                 // semicolon must{ not} be {preceded} by a space
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), OpenCloseSpacingCodeFixProvider.RemoveImmediatePreceding, " not", "preceded"));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingCodeFixProvider.RemoveImmediatePreceding, " not", "preceded"));
             }
         }
     }

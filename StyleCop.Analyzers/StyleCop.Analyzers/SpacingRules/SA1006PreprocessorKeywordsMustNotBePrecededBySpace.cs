@@ -100,7 +100,7 @@ namespace StyleCop.Analyzers.SpacingRules
             }
 
             // Preprocessor keyword '{keyword}' must not be preceded by a space.
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, targetToken.GetLocation(), OpenCloseSpacingCodeFixProvider.RemovePreceding, targetToken.Text));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, targetToken.GetLocation(), TokenSpacingCodeFixProvider.RemovePreceding, targetToken.Text));
         }
     }
 }
