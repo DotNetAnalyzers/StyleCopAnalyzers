@@ -52,49 +52,15 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeParameterConstraintClause, SyntaxKind.TypeParameterConstraintClause);
         }
 
-        private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleTypeParameterConstraintClause(SyntaxNodeAnalysisContext context)
         {
-            var declaration = (MethodDeclarationSyntax)context.Node;
-            var declarationLineSpan = declaration.GetLineSpan();
-
-            if (declaration.TypeParameterList?.Parameters.Count > 0)
+            var syntax = (TypeParameterConstraintClauseSyntax)context.Node;
+            if (!syntax.WhereKeyword.IsFirstInLine())
             {
-                Analyze(context, declarationLineSpan, declaration.ConstraintClauses);
-            }
-        }
-
-        private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            var declaration = (TypeDeclarationSyntax)context.Node;
-            var declarationLineSpan = declaration.GetLineSpan();
-
-            if (declaration.TypeParameterList?.Parameters.Count > 0)
-            {
-                Analyze(context, declarationLineSpan, declaration.ConstraintClauses);
-            }
-        }
-
-        private static void Analyze(
-            SyntaxNodeAnalysisContext context,
-            FileLinePositionSpan declarationLineSpan,
-            SyntaxList<TypeParameterConstraintClauseSyntax> constraintClauses)
-        {
-            int currentLine = declarationLineSpan.StartLinePosition.Line;
-            foreach (var constraint in constraintClauses)
-            {
-                int constraintLine = constraint.GetLineSpan().StartLinePosition.Line;
-                if (currentLine == constraintLine)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, constraint.GetLocation()));
-                }
-
-                currentLine = constraintLine;
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.GetLocation()));
             }
         }
     }
