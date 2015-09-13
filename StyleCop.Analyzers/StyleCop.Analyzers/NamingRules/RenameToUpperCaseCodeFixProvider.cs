@@ -59,11 +59,6 @@ namespace StyleCop.Analyzers.NamingRules
                 }
 
                 var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (token.IsMissing)
-                {
-                    continue;
-                }
-
                 var newName = char.ToUpper(token.ValueText[0]) + token.ValueText.Substring(1);
                 var memberSyntax = this.GetParentTypeDeclaration(token);
 

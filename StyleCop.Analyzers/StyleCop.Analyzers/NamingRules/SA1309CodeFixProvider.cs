@@ -48,11 +48,6 @@ namespace StyleCop.Analyzers.NamingRules
                 }
 
                 var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (token.IsMissing)
-                {
-                    continue;
-                }
-
                 if (!string.IsNullOrEmpty(token.ValueText))
                 {
                     var newName = token.ValueText.TrimStart(new[] { '_' });
