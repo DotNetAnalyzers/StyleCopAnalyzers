@@ -188,7 +188,9 @@ namespace StyleCop.Analyzers.SpacingRules
             if (precededBySpace)
             {
                 // Closing parenthesis must{ not} be {preceded} by a space.
-                var properties = TokenSpacingCodeFixProvider.RemovePreceding;
+                var properties = token.IsFirstInLine()
+                    ? TokenSpacingCodeFixProvider.RemovePreceding
+                    : TokenSpacingCodeFixProvider.RemoveImmediatePreceding;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, " not", "preceded"));
             }
 
