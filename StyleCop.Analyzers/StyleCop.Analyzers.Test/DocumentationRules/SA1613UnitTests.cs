@@ -108,6 +108,35 @@ $$
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Theory]
+        [MemberData(nameof(Declarations))]
+        public async Task TestMemberWithInvalidParamsAndInheritDocAsync(string declaration)
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <inheritdoc/>
+    ///<param>Test</param>
+    ///<param/>
+    ///<param name="""">Test</param>
+    ///<param name=""    "">Test</param>
+$$
+}";
+
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(8, 8),
+                this.CSharpDiagnostic().WithLocation(9, 8),
+                this.CSharpDiagnostic().WithLocation(10, 15),
+                this.CSharpDiagnostic().WithLocation(11, 15)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1613ElementParameterDocumentationMustDeclareParameterName();
