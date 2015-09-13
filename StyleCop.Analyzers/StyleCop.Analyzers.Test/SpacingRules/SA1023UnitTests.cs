@@ -33,6 +33,15 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         *x += 1;
         int*[] y;
         y = new int*[5];
+
+        // The following cases are all regression tests for DotNetAnalyzers/StyleCopAnalyzers#1457
+        x = (int*)null;
+        x = *(int**)null;
+        var t = typeof(char*);
+        t = typeof(char**);
+        var d1 = default(char*);
+        var d2 = default(char**);
+        a = *x * *x;
     }
 }
 ";
@@ -60,6 +69,15 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 * z = x;
         a = *
 x;
+
+        // The following cases are all regression tests for DotNetAnalyzers/StyleCopAnalyzers#1457
+        x = (int * )null;
+        x = * (int* * )null;
+        var t = typeof(char *);
+        t = typeof(char* *);
+        var d1 = default(char* );
+        var d2 = default(char** );
+        a = * x** x;
     }
 }
 ";
@@ -75,6 +93,15 @@ x;
         y = new int*[5];
         int* z = x;
         a = *x;
+
+        // The following cases are all regression tests for DotNetAnalyzers/StyleCopAnalyzers#1457
+        x = (int*)null;
+        x = *(int**)null;
+        var t = typeof(char*);
+        t = typeof(char**);
+        var d1 = default(char*);
+        var d2 = default(char**);
+        a = *x**x;
     }
 }
 ";
@@ -87,7 +114,20 @@ x;
                 this.CSharpDiagnostic().WithLocation(9, 21).WithArguments("not be preceded by a space"),
                 this.CSharpDiagnostic().WithLocation(9, 21).WithArguments("not be followed by a space"),
                 this.CSharpDiagnostic().WithLocation(11, 0).WithArguments("not appear at the beginning of a line"),
-                this.CSharpDiagnostic().WithLocation(12, 13).WithArguments("not appear at the end of a line")
+                this.CSharpDiagnostic().WithLocation(12, 13).WithArguments("not appear at the end of a line"),
+                this.CSharpDiagnostic().WithLocation(16, 18).WithArguments("not be preceded by a space"),
+                this.CSharpDiagnostic().WithLocation(16, 18).WithArguments("not be followed by a space"),
+                this.CSharpDiagnostic().WithLocation(17, 13).WithArguments("not be followed by a space"),
+                this.CSharpDiagnostic().WithLocation(17, 19).WithArguments("not be followed by a space"),
+                this.CSharpDiagnostic().WithLocation(17, 21).WithArguments("not be preceded by a space"),
+                this.CSharpDiagnostic().WithLocation(17, 21).WithArguments("not be followed by a space"),
+                this.CSharpDiagnostic().WithLocation(18, 29).WithArguments("not be preceded by a space"),
+                this.CSharpDiagnostic().WithLocation(19, 24).WithArguments("not be followed by a space"),
+                this.CSharpDiagnostic().WithLocation(19, 26).WithArguments("not be preceded by a space"),
+                this.CSharpDiagnostic().WithLocation(20, 30).WithArguments("not be followed by a space"),
+                this.CSharpDiagnostic().WithLocation(21, 31).WithArguments("not be followed by a space"),
+                this.CSharpDiagnostic().WithLocation(22, 13).WithArguments("not be followed by a space"),
+                this.CSharpDiagnostic().WithLocation(22, 17).WithArguments("not be followed by a space"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
