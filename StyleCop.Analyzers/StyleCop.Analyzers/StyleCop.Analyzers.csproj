@@ -353,7 +353,6 @@
     <Compile Include="SpacingRules\SA1015ClosingGenericBracketsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1016OpeningAttributeBracketsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1017ClosingAttributeBracketsMustBeSpacedCorrectly.cs" />
-    <Compile Include="SpacingRules\SA1017CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1018CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1018NullableTypeSymbolsMustNotBePrecededBySpace.cs" />
     <Compile Include="SpacingRules\SA1019MemberAccessSymbolsMustBeSpacedCorrectly.cs" />

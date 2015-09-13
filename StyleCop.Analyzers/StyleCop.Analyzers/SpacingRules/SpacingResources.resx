@@ -177,9 +177,6 @@
   <data name="SA1016Title" xml:space="preserve">
     <value>Opening attribute brackets must be spaced correctly</value>
   </data>
-  <data name="SA1017CodeFix" xml:space="preserve">
-    <value>Fix spacing</value>
-  </data>
   <data name="SA1017Description" xml:space="preserve">
     <value>A closing attribute bracket within a C# element is not spaced correctly.</value>
   </data>
