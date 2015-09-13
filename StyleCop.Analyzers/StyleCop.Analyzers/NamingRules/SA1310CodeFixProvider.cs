@@ -49,11 +49,6 @@ namespace StyleCop.Analyzers.NamingRules
                 }
 
                 var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (token.IsMissing)
-                {
-                    continue;
-                }
-
                 string currentName = token.ValueText;
                 string proposedName = BuildProposedName(currentName);
                 if (proposedName != currentName)
