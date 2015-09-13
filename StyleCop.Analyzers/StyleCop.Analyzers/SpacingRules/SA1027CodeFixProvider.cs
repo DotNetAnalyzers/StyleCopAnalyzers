@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.SpacingRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
@@ -31,7 +32,7 @@ namespace StyleCop.Analyzers.SpacingRules
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return FixAll.Instance;
         }
 
         /// <inheritdoc/>
@@ -94,6 +95,38 @@ namespace StyleCop.Analyzers.SpacingRules
             }
 
             return new TextChange(span, replacement.ToString());
+        }
+
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; }
+                = new FixAll();
+
+            protected override string CodeActionTitle
+                => SpacingResources.SA1027CodeFix;
+
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            {
+                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
+                if (diagnostics.IsEmpty)
+                {
+                    return null;
+                }
+
+                var indentationOptions = IndentationOptions.FromDocument(document);
+                SourceText sourceText = await document.GetTextAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+
+                List<TextChange> changes = new List<TextChange>();
+                foreach (var diagnostic in diagnostics)
+                {
+                    changes.Add(FixDiagnostic(indentationOptions, sourceText, diagnostic));
+                }
+
+                changes.Sort((left, right) => left.Span.Start.CompareTo(right.Span.Start));
+
+                SyntaxTree tree = await document.GetSyntaxTreeAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                return await tree.WithChangedText(sourceText.WithChanges(changes)).GetRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+            }
         }
     }
 }
