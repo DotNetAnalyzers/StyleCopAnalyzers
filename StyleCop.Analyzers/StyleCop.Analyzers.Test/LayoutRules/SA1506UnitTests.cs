@@ -572,9 +572,14 @@ public class TestClass
     public void TestMethod1() { }
 
     /// <summary>more documentation.</summary>
-    
+
     /* another comment */
     public void TestMethod2() { }
+
+    /// <summary>more documentation.</summary>
+    // another comment (a specific regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1456)
+
+    public void TestMethod3() { }
 }
 ";
 
@@ -592,6 +597,10 @@ public class TestClass
     /// <summary>more documentation.</summary>
     /* another comment */
     public void TestMethod2() { }
+
+    /// <summary>more documentation.</summary>
+    // another comment (a specific regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1456)
+    public void TestMethod3() { }
 }
 ";
 
@@ -600,6 +609,7 @@ public class TestClass
                 this.CSharpDiagnostic().WithLocation(3, 1),
                 this.CSharpDiagnostic().WithLocation(10, 1),
                 this.CSharpDiagnostic().WithLocation(15, 1),
+                this.CSharpDiagnostic().WithLocation(20, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
