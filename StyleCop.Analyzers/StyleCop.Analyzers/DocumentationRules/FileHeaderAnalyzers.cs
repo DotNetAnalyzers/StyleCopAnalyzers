@@ -315,13 +315,15 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            if (string.Equals(settings.DocumentationRules.CopyrightText, DocumentationSettings.DefaultCopyrightText, StringComparison.OrdinalIgnoreCase))
+            var settingsCopyrightText = settings.DocumentationRules.CopyrightText;
+            if (string.Equals(settingsCopyrightText, DocumentationSettings.DefaultCopyrightText, StringComparison.OrdinalIgnoreCase))
             {
                 // The copyright text is meaningless until the company name is configured by the user.
                 return;
             }
 
-            if (string.CompareOrdinal(copyrightText.Trim(' ', '\r', '\n'), settings.DocumentationRules.CopyrightText) != 0)
+            // Remove any leading or trailing spaces and remove the extra space put in as a seperator.
+            if (string.CompareOrdinal(copyrightText.Trim(' ', '\r', '\n').Replace("\n ","\n"), settingsCopyrightText.Trim(' ', '\r', '\n')) != 0)
             {
                 var location = fileHeader.GetElementLocation(context.Tree, copyrightElement);
                 context.ReportDiagnostic(Diagnostic.Create(SA1636Descriptor, location));
