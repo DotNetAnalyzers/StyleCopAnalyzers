@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.SpacingRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
@@ -12,7 +13,6 @@ namespace StyleCop.Analyzers.SpacingRules
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
 
@@ -32,7 +32,7 @@ namespace StyleCop.Analyzers.SpacingRules
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return FixAll.Instance;
         }
 
         /// <inheritdoc/>
@@ -49,53 +49,84 @@ namespace StyleCop.Analyzers.SpacingRules
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var indentationOptions = IndentationOptions.FromDocument(document);
-            var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            SourceText sourceText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+            return document.WithText(sourceText.WithChanges(FixDiagnostic(indentationOptions, sourceText, diagnostic)));
+        }
 
-            var violatingTrivia = syntaxRoot.FindTrivia(diagnostic.Location.SourceSpan.Start);
+        private static TextChange FixDiagnostic(IndentationOptions indentationOptions, SourceText sourceText, Diagnostic diagnostic)
+        {
+            TextSpan span = diagnostic.Location.SourceSpan;
 
-            var stringBuilder = new StringBuilder();
-
-            int firstTriviaIndex = violatingTrivia.GetLineSpan().StartLinePosition.Character;
-            string relevantText;
-            if (firstTriviaIndex == 0)
-            {
-                relevantText = violatingTrivia.ToFullString();
-            }
-            else
-            {
-                SourceText sourceText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
-                relevantText = sourceText.ToString(new TextSpan(violatingTrivia.FullSpan.Start - firstTriviaIndex, firstTriviaIndex + violatingTrivia.FullSpan.Length));
-            }
-
+            TextLine startLine = sourceText.Lines.GetLineFromPosition(span.Start);
+            string text = sourceText.ToString(TextSpan.FromBounds(startLine.Start, span.End));
+            StringBuilder replacement = new StringBuilder(indentationOptions.TabSize * span.Length);
             int column = 0;
-            for (int i = 0; i < relevantText.Length; i++)
+            for (int i = 0; i < text.Length; i++)
             {
-                char c = relevantText[i];
+                char c = text[i];
                 if (c == '\t')
                 {
                     var offsetWithinTabColumn = column % indentationOptions.TabSize;
                     var spaceCount = indentationOptions.TabSize - offsetWithinTabColumn;
 
-                    if (i >= firstTriviaIndex)
+                    if (i >= span.Start - startLine.Start)
                     {
-                        stringBuilder.Append(' ', spaceCount);
+                        replacement.Append(' ', spaceCount);
                     }
 
                     column += spaceCount;
                 }
                 else
                 {
-                    if (i >= firstTriviaIndex)
+                    if (i >= span.Start - startLine.Start)
                     {
-                        stringBuilder.Append(c);
+                        replacement.Append(c);
                     }
 
-                    column++;
+                    if (c == '\n')
+                    {
+                        column = 0;
+                    }
+                    else
+                    {
+                        column++;
+                    }
                 }
             }
 
-            var newSyntaxRoot = syntaxRoot.ReplaceTrivia(violatingTrivia, SyntaxFactory.Whitespace(stringBuilder.ToString()));
-            return document.WithSyntaxRoot(newSyntaxRoot);
+            return new TextChange(span, replacement.ToString());
+        }
+
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; }
+                = new FixAll();
+
+            protected override string CodeActionTitle
+                => SpacingResources.SA1027CodeFix;
+
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            {
+                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
+                if (diagnostics.IsEmpty)
+                {
+                    return null;
+                }
+
+                var indentationOptions = IndentationOptions.FromDocument(document);
+                SourceText sourceText = await document.GetTextAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+
+                List<TextChange> changes = new List<TextChange>();
+                foreach (var diagnostic in diagnostics)
+                {
+                    changes.Add(FixDiagnostic(indentationOptions, sourceText, diagnostic));
+                }
+
+                changes.Sort((left, right) => left.Span.Start.CompareTo(right.Span.Start));
+
+                SyntaxTree tree = await document.GetSyntaxTreeAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                return await tree.WithChangedText(sourceText.WithChanges(changes)).GetRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+            }
         }
     }
 }

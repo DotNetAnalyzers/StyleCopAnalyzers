@@ -97,6 +97,131 @@ public  class   Foo
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestInvalidTabsInDocumentationCommentsAsync()
+        {
+            var testCode =
+                "\t/// <summary>\r\n" +
+                "\t/// foo bar\r\n" +
+                "\t/// </summary>\r\n" +
+                "\tpublic class Foo\r\n" +
+                "\t{\r\n" +
+                "\t \t/// <MyElement> Value </MyElement>\r\n" +
+                "\t\t/// <MyElement> Value </MyElement>\r\n" +
+                "\t}\r\n";
+
+            var fixedTestCode = @"    /// <summary>
+    /// foo bar
+    /// </summary>
+    public class Foo
+    {
+        /// <MyElement> Value </MyElement>
+        /// <MyElement> Value </MyElement>
+    }
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(1, 1),
+                this.CSharpDiagnostic().WithLocation(2, 1),
+                this.CSharpDiagnostic().WithLocation(3, 1),
+                this.CSharpDiagnostic().WithLocation(4, 1),
+                this.CSharpDiagnostic().WithLocation(5, 1),
+                this.CSharpDiagnostic().WithLocation(6, 1),
+                this.CSharpDiagnostic().WithLocation(7, 1),
+                this.CSharpDiagnostic().WithLocation(8, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestInvalidTabsInCommentsAsync()
+        {
+            var testCode =
+                "\tpublic class Foo\r\n" +
+                "\t{\r\n" +
+                "\t\tpublic void Bar()\r\n" +
+                "\t\t{\r\n" +
+                "\t\t \t//\tComment\t\t1\r\n" +
+                "\t  \t\t// Comment 2\r\n" +
+                "\t\t}\r\n" +
+                "\t}\r\n";
+
+            var fixedTestCode = @"    public class Foo
+    {
+        public void Bar()
+        {
+            //  Comment     1
+            // Comment 2
+        }
+    }
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(1, 1),
+                this.CSharpDiagnostic().WithLocation(2, 1),
+                this.CSharpDiagnostic().WithLocation(3, 1),
+                this.CSharpDiagnostic().WithLocation(4, 1),
+                this.CSharpDiagnostic().WithLocation(5, 1),
+                this.CSharpDiagnostic().WithLocation(5, 5),
+                this.CSharpDiagnostic().WithLocation(6, 1),
+                this.CSharpDiagnostic().WithLocation(7, 1),
+                this.CSharpDiagnostic().WithLocation(8, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestInvalidTabsInMultiLineCommentsAsync()
+        {
+            var testCode =
+                "\tpublic class Foo\r\n" +
+                "\t{\r\n" +
+                "\t\tpublic void Bar()\r\n" +
+                "\t\t{\r\n" +
+                "\t\t \t/*\r\n" +
+                "\t\t\tComment\t\t1\r\n" +
+                "\t  \t\tComment 2\r\n" +
+                "  \t\t\t*/\r\n" +
+                "\t\t}\r\n" +
+                "\t}\r\n";
+
+            var fixedTestCode = @"    public class Foo
+    {
+        public void Bar()
+        {
+            /*
+            Comment     1
+            Comment 2
+            */
+        }
+    }
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(1, 1),
+                this.CSharpDiagnostic().WithLocation(2, 1),
+                this.CSharpDiagnostic().WithLocation(3, 1),
+                this.CSharpDiagnostic().WithLocation(4, 1),
+                this.CSharpDiagnostic().WithLocation(5, 1),
+                this.CSharpDiagnostic().WithLocation(5, 5),
+                this.CSharpDiagnostic().WithLocation(9, 1),
+                this.CSharpDiagnostic().WithLocation(10, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
