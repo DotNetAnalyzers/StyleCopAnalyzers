@@ -48,7 +48,7 @@ namespace StyleCop.Analyzers.Helpers
         /// </returns>
         internal static bool IsAnalyzerSuppressed(this SymbolAnalysisContext context, string diagnosticId, bool enabledByDefault)
         {
-            return context.Compilation.IsAnalyzerSuppressed(diagnosticId, enabledByDefault);
+            return context.Compilation.Options.IsAnalyzerSuppressed(diagnosticId, enabledByDefault);
         }
 
         /// <summary>
@@ -81,7 +81,10 @@ namespace StyleCop.Analyzers.Helpers
         /// </summary>
         /// <param name="compilationOptions">The compilation options that will be used to determine if the diagnostic is currently suppressed.</param>
         /// <param name="diagnosticId">The diagnostic identifier to check.</param>
-        /// <returns>True if the diagnostic is currently suppressed.</returns>
+        /// <param name="enabledByDefault">true to enabled by default.</param>
+        /// <returns>
+        /// True if the diagnostic is currently suppressed.
+        /// </returns>
         internal static bool IsAnalyzerSuppressed(this CompilationOptions compilationOptions, string diagnosticId, bool enabledByDefault = true)
         {
             var reportDiagnostic = compilationOptions.SpecificDiagnosticOptions.GetValueOrDefault(diagnosticId, ReportDiagnostic.Default);
