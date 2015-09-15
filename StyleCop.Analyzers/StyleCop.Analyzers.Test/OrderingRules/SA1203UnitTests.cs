@@ -1,20 +1,23 @@
-﻿namespace StyleCop.Analyzers.Test.OrderingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.OrderingRules;
     using TestHelper;
     using Xunit;
 
-    public class SA1203UnitTests : DiagnosticVerifier
+    public class SA1203UnitTests : CodeFixVerifier
     {
         [Fact]
         public async Task TestNoDiagnosticAsync()
         {
             var testCode = @"public static class TestClass1 { }
-
 public class TestClass2
 {
     public const int TestField1 = 1;
@@ -42,15 +45,12 @@ public class TestClass2
     private static int TestField23 = 1;
     private readonly int TestField24 = 1;
     private int TestField25 = 1;
-
     public TestClass2()
     {
     }
-
     private TestClass2(string a)
     {
     }
-
     ~TestClass2() { }
     
     public static int TestProperty1 { get; set; }
@@ -74,7 +74,6 @@ public class TestClass2
     protected void TestMethod8() { }
     private static void TestMethod9() { }
     private void TestMethod10() { }
-
     public static class TestClass1 { }
     public class TestClass2a { }
     internal static class TestClass3 { }
@@ -102,6 +101,15 @@ public class Foo
 }";
             var firstDiagnostic = this.CSharpDiagnostic().WithLocation(5, 23).WithArguments("private");
             await this.VerifyCSharpDiagnosticAsync(testCode, firstDiagnostic, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedTestCode = @"
+public class Foo
+{
+    private const int Bar = 2;
+    private int Baz = 1;
+}";
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -115,6 +123,15 @@ public struct Foo
 }";
             var firstDiagnostic = this.CSharpDiagnostic().WithLocation(5, 23).WithArguments("private");
             await this.VerifyCSharpDiagnosticAsync(testCode, firstDiagnostic, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedTestCode = @"
+public struct Foo
+{
+    private const int Bar = 2;
+    private int baz;
+}";
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -129,6 +146,16 @@ public class Foo
 }";
             var firstDiagnostic = this.CSharpDiagnostic().WithLocation(6, 23).WithArguments("private");
             await this.VerifyCSharpDiagnosticAsync(testCode, firstDiagnostic, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedTestCode = @"
+public class Foo
+{
+    private const int Bar = 2;
+    private const int FooBar = 2;
+    private int Baz = 1;
+}";
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -145,11 +172,224 @@ public class Test
             var expected = this.CSharpDiagnostic().WithLocation(5, 15).WithArguments("private");
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var testCodeAfterFix1 = @"
+public class Test
+{
+    const int Test2 = 2;
+    private int Test1 = 1;
+    const int Test3 = 3;
+}";
+            expected = this.CSharpDiagnostic().WithLocation(6, 15).WithArguments("private");
+            await this.VerifyCSharpDiagnosticAsync(testCodeAfterFix1, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixCode = @"
+public class Test
+{
+    const int Test2 = 2;
+    const int Test3 = 3;
+    private int Test1 = 1;
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(fixCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCodeAfterFix1, fixCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix will move the non constant fields before the constant ones, only using a single access modifier.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestCodeFixSingleAccessModifierAsync()
+        {
+            var testCode = @"
+public class Foo
+{
+    public const string Before1 = ""test"";
+
+    public const string Before2 = ""test"";
+
+    public int field1;
+
+    public const string After1 = ""test"";
+
+    public int between;
+
+    public const string After2 = ""test"";
+}
+";
+
+            var fixedTestCode = @"
+public class Foo
+{
+    public const string Before1 = ""test"";
+
+    public const string Before2 = ""test"";
+
+    public const string After1 = ""test"";
+
+    public const string After2 = ""test"";
+
+    public int field1;
+
+    public int between;
+}
+";
+
+            var diagnosticResults = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(10, 25).WithArguments("public"),
+                this.CSharpDiagnostic().WithLocation(14, 25).WithArguments("public")
+            };
+            await this.VerifyCSharpDiagnosticAsync(testCode, diagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix will move the non constant fields before the constant ones.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestCodeFixAsync()
+        {
+            var testCode = @"public class Foo
+{
+    private const string Before1 = ""test"";
+
+    public const string Before2 = ""test"";
+
+    private int field1;
+
+    private const string After1 = ""test"";
+
+    public int between;
+
+    public const string After2 = ""test"";
+}
+";
+
+            var fixedTestCode = @"public class Foo
+{
+    private const string Before1 = ""test"";
+
+    public const string Before2 = ""test"";
+
+    private const string After1 = ""test"";
+
+    public const string After2 = ""test"";
+
+    private int field1;
+
+    public int between;
+}
+";
+
+            var diagnosticResults = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(9, 26).WithArguments("private"),
+                this.CSharpDiagnostic().WithLocation(13, 25).WithArguments("public")
+            };
+            await this.VerifyCSharpDiagnosticAsync(testCode, diagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix will move the non constant fields before the constant ones leaving the comments in the proper place.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestCodeFixWithCommentsAsync()
+        {
+            var testCode = @"public class Foo
+{
+    private const string Before1 = ""test"";
+
+    public const string Before2 = ""test"";
+
+    private int field1;
+
+    //Comment on this field
+    private const string After1 = ""test"";
+
+    public int between;
+
+    public const string After2 = ""test"";
+}
+";
+
+            var fixedTestCode = @"public class Foo
+{
+    private const string Before1 = ""test"";
+
+    public const string Before2 = ""test"";
+
+    //Comment on this field
+    private const string After1 = ""test"";
+
+    public const string After2 = ""test"";
+
+    private int field1;
+
+    public int between;
+}
+";
+
+            var diagnosticResults = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(10, 26).WithArguments("private"),
+                this.CSharpDiagnostic().WithLocation(14, 25).WithArguments("public")
+            };
+            await this.VerifyCSharpDiagnosticAsync(testCode, diagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Test comments not being moved.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestOnlyLeadingWhitespaceIsMovedAsync()
+        {
+            var testCode = @"class Foo
+{
+    /// <summary>
+    /// Bar
+    /// </summary>
+    string bar;
+const string foo = ""a"";
+}
+";
+
+            var diagnosticResults = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(7, 14).WithArguments("private"),
+            };
+            await this.VerifyCSharpDiagnosticAsync(testCode, diagnosticResults, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedTestCode = @"class Foo
+{
+    const string foo = ""a"";
+    /// <summary>
+    /// Bar
+    /// </summary>
+    string bar;
+}
+";
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1203ConstantsMustAppearBeforeFields();
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1203SA1214SA1215CodeFixProvider();
         }
     }
 }

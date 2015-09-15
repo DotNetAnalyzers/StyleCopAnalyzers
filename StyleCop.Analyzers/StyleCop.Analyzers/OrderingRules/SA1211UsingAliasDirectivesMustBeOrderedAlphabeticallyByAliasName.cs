@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.OrderingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.OrderingRules
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
@@ -47,6 +50,11 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.RegisterCompilationStartAction(HandleCompilationStart);
+        }
+
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
             context.RegisterSyntaxNodeActionHonorExclusions(HandleCompilationUnit, SyntaxKind.CompilationUnit);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleNamespaceDeclaration, SyntaxKind.NamespaceDeclaration);
         }
@@ -81,6 +89,12 @@
 
             foreach (var usingDirective in usingDirectives)
             {
+                if (usingDirective.IsPrecededByPreprocessorDirective())
+                {
+                    usingAliasNames.Clear();
+                    prevAliasUsingDirective = null;
+                }
+
                 // only interested in using alias directives
                 if (usingDirective.Alias?.Name?.IsMissing != false)
                 {
@@ -88,12 +102,6 @@
                 }
 
                 string currentAliasName = usingDirective.Alias.Name.Identifier.ValueText;
-                if (usingDirective.IsPrecededByPreprocessorDirective())
-                {
-                    usingAliasNames.Clear();
-                    prevAliasUsingDirective = null;
-                }
-
                 if (prevAliasUsingDirective != null)
                 {
                     string currentLowerInvariant = currentAliasName.ToLowerInvariant();

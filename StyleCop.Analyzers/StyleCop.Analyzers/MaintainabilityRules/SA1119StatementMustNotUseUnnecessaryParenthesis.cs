@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.MaintainabilityRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
@@ -108,6 +111,14 @@
                     && !node.Expression.IsKind(SyntaxKind.AwaitExpression)
                     && !node.IsKind(SyntaxKind.ConstructorDeclaration))
                 {
+                    if (node.Expression.IsKind(SyntaxKind.ConditionalAccessExpression)
+                        && (node.Parent is ElementAccessExpressionSyntax
+                        || node.Parent is MemberAccessExpressionSyntax
+                        || node.Parent is ConditionalAccessExpressionSyntax))
+                    {
+                        return;
+                    }
+
                     ReportDiagnostic(context, node);
                 }
                 else

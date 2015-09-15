@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.DocumentationRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Immutable;
     using System.Linq;
@@ -6,6 +9,7 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Text;
 
     /// <summary>
     /// The C# code contains a single-line comment which begins with three forward slashes in a row.
@@ -71,24 +75,33 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleSingleLineDocumentationTrivia, SyntaxKind.SingleLineDocumentationCommentTrivia);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleSingleLineDocumentationTrivia(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            var node = context.Node as DocumentationCommentTriviaSyntax;
-            if (node == null)
-            {
-                return;
-            }
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleSingleLineDocumentationTrivia, SyntaxKind.SingleLineDocumentationCommentTrivia);
+        }
+
+        private static void HandleSingleLineDocumentationTrivia(SyntaxNodeAnalysisContext context)
+        {
+            var node = (DocumentationCommentTriviaSyntax)context.Node;
 
             // Check if the comment is not multi line
             if (node.Content.All(x => x.IsKind(SyntaxKind.XmlText)))
             {
-                // Add a diagnostic on '///'
-                var trivia = context.Node.GetLeadingTrivia().First();
+                foreach (var trivia in node.DescendantTrivia(descendIntoTrivia: true))
+                {
+                    if (!trivia.IsKind(SyntaxKind.DocumentationCommentExteriorTrivia))
+                    {
+                        continue;
+                    }
 
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, trivia.GetLocation()));
+                    // Add a diagnostic on '///'
+                    TextSpan location = trivia.GetLocation().SourceSpan;
+                    TextSpan slashes = TextSpan.FromBounds(location.End - 3, location.End);
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(trivia.SyntaxTree, slashes)));
+                }
             }
         }
     }

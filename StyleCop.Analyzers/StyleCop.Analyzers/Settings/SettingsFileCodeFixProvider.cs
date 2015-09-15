@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.Settings
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Settings
 {
     using System;
     using System.Collections.Immutable;
@@ -34,6 +37,9 @@
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(
+                SA1600ElementsMustBeDocumented.DiagnosticId,
+                SA1601PartialElementsMustBeDocumented.DiagnosticId,
+                SA1602EnumerationItemsMustBeDocumented.DiagnosticId,
                 FileHeaderAnalyzers.SA1633DescriptorMissing.Id,
                 FileHeaderAnalyzers.SA1634Descriptor.Id,
                 FileHeaderAnalyzers.SA1635Descriptor.Id,

@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.Test.DocumentationRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Collections.Generic;
     using System.Threading;
@@ -90,6 +93,23 @@ TypeName
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Theory]
+        [InlineData("enum")]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
+        public async Task TestNonPartialTypeWithoutDocumentationAsync(string typeName)
+        {
+            var testCode = @"
+///
+{0}
+TypeName
+{{
+}}";
+
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestMethodNoDocumentationAsync()
         {
@@ -169,6 +189,22 @@ public partial class ClassName
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 18);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestNonPartialMethodWithoutDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// 
+/// </summary>
+public partial class ClassName
+{
+    ///
+    public void Test() { }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

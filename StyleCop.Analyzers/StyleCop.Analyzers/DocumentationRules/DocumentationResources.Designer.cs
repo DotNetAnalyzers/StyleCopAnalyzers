@@ -62,6 +62,15 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Inherit documentation.
+        /// </summary>
+        internal static string InheritdocCodeFix {
+            get {
+                return ResourceManager.GetString("InheritdocCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Document value from summary.
         /// </summary>
         internal static string SA1609SA1610CodeFix {
@@ -76,6 +85,24 @@ namespace StyleCop.Analyzers.DocumentationRules {
         internal static string SA1617CodeFix {
             get {
                 return ResourceManager.GetString("SA1617CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Convert to line comment.
+        /// </summary>
+        internal static string SA1626CodeFix {
+            get {
+                return ResourceManager.GetString("SA1626CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add file header.
+        /// </summary>
+        internal static string SA1633CodeFix {
+            get {
+                return ResourceManager.GetString("SA1633CodeFix", resourceCulture);
             }
         }
         

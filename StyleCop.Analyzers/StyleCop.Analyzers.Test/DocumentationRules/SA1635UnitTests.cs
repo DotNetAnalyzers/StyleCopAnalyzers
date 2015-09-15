@@ -1,7 +1,11 @@
-﻿namespace StyleCop.Analyzers.Test.DocumentationRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using StyleCop.Analyzers.DocumentationRules;
     using Xunit;
 
@@ -23,9 +27,19 @@ namespace Bar
 {
 }
 ";
+            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright (c) FooCorp. All rights reserved.
+// </copyright>
+
+namespace Bar
+{
+}
+";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1635Descriptor).WithLocation(1, 4);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -43,9 +57,25 @@ namespace Bar
                 "namespace Bar\r\n" +
                 "{\r\n" +
                 "}\r\n";
+            string fixedCode =
+                "// <copyright file=\"Test0.cs\" company=\"FooCorp\">\r\n" +
+                "// Copyright (c) FooCorp. All rights reserved.\r\n" +
+                "// </copyright>\r\n" +
+                "\r\n" +
+                "namespace Bar\r\n" +
+                "{\r\n" +
+                "}\r\n";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1635Descriptor).WithLocation(1, 4);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new FileHeaderCodeFixProvider();
         }
     }
 }

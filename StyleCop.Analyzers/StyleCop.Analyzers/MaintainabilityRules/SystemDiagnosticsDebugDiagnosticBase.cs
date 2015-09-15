@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.MaintainabilityRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System.Diagnostics;
     using Microsoft.CodeAnalysis;
@@ -19,7 +22,7 @@
         /// <param name="methodName">The method name that should be detected</param>
         /// <param name="parameterIndex">The index, the string parameter that should be checked, is at</param>
         /// <param name="descriptor">The descriptor of the diagnostic that should be added</param>
-        protected internal void HandleMethodCall(SyntaxNodeAnalysisContext context, string methodName, int parameterIndex, DiagnosticDescriptor descriptor)
+        protected internal static void HandleMethodCall(SyntaxNodeAnalysisContext context, string methodName, int parameterIndex, DiagnosticDescriptor descriptor)
         {
             var invocationExpressionSyntax = context.Node as InvocationExpressionSyntax;
             var memberAccessExpressionSyntax = invocationExpressionSyntax?.Expression as MemberAccessExpressionSyntax;

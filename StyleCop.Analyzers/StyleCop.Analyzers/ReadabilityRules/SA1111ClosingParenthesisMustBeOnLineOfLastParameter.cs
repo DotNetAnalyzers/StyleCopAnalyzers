@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.ReadabilityRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
@@ -61,6 +64,11 @@
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterCompilationStartAction(HandleCompilationStart);
+        }
+
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
             context.RegisterSyntaxNodeActionHonorExclusions(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
@@ -342,13 +350,8 @@
                 closeParenLine.IsValid &&
                 closeParenLine.StartLinePosition.Line != lastParameterLine.EndLinePosition.Line)
             {
-                var properties = new Dictionary<string, string>
-                {
-                    [OpenCloseSpacingCodeFixProvider.LocationKey] = OpenCloseSpacingCodeFixProvider.LocationPreceding,
-                    [OpenCloseSpacingCodeFixProvider.ActionKey] = OpenCloseSpacingCodeFixProvider.ActionRemove,
-                    [OpenCloseSpacingCodeFixProvider.LayoutKey] = OpenCloseSpacingCodeFixProvider.LayoutPack
-                };
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, closeToken.GetLocation(), properties.ToImmutableDictionary()));
+                var properties = TokenSpacingCodeFixProvider.RemovePreceding;
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, closeToken.GetLocation(), properties));
             }
         }
     }

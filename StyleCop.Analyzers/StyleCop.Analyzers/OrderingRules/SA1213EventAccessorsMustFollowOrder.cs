@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.OrderingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.OrderingRules
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
@@ -63,14 +66,19 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleEventDeclaration, SyntaxKind.EventDeclaration);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleEventDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleEventDeclaration, SyntaxKind.EventDeclaration);
+        }
+
+        private static void HandleEventDeclaration(SyntaxNodeAnalysisContext context)
         {
             var eventDeclaration = (EventDeclarationSyntax)context.Node;
 
-            if (eventDeclaration?.AccessorList == null)
+            if (eventDeclaration.AccessorList == null)
             {
                 return;
             }

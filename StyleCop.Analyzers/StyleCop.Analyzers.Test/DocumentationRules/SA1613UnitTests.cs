@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.Test.DocumentationRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Collections.Generic;
     using System.Threading;
@@ -100,6 +103,35 @@ $$
                 this.CSharpDiagnostic().WithLocation(11, 8),
                 this.CSharpDiagnostic().WithLocation(12, 15),
                 this.CSharpDiagnostic().WithLocation(13, 15)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(Declarations))]
+        public async Task TestMemberWithInvalidParamsAndInheritDocAsync(string declaration)
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <inheritdoc/>
+    ///<param>Test</param>
+    ///<param/>
+    ///<param name="""">Test</param>
+    ///<param name=""    "">Test</param>
+$$
+}";
+
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(8, 8),
+                this.CSharpDiagnostic().WithLocation(9, 8),
+                this.CSharpDiagnostic().WithLocation(10, 15),
+                this.CSharpDiagnostic().WithLocation(11, 15)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);

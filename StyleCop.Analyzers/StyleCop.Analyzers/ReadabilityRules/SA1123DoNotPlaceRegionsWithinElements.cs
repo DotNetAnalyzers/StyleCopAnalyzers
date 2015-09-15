@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.ReadabilityRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
     using System.Collections.Immutable;
@@ -47,7 +50,7 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleRegionDirectiveTrivia, SyntaxKind.RegionDirectiveTrivia);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
         /// <summary>
@@ -88,11 +91,16 @@
             return true;
         }
 
-        private void HandleRegionDirectiveTrivia(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            RegionDirectiveTriviaSyntax regionSyntax = context.Node as RegionDirectiveTriviaSyntax;
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleRegionDirectiveTrivia, SyntaxKind.RegionDirectiveTrivia);
+        }
 
-            if (regionSyntax != null && IsCompletelyContainedInBody(regionSyntax))
+        private static void HandleRegionDirectiveTrivia(SyntaxNodeAnalysisContext context)
+        {
+            RegionDirectiveTriviaSyntax regionSyntax = (RegionDirectiveTriviaSyntax)context.Node;
+
+            if (IsCompletelyContainedInBody(regionSyntax))
             {
                 // Region must not be located within a code element.
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, regionSyntax.GetLocation()));

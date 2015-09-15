@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.ReadabilityRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
@@ -45,15 +48,20 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleRegionDirectiveTrivia, SyntaxKind.RegionDirectiveTrivia);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleRegionDirectiveTrivia(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            RegionDirectiveTriviaSyntax regionSyntax = context.Node as RegionDirectiveTriviaSyntax;
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleRegionDirectiveTrivia, SyntaxKind.RegionDirectiveTrivia);
+        }
+
+        private static void HandleRegionDirectiveTrivia(SyntaxNodeAnalysisContext context)
+        {
+            RegionDirectiveTriviaSyntax regionSyntax = (RegionDirectiveTriviaSyntax)context.Node;
 
             // regions that are completely inside a body are handled by SA1123.
-            if (regionSyntax != null && !SA1123DoNotPlaceRegionsWithinElements.IsCompletelyContainedInBody(regionSyntax))
+            if (!SA1123DoNotPlaceRegionsWithinElements.IsCompletelyContainedInBody(regionSyntax))
             {
                 // Regions must not be used.
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, regionSyntax.GetLocation()));

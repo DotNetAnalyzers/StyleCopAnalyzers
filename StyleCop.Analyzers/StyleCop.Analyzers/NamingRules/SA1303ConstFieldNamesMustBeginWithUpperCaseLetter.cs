@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.NamingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.NamingRules
 {
     using System.Collections.Immutable;
     using System.Linq;
@@ -87,7 +90,7 @@
                         return;
                     }
 
-                    if (location.SourceTree.IsGeneratedDocument(context.CancellationToken))
+                    if (location.SourceTree.IsGeneratedDocument(context.Compilation, context.CancellationToken))
                     {
                         return;
                     }

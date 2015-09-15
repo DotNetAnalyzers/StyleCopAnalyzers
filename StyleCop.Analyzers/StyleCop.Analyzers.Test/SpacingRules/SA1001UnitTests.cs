@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.Test.SpacingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System;
     using System.Collections.Generic;
@@ -12,7 +15,7 @@
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1001CommasMustBeSpacedCorrectly"/> and
-    /// <see cref="SA1001CodeFixProvider"/>.
+    /// <see cref="TokenSpacingCodeFixProvider"/>.
     /// </summary>
     public class SA1001UnitTests : CodeFixVerifier
     {
@@ -151,6 +154,21 @@
             await this.TestCommaInStatementOrDeclAsync(statement, expected, fixedStatement).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestSpaceOnlyBeforeCommaAsync()
+        {
+            string spaceOnlyBeforeComma = @"f(a ,b);";
+            string spaceOnlyAfterComma = @"f(a, b);";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 17),
+                this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 17)
+            };
+
+            await this.TestCommaInStatementOrDeclAsync(spaceOnlyBeforeComma, expected, spaceOnlyAfterComma).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1001CommasMustBeSpacedCorrectly();
@@ -158,7 +176,7 @@
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1001CodeFixProvider();
+            return new TokenSpacingCodeFixProvider();
         }
 
         private Task TestCommaInStatementOrDeclAsync(string originalStatement, DiagnosticResult expected, string fixedStatement)

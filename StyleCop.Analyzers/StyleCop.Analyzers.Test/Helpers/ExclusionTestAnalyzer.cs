@@ -1,4 +1,7 @@
-﻿namespace TestHelper
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace TestHelper
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
@@ -37,10 +40,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.AnalyzeTree);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void AnalyzeTree(SyntaxTreeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxTreeActionHonorExclusions(AnalyzeTree);
+        }
+
+        private static void AnalyzeTree(SyntaxTreeAnalysisContext context)
         {
             // Report a diagnostic if we got called
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Tree.GetLocation(TextSpan.FromBounds(0, 0))));

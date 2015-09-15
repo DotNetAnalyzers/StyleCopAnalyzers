@@ -117,18 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="OpenCloseSpacingCodeFix" xml:space="preserve">
-    <value>Fix spacing</value>
-  </data>
-  <data name="SA1000CodeFix" xml:space="preserve">
-    <value>Fix spacing</value>
-  </data>
-  <data name="SA1001CodeFix" xml:space="preserve">
-    <value>Fix spacing</value>
-  </data>
-  <data name="SA1002CodeFix" xml:space="preserve">
-    <value>Fix spacing</value>
-  </data>
   <data name="SA1003CodeFix" xml:space="preserve">
     <value>Fix spacing</value>
   </data>
@@ -156,9 +144,6 @@
   <data name="SA1005Title" xml:space="preserve">
     <value>Single line comments must begin with single space</value>
   </data>
-  <data name="SA1006CodeFix" xml:space="preserve">
-    <value>Fix spacing</value>
-  </data>
   <data name="SA1006Description" xml:space="preserve">
     <value>A C# preprocessor-type keyword is preceded by space.</value>
   </data>
@@ -167,9 +152,6 @@
   </data>
   <data name="SA1006Title" xml:space="preserve">
     <value>Preprocessor keywords must not be preceded by space</value>
-  </data>
-  <data name="SA1007CodeFix" xml:space="preserve">
-    <value>Fix spacing</value>
   </data>
   <data name="SA1007Description" xml:space="preserve">
     <value>The operator keyword within a C# operator overload method is not followed by any whitespace.</value>
@@ -183,12 +165,6 @@
   <data name="SA1008CodeFix" xml:space="preserve">
     <value>Fix spacing</value>
   </data>
-  <data name="SA1010CodeFix" xml:space="preserve">
-    <value>Fix spacing</value>
-  </data>
-  <data name="SA1016CodeFix" xml:space="preserve">
-    <value>Fix spacing</value>
-  </data>
   <data name="SA1016Description" xml:space="preserve">
     <value>An opening attribute bracket within a C# element is not spaced correctly.</value>
   </data>
@@ -197,9 +173,6 @@
   </data>
   <data name="SA1016Title" xml:space="preserve">
     <value>Opening attribute brackets must be spaced correctly</value>
-  </data>
-  <data name="SA1017CodeFix" xml:space="preserve">
-    <value>Fix spacing</value>
   </data>
   <data name="SA1017Description" xml:space="preserve">
     <value>A closing attribute bracket within a C# element is not spaced correctly.</value>
@@ -222,15 +195,6 @@
   <data name="SA1018Title" xml:space="preserve">
     <value>Nullable type symbols must be spaced correctly</value>
   </data>
-  <data name="SA1021CodeFix" xml:space="preserve">
-    <value>Fix spacing</value>
-  </data>
-  <data name="SA1022CodeFix" xml:space="preserve">
-    <value>Fix spacing</value>
-  </data>
-  <data name="SA1024CodeFix" xml:space="preserve">
-    <value>Fix spacing</value>
-  </data>
   <data name="SA1025CodeFix" xml:space="preserve">
     <value>Fix spacing</value>
   </data>
@@ -242,9 +206,6 @@
   </data>
   <data name="SA1025Title" xml:space="preserve">
     <value>Code must not contain multiple whitespace in a row</value>
-  </data>
-  <data name="SA1026CodeFix" xml:space="preserve">
-    <value>Fix spacing</value>
   </data>
   <data name="SA1026Description" xml:space="preserve">
     <value>An implicitly typed new array allocation within a C# code file is not spaced correctly.</value>
@@ -278,5 +239,8 @@
   </data>
   <data name="SA1028Title" xml:space="preserve">
     <value>Code must not contain trailing whitespace</value>
+  </data>
+  <data name="TokenSpacingCodeFix" xml:space="preserve">
+    <value>Fix spacing</value>
   </data>
 </root>

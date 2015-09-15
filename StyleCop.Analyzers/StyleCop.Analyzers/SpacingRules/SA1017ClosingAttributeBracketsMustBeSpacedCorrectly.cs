@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.SpacingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.SpacingRules
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
@@ -45,6 +48,11 @@
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterCompilationStartAction(HandleCompilationStart);
+        }
+
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
             context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
         }
@@ -95,7 +103,7 @@
             }
 
             // Closing attribute brackets must not be preceded by a space.
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingCodeFixProvider.RemoveImmediatePreceding));
         }
     }
 }

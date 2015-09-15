@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.ReadabilityRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
@@ -43,17 +46,22 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleEmptyStatementSyntax, SyntaxKind.EmptyStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeSyntax, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeSyntax, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeSyntax, SyntaxKind.InterfaceDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeSyntax, SyntaxKind.EnumDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleNamespaceSyntax, SyntaxKind.NamespaceDeclaration);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleTypeSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            var declaration = context.Node as BaseTypeDeclarationSyntax;
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleEmptyStatementSyntax, SyntaxKind.EmptyStatement);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeSyntax, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeSyntax, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeSyntax, SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeSyntax, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleNamespaceSyntax, SyntaxKind.NamespaceDeclaration);
+        }
+
+        private static void HandleTypeSyntax(SyntaxNodeAnalysisContext context)
+        {
+            var declaration = (BaseTypeDeclarationSyntax)context.Node;
 
             if (declaration.SemicolonToken.IsKind(SyntaxKind.SemicolonToken))
             {
@@ -61,9 +69,9 @@
             }
         }
 
-        private void HandleNamespaceSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleNamespaceSyntax(SyntaxNodeAnalysisContext context)
         {
-            var declaration = context.Node as NamespaceDeclarationSyntax;
+            var declaration = (NamespaceDeclarationSyntax)context.Node;
 
             if (declaration.SemicolonToken.IsKind(SyntaxKind.SemicolonToken))
             {
@@ -71,13 +79,9 @@
             }
         }
 
-        private void HandleEmptyStatementSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleEmptyStatementSyntax(SyntaxNodeAnalysisContext context)
         {
-            EmptyStatementSyntax syntax = context.Node as EmptyStatementSyntax;
-            if (syntax == null)
-            {
-                return;
-            }
+            EmptyStatementSyntax syntax = (EmptyStatementSyntax)context.Node;
 
             LabeledStatementSyntax labeledStatementSyntax = syntax.Parent as LabeledStatementSyntax;
             if (labeledStatementSyntax != null)

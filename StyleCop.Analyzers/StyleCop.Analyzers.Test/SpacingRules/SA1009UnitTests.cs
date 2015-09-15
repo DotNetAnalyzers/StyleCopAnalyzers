@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.Test.SpacingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Collections.Generic;
     using System.Threading;
@@ -698,6 +701,40 @@ int a)
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#684:
+        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/684
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestEmbeddedCommentAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        System.Console.WriteLine(""{0}"", 1 /*text*/ );
+    }
+}
+";
+            var fixedCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        System.Console.WriteLine(""{0}"", 1 /*text*/);
+    }
+}
+";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 52).WithArguments(" not", "preceded");
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
@@ -707,7 +744,7 @@ int a)
         /// <inheritdoc/>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new OpenCloseSpacingCodeFixProvider();
+            return new TokenSpacingCodeFixProvider();
         }
 
         private async Task TestWhitespaceInStatementOrDeclAsync(string originalStatement, string fixedStatement, params DiagnosticResult[] expected)

@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.LayoutRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.LayoutRules
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -49,32 +52,46 @@
             var triviaList = token.LeadingTrivia;
 
             var index = triviaList.IndexOf(SyntaxKind.SingleLineDocumentationCommentTrivia);
-            for (; index < triviaList.Count - 1; index++)
+
+            int currentLineStart = index + 1;
+            bool onBlankLine = true;
+            for (int currentIndex = currentLineStart; currentIndex < triviaList.Count; currentIndex++)
             {
-                if (triviaList[index].IsKind(SyntaxKind.SingleLineCommentTrivia)
-                    || triviaList[index].IsKind(SyntaxKind.MultiLineCommentTrivia))
+                switch (triviaList[currentIndex].Kind())
                 {
+                case SyntaxKind.EndOfLineTrivia:
+                    if (onBlankLine)
+                    {
+                        triviaList = triviaList.RemoveRange(currentLineStart, currentIndex - currentLineStart + 1);
+                        currentIndex = currentLineStart - 1;
+                        continue;
+                    }
+                    else
+                    {
+                        currentLineStart = currentIndex + 1;
+                        onBlankLine = true;
+                        break;
+                    }
+
+                case SyntaxKind.WhitespaceTrivia:
                     break;
+
+                default:
+                    if (triviaList[currentIndex].HasBuiltinEndLine())
+                    {
+                        currentLineStart = currentIndex + 1;
+                        onBlankLine = true;
+                        break;
+                    }
+                    else
+                    {
+                        onBlankLine = false;
+                        break;
+                    }
                 }
             }
 
-            while (!triviaList[index].IsKind(SyntaxKind.EndOfLineTrivia))
-            {
-                index--;
-            }
-
-            var lastEndOfLine = index;
-
-            while (!triviaList[index].IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia))
-            {
-                index--;
-            }
-
-            var lastDocumentation = index;
-
-            var newLeadingTrivia = triviaList.Take(lastDocumentation + 1).Concat(triviaList.Skip(lastEndOfLine + 1));
-            var newSyntaxRoot = syntaxRoot.ReplaceToken(token, token.WithLeadingTrivia(newLeadingTrivia));
-
+            var newSyntaxRoot = syntaxRoot.ReplaceToken(token, token.WithLeadingTrivia(triviaList));
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
     }

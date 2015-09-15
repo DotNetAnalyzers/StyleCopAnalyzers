@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.DocumentationRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
@@ -50,25 +53,30 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            var node = context.Node as MethodDeclarationSyntax;
-
-            this.HandleDeclaration(context, node.ReturnType);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
         }
 
-        private void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var node = context.Node as DelegateDeclarationSyntax;
+            var node = (MethodDeclarationSyntax)context.Node;
 
-            this.HandleDeclaration(context, node.ReturnType);
+            HandleDeclaration(context, node.ReturnType);
         }
 
-        private void HandleDeclaration(SyntaxNodeAnalysisContext context, TypeSyntax returnType)
+        private static void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var node = (DelegateDeclarationSyntax)context.Node;
+
+            HandleDeclaration(context, node.ReturnType);
+        }
+
+        private static void HandleDeclaration(SyntaxNodeAnalysisContext context, TypeSyntax returnType)
         {
             var predefinedType = returnType as PredefinedTypeSyntax;
 

@@ -117,10 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="SA1203CodeFix" xml:space="preserve">
+    <value>Order constants and fields</value>
+  </data>
   <data name="SA1205CodeFix" xml:space="preserve">
     <value>Add access modifier</value>
   </data>
   <data name="SA1207CodeFix" xml:space="preserve">
     <value>Place keyword 'protected' before keyword 'internal'</value>
+  </data>
+  <data name="SA1213CodeFix" xml:space="preserve">
+    <value>Fix accessor order</value>
+  </data>
+  <data name="UsingCodeFix" xml:space="preserve">
+    <value>Reorder using statements</value>
   </data>
 </root>

@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.LayoutRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.LayoutRules
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
@@ -63,17 +66,22 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleElseStatement, SyntaxKind.ElseClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleCatchClause, SyntaxKind.CatchClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleFinallyClause, SyntaxKind.FinallyClause);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleElseStatement(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleElseStatement, SyntaxKind.ElseClause);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleCatchClause, SyntaxKind.CatchClause);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleFinallyClause, SyntaxKind.FinallyClause);
+        }
+
+        private static void HandleElseStatement(SyntaxNodeAnalysisContext context)
         {
             var elseClause = (ElseClauseSyntax)context.Node;
             var elseKeyword = elseClause.ElseKeyword;
 
-            if (!elseKeyword.HasLeadingBlankLines())
+            if (!elseKeyword.IsPrecededByBlankLines())
             {
                 return;
             }
@@ -81,12 +89,12 @@
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, elseKeyword.GetLocation(), elseKeyword.ToString()));
         }
 
-        private void HandleCatchClause(SyntaxNodeAnalysisContext context)
+        private static void HandleCatchClause(SyntaxNodeAnalysisContext context)
         {
             var catchClause = (CatchClauseSyntax)context.Node;
             var catchKeyword = catchClause.CatchKeyword;
 
-            if (!catchKeyword.HasLeadingBlankLines())
+            if (!catchKeyword.IsPrecededByBlankLines())
             {
                 return;
             }
@@ -94,12 +102,12 @@
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, catchKeyword.GetLocation(), catchKeyword.ToString()));
         }
 
-        private void HandleFinallyClause(SyntaxNodeAnalysisContext context)
+        private static void HandleFinallyClause(SyntaxNodeAnalysisContext context)
         {
             var finallyClause = (FinallyClauseSyntax)context.Node;
             var finallyKeyword = finallyClause.FinallyKeyword;
 
-            if (!finallyKeyword.HasLeadingBlankLines())
+            if (!finallyKeyword.IsPrecededByBlankLines())
             {
                 return;
             }

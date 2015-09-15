@@ -1,5 +1,9 @@
-﻿namespace StyleCop.Analyzers.SpacingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.SpacingRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading;
@@ -8,8 +12,6 @@
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Text;
 
     /// <summary>
@@ -31,7 +33,7 @@
         /// <inheritdoc/>
         public sealed override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return FixAll.Instance;
         }
 
         /// <inheritdoc/>
@@ -40,37 +42,12 @@
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                var diagnosticSpan = diagnostic.Location.SourceSpan;
-                var trivia = root.FindTrivia(diagnosticSpan.Start, findInsideTrivia: true);
-                switch (trivia.Kind())
-                {
-                case SyntaxKind.WhitespaceTrivia:
-                case SyntaxKind.SingleLineCommentTrivia:
-                case SyntaxKind.MultiLineCommentTrivia:
-                case SyntaxKind.MultiLineDocumentationCommentTrivia:
-                    context.RegisterCodeFix(
-                        CodeAction.Create(
-                            SpacingResources.SA1028CodeFix,
-                            ct => RemoveWhitespaceAsync(context.Document, diagnostic, ct),
-                            equivalenceKey: nameof(SA1028CodeFixProvider)),
-                        diagnostic);
-                    break;
-                default:
-                    var node = root.FindNode(diagnosticSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
-                    switch (node.Kind())
-                    {
-                    case SyntaxKind.XmlText:
-                        context.RegisterCodeFix(
-                            CodeAction.Create(
-                                SpacingResources.SA1028CodeFix,
-                                ct => RemoveWhitespaceAsync(context.Document, diagnostic, ct),
-                                equivalenceKey: nameof(SA1028CodeFixProvider)),
-                            diagnostic);
-                        break;
-                    }
-
-                    break;
-                }
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        SpacingResources.SA1028CodeFix,
+                        ct => RemoveWhitespaceAsync(context.Document, diagnostic, ct),
+                        equivalenceKey: nameof(SA1028CodeFixProvider)),
+                    diagnostic);
             }
         }
 
@@ -83,64 +60,40 @@
         /// <returns>The transformed document.</returns>
         private static async Task<Document> RemoveWhitespaceAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
-            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var diagnosticSpan = diagnostic.Location.SourceSpan;
-            var trivia = root.FindTrivia(diagnosticSpan.Start, findInsideTrivia: true);
-            SyntaxNode newRoot;
-            switch (trivia.Kind())
-            {
-            case SyntaxKind.WhitespaceTrivia:
-                newRoot = root.ReplaceTrivia(trivia, SyntaxTriviaList.Empty);
-                break;
-            case SyntaxKind.SingleLineCommentTrivia:
-                string newTriviaContent = trivia.ToFullString().Substring(0, trivia.FullSpan.Length - diagnosticSpan.Length);
-                var newTrivia = SyntaxFactory.SyntaxTrivia(SyntaxKind.SingleLineCommentTrivia, newTriviaContent);
-                newRoot = root.ReplaceTrivia(trivia, newTrivia);
-                break;
-            case SyntaxKind.MultiLineCommentTrivia:
-            case SyntaxKind.MultiLineDocumentationCommentTrivia:
-                string oldTriviaContent = trivia.ToFullString();
-                TextSpan diagnosticSpanWithinTrivia = TextSpan.FromBounds(diagnosticSpan.Start - trivia.Span.Start, diagnosticSpan.End - trivia.Span.Start);
-                newTriviaContent = string.Concat(
-                    oldTriviaContent.Substring(0, diagnosticSpanWithinTrivia.Start),
-                    oldTriviaContent.Substring(diagnosticSpanWithinTrivia.End));
-                newTrivia = SyntaxFactory.SyntaxTrivia(trivia.Kind(), newTriviaContent);
-                newRoot = root.ReplaceTrivia(trivia, newTrivia);
-                break;
-            default:
-                var node = root.FindNode(diagnosticSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
-                switch (node.Kind())
-                {
-                case SyntaxKind.XmlText:
-                    var xmlNode = (XmlTextSyntax)node;
-                    var newTextTokens = xmlNode.TextTokens;
-                    foreach (var textToken in newTextTokens)
-                    {
-                        if (textToken.Span.IntersectsWith(diagnosticSpan))
-                        {
-                            diagnosticSpanWithinTrivia = TextSpan.FromBounds(diagnosticSpan.Start - textToken.Span.Start, diagnosticSpan.End - textToken.Span.Start);
-                            oldTriviaContent = textToken.ValueText;
-                            newTriviaContent = string.Concat(
-                                oldTriviaContent.Substring(0, diagnosticSpanWithinTrivia.Start),
-                                oldTriviaContent.Substring(diagnosticSpanWithinTrivia.End));
-                            var newToken = SyntaxFactory.Token(textToken.LeadingTrivia, textToken.Kind(), newTriviaContent, newTriviaContent, textToken.TrailingTrivia);
-                            newTextTokens = newTextTokens.Replace(textToken, newToken);
-                            break;
-                        }
-                    }
+            var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+            return document.WithText(text.WithChanges(new TextChange(diagnostic.Location.SourceSpan, string.Empty)));
+        }
 
-                    var newNode = xmlNode.Update(newTextTokens);
-                    newRoot = root.ReplaceNode(node, newNode);
-                    break;
-                default:
-                    return document;
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; } =
+                new FixAll();
+
+            protected override string CodeActionTitle =>
+                SpacingResources.SA1028CodeFix;
+
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            {
+                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
+                if (diagnostics.IsEmpty)
+                {
+                    return null;
                 }
 
-                break;
-            }
+                var text = await document.GetTextAsync().ConfigureAwait(false);
 
-            var newDocument = document.WithSyntaxRoot(newRoot);
-            return newDocument;
+                List<TextChange> changes = new List<TextChange>();
+
+                foreach (var diagnostic in diagnostics)
+                {
+                    changes.Add(new TextChange(diagnostic.Location.SourceSpan, string.Empty));
+                }
+
+                changes.Sort((left, right) => left.Span.Start.CompareTo(right.Span.Start));
+
+                var tree = await document.GetSyntaxTreeAsync().ConfigureAwait(false);
+                return await tree.WithChangedText(text.WithChanges(changes)).GetRootAsync().ConfigureAwait(false);
+            }
         }
     }
 }

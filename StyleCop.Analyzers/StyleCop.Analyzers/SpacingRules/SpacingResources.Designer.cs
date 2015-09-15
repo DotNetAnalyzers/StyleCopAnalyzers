@@ -64,42 +64,6 @@ namespace StyleCop.Analyzers.SpacingRules {
         /// <summary>
         ///   Looks up a localized string similar to Fix spacing.
         /// </summary>
-        internal static string OpenCloseSpacingCodeFix {
-            get {
-                return ResourceManager.GetString("OpenCloseSpacingCodeFix", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Fix spacing.
-        /// </summary>
-        internal static string SA1000CodeFix {
-            get {
-                return ResourceManager.GetString("SA1000CodeFix", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Fix spacing.
-        /// </summary>
-        internal static string SA1001CodeFix {
-            get {
-                return ResourceManager.GetString("SA1001CodeFix", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Fix spacing.
-        /// </summary>
-        internal static string SA1002CodeFix {
-            get {
-                return ResourceManager.GetString("SA1002CodeFix", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Fix spacing.
-        /// </summary>
         internal static string SA1003CodeFix {
             get {
                 return ResourceManager.GetString("SA1003CodeFix", resourceCulture);
@@ -179,15 +143,6 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Fix spacing.
-        /// </summary>
-        internal static string SA1006CodeFix {
-            get {
-                return ResourceManager.GetString("SA1006CodeFix", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to A C# preprocessor-type keyword is preceded by space..
         /// </summary>
         internal static string SA1006Description {
@@ -211,15 +166,6 @@ namespace StyleCop.Analyzers.SpacingRules {
         internal static string SA1006Title {
             get {
                 return ResourceManager.GetString("SA1006Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Fix spacing.
-        /// </summary>
-        internal static string SA1007CodeFix {
-            get {
-                return ResourceManager.GetString("SA1007CodeFix", resourceCulture);
             }
         }
         
@@ -260,24 +206,6 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Fix spacing.
-        /// </summary>
-        internal static string SA1010CodeFix {
-            get {
-                return ResourceManager.GetString("SA1010CodeFix", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Fix spacing.
-        /// </summary>
-        internal static string SA1016CodeFix {
-            get {
-                return ResourceManager.GetString("SA1016CodeFix", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to An opening attribute bracket within a C# element is not spaced correctly..
         /// </summary>
         internal static string SA1016Description {
@@ -301,15 +229,6 @@ namespace StyleCop.Analyzers.SpacingRules {
         internal static string SA1016Title {
             get {
                 return ResourceManager.GetString("SA1016Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Fix spacing.
-        /// </summary>
-        internal static string SA1017CodeFix {
-            get {
-                return ResourceManager.GetString("SA1017CodeFix", resourceCulture);
             }
         }
         
@@ -379,33 +298,6 @@ namespace StyleCop.Analyzers.SpacingRules {
         /// <summary>
         ///   Looks up a localized string similar to Fix spacing.
         /// </summary>
-        internal static string SA1021CodeFix {
-            get {
-                return ResourceManager.GetString("SA1021CodeFix", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Fix spacing.
-        /// </summary>
-        internal static string SA1022CodeFix {
-            get {
-                return ResourceManager.GetString("SA1022CodeFix", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Fix spacing.
-        /// </summary>
-        internal static string SA1024CodeFix {
-            get {
-                return ResourceManager.GetString("SA1024CodeFix", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Fix spacing.
-        /// </summary>
         internal static string SA1025CodeFix {
             get {
                 return ResourceManager.GetString("SA1025CodeFix", resourceCulture);
@@ -436,15 +328,6 @@ namespace StyleCop.Analyzers.SpacingRules {
         internal static string SA1025Title {
             get {
                 return ResourceManager.GetString("SA1025Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Fix spacing.
-        /// </summary>
-        internal static string SA1026CodeFix {
-            get {
-                return ResourceManager.GetString("SA1026CodeFix", resourceCulture);
             }
         }
         
@@ -544,6 +427,15 @@ namespace StyleCop.Analyzers.SpacingRules {
         internal static string SA1028Title {
             get {
                 return ResourceManager.GetString("SA1028Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fix spacing.
+        /// </summary>
+        internal static string TokenSpacingCodeFix {
+            get {
+                return ResourceManager.GetString("TokenSpacingCodeFix", resourceCulture);
             }
         }
     }

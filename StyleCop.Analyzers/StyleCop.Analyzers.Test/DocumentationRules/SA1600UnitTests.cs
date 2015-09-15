@@ -1,8 +1,12 @@
-﻿namespace StyleCop.Analyzers.Test.DocumentationRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
     using TestHelper;
@@ -13,28 +17,57 @@
     /// </summary>
     public class SA1600UnitTests : DiagnosticVerifier
     {
+        [Theory]
+        [InlineData("public string TestMember;", 15)]
+        [InlineData("public string TestMember { get; set; }", 15)]
+        [InlineData("public void TestMember() { }", 13)]
+        [InlineData("public string this[int a] { get { return \"a\"; } set { } }", 15)]
+        [InlineData("public event EventHandler TestMember { add { } remove { } }", 27)]
+        public async Task TestRegressionMethodGlobalNamespaceAsync(string code, int column)
+        {
+            // This test is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1416
+            var testCode = $@"
+using System;
+
+{code}";
+
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(4, column),
+                new DiagnosticResult
+                {
+                    Id = "CS0116",
+                    Severity = DiagnosticSeverity.Error,
+                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 4, column) },
+                    Message = "A namespace cannot directly contain members such as fields or methods"
+                }
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestClassWithoutDocumentationAsync()
         {
-            await this.TestTypeWithoutDocumentationAsync("class").ConfigureAwait(false);
+            await this.TestTypeWithoutDocumentationAsync("class", false).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestStructWithoutDocumentationAsync()
         {
-            await this.TestTypeWithoutDocumentationAsync("struct").ConfigureAwait(false);
+            await this.TestTypeWithoutDocumentationAsync("struct", false).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestEnumWithoutDocumentationAsync()
         {
-            await this.TestTypeWithoutDocumentationAsync("enum").ConfigureAwait(false);
+            await this.TestTypeWithoutDocumentationAsync("enum", false).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestInterfaceWithoutDocumentationAsync()
         {
-            await this.TestTypeWithoutDocumentationAsync("interface").ConfigureAwait(false);
+            await this.TestTypeWithoutDocumentationAsync("interface", true).ConfigureAwait(false);
         }
 
         [Fact]
@@ -52,13 +85,13 @@
         [Fact]
         public async Task TestEnumWithDocumentationAsync()
         {
-            await this.TestTypeWithoutDocumentationAsync("enum").ConfigureAwait(false);
+            await this.TestTypeWithDocumentationAsync("enum").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestInterfaceWithDocumentationAsync()
         {
-            await this.TestTypeWithoutDocumentationAsync("interface").ConfigureAwait(false);
+            await this.TestTypeWithDocumentationAsync("interface").ConfigureAwait(false);
         }
 
         [Fact]
@@ -936,14 +969,14 @@ public class OuterClass
             await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestTypeWithoutDocumentationAsync(string type)
+        private async Task TestTypeWithoutDocumentationAsync(string type, bool isInterface)
         {
             await this.TestTypeDeclarationDocumentationAsync(type, string.Empty, true, false).ConfigureAwait(false);
             await this.TestTypeDeclarationDocumentationAsync(type, "internal", true, false).ConfigureAwait(false);
             await this.TestTypeDeclarationDocumentationAsync(type, "public", true, false).ConfigureAwait(false);
 
-            await this.TestNestedTypeDeclarationDocumentationAsync(type, string.Empty, false, false).ConfigureAwait(false);
-            await this.TestNestedTypeDeclarationDocumentationAsync(type, "private", false, false).ConfigureAwait(false);
+            await this.TestNestedTypeDeclarationDocumentationAsync(type, string.Empty, isInterface, false).ConfigureAwait(false);
+            await this.TestNestedTypeDeclarationDocumentationAsync(type, "private", isInterface, false).ConfigureAwait(false);
             await this.TestNestedTypeDeclarationDocumentationAsync(type, "protected", true, false).ConfigureAwait(false);
             await this.TestNestedTypeDeclarationDocumentationAsync(type, "internal", true, false).ConfigureAwait(false);
             await this.TestNestedTypeDeclarationDocumentationAsync(type, "protected internal", true, false).ConfigureAwait(false);

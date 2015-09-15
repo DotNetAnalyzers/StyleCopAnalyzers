@@ -1,8 +1,12 @@
-﻿namespace StyleCop.Analyzers.Test.OrderingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.OrderingRules;
     using TestHelper;
@@ -11,7 +15,7 @@
     /// <summary>
     /// Unit tests for <see cref="SA1215InstanceReadonlyElementsMustAppearBeforeInstanceNonReadonlyElements"/>.
     /// </summary>
-    public class SA1215UnitTests : DiagnosticVerifier
+    public class SA1215UnitTests : CodeFixVerifier
     {
         /// <summary>
         /// Verifies that the analyzer will properly handle valid ordering.
@@ -119,6 +123,15 @@
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 25).WithArguments("public");
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixTestCode = @"public class TestClass
+{
+    public readonly int TestField2 = 1;
+    public int TestField1;
+}
+";
+            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -138,6 +151,15 @@
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 25).WithArguments("public");
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixTestCode = @"public struct TestStruct
+{
+    public readonly int TestField2;
+    public int TestField1;
+}
+";
+            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -178,6 +200,11 @@
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1215InstanceReadonlyElementsMustAppearBeforeInstanceNonReadonlyElements();
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1203SA1214SA1215CodeFixProvider();
         }
     }
 }

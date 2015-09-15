@@ -1,8 +1,12 @@
-﻿namespace StyleCop.Analyzers.Test.OrderingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.OrderingRules;
     using TestHelper;
@@ -11,7 +15,7 @@
     /// <summary>
     /// Unit tests for the <see cref="SA1200UsingDirectivesMustBePlacedWithinNamespace"/>
     /// </summary>
-    public class SA1200UnitTests : DiagnosticVerifier
+    public class SA1200UnitTests : CodeFixVerifier
     {
         private const string ClassDefinition = @"public class TestClass
 {
@@ -106,6 +110,13 @@ namespace TestNamespace
 }
 ";
 
+            var fixedTestCode = @"namespace TestNamespace
+{
+    using System;
+    using System.Threading;
+}
+";
+
             DiagnosticResult[] expectedResults =
             {
                 this.CSharpDiagnostic().WithLocation(1, 1),
@@ -113,11 +124,20 @@ namespace TestNamespace
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1200UsingDirectivesMustBePlacedWithinNamespace();
+        }
+
+        /// <inheritdoc/>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new UsingCodeFixProvider();
         }
     }
 }

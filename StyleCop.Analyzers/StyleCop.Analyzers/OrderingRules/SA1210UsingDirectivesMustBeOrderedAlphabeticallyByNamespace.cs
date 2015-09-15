@@ -1,9 +1,11 @@
-﻿namespace StyleCop.Analyzers.OrderingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.OrderingRules
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Globalization;
-    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -51,6 +53,11 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.RegisterCompilationStartAction(HandleCompilationStart);
+        }
+
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
             context.RegisterSyntaxNodeActionHonorExclusions(HandleCompilationUnit, SyntaxKind.CompilationUnit);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleNamespaceDeclaration, SyntaxKind.NamespaceDeclaration);
         }
@@ -76,11 +83,6 @@
 
             foreach (var usingDirective in usings)
             {
-                if (IsAliasOrStaticUsingDirective(usingDirective))
-                {
-                    continue;
-                }
-
                 if (usingDirective.IsPrecededByPreprocessorDirective())
                 {
                     CheckIncorrectlyOrderedUsingsAndReportDiagnostic(context, usingDirectives);
@@ -89,7 +91,12 @@
                     systemUsingDirectives.Clear();
                 }
 
-                if (HasNamespaceAliasQualifier(usingDirective) || !usingDirective.IsSystemUsingDirective())
+                if (IsAliasOrStaticUsingDirective(usingDirective))
+                {
+                    continue;
+                }
+
+                if (usingDirective.HasNamespaceAliasQualifier() || !usingDirective.IsSystemUsingDirective())
                 {
                     usingDirectives.Add(usingDirective);
                 }
@@ -111,7 +118,7 @@
             {
                 if (previousUsingDirective != null)
                 {
-                    if (CultureInfo.InvariantCulture.CompareInfo.Compare(previousUsingDirective.Name.ToString(), directive.Name.ToString(), CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreWidth) > 0)
+                    if (CultureInfo.InvariantCulture.CompareInfo.Compare(previousUsingDirective.Name.ToNormalizedString(), directive.Name.ToNormalizedString(), CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreWidth) > 0)
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, previousUsingDirective.GetLocation()));
                     }
@@ -122,7 +129,5 @@
         }
 
         private static bool IsAliasOrStaticUsingDirective(UsingDirectiveSyntax usingDirective) => usingDirective.Alias != null || usingDirective.StaticKeyword.IsKind(SyntaxKind.StaticKeyword);
-
-        private static bool HasNamespaceAliasQualifier(UsingDirectiveSyntax usingDirective) => usingDirective.DescendantNodes().Any(node => node.IsKind(SyntaxKind.AliasQualifiedName));
     }
 }

@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.NamingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.NamingRules
 {
     using System;
     using System.Collections.Immutable;
@@ -51,10 +54,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleInterfaceDeclarationSyntax, SyntaxKind.InterfaceDeclaration);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleInterfaceDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleInterfaceDeclarationSyntax, SyntaxKind.InterfaceDeclaration);
+        }
+
+        private static void HandleInterfaceDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
             var interfaceDeclaration = (InterfaceDeclarationSyntax)context.Node;
             if (interfaceDeclaration.Identifier.IsMissing)

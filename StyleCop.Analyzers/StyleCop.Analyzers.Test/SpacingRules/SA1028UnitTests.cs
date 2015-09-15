@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.Test.SpacingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Collections.Generic;
     using System.Text;
@@ -185,6 +188,52 @@
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1373 "SA1028 does not appear to catch single
+        /// space after final closing brace":
+        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1373
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestTrailingWhitespaceAfterClosingBraceAsync()
+        {
+            string testCode = new StringBuilder()
+                .AppendLine("class ClassName")
+                .AppendLine("{")
+                .Append("} ")
+                .ToString();
+
+            string fixedCode = new StringBuilder()
+                .AppendLine("class ClassName")
+                .AppendLine("{")
+                .Append("}")
+                .ToString();
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 2);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1445 "SA1028 falsely reports when
+        /// <c>[assembly: InternalsVisibleTo("...")]</c> is used at the end of file":
+        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1445
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestWhitespaceBeforeClosingBraceAsync()
+        {
+            string testCode = new StringBuilder()
+                .AppendLine("class ClassName")
+                .AppendLine("{")
+                .Append(" }")
+                .ToString();
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TrailingWhitespaceAfterDirectivesAsync()
         {
@@ -230,9 +279,7 @@
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-
-            // We don't have code fixes available for directives yet.
-            ////await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -258,6 +305,28 @@
                 .ToString();
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TrailingWhitespaceAfterTextTokenAsync()
+        {
+            string testCode = new StringBuilder()
+                .AppendLine("/// <summary>")
+                .AppendLine("/// &amp; ")
+                .AppendLine("/// </summary>")
+                .ToString();
+
+            string fixedCode = new StringBuilder()
+                .AppendLine("/// <summary>")
+                .AppendLine("/// &amp;")
+                .AppendLine("/// </summary>")
+                .ToString();
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 10);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.NamingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.NamingRules
 {
     using System.Collections.Immutable;
     using System.Composition;
@@ -45,11 +48,6 @@
                 }
 
                 var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (token.IsMissing)
-                {
-                    continue;
-                }
-
                 if (!string.IsNullOrEmpty(token.ValueText))
                 {
                     var newName = token.ValueText.TrimStart(new[] { '_' });

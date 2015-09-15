@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.DocumentationRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
@@ -30,7 +33,7 @@
         public const string DiagnosticId = "SA1622";
         private const string Title = "Generic type parameter documentation must have text";
         private const string MessageFormat = "Generic type parameter documentation must have text";
-        private const string Description = "A &lt;typeparam&gt; tag within the Xml header documentation for a generic C# element is empty.";
+        private const string Description = "A <typeparam> tag within the Xml header documentation for a generic C# element is empty.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1622.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
@@ -51,27 +54,32 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleXmlElement, SyntaxKind.XmlElement);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleXmlEmptyElement, SyntaxKind.XmlEmptyElement);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleXmlElement(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            XmlElementSyntax emptyElement = context.Node as XmlElementSyntax;
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleXmlElement, SyntaxKind.XmlElement);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleXmlEmptyElement, SyntaxKind.XmlEmptyElement);
+        }
 
-            var name = emptyElement?.StartTag?.Name;
+        private static void HandleXmlElement(SyntaxNodeAnalysisContext context)
+        {
+            XmlElementSyntax element = (XmlElementSyntax)context.Node;
 
-            if (string.Equals(name.ToString(), XmlCommentHelper.TypeParamXmlTag) && XmlCommentHelper.IsConsideredEmpty(emptyElement))
+            var name = element.StartTag?.Name;
+
+            if (string.Equals(name.ToString(), XmlCommentHelper.TypeParamXmlTag) && XmlCommentHelper.IsConsideredEmpty(element))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, emptyElement.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, element.GetLocation()));
             }
         }
 
-        private void HandleXmlEmptyElement(SyntaxNodeAnalysisContext context)
+        private static void HandleXmlEmptyElement(SyntaxNodeAnalysisContext context)
         {
-            XmlEmptyElementSyntax emptyElement = context.Node as XmlEmptyElementSyntax;
+            XmlEmptyElementSyntax emptyElement = (XmlEmptyElementSyntax)context.Node;
 
-            if (string.Equals(emptyElement?.Name.ToString(), XmlCommentHelper.TypeParamXmlTag))
+            if (string.Equals(emptyElement.Name.ToString(), XmlCommentHelper.TypeParamXmlTag))
             {
                 // <typeparam .../> is empty.
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, emptyElement.GetLocation()));

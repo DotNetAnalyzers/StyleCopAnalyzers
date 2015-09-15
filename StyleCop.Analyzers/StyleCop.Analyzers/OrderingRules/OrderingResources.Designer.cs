@@ -62,6 +62,15 @@ namespace StyleCop.Analyzers.OrderingRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Order constants and fields.
+        /// </summary>
+        internal static string SA1203CodeFix {
+            get {
+                return ResourceManager.GetString("SA1203CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add access modifier.
         /// </summary>
         internal static string SA1205CodeFix {
@@ -76,6 +85,24 @@ namespace StyleCop.Analyzers.OrderingRules {
         internal static string SA1207CodeFix {
             get {
                 return ResourceManager.GetString("SA1207CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fix accessor order.
+        /// </summary>
+        internal static string SA1213CodeFix {
+            get {
+                return ResourceManager.GetString("SA1213CodeFix", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Reorder using statements.
+        /// </summary>
+        internal static string UsingCodeFix {
+            get {
+                return ResourceManager.GetString("UsingCodeFix", resourceCulture);
             }
         }
     }

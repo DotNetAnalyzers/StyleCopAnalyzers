@@ -1,5 +1,10 @@
-﻿namespace StyleCop.Analyzers.SpacingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.SpacingRules
 {
+    using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
@@ -30,7 +35,7 @@
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return FixAll.Instance;
         }
 
         /// <inheritdoc/>
@@ -60,6 +65,38 @@
             }
 
             return document;
+        }
+
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; }
+                = new FixAll();
+
+            protected override string CodeActionTitle
+                => SpacingResources.SA1025CodeFix;
+
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            {
+                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
+                if (diagnostics.IsEmpty)
+                {
+                    return null;
+                }
+
+                var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
+
+                List<SyntaxTrivia> tokensToFix = new List<SyntaxTrivia>();
+                foreach (var diagnostic in diagnostics)
+                {
+                    SyntaxTrivia whitespace = syntaxRoot.FindTrivia(diagnostic.Location.SourceSpan.Start, findInsideTrivia: true);
+                    if (whitespace.Span.Length > 1)
+                    {
+                        tokensToFix.Add(whitespace);
+                    }
+                }
+
+                return syntaxRoot.ReplaceTrivia(tokensToFix, (originalTrivia, rewrittenTrivia) => SyntaxFactory.Space);
+            }
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.Test.SpacingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Collections.Generic;
     using System.Threading;
@@ -11,7 +14,7 @@
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1006PreprocessorKeywordsMustNotBePrecededBySpace"/> and
-    /// <see cref="SA1006CodeFixProvider"/>.
+    /// <see cref="TokenSpacingCodeFixProvider"/>.
     /// </summary>
     public class SA1006UnitTests : CodeFixVerifier
     {
@@ -110,7 +113,7 @@ more invalid text
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1006CodeFixProvider();
+            return new TokenSpacingCodeFixProvider();
         }
     }
 }

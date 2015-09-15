@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.Test.LayoutRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Test.LayoutRules
 {
     using System.Collections.Generic;
     using System.Threading;
@@ -966,6 +969,65 @@ public class TestClass
                 this.CSharpDiagnostic().WithLocation(34, 5),
                 this.CSharpDiagnostic().WithLocation(42, 5),
                 this.CSharpDiagnostic().WithLocation(49, 5)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that documentation of enum members is preceded by a blank line.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestEnumMembersMustBePrecededByDocumentationAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    using System;
+
+    /// <summary>
+    /// some documentation.
+    /// </summary>
+    public enum TestEnum
+    {
+        /// <summary>
+        /// some documentation.
+        /// </summary>
+        Value1,
+        /// <summary>
+        /// some documentation.
+        /// </summary>
+        Value2,
+    }
+}
+";
+            var fixedCode = @"namespace TestNamespace
+{
+    using System;
+
+    /// <summary>
+    /// some documentation.
+    /// </summary>
+    public enum TestEnum
+    {
+        /// <summary>
+        /// some documentation.
+        /// </summary>
+        Value1,
+
+        /// <summary>
+        /// some documentation.
+        /// </summary>
+        Value2,
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(14, 9)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.OrderingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.OrderingRules
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
@@ -48,6 +51,11 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.RegisterCompilationStartAction(HandleCompilationStart);
+        }
+
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
             context.RegisterSyntaxNodeActionHonorExclusions(HandleCompilationUnit, SyntaxKind.CompilationUnit);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleNamespaceDeclaration, SyntaxKind.NamespaceDeclaration);
         }
@@ -86,7 +94,7 @@
                 {
                     if (systemUsingDirectivesShouldBeBeforeThisName != null)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, usingDirective.GetLocation(), usingDirective.Name.ToUnaliasedString(), systemUsingDirectivesShouldBeBeforeThisName));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, usingDirective.GetLocation(), usingDirective.Name.ToNormalizedString(), systemUsingDirectivesShouldBeBeforeThisName));
                         continue;
                     }
 
@@ -94,8 +102,8 @@
 
                     if (!previousUsing.IsSystemUsingDirective() || previousUsing.StaticKeyword.Kind() != SyntaxKind.None)
                     {
-                        systemUsingDirectivesShouldBeBeforeThisName = previousUsing.Name.ToUnaliasedString();
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, usingDirective.GetLocation(), usingDirective.Name.ToUnaliasedString(), systemUsingDirectivesShouldBeBeforeThisName));
+                        systemUsingDirectivesShouldBeBeforeThisName = previousUsing.Name.ToNormalizedString();
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, usingDirective.GetLocation(), usingDirective.Name.ToNormalizedString(), systemUsingDirectivesShouldBeBeforeThisName));
                     }
                 }
             }

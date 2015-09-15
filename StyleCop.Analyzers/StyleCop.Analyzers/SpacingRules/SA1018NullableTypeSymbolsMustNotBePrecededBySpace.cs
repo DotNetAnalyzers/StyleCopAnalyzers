@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.SpacingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.SpacingRules
 {
     using System.Collections.Immutable;
     using System.Linq;
@@ -47,10 +50,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleQuestionToken, SyntaxKind.NullableType);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleQuestionToken(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleQuestionToken, SyntaxKind.NullableType);
+        }
+
+        private static void HandleQuestionToken(SyntaxNodeAnalysisContext context)
         {
             var nullableType = (NullableTypeSyntax)context.Node;
             var questionToken = nullableType.QuestionToken;

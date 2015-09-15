@@ -1,0 +1,58 @@
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCopTester
+{
+    using System.Collections.Generic;
+    using System.Collections.Immutable;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CodeFixes;
+
+    internal sealed class TesterDiagnosticProvider : FixAllContext.DiagnosticProvider
+    {
+        private readonly ImmutableDictionary<ProjectId, ImmutableDictionary<string, ImmutableArray<Diagnostic>>> documentDiagnostics;
+        private readonly ImmutableDictionary<ProjectId, ImmutableArray<Diagnostic>> projectDiagnostics;
+
+        public TesterDiagnosticProvider(ImmutableDictionary<ProjectId, ImmutableDictionary<string, ImmutableArray<Diagnostic>>> documentDiagnostics, ImmutableDictionary<ProjectId, ImmutableArray<Diagnostic>> projectDiagnostics)
+        {
+            this.documentDiagnostics = documentDiagnostics;
+            this.projectDiagnostics = projectDiagnostics;
+        }
+
+        public override Task<IEnumerable<Diagnostic>> GetAllDiagnosticsAsync(Project project, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(this.projectDiagnostics.Values.SelectMany(i => i).Concat(this.documentDiagnostics.Values.SelectMany(i => i.Values).SelectMany(i => i)));
+        }
+
+        public override Task<IEnumerable<Diagnostic>> GetDocumentDiagnosticsAsync(Document document, CancellationToken cancellationToken)
+        {
+            ImmutableDictionary<string, ImmutableArray<Diagnostic>> projectDocumentDiagnostics;
+            if (!this.documentDiagnostics.TryGetValue(document.Project.Id, out projectDocumentDiagnostics))
+            {
+                return Task.FromResult(Enumerable.Empty<Diagnostic>());
+            }
+
+            ImmutableArray<Diagnostic> diagnostics;
+            if (!projectDocumentDiagnostics.TryGetValue(document.FilePath, out diagnostics))
+            {
+                return Task.FromResult(Enumerable.Empty<Diagnostic>());
+            }
+
+            return Task.FromResult(diagnostics.AsEnumerable());
+        }
+
+        public override Task<IEnumerable<Diagnostic>> GetProjectDiagnosticsAsync(Project project, CancellationToken cancellationToken)
+        {
+            ImmutableArray<Diagnostic> diagnostics;
+            if (!this.projectDiagnostics.TryGetValue(project.Id, out diagnostics))
+            {
+                return Task.FromResult(Enumerable.Empty<Diagnostic>());
+            }
+
+            return Task.FromResult(diagnostics.AsEnumerable());
+        }
+    }
+}

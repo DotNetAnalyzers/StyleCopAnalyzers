@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.Test.DocumentationRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Collections.Generic;
     using System.Threading;
@@ -93,6 +96,24 @@ TypeName
         }
 
         [Theory]
+        [InlineData("enum")]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
+        public async Task TestNonPartialTypeWithoutSummaryDocumentationAsync(string typeName)
+        {
+            var testCode = @"
+/// <summary>
+/// 
+/// </summary>
+{0} TypeName
+{{
+}}";
+
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
         [InlineData("class")]
         [InlineData("struct")]
         [InlineData("interface")]
@@ -110,6 +131,24 @@ TypeName
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("enum")]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
+        public async Task TestNonPartialTypeWithoutContentDocumentationAsync(string typeName)
+        {
+            var testCode = @"
+/// <content>
+/// 
+/// </content>
+{0} TypeName
+{{
+}}";
+
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -196,6 +235,24 @@ public partial class ClassName
         }
 
         [Fact]
+        public async Task TestNonPartialMethodWithoutSummaryDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public partial class ClassName
+{
+/// <summary>
+/// 
+/// </summary>
+    public void Test() { }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestMethodWithoutContentDocumentationAsync()
         {
             var testCode = @"
@@ -213,6 +270,24 @@ public partial class ClassName
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 18);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestNonPartialMethodWithoutContentDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public partial class ClassName
+{
+/// <content>
+/// 
+/// </content>
+    public void Test() { }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

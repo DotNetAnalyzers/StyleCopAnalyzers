@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.Test.SpacingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Collections.Generic;
     using System.Threading;
@@ -11,7 +14,7 @@
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1000KeywordsMustBeSpacedCorrectly"/> and
-    /// <see cref="SA1000CodeFixProvider"/>.
+    /// <see cref="TokenSpacingCodeFixProvider"/>.
     /// </summary>
     public class SA1000UnitTests : CodeFixVerifier
     {
@@ -840,7 +843,7 @@ default:
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1000CodeFixProvider();
+            return new TokenSpacingCodeFixProvider();
         }
 
         private Task TestKeywordStatementAsync(string statement, DiagnosticResult expected, string fixedStatement, string returnType = "void", bool asyncMethod = false)

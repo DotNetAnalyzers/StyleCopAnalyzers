@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.NamingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.NamingRules
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
@@ -44,10 +47,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleFieldDeclarationm, SyntaxKind.FieldDeclaration);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleFieldDeclarationm(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleFieldDeclarationm, SyntaxKind.FieldDeclaration);
+        }
+
+        private static void HandleFieldDeclarationm(SyntaxNodeAnalysisContext context)
         {
             var fieldDeclaration = context.Node as FieldDeclarationSyntax;
             if (fieldDeclaration == null)

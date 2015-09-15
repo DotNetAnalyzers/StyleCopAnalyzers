@@ -1,7 +1,10 @@
-﻿namespace StyleCop.Analyzers.OrderingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.OrderingRules
 {
-    using System;
     using System.Collections.Immutable;
+    using System.Globalization;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -42,6 +45,11 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.RegisterCompilationStartAction(HandleCompilationStart);
+        }
+
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
             context.RegisterSyntaxNodeActionHonorExclusions(HandleCompilationUnit, SyntaxKind.CompilationUnit);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleNamespaceDeclaration, SyntaxKind.NamespaceDeclaration);
         }
@@ -64,14 +72,19 @@
 
             foreach (var usingDirective in usingDirectives)
             {
+                if (usingDirective.IsPrecededByPreprocessorDirective())
+                {
+                    lastStaticUsingDirective = null;
+                }
+
                 if (usingDirective.StaticKeyword.IsKind(SyntaxKind.StaticKeyword))
                 {
-                    if (lastStaticUsingDirective != null && !usingDirective.IsPrecededByPreprocessorDirective())
+                    if (lastStaticUsingDirective != null)
                     {
-                        var firstName = lastStaticUsingDirective.Name.ToUnaliasedString();
-                        var secondName = usingDirective.Name.ToUnaliasedString();
+                        var firstName = lastStaticUsingDirective.Name.ToNormalizedString();
+                        var secondName = usingDirective.Name.ToNormalizedString();
 
-                        if (string.Compare(firstName, secondName, StringComparison.OrdinalIgnoreCase) > 0)
+                        if (CultureInfo.InvariantCulture.CompareInfo.Compare(firstName, secondName, CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreWidth) > 0)
                         {
                             context.ReportDiagnostic(Diagnostic.Create(Descriptor, lastStaticUsingDirective.GetLocation(), new[] { firstName, secondName }));
                             return;

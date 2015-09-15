@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RuleSet Name="Rules for StyleCop.Analyzers internal-only projects" Description="Code analysis rules for StyleCop.Analyzers internal-only projects." ToolsVersion="14.0">
+  <Include Path="StyleCop.Analyzers.ruleset" Action="Default" />
+  <Rules AnalyzerId="Microsoft.CodeAnalysis.CSharp" RuleNamespace="Microsoft.CodeAnalysis.CSharp">
+    <Rule Id="CS1573" Action="Hidden" />
+    <Rule Id="CS1591" Action="Hidden" />
+    <Rule Id="CS2008" Action="None" />
+  </Rules>
+</RuleSet>

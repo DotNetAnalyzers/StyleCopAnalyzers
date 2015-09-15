@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.MaintainabilityRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -17,6 +20,10 @@
         protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
         {
             var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
+            if (diagnostics.IsEmpty)
+            {
+                return null;
+            }
 
             var newDocument = document;
 

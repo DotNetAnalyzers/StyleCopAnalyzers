@@ -1,17 +1,21 @@
-﻿namespace StyleCop.Analyzers.Test.OrderingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.OrderingRules;
     using TestHelper;
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1216UsingStaticDirectivesMustBePlacedAfterOtherUsingDirectives"/>.
+    /// Unit tests for <see cref="SA1216UsingStaticDirectivesMustBePlacedAtTheCorrectLocation"/>.
     /// </summary>
-    public class SA1216UnitTests : DiagnosticVerifier
+    public class SA1216UnitTests : CodeFixVerifier
     {
         /// <summary>
         /// Verifies that the analyzer will not produce diagnostics for correctly ordered using directives inside a namespace.
@@ -23,8 +27,8 @@
             var testCode = @"namespace Foo
 {
     using System;
-    using Execute = System.Action;
     using static System.Math;
+    using Execute = System.Action;
 }
 ";
 
@@ -41,16 +45,16 @@
             var testCode = @"namespace Foo
 {
     using System;
-    using Execute = System.Action;
     using static System.Math;
+    using Execute = System.Action;
 }
 
 namespace Bar
 {
     using System;
-    using Execute = System.Action;
     using static System.Array;
     using static System.Math;
+    using Execute = System.Action;
 }
 ";
 
@@ -65,9 +69,9 @@ namespace Bar
         public async Task TestValidUsingDirectivesInCompilationUnitAsync()
         {
             var testCode = @"using System;
-using Execute = System.Action;
 using static System.Array;
 using static System.Math;
+using Execute = System.Action;
 
 public class Foo
 {
@@ -100,13 +104,31 @@ namespace Bar
 }
 ";
 
+            var fixedTestCode = @"namespace Foo
+{
+    using System;
+    using static System.Math;
+    using Execute = System.Action;
+}
+
+namespace Bar
+{
+    using System;
+    using static System.Array;
+    using static System.Math;
+    using Execute = System.Action;
+}
+";
+
             DiagnosticResult[] expectedDiagnostics =
             {
                 this.CSharpDiagnostic().WithLocation(3, 5),
-                this.CSharpDiagnostic().WithLocation(12, 5)
+                this.CSharpDiagnostic().WithLocation(11, 5)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -115,8 +137,8 @@ namespace Bar
             var testCode = @"
 using System;
 using Microsoft.VisualStudio;
-using MyList = System.Collections.Generic.List<int>;
 using static System.String;
+using MyList = System.Collections.Generic.List<int>;
 
 #if true
 using System.Threading;
@@ -128,16 +150,39 @@ using static System.Math;
 using System.Threading.Tasks;
 #endif";
 
+            var fixedTestCode = @"using System;
+using Microsoft.VisualStudio;
+using static System.String;
+using MyList = System.Collections.Generic.List<int>;
+
+#if true
+using System.Threading;
+using System.Threading.Tasks;
+using static System.Math;
+#else
+using System.Threading;
+using static System.Math;
+using System.Threading.Tasks;
+#endif";
+
             // else block is skipped
             var expected = this.CSharpDiagnostic().WithLocation(9, 1);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1216UsingStaticDirectivesMustBePlacedAfterOtherUsingDirectives();
+            yield return new SA1216UsingStaticDirectivesMustBePlacedAtTheCorrectLocation();
+        }
+
+        /// <inheritdoc/>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new UsingCodeFixProvider();
         }
     }
 }

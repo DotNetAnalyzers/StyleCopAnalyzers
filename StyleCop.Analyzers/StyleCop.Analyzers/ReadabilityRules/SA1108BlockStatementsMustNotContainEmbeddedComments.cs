@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.ReadabilityRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
     using System.Collections.Immutable;
@@ -61,7 +64,7 @@
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
 
-        private readonly SyntaxKind[] supportedKinds =
+        private static readonly SyntaxKind[] SupportedKinds =
         {
             SyntaxKind.ForEachStatement,
             SyntaxKind.ForStatement,
@@ -84,11 +87,16 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.AnalyzeBlock, SyntaxKind.Block);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.AnalyzeSwitch, SyntaxKind.SwitchStatement);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void AnalyzeSwitch(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(AnalyzeBlock, SyntaxKind.Block);
+            context.RegisterSyntaxNodeActionHonorExclusions(AnalyzeSwitch, SyntaxKind.SwitchStatement);
+        }
+
+        private static void AnalyzeSwitch(SyntaxNodeAnalysisContext context)
         {
             var switchStatement = (SwitchStatementSyntax)context.Node;
             var openBraceToken = switchStatement.OpenBraceToken;
@@ -99,13 +107,13 @@
 
             var previousToken = openBraceToken.GetPreviousToken();
 
-            this.FindAllComments(context, previousToken, openBraceToken);
+            FindAllComments(context, previousToken, openBraceToken);
         }
 
-        private void AnalyzeBlock(SyntaxNodeAnalysisContext context)
+        private static void AnalyzeBlock(SyntaxNodeAnalysisContext context)
         {
             var block = (BlockSyntax)context.Node;
-            if (!this.supportedKinds.Any(block.Parent.IsKind))
+            if (!SupportedKinds.Any(block.Parent.IsKind))
             {
                 return;
             }
@@ -122,20 +130,20 @@
                 return;
             }
 
-            this.FindAllComments(context, previousToken, openBraceToken);
+            FindAllComments(context, previousToken, openBraceToken);
         }
 
-        private void FindAllComments(SyntaxNodeAnalysisContext context, SyntaxToken previousToken, SyntaxToken openBraceToken)
+        private static void FindAllComments(SyntaxNodeAnalysisContext context, SyntaxToken previousToken, SyntaxToken openBraceToken)
         {
-            var comments = previousToken.TrailingTrivia.Where(this.IsComment)
-                .Concat(openBraceToken.LeadingTrivia.Where(this.IsComment));
+            var comments = previousToken.TrailingTrivia.Where(IsComment)
+                .Concat(openBraceToken.LeadingTrivia.Where(IsComment));
             foreach (var comment in comments)
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, comment.GetLocation()));
             }
         }
 
-        private bool IsComment(SyntaxTrivia syntaxTrivia)
+        private static bool IsComment(SyntaxTrivia syntaxTrivia)
         {
             var isSingleLineComment = syntaxTrivia.IsKind(SyntaxKind.SingleLineCommentTrivia)
                 && !syntaxTrivia.ToFullString().StartsWith(@"////", StringComparison.Ordinal);

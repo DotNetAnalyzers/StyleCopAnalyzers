@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.NamingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.NamingRules
 {
     using System;
     using System.Collections.Immutable;
@@ -45,11 +48,6 @@
                 }
 
                 var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
-
-                if (token.IsMissing)
-                {
-                    continue;
-                }
 
                 // The variable name is the full suffix. In this case we cannot generate a valid variable name and thus will not offer a code fix.
                 if (token.ValueText.Length <= 2)

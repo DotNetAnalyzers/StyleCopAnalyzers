@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.Test.Settings
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Test.Settings
 {
     using System.Collections.Immutable;
     using System.Threading;
@@ -71,6 +74,57 @@
 
             Assert.Equal("TestCompany", styleCopSettings.DocumentationRules.CompanyName);
             Assert.Equal("Copyright (c) TestCompany. All rights reserved.", styleCopSettings.DocumentationRules.CopyrightText);
+        }
+
+        [Fact]
+        public async Task VerifyCircularReferenceBehaviorAsync()
+        {
+            var settings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""copyrightText"": ""{copyrightText}""
+    }
+  }
+}
+";
+            var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettings();
+
+            Assert.Equal("[CircularReference]", styleCopSettings.DocumentationRules.CopyrightText);
+        }
+
+        [Fact]
+        public async Task VerifyInvalidReferenceBehaviorAsync()
+        {
+            var settings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""copyrightText"": ""{variable}""
+    }
+  }
+}
+";
+            var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettings();
+
+            Assert.Equal("[InvalidReference]", styleCopSettings.DocumentationRules.CopyrightText);
+        }
+
+        [Fact]
+        public async Task VerifyInvalidJsonBehaviorAsync()
+        {
+            var settings = @"This is not a JSON file.";
+            var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettings();
+
+            // The result is the same as the default settings.
+            Assert.Equal("PlaceholderCompany", styleCopSettings.DocumentationRules.CompanyName);
+            Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.CopyrightText);
         }
 
         private static async Task<SyntaxTreeAnalysisContext> CreateAnalysisContextAsync(string stylecopJSON)

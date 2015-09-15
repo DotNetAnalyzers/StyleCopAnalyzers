@@ -1,6 +1,10 @@
-﻿namespace StyleCop.Analyzers.SpacingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.SpacingRules
 {
     using System.Collections.Immutable;
+    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -44,10 +48,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
+        }
+
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
@@ -55,7 +64,7 @@
                 switch (token.Kind())
                 {
                 case SyntaxKind.SemicolonToken:
-                    this.HandleSemicolonToken(context, token);
+                    HandleSemicolonToken(context, token);
                     break;
 
                 default:
@@ -64,7 +73,7 @@
             }
         }
 
-        private void HandleSemicolonToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private static void HandleSemicolonToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
             {
@@ -97,11 +106,12 @@
 
             bool hasPrecedingSpace = false;
             bool ignorePrecedingSpace = false;
-            if (!token.HasLeadingTrivia)
+            if (!token.IsFirstInLine())
             {
                 // only the first token on the line has leading trivia, and those are ignored
                 SyntaxToken precedingToken = token.GetPreviousToken();
-                if (precedingToken.HasTrailingTrivia)
+                SyntaxTriviaList trailingTrivia = precedingToken.TrailingTrivia;
+                if (trailingTrivia.Any() && trailingTrivia.Last().IsKind(SyntaxKind.WhitespaceTrivia))
                 {
                     hasPrecedingSpace = true;
                 }
@@ -117,13 +127,13 @@
             if (missingFollowingSpace)
             {
                 // semicolon must{} be {followed} by a space
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "followed"));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingCodeFixProvider.InsertFollowing, string.Empty, "followed"));
             }
 
             if (hasPrecedingSpace && !ignorePrecedingSpace)
             {
                 // semicolon must{ not} be {preceded} by a space
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), " not", "preceded"));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingCodeFixProvider.RemoveImmediatePreceding, " not", "preceded"));
             }
         }
     }

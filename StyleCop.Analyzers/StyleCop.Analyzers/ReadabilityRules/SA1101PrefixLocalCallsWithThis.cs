@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.ReadabilityRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
@@ -56,8 +59,13 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMemberAccessExpression, SyntaxKind.SimpleMemberAccessExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleIdentifierName, SyntaxKind.IdentifierName);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
+        }
+
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleMemberAccessExpression, SyntaxKind.SimpleMemberAccessExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleIdentifierName, SyntaxKind.IdentifierName);
         }
 
         /// <summary>
@@ -65,14 +73,14 @@
         /// the expression <c>X.Y.Z.A.B.C</c>.
         /// </summary>
         /// <param name="context">The analysis context for a <see cref="SyntaxNode"/>.</param>
-        private void HandleMemberAccessExpression(SyntaxNodeAnalysisContext context)
+        private static void HandleMemberAccessExpression(SyntaxNodeAnalysisContext context)
         {
             MemberAccessExpressionSyntax syntax = (MemberAccessExpressionSyntax)context.Node;
             IdentifierNameSyntax nameExpression = syntax.Expression as IdentifierNameSyntax;
-            this.HandleIdentifierNameImpl(context, nameExpression);
+            HandleIdentifierNameImpl(context, nameExpression);
         }
 
-        private void HandleIdentifierName(SyntaxNodeAnalysisContext context)
+        private static void HandleIdentifierName(SyntaxNodeAnalysisContext context)
         {
             switch (context.Node?.Parent?.Kind() ?? SyntaxKind.None)
             {
@@ -127,17 +135,17 @@
                 break;
             }
 
-            this.HandleIdentifierNameImpl(context, (IdentifierNameSyntax)context.Node);
+            HandleIdentifierNameImpl(context, (IdentifierNameSyntax)context.Node);
         }
 
-        private void HandleIdentifierNameImpl(SyntaxNodeAnalysisContext context, IdentifierNameSyntax nameExpression)
+        private static void HandleIdentifierNameImpl(SyntaxNodeAnalysisContext context, IdentifierNameSyntax nameExpression)
         {
             if (nameExpression == null)
             {
                 return;
             }
 
-            if (!this.HasThis(nameExpression))
+            if (!HasThis(nameExpression))
             {
                 return;
             }
@@ -187,7 +195,7 @@
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, nameExpression.GetLocation()));
         }
 
-        private bool HasThis(SyntaxNode node)
+        private static bool HasThis(SyntaxNode node)
         {
             for (; node != null; node = node.Parent)
             {

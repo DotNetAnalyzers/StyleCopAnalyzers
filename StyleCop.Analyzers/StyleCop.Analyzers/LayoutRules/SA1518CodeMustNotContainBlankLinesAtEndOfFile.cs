@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.LayoutRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.LayoutRules
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
@@ -44,10 +47,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTreeAction);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleSyntaxTreeAction(SyntaxTreeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTreeAction);
+        }
+
+        private static void HandleSyntaxTreeAction(SyntaxTreeAnalysisContext context)
         {
             var lastToken = context.Tree.GetRoot().GetLastToken(includeZeroWidth: true);
 

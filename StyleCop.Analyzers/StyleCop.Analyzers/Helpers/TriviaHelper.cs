@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.Helpers
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Helpers
 {
     using System;
     using System.Collections;
@@ -110,6 +113,53 @@
         }
 
         /// <summary>
+        /// Removes a range of elements from the <see cref="SyntaxTriviaList"/>.
+        /// </summary>
+        /// <param name="list">The list to remove elements from.</param>
+        /// <param name="index">The zero-based starting index of the range of elements to remove.</param>
+        /// <param name="count">The number of elements to remove.</param>
+        /// <returns>A copy of <paramref name="list"/> with the specified range of elements removed.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// <para>If <paramref name="index"/> is less than 0.</para>
+        /// <para>-or-</para>
+        /// <para>If <paramref name="count"/> is less than 0.</para>
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// <para>If <paramref name="index"/> and <paramref name="count"/> do not denote a valid range of elements in
+        /// the <see cref="SyntaxTriviaList"/>.</para>
+        /// </exception>
+        internal static SyntaxTriviaList RemoveRange(this SyntaxTriviaList list, int index, int count)
+        {
+            if (index < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index));
+            }
+
+            if (count < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(count));
+            }
+
+            if (index > list.Count - count)
+            {
+                throw new ArgumentException("The specified range of elements does not exist in the list.");
+            }
+
+            SyntaxTrivia[] trivia = new SyntaxTrivia[list.Count - count];
+            for (int i = 0; i < index; i++)
+            {
+                trivia[i] = list[i];
+            }
+
+            for (int i = index; i + count < list.Count; i++)
+            {
+                trivia[i] = list[i + count];
+            }
+
+            return SyntaxFactory.TriviaList(trivia);
+        }
+
+        /// <summary>
         /// Returns the index of the last trivia of a specified kind in the trivia list.
         /// </summary>
         /// <param name="list">The trivia list.</param>
@@ -153,7 +203,7 @@
         internal static SyntaxTriviaList WithoutLeadingWhitespace(this SyntaxTriviaList triviaList, bool endOfLineIsWhitespace = true)
         {
             var nonWhitespaceIndex = IndexOfFirstNonWhitespaceTrivia(triviaList, endOfLineIsWhitespace);
-            return (nonWhitespaceIndex >= 0) ? SyntaxFactory.TriviaList(triviaList.Take(nonWhitespaceIndex)) : SyntaxFactory.TriviaList();
+            return (nonWhitespaceIndex >= 0) ? SyntaxFactory.TriviaList(triviaList.Skip(nonWhitespaceIndex)) : SyntaxFactory.TriviaList();
         }
 
         /// <summary>
@@ -205,11 +255,14 @@
         }
 
         /// <summary>
-        /// Determines if the given token has leading blank lines. Leading whitespace on the same line as the token is ignored.
+        /// Determines if the given token is immediately preceded by blank lines. Leading whitespace on the same line as
+        /// the token is ignored.
         /// </summary>
-        /// <param name="token">The token to check for leading blank lines.</param>
-        /// <returns>True if the token has leading blank lines.</returns>
-        internal static bool HasLeadingBlankLines(this SyntaxToken token)
+        /// <param name="token">The token to check for immediately preceding blank lines.</param>
+        /// <returns>
+        /// <see langword="true"/> if the token is immediately preceded by blank lines; otherwise, <see langword="false"/>.
+        /// </returns>
+        internal static bool IsPrecededByBlankLines(this SyntaxToken token)
         {
             if (!token.HasLeadingTrivia)
             {
@@ -225,7 +278,7 @@
                 index--;
             }
 
-            if ((index < 0) || !triviaList[index].IsKind(SyntaxKind.EndOfLineTrivia))
+            if ((index < 0) || !triviaList[index].HasBuiltinEndLine())
             {
                 return false;
             }
@@ -233,21 +286,22 @@
             var blankLineCount = -1;
             while (index >= 0)
             {
+                if (triviaList[index].HasBuiltinEndLine() && !triviaList[index].IsKind(SyntaxKind.EndOfLineTrivia))
+                {
+                    blankLineCount++;
+                    return blankLineCount > 0;
+                }
+
                 switch (triviaList[index].Kind())
                 {
                 case SyntaxKind.WhitespaceTrivia:
                     // ignore;
                     break;
+
                 case SyntaxKind.EndOfLineTrivia:
                     blankLineCount++;
                     break;
-                case SyntaxKind.IfDirectiveTrivia:
-                case SyntaxKind.ElifDirectiveTrivia:
-                case SyntaxKind.ElseDirectiveTrivia:
-                case SyntaxKind.EndIfDirectiveTrivia:
-                    // directive trivia have an embedded end of line
-                    blankLineCount++;
-                    return blankLineCount > 0;
+
                 default:
                     return blankLineCount > 0;
                 }
@@ -311,7 +365,7 @@
             return token.WithLeadingTrivia(newLeadingTrivia);
         }
 
-        private static bool HasBuiltinEndLine(this SyntaxTrivia trivia)
+        internal static bool HasBuiltinEndLine(this SyntaxTrivia trivia)
         {
             return trivia.IsDirective
                 || trivia.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia)

@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.SpacingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.SpacingRules
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
@@ -48,10 +51,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
+        }
+
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens())
@@ -59,7 +67,7 @@
                 switch (token.Kind())
                 {
                 case SyntaxKind.PlusToken:
-                    this.HandlePlusToken(context, token);
+                    HandlePlusToken(context, token);
                     break;
 
                 default:
@@ -68,7 +76,7 @@
             }
         }
 
-        private void HandlePlusToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private static void HandlePlusToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
             {
@@ -103,19 +111,19 @@
                 if (!followsSpecialCharacter && !precededBySpace)
                 {
                     // Positive sign must{} be {preceded} by a space.
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), string.Empty, "preceded"));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingCodeFixProvider.InsertPreceding, string.Empty, "preceded"));
                 }
                 else if (followsSpecialCharacter && precededBySpace)
                 {
                     // Positive sign must{ not} be {preceded} by a space.
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), " not", "preceded"));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingCodeFixProvider.RemovePreceding, " not", "preceded"));
                 }
             }
 
             if (lastInLine || followedBySpace)
             {
                 // Positive sign must{ not} be {followed} by a space.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), " not", "followed"));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingCodeFixProvider.RemoveFollowing, " not", "followed"));
             }
         }
     }

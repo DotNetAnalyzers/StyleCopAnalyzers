@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.Test.SpacingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Collections.Generic;
     using System.Threading;
@@ -96,7 +99,7 @@ class ClassName2
 {
 }
 
-[/*comment*/System.Obsolete]
+[/*comment*/ System.Obsolete]
 class ClassName3
 {
 }
@@ -123,7 +126,7 @@ class ClassName3
         /// <inheritdoc/>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1016CodeFixProvider();
+            return new TokenSpacingCodeFixProvider();
         }
     }
 }

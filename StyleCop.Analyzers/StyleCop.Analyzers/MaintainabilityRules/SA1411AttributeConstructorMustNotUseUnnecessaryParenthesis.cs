@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.MaintainabilityRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
@@ -54,12 +57,17 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleAttributeArgumentListSyntax, SyntaxKind.AttributeArgumentList);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleAttributeArgumentListSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            AttributeArgumentListSyntax syntax = context.Node as AttributeArgumentListSyntax;
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleAttributeArgumentListSyntax, SyntaxKind.AttributeArgumentList);
+        }
+
+        private static void HandleAttributeArgumentListSyntax(SyntaxNodeAnalysisContext context)
+        {
+            AttributeArgumentListSyntax syntax = (AttributeArgumentListSyntax)context.Node;
             if (syntax.Arguments.Count != 0)
             {
                 return;

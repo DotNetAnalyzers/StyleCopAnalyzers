@@ -1,8 +1,12 @@
-﻿namespace StyleCop.Analyzers.Test.DocumentationRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
     using TestHelper;
@@ -13,6 +17,17 @@
     /// </summary>
     public class SA1601UnitTests : DiagnosticVerifier
     {
+        private const string SettingsFileName = "stylecop.json";
+        private const string TestSettings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""documentPrivateElements"": true
+    }
+  }
+}
+";
+
         [Theory]
         [InlineData("class")]
         [InlineData("struct")]
@@ -120,6 +135,13 @@ public partial class TypeName
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <inheritdoc/>
+        protected override string GetSettings()
+        {
+            return TestSettings;
+        }
+
+        /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1601PartialElementsMustBeDocumented();

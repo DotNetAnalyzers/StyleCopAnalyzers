@@ -1,11 +1,12 @@
-﻿// This file originally obtained from
-// https://github.com/code-cracker/code-cracker/blob/08c1a01337964924eeed12be8b14c8ce8ec6b626/src/Common/CodeCracker.Common/Extensions/AnalyzerExtensions.cs
-// It is subject to the Apache License 2.0
-// This file has been modified since obtaining it from its original source.
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers
 {
     using System;
+    using System.Collections.Concurrent;
+    using System.Runtime.CompilerServices;
+    using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -15,29 +16,14 @@ namespace StyleCop.Analyzers
     public static class AnalyzerExtensions
     {
         /// <summary>
-        /// Register an action to be executed at completion of parsing of a code document. A syntax tree action reports
-        /// diagnostics about the <see cref="SyntaxTree"/> of a document.
+        /// A cache of the result of computing whether a document has an auto-generated header.
         /// </summary>
-        /// <remarks>This method honors exclusions.</remarks>
-        /// <param name="context">The analysis context.</param>
-        /// <param name="action">Action to be executed at completion of parsing of a document.</param>
-        public static void RegisterSyntaxTreeActionHonorExclusions(this AnalysisContext context, Action<SyntaxTreeAnalysisContext> action)
-        {
-            context.RegisterSyntaxTreeAction(
-                c =>
-                {
-                    if (c.IsGeneratedDocument())
-                    {
-                        return;
-                    }
-
-                    // Honor the containing document item's ExcludeFromStylecop=True
-                    // MSBuild metadata, if analyzers have access to it.
-                    //// TODO: code here
-
-                    action(c);
-                });
-        }
+        /// <remarks>
+        /// This allows many analyzers that run on every token in the file to avoid checking
+        /// the same state in the document repeatedly.
+        /// </remarks>
+        private static readonly ConditionalWeakTable<Compilation, ConcurrentDictionary<SyntaxTree, bool>> GeneratedHeaderCache
+            = new ConditionalWeakTable<Compilation, ConcurrentDictionary<SyntaxTree, bool>>();
 
         /// <summary>
         /// Register an action to be executed at completion of parsing of a code document. A syntax tree action reports
@@ -48,10 +34,13 @@ namespace StyleCop.Analyzers
         /// <param name="action">Action to be executed at completion of parsing of a document.</param>
         public static void RegisterSyntaxTreeActionHonorExclusions(this CompilationStartAnalysisContext context, Action<SyntaxTreeAnalysisContext> action)
         {
+            Compilation compilation = context.Compilation;
+            ConcurrentDictionary<SyntaxTree, bool> cache = GeneratedHeaderCache.GetOrCreateValue(compilation);
+
             context.RegisterSyntaxTreeAction(
                 c =>
                 {
-                    if (c.IsGeneratedDocument())
+                    if (c.IsGeneratedDocument(cache))
                     {
                         return;
                     }
@@ -62,39 +51,6 @@ namespace StyleCop.Analyzers
 
                     action(c);
                 });
-        }
-
-        /// <summary>
-        /// Register an action to be executed at completion of semantic analysis of a <see cref="SyntaxNode"/> with an
-        /// appropriate kind. A syntax node action can report diagnostics about a <see cref="SyntaxNode"/>, and can also
-        /// collect state information to be used by other syntax node actions or code block end actions.
-        /// </summary>
-        /// <remarks>This method honors exclusions.</remarks>
-        /// <param name="context">Action will be executed only if a <see cref="SyntaxNode"/>'s kind matches one of the
-        /// <paramref name="syntaxKinds"/> values.</param>
-        /// <param name="action">Action to be executed at completion of semantic analysis of a
-        /// <see cref="SyntaxNode"/>.</param>
-        /// <param name="syntaxKinds">The kinds of syntax that should be analyzed.</param>
-        /// <typeparam name="TLanguageKindEnum">Enum type giving the syntax node kinds of the source language for which
-        /// the action applies.</typeparam>
-        public static void RegisterSyntaxNodeActionHonorExclusions<TLanguageKindEnum>(this AnalysisContext context, Action<SyntaxNodeAnalysisContext> action, params TLanguageKindEnum[] syntaxKinds)
-            where TLanguageKindEnum : struct
-        {
-            context.RegisterSyntaxNodeAction(
-                c =>
-                {
-                    if (c.IsGenerated())
-                    {
-                        return;
-                    }
-
-                    // Honor the containing document item's ExcludeFromStylecop=True
-                    // MSBuild metadata, if analyzers have access to it.
-                    //// TODO: code here
-
-                    action(c);
-                },
-                syntaxKinds);
         }
 
         /// <summary>
@@ -113,10 +69,13 @@ namespace StyleCop.Analyzers
         public static void RegisterSyntaxNodeActionHonorExclusions<TLanguageKindEnum>(this CompilationStartAnalysisContext context, Action<SyntaxNodeAnalysisContext> action, params TLanguageKindEnum[] syntaxKinds)
             where TLanguageKindEnum : struct
         {
+            Compilation compilation = context.Compilation;
+            ConcurrentDictionary<SyntaxTree, bool> cache = GeneratedHeaderCache.GetOrCreateValue(compilation);
+
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (c.IsGenerated())
+                    if (c.IsGenerated(cache))
                     {
                         return;
                     }
@@ -128,6 +87,37 @@ namespace StyleCop.Analyzers
                     action(c);
                 },
                 syntaxKinds);
+        }
+
+        /// <summary>
+        /// Checks whether the given document is auto generated by a tool (based on filename or comment header).
+        /// </summary>
+        /// <remarks>
+        /// <para>The exact conditions used to identify generated code are subject to change in future releases. The
+        /// current algorithm uses the following checks.</para>
+        /// <para>Code is considered generated if it meets any of the following conditions.</para>
+        /// <list type="bullet">
+        /// <item>The code is contained in a file which starts with a comment containing the text
+        /// <c>&lt;auto-generated</c>.</item>
+        /// <item>The code is contained in a file with a name matching certain patterns (case-insensitive):
+        /// <list type="bullet">
+        /// <item>*.designer.cs</item>
+        /// </list>
+        /// </item>
+        /// </list>
+        /// </remarks>
+        /// <param name="tree">The syntax tree to examine.</param>
+        /// <param name="compilation">The <see cref="Compilation"/> containing the specified <paramref name="tree"/>.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
+        /// <returns>
+        /// <para><see langword="true"/> if <paramref name="tree"/> is located in generated code; otherwise,
+        /// <see langword="false"/>. If <paramref name="tree"/> is <see langword="null"/>, this method returns
+        /// <see langword="false"/>.</para>
+        /// </returns>
+        public static bool IsGeneratedDocument(this SyntaxTree tree, Compilation compilation, CancellationToken cancellationToken)
+        {
+            ConcurrentDictionary<SyntaxTree, bool> cache = GeneratedHeaderCache.GetOrCreateValue(compilation);
+            return tree.IsGeneratedDocument(cache, cancellationToken);
         }
     }
 }

@@ -1,8 +1,13 @@
-﻿namespace StyleCop.Analyzers.LayoutRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.LayoutRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Helpers;
     using Microsoft.CodeAnalysis;
@@ -27,39 +32,43 @@
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return FixAll.Instance;
         }
 
         /// <inheritdoc/>
         public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+
             foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
             {
-                var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-
-                var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
-                node = this.GetRelevantNode(node);
-                var leadingTrivia = node?.GetLeadingTrivia();
-                if (leadingTrivia != null)
-                {
-                    context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1516CodeFix, token => GetTransformedDocumentAsync(context, syntaxRoot, node, (SyntaxTriviaList)leadingTrivia), equivalenceKey: nameof(SA1516CodeFixProvider)), diagnostic);
-                }
+                context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1516CodeFix, token => GetTransformedDocumentAsync(context.Document, syntaxRoot, diagnostic, context.CancellationToken), equivalenceKey: nameof(SA1516CodeFixProvider)), diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocumentAsync(CodeFixContext context, SyntaxNode syntaxRoot, SyntaxNode node, SyntaxTriviaList leadingTrivia)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode syntaxRoot, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
+            var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
+            node = GetRelevantNode(node);
+
+            if (node == null)
+            {
+                return Task.FromResult(document);
+            }
+
+            var leadingTrivia = node.GetLeadingTrivia();
+
             var newTriviaList = leadingTrivia;
             newTriviaList = newTriviaList.Insert(0, SyntaxFactory.CarriageReturnLineFeed);
 
             var newNode = node.WithLeadingTrivia(newTriviaList);
             var newSyntaxRoot = syntaxRoot.ReplaceNode(node, newNode);
-            var newDocument = context.Document.WithSyntaxRoot(newSyntaxRoot);
+            var newDocument = document.WithSyntaxRoot(newSyntaxRoot);
 
             return Task.FromResult(newDocument);
         }
 
-        private SyntaxNode GetRelevantNode(SyntaxNode innerNode)
+        private static SyntaxNode GetRelevantNode(SyntaxNode innerNode)
         {
             SyntaxNode currentNode = innerNode;
             while (currentNode != null)
@@ -93,6 +102,47 @@
             }
 
             return null;
+        }
+
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; } =
+                new FixAll();
+
+            protected override string CodeActionTitle =>
+                LayoutResources.SA1516CodeFix;
+
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            {
+                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
+                if (diagnostics.IsEmpty)
+                {
+                    return null;
+                }
+
+                var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
+
+                List<SyntaxNode> nodes = new List<SyntaxNode>();
+
+                foreach (var diagnostic in diagnostics)
+                {
+                    var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
+                    node = GetRelevantNode(node);
+
+                    if (node != null)
+                    {
+                        nodes.Add(node);
+                    }
+                }
+
+                return syntaxRoot.ReplaceNodes(nodes, (oldNode, newNode) =>
+                {
+                    var newTriviaList = newNode.GetLeadingTrivia();
+                    newTriviaList = newTriviaList.Insert(0, SyntaxFactory.CarriageReturnLineFeed);
+
+                    return newNode.WithLeadingTrivia(newTriviaList);
+                });
+            }
         }
     }
 }

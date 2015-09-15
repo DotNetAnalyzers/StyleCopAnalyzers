@@ -1,15 +1,19 @@
-﻿namespace StyleCop.Analyzers.ReadabilityRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.ReadabilityRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Threading;
     using System.Threading.Tasks;
     using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using SpacingRules;
+    using Microsoft.CodeAnalysis.Text;
 
     /// <summary>
     /// This class provides a code fix for <see cref="SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists"/>.
@@ -30,14 +34,12 @@
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return FixAll.Instance;
         }
 
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-
             foreach (var diagnostic in context.Diagnostics)
             {
                 if (!diagnostic.Id.Equals(SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists.DiagnosticId))
@@ -45,24 +47,66 @@
                     continue;
                 }
 
-                var node = root.FindNode(diagnostic.Location.SourceSpan) as BaseExpressionSyntax;
-                if (node == null)
-                {
-                    return;
-                }
-
-                context.RegisterCodeFix(CodeAction.Create(ReadabilityResources.SA1100CodeFix, token => GetTransformedDocumentAsync(context.Document, root, node), equivalenceKey: nameof(SA1100CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        ReadabilityResources.SA1100CodeFix,
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
+                        equivalenceKey: nameof(SA1100CodeFixProvider)),
+                    diagnostic);
             }
+
+            return SpecializedTasks.CompletedTask;
         }
 
-        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, SyntaxNode node)
+        private static SyntaxToken GetBaseKeywordToken(SyntaxNode root, TextSpan sourceSpan)
         {
-            var thisExpressionSyntax = SyntaxFactory.ThisExpression()
-                .WithTriviaFrom(node)
-                .WithoutFormatting();
+            return root.FindToken(sourceSpan.Start);
+        }
 
-            SyntaxNode newSyntaxRoot = root.ReplaceNode(node, thisExpressionSyntax);
-            return Task.FromResult(document.WithSyntaxRoot(newSyntaxRoot));
+        private static SyntaxToken RewriteBaseAsThis(SyntaxToken token)
+        {
+            // By creating a `base` token with the literal text `this`, we can replace a token with the code fix instead
+            // of replacing an entire syntax node. This improves the performance of the code fix, but the resulting tree
+            // could be considered in a bad state. However, this is not a problem under any interpretation of the result
+            // because SA1100 is only reported in cases where `base.` and `this.` have the same meaning.
+            return SyntaxFactory.Token(token.LeadingTrivia, SyntaxKind.BaseKeyword, "this", "this", token.TrailingTrivia);
+        }
+
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+        {
+            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var token = GetBaseKeywordToken(root, diagnostic.Location.SourceSpan);
+
+            SyntaxNode newSyntaxRoot = root.ReplaceToken(token, RewriteBaseAsThis(token));
+            return document.WithSyntaxRoot(newSyntaxRoot);
+        }
+
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; }
+                = new FixAll();
+
+            protected override string CodeActionTitle
+                => ReadabilityResources.SA1100CodeFix;
+
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            {
+                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
+                if (diagnostics.IsEmpty)
+                {
+                    return null;
+                }
+
+                var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
+
+                List<SyntaxToken> tokensToReplace = new List<SyntaxToken>(diagnostics.Length);
+                foreach (var diagnostic in diagnostics)
+                {
+                    tokensToReplace.Add(GetBaseKeywordToken(syntaxRoot, diagnostic.Location.SourceSpan));
+                }
+
+                return syntaxRoot.ReplaceTokens(tokensToReplace, (originalToken, rewrittenToken) => RewriteBaseAsThis(rewrittenToken));
+            }
         }
     }
 }

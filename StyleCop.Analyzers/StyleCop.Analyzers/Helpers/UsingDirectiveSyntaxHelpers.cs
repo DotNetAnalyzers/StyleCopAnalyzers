@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.Helpers
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Helpers
 {
     using System;
     using System.Linq;
@@ -42,6 +45,16 @@
 
             return false;
         }
+
+        /// <summary>
+        /// Check if the name of using directive contains a namespace alias qualifier.
+        /// </summary>
+        /// <param name="usingDirective">The <see cref="UsingDirectiveSyntax"/> that will be checked.</param>
+        /// <returns>
+        /// <see langword="true"/> if the <see cref="UsingDirectiveSyntax"/> contains a namespace alias qualifier;
+        /// otherwise, <see langword="false"/>.
+        /// </returns>
+        internal static bool HasNamespaceAliasQualifier(this UsingDirectiveSyntax usingDirective) => usingDirective.DescendantNodes().Any(node => node.IsKind(SyntaxKind.AliasQualifiedName));
 
         private static bool ExcludeGlobalKeyword(IdentifierNameSyntax token) => !token.Identifier.IsKind(SyntaxKind.GlobalKeyword);
 

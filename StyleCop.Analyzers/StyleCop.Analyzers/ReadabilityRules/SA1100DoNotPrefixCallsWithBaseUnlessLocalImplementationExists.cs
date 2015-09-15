@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.ReadabilityRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
@@ -77,10 +80,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.AnalyzeBaseExpression, SyntaxKind.BaseExpression);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void AnalyzeBaseExpression(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(AnalyzeBaseExpression, SyntaxKind.BaseExpression);
+        }
+
+        private static void AnalyzeBaseExpression(SyntaxNodeAnalysisContext context)
         {
             var baseExpressionSyntax = (BaseExpressionSyntax)context.Node;
             var parent = baseExpressionSyntax.Parent;

@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.Test.MaintainabilityRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
@@ -1147,34 +1150,276 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestMemberAccessExpressionAroundConditionalMemberAccessExpressionAsync()
+        {
+            string testCode = @"class Foo
+{
+    public void Bar()
+    {
+        var myObject = new { intValue = 5 };
+        int number = (myObject?.intValue).GetValueOrDefault();
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestElementAccessExpressionAroundConditionalMemberAccessExpressionAsync()
+        {
+            // In this case removing the parenthesis is an syntactical(because char is a value type) change to the code.
+            // If (myObject?.Foo)[0] would be a refrrence type removing parenthesis would be a semantic change
+            // because (myObject?.Foo)[0] crashes if myObject is null, but myObject?.Foo[0] evaluates to null.
+            string testCode = @"class Foo
+{
+    public void Bar()
+    {
+        var myObject = new { Foo = ""Bar"" };
+        char number = (myObject?.Foo)[0];
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestConditionalMemberAccessExpressionAsync()
+        {
+            string testCode = @"class Foo
+{
+    public void Bar()
+    {
+        var myObject = new { intValue = 5 };
+        int? number = (myObject?.intValue);
+    }
+}";
+
+            string fixedCode = @"class Foo
+{
+    public void Bar()
+    {
+        var myObject = new { intValue = 5 };
+        int? number = myObject?.intValue;
+    }
+}";
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 23),
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 23),
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 42)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestConditionalMemberAccessExpressionAroundConditionalMemberAccessExpressionAsync()
+        {
+            string testCode = @"class Foo
+{
+    public void Bar()
+    {
+        var myObject = new { Foo = """" };
+        var number = (myObject?.Foo)?.ToString();
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestConditionalElementExpressionAroundConditionalElementAccessExpressionAsync()
+        {
+            string testCode = @"class Foo
+{
+    public void Bar()
+    {
+        var myObject = new { Foo = """" };
+        var number = (myObject?.Foo)?[0];
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMemberAccessExpressionAroundElementAccessExpressionAsync()
+        {
+            string testCode = @"class Foo
+{
+    public void Bar()
+    {
+        var myObject = new { Foo = ""Bar"" };
+        var number = (myObject.Foo)[0];
+    }
+}";
+
+            string fixedCode = @"class Foo
+{
+    public void Bar()
+    {
+        var myObject = new { Foo = ""Bar"" };
+        var number = myObject.Foo[0];
+    }
+}";
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 22),
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 22),
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 35)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMemberAccessExpressionAroundConditionalElementAccessExpressionAsync()
+        {
+            string testCode = @"class Foo
+{
+    public void Bar()
+    {
+        string foo = """";
+        var number = (foo?[0]).ToString();
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestElementAccessExpressionAroundConditionalElementAccessExpressionAsync()
+        {
+            string testCode = @"class Foo
+{
+    public void Bar()
+    {
+        string[] foo = new string[0];
+        char number = (foo?[0])[0];
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestConditionalElementAccessExpressionAsync()
+        {
+            string testCode = @"class Foo
+{
+    public void Bar()
+    {
+        string foo = null;
+        var number = (foo?[0]);
+    }
+}";
+
+            string fixedCode = @"class Foo
+{
+    public void Bar()
+    {
+        string foo = null;
+        var number = foo?[0];
+    }
+}";
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 22),
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 22),
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 30)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestConditionalMemberAccessExpressionAroundConditionalElementAccessExpressionAsync()
+        {
+            string testCode = @"class Foo
+{
+    public void Bar()
+    {
+        string foo = null;
+        var number = (foo?[0])?.ToString();
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestConditionalElementAccessExpressionAroundConditionalElementAccessExpressionAsync()
+        {
+            string testCode = @"class Foo
+{
+    public void Bar()
+    {
+        string[] foo = null;
+        var number = (foo?[0])?[0];
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestElementMemberAccessExpressionAroundElementMemberAccessExpressionAsync()
+        {
+            string testCode = @"class Foo
+{
+    public void Bar()
+    {
+        string[] foo = null;
+        var number = (foo[0])[0];
+    }
+}";
+
+            string fixedCode = @"class Foo
+{
+    public void Bar()
+    {
+        string[] foo = null;
+        var number = foo[0][0];
+    }
+}";
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 22),
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 22),
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 29)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1119StatementMustNotUseUnnecessaryParenthesis();
         }
 
+        /// <inheritdoc/>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new SA1119CodeFixProvider();
         }
 
-        protected override Solution CreateSolution(ProjectId projectId, string language)
+        /// <inheritdoc/>
+        protected override IEnumerable<string> GetDisabledDiagnostics()
         {
-            Solution solution = base.CreateSolution(projectId, language);
-
             if (this.mainDiagnosticShouldBeDisabled)
             {
-                Project project = solution.GetProject(projectId);
-
-                CompilationOptions options = project.CompilationOptions;
-
-                ImmutableDictionary<string, ReportDiagnostic> specificOptions = options.SpecificDiagnosticOptions;
-
-                options = options.WithSpecificDiagnosticOptions(specificOptions.Add(DiagnosticId, ReportDiagnostic.Suppress));
-
-                solution = solution.WithProjectCompilationOptions(projectId, options);
+                yield return DiagnosticId;
             }
-
-            return solution;
         }
     }
 }

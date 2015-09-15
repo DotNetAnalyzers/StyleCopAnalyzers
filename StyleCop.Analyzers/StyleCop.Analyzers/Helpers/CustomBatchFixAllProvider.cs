@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.Helpers
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Helpers
 {
     using System;
     using System.Collections.Concurrent;
@@ -161,12 +164,11 @@
             }
 
             var solution = fixAllContext.Solution;
-            var cancellationToken = fixAllContext.CancellationToken;
-            var newSolution = await this.TryMergeFixesAsync(solution, batchOfFixes, cancellationToken).ConfigureAwait(false);
+            var newSolution = await this.TryMergeFixesAsync(solution, batchOfFixes, fixAllContext.CancellationToken).ConfigureAwait(false);
             if (newSolution != null && newSolution != solution)
             {
                 var title = this.GetFixAllTitle(fixAllContext);
-                return CodeAction.Create(title, _ => Task.FromResult(newSolution));
+                return CodeAction.Create(title, cancellationToken => Task.FromResult(newSolution));
             }
 
             return null;

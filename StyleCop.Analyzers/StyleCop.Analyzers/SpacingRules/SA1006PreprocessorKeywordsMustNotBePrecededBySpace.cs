@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.SpacingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.SpacingRules
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
@@ -53,10 +56,15 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(this.HandleSyntaxTree);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
+        }
+
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens(descendIntoTrivia: true))
@@ -64,7 +72,7 @@
                 switch (token.Kind())
                 {
                 case SyntaxKind.HashToken:
-                    this.HandleHashToken(context, token);
+                    HandleHashToken(context, token);
                     break;
 
                 default:
@@ -73,7 +81,7 @@
             }
         }
 
-        private void HandleHashToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        private static void HandleHashToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
             {
@@ -92,7 +100,7 @@
             }
 
             // Preprocessor keyword '{keyword}' must not be preceded by a space.
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, targetToken.GetLocation(), targetToken.Text));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, targetToken.GetLocation(), TokenSpacingCodeFixProvider.RemovePreceding, targetToken.Text));
         }
     }
 }

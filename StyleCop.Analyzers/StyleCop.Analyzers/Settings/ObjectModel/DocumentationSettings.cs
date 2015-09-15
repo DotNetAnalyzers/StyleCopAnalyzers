@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.Settings.ObjectModel
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Settings.ObjectModel
 {
     using System.Collections.Immutable;
     using System.Text.RegularExpressions;
@@ -42,6 +45,36 @@
         private bool xmlHeader;
 
         /// <summary>
+        /// This is the backing field for the <see cref="DocumentExposedElements"/> property.
+        /// </summary>
+        [JsonProperty("documentExposedElements", DefaultValueHandling = DefaultValueHandling.Include)]
+        private bool documentExposedElements;
+
+        /// <summary>
+        /// This is the backing field for the <see cref="DocumentInternalElements"/> property.
+        /// </summary>
+        [JsonProperty("documentInternalElements", DefaultValueHandling = DefaultValueHandling.Include)]
+        private bool documentInternalElements;
+
+        /// <summary>
+        /// This is the backing field for the <see cref="DocumentPrivateElements"/> property.
+        /// </summary>
+        [JsonProperty("documentPrivateElements", DefaultValueHandling = DefaultValueHandling.Include)]
+        private bool documentPrivateElements;
+
+        /// <summary>
+        /// This is the backing field for the <see cref="DocumentInterfaces"/> property.
+        /// </summary>
+        [JsonProperty("documentInterfaces", DefaultValueHandling = DefaultValueHandling.Include)]
+        private bool documentInterfaces;
+
+        /// <summary>
+        /// This is the backing field for the <see cref="DocumentPrivateFields"/> property.
+        /// </summary>
+        [JsonProperty("documentPrivateFields", DefaultValueHandling = DefaultValueHandling.Include)]
+        private bool documentPrivateFields;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="DocumentationSettings"/> class during JSON deserialization.
         /// </summary>
         [JsonConstructor]
@@ -51,6 +84,12 @@
             this.copyrightText = DefaultCopyrightText;
             this.variables = ImmutableDictionary<string, string>.Empty;
             this.xmlHeader = true;
+
+            this.documentExposedElements = true;
+            this.documentInternalElements = true;
+            this.documentPrivateElements = false;
+            this.documentInterfaces = true;
+            this.documentPrivateFields = false;
         }
 
         public string CompanyName
@@ -110,5 +149,20 @@
                 return this.xmlHeader;
             }
         }
+
+        public bool DocumentExposedElements =>
+            this.documentExposedElements;
+
+        public bool DocumentInternalElements =>
+            this.documentInternalElements;
+
+        public bool DocumentPrivateElements =>
+            this.documentPrivateElements;
+
+        public bool DocumentInterfaces =>
+            this.documentInterfaces;
+
+        public bool DocumentPrivateFields =>
+            this.documentPrivateFields;
     }
 }

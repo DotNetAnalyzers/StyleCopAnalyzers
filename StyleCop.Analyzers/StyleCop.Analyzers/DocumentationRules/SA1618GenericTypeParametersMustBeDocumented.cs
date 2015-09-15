@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.DocumentationRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Immutable;
     using System.Linq;
@@ -51,15 +54,18 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
-
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.InterfaceDeclaration);
+
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
+        }
+
+        private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
             TypeDeclarationSyntax typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
@@ -69,24 +75,24 @@
                 return;
             }
 
-            this.HandleMemberDeclaration(context, typeDeclaration, typeDeclaration.TypeParameterList);
+            HandleMemberDeclaration(context, typeDeclaration, typeDeclaration.TypeParameterList);
         }
 
-        private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
             MethodDeclarationSyntax methodDeclaration = (MethodDeclarationSyntax)context.Node;
 
-            this.HandleMemberDeclaration(context, methodDeclaration, methodDeclaration.TypeParameterList);
+            HandleMemberDeclaration(context, methodDeclaration, methodDeclaration.TypeParameterList);
         }
 
-        private void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
         {
             DelegateDeclarationSyntax delegateDeclaration = (DelegateDeclarationSyntax)context.Node;
 
-            this.HandleMemberDeclaration(context, delegateDeclaration, delegateDeclaration.TypeParameterList);
+            HandleMemberDeclaration(context, delegateDeclaration, delegateDeclaration.TypeParameterList);
         }
 
-        private void HandleMemberDeclaration(SyntaxNodeAnalysisContext context, SyntaxNode node, TypeParameterListSyntax typeParameterList)
+        private static void HandleMemberDeclaration(SyntaxNodeAnalysisContext context, SyntaxNode node, TypeParameterListSyntax typeParameterList)
         {
             if (typeParameterList == null)
             {

@@ -103,10 +103,12 @@
     <Rule Id="SA1408" Action="Error" />
     <Rule Id="SA1410" Action="Error" />
     <Rule Id="SA1411" Action="Error" />
+    <Rule Id="SA1412" Action="Warning" />
     <Rule Id="SA1600" Action="None" />
     <Rule Id="SA1603" Action="Error" />
     <Rule Id="SA1609" Action="Warning" />
-    <Rule Id="SA1633" Action="Hidden" />
+    <Rule Id="SA1633" Action="Error" />
+    <Rule Id="SA1636" Action="Error" />
     <Rule Id="SA1642" Action="Error" />
     <Rule Id="SA1643" Action="Error" />
   </Rules>

@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.Test.NamingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Test.NamingRules
 {
     using System.Collections.Generic;
     using System.Threading;
@@ -23,7 +26,6 @@
 
         [InlineData("private readonly")]
         [InlineData("protected readonly")]
-        [InlineData("protected internal readonly")]
         public async Task TestThatDiagnosticIsNotReportedAsync(string modifiers)
         {
             var testCode = @"public class Foo
@@ -39,6 +41,9 @@ string Bar = """", car = """", Dar = """";
         [InlineData("public")]
         [InlineData("internal")]
         [InlineData("protected internal")]
+
+        [InlineData("public readonly")]
+        [InlineData("protected internal readonly")]
         public async Task TestThatDiagnosticIsReported_SingleFieldAsync(string modifiers)
         {
             var testCode = @"public class Foo

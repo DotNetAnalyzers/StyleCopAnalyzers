@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.Test.SpacingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Collections.Generic;
     using System.Threading;
@@ -11,7 +14,7 @@
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1002SemicolonsMustBeSpacedCorrectly"/> and
-    /// <see cref="SA1002CodeFixProvider"/>.
+    /// <see cref="TokenSpacingCodeFixProvider"/>.
     /// </summary>
     public class SA1002UnitTests : CodeFixVerifier
     {
@@ -302,6 +305,71 @@ class ClassName
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1426.
+        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1426
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestPrecededByBlockCommentAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    void MethodName()
+    {
+        bool special = true ? true /*comment*/ : false /*comment*/ ;
+    }
+}
+";
+            string fixedCode = @"
+class ClassName
+{
+    void MethodName()
+    {
+        bool special = true ? true /*comment*/ : false /*comment*/;
+    }
+}
+";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(6, 68);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#403.
+        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/403
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestSemicolonAtBeginningOfLineAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    void MethodName()
+    {
+        // The first one is indented (has leading trivia).
+        bool special = false
+            ;
+
+        // The second one is not indented (no leading trivia).
+        special = true
+;
+
+        // The third one is preceded by non-whitespace trivia.
+        special = false
+/*comment*/;
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1002SemicolonsMustBeSpacedCorrectly();
@@ -309,7 +377,7 @@ class ClassName
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1002CodeFixProvider();
+            return new TokenSpacingCodeFixProvider();
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.DocumentationRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
@@ -33,7 +36,7 @@
         /// </summary>
         public const string DiagnosticId = "SA1620";
         private const string Title = "Generic type parameter documentation must match type parameters";
-        private const string Description = "The &lt;typeparam&gt; tags within the Xml header documentation for a generic C# element do not match the generic type parameters on the element.";
+        private const string Description = "The <typeparam> tags within the Xml header documentation for a generic C# element do not match the generic type parameters on the element.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1620.md";
 
         private const string MissingTypeParamForDocumentationMessageFormat = "The type parameter '{0}' does not exist.";
@@ -59,6 +62,11 @@
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
+        {
+            context.RegisterCompilationStartAction(HandleCompilationStart);
+        }
+
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
             context.RegisterSyntaxNodeActionHonorExclusions(HandleDocumentationTrivia, SyntaxKind.SingleLineDocumentationCommentTrivia);
         }

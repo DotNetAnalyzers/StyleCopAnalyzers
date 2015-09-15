@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.MaintainabilityRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
@@ -77,7 +80,7 @@
                         return;
                     }
 
-                    if (location.SourceTree.IsGeneratedDocument(symbolAnalysisContext.CancellationToken))
+                    if (location.SourceTree.IsGeneratedDocument(symbolAnalysisContext.Compilation, symbolAnalysisContext.CancellationToken))
                     {
                         return;
                     }

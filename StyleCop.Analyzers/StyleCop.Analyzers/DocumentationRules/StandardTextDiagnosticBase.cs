@@ -1,7 +1,9 @@
-﻿namespace StyleCop.Analyzers.DocumentationRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
-    using System.Linq;
     using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -36,22 +38,14 @@
         }
 
         /// <summary>
-        /// Gets the diagnostic descriptor that should be used when reporting a diagnostic.
-        /// </summary>
-        /// <value>
-        /// The diagnostic descriptor that should be used when reporting a diagnostic.
-        /// </value>
-        protected abstract DiagnosticDescriptor DiagnosticDescriptor { get; }
-
-        /// <summary>
         /// Analyzes a <see cref="BaseMethodDeclarationSyntax"/> node. If it has a summary it is checked if the text starts with &quot;[firstTextPart]&lt;see cref=&quot;[className]&quot;/&gt;[secondTextPart]&quot;.
         /// </summary>
         /// <param name="context">The <see cref="SyntaxNodeAnalysisContext"/> of this analysis.</param>
         /// <param name="firstTextPart">The first part of the standard text.</param>
         /// <param name="secondTextPart">The second part of the standard text.</param>
-        /// <param name="reportDiagnostic">Whether or not a diagnostic should be reported.</param>
+        /// <param name="diagnosticDescriptor">The diagnostic to report for violations, or <see langword="null"/> to not report violations.</param>
         /// <returns>A <see cref="MatchResult"/> describing the result of the analysis.</returns>
-        protected MatchResult HandleDeclaration(SyntaxNodeAnalysisContext context, string firstTextPart, string secondTextPart, bool reportDiagnostic)
+        protected static MatchResult HandleDeclaration(SyntaxNodeAnalysisContext context, string firstTextPart, string secondTextPart, DiagnosticDescriptor diagnosticDescriptor)
         {
             var declarationSyntax = context.Node as BaseMethodDeclarationSyntax;
             if (declarationSyntax == null)
@@ -90,9 +84,9 @@
                 }
             }
 
-            if (reportDiagnostic)
+            if (diagnosticDescriptor != null)
             {
-                context.ReportDiagnostic(Diagnostic.Create(this.DiagnosticDescriptor, summaryElement.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(diagnosticDescriptor, summaryElement.GetLocation()));
             }
 
             // TODO: be more specific about the type of error when possible

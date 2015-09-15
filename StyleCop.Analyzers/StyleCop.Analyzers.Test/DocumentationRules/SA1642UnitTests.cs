@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.Test.DocumentationRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Collections.Generic;
     using System.Threading;
@@ -93,7 +96,15 @@
         [InlineData("struct")]
         public async Task TestPrivateConstructorCorrectDocumentationAsync(string typeKind)
         {
-            await this.TestConstructorCorrectDocumentationAsync(typeKind, "private", PrivateConstructorStandardText[0], $" {typeKind}" + PrivateConstructorStandardText[1], string.Empty, false).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationAsync(typeKind, "private", PrivateConstructorStandardText[0], $" {typeKind} from being created.", string.Empty, false).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        public async Task TestPrivateConstructorCorrectExtendedDocumentationAsync(string typeKind)
+        {
+            await this.TestConstructorCorrectDocumentationAsync(typeKind, "private", PrivateConstructorStandardText[0], $" {typeKind} from being created externally.", string.Empty, false).ConfigureAwait(false);
         }
 
         [Theory]
@@ -117,7 +128,15 @@
         [InlineData("struct")]
         public async Task TestPrivateConstructorCorrectDocumentationGenericAsync(string typeKind)
         {
-            await this.TestConstructorCorrectDocumentationAsync(typeKind, "private", PrivateConstructorStandardText[0], $" {typeKind}" + PrivateConstructorStandardText[1], string.Empty, true).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationAsync(typeKind, "private", PrivateConstructorStandardText[0], $" {typeKind} from being created.", string.Empty, true).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        public async Task TestPrivateConstructorCorrectExtendedDocumentationGenericAsync(string typeKind)
+        {
+            await this.TestConstructorCorrectDocumentationAsync(typeKind, "private", PrivateConstructorStandardText[0], $" {typeKind} from being created externally.", string.Empty, true).ConfigureAwait(false);
         }
 
         [Theory]

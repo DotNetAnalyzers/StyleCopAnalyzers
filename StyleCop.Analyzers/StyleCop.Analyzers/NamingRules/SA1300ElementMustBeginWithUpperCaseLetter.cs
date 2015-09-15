@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.NamingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.NamingRules
 {
     using System.Collections.Immutable;
     using System.Linq;
@@ -55,26 +58,31 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.RegisterCompilationStartAction(HandleCompilationStart);
+        }
+
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
             // Note: Interfaces are handled by SA1302
             // Note: Fields are handled by SA1303 through SA1311
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleNamespaceDeclarationSyntax, SyntaxKind.NamespaceDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleClassDeclarationSyntax, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleEnumDeclarationSyntax, SyntaxKind.EnumDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleStructDeclarationSyntax, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDelegateDeclarationSyntax, SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleEventDeclarationSyntax, SyntaxKind.EventDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleEventFieldDeclarationSyntax, SyntaxKind.EventFieldDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMethodDeclarationSyntax, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandlePropertyDeclarationSyntax, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleNamespaceDeclarationSyntax, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleClassDeclarationSyntax, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleEnumDeclarationSyntax, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleStructDeclarationSyntax, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleDelegateDeclarationSyntax, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleEventDeclarationSyntax, SyntaxKind.EventDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleEventFieldDeclarationSyntax, SyntaxKind.EventFieldDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleMethodDeclarationSyntax, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandlePropertyDeclarationSyntax, SyntaxKind.PropertyDeclaration);
         }
 
-        private void HandleNamespaceDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleNamespaceDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
             NameSyntax nameSyntax = ((NamespaceDeclarationSyntax)context.Node).Name;
-            this.CheckNameSyntax(context, nameSyntax);
+            CheckNameSyntax(context, nameSyntax);
         }
 
-        private void CheckNameSyntax(SyntaxNodeAnalysisContext context, NameSyntax nameSyntax)
+        private static void CheckNameSyntax(SyntaxNodeAnalysisContext context, NameSyntax nameSyntax)
         {
             if (nameSyntax == null || nameSyntax.IsMissing)
             {
@@ -84,42 +92,42 @@
             QualifiedNameSyntax qualifiedNameSyntax = nameSyntax as QualifiedNameSyntax;
             if (qualifiedNameSyntax != null)
             {
-                this.CheckNameSyntax(context, qualifiedNameSyntax.Left);
-                this.CheckNameSyntax(context, qualifiedNameSyntax.Right);
+                CheckNameSyntax(context, qualifiedNameSyntax.Left);
+                CheckNameSyntax(context, qualifiedNameSyntax.Right);
                 return;
             }
 
             SimpleNameSyntax simpleNameSyntax = nameSyntax as SimpleNameSyntax;
             if (simpleNameSyntax != null)
             {
-                this.CheckElementNameToken(context, simpleNameSyntax.Identifier);
+                CheckElementNameToken(context, simpleNameSyntax.Identifier);
                 return;
             }
 
             // TODO: any other cases?
         }
 
-        private void HandleClassDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleClassDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            this.CheckElementNameToken(context, ((ClassDeclarationSyntax)context.Node).Identifier);
+            CheckElementNameToken(context, ((ClassDeclarationSyntax)context.Node).Identifier);
         }
 
-        private void HandleEnumDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleEnumDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            this.CheckElementNameToken(context, ((EnumDeclarationSyntax)context.Node).Identifier);
+            CheckElementNameToken(context, ((EnumDeclarationSyntax)context.Node).Identifier);
         }
 
-        private void HandleStructDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleStructDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            this.CheckElementNameToken(context, ((StructDeclarationSyntax)context.Node).Identifier);
+            CheckElementNameToken(context, ((StructDeclarationSyntax)context.Node).Identifier);
         }
 
-        private void HandleDelegateDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleDelegateDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
-            this.CheckElementNameToken(context, ((DelegateDeclarationSyntax)context.Node).Identifier);
+            CheckElementNameToken(context, ((DelegateDeclarationSyntax)context.Node).Identifier);
         }
 
-        private void HandleEventDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleEventDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
             var eventDeclaration = (EventDeclarationSyntax)context.Node;
             if (eventDeclaration.Modifiers.Any(SyntaxKind.OverrideKeyword))
@@ -128,10 +136,10 @@
                 return;
             }
 
-            this.CheckElementNameToken(context, eventDeclaration.Identifier);
+            CheckElementNameToken(context, eventDeclaration.Identifier);
         }
 
-        private void HandleEventFieldDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleEventFieldDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
             EventFieldDeclarationSyntax eventFieldDeclarationSyntax = (EventFieldDeclarationSyntax)context.Node;
             VariableDeclarationSyntax variableDeclarationSyntax = eventFieldDeclarationSyntax.Declaration;
@@ -147,11 +155,11 @@
                     continue;
                 }
 
-                this.CheckElementNameToken(context, declarator.Identifier);
+                CheckElementNameToken(context, declarator.Identifier);
             }
         }
 
-        private void HandleMethodDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleMethodDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
             var methodDeclaration = (MethodDeclarationSyntax)context.Node;
             if (methodDeclaration.Modifiers.Any(SyntaxKind.OverrideKeyword))
@@ -160,10 +168,10 @@
                 return;
             }
 
-            this.CheckElementNameToken(context, methodDeclaration.Identifier);
+            CheckElementNameToken(context, methodDeclaration.Identifier);
         }
 
-        private void HandlePropertyDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandlePropertyDeclarationSyntax(SyntaxNodeAnalysisContext context)
         {
             var propertyDeclaration = (PropertyDeclarationSyntax)context.Node;
             if (propertyDeclaration.Modifiers.Any(SyntaxKind.OverrideKeyword))
@@ -172,10 +180,10 @@
                 return;
             }
 
-            this.CheckElementNameToken(context, propertyDeclaration.Identifier);
+            CheckElementNameToken(context, propertyDeclaration.Identifier);
         }
 
-        private void CheckElementNameToken(SyntaxNodeAnalysisContext context, SyntaxToken identifier)
+        private static void CheckElementNameToken(SyntaxNodeAnalysisContext context, SyntaxToken identifier)
         {
             if (identifier.IsMissing)
             {

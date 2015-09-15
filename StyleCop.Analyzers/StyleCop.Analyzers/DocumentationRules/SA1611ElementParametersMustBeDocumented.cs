@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.DocumentationRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
@@ -53,13 +56,18 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleSyntaxNode, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleSyntaxNode, SyntaxKind.ConstructorDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleSyntaxNode, SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleSyntaxNode, SyntaxKind.IndexerDeclaration);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleSyntaxNode(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleSyntaxNode, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleSyntaxNode, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleSyntaxNode, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleSyntaxNode, SyntaxKind.IndexerDeclaration);
+        }
+
+        private static void HandleSyntaxNode(SyntaxNodeAnalysisContext context)
         {
             var node = context.Node;
 
@@ -67,7 +75,7 @@
 
             if (documentation != null)
             {
-                IEnumerable<ParameterSyntax> parameterList = this.GetParameters(node);
+                IEnumerable<ParameterSyntax> parameterList = GetParameters(node);
 
                 if (parameterList == null)
                 {
@@ -95,7 +103,7 @@
             }
         }
 
-        private IEnumerable<ParameterSyntax> GetParameters(SyntaxNode node)
+        private static IEnumerable<ParameterSyntax> GetParameters(SyntaxNode node)
         {
             return (node as BaseMethodDeclarationSyntax)?.ParameterList?.Parameters
                 ?? (node as IndexerDeclarationSyntax)?.ParameterList?.Parameters

@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.NamingRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.NamingRules
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
@@ -51,18 +54,23 @@
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleFieldDeclaration, SyntaxKind.FieldDeclaration);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleFieldDeclaration, SyntaxKind.FieldDeclaration);
+        }
+
+        private static void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
         {
             // To improve performance we are looking for the field instead of the declarator directly. That way we don't get called for local variables.
-            FieldDeclarationSyntax declaration = context.Node as FieldDeclarationSyntax;
-            if (declaration != null && declaration.Declaration != null)
+            FieldDeclarationSyntax declaration = (FieldDeclarationSyntax)context.Node;
+            if (declaration.Declaration != null)
             {
-                if (declaration.Modifiers.Any(SyntaxKind.ConstKeyword) || declaration.Modifiers.Any(SyntaxKind.ReadOnlyKeyword))
+                if (declaration.Modifiers.Any(SyntaxKind.ConstKeyword))
                 {
-                    // These are reported as SA1303 or SA1304, respectively
+                    // These are reported as SA1303.
                     return;
                 }
 

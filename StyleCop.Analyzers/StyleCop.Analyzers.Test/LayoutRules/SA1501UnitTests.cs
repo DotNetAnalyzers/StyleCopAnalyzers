@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.Test.LayoutRules
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Test.LayoutRules
 {
     using System.Collections.Generic;
     using System.Collections.Immutable;
@@ -964,19 +967,13 @@ public class TypeName
             return new SA1501CodeFixProvider();
         }
 
-        protected override Solution CreateSolution(ProjectId projectId, string language)
+        /// <inheritdoc/>
+        protected override IEnumerable<string> GetDisabledDiagnostics()
         {
-            Solution solution = base.CreateSolution(projectId, language);
             if (this.suppressSA1503)
             {
-                Project project = solution.GetProject(projectId);
-                CompilationOptions options = project.CompilationOptions;
-                ImmutableDictionary<string, ReportDiagnostic> specificOptions = options.SpecificDiagnosticOptions;
-                options = options.WithSpecificDiagnosticOptions(specificOptions.Add(SA1503CurlyBracketsMustNotBeOmitted.DiagnosticId, ReportDiagnostic.Suppress));
-                solution = solution.WithProjectCompilationOptions(projectId, options);
+                yield return SA1503CurlyBracketsMustNotBeOmitted.DiagnosticId;
             }
-
-            return solution;
         }
 
         /// <summary>
