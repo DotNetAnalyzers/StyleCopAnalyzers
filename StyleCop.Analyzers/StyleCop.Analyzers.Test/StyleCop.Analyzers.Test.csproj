@@ -169,6 +169,7 @@
     <Compile Include="Helpers\DiagnosticVerifier.Helper.cs" />
     <Compile Include="Helpers\ExclusionTestAnalyzer.cs" />
     <Compile Include="Helpers\TestDiagnosticProvider.cs" />
+    <Compile Include="HelperTests\TokenHelperTests.cs" />
     <Compile Include="HelperTests\TriviaHelperTests.cs" />
     <Compile Include="LayoutRules\SA1500\SA1500UnitTests.Blocks.cs" />
     <Compile Include="LayoutRules\SA1500\SA1500UnitTests.Classes.cs" />

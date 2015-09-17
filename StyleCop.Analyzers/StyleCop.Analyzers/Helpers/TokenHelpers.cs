@@ -19,8 +19,15 @@ namespace StyleCop.Analyzers.Helpers
         /// <returns>true if token is first in line, otherwise false.</returns>
         internal static bool IsFirstInLine(this SyntaxToken token)
         {
-            return token.SyntaxTree == null
-                || token.SyntaxTree.GetLineSpan(token.FullSpan).StartLinePosition.Character == 0;
+            var fullLineSpan = token.SyntaxTree.GetLineSpan(token.FullSpan);
+
+            if (token.SyntaxTree == null || fullLineSpan.StartLinePosition.Character == 0)
+            {
+                return true;
+            }
+
+            var tokenLineSpan = token.SyntaxTree.GetLineSpan(token.Span);
+            return tokenLineSpan.StartLinePosition.Line != fullLineSpan.StartLinePosition.Line;
         }
 
         /// <summary>
@@ -30,9 +37,25 @@ namespace StyleCop.Analyzers.Helpers
         /// <returns>true if token is last in line, otherwise false.</returns>
         internal static bool IsLastInLine(this SyntaxToken token)
         {
-            return token.SyntaxTree == null
-                || token.SyntaxTree.GetLineSpan(token.FullSpan).EndLinePosition.Character == 0
-                || token.SyntaxTree.Length == token.FullSpan.End;
+            var fullLineSpan = token.SyntaxTree.GetLineSpan(token.FullSpan);
+
+            if (token.SyntaxTree == null || fullLineSpan.EndLinePosition.Character == 0)
+            {
+                return true;
+            }
+
+            var tokenLineSpan = token.SyntaxTree.GetLineSpan(token.Span);
+
+            if (tokenLineSpan.EndLinePosition.Line != fullLineSpan.EndLinePosition.Line
+                || token.SyntaxTree.Length == token.FullSpan.End)
+            {
+                return true;
+            }
+
+            // Use the slow path because we cant be sure if a multi line trivia is following this
+            // token.
+            var nextToken = token.GetNextToken();
+            return nextToken.IsKind(SyntaxKind.None) || token.GetEndLine() < nextToken.GetLine();
         }
 
         /// <summary>
