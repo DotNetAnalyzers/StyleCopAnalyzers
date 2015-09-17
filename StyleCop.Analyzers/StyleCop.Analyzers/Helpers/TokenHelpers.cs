@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.Helpers
 {
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.Text;
 
     /// <summary>
     /// Provides helper methods to work with token.
@@ -18,8 +19,8 @@ namespace StyleCop.Analyzers.Helpers
         /// <returns>true if token is first in line, otherwise false.</returns>
         internal static bool IsFirstInLine(this SyntaxToken token)
         {
-            SyntaxToken previousToken = token.GetPreviousToken();
-            return previousToken.IsKind(SyntaxKind.None) || previousToken.GetEndLine() < token.GetLine();
+            return token.SyntaxTree == null
+                || token.SyntaxTree.GetLineSpan(token.FullSpan).StartLinePosition.Character == 0;
         }
 
         /// <summary>
@@ -29,8 +30,9 @@ namespace StyleCop.Analyzers.Helpers
         /// <returns>true if token is last in line, otherwise false.</returns>
         internal static bool IsLastInLine(this SyntaxToken token)
         {
-            SyntaxToken nextToken = token.GetNextToken();
-            return nextToken.IsKind(SyntaxKind.None) || token.GetEndLine() < nextToken.GetLine();
+            return token.SyntaxTree == null
+                || token.SyntaxTree.GetLineSpan(token.FullSpan).EndLinePosition.Character == 0
+                || token.SyntaxTree.Length == token.FullSpan.End;
         }
 
         /// <summary>
