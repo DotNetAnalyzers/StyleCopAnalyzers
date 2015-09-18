@@ -163,7 +163,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             // int i,;
             Array.Resize(ref locations, insertionIndex);
 
-            this.HandleDeclaration(context, node, locations.ToArray());
+            this.HandleDeclaration(context, node, locations);
         }
 
         private void HandleEventDeclaration(SyntaxNodeAnalysisContext context)
