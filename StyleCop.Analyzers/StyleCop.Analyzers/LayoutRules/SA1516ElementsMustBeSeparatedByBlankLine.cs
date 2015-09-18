@@ -55,7 +55,7 @@ namespace StyleCop.Analyzers.LayoutRules
     /// is multi-line.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1516ElementsMustBeSeparatedByBlankLine : DiagnosticAnalyzer
+    internal class SA1516ElementsMustBeSeparatedByBlankLine : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1516ElementsMustBeSeparatedByBlankLine"/> analyzer.

@@ -20,7 +20,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// <para>A nullable type symbol should never be preceded by whitespace.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1018NullableTypeSymbolsMustNotBePrecededBySpace : DiagnosticAnalyzer
+    internal class SA1018NullableTypeSymbolsMustNotBePrecededBySpace : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1018NullableTypeSymbolsMustNotBePrecededBySpace"/>

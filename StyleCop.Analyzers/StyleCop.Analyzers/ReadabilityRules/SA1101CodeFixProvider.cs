@@ -25,7 +25,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// </remarks>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1101CodeFixProvider))]
     [Shared]
-    public class SA1101CodeFixProvider : CodeFixProvider
+    internal class SA1101CodeFixProvider : CodeFixProvider
     {
         private static readonly ThisExpressionSyntax ThisExpressionSyntax = SyntaxFactory.ThisExpression();
         private static readonly ImmutableArray<string> FixableDiagnostics =

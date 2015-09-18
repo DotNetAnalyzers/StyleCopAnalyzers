@@ -22,7 +22,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// base case or implement an interface.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1648InheritDocMustBeUsedWithInheritingClass : DiagnosticAnalyzer
+    internal class SA1648InheritDocMustBeUsedWithInheritingClass : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1648InheritDocMustBeUsedWithInheritingClass"/> analyzer.

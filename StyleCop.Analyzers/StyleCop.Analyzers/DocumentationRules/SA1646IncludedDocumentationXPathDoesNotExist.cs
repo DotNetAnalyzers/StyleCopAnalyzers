@@ -35,7 +35,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     [NoDiagnostic("This is already handled by the compiler with warning CS1589.")]
     [NoCodeFix("Cannot generate documentation")]
-    public class SA1646IncludedDocumentationXPathDoesNotExist : DiagnosticAnalyzer
+    internal class SA1646IncludedDocumentationXPathDoesNotExist : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1646IncludedDocumentationXPathDoesNotExist"/> analyzer.

@@ -41,7 +41,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1004DocumentationLinesMustBeginWithSingleSpace : DiagnosticAnalyzer
+    internal class SA1004DocumentationLinesMustBeginWithSingleSpace : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1004DocumentationLinesMustBeginWithSingleSpace"/>

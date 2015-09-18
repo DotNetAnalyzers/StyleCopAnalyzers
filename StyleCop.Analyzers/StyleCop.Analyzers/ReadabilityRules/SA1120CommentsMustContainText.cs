@@ -17,7 +17,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// text.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1120CommentsMustContainText : DiagnosticAnalyzer
+    internal class SA1120CommentsMustContainText : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1120CommentsMustContainText"/> analyzer.

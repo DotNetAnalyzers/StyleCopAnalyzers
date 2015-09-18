@@ -22,7 +22,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     [NoCodeFix("No message is available for Debug.Fail")]
-    public class SA1406DebugFailMustProvideMessageText : SystemDiagnosticsDebugDiagnosticBase
+    internal class SA1406DebugFailMustProvideMessageText : SystemDiagnosticsDebugDiagnosticBase
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1406DebugFailMustProvideMessageText"/> analyzer.

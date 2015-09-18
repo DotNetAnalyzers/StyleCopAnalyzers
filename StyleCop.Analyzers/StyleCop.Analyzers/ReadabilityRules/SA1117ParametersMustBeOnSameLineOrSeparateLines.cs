@@ -42,7 +42,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1117ParametersMustBeOnSameLineOrSeparateLines : DiagnosticAnalyzer
+    internal class SA1117ParametersMustBeOnSameLineOrSeparateLines : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1117ParametersMustBeOnSameLineOrSeparateLines"/>

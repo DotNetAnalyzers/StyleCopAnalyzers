@@ -24,7 +24,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </remarks>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1651CodeFixProvider))]
     [Shared]
-    public class SA1651CodeFixProvider : CodeFixProvider
+    internal class SA1651CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1651DoNotUsePlaceholderElements.DiagnosticId);

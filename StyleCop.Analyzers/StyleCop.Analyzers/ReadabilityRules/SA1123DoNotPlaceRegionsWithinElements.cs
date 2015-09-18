@@ -21,7 +21,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// decisions as the code is maintained over time.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1123DoNotPlaceRegionsWithinElements : DiagnosticAnalyzer
+    internal class SA1123DoNotPlaceRegionsWithinElements : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1123DoNotPlaceRegionsWithinElements"/> analyzer.

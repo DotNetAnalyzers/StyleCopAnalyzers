@@ -36,7 +36,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     [NoDiagnostic("This diagnostic was determined to be too subjective and/or misleading to developers.")]
     [NoCodeFix("Cannot generate documentation")]
-    public class SA1632DocumentationTextMustMeetMinimumCharacterLength : DiagnosticAnalyzer
+    internal class SA1632DocumentationTextMustMeetMinimumCharacterLength : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1632DocumentationTextMustMeetMinimumCharacterLength"/>

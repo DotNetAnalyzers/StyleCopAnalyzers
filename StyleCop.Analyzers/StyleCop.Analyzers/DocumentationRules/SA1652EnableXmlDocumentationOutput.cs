@@ -22,7 +22,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// increasing number of errors over time.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1652EnableXmlDocumentationOutput : DiagnosticAnalyzer
+    internal class SA1652EnableXmlDocumentationOutput : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1652EnableXmlDocumentationOutput"/> analyzer.

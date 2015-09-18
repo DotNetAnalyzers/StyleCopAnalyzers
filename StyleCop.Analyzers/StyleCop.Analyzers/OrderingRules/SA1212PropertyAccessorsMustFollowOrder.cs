@@ -37,7 +37,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1212PropertyAccessorsMustFollowOrder : DiagnosticAnalyzer
+    internal class SA1212PropertyAccessorsMustFollowOrder : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1212PropertyAccessorsMustFollowOrder"/> analyzer.

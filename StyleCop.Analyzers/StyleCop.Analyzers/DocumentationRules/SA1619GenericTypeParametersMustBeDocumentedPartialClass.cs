@@ -74,7 +74,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// tags on this part of the class.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1619GenericTypeParametersMustBeDocumentedPartialClass : DiagnosticAnalyzer
+    internal class SA1619GenericTypeParametersMustBeDocumentedPartialClass : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1619GenericTypeParametersMustBeDocumentedPartialClass"/>

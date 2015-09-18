@@ -18,7 +18,7 @@ namespace StyleCop.Analyzers.LayoutRules
     /// <para>A violation of this rule occurs when one or more blank lines are at the start of the file.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1517CodeMustNotContainBlankLinesAtStartOfFile : DiagnosticAnalyzer
+    internal class SA1517CodeMustNotContainBlankLinesAtStartOfFile : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1517CodeMustNotContainBlankLinesAtStartOfFile"/>

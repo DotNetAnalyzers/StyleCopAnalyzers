@@ -35,7 +35,7 @@ namespace StyleCop.Analyzers.LayoutRules
     /// the readability and maintainability of the code.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1520UseCurlyBracketsConsistently : DiagnosticAnalyzer
+    internal class SA1520UseCurlyBracketsConsistently : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1520UseCurlyBracketsConsistently"/> analyzer.

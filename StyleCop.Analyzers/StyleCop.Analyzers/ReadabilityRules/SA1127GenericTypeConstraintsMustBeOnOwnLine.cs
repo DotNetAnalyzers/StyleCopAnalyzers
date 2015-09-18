@@ -18,7 +18,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// keyword are on the same line.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1127GenericTypeConstraintsMustBeOnOwnLine : DiagnosticAnalyzer
+    internal class SA1127GenericTypeConstraintsMustBeOnOwnLine : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1127GenericTypeConstraintsMustBeOnOwnLine"/>

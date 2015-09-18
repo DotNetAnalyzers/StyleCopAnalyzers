@@ -24,7 +24,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// </remarks>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1003CodeFixProvider))]
     [Shared]
-    public class SA1003CodeFixProvider : CodeFixProvider
+    internal class SA1003CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1003SymbolsMustBeSpacedCorrectly.DiagnosticId);

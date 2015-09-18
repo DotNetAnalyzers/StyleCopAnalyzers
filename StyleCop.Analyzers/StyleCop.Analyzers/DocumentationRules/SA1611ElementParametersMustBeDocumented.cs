@@ -27,7 +27,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// more of its parameters.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1611ElementParametersMustBeDocumented : DiagnosticAnalyzer
+    internal class SA1611ElementParametersMustBeDocumented : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1611ElementParametersMustBeDocumented"/> analyzer.

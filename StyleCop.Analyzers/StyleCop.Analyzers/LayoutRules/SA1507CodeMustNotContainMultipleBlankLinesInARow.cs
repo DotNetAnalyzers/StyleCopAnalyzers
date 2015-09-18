@@ -37,7 +37,7 @@ namespace StyleCop.Analyzers.LayoutRules
     /// row.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1507CodeMustNotContainMultipleBlankLinesInARow : DiagnosticAnalyzer
+    internal class SA1507CodeMustNotContainMultipleBlankLinesInARow : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1507CodeMustNotContainMultipleBlankLinesInARow"/>

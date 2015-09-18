@@ -20,7 +20,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// first or last character on the line.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1014OpeningGenericBracketsMustBeSpacedCorrectly : DiagnosticAnalyzer
+    internal class SA1014OpeningGenericBracketsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1014OpeningGenericBracketsMustBeSpacedCorrectly"/>

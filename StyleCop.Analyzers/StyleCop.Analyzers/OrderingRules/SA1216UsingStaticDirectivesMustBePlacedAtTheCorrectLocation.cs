@@ -21,7 +21,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// </para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1216UsingStaticDirectivesMustBePlacedAtTheCorrectLocation : DiagnosticAnalyzer
+    internal class SA1216UsingStaticDirectivesMustBePlacedAtTheCorrectLocation : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1216UsingStaticDirectivesMustBePlacedAtTheCorrectLocation"/> analyzer.

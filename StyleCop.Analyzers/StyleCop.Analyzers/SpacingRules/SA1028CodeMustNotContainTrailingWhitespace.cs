@@ -23,7 +23,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// <para>For these reasons, trailing whitespace should be avoided.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1028CodeMustNotContainTrailingWhitespace : DiagnosticAnalyzer
+    internal class SA1028CodeMustNotContainTrailingWhitespace : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1028CodeMustNotContainTrailingWhitespace"/> analyzer.

@@ -54,7 +54,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1118ParameterMustNotSpanMultipleLines : DiagnosticAnalyzer
+    internal class SA1118ParameterMustNotSpanMultipleLines : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1118ParameterMustNotSpanMultipleLines"/> analyzer.

@@ -34,7 +34,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     [NoDiagnostic("This is already handled by the compiler with warning CS1589.")]
-    public class SA1645IncludedDocumentationFileDoesNotExist : DiagnosticAnalyzer
+    internal class SA1645IncludedDocumentationFileDoesNotExist : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1645IncludedDocumentationFileDoesNotExist"/> analyzer.

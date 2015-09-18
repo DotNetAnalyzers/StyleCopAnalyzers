@@ -21,7 +21,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// the namespaces that are being used by the code.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives : DiagnosticAnalyzer
+    internal class SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the

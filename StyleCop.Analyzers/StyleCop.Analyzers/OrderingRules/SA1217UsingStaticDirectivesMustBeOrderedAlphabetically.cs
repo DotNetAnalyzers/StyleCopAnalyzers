@@ -22,7 +22,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// </para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1217UsingStaticDirectivesMustBeOrderedAlphabetically : DiagnosticAnalyzer
+    internal class SA1217UsingStaticDirectivesMustBeOrderedAlphabetically : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1217UsingStaticDirectivesMustBeOrderedAlphabetically"/> analyzer.

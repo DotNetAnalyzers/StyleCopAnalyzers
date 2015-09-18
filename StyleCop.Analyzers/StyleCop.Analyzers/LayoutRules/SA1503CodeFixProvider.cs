@@ -24,7 +24,7 @@ namespace StyleCop.Analyzers.LayoutRules
     /// </remarks>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1503CodeFixProvider))]
     [Shared]
-    public class SA1503CodeFixProvider : CodeFixProvider
+    internal class SA1503CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1503CurlyBracketsMustNotBeOmitted.DiagnosticId, SA1519CurlyBracketsMustNotBeOmittedFromMultiLineChildStatement.DiagnosticId, SA1520UseCurlyBracketsConsistently.DiagnosticId);

@@ -24,7 +24,7 @@ namespace StyleCop.Analyzers.NamingRules
     /// </remarks>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RenameToUpperCaseCodeFixProvider))]
     [Shared]
-    public class RenameToUpperCaseCodeFixProvider : CodeFixProvider
+    internal class RenameToUpperCaseCodeFixProvider : CodeFixProvider
     {
         private const string Suffix = "Value";
 

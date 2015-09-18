@@ -47,7 +47,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1643DestructorSummaryDocumentationMustBeginWithStandardText : StandardTextDiagnosticBase
+    internal class SA1643DestructorSummaryDocumentationMustBeginWithStandardText : StandardTextDiagnosticBase
     {
         /// <summary>
         /// The ID for diagnostics produced by the

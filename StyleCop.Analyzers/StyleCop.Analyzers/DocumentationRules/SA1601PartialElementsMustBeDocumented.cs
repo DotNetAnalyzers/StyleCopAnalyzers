@@ -67,7 +67,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// SDK documentation tools.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1601PartialElementsMustBeDocumented : DiagnosticAnalyzer
+    internal class SA1601PartialElementsMustBeDocumented : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1601PartialElementsMustBeDocumented"/> analyzer.

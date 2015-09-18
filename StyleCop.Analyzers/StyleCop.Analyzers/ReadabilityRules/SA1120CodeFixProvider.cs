@@ -20,7 +20,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1120CodeFixProvider))]
     [Shared]
-    public class SA1120CodeFixProvider : CodeFixProvider
+    internal class SA1120CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1120CommentsMustContainText.DiagnosticId);

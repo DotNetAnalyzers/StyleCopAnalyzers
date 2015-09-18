@@ -35,7 +35,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1629DocumentationTextMustEndWithAPeriod : DiagnosticAnalyzer
+    internal class SA1629DocumentationTextMustEndWithAPeriod : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1629DocumentationTextMustEndWithAPeriod"/> analyzer.

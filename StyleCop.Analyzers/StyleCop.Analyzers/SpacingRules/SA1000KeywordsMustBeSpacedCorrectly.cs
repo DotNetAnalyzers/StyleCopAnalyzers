@@ -29,7 +29,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// array, in which case there should be no space between the new keyword and the opening array bracket.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1000KeywordsMustBeSpacedCorrectly : DiagnosticAnalyzer
+    internal class SA1000KeywordsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1000KeywordsMustBeSpacedCorrectly"/> analyzer.

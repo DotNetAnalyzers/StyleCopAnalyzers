@@ -28,7 +28,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1404CodeAnalysisSuppressionMustHaveJustification : DiagnosticAnalyzer
+    internal class SA1404CodeAnalysisSuppressionMustHaveJustification : DiagnosticAnalyzer
     {
         /// <summary>
         /// The placeholder to insert as part of the code fix.

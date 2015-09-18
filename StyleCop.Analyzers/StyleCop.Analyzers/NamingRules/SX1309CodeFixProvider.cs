@@ -21,7 +21,7 @@ namespace StyleCop.Analyzers.NamingRules
     /// </remarks>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SX1309CodeFixProvider))]
     [Shared]
-    public class SX1309CodeFixProvider : CodeFixProvider
+    internal class SX1309CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SX1309FieldNamesMustBeginWithUnderscore.DiagnosticId, SX1309SStaticFieldNamesMustBeginWithUnderscore.DiagnosticId);

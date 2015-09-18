@@ -47,7 +47,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1005SingleLineCommentsMustBeginWithSingleSpace : DiagnosticAnalyzer
+    internal class SA1005SingleLineCommentsMustBeginWithSingleSpace : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1005SingleLineCommentsMustBeginWithSingleSpace"/>

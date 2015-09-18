@@ -50,7 +50,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// <c>base.</c>.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists : DiagnosticAnalyzer
+    internal class SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the

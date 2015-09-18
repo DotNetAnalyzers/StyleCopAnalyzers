@@ -17,7 +17,7 @@ namespace StyleCop.Analyzers.NamingRules
     /// letter.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter : DiagnosticAnalyzer
+    internal class SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter"/>

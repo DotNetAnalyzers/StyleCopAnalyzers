@@ -26,7 +26,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1006PreprocessorKeywordsMustNotBePrecededBySpace : DiagnosticAnalyzer
+    internal class SA1006PreprocessorKeywordsMustNotBePrecededBySpace : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1006PreprocessorKeywordsMustNotBePrecededBySpace"/>

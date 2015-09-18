@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// This is the base class for analyzers which examine the <c>&lt;summary&gt;</c> or <c>&lt;content&gt;</c> text of
     /// the documentation comment associated with a <c>partial</c> element.
     /// </summary>
-    public abstract class PartialElementDocumentationSummaryBase : DiagnosticAnalyzer
+    internal abstract class PartialElementDocumentationSummaryBase : DiagnosticAnalyzer
     {
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)

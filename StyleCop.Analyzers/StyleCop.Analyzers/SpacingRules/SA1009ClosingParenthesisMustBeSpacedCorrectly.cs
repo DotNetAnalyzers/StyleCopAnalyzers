@@ -27,7 +27,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// opening or closing parenthesis or square bracket, or a semicolon or comma.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1009ClosingParenthesisMustBeSpacedCorrectly : DiagnosticAnalyzer
+    internal class SA1009ClosingParenthesisMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1009ClosingParenthesisMustBeSpacedCorrectly"/> analyzer.

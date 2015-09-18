@@ -22,7 +22,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// </remarks>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1107CodeFixProvider))]
     [Shared]
-    public class SA1107CodeFixProvider : CodeFixProvider
+    internal class SA1107CodeFixProvider : CodeFixProvider
     {
         private static readonly SA1107FixAllProvider FixAllProvider = new SA1107FixAllProvider();
 

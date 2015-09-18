@@ -20,7 +20,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// character on the line.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1016OpeningAttributeBracketsMustBeSpacedCorrectly : DiagnosticAnalyzer
+    internal class SA1016OpeningAttributeBracketsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1016OpeningAttributeBracketsMustBeSpacedCorrectly"/>

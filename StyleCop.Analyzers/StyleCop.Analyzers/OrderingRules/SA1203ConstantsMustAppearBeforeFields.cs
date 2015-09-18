@@ -19,7 +19,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// different considerations for the compiler, different naming requirements, etc.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1203ConstantsMustAppearBeforeFields : DiagnosticAnalyzer
+    internal class SA1203ConstantsMustAppearBeforeFields : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1203ConstantsMustAppearBeforeFields"/> analyzer.

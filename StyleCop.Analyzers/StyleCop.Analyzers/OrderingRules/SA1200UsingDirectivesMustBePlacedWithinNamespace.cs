@@ -148,7 +148,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// are placed outside of the namespace.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1200UsingDirectivesMustBePlacedWithinNamespace : DiagnosticAnalyzer
+    internal class SA1200UsingDirectivesMustBePlacedWithinNamespace : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1200UsingDirectivesMustBePlacedWithinNamespace"/>

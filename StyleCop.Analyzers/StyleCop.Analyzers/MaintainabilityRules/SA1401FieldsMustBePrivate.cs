@@ -20,7 +20,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     [NoCodeFix("The \"Encapsulate Field\" fix is provided by Visual Studio.")]
-    public class SA1401FieldsMustBePrivate : DiagnosticAnalyzer
+    internal class SA1401FieldsMustBePrivate : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1401FieldsMustBePrivate"/> analyzer.

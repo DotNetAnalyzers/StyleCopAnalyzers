@@ -23,7 +23,7 @@ namespace StyleCop.Analyzers.NamingRules
     /// <c>NativeMethods</c> class.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1312VariableNamesMustBeginWithLowerCaseLetter : DiagnosticAnalyzer
+    internal class SA1312VariableNamesMustBeginWithLowerCaseLetter : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1312VariableNamesMustBeginWithLowerCaseLetter"/> analyzer.
