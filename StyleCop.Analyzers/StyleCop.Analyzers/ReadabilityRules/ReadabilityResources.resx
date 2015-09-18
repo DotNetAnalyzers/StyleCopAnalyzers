@@ -301,7 +301,7 @@
     <value>The parameters to a C# method or indexer call or declaration are not all on the same line or each on a separate line.</value>
   </data>
   <data name="SA1117MessageFormat" xml:space="preserve">
-    <value>The parameters must all be placed on the same line or alternatively, each parameter must be placed on its own line.</value>
+    <value>The parameters must all be placed on the same line or each parameter must be placed on its own line.</value>
   </data>
   <data name="SA1117Title" xml:space="preserve">
     <value>Parameters must be on same line or separate lines</value>
