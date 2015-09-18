@@ -117,7 +117,9 @@ namespace StyleCop.Analyzers.LayoutRules
                 }
 
                 int triviaIndex;
-                var triviaList = TriviaHelper.GetContainingTriviaList(trivia, out triviaIndex);
+
+                // PERF: Explicitly cast to IReadOnlyList so we only box once.
+                IReadOnlyList<SyntaxTrivia> triviaList = TriviaHelper.GetContainingTriviaList(trivia, out triviaIndex);
 
                 if (!IsOnOwnLine(triviaList, triviaIndex))
                 {

@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -89,7 +90,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static void HandleSingleLineComment(SyntaxTreeAnalysisContext context, SyntaxTrivia singleLineComment)
         {
             int index = 0;
-            var list = TriviaHelper.GetContainingTriviaList(singleLineComment, out index);
+
+            // PERF: Explicitly cast to IReadOnlyList so we only box once.
+            IReadOnlyList<SyntaxTrivia> list = TriviaHelper.GetContainingTriviaList(singleLineComment, out index);
             var firstNonWhiteSpace = TriviaHelper.IndexOfFirstNonWhitespaceTrivia(list);
 
             // When we encounter a block of single line comments, we only want to raise this diagnostic
