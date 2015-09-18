@@ -44,10 +44,28 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             yield return new object[] { $"System.Action func = () => Bar(0, 2, 3)", 0 };
             yield return new object[] { $"System.Action<int> func = x => Bar(x, 2, 3)", 0 };
             yield return new object[] { $"System.Action func = delegate {{ Bar(0, 0, 0); }}", 0 };
+            yield return new object[] { "var weird = new int[10][,,,];", 0 };
+        }
+
+        public static IEnumerable<object[]> ValidTestDeclarations()
+        {
+            yield return new object[]
+            {
+                $@"public Foo(
+    int a, int b, string s) {{ }}"
+            };
+            yield return new object[]
+            {
+                $@"public Foo(
+    int a,
+    int b,
+    string s) {{ }}"
+            };
         }
 
         [Theory]
         [MemberData(nameof(GetTestDeclarations), "")]
+        [MemberData(nameof(ValidTestDeclarations))]
         public async Task TestValidDeclarationAsync(string declaration)
         {
             var testCode = $@"

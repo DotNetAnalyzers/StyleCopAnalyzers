@@ -61,11 +61,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
-            ImmutableArray.Create(Descriptor);
-
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => SupportedDiagnosticsValue;
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -151,17 +148,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 if (firstParameterLine == previousLine)
                 {
                     // arguments must be on same line
-                    lineCondition = (param1Line, param2Line) => param1Line != param2Line;
-                }
-                else if (previousLine - firstParameterLine == 1)
-                {
-                    // each argument must be on its own line
                     lineCondition = (param1Line, param2Line) => param1Line == param2Line;
                 }
                 else
                 {
-                    // SA1115 should be handled first
-                    return;
+                    // each argument must be on its own line
+                    lineCondition = (param1Line, param2Line) => param1Line != param2Line;
                 }
 
                 for (int i = 2; i < sizes.Count; ++i)
@@ -171,11 +163,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                     if (lineCondition(previousLine, currentLine))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentParameter.GetLocation()));
-                        return;
+                        previousLine = currentLine;
+                        continue;
                     }
 
-                    previousLine = currentLine;
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentParameter.GetLocation()));
+                    return;
                 }
             }
         }
@@ -203,17 +196,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
             if (firstParameterLine == previousLine)
             {
                 // arguments must be on same line
-                lineCondition = (param1Line, param2Line) => param1Line != param2Line;
-            }
-            else if (previousLine - firstParameterLine == 1)
-            {
-                // each argument must be on its own line
                 lineCondition = (param1Line, param2Line) => param1Line == param2Line;
             }
             else
             {
-                // SA1115 should be handled first
-                return;
+                // each argument must be on its own line
+                lineCondition = (param1Line, param2Line) => param1Line != param2Line;
             }
 
             for (int i = 2; i < arguments.Count; ++i)
@@ -223,11 +211,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 if (lineCondition(previousLine, currentLine))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentParameter.GetLocation()));
-                    return;
+                    previousLine = currentLine;
+                    continue;
                 }
 
-                previousLine = currentLine;
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentParameter.GetLocation()));
+                return;
             }
         }
 
@@ -308,17 +297,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
             if (firstParameterLine == previousLine)
             {
                 // parameters must be on same line
-                lineCondition = (param1Line, param2Line) => param1Line != param2Line;
-            }
-            else if (previousLine - firstParameterLine == 1)
-            {
-                // each parameter must be on its own line
                 lineCondition = (param1Line, param2Line) => param1Line == param2Line;
             }
             else
             {
-                // SA1115 should be handled first
-                return;
+                // each parameter must be on its own line
+                lineCondition = (param1Line, param2Line) => param1Line != param2Line;
             }
 
             for (int i = 2; i < parameters.Count; ++i)
@@ -328,11 +312,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 if (lineCondition(previousLine, currentLine))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentParameter.GetLocation()));
-                    return;
+                    previousLine = currentLine;
+                    continue;
                 }
 
-                previousLine = currentLine;
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentParameter.GetLocation()));
+                return;
             }
         }
 
@@ -346,17 +331,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
             if (firstParameterLine == previousLine)
             {
                 // arguments must be on same line
-                lineCondition = (param1Line, param2Line) => param1Line != param2Line;
-            }
-            else if (previousLine - firstParameterLine == 1)
-            {
-                // each argument must be on its own line
                 lineCondition = (param1Line, param2Line) => param1Line == param2Line;
             }
             else
             {
-                // SA1115 should be handled first
-                return;
+                // each argument must be on its own line
+                lineCondition = (param1Line, param2Line) => param1Line != param2Line;
             }
 
             for (int i = 2; i < arguments.Count; ++i)
@@ -366,11 +346,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 if (lineCondition(previousLine, currentLine))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentParameter.GetLocation()));
-                    return;
+                    previousLine = currentLine;
+                    continue;
                 }
 
-                previousLine = currentLine;
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentParameter.GetLocation()));
+                return;
             }
         }
     }
