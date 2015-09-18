@@ -20,11 +20,22 @@ namespace StyleCop.Analyzers.Helpers
                 return null;
             }
 
-            return node
-                .GetLeadingTrivia()
-                .Select(i => i.GetStructure())
-                .OfType<DocumentationCommentTriviaSyntax>()
-                .FirstOrDefault();
+            foreach (var leadingTrivia in node.GetLeadingTrivia())
+            {
+                if (!leadingTrivia.HasStructure)
+                {
+                    continue;
+                }
+
+                var structure = leadingTrivia.GetStructure() as DocumentationCommentTriviaSyntax;
+
+                if (structure != null)
+                {
+                    return structure;
+                }
+            }
+
+            return null;
         }
 
         public static XmlNodeSyntax GetFirstXmlElement(this SyntaxList<XmlNodeSyntax> content, string elementName)

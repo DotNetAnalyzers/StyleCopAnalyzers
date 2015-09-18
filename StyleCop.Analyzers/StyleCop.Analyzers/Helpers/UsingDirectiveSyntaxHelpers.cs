@@ -58,6 +58,19 @@ namespace StyleCop.Analyzers.Helpers
 
         private static bool ExcludeGlobalKeyword(IdentifierNameSyntax token) => !token.Identifier.IsKind(SyntaxKind.GlobalKeyword);
 
-        private static SyntaxToken? GetFirstIdentifierInUsingDirective(UsingDirectiveSyntax usingDirective) => usingDirective.DescendantNodes().OfType<IdentifierNameSyntax>().FirstOrDefault(ExcludeGlobalKeyword)?.Identifier;
+        private static SyntaxToken? GetFirstIdentifierInUsingDirective(UsingDirectiveSyntax usingDirective)
+        {
+            foreach (var identifier in usingDirective.DescendantNodes())
+            {
+                IdentifierNameSyntax identifierName = identifier as IdentifierNameSyntax;
+
+                if (identifierName != null && ExcludeGlobalKeyword(identifierName))
+                {
+                    return identifierName.Identifier;
+                }
+            }
+
+            return null;
+        }
     }
 }

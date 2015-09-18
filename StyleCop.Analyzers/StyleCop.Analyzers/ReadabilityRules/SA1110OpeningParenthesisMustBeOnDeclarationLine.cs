@@ -176,7 +176,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var attribute = (AttributeSyntax)context.Node;
 
-            var qualifiedNameSyntax = attribute.ChildNodes().OfType<QualifiedNameSyntax>().FirstOrDefault();
+            var qualifiedNameSyntax = attribute.ChildNodes().FirstOrDefault(x => x.IsKind(SyntaxKind.QualifiedName)) as QualifiedNameSyntax;
             IdentifierNameSyntax identifierNameSyntax = null;
             if (qualifiedNameSyntax != null)
             {
@@ -184,7 +184,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
             else
             {
-                identifierNameSyntax = attribute.DescendantNodes().OfType<IdentifierNameSyntax>().FirstOrDefault();
+                identifierNameSyntax = attribute.DescendantNodes().FirstOrDefault(x => x.IsKind(SyntaxKind.IdentifierName)) as IdentifierNameSyntax;
             }
 
             if (identifierNameSyntax != null)
