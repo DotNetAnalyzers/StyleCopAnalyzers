@@ -611,7 +611,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to The parameters must all be placed on the same line or each parameter must be placed on its own line..
         /// </summary>
         internal static string SA1117MessageFormat {
             get {
