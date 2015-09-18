@@ -146,19 +146,21 @@ public  class   Foo
                 "\t\tpublic void Bar()\r\n" +
                 "\t\t{\r\n" +
                 "\t\t \t//\tComment\t\t1\r\n" +
+                "            ////\tCommented Code\t\t1\r\n" +
                 "\t  \t\t// Comment 2\r\n" +
                 "\t\t}\r\n" +
                 "\t}\r\n";
 
-            var fixedTestCode = @"    public class Foo
-    {
-        public void Bar()
-        {
-            //  Comment     1
-            // Comment 2
-        }
-    }
-";
+            var fixedTestCode =
+                "    public class Foo\r\n" +
+                "    {\r\n" +
+                "        public void Bar()\r\n" +
+                "        {\r\n" +
+                "            //  Comment     1\r\n" +
+                "            ////\tCommented Code\t\t1\r\n" +
+                "            // Comment 2\r\n" +
+                "        }\r\n" +
+                "    }\r\n";
 
             DiagnosticResult[] expected =
             {
@@ -168,9 +170,9 @@ public  class   Foo
                 this.CSharpDiagnostic().WithLocation(4, 1),
                 this.CSharpDiagnostic().WithLocation(5, 1),
                 this.CSharpDiagnostic().WithLocation(5, 5),
-                this.CSharpDiagnostic().WithLocation(6, 1),
                 this.CSharpDiagnostic().WithLocation(7, 1),
                 this.CSharpDiagnostic().WithLocation(8, 1),
+                this.CSharpDiagnostic().WithLocation(9, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
