@@ -135,11 +135,20 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void FindAllComments(SyntaxNodeAnalysisContext context, SyntaxToken previousToken, SyntaxToken openBraceToken)
         {
-            var comments = previousToken.TrailingTrivia.Where(IsComment)
-                .Concat(openBraceToken.LeadingTrivia.Where(IsComment));
-            foreach (var comment in comments)
+            foreach (var comment in previousToken.TrailingTrivia)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, comment.GetLocation()));
+                if (IsComment(comment))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, comment.GetLocation()));
+                }
+            }
+
+            foreach (var comment in openBraceToken.LeadingTrivia)
+            {
+                if (IsComment(comment))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, comment.GetLocation()));
+                }
             }
         }
 

@@ -91,7 +91,7 @@ namespace StyleCop.Analyzers.LayoutRules
         private static void AnalyzeOpenBrace(SyntaxTreeAnalysisContext context, SyntaxToken openBrace)
         {
             var prevToken = openBrace.GetPreviousToken();
-            var triviaList = prevToken.IsKind(SyntaxKind.None) ? openBrace.LeadingTrivia : TriviaHelper.MergeTriviaLists(prevToken.TrailingTrivia, openBrace.LeadingTrivia);
+            var triviaList = TriviaHelper.MergeTriviaLists(prevToken.TrailingTrivia, openBrace.LeadingTrivia);
 
             var done = false;
             var eolCount = 0;
