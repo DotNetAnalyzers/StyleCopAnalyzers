@@ -90,6 +90,8 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.documentPrivateElements = false;
             this.documentInterfaces = true;
             this.documentPrivateFields = false;
+
+            this.CopyrightText = this.BuildCopyrightText();
         }
 
         public string CompanyName
@@ -100,38 +102,37 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             }
         }
 
-        public string CopyrightText
+        public string CopyrightText { get; }
+
+        private string BuildCopyrightText()
         {
-            get
-            {
-                string pattern = Regex.Escape("{") + "(?<Property>[a-zA-Z0-9]+)" + Regex.Escape("}");
-                MatchEvaluator evaluator =
-                    match =>
+            string pattern = Regex.Escape("{") + "(?<Property>[a-zA-Z0-9]+)" + Regex.Escape("}");
+            MatchEvaluator evaluator =
+                match =>
+                {
+                    string key = match.Groups["Property"].Value;
+                    switch (key)
                     {
-                        string key = match.Groups["Property"].Value;
-                        switch (key)
+                    case "companyName":
+                        return this.CompanyName;
+
+                    case "copyrightText":
+                        return "[CircularReference]";
+
+                    default:
+                        string value;
+                        if (this.Variables.TryGetValue(key, out value))
                         {
-                        case "companyName":
-                            return this.CompanyName;
-
-                        case "copyrightText":
-                            return "[CircularReference]";
-
-                        default:
-                            string value;
-                            if (this.Variables.TryGetValue(key, out value))
-                            {
-                                return value;
-                            }
-
-                            break;
+                            return value;
                         }
 
-                        return "[InvalidReference]";
-                    };
+                        break;
+                    }
 
-                return Regex.Replace(this.copyrightText, pattern, evaluator);
-            }
+                    return "[InvalidReference]";
+                };
+
+            return Regex.Replace(this.copyrightText, pattern, evaluator);
         }
 
         public ImmutableDictionary<string, string> Variables
