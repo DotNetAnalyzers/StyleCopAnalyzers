@@ -217,7 +217,7 @@ namespace StyleCop.Analyzers.Helpers
         /// <param name="trivia">The trivia to create the list from.</param>
         /// <param name="triviaIndex">The index of the trivia in the created trivia list.</param>
         /// <returns>The created trivia list.</returns>
-        internal static IReadOnlyList<SyntaxTrivia> GetContainingTriviaList(SyntaxTrivia trivia, out int triviaIndex)
+        internal static DualTriviaListHelper GetContainingTriviaList(SyntaxTrivia trivia, out int triviaIndex)
         {
             var token = trivia.Token;
             SyntaxTriviaList part1;
@@ -249,7 +249,7 @@ namespace StyleCop.Analyzers.Helpers
         /// <param name="list1">The first part of the new list.</param>
         /// <param name="list2">The second part of the new list.</param>
         /// <returns>The merged trivia list.</returns>
-        internal static IReadOnlyList<SyntaxTrivia> MergeTriviaLists(IReadOnlyList<SyntaxTrivia> list1, IReadOnlyList<SyntaxTrivia> list2)
+        internal static DualTriviaListHelper MergeTriviaLists(SyntaxTriviaList list1, SyntaxTriviaList list2)
         {
             return new DualTriviaListHelper(list1, list2);
         }
@@ -403,13 +403,13 @@ namespace StyleCop.Analyzers.Helpers
         /// <summary>
         /// Helper class that merges two SyntaxTriviaLists with (hopefully) the lowest possible performance penalty.
         /// </summary>
-        private class DualTriviaListHelper : IReadOnlyList<SyntaxTrivia>
+        internal struct DualTriviaListHelper : IReadOnlyList<SyntaxTrivia>
         {
-            private readonly IReadOnlyList<SyntaxTrivia> part1;
+            private readonly SyntaxTriviaList part1;
             private readonly int part1Count;
-            private readonly IReadOnlyList<SyntaxTrivia> part2;
+            private readonly SyntaxTriviaList part2;
 
-            public DualTriviaListHelper(IReadOnlyList<SyntaxTrivia> part1, IReadOnlyList<SyntaxTrivia> part2)
+            public DualTriviaListHelper(SyntaxTriviaList part1, SyntaxTriviaList part2)
             {
                 this.part1 = part1;
                 this.part2 = part2;
@@ -454,6 +454,16 @@ namespace StyleCop.Analyzers.Helpers
             IEnumerator IEnumerable.GetEnumerator()
             {
                 return this.GetEnumerator();
+            }
+
+            public SyntaxTrivia First()
+            {
+                return this[0];
+            }
+
+            public SyntaxTrivia Last()
+            {
+                return this[this.Count - 1];
             }
         }
     }
