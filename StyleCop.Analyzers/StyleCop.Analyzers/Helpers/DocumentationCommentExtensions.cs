@@ -22,11 +22,6 @@ namespace StyleCop.Analyzers.Helpers
 
             foreach (var leadingTrivia in node.GetLeadingTrivia())
             {
-                if (!leadingTrivia.HasStructure)
-                {
-                    continue;
-                }
-
                 var structure = leadingTrivia.GetStructure() as DocumentationCommentTriviaSyntax;
 
                 if (structure != null)
