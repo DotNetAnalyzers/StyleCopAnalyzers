@@ -192,7 +192,6 @@ namespace Bar
             await this.VerifyCSharpDiagnosticAsync(new[] { testCode1, testCode2, testCode3 }, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
         /// <summary>
         /// Verifies that a file header with an incorrect copyright text the fix only replaces the text.
         /// </summary>

@@ -140,11 +140,6 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
             }
 
-            if (isMalformedHeader)
-            {
-                copyrightTriviaIndex = null;
-            }
-
             // Remove copyright lines in reverse order
             removalList.Reverse();
             foreach (var triviaLine in removalList)
@@ -155,23 +150,20 @@ namespace StyleCop.Analyzers.DocumentationRules
             string newLineText = document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp);
 
             var newHeaderTrivia = CreateNewHeader(document.Name, settings, newLineText);
-            if (copyrightTriviaIndex.HasValue)
+            if (!isMalformedHeader && copyrightTriviaIndex.HasValue)
             {
-                if (inCopyright)
-                {
-                    newHeaderTrivia = newHeaderTrivia.Add(SyntaxFactory.CarriageReturnLineFeed);
-                }
-
-                trivia = trivia.ReplaceRange(trivia[copyrightTriviaIndex.Value], newHeaderTrivia);
-                return root.WithLeadingTrivia(trivia);
+                // Replace copyright element in place.
+                return root.WithLeadingTrivia(trivia.ReplaceRange(trivia[copyrightTriviaIndex.Value], newHeaderTrivia));
             }
             else
             {
+                // Add blank line if we don't already have comments at top of file.
                 if ((trivia.Count == 0) || (trivia[0].Kind() != SyntaxKind.SingleLineCommentTrivia))
                 {
                     newHeaderTrivia = newHeaderTrivia.Add(SyntaxFactory.CarriageReturnLineFeed);
                 }
 
+                // Insert header at top of the file.
                 return root.WithLeadingTrivia(newHeaderTrivia.Add(SyntaxFactory.CarriageReturnLineFeed).AddRange(trivia));
             }
         }
