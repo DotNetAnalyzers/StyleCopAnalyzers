@@ -408,4 +408,49 @@
   <data name="SA1128Title" xml:space="preserve">
     <value>Put constructor initializers on their own line</value>
   </data>
+  <data name="SA1129Description" xml:space="preserve">
+    <value>When creating a new instance of a value type T, the syntax 'default(T)' is functionally equivalent to the syntax 'new T()'. To avoid confusion regarding the behavior of the resulting instance, the first form is preferred.</value>
+  </data>
+  <data name="SA1129MessageFormat" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SA1129Title" xml:space="preserve">
+    <value>Do not use default value type constructor</value>
+  </data>
+  <data name="SA1130Description" xml:space="preserve">
+    <value>Lambda expressions are more succinct and easier to read than anonymous methods, so they should are preferred whenever the two are functionally equivalent.</value>
+  </data>
+  <data name="SA1130MessageFormat" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SA1130Title" xml:space="preserve">
+    <value>Use lambda syntax</value>
+  </data>
+  <data name="SA1131Description" xml:space="preserve">
+    <value>When a comparison is made between a variable and a literal, the variable should be placed on the left-hand-side to maximize readability.</value>
+  </data>
+  <data name="SA1131MessageFormat" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SA1131Title" xml:space="preserve">
+    <value>Use readable conditions</value>
+  </data>
+  <data name="SA1132Description" xml:space="preserve">
+    <value>Each field should be declared on its own line, in order to clearly see each field of a type and allow for proper documentation of the behavior of each field.</value>
+  </data>
+  <data name="SA1132MessageFormat" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SA1132Title" xml:space="preserve">
+    <value>Do not combine fields</value>
+  </data>
+  <data name="SA1133Description" xml:space="preserve">
+    <value>Each attribute usage should be placed in its own set of square brackets for maximum readability.</value>
+  </data>
+  <data name="SA1133MessageFormat" xml:space="preserve">
+    <value />
+  </data>
+  <data name="SA1133Title" xml:space="preserve">
+    <value>Do not combine attributes</value>
+  </data>
 </root>
