@@ -421,7 +421,7 @@
     <value>Lambda expressions are more succinct and easier to read than anonymous methods, so they should are preferred whenever the two are functionally equivalent.</value>
   </data>
   <data name="SA1130MessageFormat" xml:space="preserve">
-    <value />
+    <value>Use lambda syntax</value>
   </data>
   <data name="SA1130Title" xml:space="preserve">
     <value>Use lambda syntax</value>
