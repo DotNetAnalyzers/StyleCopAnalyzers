@@ -908,6 +908,15 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Place constructor initializer on own line.
+        /// </summary>
+        internal static string SA1128CodeFix {
+            get {
+                return ResourceManager.GetString("SA1128CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A constructor initializer, including the colon character, should be on its own line..
         /// </summary>
         internal static string SA1128Description {
