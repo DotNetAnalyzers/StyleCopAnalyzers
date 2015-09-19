@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers
     /// <summary>
     /// Provides extension methods to deal for analyzers.
     /// </summary>
-    public static class AnalyzerExtensions
+    internal static class AnalyzerExtensions
     {
         /// <summary>
         /// A cache of the result of computing whether a document has an auto-generated header.

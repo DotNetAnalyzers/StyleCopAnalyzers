@@ -189,7 +189,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </list>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1623PropertySummaryDocumentationMustMatchAccessors : DiagnosticAnalyzer
+    internal class SA1623PropertySummaryDocumentationMustMatchAccessors : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1623PropertySummaryDocumentationMustMatchAccessors"/>

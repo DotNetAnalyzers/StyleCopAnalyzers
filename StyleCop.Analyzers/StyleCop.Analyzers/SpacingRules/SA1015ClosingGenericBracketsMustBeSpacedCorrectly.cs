@@ -22,7 +22,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// open parenthesis).</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1015ClosingGenericBracketsMustBeSpacedCorrectly : DiagnosticAnalyzer
+    internal class SA1015ClosingGenericBracketsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1015ClosingGenericBracketsMustBeSpacedCorrectly"/>

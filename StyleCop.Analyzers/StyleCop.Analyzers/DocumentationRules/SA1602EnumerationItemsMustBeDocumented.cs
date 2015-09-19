@@ -37,7 +37,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1602EnumerationItemsMustBeDocumented : DiagnosticAnalyzer
+    internal class SA1602EnumerationItemsMustBeDocumented : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1602EnumerationItemsMustBeDocumented"/> analyzer.

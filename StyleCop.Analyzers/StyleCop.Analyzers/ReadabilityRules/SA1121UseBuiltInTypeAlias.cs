@@ -118,7 +118,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// </list>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1121UseBuiltInTypeAlias : DiagnosticAnalyzer
+    internal class SA1121UseBuiltInTypeAlias : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1121UseBuiltInTypeAlias"/> analyzer.

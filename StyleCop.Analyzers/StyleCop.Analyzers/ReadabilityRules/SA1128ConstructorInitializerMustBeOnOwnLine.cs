@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// A constructor initializer is on the same line as the constructor declaration, within a C# code file.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1128ConstructorInitializerMustBeOnOwnLine : DiagnosticAnalyzer
+    internal class SA1128ConstructorInitializerMustBeOnOwnLine : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1128ConstructorInitializerMustBeOnOwnLine"/>

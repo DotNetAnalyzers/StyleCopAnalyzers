@@ -24,7 +24,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// </remarks>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1122CodeFixProvider))]
     [Shared]
-    public class SA1122CodeFixProvider : CodeFixProvider
+    internal class SA1122CodeFixProvider : CodeFixProvider
     {
         private static readonly SyntaxNode StringEmptyExpression;
 

@@ -56,7 +56,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1649FileHeaderFileNameDocumentationMustMatchTypeName : DiagnosticAnalyzer
+    internal class SA1649FileHeaderFileNameDocumentationMustMatchTypeName : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1649FileHeaderFileNameDocumentationMustMatchTypeName"/>

@@ -52,7 +52,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     [NoDiagnostic("This diagnostic requires deep semantic analysis which is more suited to a usage-based analysis toolset as opposed to a style-based analysis toolset.")]
-    public class SA1409RemoveUnnecessaryCode : DiagnosticAnalyzer
+    internal class SA1409RemoveUnnecessaryCode : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1409RemoveUnnecessaryCode"/> analyzer.

@@ -24,7 +24,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// XML header documentation.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1622GenericTypeParameterDocumentationMustHaveText : DiagnosticAnalyzer
+    internal class SA1622GenericTypeParameterDocumentationMustHaveText : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1622GenericTypeParameterDocumentationMustHaveText"/>

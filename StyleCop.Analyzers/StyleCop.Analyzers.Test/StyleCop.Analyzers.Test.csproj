@@ -274,6 +274,7 @@
     <Compile Include="OrderingRules\SA1217UnitTests.cs" />
     <Compile Include="OrderingRules\UsingCodeFixProviderUnitTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PublicApiTests.cs" />
     <Compile Include="ReadabilityRules\SA1100UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1101UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1102UnitTests.cs" />

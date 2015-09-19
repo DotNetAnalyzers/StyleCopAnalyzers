@@ -35,7 +35,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1113CommaMustBeOnSameLineAsPreviousParameter : DiagnosticAnalyzer
+    internal class SA1113CommaMustBeOnSameLineAsPreviousParameter : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1113CommaMustBeOnSameLineAsPreviousParameter"/>

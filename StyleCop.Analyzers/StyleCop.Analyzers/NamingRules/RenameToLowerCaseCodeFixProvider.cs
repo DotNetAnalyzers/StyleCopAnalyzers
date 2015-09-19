@@ -20,7 +20,7 @@ namespace StyleCop.Analyzers.NamingRules
     /// </remarks>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RenameToLowerCaseCodeFixProvider))]
     [Shared]
-    public class RenameToLowerCaseCodeFixProvider : CodeFixProvider
+    internal class RenameToLowerCaseCodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(

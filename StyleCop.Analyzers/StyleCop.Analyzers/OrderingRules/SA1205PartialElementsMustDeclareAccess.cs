@@ -18,7 +18,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// <para>A violation of this rule occurs when the partial elements does not have an access modifier defined.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1205PartialElementsMustDeclareAccess : DiagnosticAnalyzer
+    internal class SA1205PartialElementsMustDeclareAccess : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1205PartialElementsMustDeclareAccess"/> analyzer.

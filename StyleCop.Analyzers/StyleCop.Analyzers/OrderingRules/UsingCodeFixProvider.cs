@@ -24,7 +24,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UsingCodeFixProvider))]
     [Shared]
-    public sealed class UsingCodeFixProvider : CodeFixProvider
+    internal sealed class UsingCodeFixProvider : CodeFixProvider
     {
         private static readonly List<UsingDirectiveSyntax> EmptyUsingsList = new List<UsingDirectiveSyntax>();
 

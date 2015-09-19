@@ -18,7 +18,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// statement must begin on a new line.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1107CodeMustNotContainMultipleStatementsOnOneLine : DiagnosticAnalyzer
+    internal class SA1107CodeMustNotContainMultipleStatementsOnOneLine : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1107CodeMustNotContainMultipleStatementsOnOneLine"/>

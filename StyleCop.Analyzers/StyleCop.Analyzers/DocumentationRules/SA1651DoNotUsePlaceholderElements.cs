@@ -30,7 +30,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// <para>Placeholder elements should be reviewed and removed from documentation.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1651DoNotUsePlaceholderElements : DiagnosticAnalyzer
+    internal class SA1651DoNotUsePlaceholderElements : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1651DoNotUsePlaceholderElements"/>

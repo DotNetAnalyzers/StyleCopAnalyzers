@@ -24,7 +24,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// <para>A violation of this rule occurs when the <c>&lt;value&gt;</c> tag for a property is missing.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1609PropertyDocumentationMustHaveValue : PropertyDocumentationSummaryBase
+    internal class SA1609PropertyDocumentationMustHaveValue : PropertyDocumentationSummaryBase
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1609PropertyDocumentationMustHaveValue"/> analyzer.

@@ -17,7 +17,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// an extra, empty statement in the code.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1106CodeMustNotContainEmptyStatements : DiagnosticAnalyzer
+    internal class SA1106CodeMustNotContainEmptyStatements : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1106CodeMustNotContainEmptyStatements"/> analyzer.

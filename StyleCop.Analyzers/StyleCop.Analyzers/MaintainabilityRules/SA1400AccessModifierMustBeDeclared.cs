@@ -21,7 +21,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     /// for the reader to make assumptions about the code, improving the readability of the code.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1400AccessModifierMustBeDeclared : DiagnosticAnalyzer
+    internal class SA1400AccessModifierMustBeDeclared : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1400AccessModifierMustBeDeclared"/> analyzer.

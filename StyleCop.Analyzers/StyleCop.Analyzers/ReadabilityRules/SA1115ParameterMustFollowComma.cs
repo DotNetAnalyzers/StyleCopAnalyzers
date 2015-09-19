@@ -39,7 +39,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1115ParameterMustFollowComma : DiagnosticAnalyzer
+    internal class SA1115ParameterMustFollowComma : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1115ParameterMustFollowComma"/> analyzer.

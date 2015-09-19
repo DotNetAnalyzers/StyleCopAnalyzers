@@ -169,7 +169,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </list>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1624PropertySummaryDocumentationMustOmitSetAccessorWithRestrictedAccess : DiagnosticAnalyzer
+    internal class SA1624PropertySummaryDocumentationMustOmitSetAccessorWithRestrictedAccess : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the

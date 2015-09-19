@@ -22,7 +22,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// tag.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1604ElementDocumentationMustHaveSummary : ElementDocumentationSummaryBase
+    internal class SA1604ElementDocumentationMustHaveSummary : ElementDocumentationSummaryBase
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1604ElementDocumentationMustHaveSummary"/> analyzer.

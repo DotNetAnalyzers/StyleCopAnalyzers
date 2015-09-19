@@ -28,7 +28,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// element's type parameters.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1620GenericTypeParameterDocumentationMustMatchTypeParameters : DiagnosticAnalyzer
+    internal class SA1620GenericTypeParameterDocumentationMustMatchTypeParameters : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the

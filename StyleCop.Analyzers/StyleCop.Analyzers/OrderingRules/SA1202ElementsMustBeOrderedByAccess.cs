@@ -35,7 +35,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// class.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1202ElementsMustBeOrderedByAccess : DiagnosticAnalyzer
+    internal class SA1202ElementsMustBeOrderedByAccess : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1202ElementsMustBeOrderedByAccess"/> analyzer.

@@ -19,7 +19,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// a semicolon should never be preceded by any whitespace, unless it is the first character on the line.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1002SemicolonsMustBeSpacedCorrectly : DiagnosticAnalyzer
+    internal class SA1002SemicolonsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1002SemicolonsMustBeSpacedCorrectly"/> analyzer.

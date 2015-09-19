@@ -22,7 +22,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// This will ensure that the code looks the same no matter which editor is being used to view the code.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1027TabsMustNotBeUsed : DiagnosticAnalyzer
+    internal class SA1027TabsMustNotBeUsed : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1027TabsMustNotBeUsed"/> analyzer.

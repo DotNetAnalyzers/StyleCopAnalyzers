@@ -21,7 +21,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1027CodeFixProvider))]
     [Shared]
-    public class SA1027CodeFixProvider : CodeFixProvider
+    internal class SA1027CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1027TabsMustNotBeUsed.DiagnosticId);

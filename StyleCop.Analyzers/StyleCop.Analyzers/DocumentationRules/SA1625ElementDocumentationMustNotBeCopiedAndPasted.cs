@@ -53,7 +53,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1625ElementDocumentationMustNotBeCopiedAndPasted : DiagnosticAnalyzer
+    internal class SA1625ElementDocumentationMustNotBeCopiedAndPasted : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1625ElementDocumentationMustNotBeCopiedAndPasted"/>

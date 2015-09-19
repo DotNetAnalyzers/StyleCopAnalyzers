@@ -23,7 +23,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// </remarks>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1116CodeFixProvider))]
     [Shared]
-    public class SA1116CodeFixProvider : CodeFixProvider
+    internal class SA1116CodeFixProvider : CodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =

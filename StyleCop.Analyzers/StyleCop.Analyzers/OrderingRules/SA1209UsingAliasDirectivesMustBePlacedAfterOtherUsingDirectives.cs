@@ -20,7 +20,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// cleaner and easier to read, and can help make it easier to identify the types used throughout the code.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1209UsingAliasDirectivesMustBePlacedAfterOtherUsingDirectives : DiagnosticAnalyzer
+    internal class SA1209UsingAliasDirectivesMustBePlacedAfterOtherUsingDirectives : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the

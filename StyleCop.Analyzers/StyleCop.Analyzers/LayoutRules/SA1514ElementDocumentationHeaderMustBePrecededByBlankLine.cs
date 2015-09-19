@@ -58,7 +58,7 @@ namespace StyleCop.Analyzers.LayoutRules
     /// blank line.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1514ElementDocumentationHeaderMustBePrecededByBlankLine : DiagnosticAnalyzer
+    internal class SA1514ElementDocumentationHeaderMustBePrecededByBlankLine : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the

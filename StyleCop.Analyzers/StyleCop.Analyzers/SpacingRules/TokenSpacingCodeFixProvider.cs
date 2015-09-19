@@ -21,7 +21,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(TokenSpacingCodeFixProvider))]
     [Shared]
-    public class TokenSpacingCodeFixProvider : CodeFixProvider
+    internal class TokenSpacingCodeFixProvider : CodeFixProvider
     {
         private const string LocationKey = "location";
         private const string ActionKey = "action";

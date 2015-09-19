@@ -37,7 +37,7 @@ namespace StyleCop.Analyzers.LayoutRules
     /// curly bracket is not followed by a blank line.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1513ClosingCurlyBracketMustBeFollowedByBlankLine : DiagnosticAnalyzer
+    internal class SA1513ClosingCurlyBracketMustBeFollowedByBlankLine : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1513ClosingCurlyBracketMustBeFollowedByBlankLine"/>

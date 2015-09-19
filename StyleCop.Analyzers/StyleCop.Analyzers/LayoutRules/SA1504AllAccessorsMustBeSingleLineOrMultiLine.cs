@@ -59,7 +59,7 @@ namespace StyleCop.Analyzers.LayoutRules
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1504AllAccessorsMustBeSingleLineOrMultiLine : DiagnosticAnalyzer
+    internal class SA1504AllAccessorsMustBeSingleLineOrMultiLine : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1504AllAccessorsMustBeSingleLineOrMultiLine"/> analyzer.

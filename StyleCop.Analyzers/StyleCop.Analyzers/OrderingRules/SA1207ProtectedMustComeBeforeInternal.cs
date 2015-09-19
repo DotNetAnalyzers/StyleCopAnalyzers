@@ -21,7 +21,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// these access levels are indeed the same.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1207ProtectedMustComeBeforeInternal : DiagnosticAnalyzer
+    internal class SA1207ProtectedMustComeBeforeInternal : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1207ProtectedMustComeBeforeInternal"/> analyzer.

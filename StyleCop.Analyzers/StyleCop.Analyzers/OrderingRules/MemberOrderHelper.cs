@@ -12,7 +12,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// <summary>
     /// Helper for dealing with member priority.
     /// </summary>
-    public struct MemberOrderHelper
+    internal struct MemberOrderHelper
     {
         private readonly ModifierFlags modifierFlags;
         private readonly AccessLevel accessibilty;

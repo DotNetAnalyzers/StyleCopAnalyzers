@@ -36,7 +36,7 @@ namespace StyleCop.Analyzers.LayoutRules
     /// all on a single line, as long as the accessor is short.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1502ElementMustNotBeOnASingleLine : DiagnosticAnalyzer
+    internal class SA1502ElementMustNotBeOnASingleLine : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1502ElementMustNotBeOnASingleLine"/> analyzer.

@@ -25,7 +25,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// followed by certain types of operator symbols.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1011ClosingSquareBracketsMustBeSpacedCorrectly : DiagnosticAnalyzer
+    internal class SA1011ClosingSquareBracketsMustBeSpacedCorrectly : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1011ClosingSquareBracketsMustBeSpacedCorrectly"/>

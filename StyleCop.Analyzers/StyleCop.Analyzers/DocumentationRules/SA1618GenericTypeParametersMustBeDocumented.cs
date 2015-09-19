@@ -25,7 +25,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// for one or more of its generic type parameters.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1618GenericTypeParametersMustBeDocumented : DiagnosticAnalyzer
+    internal class SA1618GenericTypeParametersMustBeDocumented : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1618GenericTypeParametersMustBeDocumented"/> analyzer.

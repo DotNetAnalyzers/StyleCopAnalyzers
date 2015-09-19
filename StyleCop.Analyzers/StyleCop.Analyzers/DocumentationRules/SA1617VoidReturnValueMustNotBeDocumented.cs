@@ -25,7 +25,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// tag within its documentation header.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1617VoidReturnValueMustNotBeDocumented : DiagnosticAnalyzer
+    internal class SA1617VoidReturnValueMustNotBeDocumented : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1617VoidReturnValueMustNotBeDocumented"/> analyzer.

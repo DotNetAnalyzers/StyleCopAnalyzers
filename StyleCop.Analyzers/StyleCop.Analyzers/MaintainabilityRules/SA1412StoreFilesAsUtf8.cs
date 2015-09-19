@@ -20,7 +20,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     /// </para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1412StoreFilesAsUtf8 : DiagnosticAnalyzer
+    internal class SA1412StoreFilesAsUtf8 : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the

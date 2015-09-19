@@ -24,7 +24,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     [NoCodeFix("Cannot generate documentation")]
-    public class SA1616ElementReturnValueDocumentationMustHaveText : DiagnosticAnalyzer
+    internal class SA1616ElementReturnValueDocumentationMustHaveText : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1616ElementReturnValueDocumentationMustHaveText"/>

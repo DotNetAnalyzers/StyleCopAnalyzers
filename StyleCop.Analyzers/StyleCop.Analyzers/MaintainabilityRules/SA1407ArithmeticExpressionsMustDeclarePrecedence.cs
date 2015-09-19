@@ -38,7 +38,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     /// reader to make assumptions about the code.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1407ArithmeticExpressionsMustDeclarePrecedence : DiagnosticAnalyzer
+    internal class SA1407ArithmeticExpressionsMustDeclarePrecedence : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1407ArithmeticExpressionsMustDeclarePrecedence"/>

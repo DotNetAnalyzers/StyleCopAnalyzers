@@ -12,7 +12,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// <summary>
     /// This is the base class for analyzers which examine the <c>&lt;value&gt;</c> text of a documentation comment on a property declaration.
     /// </summary>
-    public abstract class PropertyDocumentationSummaryBase : DiagnosticAnalyzer
+    internal abstract class PropertyDocumentationSummaryBase : DiagnosticAnalyzer
     {
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)

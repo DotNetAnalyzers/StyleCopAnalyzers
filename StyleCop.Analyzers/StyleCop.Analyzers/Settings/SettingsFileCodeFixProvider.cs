@@ -21,7 +21,7 @@ namespace StyleCop.Analyzers.Settings
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SettingsFileCodeFixProvider))]
     [Shared]
-    public class SettingsFileCodeFixProvider : CodeFixProvider
+    internal class SettingsFileCodeFixProvider : CodeFixProvider
     {
         private const string StyleCopSettingsFileName = "stylecop.json";
         private const string DefaultSettingsFileContent = @"{

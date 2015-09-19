@@ -26,7 +26,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// delegates, enums, events, finalizers, indexers, interfaces, methods, properties, and structs.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1600ElementsMustBeDocumented : DiagnosticAnalyzer
+    internal class SA1600ElementsMustBeDocumented : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1600ElementsMustBeDocumented"/> analyzer.

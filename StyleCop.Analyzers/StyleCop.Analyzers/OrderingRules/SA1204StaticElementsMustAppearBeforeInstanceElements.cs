@@ -21,7 +21,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// see the interface exposed from the instance and static version of the class.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1204StaticElementsMustAppearBeforeInstanceElements : DiagnosticAnalyzer
+    internal class SA1204StaticElementsMustAppearBeforeInstanceElements : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1204StaticElementsMustAppearBeforeInstanceElements"/>

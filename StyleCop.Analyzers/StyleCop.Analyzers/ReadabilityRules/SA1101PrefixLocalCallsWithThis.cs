@@ -30,7 +30,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// call.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1101PrefixLocalCallsWithThis : DiagnosticAnalyzer
+    internal class SA1101PrefixLocalCallsWithThis : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1101PrefixLocalCallsWithThis"/> analyzer.

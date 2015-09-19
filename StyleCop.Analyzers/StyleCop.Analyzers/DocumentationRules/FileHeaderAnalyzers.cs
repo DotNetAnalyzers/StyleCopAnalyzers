@@ -26,7 +26,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1641.md">SA1641 File header company name text must match</seealso>
     /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1649.md">SA1649 File header file name documentation must match type name</seealso>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class FileHeaderAnalyzers : DiagnosticAnalyzer
+    internal class FileHeaderAnalyzers : DiagnosticAnalyzer
     {
         private const string SA1633Identifier = "SA1633";
         private const string SA1634Identifier = "SA1634";

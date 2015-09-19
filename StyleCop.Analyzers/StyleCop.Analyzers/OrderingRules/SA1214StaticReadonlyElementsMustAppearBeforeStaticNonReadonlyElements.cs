@@ -19,7 +19,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// element of the same type.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1214StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements : DiagnosticAnalyzer
+    internal class SA1214StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the

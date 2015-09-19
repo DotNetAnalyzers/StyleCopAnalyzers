@@ -25,7 +25,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// </remarks>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1121CodeFixProvider))]
     [Shared]
-    public class SA1121CodeFixProvider : CodeFixProvider
+    internal class SA1121CodeFixProvider : CodeFixProvider
     {
         private static readonly Dictionary<SpecialType, SyntaxKind> PredefinedSpecialTypes = new Dictionary<SpecialType, SyntaxKind>
         {

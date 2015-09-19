@@ -25,7 +25,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// header documentation which does not declare the name of the type parameter.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1621GenericTypeParameterDocumentationMustDeclareParameterName : DiagnosticAnalyzer
+    internal class SA1621GenericTypeParameterDocumentationMustDeclareParameterName : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the

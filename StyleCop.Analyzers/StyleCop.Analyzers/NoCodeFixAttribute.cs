@@ -19,7 +19,7 @@ namespace StyleCop.Analyzers
     /// <para>The <see cref="Reason"/> should be provided.</para>
     /// </remarks>
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
-    public sealed class NoCodeFixAttribute : System.Attribute
+    internal sealed class NoCodeFixAttribute : System.Attribute
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="NoCodeFixAttribute"/> class.

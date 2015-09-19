@@ -27,7 +27,7 @@ namespace StyleCop.Analyzers.NamingRules
     /// within a <c>NativeMethods</c> class.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SX1309SStaticFieldNamesMustBeginWithUnderscore : DiagnosticAnalyzer
+    internal class SX1309SStaticFieldNamesMustBeginWithUnderscore : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SX1309SStaticFieldNamesMustBeginWithUnderscore"/>

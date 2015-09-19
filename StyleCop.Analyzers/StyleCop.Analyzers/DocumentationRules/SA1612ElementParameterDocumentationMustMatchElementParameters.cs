@@ -27,7 +27,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// parameters on the element, or if the parameter documentation is not listed in the same order as the element's parameters.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1612ElementParameterDocumentationMustMatchElementParameters : DiagnosticAnalyzer
+    internal class SA1612ElementParameterDocumentationMustMatchElementParameters : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the

@@ -46,7 +46,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1108BlockStatementsMustNotContainEmbeddedComments : DiagnosticAnalyzer
+    internal class SA1108BlockStatementsMustNotContainEmbeddedComments : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1108BlockStatementsMustNotContainEmbeddedComments"/>

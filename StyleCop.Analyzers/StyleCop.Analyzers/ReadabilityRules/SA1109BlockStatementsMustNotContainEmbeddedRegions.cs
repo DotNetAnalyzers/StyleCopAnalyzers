@@ -27,7 +27,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     [NoDiagnostic("This diagnostic is rarely-occurring specialization of SA1123; the latter is now preferred in all cases.")]
-    public class SA1109BlockStatementsMustNotContainEmbeddedRegions : DiagnosticAnalyzer
+    internal class SA1109BlockStatementsMustNotContainEmbeddedRegions : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1109BlockStatementsMustNotContainEmbeddedRegions"/>

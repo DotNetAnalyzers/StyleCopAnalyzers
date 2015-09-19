@@ -22,7 +22,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// </remarks>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1028CodeFixProvider))]
     [Shared]
-    public class SA1028CodeFixProvider : CodeFixProvider
+    internal class SA1028CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1028CodeMustNotContainTrailingWhitespace.DiagnosticId);

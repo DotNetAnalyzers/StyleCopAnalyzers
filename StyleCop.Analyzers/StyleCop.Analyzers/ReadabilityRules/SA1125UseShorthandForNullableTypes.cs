@@ -20,7 +20,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     [NoCodeFix("Provided by Visual Studio")]
-    public class SA1125UseShorthandForNullableTypes : DiagnosticAnalyzer
+    internal class SA1125UseShorthandForNullableTypes : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1125UseShorthandForNullableTypes"/> analyzer.

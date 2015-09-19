@@ -20,7 +20,7 @@ namespace StyleCop.Analyzers.NamingRules
     /// </remarks>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1302CodeFixProvider))]
     [Shared]
-    public class SA1302CodeFixProvider : CodeFixProvider
+    internal class SA1302CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1302InterfaceNamesMustBeginWithI.DiagnosticId);

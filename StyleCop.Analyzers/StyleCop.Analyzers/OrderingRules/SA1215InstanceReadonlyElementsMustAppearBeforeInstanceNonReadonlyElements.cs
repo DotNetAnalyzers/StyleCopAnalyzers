@@ -18,7 +18,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// non-readonly element of the same type.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1215InstanceReadonlyElementsMustAppearBeforeInstanceNonReadonlyElements : DiagnosticAnalyzer
+    internal class SA1215InstanceReadonlyElementsMustAppearBeforeInstanceNonReadonlyElements : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the

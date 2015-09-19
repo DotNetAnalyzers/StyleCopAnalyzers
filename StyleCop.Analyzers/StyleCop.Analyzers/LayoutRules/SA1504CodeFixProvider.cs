@@ -22,7 +22,7 @@ namespace StyleCop.Analyzers.LayoutRules
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1504CodeFixProvider))]
     [Shared]
-    public class SA1504CodeFixProvider : CodeFixProvider
+    internal class SA1504CodeFixProvider : CodeFixProvider
     {
         private static readonly ImmutableArray<string> FixableDiagnostics =
             ImmutableArray.Create(SA1504AllAccessorsMustBeSingleLineOrMultiLine.DiagnosticId);

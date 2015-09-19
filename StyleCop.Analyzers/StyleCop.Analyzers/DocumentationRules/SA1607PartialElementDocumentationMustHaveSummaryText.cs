@@ -67,7 +67,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     [NoCodeFix("Cannot generate documentation")]
-    public class SA1607PartialElementDocumentationMustHaveSummaryText : PartialElementDocumentationSummaryBase
+    internal class SA1607PartialElementDocumentationMustHaveSummaryText : PartialElementDocumentationSummaryBase
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1607PartialElementDocumentationMustHaveSummaryText"/>

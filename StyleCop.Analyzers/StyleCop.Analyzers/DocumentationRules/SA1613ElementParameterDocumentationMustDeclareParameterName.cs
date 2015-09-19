@@ -25,7 +25,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// which is missing a <c>name</c> attribute, or which contains an empty <c>name</c> attribute.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1613ElementParameterDocumentationMustDeclareParameterName : DiagnosticAnalyzer
+    internal class SA1613ElementParameterDocumentationMustDeclareParameterName : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the

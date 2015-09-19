@@ -17,7 +17,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     /// maintainability of the code-base, each file should contain at most one namespace.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SA1403FileMayOnlyContainASingleNamespace : DiagnosticAnalyzer
+    internal class SA1403FileMayOnlyContainASingleNamespace : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1403FileMayOnlyContainASingleNamespace"/> analyzer.
