@@ -96,8 +96,9 @@ namespace Bar
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1634Descriptor).WithLocation(1, 1);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
         }
+
         /// <summary>
-        /// Verifies that a file header with a copyright element will not produce a diagnostic message.
+        /// Check multiple line copyright headers can be checked correctly.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -108,6 +109,7 @@ namespace Bar
 // </author>
 // <copyright file=""Test0.cs"" company=""FooCorp"">
 // Copyright (c) FooCorp. All rights reserved.
+//
 // Licence is FooBar MIT.
 // </copyright>
 
@@ -120,7 +122,7 @@ namespace Bar
   ""settings"": {
     ""documentationRules"": {
       ""companyName"": ""FooCorp"",
-      ""copyrightText"": ""Copyright (c) FooCorp. All rights reserved.\nLicence is FooBar MIT.""
+      ""copyrightText"": ""Copyright (c) FooCorp. All rights reserved.\n\nLicence is FooBar MIT.""
     }
   }
 }
@@ -128,9 +130,44 @@ namespace Bar
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that a file header with missing copyright text the fix leaves behind other comments.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestFileHeaderFixWithReplaceCopyrightTagTextAsync()
+        {
+            var testCode = @"// <author>
+//   John Doe
+// </author>
+// <summary>This is a test file.</summary>
+
+namespace Bar
+{
+}
+";
+            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright (c) FooCorp. All rights reserved.
+// </copyright>
+// <author>
+//   John Doe
+// </author>
+// <summary>This is a test file.</summary>
+
+namespace Bar
+{
+}
+";
+
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1634Descriptor).WithLocation(1, 1);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            throw new System.NotImplementedException();
+            return new FileHeaderCodeFixProvider();
         }
 
         protected override string GetSettings()

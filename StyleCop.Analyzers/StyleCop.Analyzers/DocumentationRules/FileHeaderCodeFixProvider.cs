@@ -30,6 +30,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         public override ImmutableArray<string> FixableDiagnosticIds { get; }
             = ImmutableArray.Create(
                 FileHeaderAnalyzers.SA1633DescriptorMissing.Id,
+                FileHeaderAnalyzers.SA1634Descriptor.Id,
                 FileHeaderAnalyzers.SA1635Descriptor.Id,
                 FileHeaderAnalyzers.SA1636Descriptor.Id);
 
@@ -56,48 +57,81 @@ namespace StyleCop.Analyzers.DocumentationRules
             var settings = document.Project.AnalyzerOptions.GetStyleCopSettings();
 
             var fileHeader = FileHeaderHelpers.ParseFileHeader(root);
-            var newSyntaxRoot = fileHeader.IsMissing ? AddHeader(document, root, document.Name, settings) : ReplaceHeader(document, root, settings);
+            var xmlFileHeader = FileHeaderHelpers.ParseXmlFileHeader(root);
+            var newSyntaxRoot = fileHeader.IsMissing ? AddHeader(document, root, document.Name, settings) : ReplaceHeader(document, root, settings, xmlFileHeader.IsMalformed);
 
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
 
-        private static SyntaxNode ReplaceHeader(Document document, SyntaxNode root, StyleCopSettings settings)
+        private static SyntaxNode ReplaceHeader(Document document, SyntaxNode root, StyleCopSettings settings, bool isMalformedHeader)
         {
+            // If the header is well formed Xml then we parse out the copyright otherwise
             // Skip single line comments, whitespace, and end of line trivia until a blank line is encountered.
             SyntaxTriviaList trivia = root.GetLeadingTrivia();
-
             bool onBlankLine = false;
-            while (trivia.Any())
+            bool inCopyright = isMalformedHeader;
+            int? copyrightTriviaIndex = null;
+            var removalList = new System.Collections.Generic.List<int>();
+
+            // Need to do this with index so we get the line endings correct.
+            for (int i = 0; i < trivia.Count; i++)
             {
+                var triviaLine = trivia[i];
                 bool done = false;
-                switch (trivia[0].Kind())
+                switch (triviaLine.Kind())
                 {
-                case SyntaxKind.SingleLineCommentTrivia:
-                    trivia = trivia.RemoveAt(0);
-                    onBlankLine = false;
-                    break;
+                    case SyntaxKind.SingleLineCommentTrivia:
+                        if (!isMalformedHeader)
+                        {
+                            var openingTag = triviaLine.ToFullString().Contains("<copyright ");
+                            var closingTag = triviaLine.ToFullString().Contains("</copyright>") ||
+                                (openingTag && triviaLine.ToFullString().Trim().EndsWith("/>"));
+                            if (openingTag)
+                            {
+                                inCopyright = !closingTag;
+                                copyrightTriviaIndex = i;
+                            }
+                            else
+                            {
+                                if (inCopyright)
+                                {
+                                    removalList.Add(i);
+                                    inCopyright = !closingTag;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            removalList.Add(i);
+                        }
 
-                case SyntaxKind.WhitespaceTrivia:
-                    trivia = trivia.RemoveAt(0);
-                    break;
+                        onBlankLine = false;
+                        break;
 
-                case SyntaxKind.EndOfLineTrivia:
-                    trivia = trivia.RemoveAt(0);
+                    case SyntaxKind.WhitespaceTrivia:
+                        removalList.Add(i);
+                        break;
 
-                    if (onBlankLine)
-                    {
+                    case SyntaxKind.EndOfLineTrivia:
+                        if (inCopyright)
+                        {
+                            removalList.Add(i);
+                        }
+
+                        if (onBlankLine)
+                        {
+                            done = true;
+                        }
+                        else
+                        {
+                            onBlankLine = true;
+                        }
+
+                        break;
+
+                    default:
                         done = true;
-                    }
-                    else
-                    {
-                        onBlankLine = true;
-                    }
-
-                    break;
-
-                default:
-                    done = true;
-                    break;
+                        break;
                 }
 
                 if (done)
@@ -106,8 +140,40 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
             }
 
+            if (isMalformedHeader)
+            {
+                copyrightTriviaIndex = null;
+            }
+
+            // Remove copyright lines in reverse order
+            removalList.Reverse();
+            foreach (var triviaLine in removalList)
+            {
+                trivia = trivia.RemoveAt(triviaLine);
+            }
+
             string newLineText = document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp);
-            return root.WithLeadingTrivia(CreateNewHeader(document.Name, settings, newLineText).Add(SyntaxFactory.CarriageReturnLineFeed).Add(SyntaxFactory.CarriageReturnLineFeed).AddRange(trivia));
+
+            var newHeaderTrivia = CreateNewHeader(document.Name, settings, newLineText);
+            if (copyrightTriviaIndex.HasValue)
+            {
+                if (inCopyright)
+                {
+                    newHeaderTrivia = newHeaderTrivia.Add(SyntaxFactory.CarriageReturnLineFeed);
+                }
+
+                trivia = trivia.ReplaceRange(trivia[copyrightTriviaIndex.Value], newHeaderTrivia);
+                return root.WithLeadingTrivia(trivia);
+            }
+            else
+            {
+                if ((trivia.Count == 0) || (trivia[0].Kind() != SyntaxKind.SingleLineCommentTrivia))
+                {
+                    newHeaderTrivia = newHeaderTrivia.Add(SyntaxFactory.CarriageReturnLineFeed);
+                }
+
+                return root.WithLeadingTrivia(newHeaderTrivia.Add(SyntaxFactory.CarriageReturnLineFeed).AddRange(trivia));
+            }
         }
 
         private static SyntaxNode AddHeader(Document document, SyntaxNode root, string name, StyleCopSettings settings)
@@ -139,7 +205,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static string GetCopyrightText(string copyrightText, string newLineText)
         {
             copyrightText = copyrightText.Replace("\r\n", "\n");
-            return string.Join(newLineText + "// ", copyrightText.Split('\n'));
+            return string.Join(newLineText + "// ", copyrightText.Split('\n')).Replace("// " + newLineText, "//" + newLineText);
         }
     }
 }

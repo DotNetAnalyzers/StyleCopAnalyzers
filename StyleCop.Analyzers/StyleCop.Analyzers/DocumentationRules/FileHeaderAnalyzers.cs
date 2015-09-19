@@ -323,7 +323,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             // Remove any leading or trailing spaces and remove the extra space put in as a seperator.
-            if (string.CompareOrdinal(copyrightText.Trim(' ', '\r', '\n').Replace("\n ","\n"), settingsCopyrightText.Trim(' ', '\r', '\n')) != 0)
+            if (string.CompareOrdinal(copyrightText.Trim(' ', '\r', '\n').Replace("\n ", "\n"), settingsCopyrightText.Trim(' ', '\r', '\n')) != 0)
             {
                 var location = fileHeader.GetElementLocation(context.Tree, copyrightElement);
                 context.ReportDiagnostic(Diagnostic.Create(SA1636Descriptor, location));
