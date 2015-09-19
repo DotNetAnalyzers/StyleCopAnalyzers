@@ -81,8 +81,16 @@ namespace StyleCop.Analyzers.SpacingRules
 
         private static void HandleWhitespaceTrivia(SyntaxTreeAnalysisContext context, SyntaxTrivia trivia)
         {
-            if (trivia.ToFullString().IndexOf('\t') < 0)
+            string fullString = trivia.ToFullString();
+            if (fullString.StartsWith("////"))
             {
+                // This is a line of commented code.
+                return;
+            }
+
+            if (fullString.IndexOf('\t') < 0)
+            {
+                // No hard tabs were found.
                 return;
             }
 

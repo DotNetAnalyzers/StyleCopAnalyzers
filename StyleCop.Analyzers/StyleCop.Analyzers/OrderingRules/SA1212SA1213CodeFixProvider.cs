@@ -98,8 +98,8 @@ namespace StyleCop.Analyzers.OrderingRules
             var newLeadingTrivia = GetLeadingTriviaWithoutLeadingBlankLines(secondAccessor);
             if (AccessorsAreOnTheSameLine(firstAccessor, secondAccessor))
             {
-                var leadingWhitespace = firstAccessor.GetLeadingTrivia().Where(x => x.IsKind(SyntaxKind.WhitespaceTrivia)).ToList();
-                newLeadingTrivia = SyntaxFactory.TriviaList(TriviaHelper.MergeTriviaLists(newLeadingTrivia, leadingWhitespace));
+                var leadingWhitespace = firstAccessor.GetLeadingTrivia().Where(x => x.IsKind(SyntaxKind.WhitespaceTrivia));
+                newLeadingTrivia = SyntaxFactory.TriviaList(TriviaHelper.MergeTriviaLists(newLeadingTrivia, SyntaxTriviaList.Empty.AddRange(leadingWhitespace)));
             }
 
             var newAccessor = accessorList.Accessors[1]

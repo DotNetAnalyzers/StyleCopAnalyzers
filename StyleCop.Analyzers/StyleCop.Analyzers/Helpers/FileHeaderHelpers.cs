@@ -66,16 +66,11 @@ namespace StyleCop.Analyzers.Helpers
                         var endIndex = triviaString.LastIndexOf("*/", StringComparison.Ordinal);
                         var commentContext = triviaString.Substring(startIndex, endIndex - startIndex).Trim();
 
-                        var triviaStringParts = commentContext.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                        var triviaStringParts = commentContext.Replace("\r\n", "\n").Split('\n');
 
                         foreach (var part in triviaStringParts)
                         {
-                            var trimmedPart = part.Trim();
-                            if (trimmedPart.StartsWith("*"))
-                            {
-                                trimmedPart = trimmedPart.Substring(1).TrimStart();
-                            }
-
+                            var trimmedPart = part.TrimStart(' ', '*');
                             sb.AppendLine(trimmedPart);
                         }
 
@@ -118,31 +113,76 @@ namespace StyleCop.Analyzers.Helpers
         internal static XmlFileHeader ParseXmlFileHeader(SyntaxNode root)
         {
             var firstToken = root.GetFirstToken(includeZeroWidth: true);
+            string xmlString;
+            int fileHeaderStart;
+            int fileHeaderEnd;
 
-            if (!firstToken.HasLeadingTrivia)
+            var firstNonWhitespaceTrivia = TriviaHelper.IndexOfFirstNonWhitespaceTrivia(firstToken.LeadingTrivia, false);
+            if (firstNonWhitespaceTrivia == -1)
             {
                 return XmlFileHeader.MissingFileHeader;
             }
 
+            switch (firstToken.LeadingTrivia[firstNonWhitespaceTrivia].Kind())
+            {
+            case SyntaxKind.SingleLineCommentTrivia:
+                xmlString = ProcessSingleLineCommentsHeader(firstToken.LeadingTrivia, firstNonWhitespaceTrivia, out fileHeaderStart, out fileHeaderEnd);
+                break;
+
+            case SyntaxKind.MultiLineCommentTrivia:
+                xmlString = ProcessMultiLineCommentsHeader(firstToken.LeadingTrivia[firstNonWhitespaceTrivia], out fileHeaderStart, out fileHeaderEnd);
+                break;
+
+            default:
+                return XmlFileHeader.MissingFileHeader;
+            }
+
+            if (fileHeaderStart > fileHeaderEnd)
+            {
+                return XmlFileHeader.MissingFileHeader;
+            }
+
+            try
+            {
+                var parsedFileHeaderXml = XElement.Parse(xmlString);
+
+                // a header without any XML tags is malformed.
+                if (!parsedFileHeaderXml.Descendants().Any())
+                {
+                    return XmlFileHeader.MalformedFileHeader;
+                }
+
+                return new XmlFileHeader(parsedFileHeaderXml, fileHeaderStart, fileHeaderEnd);
+            }
+            catch (XmlException)
+            {
+                return XmlFileHeader.MalformedFileHeader;
+            }
+        }
+
+        private static string ProcessSingleLineCommentsHeader(SyntaxTriviaList triviaList, int startIndex, out int fileHeaderStart, out int fileHeaderEnd)
+        {
             var sb = new StringBuilder();
             var endOfLineCount = 0;
             var done = false;
-            var fileHeaderStart = int.MaxValue;
-            var fileHeaderEnd = int.MinValue;
+
+            fileHeaderStart = int.MaxValue;
+            fileHeaderEnd = int.MinValue;
 
             // wrap the XML from the file header in a single root element to make XML parsing work.
             sb.AppendLine("<root>");
 
             int i;
-            for (i = 0; !done && (i < firstToken.LeadingTrivia.Count); i++)
+            for (i = startIndex; !done && (i < triviaList.Count); i++)
             {
-                var trivia = firstToken.LeadingTrivia[i];
+                var trivia = triviaList[i];
 
                 switch (trivia.Kind())
                 {
                 case SyntaxKind.WhitespaceTrivia:
                     endOfLineCount = 0;
                     break;
+
                 case SyntaxKind.SingleLineCommentTrivia:
                     endOfLineCount = 0;
 
@@ -159,39 +199,45 @@ namespace StyleCop.Analyzers.Helpers
 
                     sb.AppendLine(commentString.Substring(2));
                     break;
+
                 case SyntaxKind.EndOfLineTrivia:
                     endOfLineCount++;
                     done = endOfLineCount > 1;
                     break;
+
                 default:
                     done = (fileHeaderStart < fileHeaderEnd) || !trivia.IsDirective;
                     break;
                 }
             }
 
-            if (fileHeaderStart > fileHeaderEnd)
+            sb.AppendLine("</root>");
+            return sb.ToString();
+        }
+
+        private static string ProcessMultiLineCommentsHeader(SyntaxTrivia multiLineComment, out int fileHeaderStart, out int fileHeaderEnd)
+        {
+            var sb = new StringBuilder();
+
+            // wrap the XML from the file header in a single root element to make XML parsing work.
+            sb.AppendLine("<root>");
+
+            fileHeaderStart = multiLineComment.FullSpan.Start;
+            fileHeaderEnd = multiLineComment.FullSpan.End;
+
+            var rawCommentString = multiLineComment.ToFullString();
+            var commentText = rawCommentString.Substring(2, rawCommentString.Length - 4);
+            var commentLines = commentText.Replace("\r\n", "\n").Split('\n');
+
+            /* TODO: Ignore borders ??? */
+
+            foreach (var commentLine in commentLines)
             {
-                return XmlFileHeader.MissingFileHeader;
+                sb.AppendLine(commentLine.TrimStart(' ', '*'));
             }
 
             sb.AppendLine("</root>");
-
-            try
-            {
-                var parsedFileHeaderXml = XElement.Parse(sb.ToString());
-
-                // a header without any XML tags is malformed.
-                if (!parsedFileHeaderXml.Descendants().Any())
-                {
-                    return XmlFileHeader.MalformedFileHeader;
-                }
-
-                return new XmlFileHeader(parsedFileHeaderXml, fileHeaderStart, fileHeaderEnd);
-            }
-            catch (XmlException)
-            {
-                return XmlFileHeader.MalformedFileHeader;
-            }
+            return sb.ToString();
         }
     }
 }

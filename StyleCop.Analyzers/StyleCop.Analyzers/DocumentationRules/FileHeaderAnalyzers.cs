@@ -242,11 +242,10 @@ namespace StyleCop.Analyzers.DocumentationRules
                         return;
                     }
 
-                    // make sure that both \n and \r\n are accepted from the settings.
-                    var reformattedCopyrightText = settings.DocumentationRules.CopyrightText.Replace("\r\n", "\n").Replace("\n", Environment.NewLine);
-                    if (string.CompareOrdinal(fileHeader.CopyrightText, reformattedCopyrightText) != 0)
+                    if (!CompareCopyrightText(fileHeader.CopyrightText, settings))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(SA1636Descriptor, fileHeader.GetLocation(context.Tree)));
+                        return;
                     }
                 }
             }
@@ -322,8 +321,8 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            // Remove any leading or trailing spaces and remove the extra space put in as a seperator.
-            if (string.CompareOrdinal(copyrightText.Trim(' ', '\r', '\n').Replace("\n ", "\n"), settingsCopyrightText.Trim(' ', '\r', '\n')) != 0)
+            // trim any leading / trailing new line or whitespace characters (those are a result of the XML formatting)
+            if (!CompareCopyrightText(copyrightText.Trim('\r', '\n', ' ', '\t'), settings))
             {
                 var location = fileHeader.GetElementLocation(context.Tree, copyrightElement);
                 context.ReportDiagnostic(Diagnostic.Create(SA1636Descriptor, location));
@@ -372,6 +371,29 @@ namespace StyleCop.Analyzers.DocumentationRules
                 var location = fileHeader.GetElementLocation(context.Tree, summaryElement);
                 context.ReportDiagnostic(Diagnostic.Create(SA1639Descriptor, location));
             }
+        }
+
+        private static bool CompareCopyrightText(string copyrightText, StyleCopSettings settings)
+        {
+            // make sure that both \n and \r\n are accepted from the settings.
+            var reformattedCopyrightTextParts = settings.DocumentationRules.CopyrightText.Replace("\r\n", "\n").Split('\n');
+            var fileHeaderCopyrightTextParts = copyrightText.Replace("\r\n", "\n").Split('\n');
+
+            if (reformattedCopyrightTextParts.Length != fileHeaderCopyrightTextParts.Length)
+            {
+                return false;
+            }
+
+            // compare line by line, ignoring leading and trailing whitespace on each line.
+            for (var i = 0; i < reformattedCopyrightTextParts.Length; i++)
+            {
+                if (string.CompareOrdinal(reformattedCopyrightTextParts[i].Trim(), fileHeaderCopyrightTextParts[i].Trim()) != 0)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }
