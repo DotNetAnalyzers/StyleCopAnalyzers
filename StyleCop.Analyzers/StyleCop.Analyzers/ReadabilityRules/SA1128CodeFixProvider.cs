@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading;
@@ -32,6 +33,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
             ImmutableArray.Create(SA1128ConstructorInitializerMustBeOnOwnLine.DiagnosticId);
 
         /// <inheritdoc/>
+        public override FixAllProvider GetFixAllProvider()
+        {
+            return FixAll.Instance;
+        }
+
+        /// <inheritdoc/>
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             foreach (var diagnostic in context.Diagnostics)
@@ -51,12 +58,23 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var indentationOptions = IndentationOptions.FromDocument(document);
+            var newLine = TriviaHelper.GetNewLineTrivia(document);
 
             var constructorInitializer = (ConstructorInitializerSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
             var constructorDeclaration = (ConstructorDeclarationSyntax)constructorInitializer.Parent;
 
+            var newConstructorDeclaration = ReformatConstructorDeclaration(constructorDeclaration, indentationOptions, newLine);
+
+            var newSyntaxRoot = syntaxRoot.ReplaceNode(constructorDeclaration, newConstructorDeclaration);
+            return document.WithSyntaxRoot(newSyntaxRoot);
+        }
+
+        private static ConstructorDeclarationSyntax ReformatConstructorDeclaration(ConstructorDeclarationSyntax constructorDeclaration, IndentationOptions indentationOptions, SyntaxTrivia newLine)
+        {
+            var constructorInitializer = constructorDeclaration.Initializer;
+
             var newParameterList = constructorDeclaration.ParameterList
-                .WithTrailingTrivia(constructorDeclaration.ParameterList.GetTrailingTrivia().WithoutTrailingWhitespace().Add(SyntaxFactory.CarriageReturnLineFeed));
+                .WithTrailingTrivia(constructorDeclaration.ParameterList.GetTrailingTrivia().WithoutTrailingWhitespace().Add(newLine));
 
             var indentationSteps = IndentationHelper.GetIndentationSteps(indentationOptions, constructorDeclaration);
             var indentation = IndentationHelper.GenerateWhitespaceTrivia(indentationOptions, indentationSteps + 1);
@@ -71,12 +89,53 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 .WithColonToken(newColonToken)
                 .WithThisOrBaseKeyword(constructorInitializer.ThisOrBaseKeyword.WithLeadingTrivia(SyntaxFactory.Space));
 
-            var newConstructorDeclaration = constructorDeclaration
+            return constructorDeclaration
                 .WithParameterList(newParameterList)
                 .WithInitializer(newInitializer);
+        }
 
-            var newSyntaxRoot = syntaxRoot.ReplaceNode(constructorDeclaration, newConstructorDeclaration);
-            return document.WithSyntaxRoot(newSyntaxRoot);
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; } =
+                new FixAll();
+
+            protected override string CodeActionTitle { get; } =
+                ReadabilityResources.SA1128CodeFix;
+
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            {
+                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
+                if (diagnostics.IsEmpty)
+                {
+                    return null;
+                }
+
+                var syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var indentationOptions = IndentationOptions.FromDocument(document);
+                var newLine = TriviaHelper.GetNewLineTrivia(document);
+
+                SortedDictionary<SyntaxNode, SyntaxNode> replaceMap = new SortedDictionary<SyntaxNode, SyntaxNode>(new SpanComparer());
+
+                foreach (var diagnostic in diagnostics)
+                {
+                    var constructorInitializer = (ConstructorInitializerSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
+                    var constructorDeclaration = (ConstructorDeclarationSyntax)constructorInitializer.Parent;
+
+                    var newConstructorDeclaration = ReformatConstructorDeclaration(constructorDeclaration, indentationOptions, newLine);
+
+                    replaceMap.Add(constructorDeclaration, newConstructorDeclaration);
+                }
+
+                return syntaxRoot.ReplaceNodes(replaceMap.Keys, (original, maybeRewritten) => replaceMap[original]);
+            }
+        }
+
+        private class SpanComparer : IComparer<SyntaxNode>
+        {
+            public int Compare(SyntaxNode x, SyntaxNode y)
+            {
+                return x.Span.Start - y.Span.Start;
+            }
         }
     }
 }
