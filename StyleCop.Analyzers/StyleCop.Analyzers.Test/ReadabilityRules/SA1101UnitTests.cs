@@ -264,6 +264,43 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         }
 
         [Fact]
+        public async Task TestPrefixLocalCallsWithThisWithGenericArgumentsAsync()
+        {
+            string testCode = @"public class Test_SA1101
+{
+    public void Foo()
+    {
+        ConvertAll(42); // SA1101, OK
+        this.ConvertAll(42); // no SA1101, OK
+        ConvertAll<int>(42); // no SA1101, NOT OK!!!
+        this.ConvertAll<int>(42); // SA1101, OK
+    }
+    public void ConvertAll<T>(T value) { }
+}";
+            string fixedCode = @"public class Test_SA1101
+{
+    public void Foo()
+    {
+        this.ConvertAll(42); // SA1101, OK
+        this.ConvertAll(42); // no SA1101, OK
+        this.ConvertAll<int>(42); // no SA1101, NOT OK!!!
+        this.ConvertAll<int>(42); // SA1101, OK
+    }
+    public void ConvertAll<T>(T value) { }
+}";
+
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(5, 9),
+                this.CSharpDiagnostic().WithLocation(7, 9)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestPrefixLocalCallsWithThisCodeFixAsync()
         {
             await this.VerifyCSharpFixAsync(ReferenceCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
