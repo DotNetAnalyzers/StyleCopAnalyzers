@@ -270,10 +270,10 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     public void Foo()
     {
-        ConvertAll(42); // SA1101, OK
-        this.ConvertAll(42); // no SA1101, OK
-        ConvertAll<int>(42); // no SA1101, NOT OK!!!
-        this.ConvertAll<int>(42); // SA1101, OK
+        ConvertAll(42); // SA1101
+        this.ConvertAll(42); // no SA1101
+        ConvertAll<int>(42); // SA1101
+        this.ConvertAll<int>(42); // no SA1101
     }
     public void ConvertAll<T>(T value) { }
 }";
@@ -281,10 +281,10 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     public void Foo()
     {
-        this.ConvertAll(42); // SA1101, OK
-        this.ConvertAll(42); // no SA1101, OK
-        this.ConvertAll<int>(42); // no SA1101, NOT OK!!!
-        this.ConvertAll<int>(42); // SA1101, OK
+        this.ConvertAll(42); // SA1101
+        this.ConvertAll(42); // no SA1101
+        this.ConvertAll<int>(42); // SA1101
+        this.ConvertAll<int>(42); // no SA1101
     }
     public void ConvertAll<T>(T value) { }
 }";
