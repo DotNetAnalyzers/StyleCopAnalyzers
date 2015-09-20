@@ -1016,6 +1016,15 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Place each field on a new line.
+        /// </summary>
+        internal static string SA1132CodeFix {
+            get {
+                return ResourceManager.GetString("SA1132CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Each field should be declared on its own line, in order to clearly see each field of a type and allow for proper documentation of the behavior of each field..
         /// </summary>
         internal static string SA1132Description {
@@ -1025,7 +1034,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Each field should be declared on its own line.
         /// </summary>
         internal static string SA1132MessageFormat {
             get {

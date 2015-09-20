@@ -324,6 +324,7 @@
     <Compile Include="ReadabilityRules\SA1129DoNotUseDefaultValueTypeConstructor.cs" />
     <Compile Include="ReadabilityRules\SA1130UseLambdaSyntax.cs" />
     <Compile Include="ReadabilityRules\SA1131UseReadableConditions.cs" />
+    <Compile Include="ReadabilityRules\SA1132CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1132DoNotCombineFields.cs" />
     <Compile Include="ReadabilityRules\SA1133DoNotCombineAttributes.cs" />
     <Compile Include="Settings\ObjectModel\DocumentationSettings.cs" />
