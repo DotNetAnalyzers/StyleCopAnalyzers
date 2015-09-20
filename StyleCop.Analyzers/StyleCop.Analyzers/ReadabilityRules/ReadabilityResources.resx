@@ -435,11 +435,14 @@
   <data name="SA1131Title" xml:space="preserve">
     <value>Use readable conditions</value>
   </data>
+  <data name="SA1132CodeFix" xml:space="preserve">
+    <value>Place each field on a new line</value>
+  </data>
   <data name="SA1132Description" xml:space="preserve">
     <value>Each field should be declared on its own line, in order to clearly see each field of a type and allow for proper documentation of the behavior of each field.</value>
   </data>
   <data name="SA1132MessageFormat" xml:space="preserve">
-    <value />
+    <value>Each field should be declared on its own line</value>
   </data>
   <data name="SA1132Title" xml:space="preserve">
     <value>Do not combine fields</value>
