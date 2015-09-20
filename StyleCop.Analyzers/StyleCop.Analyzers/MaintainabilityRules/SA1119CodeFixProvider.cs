@@ -34,7 +34,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return FixAll.Instance;
         }
 
         /// <inheritdoc/>
@@ -64,20 +64,47 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             }
         }
 
-        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, ParenthesizedExpressionSyntax syntax)
+        private static SyntaxNode GetReplacement(ParenthesizedExpressionSyntax oldNode)
         {
-            var leadingTrivia = SyntaxFactory.TriviaList(syntax.OpenParenToken.GetAllTrivia().Concat(syntax.Expression.GetLeadingTrivia()));
-            var trailingTrivia = syntax.Expression.GetTrailingTrivia().AddRange(syntax.CloseParenToken.GetAllTrivia());
+            var leadingTrivia = SyntaxFactory.TriviaList(oldNode.OpenParenToken.GetAllTrivia().Concat(oldNode.Expression.GetLeadingTrivia()));
+            var trailingTrivia = oldNode.Expression.GetTrailingTrivia().AddRange(oldNode.CloseParenToken.GetAllTrivia());
 
-            var newNode = syntax.Expression
+            return oldNode.Expression
                 .WithLeadingTrivia(leadingTrivia.Any() ? leadingTrivia : SyntaxFactory.TriviaList(SyntaxFactory.ElasticMarker))
                 .WithTrailingTrivia(trailingTrivia.Any() ? trailingTrivia : SyntaxFactory.TriviaList(SyntaxFactory.ElasticMarker));
+        }
 
-            var newSyntaxRoot = root.ReplaceNode(syntax, newNode);
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, ParenthesizedExpressionSyntax syntax)
+        {
+            var newSyntaxRoot = root.ReplaceNode(syntax, GetReplacement(syntax));
 
             var changedDocument = document.WithSyntaxRoot(newSyntaxRoot);
 
             return Task.FromResult(changedDocument);
+        }
+
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; }
+                = new FixAll();
+
+            protected override string CodeActionTitle
+                => MaintainabilityResources.SA1119CodeFix;
+
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            {
+                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
+                if (diagnostics.IsEmpty)
+                {
+                    return null;
+                }
+
+                var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
+
+                var nodes = diagnostics.Select(diagnostic => syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true, findInsideTrivia: true));
+
+                return syntaxRoot.ReplaceNodes(nodes, (originalNode, rewrittenNode) => GetReplacement((ParenthesizedExpressionSyntax)rewrittenNode));
+            }
         }
     }
 }
