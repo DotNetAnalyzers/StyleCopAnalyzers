@@ -15,6 +15,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Editing;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.SpacingRules;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1132DoNotCombineFields"/>.
@@ -63,7 +64,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 var editor = new SyntaxEditor(syntaxRoot, document.Project.Solution.Workspace);
                 editor.InsertAfter(baseFieldDeclaration, newFieldDeclarations);
                 editor.RemoveNode(baseFieldDeclaration);
-                return document.WithSyntaxRoot(editor.GetChangedRoot());
+                return document.WithSyntaxRoot(editor.GetChangedRoot().WithoutFormatting());
             }
 
             return document;
@@ -81,7 +82,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 foreach (VariableDeclaratorSyntax variable in variables)
                 {
-                    var variableDeclarator = SyntaxFactory.SeparatedList(new[] { variable });
+                    var variableDeclarator = SyntaxFactory.SingletonSeparatedList(variable);
                     var newFieldDeclaration = fieldDeclaration.WithDeclaration(declaration.WithVariables(variableDeclarator));
 
                     if (variable != first)
@@ -106,7 +107,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 foreach (VariableDeclaratorSyntax variable in variables)
                 {
-                    var variableDeclarator = SyntaxFactory.SeparatedList(new[] { variable });
+                    var variableDeclarator = SyntaxFactory.SingletonSeparatedList(variable);
                     var newEventFieldDeclaration = eventFieldDeclaration.WithDeclaration(declaration.WithVariables(variableDeclarator));
 
                     if (variable != first)

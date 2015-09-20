@@ -19,20 +19,39 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         [InlineData("public event System.Action a;")]
         public async Task TestValidDeclarationAsync(string declaration)
         {
-            var testCode = GetTemplate(declaration);
+            var testCode = $@"
+class Foo
+{{
+    {declaration}
+}}";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Theory]
-        [InlineData("private int a, b;", "private int a;\r\n    private int b;")]
-        [InlineData("public event System.Action a, b;", "public event System.Action a;\r\n    public event System.Action b;")]
-        public async Task TestInvalidDeclarationAsync(string declaration, string fixedDeclaration)
+        [Fact]
+        public async Task TestInvalidDeclarationAsync()
         {
-            string testCode = GetTemplate(declaration);
-            string fixedCode = GetTemplate(fixedDeclaration);
+            const string testCode = @"
+class Foo
+{
+    private int a, b;
+    public event System.Action aa, bb;
+}";
+            const string fixedCode = @"
+class Foo
+{
+    private int a;
+    private int b;
+    public event System.Action aa;
+    public event System.Action bb;
+}";
 
-            var expected = this.CSharpDiagnostic().WithLocation(4, 5);
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(4, 5),
+                this.CSharpDiagnostic().WithLocation(5, 5)
+            };
+
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
@@ -109,15 +128,6 @@ class TestAttribute : System.Attribute
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1132DoNotCombineFields();
-        }
-
-        private static string GetTemplate(string declaration)
-        {
-            return $@"
-class Foo
-{{
-    {declaration}
-}}";
         }
     }
 }

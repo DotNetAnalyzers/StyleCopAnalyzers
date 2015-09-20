@@ -164,25 +164,9 @@ namespace StyleCop.Analyzers.Helpers
             var resultTriviaList = new List<SyntaxTrivia>(triviaList.Count);
             foreach (var trivia in triviaList)
             {
-                switch (trivia.Kind())
+                if (!trivia.IsDirective)
                 {
-                    case SyntaxKind.IfDirectiveTrivia:
-                    case SyntaxKind.ElseDirectiveTrivia:
-                    case SyntaxKind.ElifDirectiveTrivia:
-                    case SyntaxKind.EndIfDirectiveTrivia:
-                    case SyntaxKind.DefineDirectiveTrivia:
-                    case SyntaxKind.UndefDirectiveTrivia:
-                    case SyntaxKind.WarningDirectiveTrivia:
-                    case SyntaxKind.ErrorDirectiveTrivia:
-                    case SyntaxKind.LineDirectiveTrivia:
-                    case SyntaxKind.RegionDirectiveTrivia:
-                    case SyntaxKind.EndRegionDirectiveTrivia:
-                    case SyntaxKind.PragmaWarningDirectiveTrivia:
-                    case SyntaxKind.PragmaChecksumDirectiveTrivia:
-                        continue;
-                    default:
-                        resultTriviaList.Add(trivia);
-                        continue;
+                    resultTriviaList.Add(trivia);
                 }
             }
 
