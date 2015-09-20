@@ -1068,5 +1068,32 @@ namespace StyleCop.Analyzers.ReadabilityRules {
                 return ResourceManager.GetString("SA1133Title", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Each attribute should be placed on its own line of code..
+        /// </summary>
+        internal static string SA1134Description {
+            get {
+                return ResourceManager.GetString("SA1134Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string SA1134MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1134MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Attributes must not shared line.
+        /// </summary>
+        internal static string SA1134Title {
+            get {
+                return ResourceManager.GetString("SA1134Title", resourceCulture);
+            }
+        }
     }
 }
