@@ -68,8 +68,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 return;
             }
 
-            NullableTypeSyntax parentNullableTypeSyntax = questionToken.Parent as NullableTypeSyntax;
-            if (parentNullableTypeSyntax != null && parentNullableTypeSyntax.ElementType.IsMissing)
+            if (nullableType.ElementType.IsMissing)
             {
                 return;
             }
