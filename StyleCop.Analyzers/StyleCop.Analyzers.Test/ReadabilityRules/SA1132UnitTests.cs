@@ -68,8 +68,10 @@ class Foo
             const string testCode = @"
 class Foo
 {
+#if true
     [Test]
     public event System.Action foo, bar;
+#endif
 }
 
 [System.AttributeUsage(System.AttributeTargets.Event)]
@@ -79,10 +81,12 @@ class TestAttribute : System.Attribute
             const string fixedCode = @"
 class Foo
 {
+#if true
     [Test]
     public event System.Action foo;
     [Test]
     public event System.Action bar;
+#endif
 }
 
 [System.AttributeUsage(System.AttributeTargets.Event)]
@@ -90,7 +94,7 @@ class TestAttribute : System.Attribute
 {
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(4, 5);
+            var expected = this.CSharpDiagnostic().WithLocation(5, 5);
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);

@@ -159,6 +159,36 @@ namespace StyleCop.Analyzers.Helpers
             return SyntaxFactory.TriviaList(trivia);
         }
 
+        internal static SyntaxTriviaList WithoutDirectiveTrivia(this SyntaxTriviaList triviaList)
+        {
+            var resultTriviaList = new List<SyntaxTrivia>(triviaList.Count);
+            foreach (var trivia in triviaList)
+            {
+                switch (trivia.Kind())
+                {
+                    case SyntaxKind.IfDirectiveTrivia:
+                    case SyntaxKind.ElseDirectiveTrivia:
+                    case SyntaxKind.ElifDirectiveTrivia:
+                    case SyntaxKind.EndIfDirectiveTrivia:
+                    case SyntaxKind.DefineDirectiveTrivia:
+                    case SyntaxKind.UndefDirectiveTrivia:
+                    case SyntaxKind.WarningDirectiveTrivia:
+                    case SyntaxKind.ErrorDirectiveTrivia:
+                    case SyntaxKind.LineDirectiveTrivia:
+                    case SyntaxKind.RegionDirectiveTrivia:
+                    case SyntaxKind.EndRegionDirectiveTrivia:
+                    case SyntaxKind.PragmaWarningDirectiveTrivia:
+                    case SyntaxKind.PragmaChecksumDirectiveTrivia:
+                        continue;
+                    default:
+                        resultTriviaList.Add(trivia);
+                        continue;
+                }
+            }
+
+            return SyntaxFactory.TriviaList(resultTriviaList);
+        }
+
         /// <summary>
         /// Returns the index of the last trivia of a specified kind in the trivia list.
         /// </summary>

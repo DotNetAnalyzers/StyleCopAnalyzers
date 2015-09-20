@@ -76,15 +76,21 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 VariableDeclarationSyntax declaration = fieldDeclaration.Declaration;
                 SeparatedSyntaxList<VariableDeclaratorSyntax> variables = declaration.Variables;
+                VariableDeclaratorSyntax first = variables.First();
                 var newFieldDeclarations = new List<BaseFieldDeclarationSyntax>(variables.Count);
 
                 foreach (VariableDeclaratorSyntax variable in variables)
                 {
                     var variableDeclarator = SyntaxFactory.SeparatedList(new[] { variable });
+                    var newFieldDeclaration = fieldDeclaration.WithDeclaration(declaration.WithVariables(variableDeclarator));
 
-                    newFieldDeclarations.Add(
-                        fieldDeclaration.WithDeclaration(
-                            declaration.WithVariables(variableDeclarator)));
+                    if (variable != first)
+                    {
+                        var triviaList = newFieldDeclaration.GetLeadingTrivia().WithoutDirectiveTrivia();
+                        newFieldDeclaration = newFieldDeclaration.WithLeadingTrivia(triviaList);
+                    }
+
+                    newFieldDeclarations.Add(newFieldDeclaration);
                 }
 
                 return newFieldDeclarations;
@@ -95,15 +101,21 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 VariableDeclarationSyntax declaration = eventFieldDeclaration.Declaration;
                 SeparatedSyntaxList<VariableDeclaratorSyntax> variables = declaration.Variables;
+                var first = variables.First();
                 var newEventFieldDeclarations = new List<BaseFieldDeclarationSyntax>(variables.Count);
 
                 foreach (VariableDeclaratorSyntax variable in variables)
                 {
                     var variableDeclarator = SyntaxFactory.SeparatedList(new[] { variable });
+                    var newEventFieldDeclaration = eventFieldDeclaration.WithDeclaration(declaration.WithVariables(variableDeclarator));
 
-                    newEventFieldDeclarations.Add(
-                        eventFieldDeclaration.WithDeclaration(
-                            declaration.WithVariables(variableDeclarator)));
+                    if (variable != first)
+                    {
+                        var triviaList = newEventFieldDeclaration.GetLeadingTrivia().WithoutDirectiveTrivia();
+                        newEventFieldDeclaration = newEventFieldDeclaration.WithLeadingTrivia(triviaList);
+                    }
+
+                    newEventFieldDeclarations.Add(newEventFieldDeclaration);
                 }
 
                 return newEventFieldDeclarations;
