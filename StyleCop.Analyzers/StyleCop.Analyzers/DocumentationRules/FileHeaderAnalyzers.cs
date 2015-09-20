@@ -180,11 +180,11 @@ namespace StyleCop.Analyzers.DocumentationRules
             // Disabling SA1633 will disable all other header related diagnostics.
             if (!compilation.IsAnalyzerSuppressed(SA1633Identifier))
             {
-                context.RegisterSyntaxTreeActionHonorExclusions(ctx => HandleSyntaxTreeAxtion(ctx, compilation));
+                context.RegisterSyntaxTreeActionHonorExclusions(ctx => HandleSyntaxTreeAction(ctx, compilation));
             }
         }
 
-        private static void HandleSyntaxTreeAxtion(SyntaxTreeAnalysisContext context, Compilation compilation)
+        private static void HandleSyntaxTreeAction(SyntaxTreeAnalysisContext context, Compilation compilation)
         {
             var root = context.Tree.GetRoot(context.CancellationToken);
             var settings = context.GetStyleCopSettings();

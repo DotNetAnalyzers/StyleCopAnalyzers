@@ -129,6 +129,8 @@ namespace StyleCop.Analyzers.LayoutRules
                 }
 
                 int triviaIndex;
+
+                // PERF: Explicitly cast to IReadOnlyList so we only box once.
                 var triviaList = TriviaHelper.GetContainingTriviaList(trivia, out triviaIndex);
 
                 if (!IsOnOwnLine(triviaList, triviaIndex))
@@ -166,7 +168,8 @@ namespace StyleCop.Analyzers.LayoutRules
             }
         }
 
-        private static bool IsOnOwnLine(IReadOnlyList<SyntaxTrivia> triviaList, int triviaIndex)
+        private static bool IsOnOwnLine<T>(T triviaList, int triviaIndex)
+            where T : IReadOnlyList<SyntaxTrivia>
         {
             while (triviaIndex >= 0)
             {
@@ -181,7 +184,8 @@ namespace StyleCop.Analyzers.LayoutRules
             return false;
         }
 
-        private static bool IsPrecededBySingleLineCommentOrDocumentation(IReadOnlyList<SyntaxTrivia> triviaList, int triviaIndex)
+        private static bool IsPrecededBySingleLineCommentOrDocumentation<T>(T triviaList, int triviaIndex)
+            where T : IReadOnlyList<SyntaxTrivia>
         {
             var eolCount = 0;
 
@@ -211,7 +215,8 @@ namespace StyleCop.Analyzers.LayoutRules
             return false;
         }
 
-        private static bool IsPrecededByBlankLine(IReadOnlyList<SyntaxTrivia> triviaList, int triviaIndex)
+        private static bool IsPrecededByBlankLine<T>(T triviaList, int triviaIndex)
+            where T : IReadOnlyList<SyntaxTrivia>
         {
             var eolCount = 0;
             var index = triviaIndex - 1;
@@ -258,7 +263,8 @@ namespace StyleCop.Analyzers.LayoutRules
                    || prevToken.Parent.IsKind(SyntaxKind.DefaultSwitchLabel);
         }
 
-        private static bool IsPrecededByDirectiveTrivia(IReadOnlyList<SyntaxTrivia> triviaList, int triviaIndex)
+        private static bool IsPrecededByDirectiveTrivia<T>(T triviaList, int triviaIndex)
+            where T : IReadOnlyList<SyntaxTrivia>
         {
             triviaIndex--;
             while (triviaIndex >= 0)

@@ -117,6 +117,8 @@ namespace StyleCop.Analyzers.LayoutRules
                 }
 
                 int triviaIndex;
+
+                // PERF: Explicitly cast to IReadOnlyList so we only box once.
                 var triviaList = TriviaHelper.GetContainingTriviaList(trivia, out triviaIndex);
 
                 if (!IsOnOwnLine(triviaList, triviaIndex))
@@ -166,7 +168,8 @@ namespace StyleCop.Analyzers.LayoutRules
             }
         }
 
-        private static bool IsOnOwnLine(IReadOnlyList<SyntaxTrivia> triviaList, int triviaIndex)
+        private static bool IsOnOwnLine<T>(T triviaList, int triviaIndex)
+            where T : IReadOnlyList<SyntaxTrivia>
         {
             while (triviaIndex >= 0)
             {
@@ -181,7 +184,8 @@ namespace StyleCop.Analyzers.LayoutRules
             return false;
         }
 
-        private static bool IsPartOfFileHeader(IReadOnlyList<SyntaxTrivia> triviaList, int triviaIndex)
+        private static bool IsPartOfFileHeader<T>(T triviaList, int triviaIndex)
+            where T : IReadOnlyList<SyntaxTrivia>
         {
             if (triviaList[0].FullSpan.Start > 0)
             {
@@ -215,7 +219,8 @@ namespace StyleCop.Analyzers.LayoutRules
             return true;
         }
 
-        private static int GetTrailingBlankLineCount(IReadOnlyList<SyntaxTrivia> triviaList, ref int triviaIndex)
+        private static int GetTrailingBlankLineCount<T>(T triviaList, ref int triviaIndex)
+            where T : IReadOnlyList<SyntaxTrivia>
         {
             int eolCount = 0;
 

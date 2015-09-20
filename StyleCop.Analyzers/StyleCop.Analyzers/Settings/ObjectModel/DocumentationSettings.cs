@@ -33,6 +33,11 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         private string copyrightText;
 
         /// <summary>
+        /// This is the cache for the <see cref="CopyrightText"/> property.
+        /// </summary>
+        private string copyrightTextCache;
+
+        /// <summary>
         /// This is the backing field for the <see cref="Variables"/> property.
         /// </summary>
         [JsonProperty("variables", DefaultValueHandling = DefaultValueHandling.Ignore)]
@@ -104,33 +109,12 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         {
             get
             {
-                string pattern = Regex.Escape("{") + "(?<Property>[a-zA-Z0-9]+)" + Regex.Escape("}");
-                MatchEvaluator evaluator =
-                    match =>
-                    {
-                        string key = match.Groups["Property"].Value;
-                        switch (key)
-                        {
-                        case "companyName":
-                            return this.CompanyName;
+                if (this.copyrightTextCache == null)
+                {
+                    this.copyrightTextCache = this.BuildCopyrightText();
+                }
 
-                        case "copyrightText":
-                            return "[CircularReference]";
-
-                        default:
-                            string value;
-                            if (this.Variables.TryGetValue(key, out value))
-                            {
-                                return value;
-                            }
-
-                            break;
-                        }
-
-                        return "[InvalidReference]";
-                    };
-
-                return Regex.Replace(this.copyrightText, pattern, evaluator);
+                return this.copyrightTextCache;
             }
         }
 
@@ -164,5 +148,36 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
         public bool DocumentPrivateFields =>
             this.documentPrivateFields;
+
+        private string BuildCopyrightText()
+        {
+            string pattern = Regex.Escape("{") + "(?<Property>[a-zA-Z0-9]+)" + Regex.Escape("}");
+            MatchEvaluator evaluator =
+                match =>
+                {
+                    string key = match.Groups["Property"].Value;
+                    switch (key)
+                    {
+                    case "companyName":
+                        return this.CompanyName;
+
+                    case "copyrightText":
+                        return "[CircularReference]";
+
+                    default:
+                        string value;
+                        if (this.Variables.TryGetValue(key, out value))
+                        {
+                            return value;
+                        }
+
+                        break;
+                    }
+
+                    return "[InvalidReference]";
+                };
+
+            return Regex.Replace(this.copyrightText, pattern, evaluator);
+        }
     }
 }

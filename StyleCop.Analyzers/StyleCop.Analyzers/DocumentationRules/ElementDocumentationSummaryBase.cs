@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
+    using System;
     using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -144,13 +145,25 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            var locations =
-                from variable in node.Declaration.Variables
-                let identifier = variable.Identifier
-                where !identifier.IsMissing
-                select identifier.GetLocation();
+            Location[] locations = new Location[node.Declaration.Variables.Count];
 
-            this.HandleDeclaration(context, node, locations.ToArray());
+            int insertionIndex = 0;
+
+            foreach (var variable in node.Declaration.Variables)
+            {
+                var identifier = variable.Identifier;
+                if (!identifier.IsMissing)
+                {
+                    locations[insertionIndex++] = identifier.GetLocation();
+                }
+            }
+
+            // PERF: Most of the time locations will have the correct size.
+            // The only case where it might be smaller is in invalid syntax like
+            // int i,;
+            Array.Resize(ref locations, insertionIndex);
+
+            this.HandleDeclaration(context, node, locations);
         }
 
         private void HandleEventDeclaration(SyntaxNodeAnalysisContext context)

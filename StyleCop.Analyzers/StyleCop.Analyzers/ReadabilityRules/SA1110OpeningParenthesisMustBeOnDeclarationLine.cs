@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
     using Microsoft.CodeAnalysis;
@@ -176,7 +175,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var attribute = (AttributeSyntax)context.Node;
 
-            var qualifiedNameSyntax = attribute.ChildNodes().OfType<QualifiedNameSyntax>().FirstOrDefault();
+            var qualifiedNameSyntax = attribute.Name as QualifiedNameSyntax;
             IdentifierNameSyntax identifierNameSyntax = null;
             if (qualifiedNameSyntax != null)
             {
@@ -184,7 +183,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
             else
             {
-                identifierNameSyntax = attribute.DescendantNodes().OfType<IdentifierNameSyntax>().FirstOrDefault();
+                identifierNameSyntax = attribute.Name as IdentifierNameSyntax;
             }
 
             if (identifierNameSyntax != null)
