@@ -41,7 +41,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// This is the backing field for the <see cref="Variables"/> property.
         /// </summary>
         [JsonProperty("variables", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        private ImmutableDictionary<string, string> variables;
+        private ImmutableDictionary<string, string>.Builder variables;
 
         /// <summary>
         /// This is the backing field for the <see cref="XmlHeader"/> property.
@@ -87,7 +87,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         {
             this.companyName = DefaultCompanyName;
             this.copyrightText = DefaultCopyrightText;
-            this.variables = ImmutableDictionary<string, string>.Empty;
+            this.variables = ImmutableDictionary<string, string>.Empty.ToBuilder();
             this.xmlHeader = true;
 
             this.documentExposedElements = true;
@@ -122,7 +122,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         {
             get
             {
-                return this.variables;
+                return this.variables.ToImmutable();
             }
         }
 
