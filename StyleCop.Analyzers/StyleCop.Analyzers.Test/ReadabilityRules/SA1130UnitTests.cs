@@ -84,6 +84,34 @@ public class TypeName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestDelegateUseAsMethodArgumentsWithNonConflictingExpressionOverloadAsync()
+        {
+            var testCode = @"
+using System;
+using System.Linq.Expressions;
+public class TypeName
+{
+    public void Test(Action argument)
+    {
+
+    }
+
+    public void Test(Expression<Func<int>> argument)
+    {
+
+    }
+
+    public void Test()
+    {
+        Test(delegate { });
+    }
+}";
+            var expected = this.CSharpDiagnostic().WithLocation(18, 14);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
