@@ -377,6 +377,74 @@ class TestClass1 { }
         }
 
         /// <summary>
+        /// Verifies that the analyzer will properly handle wrongly ordered classes with a file header.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestWronglyOrderedClassesWithFileHeaderAsync()
+        {
+            var testCode = @"// Test header
+
+public class TestClass1 { }
+public static class TestClass2 { }
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(4, 21).WithArguments("public", "classes");
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedCode = @"// Test header
+
+public static class TestClass2 { }
+public class TestClass1 { }
+";
+
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer will properly handle wrongly ordered classes with a file header and XMN comments.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestWronglyOrderedClassesWithFileHeaderAndXmlCommentsAsync()
+        {
+            var testCode = @"// Test header
+
+/// <summary>
+/// Test comment 1
+/// </summary>
+public class TestClass1 { }
+
+/// <summary>
+/// Test comment 2
+/// </summary>
+public static class TestClass2 { }
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(11, 21).WithArguments("public", "classes");
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedCode = @"// Test header
+
+/// <summary>
+/// Test comment 2
+/// </summary>
+public static class TestClass2 { }
+
+/// <summary>
+/// Test comment 1
+/// </summary>
+public class TestClass1 { }
+";
+
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that the analyzer will properly handle ordering within a namespace.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
@@ -429,7 +497,7 @@ class MyClass2
     static MyClass2()
     {
     }
-    
+
     public MyClass2()
     {
     }
@@ -443,10 +511,10 @@ class MyClass2
             var fixedCode = @"
 class MyClass1
 {
-
     static MyClass1()
     {
     }
+
     public MyClass1()
     {
     }
@@ -457,7 +525,7 @@ class MyClass2
     static MyClass2()
     {
     }
-    
+
     public MyClass2()
     {
     }

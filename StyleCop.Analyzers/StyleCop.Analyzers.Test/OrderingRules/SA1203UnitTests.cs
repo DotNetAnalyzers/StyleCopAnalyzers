@@ -4,10 +4,8 @@
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Collections.Generic;
-    using System.Collections.Immutable;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.OrderingRules;
@@ -275,11 +273,11 @@ public class Foo
 
             var fixedTestCode = @"public class Foo
 {
-
-    public const string After2 = ""test"";
     private const string Before1 = ""test"";
 
     public const string Before2 = ""test"";
+
+    public const string After2 = ""test"";
 
     private const string After1 = ""test"";
 
@@ -325,11 +323,11 @@ public class Foo
 
             var fixedTestCode = @"public class Foo
 {
-
-    public const string After2 = ""test"";
     private const string Before1 = ""test"";
 
     public const string Before2 = ""test"";
+
+    public const string After2 = ""test"";
 
     //Comment on this field
     private const string After1 = ""test"";
@@ -447,19 +445,12 @@ const string foo = ""a"";
             return new ElementOrderCodeFixProvider();
         }
 
-        protected override Solution CreateSolution(ProjectId projectId, string language)
+        protected override IEnumerable<string> GetDisabledDiagnostics()
         {
-            Solution solution = base.CreateSolution(projectId, language);
             if (this.suppressSA1202)
             {
-                Project project = solution.GetProject(projectId);
-                CompilationOptions options = project.CompilationOptions;
-                ImmutableDictionary<string, ReportDiagnostic> specificOptions = options.SpecificDiagnosticOptions;
-                options = options.WithSpecificDiagnosticOptions(specificOptions.Add(SA1202ElementsMustBeOrderedByAccess.DiagnosticId, ReportDiagnostic.Suppress));
-                solution = solution.WithProjectCompilationOptions(projectId, options);
+                yield return SA1202ElementsMustBeOrderedByAccess.DiagnosticId;
             }
-
-            return solution;
         }
     }
 }

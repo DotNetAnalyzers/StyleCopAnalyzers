@@ -532,10 +532,10 @@ class TestClass1 { }
 
             var fixedCode = @"public class TestClass
 {
-
     public void B()
     {
     }
+
     private static void A()
     {
     }
@@ -740,10 +740,10 @@ class MyClass
             var fixedCode = @"
 class MyClass
 {
-
     public MyClass(int a)
     {
     }
+
     private MyClass()
     {
     }
@@ -904,10 +904,10 @@ public interface TestInterface
 
 public class TestClass : TestInterface
 {
-
     void TestInterface.SomeMethod()
     {
     }
+
     private static void ExampleMethod()
     {
     }

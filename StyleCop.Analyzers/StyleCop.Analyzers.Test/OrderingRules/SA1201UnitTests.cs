@@ -132,8 +132,8 @@ public struct FooStruct { }
     public string TestProperty { get; set; }
     public struct TestStruct { }
     public void TestMethod () { }
-    public string this[string arg] { get { return ""foo""; } set { } }
     public class TestClass { }
+    public string this[string arg] { get { return ""foo""; } set { } }
 }
 ";
             var expected = new[]
@@ -143,7 +143,7 @@ public struct FooStruct { }
                 this.CSharpDiagnostic().WithLocation(11, 5).WithArguments("conversion", "operator"),
                 this.CSharpDiagnostic().WithLocation(12, 19).WithArguments("property", "conversion"),
                 this.CSharpDiagnostic().WithLocation(14, 17).WithArguments("method", "struct"),
-                this.CSharpDiagnostic().WithLocation(15, 19).WithArguments("indexer", "method")
+                this.CSharpDiagnostic().WithLocation(16, 19).WithArguments("indexer", "class")
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -187,8 +187,8 @@ public struct FooStruct { }
     public string TestProperty { get; set; }
     public struct TestStruct { }
     public void TestMethod () { }
-    public string this[string arg] { get { return ""foo""; } set { } }
     public class TestClass { }
+    public string this[string arg] { get { return ""foo""; } set { } }
 }
 ";
             var expected = new[]
@@ -197,7 +197,7 @@ public struct FooStruct { }
                 this.CSharpDiagnostic().WithLocation(10, 5).WithArguments("conversion", "operator"),
                 this.CSharpDiagnostic().WithLocation(11, 19).WithArguments("property", "conversion"),
                 this.CSharpDiagnostic().WithLocation(13, 17).WithArguments("method", "struct"),
-                this.CSharpDiagnostic().WithLocation(14, 19).WithArguments("indexer", "method")
+                this.CSharpDiagnostic().WithLocation(15, 19).WithArguments("indexer", "class")
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -229,14 +229,18 @@ public struct FooStruct { }
         {
             string testCode = @"public interface OuterType
 {
-    event System.Action TestEvent;
     string TestProperty { get; set; }
+    event System.Action TestEvent;
     void TestMethod ();
     string this[string arg] { get; set; }
 }
 ";
 
-            var expected = this.CSharpDiagnostic().WithLocation(6, 12).WithArguments("indexer", "method");
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(4, 5).WithArguments("event", "property"),
+                this.CSharpDiagnostic().WithLocation(6, 12).WithArguments("indexer", "method")
+            };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 

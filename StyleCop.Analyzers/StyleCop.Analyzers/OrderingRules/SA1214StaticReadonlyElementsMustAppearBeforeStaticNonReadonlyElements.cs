@@ -74,6 +74,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 var field = member as FieldDeclarationSyntax;
                 if (field == null)
                 {
+                    previousFieldReadonly = true;
                     continue;
                 }
 

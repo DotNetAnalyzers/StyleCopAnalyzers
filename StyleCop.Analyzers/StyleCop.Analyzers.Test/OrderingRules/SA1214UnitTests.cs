@@ -243,10 +243,8 @@ public class Foo
             var fixTestCode = @"
 public class Foo
 {
-
     public static readonly int  u = 5;
 
-    public static readonly int j = 0;
     public string s = ""qwe"";
     private static readonly int i = 0;
 
@@ -256,15 +254,45 @@ public class Foo
 
     public class FooInner 
     {
-        private static readonly int e = 1;
         private int aa = 0;
         public static readonly int t = 2;
+        private static readonly int e = 1;
         private static int z = 999;
     }
+
+    public static readonly int j = 0;
 }";
+
             await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestStaticReadonlyPrecededByClassAsync()
+        {
+            var testCode = @"
+public class Foo
+{
+    public static readonly int  u = 5;
+    public string s = ""qwe"";
+    private static readonly int i = 0;
+
+    public void Ff() {}
+
+    public static string s2 = ""qwe"";
+
+    public class FooInner 
+    {
+        private int aa = 0;
+        public static readonly int t = 2;
+        private static readonly int e = 1;
+        private static int z = 999;
+    }
+
+    public static readonly int j = 0;
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]

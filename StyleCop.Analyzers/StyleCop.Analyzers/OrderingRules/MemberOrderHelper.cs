@@ -53,9 +53,9 @@ namespace StyleCop.Analyzers.OrderingRules
             if (checks.AccessLevel)
             {
                 if ((type == SyntaxKind.ConstructorDeclaration && this.modifierFlags.HasFlag(ModifierFlags.Static))
-                    || (type == SyntaxKind.MethodDeclaration && (member as MethodDeclarationSyntax)?.ExplicitInterfaceSpecifier != null)
-                    || (type == SyntaxKind.PropertyDeclaration && (member as PropertyDeclarationSyntax)?.ExplicitInterfaceSpecifier != null)
-                    || (type == SyntaxKind.IndexerDeclaration && (member as IndexerDeclarationSyntax)?.ExplicitInterfaceSpecifier != null))
+                    || (type == SyntaxKind.MethodDeclaration && ((MethodDeclarationSyntax)member).ExplicitInterfaceSpecifier != null)
+                    || (type == SyntaxKind.PropertyDeclaration && ((PropertyDeclarationSyntax)member).ExplicitInterfaceSpecifier != null)
+                    || (type == SyntaxKind.IndexerDeclaration && ((IndexerDeclarationSyntax)member).ExplicitInterfaceSpecifier != null))
                 {
                     this.accessibilty = AccessLevel.Public;
                 }
