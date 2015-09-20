@@ -3,9 +3,9 @@
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -16,7 +16,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// Implements a code fix for <see cref="SA1107CodeMustNotContainMultipleStatementsOnOneLine"/>.
+    /// Implements a code fix for <see cref="SA1128ConstructorInitializerMustBeOnOwnLine"/>.
     /// </summary>
     /// <remarks>
     /// <para>To fix a violation of this rule, add or remove a space after the keyword, according to the description
@@ -26,8 +26,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
     [Shared]
     internal class SA1128CodeFixProvider : CodeFixProvider
     {
-        ////private static readonly SA1107FixAllProvider FixAllProvider = new SA1107FixAllProvider();
-
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(SA1128ConstructorInitializerMustBeOnOwnLine.DiagnosticId);
@@ -114,27 +112,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 var indentationOptions = IndentationOptions.FromDocument(document);
                 var newLine = TriviaHelper.GetNewLineTrivia(document);
 
-                SortedDictionary<SyntaxNode, SyntaxNode> replaceMap = new SortedDictionary<SyntaxNode, SyntaxNode>(new SpanComparer());
+                var nodes = diagnostics.Select(diagnostic => syntaxRoot.FindNode(diagnostic.Location.SourceSpan).Parent);
 
-                foreach (var diagnostic in diagnostics)
-                {
-                    var constructorInitializer = (ConstructorInitializerSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
-                    var constructorDeclaration = (ConstructorDeclarationSyntax)constructorInitializer.Parent;
-
-                    var newConstructorDeclaration = ReformatConstructorDeclaration(constructorDeclaration, indentationOptions, newLine);
-
-                    replaceMap.Add(constructorDeclaration, newConstructorDeclaration);
-                }
-
-                return syntaxRoot.ReplaceNodes(replaceMap.Keys, (original, maybeRewritten) => replaceMap[original]);
-            }
-        }
-
-        private class SpanComparer : IComparer<SyntaxNode>
-        {
-            public int Compare(SyntaxNode x, SyntaxNode y)
-            {
-                return x.Span.Start - y.Span.Start;
+                return syntaxRoot.ReplaceNodes(nodes, (originalNode, rewrittenNode) => ReformatConstructorDeclaration((ConstructorDeclarationSyntax)rewrittenNode, indentationOptions, newLine));
             }
         }
     }
