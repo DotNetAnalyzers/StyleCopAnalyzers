@@ -65,7 +65,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
             context.RegisterSyntaxNodeActionHonorExclusions(HandleMemberAccessExpression, SyntaxKind.SimpleMemberAccessExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleIdentifierName, SyntaxKind.IdentifierName);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleIdentifierName, SyntaxKind.IdentifierName, SyntaxKind.GenericName);
         }
 
         /// <summary>
@@ -135,10 +135,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 break;
             }
 
-            HandleIdentifierNameImpl(context, (IdentifierNameSyntax)context.Node);
+            HandleIdentifierNameImpl(context, (SimpleNameSyntax)context.Node);
         }
 
-        private static void HandleIdentifierNameImpl(SyntaxNodeAnalysisContext context, IdentifierNameSyntax nameExpression)
+        private static void HandleIdentifierNameImpl(SyntaxNodeAnalysisContext context, SimpleNameSyntax nameExpression)
         {
             if (nameExpression == null)
             {
