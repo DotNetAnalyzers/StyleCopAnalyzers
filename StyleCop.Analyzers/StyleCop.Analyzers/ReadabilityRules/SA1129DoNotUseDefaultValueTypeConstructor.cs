@@ -5,6 +5,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -32,7 +34,35 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterCompilationStartAction(HandleCompilationStart);
+        }
+
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleNewExpression, SyntaxKind.ObjectCreationExpression);
+        }
+
+        private static void HandleNewExpression(SyntaxNodeAnalysisContext context)
+        {
+            ObjectCreationExpressionSyntax newExpression = (ObjectCreationExpressionSyntax)context.Node;
+
+            var typeToCreate = context.SemanticModel.GetTypeInfo(newExpression, context.CancellationToken);
+            if (typeToCreate.Type.IsReferenceType)
+            {
+                return;
+            }
+
+            if (newExpression.ArgumentList.Arguments.Count > 0)
+            {
+                return;
+            }
+
+            if (newExpression.Initializer != null)
+            {
+                return;
+            }
+
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, newExpression.GetLocation()));
         }
     }
 }

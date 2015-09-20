@@ -944,6 +944,15 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Replace with default(T).
+        /// </summary>
+        internal static string SA1129CodeFix {
+            get {
+                return ResourceManager.GetString("SA1129CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to When creating a new instance of a value type T, the syntax &apos;default(T)&apos; is functionally equivalent to the syntax &apos;new T()&apos;. To avoid confusion regarding the behavior of the resulting instance, the first form is preferred..
         /// </summary>
         internal static string SA1129Description {
@@ -953,7 +962,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Do not use default value type constructor.
         /// </summary>
         internal static string SA1129MessageFormat {
             get {
