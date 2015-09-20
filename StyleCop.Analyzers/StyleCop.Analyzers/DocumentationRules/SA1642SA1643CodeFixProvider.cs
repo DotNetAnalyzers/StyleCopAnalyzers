@@ -54,13 +54,19 @@ namespace StyleCop.Analyzers.DocumentationRules
                     continue;
                 }
 
-                var node = root.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true) as XmlElementSyntax;
-                if (node == null)
-                {
-                    continue;
-                }
+                var node = root.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true) as XmlNodeSyntax;
 
-                context.RegisterCodeFix(CodeAction.Create(DocumentationResources.SA1642SA1643CodeFix, token => GetTransformedDocumentAsync(context.Document, root, node), equivalenceKey: nameof(SA1642SA1643CodeFixProvider)), diagnostic);
+                var xmlElementSyntax = node as XmlElementSyntax;
+
+                if (xmlElementSyntax != null)
+                {
+                    context.RegisterCodeFix(CodeAction.Create(DocumentationResources.SA1642SA1643CodeFix, token => GetTransformedDocumentAsync(context.Document, root, xmlElementSyntax), equivalenceKey: nameof(SA1642SA1643CodeFixProvider)), diagnostic);
+                }
+                else
+                {
+                    var xmlEmptyElementSyntax = node as XmlEmptyElementSyntax;
+                    context.RegisterCodeFix(CodeAction.Create(DocumentationResources.SA1642SA1643CodeFix, token => GetTransformedDocumentAsync(context.Document, root, xmlEmptyElementSyntax), equivalenceKey: nameof(SA1642SA1643CodeFixProvider)), diagnostic);
+                }
             }
         }
 
@@ -130,6 +136,30 @@ namespace StyleCop.Analyzers.DocumentationRules
             var newNode = node.WithContent(newContent).AdjustDocumentationCommentNewLineTrivia();
 
             var newRoot = root.ReplaceNode(node, newNode);
+
+            var newDocument = document.WithSyntaxRoot(newRoot);
+
+            return Task.FromResult(newDocument);
+        }
+
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, XmlEmptyElementSyntax node)
+        {
+            var typeDeclaration = node.FirstAncestorOrSelf<BaseTypeDeclarationSyntax>();
+            var declarationSyntax = node.FirstAncestorOrSelf<BaseMethodDeclarationSyntax>();
+            bool isStruct = typeDeclaration.IsKind(SyntaxKind.StructDeclaration);
+
+            TypeParameterListSyntax typeParameterList;
+            ClassDeclarationSyntax classDeclaration = typeDeclaration as ClassDeclarationSyntax;
+            if (classDeclaration != null)
+            {
+                typeParameterList = classDeclaration.TypeParameterList;
+            }
+            else
+            {
+                typeParameterList = (typeDeclaration as StructDeclarationSyntax)?.TypeParameterList;
+            }
+
+            var newRoot = root.ReplaceNode(node, BuildSeeElement(typeDeclaration.Identifier, typeParameterList));
 
             var newDocument = document.WithSyntaxRoot(newRoot);
 
@@ -209,6 +239,15 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static SyntaxList<XmlNodeSyntax> BuildStandardText(SyntaxToken identifier, TypeParameterListSyntax typeParameters, string newLineText, string preText, string postText)
         {
+            return XmlSyntaxFactory.List(
+                XmlSyntaxFactory.NewLine(newLineText),
+                XmlSyntaxFactory.Text(preText),
+                BuildSeeElement(identifier, typeParameters),
+                XmlSyntaxFactory.Text(postText.EndsWith(".") ? postText : (postText + ".")));
+        }
+
+        private static XmlEmptyElementSyntax BuildSeeElement(SyntaxToken identifier, TypeParameterListSyntax typeParameters)
+        {
             TypeSyntax identifierName;
 
             // Get a TypeSyntax representing the class name with its type parameters
@@ -221,11 +260,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 identifierName = SyntaxFactory.GenericName(identifier.WithoutTrivia(), ParameterToArgumentListSyntax(typeParameters));
             }
 
-            return XmlSyntaxFactory.List(
-                XmlSyntaxFactory.NewLine(newLineText),
-                XmlSyntaxFactory.Text(preText),
-                XmlSyntaxFactory.SeeElement(SyntaxFactory.TypeCref(identifierName)),
-                XmlSyntaxFactory.Text(postText.EndsWith(".") ? postText : (postText + ".")));
+            return XmlSyntaxFactory.SeeElement(SyntaxFactory.TypeCref(identifierName));
         }
 
         private static TypeArgumentListSyntax ParameterToArgumentListSyntax(TypeParameterListSyntax typeParameters)

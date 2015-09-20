@@ -411,7 +411,6 @@ internal abstract class CustomizableBlockSubscriberBase<TSource, TTarget, TSubsc
 {
     /// <summary>
     /// Initializes a new instance of the <see cref=""CustomizableBlockSubscriberBase{TSource, TTarget, TSubscribedElement}""/> class.
-    /// Initializes a new instance of the <see cref=""ProjectBuildSnapshotService""/> class.
     /// </summary>
     protected CustomizableBlockSubscriberBase()
     {
@@ -419,7 +418,7 @@ internal abstract class CustomizableBlockSubscriberBase<TSource, TTarget, TSubsc
 }
 ";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 9);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 43);
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
@@ -592,7 +591,8 @@ internal abstract class CustomizableBlockSubscriberBase<TSource, TTarget, TSubsc
 
             await this.VerifyCSharpDiagnosticAsync(
                 testCode,
-                expected, CancellationToken.None).ConfigureAwait(false);
+                expected,
+                CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"namespace FooNamespace
 {{
@@ -637,7 +637,8 @@ internal abstract class CustomizableBlockSubscriberBase<TSource, TTarget, TSubsc
 
             await this.VerifyCSharpDiagnosticAsync(
                 testCode,
-                expected, CancellationToken.None).ConfigureAwait(false);
+                expected,
+                CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"namespace FooNamespace
 {{
