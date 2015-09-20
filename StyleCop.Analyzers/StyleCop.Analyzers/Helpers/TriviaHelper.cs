@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Helpers
     using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.Formatting;
 
     /// <summary>
     /// Provides helper methods to work with trivia (lists).
@@ -390,6 +391,11 @@ namespace StyleCop.Analyzers.Helpers
             return trivia.IsDirective
                 || trivia.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia)
                 || trivia.IsKind(SyntaxKind.EndOfLineTrivia);
+        }
+
+        internal static SyntaxTrivia GetNewLineTrivia(Document document)
+        {
+            return SyntaxFactory.SyntaxTrivia(SyntaxKind.EndOfLineTrivia, document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp));
         }
 
         private static int BinarySearch(SyntaxTriviaList leadingTrivia, SyntaxTrivia trivia)
