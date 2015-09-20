@@ -21,8 +21,10 @@ namespace StyleCop.Analyzers.Helpers
         /// <param name="triviaList">The trivia list to process.</param>
         /// <param name="endOfLineIsWhitespace"><see langword="true"/> to treat <see cref="SyntaxKind.EndOfLineTrivia"/>
         /// as whitespace; otherwise, <see langword="false"/>.</param>
+        /// <typeparam name="T">The type of the trivia list.</typeparam>
         /// <returns>The index where the non-whitespace starts, or -1 if there is no non-whitespace trivia.</returns>
-        internal static int IndexOfFirstNonWhitespaceTrivia(IReadOnlyList<SyntaxTrivia> triviaList, bool endOfLineIsWhitespace = true)
+        internal static int IndexOfFirstNonWhitespaceTrivia<T>(T triviaList, bool endOfLineIsWhitespace = true)
+            where T : IReadOnlyList<SyntaxTrivia>
         {
             for (var index = 0; index < triviaList.Count; index++)
             {
@@ -53,8 +55,10 @@ namespace StyleCop.Analyzers.Helpers
         /// Returns the index of the first trivia that is not part of a blank line.
         /// </summary>
         /// <param name="triviaList">The trivia list to process.</param>
+        /// <typeparam name="T">The type of the trivia list.</typeparam>
         /// <returns>The index of the first trivia that is not part of a blank line, or -1 if there is no such trivia.</returns>
-        internal static int IndexOfFirstNonBlankLineTrivia(IReadOnlyList<SyntaxTrivia> triviaList)
+        internal static int IndexOfFirstNonBlankLineTrivia<T>(T triviaList)
+            where T : IReadOnlyList<SyntaxTrivia>
         {
             var firstNonWhitespaceTriviaIndex = IndexOfFirstNonWhitespaceTrivia(triviaList);
             var startIndex = (firstNonWhitespaceTriviaIndex == -1) ? triviaList.Count : firstNonWhitespaceTriviaIndex;
@@ -75,8 +79,10 @@ namespace StyleCop.Analyzers.Helpers
         /// Returns the index into the trivia list where the trailing whitespace starts.
         /// </summary>
         /// <param name="triviaList">The trivia list to process.</param>
+        /// <typeparam name="T">The type of the trivia list.</typeparam>
         /// <returns>The index where the trailing whitespace starts, or -1 if there is no trailing whitespace.</returns>
-        internal static int IndexOfTrailingWhitespace(IReadOnlyList<SyntaxTrivia> triviaList)
+        internal static int IndexOfTrailingWhitespace<T>(T triviaList)
+            where T : IReadOnlyList<SyntaxTrivia>
         {
             var done = false;
             int whiteSpaceStartIndex = -1;
