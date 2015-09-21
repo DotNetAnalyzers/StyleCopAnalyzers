@@ -189,6 +189,20 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 {
                     return;
                 }
+
+                // This is a workaround for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1501 and can
+                // be removed when the underlying bug in roslyn is resolved
+                if (nameExpression.Parent is MemberAccessExpressionSyntax)
+                {
+                    var parentSymbol = context.SemanticModel.GetSymbolInfo(nameExpression.Parent, context.CancellationToken).Symbol as IFieldSymbol;
+
+                    if (parentSymbol.IsStatic && parentSymbol.ContainingType.Name == symbol.Name)
+                    {
+                        return;
+                    }
+                }
+
+                // End of workaround
             }
 
             // Prefix local calls with this
