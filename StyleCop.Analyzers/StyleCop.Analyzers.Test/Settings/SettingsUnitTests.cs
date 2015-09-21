@@ -25,6 +25,8 @@ namespace StyleCop.Analyzers.Test.Settings
 
             Assert.Equal("PlaceholderCompany", styleCopSettings.DocumentationRules.CompanyName);
             Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.CopyrightText);
+            Assert.True(styleCopSettings.NamingRules.AllowCommonHungarianPrefixes);
+            Assert.Equal(0, styleCopSettings.NamingRules.AllowedHungarianPrefixes.Length);
         }
 
         /// <summary>
@@ -40,6 +42,10 @@ namespace StyleCop.Analyzers.Test.Settings
     ""documentationRules"": {
       ""companyName"": ""TestCompany"",
       ""copyrightText"": ""Custom copyright text.""
+    },
+    ""namingRules"": {
+        ""allowCommonHungarianPrefixes"": false,
+        ""allowedHungarianPrefixes"": [""a"", ""ab""]
     }
   }
 }
@@ -50,6 +56,8 @@ namespace StyleCop.Analyzers.Test.Settings
 
             Assert.Equal("TestCompany", styleCopSettings.DocumentationRules.CompanyName);
             Assert.Equal("Custom copyright text.", styleCopSettings.DocumentationRules.CopyrightText);
+            Assert.False(styleCopSettings.NamingRules.AllowCommonHungarianPrefixes);
+            Assert.Equal(new[] { "a", "ab" }, styleCopSettings.NamingRules.AllowedHungarianPrefixes);
         }
 
         /// <summary>

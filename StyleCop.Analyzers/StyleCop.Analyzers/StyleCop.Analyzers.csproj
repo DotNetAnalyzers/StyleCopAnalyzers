@@ -330,6 +330,7 @@
     <Compile Include="ReadabilityRules\SA1133DoNotCombineAttributes.cs" />
     <Compile Include="ReadabilityRules\SA1134AttributesMustNotShareLine.cs" />
     <Compile Include="Settings\ObjectModel\DocumentationSettings.cs" />
+    <Compile Include="Settings\ObjectModel\NamingSettings.cs" />
     <Compile Include="Settings\ObjectModel\SettingsFile.cs" />
     <Compile Include="Settings\ObjectModel\StyleCopSettings.cs" />
     <Compile Include="Settings\SettingsFileCodeFixProvider.cs" />

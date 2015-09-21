@@ -80,6 +80,7 @@
               "default": [ ],
               "items": {
                 "type": "string",
+                "pattern": "^[a-z]{1,2}$",
                 "uniqueItems": true
               }
             }

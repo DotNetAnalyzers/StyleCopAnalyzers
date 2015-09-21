@@ -15,12 +15,19 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         private DocumentationSettings documentationRules;
 
         /// <summary>
+        /// This is the backing field for the <see cref="NamingRules"/> property.
+        /// </summary>
+        [JsonProperty("namingRules", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        private NamingSettings namingRules;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="StyleCopSettings"/> class during JSON deserialization.
         /// </summary>
         [JsonConstructor]
         protected internal StyleCopSettings()
         {
             this.documentationRules = new DocumentationSettings();
+            this.namingRules = new NamingSettings();
         }
 
         public DocumentationSettings DocumentationRules
@@ -28,6 +35,14 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             get
             {
                 return this.documentationRules;
+            }
+        }
+
+        public NamingSettings NamingRules
+        {
+            get
+            {
+                return this.namingRules;
             }
         }
     }
