@@ -27,23 +27,23 @@ namespace StyleCop.Analyzers.ReadabilityRules
     [Shared]
     internal class SA1121CodeFixProvider : CodeFixProvider
     {
-        private static readonly Dictionary<SpecialType, SyntaxKind> PredefinedSpecialTypes = new Dictionary<SpecialType, SyntaxKind>
+        private static readonly Dictionary<SpecialType, PredefinedTypeSyntax> PredefinedSpecialTypes = new Dictionary<SpecialType, PredefinedTypeSyntax>
         {
-            [SpecialType.System_Boolean] = SyntaxKind.BoolKeyword,
-            [SpecialType.System_Byte] = SyntaxKind.ByteKeyword,
-            [SpecialType.System_Char] = SyntaxKind.CharKeyword,
-            [SpecialType.System_Decimal] = SyntaxKind.DecimalKeyword,
-            [SpecialType.System_Double] = SyntaxKind.DoubleKeyword,
-            [SpecialType.System_Int16] = SyntaxKind.ShortKeyword,
-            [SpecialType.System_Int32] = SyntaxKind.IntKeyword,
-            [SpecialType.System_Int64] = SyntaxKind.LongKeyword,
-            [SpecialType.System_Object] = SyntaxKind.ObjectKeyword,
-            [SpecialType.System_SByte] = SyntaxKind.SByteKeyword,
-            [SpecialType.System_Single] = SyntaxKind.FloatKeyword,
-            [SpecialType.System_String] = SyntaxKind.StringKeyword,
-            [SpecialType.System_UInt16] = SyntaxKind.UShortKeyword,
-            [SpecialType.System_UInt32] = SyntaxKind.UIntKeyword,
-            [SpecialType.System_UInt64] = SyntaxKind.ULongKeyword
+            [SpecialType.System_Boolean] = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.BoolKeyword)),
+            [SpecialType.System_Byte] = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ByteKeyword)),
+            [SpecialType.System_Char] = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.CharKeyword)),
+            [SpecialType.System_Decimal] = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.DecimalKeyword)),
+            [SpecialType.System_Double] = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.DoubleKeyword)),
+            [SpecialType.System_Int16] = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ShortKeyword)),
+            [SpecialType.System_Int32] = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword)),
+            [SpecialType.System_Int64] = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.LongKeyword)),
+            [SpecialType.System_Object] = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ObjectKeyword)),
+            [SpecialType.System_SByte] = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.SByteKeyword)),
+            [SpecialType.System_Single] = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.FloatKeyword)),
+            [SpecialType.System_String] = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.StringKeyword)),
+            [SpecialType.System_UInt16] = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.UShortKeyword)),
+            [SpecialType.System_UInt32] = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.UIntKeyword)),
+            [SpecialType.System_UInt64] = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ULongKeyword))
         };
 
         private static readonly ImmutableArray<string> FixableDiagnostics =
@@ -55,7 +55,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return FixAll.Instance;
         }
 
         /// <inheritdoc/>
@@ -74,17 +74,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             return SpecializedTasks.CompletedTask;
         }
 
-        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+        private static SyntaxNode ComputeReplacement(SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken)
         {
-            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-            if (semanticModel == null)
-            {
-                return document;
-            }
-
-            var node = root.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
-
             var memberAccess = node.Parent as MemberAccessExpressionSyntax;
             if (memberAccess != null)
             {
@@ -96,14 +87,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             var type = semanticModel.GetSymbolInfo(node, cancellationToken).Symbol as INamedTypeSymbol;
 
-            SyntaxKind specialKind;
-            if (!PredefinedSpecialTypes.TryGetValue(type.SpecialType, out specialKind))
+            PredefinedTypeSyntax typeSyntax;
+            if (!PredefinedSpecialTypes.TryGetValue(type.SpecialType, out typeSyntax))
             {
-                return document;
+                return node;
             }
 
             SyntaxNode newNode;
-            PredefinedTypeSyntax typeSyntax = SyntaxFactory.PredefinedType(SyntaxFactory.Token(specialKind));
             if (node is CrefSyntax)
             {
                 newNode = SyntaxFactory.TypeCref(typeSyntax);
@@ -113,12 +103,55 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 newNode = typeSyntax;
             }
 
-            newNode = newNode
-                .WithTriviaFrom(node)
-                .WithoutFormatting();
+            return newNode.WithTriviaFrom(node).WithoutFormatting();
+        }
+
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+        {
+            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+            if (semanticModel == null)
+            {
+                return document;
+            }
+
+            var node = root.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
+
+            var newNode = ComputeReplacement(semanticModel, node, cancellationToken);
 
             var newRoot = root.ReplaceNode(node, newNode);
             return document.WithSyntaxRoot(newRoot);
+        }
+
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; }
+                = new FixAll();
+
+            protected override string CodeActionTitle
+                => ReadabilityResources.SA1121CodeFix;
+
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            {
+                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
+                if (diagnostics.IsEmpty)
+                {
+                    return null;
+                }
+
+                var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
+                var semanticModel = await document.GetSemanticModelAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+
+                List<SyntaxNode> nodesToReplace = new List<SyntaxNode>(diagnostics.Length);
+                foreach (var diagnostic in diagnostics)
+                {
+                    var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
+
+                    nodesToReplace.Add(node);
+                }
+
+                return syntaxRoot.ReplaceNodes(nodesToReplace, (originalNode, rewrittenNode) => ComputeReplacement(semanticModel, originalNode, fixAllContext.CancellationToken));
+            }
         }
     }
 }
