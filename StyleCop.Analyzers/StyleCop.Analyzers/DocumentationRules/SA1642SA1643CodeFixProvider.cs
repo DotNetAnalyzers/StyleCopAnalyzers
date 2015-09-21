@@ -54,7 +54,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     continue;
                 }
 
-                var node = root.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true) as XmlNodeSyntax;
+                var node = root.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
 
                 var xmlElementSyntax = node as XmlElementSyntax;
 
@@ -64,7 +64,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
                 else
                 {
-                    var xmlEmptyElementSyntax = node as XmlEmptyElementSyntax;
+                    var xmlEmptyElementSyntax = (XmlEmptyElementSyntax)node;
                     context.RegisterCodeFix(CodeAction.Create(DocumentationResources.SA1642SA1643CodeFix, token => GetTransformedDocumentAsync(context.Document, root, xmlEmptyElementSyntax), equivalenceKey: nameof(SA1642SA1643CodeFixProvider)), diagnostic);
                 }
             }
