@@ -32,6 +32,11 @@ namespace StyleCop.Analyzers.DocumentationRules
             None,
 
             /// <summary>
+            /// A standard text was found but the see element was incorrect.
+            /// </summary>
+            InvalidSeeTag,
+
+            /// <summary>
             /// A match to the expected text was found.
             /// </summary>
             FoundMatch,
@@ -75,11 +80,22 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 if (firstTextPartSyntax != null && classReferencePart != null && secondTextParSyntaxt != null)
                 {
-                    if (TextPartsMatch(firstTextPart, secondTextPart, firstTextPartSyntax, secondTextParSyntaxt)
-                        && SeeTagIsCorrect(context, classReferencePart, declarationSyntax))
+                    if (TextPartsMatch(firstTextPart, secondTextPart, firstTextPartSyntax, secondTextParSyntaxt))
                     {
-                        // We found a correct standard text
-                        return MatchResult.FoundMatch;
+                        if (SeeTagIsCorrect(context, classReferencePart, declarationSyntax))
+                        {
+                            // We found a correct standard text
+                            return MatchResult.FoundMatch;
+                        }
+                        else
+                        {
+                            if (diagnosticDescriptor != null)
+                            {
+                                context.ReportDiagnostic(Diagnostic.Create(diagnosticDescriptor, classReferencePart.GetLocation()));
+                            }
+
+                            return MatchResult.None;
+                        }
                     }
                 }
             }
