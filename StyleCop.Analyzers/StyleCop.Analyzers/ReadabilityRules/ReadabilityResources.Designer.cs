@@ -1106,7 +1106,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Attributes must not shared line.
+        ///   Looks up a localized string similar to Attributes must not share line.
         /// </summary>
         internal static string SA1134Title {
             get {
