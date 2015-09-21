@@ -980,7 +980,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Use lambda syntax.
         /// </summary>
         internal static string SA1130MessageFormat {
             get {
