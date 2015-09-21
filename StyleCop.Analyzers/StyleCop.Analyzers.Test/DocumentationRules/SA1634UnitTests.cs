@@ -131,6 +131,41 @@ namespace Bar
         }
 
         /// <summary>
+        /// Verifies that we keep leading spaces in a file header when adding copyright text.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestFileHeaderKeepsLeadingWhiteSpaceWhenAddingCopyrightMessageAsync()
+        {
+            var testCode = @"    // <author>FooCorp</author>
+    // <summary>
+    //   FooCorp Bar class
+    // </summary>
+
+namespace Bar
+{
+}
+";
+            var fixedCode = @"    // <copyright file=""Test0.cs"" company=""FooCorp"">
+    // Copyright (c) FooCorp. All rights reserved.
+    // </copyright>
+    // <author>FooCorp</author>
+    // <summary>
+    //   FooCorp Bar class
+    // </summary>
+
+namespace Bar
+{
+}
+";
+
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1634Descriptor).WithLocation(1, 5);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that a file header with missing copyright text the fix leaves behind other comments.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
@@ -153,6 +188,80 @@ namespace Bar
 //   John Doe
 // </author>
 // <summary>This is a test file.</summary>
+
+namespace Bar
+{
+}
+";
+
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1634Descriptor).WithLocation(1, 1);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a file header with missing copyright text and a multiline comment without leading stars the fix leaves behind other comments.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestFileHeaderForMultilineCommentWithoutLeadingStarsFixWithReplaceCopyrightTagTextAsync()
+        {
+            var testCode = @"/* <author>
+     John Doe
+   </author>
+   <summary>This is a test file.</summary>
+ */
+
+namespace Bar
+{
+}
+";
+            var fixedCode = @"/* <copyright file=""Test0.cs"" company=""FooCorp"">
+   Copyright (c) FooCorp. All rights reserved.
+   </copyright>
+   <author>
+     John Doe
+   </author>
+   <summary>This is a test file.</summary>
+ */
+
+namespace Bar
+{
+}
+";
+
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1634Descriptor).WithLocation(1, 1);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a file header with missing copyright text and a multiline comment with leading stars the fix leaves behind other comments.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestFileHeaderForMultilineCommentWithLeadingStarsFixWithReplaceCopyrightTagTextAsync()
+        {
+            var testCode = @"/* <author>
+ *   John Doe
+ * </author>
+ * <summary>This is a test file.</summary>
+ */
+
+namespace Bar
+{
+}
+";
+            var fixedCode = @"/* <copyright file=""Test0.cs"" company=""FooCorp"">
+ * Copyright (c) FooCorp. All rights reserved.
+ * </copyright>
+ * <author>
+ *   John Doe
+ * </author>
+ * <summary>This is a test file.</summary>
+ */
 
 namespace Bar
 {
