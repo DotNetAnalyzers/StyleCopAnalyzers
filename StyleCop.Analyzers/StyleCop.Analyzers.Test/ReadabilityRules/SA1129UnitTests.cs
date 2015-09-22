@@ -62,6 +62,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         var v1 = new TestStruct(1);
         var v2 = new TestStruct(1) { TestProperty = 2 };
         var v3 = new TestStruct() { TestProperty = 2 };
+        var v4 = new TestStruct { TestProperty = 2 };
     }
 
     private struct TestStruct
@@ -176,6 +177,55 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             {
                 this.CSharpDiagnostic().WithLocation(5, 27),
                 this.CSharpDiagnostic().WithLocation(9, 13)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that new expressions for value types through generics will generate diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyGenericsTypeCreationAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    public T TestMethod1<T>()
+        where T : struct
+    {
+        return new T();
+    }
+
+    public T TestMethod2<T>()
+        where T : new()
+    {
+        return new T();
+    }
+}
+";
+
+            var fixedTestCode = @"public class TestClass
+{
+    public T TestMethod1<T>()
+        where T : struct
+    {
+        return default(T);
+    }
+
+    public T TestMethod2<T>()
+        where T : new()
+    {
+        return new T();
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(6, 16)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

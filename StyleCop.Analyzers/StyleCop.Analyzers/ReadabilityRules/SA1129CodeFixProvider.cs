@@ -33,7 +33,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            foreach (var diagnostic in context.Diagnostics.Where(d => this.FixableDiagnosticIds.Contains(d.Id)))
+            foreach (var diagnostic in context.Diagnostics)
             {
                 context.RegisterCodeFix(
                     CodeAction.Create(

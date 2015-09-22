@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
+    using System;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -47,12 +48,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
             ObjectCreationExpressionSyntax newExpression = (ObjectCreationExpressionSyntax)context.Node;
 
             var typeToCreate = context.SemanticModel.GetTypeInfo(newExpression, context.CancellationToken);
-            if (typeToCreate.Type.IsReferenceType)
+            if (typeToCreate.Type.IsReferenceType || IsReferenceTypeParameter(typeToCreate.Type))
             {
                 return;
             }
 
-            if (newExpression.ArgumentList.Arguments.Count > 0)
+            if ((newExpression.ArgumentList == null) || (newExpression.ArgumentList.Arguments.Count > 0))
             {
                 return;
             }
@@ -63,6 +64,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, newExpression.GetLocation()));
+        }
+
+        private static bool IsReferenceTypeParameter(ITypeSymbol type)
+        {
+            return (type.Kind == SymbolKind.TypeParameter) && !((ITypeParameterSymbol)type).HasValueTypeConstraint;
         }
     }
 }
