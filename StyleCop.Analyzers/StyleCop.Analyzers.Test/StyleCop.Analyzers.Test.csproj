@@ -244,6 +244,7 @@
     <Compile Include="NamingRules\SA1302UnitTests.cs" />
     <Compile Include="NamingRules\SA1303UnitTests.cs" />
     <Compile Include="NamingRules\SA1304UnitTests.cs" />
+    <Compile Include="NamingRules\SA1305UnitTests.cs" />
     <Compile Include="NamingRules\SA1306UnitTests.cs" />
     <Compile Include="NamingRules\SA1307UnitTests.cs" />
     <Compile Include="NamingRules\SA1308UnitTests.cs" />

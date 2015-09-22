@@ -4,8 +4,13 @@
 namespace StyleCop.Analyzers.NamingRules
 {
     using System.Collections.Immutable;
+    using System.Text.RegularExpressions;
+    using Helpers;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Settings.ObjectModel;
 
     /// <summary>
     /// The name of a field or variable in C# uses Hungarian notation.
@@ -48,7 +53,7 @@ namespace StyleCop.Analyzers.NamingRules
         /// </summary>
         public const string DiagnosticId = "SA1305";
         private const string Title = "Field names must not use Hungarian notation";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "{0} {1} must not use Hungarian notation";
         private const string Description = "The name of a field or variable in C# uses Hungarian notation.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1305.md";
 
@@ -57,6 +62,13 @@ namespace StyleCop.Analyzers.NamingRules
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
+
+        private static readonly ImmutableArray<string> CommonPrefixes =
+            ImmutableArray.Create("as", "at", "by", "do", "go", "if", "in", "is", "it", "no", "of", "on", "or", "to");
+
+        private static readonly Regex HungarianRegex = new Regex(@"^(?<notation>[a-z]{1,2})[A-Z]");
+
+        private static NamingSettings namingSettings;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
@@ -70,7 +82,69 @@ namespace StyleCop.Analyzers.NamingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterCompilationStartAction(HandleCompilationStart);
+        }
+
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            namingSettings = context.Options.GetStyleCopSettings().NamingRules;
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleVariableDeclarationSyntax, SyntaxKind.VariableDeclaration);
+        }
+
+        private static void HandleVariableDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        {
+            var syntax = (VariableDeclarationSyntax)context.Node;
+
+            if (syntax.Parent.IsKind(SyntaxKind.EventFieldDeclaration))
+            {
+                return;
+            }
+
+            if (NamedTypeHelpers.IsContainedInNativeMethodsClass(syntax))
+            {
+                return;
+            }
+
+            var fieldDeclaration = syntax.Parent.IsKind(SyntaxKind.FieldDeclaration);
+            foreach (var variableDeclarator in syntax.Variables)
+            {
+                if (variableDeclarator == null)
+                {
+                    continue;
+                }
+
+                var identifier = variableDeclarator.Identifier;
+                if (identifier.IsMissing)
+                {
+                    continue;
+                }
+
+                string name = identifier.ValueText;
+                if (string.IsNullOrEmpty(name))
+                {
+                    continue;
+                }
+
+                var match = HungarianRegex.Match(name);
+                if (!match.Success)
+                {
+                    continue;
+                }
+
+                var notationValue = match.Groups["notation"].Value;
+                if (namingSettings.AllowCommonHungarianPrefixes && CommonPrefixes.Contains(notationValue))
+                {
+                    continue;
+                }
+
+                if (namingSettings.AllowedHungarianPrefixes.Contains(notationValue))
+                {
+                    continue;
+                }
+
+                // Variable names must begin with lower-case letter
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), fieldDeclaration ? "field" : "variable", name));
+            }
         }
     }
 }
