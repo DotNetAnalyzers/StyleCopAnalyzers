@@ -90,6 +90,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     public void TestMethod()
     {
         var v1 = new TestStruct();
+
+        System.Console.WriteLine(new TestStruct());
     }
 
     private struct TestStruct
@@ -104,6 +106,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     public void TestMethod()
     {
         var v1 = default(TestStruct);
+
+        System.Console.WriteLine(default(TestStruct));
     }
 
     private struct TestStruct
@@ -115,7 +119,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(5, 18)
+                this.CSharpDiagnostic().WithLocation(5, 18),
+                this.CSharpDiagnostic().WithLocation(7, 34),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
