@@ -322,6 +322,7 @@
     <Compile Include="ReadabilityRules\SA1127GenericTypeConstraintsMustBeOnOwnLine.cs" />
     <Compile Include="ReadabilityRules\SA1128CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1128ConstructorInitializerMustBeOnOwnLine.cs" />
+    <Compile Include="ReadabilityRules\SA1129CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1129DoNotUseDefaultValueTypeConstructor.cs" />
     <Compile Include="ReadabilityRules\SA1130UseLambdaSyntax.cs" />
     <Compile Include="ReadabilityRules\SA1131UseReadableConditions.cs" />
