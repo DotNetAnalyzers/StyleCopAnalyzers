@@ -314,7 +314,8 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            if (string.Equals(settings.DocumentationRules.CopyrightText, DocumentationSettings.DefaultCopyrightText, StringComparison.OrdinalIgnoreCase))
+            var settingsCopyrightText = settings.DocumentationRules.CopyrightText;
+            if (string.Equals(settingsCopyrightText, DocumentationSettings.DefaultCopyrightText, StringComparison.OrdinalIgnoreCase))
             {
                 // The copyright text is meaningless until the company name is configured by the user.
                 return;
