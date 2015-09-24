@@ -274,6 +274,51 @@ namespace Bar
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that a multi line file header containing characters that need xml escaping gets fixed correctly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestFileHeaderWithMultiLineCommentAndFieldsNeedingXmlEscapingAsync()
+        {
+            this.multiLineSettings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""companyName"": ""Foo & Bar Corp"",
+      ""copyrightText"": ""copyright (c) {companyName}. All rights reserved.\n\nLine #3""
+    }
+  }
+}
+";
+
+            var testCode = @"// <author>FooCorp</author>
+// <summary>Foo &amp; Bar Corp Bar Class</summary>
+ 
+namespace Bar
+{
+}
+";
+
+            var fixedCode = @"// <copyright file=""Test0.cs"" company=""Foo &amp; Bar Corp"">
+// copyright (c) Foo &amp; Bar Corp. All rights reserved.
+//
+// Line #3
+// </copyright>
+// <author>FooCorp</author>
+// <summary>Foo &amp; Bar Corp Bar Class</summary>
+ 
+namespace Bar
+{
+}
+";
+
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1634Descriptor).WithLocation(1, 1);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new FileHeaderCodeFixProvider();

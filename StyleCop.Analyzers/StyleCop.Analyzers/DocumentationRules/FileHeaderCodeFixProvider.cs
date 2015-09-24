@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
+    using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -352,9 +353,13 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static string WrapInXmlComment(string prefixWithLeadingSpaces, string copyrightText, string filename, StyleCopSettings settings, string newLineText)
         {
+            string encodedFilename = new XText(filename).ToString();
+            string encodedCompanyName = new XText(settings.DocumentationRules.CompanyName).ToString();
+            string encodedCopyrightText = new XText(copyrightText).ToString();
+
             return
-                $"{prefixWithLeadingSpaces} <copyright file=\"{filename}\" company=\"{settings.DocumentationRules.CompanyName}\">" + newLineText
-                + copyrightText + newLineText
+                $"{prefixWithLeadingSpaces} <copyright file=\"{encodedFilename}\" company=\"{encodedCompanyName}\">" + newLineText
+                + encodedCopyrightText + newLineText
                 + prefixWithLeadingSpaces + " </copyright>";
         }
 
