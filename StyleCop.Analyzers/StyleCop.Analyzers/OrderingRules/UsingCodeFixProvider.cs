@@ -53,7 +53,7 @@ namespace StyleCop.Analyzers.OrderingRules
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             var compilationUnit = (CompilationUnitSyntax)syntaxRoot;
 
-            foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
+            foreach (Diagnostic diagnostic in context.Diagnostics)
             {
                 // do not offer a code fix for SA1200 when there are multiple namespaces in the source file
                 if ((diagnostic.Id == SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId)
@@ -533,18 +533,48 @@ namespace StyleCop.Analyzers.OrderingRules
                 {
                     var currentUsing = usingsList[i];
 
-                    triviaToMove.AddRange(currentUsing.GetLeadingTrivia().Where(tr => tr.IsDirective));
+                    triviaToMove.AddRange(currentUsing.GetLeadingTrivia().Where(tr => tr.IsDirective || tr.IsKind(SyntaxKind.DisabledTextTrivia)));
 
                     // preserve leading trivia (excluding directive trivia), indenting each line as appropriate
                     var newLeadingTrivia = currentUsing
                         .GetLeadingTrivia()
-                        .WithoutLeadingWhitespace()
-                        .Where(tr => !tr.IsDirective)
+                        .Where(tr => !tr.IsDirective && !tr.IsKind(SyntaxKind.DisabledTextTrivia))
                         .ToList();
 
                     if (i == 0)
                     {
                         newLeadingTrivia = StripFileHeader(newLeadingTrivia);
+                    }
+
+                    // strip any leading whitespace on each line (and also all blank lines)
+                    var k = 0;
+                    var startOfLine = true;
+                    while (k < newLeadingTrivia.Count)
+                    {
+                        switch (newLeadingTrivia[k].Kind())
+                        {
+                        case SyntaxKind.WhitespaceTrivia:
+                            newLeadingTrivia.RemoveAt(k);
+                            break;
+
+                        case SyntaxKind.EndOfLineTrivia:
+                            if (startOfLine)
+                            {
+                                newLeadingTrivia.RemoveAt(k);
+                            }
+                            else
+                            {
+                                startOfLine = true;
+                                k++;
+                            }
+
+                            break;
+
+                        default:
+                            startOfLine = newLeadingTrivia[k].IsDirective;
+                            k++;
+                            break;
+                        }
                     }
 
                     for (var j = newLeadingTrivia.Count - 1; j >= 0; j--)

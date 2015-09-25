@@ -441,6 +441,42 @@ namespace TestNamespace2
             Assert.Empty(offeredFixes);
         }
 
+        /// <summary>
+        /// Verifies that the code fix will handle using statements in the else part of a #if directive trivia.
+        /// This is a regression test for #1528
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyCodefixForElsePartOfDirectiveTriviaAsync()
+        {
+            var testCode = @"namespace NamespaceName
+{
+#if false
+    using System.Runtime.CompilerServices;
+#else
+    using System.Collections.Generic;
+    using System.Collections.Concurrent;
+#endif
+}
+";
+
+            var fixedTestCode = @"namespace NamespaceName
+{
+#if false
+    using System.Runtime.CompilerServices;
+#else
+    using System.Collections.Concurrent;
+    using System.Collections.Generic;
+#endif
+}
+";
+            var expected = this.CSharpDiagnostic(SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace.DiagnosticId).WithLocation(6, 5);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<string> GetDisabledDiagnostics()
         {
