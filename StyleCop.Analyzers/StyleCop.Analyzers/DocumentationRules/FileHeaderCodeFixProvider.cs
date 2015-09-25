@@ -353,8 +353,8 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static string WrapInXmlComment(string prefixWithLeadingSpaces, string copyrightText, string filename, StyleCopSettings settings, string newLineText)
         {
-            string encodedFilename = new XText(filename).ToString();
-            string encodedCompanyName = new XText(settings.DocumentationRules.CompanyName).ToString();
+            string encodedFilename = new XAttribute("t", filename).ToString().Substring(2).Trim('"');
+            string encodedCompanyName = new XAttribute("t", settings.DocumentationRules.CompanyName).ToString().Substring(2).Trim('"');
             string encodedCopyrightText = new XText(copyrightText).ToString();
 
             return

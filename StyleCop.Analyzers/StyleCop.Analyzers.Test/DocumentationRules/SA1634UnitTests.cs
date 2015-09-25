@@ -285,7 +285,7 @@ namespace Bar
 {
   ""settings"": {
     ""documentationRules"": {
-      ""companyName"": ""Foo & Bar Corp"",
+      ""companyName"": ""Foo & Bar \""quote\"" Corp"",
       ""copyrightText"": ""copyright (c) {companyName}. All rights reserved.\n\nLine #3""
     }
   }
@@ -300,8 +300,8 @@ namespace Bar
 }
 ";
 
-            var fixedCode = @"// <copyright file=""Test0.cs"" company=""Foo &amp; Bar Corp"">
-// copyright (c) Foo &amp; Bar Corp. All rights reserved.
+            var fixedCode = @"// <copyright file=""Test0.cs"" company=""Foo &amp; Bar &quot;quote&quot; Corp"">
+// copyright (c) Foo &amp; Bar ""quote"" Corp. All rights reserved.
 //
 // Line #3
 // </copyright>
