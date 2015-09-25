@@ -62,22 +62,31 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             if (block != null && block.Statements.Any())
             {
-                FileLinePositionSpan previousStatementLocation = block.Statements[0].GetLineSpan();
+                var previousStatement = block.Statements[0];
+                FileLinePositionSpan previousStatementLocation = previousStatement.GetLineSpan();
                 FileLinePositionSpan currentStatementLocation;
 
                 for (int i = 1; i < block.Statements.Count; i++)
                 {
-                    currentStatementLocation = block.Statements[i].GetLineSpan();
+                    var currentStatement = block.Statements[i];
+                    currentStatementLocation = currentStatement.GetLineSpan();
 
                     if (previousStatementLocation.EndLinePosition.Line
-                        == currentStatementLocation.StartLinePosition.Line)
+                        == currentStatementLocation.StartLinePosition.Line
+                        && !IsLastTokenMissing(previousStatement))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, block.Statements[i].GetLocation()));
                     }
 
                     previousStatementLocation = currentStatementLocation;
+                    previousStatement = currentStatement;
                 }
             }
+        }
+
+        private static bool IsLastTokenMissing(StatementSyntax previousStatement)
+        {
+            return previousStatement.GetLastToken(includeZeroWidth: true, includeSkipped: true).IsMissing;
         }
     }
 }
