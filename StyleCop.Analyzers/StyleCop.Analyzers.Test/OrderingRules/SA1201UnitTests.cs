@@ -7,12 +7,13 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.OrderingRules;
     using TestHelper;
     using Xunit;
 
-    public class SA1201UnitTests : DiagnosticVerifier
+    public class SA1201UnitTests : CodeFixVerifier
     {
         [Fact]
         public async Task TestOuterOrderCorrectOrderAsync()
@@ -131,8 +132,8 @@ public struct FooStruct { }
     public string TestProperty { get; set; }
     public struct TestStruct { }
     public void TestMethod () { }
-    public string this[string arg] { get { return ""foo""; } set { } }
     public class TestClass { }
+    public string this[string arg] { get { return ""foo""; } set { } }
 }
 ";
             var expected = new[]
@@ -142,10 +143,32 @@ public struct FooStruct { }
                 this.CSharpDiagnostic().WithLocation(11, 5).WithArguments("conversion", "operator"),
                 this.CSharpDiagnostic().WithLocation(12, 19).WithArguments("property", "conversion"),
                 this.CSharpDiagnostic().WithLocation(14, 17).WithArguments("method", "struct"),
-                this.CSharpDiagnostic().WithLocation(15, 19).WithArguments("indexer", "method")
+                this.CSharpDiagnostic().WithLocation(16, 19).WithArguments("indexer", "class")
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            string fixedCode = @"public class OuterType
+{
+    public string TestField;
+    public OuterType() { }
+    ~OuterType() { }
+    public delegate void TestDelegate();
+    public event TestDelegate TestEvent { add { } remove { } }
+    public enum TestEnum { }
+    public interface ITest { }
+    public string TestProperty { get; set; }
+    public string this[string arg] { get { return ""foo""; } set { } }
+    public static explicit operator bool(OuterType t1) { return t1.TestField != null; }
+    public static OuterType operator +(OuterType t1, OuterType t2) { return t1; }
+    public void TestMethod () { }
+    public struct TestStruct { }
+    public class TestClass { }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -164,8 +187,8 @@ public struct FooStruct { }
     public string TestProperty { get; set; }
     public struct TestStruct { }
     public void TestMethod () { }
-    public string this[string arg] { get { return ""foo""; } set { } }
     public class TestClass { }
+    public string this[string arg] { get { return ""foo""; } set { } }
 }
 ";
             var expected = new[]
@@ -174,10 +197,31 @@ public struct FooStruct { }
                 this.CSharpDiagnostic().WithLocation(10, 5).WithArguments("conversion", "operator"),
                 this.CSharpDiagnostic().WithLocation(11, 19).WithArguments("property", "conversion"),
                 this.CSharpDiagnostic().WithLocation(13, 17).WithArguments("method", "struct"),
-                this.CSharpDiagnostic().WithLocation(14, 19).WithArguments("indexer", "method")
+                this.CSharpDiagnostic().WithLocation(15, 19).WithArguments("indexer", "class")
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            string fixedCode = @"public struct OuterType
+{
+    public string TestField;
+    public OuterType(int argument) { TestField = ""foo""; TestProperty = ""bar""; }
+    public delegate void TestDelegate();
+    public event TestDelegate TestEvent { add { } remove { } }
+    public enum TestEnum { }
+    public interface ITest { }
+    public string TestProperty { get; set; }
+    public string this[string arg] { get { return ""foo""; } set { } }
+    public static explicit operator bool(OuterType t1) { return t1.TestField != null; }
+    public static OuterType operator +(OuterType t1, OuterType t2) { return t1; }
+    public void TestMethod () { }
+    public struct TestStruct { }
+    public class TestClass { }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -185,18 +229,32 @@ public struct FooStruct { }
         {
             string testCode = @"public interface OuterType
 {
-    event System.Action TestEvent;
     string TestProperty { get; set; }
+    event System.Action TestEvent;
     void TestMethod ();
     string this[string arg] { get; set; }
 }
 ";
-            var expected = new[]
+
+            DiagnosticResult[] expected =
             {
+                this.CSharpDiagnostic().WithLocation(4, 5).WithArguments("event", "property"),
                 this.CSharpDiagnostic().WithLocation(6, 12).WithArguments("indexer", "method")
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            string fixedCode = @"public interface OuterType
+{
+    event System.Action TestEvent;
+    string TestProperty { get; set; }
+    string this[string arg] { get; set; }
+    void TestMethod ();
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -248,9 +306,16 @@ public struct FooStruct { }
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1201ElementsMustAppearInTheCorrectOrder();
+        }
+
+        /// <inheritdoc/>
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new ElementOrderCodeFixProvider();
         }
     }
 }

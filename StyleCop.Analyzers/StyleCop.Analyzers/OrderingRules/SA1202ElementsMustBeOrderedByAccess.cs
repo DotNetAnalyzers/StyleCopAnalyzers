@@ -138,7 +138,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
                 if (previousAccessLevel != AccessLevel.NotSpecified
                     && currentSyntaxKind == previousSyntaxKind
-                    && currentAccessLevel < previousAccessLevel)
+                    && currentAccessLevel > previousAccessLevel)
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(

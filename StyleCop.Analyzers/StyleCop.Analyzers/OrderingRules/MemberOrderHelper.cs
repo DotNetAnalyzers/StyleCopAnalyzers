@@ -4,6 +4,7 @@
 namespace StyleCop.Analyzers.OrderingRules
 {
     using System;
+    using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -14,20 +15,70 @@ namespace StyleCop.Analyzers.OrderingRules
     /// </summary>
     internal struct MemberOrderHelper
     {
+        private static readonly ImmutableArray<SyntaxKind> TypeMemberOrder = ImmutableArray.Create(
+            SyntaxKind.ClassDeclaration,
+            SyntaxKind.StructDeclaration,
+            SyntaxKind.MethodDeclaration,
+            SyntaxKind.OperatorDeclaration,
+            SyntaxKind.ConversionOperatorDeclaration,
+            SyntaxKind.IndexerDeclaration,
+            SyntaxKind.PropertyDeclaration,
+            SyntaxKind.InterfaceDeclaration,
+            SyntaxKind.EnumDeclaration,
+            SyntaxKind.EventDeclaration,
+            SyntaxKind.DelegateDeclaration,
+            SyntaxKind.DestructorDeclaration,
+            SyntaxKind.ConstructorDeclaration,
+            SyntaxKind.FieldDeclaration,
+            SyntaxKind.NamespaceDeclaration);
+
         private readonly ModifierFlags modifierFlags;
+        private readonly int elementPriority;
         private readonly AccessLevel accessibilty;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MemberOrderHelper"/> struct.
         /// </summary>
         /// <param name="member">The member to wrap.</param>
-        public MemberOrderHelper(MemberDeclarationSyntax member)
+        /// <param name="checks">The element ordering checks.</param>
+        internal MemberOrderHelper(MemberDeclarationSyntax member, ElementOrderingChecks checks)
         {
             this.Member = member;
             var modifiers = member.GetModifiers();
+            var type = member.Kind();
+            type = type == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : type;
 
-            this.modifierFlags = GetModifierFlags(modifiers);
-            this.accessibilty = AccessLevelHelper.GetAccessLevel(modifiers);
+            this.elementPriority = checks.ElementType ? TypeMemberOrder.IndexOf(type) : 0;
+            this.modifierFlags = GetModifierFlags(modifiers, checks);
+            if (checks.AccessLevel)
+            {
+                if ((type == SyntaxKind.ConstructorDeclaration && this.modifierFlags.HasFlag(ModifierFlags.Static))
+                    || (type == SyntaxKind.MethodDeclaration && ((MethodDeclarationSyntax)member).ExplicitInterfaceSpecifier != null)
+                    || (type == SyntaxKind.PropertyDeclaration && ((PropertyDeclarationSyntax)member).ExplicitInterfaceSpecifier != null)
+                    || (type == SyntaxKind.IndexerDeclaration && ((IndexerDeclarationSyntax)member).ExplicitInterfaceSpecifier != null))
+                {
+                    this.accessibilty = AccessLevel.Public;
+                }
+                else
+                {
+                    this.accessibilty = AccessLevelHelper.GetAccessLevel(modifiers);
+                    if (this.accessibilty == AccessLevel.NotSpecified)
+                    {
+                        if (member.Parent.IsKind(SyntaxKind.CompilationUnit) || member.Parent.IsKind(SyntaxKind.NamespaceDeclaration))
+                        {
+                            this.accessibilty = AccessLevel.Internal;
+                        }
+                        else
+                        {
+                            this.accessibilty = AccessLevel.Private;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                this.accessibilty = AccessLevel.Public;
+            }
         }
 
         [Flags]
@@ -60,7 +111,7 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <value>
         /// The wrapped member.
         /// </value>
-        public MemberDeclarationSyntax Member { get; }
+        internal MemberDeclarationSyntax Member { get; }
 
         /// <summary>
         /// The priority for this member.
@@ -68,19 +119,28 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <value>
         /// The priority for this member.
         /// </value>
-        public int Priority =>
-            (int)this.modifierFlags +
-            (
-                /*the * 100 ensures the accesibility is more important than the modifier*/
-                (int)this.accessibilty * 100);
+        internal int Priority
+        {
+            get
+            {
+                var priority = this.ModifierPriority;
+
+                // accessibility is more important than the modifiers
+                priority += (this.AccessibilityPriority + 1) * 100;
+
+                // element type is more important than accessibility
+                priority += (this.elementPriority + 1) * 1000;
+                return priority;
+            }
+        }
 
         /// <summary>
-        /// The priority for this member only from accesibility.
+        /// The priority for this member only from accessibility.
         /// </summary>
         /// <value>
         /// The priority for this member.
         /// </value>
-        public int AccessibilityPriority => (int)this.accessibilty;
+        internal int AccessibilityPriority => (int)this.accessibilty;
 
         /// <summary>
         /// The priority for this member only from modifiers.
@@ -88,29 +148,29 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <value>
         /// The priority for this member.
         /// </value>
-        public int ModifierPriority => (int)this.modifierFlags;
+        internal int ModifierPriority => (int)this.modifierFlags;
 
-        private static ModifierFlags GetModifierFlags(SyntaxTokenList syntax)
+        private static ModifierFlags GetModifierFlags(SyntaxTokenList syntax, ElementOrderingChecks checks)
         {
-            ModifierFlags flags = 0;
-            if (syntax.Any(SyntaxKind.ConstKeyword))
+            var flags = ModifierFlags.None;
+            if (checks.Const && syntax.Any(SyntaxKind.ConstKeyword))
             {
                 flags |= ModifierFlags.Const;
             }
             else
             {
-                if (syntax.Any(SyntaxKind.StaticKeyword))
+                if (checks.Static && syntax.Any(SyntaxKind.StaticKeyword))
                 {
                     flags |= ModifierFlags.Static;
                 }
 
-                if (syntax.Any(SyntaxKind.ReadOnlyKeyword))
+                if (checks.Readonly && syntax.Any(SyntaxKind.ReadOnlyKeyword))
                 {
                     flags |= ModifierFlags.Readonly;
                 }
             }
 
-            return flags == 0 ? ModifierFlags.None : flags;
+            return flags;
         }
     }
 }
