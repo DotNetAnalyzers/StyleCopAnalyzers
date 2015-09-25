@@ -96,7 +96,9 @@ namespace StyleCop.Analyzers.OrderingRules
                     continue;
                 }
 
-                if (usingDirective.HasNamespaceAliasQualifier() || !usingDirective.IsSystemUsingDirective())
+                if (usingDirective.HasNamespaceAliasQualifier()
+                    || !usingDirective.IsSystemUsingDirective()
+                    || context.IsAnalyzerSuppressed(SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives.DiagnosticId))
                 {
                     usingDirectives.Add(usingDirective);
                 }
