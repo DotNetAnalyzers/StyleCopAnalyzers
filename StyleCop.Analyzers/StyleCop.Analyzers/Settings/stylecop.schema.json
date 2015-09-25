@@ -64,6 +64,27 @@
               "default": true
             }
           }
+        },
+        "namingRules": {
+          "type": "object",
+          "description": "Configuration for naming rules (SA1300-)",
+          "properties": {
+            "allowCommonHungarianPrefixes": {
+              "type": "boolean",
+              "description": "Determines whether common Hungarian notation prefixes should be allowed.",
+              "default": true
+            },
+            "allowedHungarianPrefixes": {
+              "type": "array",
+              "description": "Allowed Hungarian notation prefixes.",
+              "default": [ ],
+              "items": {
+                "type": "string",
+                "pattern": "^[a-z]{1,2}$",
+                "uniqueItems": true
+              }
+            }
+          }
         }
       }
     }
