@@ -10,7 +10,7 @@ build:
   project: StyleCopAnalyzers.sln
   verbosity: minimal
 test_script:
-- .\packages\OpenCover.4.6.166\tools\OpenCover.Console.exe -register:user -target:"%xunit20%\xunit.console.x86.exe" -targetargs:"C:\projects\stylecopanalyzers\StyleCop.Analyzers\StyleCop.Analyzers.Test\bin\Debug\StyleCop.Analyzers.Test.dll -noshadow -appveyor" -filter:"+[StyleCop*]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -hideskipped:All -output:.\StyleCopAnalyzers_coverage.xml
+- .\packages\OpenCover.4.6.166\tools\OpenCover.Console.exe -register:user -target:"%xunit20%\xunit.console.x86.exe" -targetargs:"C:\projects\stylecopanalyzers\StyleCop.Analyzers\StyleCop.Analyzers.Test\bin\Debug\StyleCop.Analyzers.Test.dll -noshadow -appveyor" -filter:"+[StyleCop*]*" "-excludebyattribute:(*.ExcludeFromCodeCoverageAttribute)|(*.CompilerGeneratedAttribute)" -hideskipped:All -output:.\StyleCopAnalyzers_coverage.xml
 - "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
 - pip install codecov
 - codecov -f "StyleCopAnalyzers_coverage.xml"
