@@ -142,17 +142,20 @@ namespace StyleCop.Analyzers.NamingRules
             }
             else
             {
-                var implementedInterfaces = methodSymbol.ContainingType.Interfaces;
-                if (implementedInterfaces.Length != 0)
+                var containingType = methodSymbol.ContainingType;
+                if (containingType == null)
                 {
-                    foreach (var @interface in implementedInterfaces)
+                    return false;
+                }
+
+                var implementedInterfaces = containingType.Interfaces;
+                foreach (var implementedInterface in implementedInterfaces)
+                {
+                    foreach (var member in implementedInterface.GetMembers(methodSymbol.Name).OfType<IMethodSymbol>())
                     {
-                        foreach (var member in @interface.GetMembers(methodSymbol.Name).OfType<IMethodSymbol>())
+                        if (containingType.FindImplementationForInterfaceMember(member) == methodSymbol)
                         {
-                            if (methodSymbol.ContainingType.FindImplementationForInterfaceMember(member).Equals(methodSymbol))
-                            {
-                                return member.Parameters[index].Name == syntax.Identifier.ValueText;
-                            }
+                            return member.Parameters[index].Name == syntax.Identifier.ValueText;
                         }
                     }
                 }
