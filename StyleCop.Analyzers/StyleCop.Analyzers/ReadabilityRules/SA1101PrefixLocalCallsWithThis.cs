@@ -196,7 +196,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 {
                     var parentSymbol = context.SemanticModel.GetSymbolInfo(nameExpression.Parent, context.CancellationToken).Symbol as IFieldSymbol;
 
-                    if (parentSymbol.IsStatic && parentSymbol.ContainingType.Name == symbol.Name)
+                    if (parentSymbol != null
+                        && parentSymbol.IsStatic
+                        && parentSymbol.ContainingType.Name == symbol.Name)
                     {
                         return;
                     }
