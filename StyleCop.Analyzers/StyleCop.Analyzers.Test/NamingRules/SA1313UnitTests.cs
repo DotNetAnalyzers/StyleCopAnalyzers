@@ -474,6 +474,37 @@ public class Test : Testbase
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1529:
+        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1529
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestInheritedInterfacesWithOverloadedMembersAsync()
+        {
+            var testCode = @"
+public interface ITest
+{
+    void Method(int Param1, int param2, int Param3);
+    void Method();
+}
+
+public interface IEmptyInterface { }
+
+public interface IDerivedTest : ITest, IEmptyInterface
+{
+    void Method(int Param1, int param2, int param3);
+}";
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(4, 21).WithArguments("Param1"),
+                this.CSharpDiagnostic().WithLocation(4, 45).WithArguments("Param3"),
+                this.CSharpDiagnostic().WithLocation(12, 21).WithArguments("Param1"),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1313ParameterNamesMustBeginWithLowerCaseLetter();
