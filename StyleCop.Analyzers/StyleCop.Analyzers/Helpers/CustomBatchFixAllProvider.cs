@@ -83,7 +83,9 @@ namespace StyleCop.Analyzers.Helpers
                 fixerTasks[i] = Task.Run(async () =>
                 {
                     var localFixes = new List<CodeAction>();
-                    var context = new CodeFixContext(document, diagnostic,
+                    var context = new CodeFixContext(
+                        document,
+                        diagnostic,
                         (a, d) =>
                         {
                             // TODO: Can we share code between similar lambdas that we pass to this API in BatchFixAllProvider.cs, CodeFixService.cs and CodeRefactoringService.cs?

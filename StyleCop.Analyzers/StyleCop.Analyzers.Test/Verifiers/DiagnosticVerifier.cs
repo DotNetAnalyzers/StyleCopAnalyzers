@@ -167,7 +167,8 @@ namespace TestHelper
                         string message =
                             string.Format(
                                 "Expected {0} additional locations but got {1} for Diagnostic:\r\n    {2}\r\n",
-                                expected.Locations.Length - 1, additionalLocations.Length,
+                                expected.Locations.Length - 1,
+                                additionalLocations.Length,
                                 FormatDiagnostics(analyzers, actual));
                         Assert.True(false, message);
                     }
@@ -183,7 +184,9 @@ namespace TestHelper
                     string message =
                         string.Format(
                             "Expected diagnostic id to be \"{0}\" was \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                            expected.Id, actual.Id, FormatDiagnostics(analyzers, actual));
+                            expected.Id,
+                            actual.Id,
+                            FormatDiagnostics(analyzers, actual));
                     Assert.True(false, message);
                 }
 
@@ -192,7 +195,9 @@ namespace TestHelper
                     string message =
                         string.Format(
                             "Expected diagnostic severity to be \"{0}\" was \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                            expected.Severity, actual.Severity, FormatDiagnostics(analyzers, actual));
+                            expected.Severity,
+                            actual.Severity,
+                            FormatDiagnostics(analyzers, actual));
                     Assert.True(false, message);
                 }
 
@@ -201,7 +206,9 @@ namespace TestHelper
                     string message =
                         string.Format(
                             "Expected diagnostic message to be \"{0}\" was \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                            expected.Message, actual.GetMessage(), FormatDiagnostics(analyzers, actual));
+                            expected.Message,
+                            actual.GetMessage(),
+                            FormatDiagnostics(analyzers, actual));
                     Assert.True(false, message);
                 }
             }
@@ -224,7 +231,9 @@ namespace TestHelper
             string message =
                 string.Format(
                     "Expected diagnostic to be in file \"{0}\" was actually in file \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                    expected.Path, actualSpan.Path, FormatDiagnostics(analyzers, diagnostic));
+                    expected.Path,
+                    actualSpan.Path,
+                    FormatDiagnostics(analyzers, diagnostic));
             Assert.True(
                 actualSpan.Path == expected.Path || (actualSpan.Path != null && actualSpan.Path.Contains("Test0.") && expected.Path.Contains("Test.")),
                 message);
@@ -239,7 +248,9 @@ namespace TestHelper
                     string message2 =
                         string.Format(
                             "Expected diagnostic to be on line \"{0}\" was actually on line \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                            expected.Line, actualLinePosition.Line + 1, FormatDiagnostics(analyzers, diagnostic));
+                            expected.Line,
+                            actualLinePosition.Line + 1,
+                            FormatDiagnostics(analyzers, diagnostic));
                     Assert.True(false, message2);
                 }
             }
@@ -252,7 +263,9 @@ namespace TestHelper
                     string message2 =
                         string.Format(
                             "Expected diagnostic to start at column \"{0}\" was actually at column \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                            expected.Column, actualLinePosition.Character + 1, FormatDiagnostics(analyzers, diagnostic));
+                            expected.Column,
+                            actualLinePosition.Character + 1,
+                            FormatDiagnostics(analyzers, diagnostic));
                     Assert.True(false, message2);
                 }
             }

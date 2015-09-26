@@ -84,7 +84,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 CheckIfLocationOfOpenAndCloseTokensAreTheSame(
                     context,
-                    objectCreation.ArgumentList.OpenParenToken, objectCreation.ArgumentList.CloseParenToken);
+                    objectCreation.ArgumentList.OpenParenToken,
+                    objectCreation.ArgumentList.CloseParenToken);
             }
         }
 
@@ -103,7 +104,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 CheckIfLocationOfOpenAndCloseTokensAreTheSame(
                     context,
-                    invocationExpression.ArgumentList.OpenParenToken, invocationExpression.ArgumentList.CloseParenToken);
+                    invocationExpression.ArgumentList.OpenParenToken,
+                    invocationExpression.ArgumentList.CloseParenToken);
             }
         }
 
@@ -138,7 +140,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void CheckIfLocationOfOpenAndCloseTokensAreTheSame(
             SyntaxNodeAnalysisContext context,
-            SyntaxToken openToken, SyntaxToken closeToken)
+            SyntaxToken openToken,
+            SyntaxToken closeToken)
         {
             var closeParenLine = closeToken.GetLineSpan();
             var openParenLine = openToken.GetLineSpan();
