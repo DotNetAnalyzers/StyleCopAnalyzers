@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading;
     using System.Threading.Tasks;
     using Analyzers.ReadabilityRules;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using TestHelper;
@@ -34,14 +35,16 @@ class Foo
             const string testCode = @"
 class Foo
 {
-    private int a, b;
+    private int a, b,/*foo*/c,d;
     public event System.Action aa, bb;
 }";
             const string fixedCode = @"
 class Foo
 {
     private int a;
-    private int b;
+    private int b;/*foo*/
+    private int c;
+    private int d;
     public event System.Action aa;
     public event System.Action bb;
 }";
@@ -107,6 +110,37 @@ class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestDeclarationWithMissingTokensAndNodesAsync()
+        {
+            const string testCode = @"
+class Foo
+{
+    private int a,, b;
+    private int c, d
+}";
+
+            DiagnosticResult[] expected =
+            {
+                new DiagnosticResult
+                {
+                    Id = "CS1001",
+                    Severity = DiagnosticSeverity.Error,
+                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 4, 19) },
+                    Message = "Identifier expected"
+                },
+                new DiagnosticResult
+                {
+                    Id = "CS1002",
+                    Severity = DiagnosticSeverity.Error,
+                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 5, 21) },
+                    Message = "; expected"
+                }
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
