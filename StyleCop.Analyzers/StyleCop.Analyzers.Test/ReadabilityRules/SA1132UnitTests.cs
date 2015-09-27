@@ -58,6 +58,34 @@ class Foo
         }
 
         [Fact]
+        public async Task TestInvalidDeclarationWithTrailingTriviaAsync()
+        {
+            const string testCode = @"
+class Foo
+{
+    public const int a = 1, // foo
+        b = 2,
+        c = 3, // bar
+        d = 4,
+        e = 5; /* spam */
+}";
+            const string fixedCode = @"
+class Foo
+{
+    public const int a = 1; // foo
+    public const int b = 2;
+    public const int c = 3; // bar
+    public const int d = 4;
+    public const int e = 5; /* spam */
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 5);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestInvalidFieldDeclarationWithAttributesAsync()
         {
             const string testCode = @"
