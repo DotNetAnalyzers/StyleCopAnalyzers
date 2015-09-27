@@ -4,6 +4,7 @@
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -45,10 +46,22 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
         {
             var fieldDeclaration = (BaseFieldDeclarationSyntax)context.Node;
-            if (fieldDeclaration.Declaration.Variables.Count > 1)
+            var variables = fieldDeclaration.Declaration.Variables;
+
+            if (variables.Count < 2 || fieldDeclaration.SemicolonToken.IsMissing)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, fieldDeclaration.GetLocation()));
+                return;
             }
+
+            foreach (VariableDeclaratorSyntax variable in variables)
+            {
+                if (variable.IsMissing)
+                {
+                    return;
+                }
+            }
+
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, fieldDeclaration.GetLocation()));
         }
     }
 }
