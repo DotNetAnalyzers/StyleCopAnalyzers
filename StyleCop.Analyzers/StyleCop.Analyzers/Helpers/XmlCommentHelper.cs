@@ -95,10 +95,10 @@ namespace StyleCop.Analyzers.Helpers
                 return true;
             }
 
-            var cDataElement = xmlSyntax as XmlCDataSectionSyntax;
-            if (cDataElement != null)
+            var cdataElement = xmlSyntax as XmlCDataSectionSyntax;
+            if (cdataElement != null)
             {
-                foreach (SyntaxToken token in cDataElement.TextTokens)
+                foreach (SyntaxToken token in cdataElement.TextTokens)
                 {
                     if (!string.IsNullOrWhiteSpace(token.ToString()))
                     {

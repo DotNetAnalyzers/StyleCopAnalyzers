@@ -105,7 +105,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 if (!arrayRankSpecifierSyntax.CloseBracketToken.IsMissing)
                 {
-                    CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(context, lastSize,
+                    CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(
+                        context,
+                        lastSize,
                         arrayRankSpecifierSyntax.CloseBracketToken);
                 }
             }
@@ -128,7 +130,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             if (!lambdaExpressionSyntax.ParameterList.CloseParenToken.IsMissing)
             {
-                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(context, lastParameter,
+                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(
+                    context,
+                    lastParameter,
                     lambdaExpressionSyntax.ParameterList.CloseParenToken);
             }
         }
@@ -147,7 +151,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             if (!attributeList.CloseBracketToken.IsMissing && lastAttribute.ArgumentList != null)
             {
-                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(context, lastAttribute,
+                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(
+                    context,
+                    lastAttribute,
                     attributeList.CloseBracketToken);
             }
         }
@@ -169,7 +175,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             if (!anonymousMethod.ParameterList.CloseParenToken.IsMissing)
             {
-                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(context, lastParameter,
+                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(
+                    context,
+                    lastParameter,
                     anonymousMethod.ParameterList.CloseParenToken);
             }
         }
@@ -191,7 +199,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             if (!attribute.ArgumentList.CloseParenToken.IsMissing)
             {
-                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(context, lastArgument,
+                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(
+                    context,
+                    lastArgument,
                     attribute.ArgumentList.CloseParenToken);
             }
         }
@@ -213,7 +223,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             if (!delegateDeclaration.ParameterList.CloseParenToken.IsMissing)
             {
-                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(context, lastParameter,
+                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(
+                    context,
+                    lastParameter,
                     delegateDeclaration.ParameterList.CloseParenToken);
             }
         }
@@ -235,7 +247,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             if (!elementAccess.ArgumentList.CloseBracketToken.IsMissing && !lastArgument.IsMissing)
             {
-                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(context, lastArgument,
+                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(
+                    context,
+                    lastArgument,
                     elementAccess.ArgumentList.CloseBracketToken);
             }
         }
@@ -270,7 +284,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
             if (!invocationExpression.ArgumentList.CloseParenToken.IsMissing &&
                 !lastArgument.IsMissing)
             {
-                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(context, lastArgument,
+                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(
+                    context,
+                    lastArgument,
                     invocationExpression.ArgumentList.CloseParenToken);
             }
         }
@@ -293,7 +309,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
             if (!objectCreation.ArgumentList.CloseParenToken.IsMissing &&
                 !lastArgument.IsMissing)
             {
-                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(context, lastArgument,
+                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(
+                    context,
+                    lastArgument,
                     objectCreation.ArgumentList.CloseParenToken);
             }
         }
@@ -342,7 +360,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(
             SyntaxNodeAnalysisContext context,
-            CSharpSyntaxNode parameterOrArgument, SyntaxToken closeToken)
+            CSharpSyntaxNode parameterOrArgument,
+            SyntaxToken closeToken)
         {
             var lastParameterLine = parameterOrArgument.GetLineSpan();
             var closeParenLine = closeToken.GetLineSpan();

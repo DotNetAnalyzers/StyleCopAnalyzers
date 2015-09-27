@@ -265,7 +265,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static TypeArgumentListSyntax ParameterToArgumentListSyntax(TypeParameterListSyntax typeParameters)
         {
-            var list = new SeparatedSyntaxList<TypeSyntax>();
+            var list = SyntaxFactory.SeparatedList<TypeSyntax>();
             list = list.AddRange(typeParameters.Parameters.Select(p => SyntaxFactory.ParseName(p.ToString()).WithTriviaFrom(p)));
 
             for (int i = 0; i < list.SeparatorCount; i++)

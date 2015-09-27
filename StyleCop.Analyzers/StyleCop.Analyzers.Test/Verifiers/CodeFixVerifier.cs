@@ -293,8 +293,17 @@ namespace TestHelper
             return false;
         }
 
-        private async Task VerifyFixInternalAsync(string language, ImmutableArray<DiagnosticAnalyzer> analyzers, CodeFixProvider codeFixProvider, string oldSource, string newSource, int? codeFixIndex,
-            bool allowNewCompilerDiagnostics, int maxNumberOfIterations, Func<ImmutableArray<DiagnosticAnalyzer>, CodeFixProvider, int?, Document, int, CancellationToken, Task<Document>> getFixedDocument, CancellationToken cancellationToken)
+        private async Task VerifyFixInternalAsync(
+            string language,
+            ImmutableArray<DiagnosticAnalyzer> analyzers,
+            CodeFixProvider codeFixProvider,
+            string oldSource,
+            string newSource,
+            int? codeFixIndex,
+            bool allowNewCompilerDiagnostics,
+            int maxNumberOfIterations,
+            Func<ImmutableArray<DiagnosticAnalyzer>, CodeFixProvider, int?, Document, int, CancellationToken, Task<Document>> getFixedDocument,
+            CancellationToken cancellationToken)
         {
             var document = this.CreateDocument(oldSource, language);
             var compilerDiagnostics = await GetCompilerDiagnosticsAsync(document, cancellationToken).ConfigureAwait(false);

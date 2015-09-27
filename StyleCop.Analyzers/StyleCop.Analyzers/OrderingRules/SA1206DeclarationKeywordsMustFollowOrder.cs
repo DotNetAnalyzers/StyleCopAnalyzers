@@ -89,10 +89,22 @@ namespace StyleCop.Analyzers.OrderingRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleDeclaration, SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.InterfaceDeclaration,
-                SyntaxKind.EnumDeclaration, SyntaxKind.DelegateDeclaration, SyntaxKind.FieldDeclaration, SyntaxKind.MethodDeclaration,
-                SyntaxKind.PropertyDeclaration, SyntaxKind.EventDeclaration, SyntaxKind.EventFieldDeclaration, SyntaxKind.IndexerDeclaration,
-                SyntaxKind.OperatorDeclaration, SyntaxKind.ConversionOperatorDeclaration, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(
+                HandleDeclaration,
+                SyntaxKind.ClassDeclaration,
+                SyntaxKind.StructDeclaration,
+                SyntaxKind.InterfaceDeclaration,
+                SyntaxKind.EnumDeclaration,
+                SyntaxKind.DelegateDeclaration,
+                SyntaxKind.FieldDeclaration,
+                SyntaxKind.MethodDeclaration,
+                SyntaxKind.PropertyDeclaration,
+                SyntaxKind.EventDeclaration,
+                SyntaxKind.EventFieldDeclaration,
+                SyntaxKind.IndexerDeclaration,
+                SyntaxKind.OperatorDeclaration,
+                SyntaxKind.ConversionOperatorDeclaration,
+                SyntaxKind.ConstructorDeclaration);
         }
 
         private static void HandleDeclaration(SyntaxNodeAnalysisContext context)

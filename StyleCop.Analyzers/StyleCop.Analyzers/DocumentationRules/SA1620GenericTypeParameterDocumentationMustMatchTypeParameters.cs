@@ -117,8 +117,12 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
             else if (parentTypeParameters.Length <= index || parentTypeParameters[index] != nameAttribute.Identifier.Identifier.ValueText)
             {
-                context.ReportDiagnostic(Diagnostic.Create(OrderDescriptor, nameAttribute?.Identifier?.GetLocation() ?? alternativeDiagnosticLocation,
-                    nameAttribute.Identifier.Identifier.ValueText, parentTypeParameters.IndexOf(nameAttribute.Identifier.Identifier.ValueText) + 1));
+                context.ReportDiagnostic(
+                    Diagnostic.Create(
+                        OrderDescriptor,
+                        nameAttribute?.Identifier?.GetLocation() ?? alternativeDiagnosticLocation,
+                        nameAttribute.Identifier.Identifier.ValueText,
+                        parentTypeParameters.IndexOf(nameAttribute.Identifier.Identifier.ValueText) + 1));
             }
         }
 
