@@ -4,7 +4,11 @@
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Immutable;
+    using System.Linq;
+    using Helpers;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -24,7 +28,8 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// /// &lt;summary&gt;
     /// /// Joins a first name and a last name together into a single string.
     /// /// &lt;/summary&gt;
-    /// /// &lt;param name="firstName"&gt; &lt;/param&gt;
+    /// /// &lt;remarks&gt;&lt;/remarks&gt;
+    /// /// &lt;param name="firstName"&gt;Other part of name.&lt;/param&gt;
     /// /// &lt;param name="lastName"&gt;Part of the name.&lt;/param&gt;
     /// /// &lt;returns&gt;The joined names.&lt;/returns&gt;
     /// public string JoinNames(string firstName, string lastName)
@@ -42,7 +47,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// </summary>
         public const string DiagnosticId = "SA1627";
         private const string Title = "Documentation text must not be empty";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "The documentation text within the {0} tag must not be empty.";
         private const string Description = "The XML header documentation for a C# code element contains an empty tag.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1627.md";
 
@@ -53,10 +58,46 @@ namespace StyleCop.Analyzers.DocumentationRules
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(Descriptor);
 
+        private static string[] elementsToCheck =
+            {
+                XmlCommentHelper.RemarksXmlTag,
+                XmlCommentHelper.PermissionXmlTag,
+                XmlCommentHelper.ExceptionXmlTag,
+                XmlCommentHelper.ExampleXmlTag
+            };
+
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterCompilationStartAction(HandleCompilationStart);
+        }
+
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleXmlElement, SyntaxKind.XmlElement);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleXmlEmptyElement, SyntaxKind.XmlEmptyElement);
+        }
+
+        private static void HandleXmlElement(SyntaxNodeAnalysisContext context)
+        {
+            XmlElementSyntax emptyElement = context.Node as XmlElementSyntax;
+
+            var name = emptyElement?.StartTag?.Name;
+
+            if (elementsToCheck.Contains(name.ToString()) && XmlCommentHelper.IsConsideredEmpty(emptyElement))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, emptyElement.GetLocation(), name.ToString()));
+            }
+        }
+
+        private static void HandleXmlEmptyElement(SyntaxNodeAnalysisContext context)
+        {
+            XmlEmptyElementSyntax emptyElement = context.Node as XmlEmptyElementSyntax;
+
+            if (elementsToCheck.Contains(emptyElement?.Name.ToString()))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, emptyElement.GetLocation(), emptyElement?.Name.ToString()));
+            }
         }
     }
 }
