@@ -38,24 +38,24 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         {
             var testCode = @"
 /// <summary>
-/// Foo
+/// Class name.
 /// </summary>
 public class ClassName
 {
     /// <summary>
-    /// Foo
+    /// Join together two strings.
     /// </summary>
-    ///<param name=""foo"">Test</param>
-    ///<param name=""bar"">Test</param>
+    ///<param name=""first"">First string.</param>
+    ///<param name=""second"">Second string.</param>
     /// <$$>  </$$>
-    public ClassName Method(string foo, string bar) { return null; }
+    public string JoinStrings(string first, string second) { return first + second; }
 }";
             var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(12, 9).WithArguments(element);
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", element), expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// Checks an element with a blank value gives an error.
+        /// Checks an element with a multiple blank values give multiple errors.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -63,25 +63,25 @@ public class ClassName
         {
             var testCode = @"
 /// <summary>
-/// Foo
+/// Class name.
 /// </summary>
 public class ClassName
 {
     /// <summary>
-    /// Foo
+    /// Join together two strings.
     /// </summary>
-    ///<param name=""foo"">Test</param>
-    ///<param name=""bar"">Test</param>
-    /// <remarks>Foo bar</remarks>
+    ///<param name=""first"">First string.</param>
+    ///<param name=""second"">Second string.</param>
+    /// <remarks>Single line remark.</remarks>
     /// <example></example>
     /// <exception>
     ///
     /// </exception>
     /// <permission>
-    /// Multi line notes
-    /// Multi line notes
+    /// Multi line notes.
+    /// Multi line notes.
     /// </permission>
-    public ClassName Method(string foo, string bar) { return null; }
+    public string JoinStrings(string first, string second) { return first + second; }
 }";
             var expectedDiagnostics = new[]
             {
@@ -102,17 +102,17 @@ public class ClassName
         {
             var testCode = @"
 /// <summary>
-/// Foo
+/// Class name.
 /// </summary>
 public class ClassName
 {
     /// <summary>
-    /// Foo
+    /// Join together two strings.
     /// </summary>
-    ///<param name=""foo"">Test</param>
-    ///<param name=""bar"">Test</param>
+    ///<param name=""first"">First string.</param>
+    ///<param name=""second"">Second string.</param>
     /// <$$ />
-    public ClassName Method(string foo, string bar) { return null; }
+    public string JoinStrings(string first, string second) { return first + second; }
 }";
             var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(12, 9).WithArguments(element);
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", element), expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
@@ -129,17 +129,17 @@ public class ClassName
         {
             var testCode = @"
 /// <summary>
-/// Foo
+/// Class name.
 /// </summary>
 public class ClassName
 {
     /// <summary>
-    /// Foo
+    /// Join together two strings.
     /// </summary>
-    ///<param name=""foo"">Test</param>
-    ///<param name=""bar"">Test</param>
-    /// <$$>FooBar</$$>
-    public ClassName Method(string foo, string bar) { return null; }
+    ///<param name=""first"">First string.</param>
+    ///<param name=""second"">Second string.</param>
+    /// <$$>Not blank element.</$$>
+    public string JoinStrings(string first, string second) { return first + second; }
 }";
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", element), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }

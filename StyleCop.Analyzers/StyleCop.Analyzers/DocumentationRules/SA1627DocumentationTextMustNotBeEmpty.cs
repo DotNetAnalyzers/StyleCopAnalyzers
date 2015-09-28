@@ -47,7 +47,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// </summary>
         public const string DiagnosticId = "SA1627";
         private const string Title = "Documentation text must not be empty";
-        private const string MessageFormat = "The documentation text within the {0} tag must not be empty.";
+        private const string MessageFormat = "The documentation text within the \'{0}\' tag must not be empty.";
         private const string Description = "The XML header documentation for a C# code element contains an empty tag.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1627.md";
 
@@ -88,23 +88,23 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static void HandleXmlElement(SyntaxNodeAnalysisContext context)
         {
-            XmlElementSyntax emptyElement = context.Node as XmlElementSyntax;
+            var element = (XmlElementSyntax)context.Node;
 
-            var name = emptyElement?.StartTag?.Name;
+            var name = element.StartTag?.Name;
 
-            if (elementsToCheck.Contains(name.ToString()) && XmlCommentHelper.IsConsideredEmpty(emptyElement))
+            if (elementsToCheck.Contains(name.ToString()) && XmlCommentHelper.IsConsideredEmpty(element))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, emptyElement.GetLocation(), name.ToString()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, element.GetLocation(), name.ToString()));
             }
         }
 
         private static void HandleXmlEmptyElement(SyntaxNodeAnalysisContext context)
         {
-            XmlEmptyElementSyntax emptyElement = context.Node as XmlEmptyElementSyntax;
+            var element = (XmlEmptyElementSyntax)context.Node;
 
-            if (elementsToCheck.Contains(emptyElement?.Name.ToString()))
+            if (elementsToCheck.Contains(element.Name.ToString()))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, emptyElement.GetLocation(), emptyElement?.Name.ToString()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, element.GetLocation(), element.Name.ToString()));
             }
         }
     }
