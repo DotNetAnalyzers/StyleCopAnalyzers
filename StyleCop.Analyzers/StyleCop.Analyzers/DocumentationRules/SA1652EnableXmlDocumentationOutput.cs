@@ -21,6 +21,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// Otherwise, the semantics of all documentation comments are not checked and comments are likely to contain an
     /// increasing number of errors over time.</para>
     /// </remarks>
+    [NoCodeFix("The necessary actions for this code fix are not supported by the analysis infrastructure.")]
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class SA1652EnableXmlDocumentationOutput : DiagnosticAnalyzer
     {
