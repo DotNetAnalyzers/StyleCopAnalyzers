@@ -113,6 +113,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AttributeTests.cs" />
     <Compile Include="DocumentationRules\FileHeaderTestBase.cs" />
     <Compile Include="DocumentationRules\InheritdocCodeFixProviderUnitTests.cs" />
     <Compile Include="DocumentationRules\NoXmlFileHeaderUnitTests.cs" />
