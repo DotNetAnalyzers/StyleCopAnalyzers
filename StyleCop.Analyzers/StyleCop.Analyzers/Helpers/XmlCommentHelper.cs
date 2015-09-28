@@ -24,6 +24,10 @@ namespace StyleCop.Analyzers.Helpers
         internal const string SeeXmlTag = "see";
         internal const string ParamXmlTag = "param";
         internal const string TypeParamXmlTag = "typeparam";
+        internal const string RemarksXmlTag = "remarks";
+        internal const string ExampleXmlTag = "example";
+        internal const string PermissionXmlTag = "permission";
+        internal const string ExceptionXmlTag = "exception";
         internal const string CrefArgumentName = "cref";
         internal const string NameArgumentName = "name";
 
