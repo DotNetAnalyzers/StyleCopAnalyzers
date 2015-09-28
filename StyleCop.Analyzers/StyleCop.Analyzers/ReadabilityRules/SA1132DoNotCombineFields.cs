@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Immutable;
-    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -55,7 +54,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             foreach (VariableDeclaratorSyntax variable in variables)
             {
-                if (variable.IsMissing)
+                if (variable.IsMissing || variable.Identifier.IsMissing)
                 {
                     return;
                 }

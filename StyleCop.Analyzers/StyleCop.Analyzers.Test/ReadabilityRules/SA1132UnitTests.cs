@@ -112,32 +112,24 @@ class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestDeclarationWithMissingTokensAndNodesAsync()
+        [Theory]
+        [InlineData("CS1001", 19, "Identifier expected", "private int a,, b;")]
+        [InlineData("CS1001", 20, "Identifier expected", "private int e, = 3;")]
+        [InlineData("CS1002", 21, "; expected", "private int c, d")]
+        public async Task TestDeclarationWithMissingTokensAndNodesAsync(string id, int column, string message, string declaration)
         {
-            const string testCode = @"
+            string testCode = $@"
 class Foo
-{
-    private int a,, b;
-    private int c, d
-}";
+{{
+    {declaration}
+}}";
 
-            DiagnosticResult[] expected =
+            DiagnosticResult expected = new DiagnosticResult
             {
-                new DiagnosticResult
-                {
-                    Id = "CS1001",
-                    Severity = DiagnosticSeverity.Error,
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 4, 19) },
-                    Message = "Identifier expected"
-                },
-                new DiagnosticResult
-                {
-                    Id = "CS1002",
-                    Severity = DiagnosticSeverity.Error,
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 5, 21) },
-                    Message = "; expected"
-                }
+                Id = id,
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 4, column) },
+                Message = message
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
