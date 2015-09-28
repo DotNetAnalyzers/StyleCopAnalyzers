@@ -29,9 +29,19 @@ namespace Bar
 {
 }
 ";
+            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright (c) FooCorp. All rights reserved.
+// </copyright>
+
+namespace Bar
+{
+}
+";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1641Descriptor).WithLocation(1, 4);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -49,14 +59,24 @@ namespace Bar
 {
 }
 ";
+            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright (c) FooCorp. All rights reserved.
+// </copyright>
+
+namespace Bar
+{
+}
+";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1641Descriptor).WithLocation(1, 4);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            throw new System.NotImplementedException();
+            return new FileHeaderCodeFixProvider();
         }
     }
 }
