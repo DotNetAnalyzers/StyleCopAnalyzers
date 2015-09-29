@@ -129,8 +129,10 @@ namespace StyleCop.Analyzers.LayoutRules
             var separatingTrivia = TriviaHelper.MergeTriviaLists(previousToken.TrailingTrivia, closeBraceToken.LeadingTrivia);
 
             // skip all leading whitespace for the close brace
+            // the index must be checked because two tokens can be more than two lines apart and
+            // still only be separated by whitespace trivia due to compilation errors
             var index = separatingTrivia.Count - 1;
-            while (separatingTrivia[index].IsKind(SyntaxKind.WhitespaceTrivia))
+            while (index >= 0 && separatingTrivia[index].IsKind(SyntaxKind.WhitespaceTrivia))
             {
                 index--;
             }
