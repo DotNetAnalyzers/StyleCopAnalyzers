@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A field within a C# class has an access modifier other than private.
@@ -31,11 +32,20 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         private const string Description = "A field within a C# class has an access modifier other than private.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1401.md";
 
+        private const string SX1401DiagnosticId = "SX1401";
+        private const string SX1401Title = "Static readonly fields may be non private";
+        private const string SX1401MessageFormat = "Static readonly fields may be non private";
+        private const string SX1401Description = "A field within a C# class can have an access modifier other than private if it is static and readonly.";
+        private const string SX1401HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SX1401.md";
+
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
+        private static readonly DiagnosticDescriptor SX1401Descriptor =
+            new DiagnosticDescriptor(SX1401DiagnosticId, SX1401Title, SX1401MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Hidden, AnalyzerConstants.DisabledAlternative, SX1401Description, SX1401HelpLink);
+
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
-            ImmutableArray.Create(Descriptor);
+            ImmutableArray.Create(Descriptor, SX1401Descriptor);
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
@@ -54,10 +64,13 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
         private void AnalyzeField(SymbolAnalysisContext symbolAnalysisContext)
         {
+            bool isEnabledSX1401 = !symbolAnalysisContext.IsAnalyzerSuppressed(SX1401DiagnosticId, SX1401Descriptor.IsEnabledByDefault);
+
             var fieldDeclarationSyntax = (IFieldSymbol)symbolAnalysisContext.Symbol;
             if (!this.IsFieldPrivate(fieldDeclarationSyntax) &&
                 this.IsParentAClass(fieldDeclarationSyntax) &&
-                !fieldDeclarationSyntax.IsConst)
+                !fieldDeclarationSyntax.IsConst &&
+                (!isEnabledSX1401 || !this.IsFieldStaticReadonly(fieldDeclarationSyntax)))
             {
                 foreach (var location in symbolAnalysisContext.Symbol.Locations)
                 {
@@ -91,6 +104,11 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             }
 
             return false;
+        }
+
+        private bool IsFieldStaticReadonly(IFieldSymbol fieldDeclarationSyntax)
+        {
+            return fieldDeclarationSyntax.IsStatic && fieldDeclarationSyntax.IsReadOnly;
         }
     }
 }

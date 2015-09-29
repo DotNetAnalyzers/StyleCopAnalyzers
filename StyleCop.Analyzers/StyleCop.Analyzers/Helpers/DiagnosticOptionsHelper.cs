@@ -40,9 +40,26 @@ namespace StyleCop.Analyzers.Helpers
         /// <summary>
         /// Determines if the diagnostic identified by the given identifier is currently suppressed.
         /// </summary>
+        /// <param name="context">The context that will be used to determine if the diagnostic is currently suppressed.</param>
+        /// <param name="diagnosticId">The diagnostic identifier to check.</param>
+        /// <param name="enabledByDefault">true to enabled by default.</param>
+        /// <returns>
+        /// True if the diagnostic is currently suppressed.
+        /// </returns>
+        internal static bool IsAnalyzerSuppressed(this SymbolAnalysisContext context, string diagnosticId, bool enabledByDefault)
+        {
+            return context.Compilation.Options.IsAnalyzerSuppressed(diagnosticId, enabledByDefault);
+        }
+
+        /// <summary>
+        /// Determines if the diagnostic identified by the given identifier is currently suppressed.
+        /// </summary>
         /// <param name="compilation">The compilation that will be used to determine if the diagnostic is currently suppressed.</param>
         /// <param name="diagnosticId">The diagnostic identifier to check.</param>
-        /// <returns>True if the diagnostic is currently suppressed.</returns>
+        /// <param name="enabledByDefault">true to enabled by default.</param>
+        /// <returns>
+        /// True if the diagnostic is currently suppressed.
+        /// </returns>
         internal static bool IsAnalyzerSuppressed(this Compilation compilation, string diagnosticId)
         {
             return compilation.Options.IsAnalyzerSuppressed(diagnosticId);
@@ -64,10 +81,14 @@ namespace StyleCop.Analyzers.Helpers
         /// </summary>
         /// <param name="compilationOptions">The compilation options that will be used to determine if the diagnostic is currently suppressed.</param>
         /// <param name="diagnosticId">The diagnostic identifier to check.</param>
-        /// <returns>True if the diagnostic is currently suppressed.</returns>
-        internal static bool IsAnalyzerSuppressed(this CompilationOptions compilationOptions, string diagnosticId)
+        /// <param name="enabledByDefault">true to enabled by default.</param>
+        /// <returns>
+        /// True if the diagnostic is currently suppressed.
+        /// </returns>
+        internal static bool IsAnalyzerSuppressed(this CompilationOptions compilationOptions, string diagnosticId, bool enabledByDefault = true)
         {
-            return compilationOptions.SpecificDiagnosticOptions.GetValueOrDefault(diagnosticId, ReportDiagnostic.Default) == ReportDiagnostic.Suppress;
+            var reportDiagnostic = compilationOptions.SpecificDiagnosticOptions.GetValueOrDefault(diagnosticId, ReportDiagnostic.Default);
+            return reportDiagnostic == ReportDiagnostic.Default ? !enabledByDefault : reportDiagnostic == ReportDiagnostic.Suppress;
         }
 
         /// <summary>

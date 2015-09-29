@@ -24,7 +24,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     public string bar;
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 19);
+            DiagnosticResult expected = this.CSharpDiagnostic(SA1401FieldsMustBePrivate.DiagnosticId).WithLocation(3, 19);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
@@ -37,7 +37,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     internal string bar;
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 21);
+            DiagnosticResult expected = this.CSharpDiagnostic(SA1401FieldsMustBePrivate.DiagnosticId).WithLocation(3, 21);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
