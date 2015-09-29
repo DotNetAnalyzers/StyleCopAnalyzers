@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.SpacingRules
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
 
@@ -37,17 +38,8 @@ namespace StyleCop.Analyzers.SpacingRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
-            ImmutableArray.Create(Descriptor);
-
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        {
-            get
-            {
-                return SupportedDiagnosticsValue;
-            }
-        }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -57,28 +49,17 @@ namespace StyleCop.Analyzers.SpacingRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleImplicitArrayCreation, SyntaxKind.ImplicitArrayCreationExpression);
         }
 
-        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleImplicitArrayCreation(SyntaxNodeAnalysisContext context)
         {
-            SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
-            foreach (var token in root.DescendantTokens())
+            var arrayCreation = (ImplicitArrayCreationExpressionSyntax)context.Node;
+            var newKeywordToken = arrayCreation.NewKeyword;
+
+            if (newKeywordToken.IsFollowedByWhitespace() || newKeywordToken.IsLastInLine())
             {
-                if (!token.IsKind(SyntaxKind.NewKeyword))
-                {
-                    continue;
-                }
-
-                if (token.IsMissing || !token.Parent.IsKind(SyntaxKind.ImplicitArrayCreationExpression))
-                {
-                    continue;
-                }
-
-                if (token.IsFollowedByWhitespace() || token.IsLastInLine())
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingCodeFixProvider.RemoveFollowing));
-                }
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, newKeywordToken.GetLocation(), TokenSpacingCodeFixProvider.RemoveFollowing));
             }
         }
     }
