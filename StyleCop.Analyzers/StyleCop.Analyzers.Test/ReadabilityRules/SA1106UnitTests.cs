@@ -340,6 +340,52 @@ class TestClass
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that the code fix will remove all unnecessary whitespace.
+        /// This is a regression for #1556
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyCodeFixWillRemoveUnnecessaryWhitespaceAsync()
+        {
+            var testCode = @"
+class TestClass
+{
+    public void TestMethod1()
+    {
+        throw new System.NotImplementedException(); ;
+    }
+
+    public void TestMethod2()
+    {
+        throw new System.NotImplementedException(); /* c1 */ ;
+    }
+}";
+            var fixedCode = @"
+class TestClass
+{
+    public void TestMethod1()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void TestMethod2()
+    {
+        throw new System.NotImplementedException(); /* c1 */
+    }
+}";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(6, 53),
+                this.CSharpDiagnostic().WithLocation(11, 62)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
