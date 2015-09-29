@@ -79,7 +79,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeActionHonorExclusions(HandleDelegateDeclarationExpression, SyntaxKind.DelegateDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleAttribute, SyntaxKind.Attribute);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleAnonymousMethod, SyntaxKind.AnonymousMethodExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleAttributeList, SyntaxKind.AttributeList);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleParenthesizedLambdaExpression, SyntaxKind.ParenthesizedLambdaExpression);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleArrayCreation, SyntaxKind.ArrayCreationExpression);
         }
@@ -134,27 +133,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     context,
                     lastParameter,
                     lambdaExpressionSyntax.ParameterList.CloseParenToken);
-            }
-        }
-
-        private static void HandleAttributeList(SyntaxNodeAnalysisContext context)
-        {
-            var attributeList = (AttributeListSyntax)context.Node;
-
-            if (!attributeList.Attributes.Any())
-            {
-                return;
-            }
-
-            var lastAttribute = attributeList.Attributes
-                                .Last();
-
-            if (!attributeList.CloseBracketToken.IsMissing && lastAttribute.ArgumentList != null)
-            {
-                CheckIfLocationOfLastArgumentOrParameterAndCloseTokenAreTheSame(
-                    context,
-                    lastAttribute,
-                    attributeList.CloseBracketToken);
             }
         }
 
