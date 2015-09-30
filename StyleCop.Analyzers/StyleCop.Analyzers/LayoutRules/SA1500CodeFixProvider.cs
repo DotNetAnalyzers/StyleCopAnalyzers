@@ -26,7 +26,7 @@ namespace StyleCop.Analyzers.LayoutRules
     internal class SA1500CodeFixProvider : CodeFixProvider
     {
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds { get; } = 
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine.DiagnosticId);
 
         /// <inheritdoc/>
@@ -74,14 +74,11 @@ namespace StyleCop.Analyzers.LayoutRules
 
                 if (IsAccessorWithSingleLineBlock(previousToken, braceToken))
                 {
-                    if (!braceTokens.Contains(previousToken))
-                    {
-                        var newTrailingTrivia = previousToken.TrailingTrivia
-                            .WithoutTrailingWhitespace()
-                            .Add(SyntaxFactory.Space);
+                    var newTrailingTrivia = previousToken.TrailingTrivia
+                        .WithoutTrailingWhitespace()
+                        .Add(SyntaxFactory.Space);
 
-                        AddReplacement(tokenReplacements, previousToken, previousToken.WithTrailingTrivia(newTrailingTrivia));
-                    }
+                    AddReplacement(tokenReplacements, previousToken, previousToken.WithTrailingTrivia(newTrailingTrivia));
 
                     braceReplacementToken = braceReplacementToken.WithLeadingTrivia(braceToken.LeadingTrivia.WithoutLeadingWhitespace());
                 }
@@ -254,7 +251,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 new FixAll();
 
             protected override string CodeActionTitle =>
-                LayoutResources.SA1503CodeFix;
+                LayoutResources.SA1500CodeFix;
 
             protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
             {
@@ -268,9 +265,10 @@ namespace StyleCop.Analyzers.LayoutRules
 
                 var tokens = diagnostics
                     .Select(diagnostic => syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start))
-                    .OrderBy(token => token.SpanStart);
+                    .OrderBy(token => token.SpanStart)
+                    .ToImmutableArray();
 
-                var tokenReplacements = GenerateBraceFixes(document, tokens.ToImmutableArray());
+                var tokenReplacements = GenerateBraceFixes(document, tokens);
 
                 return syntaxRoot.ReplaceTokens(tokenReplacements.Keys, (originalToken, rewrittenToken) => tokenReplacements[originalToken]);
             }
