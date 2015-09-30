@@ -25,6 +25,10 @@
     <!-- Scripts -->
     <file src="tools\install.ps1" target="tools\" />
     <file src="tools\uninstall.ps1" target="tools\" />
+    
+    <!-- MSBuild imports -->
+    <file src="build\StyleCop.Analyzers.props" target="build\" />
+    <file src="build\StyleCop.Analyzers.targets" target="build\" />
 
     <!-- Source code -->
     <file src="**\*.cs" exclude="obj\**\*.cs" target="src"/>
