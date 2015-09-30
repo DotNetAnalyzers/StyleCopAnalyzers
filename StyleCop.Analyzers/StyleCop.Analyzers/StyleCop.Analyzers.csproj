@@ -220,6 +220,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>NamingResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="NamingRules\RenameFixAllProvider.cs" />
     <Compile Include="NamingRules\RenameToLowerCaseCodeFixProvider.cs" />
     <Compile Include="NamingRules\RenameToUpperCaseCodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1300ElementMustBeginWithUpperCaseLetter.cs" />

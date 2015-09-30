@@ -6,7 +6,6 @@ namespace StyleCop.Analyzers.NamingRules
     using System;
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Threading;
     using System.Threading.Tasks;
     using Helpers;
     using Microsoft.CodeAnalysis;
@@ -42,7 +41,7 @@ namespace StyleCop.Analyzers.NamingRules
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return new RenameFixAllProvider(NamingResources.RenameToCodeFix, symbol => GetNewName(symbol));
         }
 
         /// <inheritdoc/>
@@ -61,43 +60,45 @@ namespace StyleCop.Analyzers.NamingRules
                 var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 var newName = char.ToUpper(token.ValueText[0]) + token.ValueText.Substring(1);
                 var memberSyntax = this.GetParentTypeDeclaration(token);
-
                 if (memberSyntax is NamespaceDeclarationSyntax)
                 {
-                    // namespaces are not symbols. So we are just renaming the namespace
-                    Func<CancellationToken, Task<Document>> renameNamespace = t =>
-                    {
-                        IdentifierNameSyntax identifierSyntax = (IdentifierNameSyntax)token.Parent;
-
-                        var newIdentifierSyntac = identifierSyntax.WithIdentifier(SyntaxFactory.Identifier(newName));
-
-                        var newRoot = root.ReplaceNode(identifierSyntax, newIdentifierSyntac);
-                        return Task.FromResult(context.Document.WithSyntaxRoot(newRoot));
-                    };
-
-                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.RenameToCodeFix, newName), renameNamespace, equivalenceKey: nameof(RenameToUpperCaseCodeFixProvider) + "_" + diagnostic.Id), diagnostic);
+                    memberSyntax = token.Parent;
                 }
-                else if (memberSyntax != null)
+
+                SemanticModel semanticModel = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+
+                var typeDeclarationSymbol = semanticModel.GetDeclaredSymbol(memberSyntax) ?? semanticModel.GetSymbolInfo(memberSyntax).Symbol;
+                if (typeDeclarationSymbol == null)
                 {
-                    SemanticModel semanticModel = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
-
-                    var typeDeclarationSymbol = semanticModel.GetDeclaredSymbol(memberSyntax);
-                    if (typeDeclarationSymbol == null)
-                    {
-                        continue;
-                    }
-
-                    if (!this.IsValidNewMemberName(typeDeclarationSymbol, newName))
-                    {
-                        newName = newName + Suffix;
-                    }
-
-                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.RenameToCodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken), equivalenceKey: nameof(RenameToUpperCaseCodeFixProvider) + "_" + diagnostic.Id), diagnostic);
+                    continue;
                 }
+
+                if (!IsValidNewMemberName(typeDeclarationSymbol, newName))
+                {
+                    newName = newName + Suffix;
+                }
+
+                context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.RenameToCodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken), equivalenceKey: nameof(RenameToUpperCaseCodeFixProvider) + "_" + diagnostic.Id), diagnostic);
             }
         }
 
-        private bool IsValidNewMemberName(ISymbol typeSymbol, string name)
+        private static string GetNewName(ISymbol symbol)
+        {
+            var newName = char.ToUpper(symbol.Name[0]) + symbol.Name.Substring(1);
+            if (symbol == null)
+            {
+                return null;
+            }
+
+            if (!IsValidNewMemberName(symbol, newName))
+            {
+                newName = newName + Suffix;
+            }
+
+            return newName;
+        }
+
+        private static bool IsValidNewMemberName(ISymbol typeSymbol, string name)
         {
             if (typeSymbol == null)
             {
