@@ -74,6 +74,21 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Theory]
+        [InlineData("public")]
+        [InlineData("protected")]
+        [InlineData("protected internal")]
+        public async Task TestClassWithStaticReadonlyFieldAsync(string accessModifier)
+        {
+            var testCode = $@"public class TestClass
+{{
+    {accessModifier} static readonly string TestField = ""qwe"";
+}}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1401FieldsMustBePrivate();
