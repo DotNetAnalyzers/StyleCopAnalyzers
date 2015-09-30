@@ -25,11 +25,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
     [Shared]
     internal class SA1106CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1106CodeMustNotContainEmptyStatements.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+             ImmutableArray.Create(SA1106CodeMustNotContainEmptyStatements.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -42,11 +40,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!diagnostic.Id.Equals(SA1106CodeMustNotContainEmptyStatements.DiagnosticId))
-                {
-                    continue;
-                }
-
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         ReadabilityResources.SA1106CodeFix,
@@ -62,10 +55,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
-            if (token.IsMissingOrDefault())
-            {
-                return document;
-            }
 
             if (!token.Parent.IsKind(SyntaxKind.EmptyStatement))
             {
