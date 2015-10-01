@@ -49,14 +49,15 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSymbolAction(this.AnalyzeField, SymbolKind.Field);
+            context.RegisterSymbolAction(AnalyzeField, SymbolKind.Field);
         }
 
-        private void AnalyzeField(SymbolAnalysisContext symbolAnalysisContext)
+        private static void AnalyzeField(SymbolAnalysisContext symbolAnalysisContext)
         {
             var fieldDeclarationSyntax = (IFieldSymbol)symbolAnalysisContext.Symbol;
-            if (!this.IsFieldPrivate(fieldDeclarationSyntax) &&
-                this.IsParentAClass(fieldDeclarationSyntax) &&
+            if (!IsFieldPrivate(fieldDeclarationSyntax) &&
+                !IsStaticReadonly(fieldDeclarationSyntax) &&
+                IsParentAClass(fieldDeclarationSyntax) &&
                 !fieldDeclarationSyntax.IsConst)
             {
                 foreach (var location in symbolAnalysisContext.Symbol.Locations)
@@ -77,12 +78,17 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             }
         }
 
-        private bool IsFieldPrivate(IFieldSymbol fieldDeclarationSyntax)
+        private static bool IsFieldPrivate(IFieldSymbol fieldDeclarationSyntax)
         {
             return fieldDeclarationSyntax.DeclaredAccessibility == Accessibility.Private;
         }
 
-        private bool IsParentAClass(IFieldSymbol fieldDeclarationSyntax)
+        private static bool IsStaticReadonly(IFieldSymbol fieldDeclarationSyntax)
+        {
+            return fieldDeclarationSyntax.IsStatic && fieldDeclarationSyntax.IsReadOnly;
+        }
+
+        private static bool IsParentAClass(IFieldSymbol fieldDeclarationSyntax)
         {
             if (fieldDeclarationSyntax.ContainingSymbol != null &&
                 fieldDeclarationSyntax.ContainingSymbol.Kind == SymbolKind.NamedType)
