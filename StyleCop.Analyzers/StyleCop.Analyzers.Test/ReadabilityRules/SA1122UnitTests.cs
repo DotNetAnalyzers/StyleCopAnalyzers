@@ -18,6 +18,9 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     /// </summary>
     public class SA1122UnitTests : CodeFixVerifier
     {
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
         public async Task TestWhitespaceStringLiteralAsync(bool useVerbatimLiteral)
         {
             var testCode = @"public class Foo
@@ -30,15 +33,16 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, useVerbatimLiteral ? "@" : string.Empty), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
         public async Task TestNullInMethodAsync()
         {
             var testCode = @"public class Foo
-{{
+{
     public void Bar()
-    {{
+    {
         string test = null;
-    }}
-}}";
+    }
+}";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
