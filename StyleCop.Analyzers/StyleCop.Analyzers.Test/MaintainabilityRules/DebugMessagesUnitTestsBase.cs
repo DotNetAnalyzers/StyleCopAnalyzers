@@ -12,7 +12,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using TestHelper;
     using Xunit;
 
-    public abstract class DebugMessagesUnitTestsBase : CodeFixVerifier
+    public abstract class DebugMessagesUnitTestsBase : DiagnosticVerifier
     {
         protected bool IncludeSystemDll { get; set; } = true;
 

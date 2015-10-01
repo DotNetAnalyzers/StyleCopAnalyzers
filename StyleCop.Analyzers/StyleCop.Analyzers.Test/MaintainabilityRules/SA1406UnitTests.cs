@@ -71,10 +71,5 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         {
             yield return new SA1406DebugFailMustProvideMessageText();
         }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            throw new NotSupportedException();
-        }
     }
 }
