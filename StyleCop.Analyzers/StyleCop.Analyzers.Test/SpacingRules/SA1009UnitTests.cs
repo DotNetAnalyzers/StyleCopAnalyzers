@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.SpacingRules;
@@ -733,6 +734,72 @@ public class TestClass
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestFollowedByStickyColonAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    void Method()
+    {
+        switch (0)
+        {
+        case(1) :
+        default:
+            break;
+        }
+    }
+}
+";
+            string fixedCode = @"
+class ClassName
+{
+    void Method()
+    {
+        switch (0)
+        {
+        case(1):
+        default:
+            break;
+        }
+    }
+}
+";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 15).WithArguments(" not", "followed");
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMissingTokenAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    ClassName()
+        : base(
+    {
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                new DiagnosticResult
+                {
+                    Id = "CS1026",
+                    Severity = DiagnosticSeverity.Error,
+                    Message = ") expected",
+                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 5, 16) }
+                }
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
