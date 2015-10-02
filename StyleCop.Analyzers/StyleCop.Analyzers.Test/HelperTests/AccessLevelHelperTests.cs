@@ -3,12 +3,19 @@
 
 namespace StyleCop.Analyzers.Test.HelperTests
 {
+    using System;
     using Analyzers.Helpers;
     using Microsoft.CodeAnalysis;
     using Xunit;
 
     public class AccessLevelHelperTests
     {
+        [Fact]
+        public void TestNotSpecifiedToAccessibility()
+        {
+            Assert.Throws<ArgumentException>(() => AccessLevel.NotSpecified.ToAccessibility());
+        }
+
         [Fact]
         public void TestCombineEffectiveAccessibility()
         {

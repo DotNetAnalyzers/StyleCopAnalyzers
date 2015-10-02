@@ -133,6 +133,7 @@
     <Compile Include="Helpers\NamedTypeHelpers.cs" />
     <Compile Include="Helpers\NameSyntaxHelpers.cs" />
     <Compile Include="Helpers\RenameHelper.cs" />
+    <Compile Include="Helpers\Requires.cs" />
     <Compile Include="Helpers\SpecializedTasks.cs" />
     <Compile Include="Helpers\SyntaxTreeHelpers.cs" />
     <Compile Include="Helpers\TokenHelpers.cs" />
