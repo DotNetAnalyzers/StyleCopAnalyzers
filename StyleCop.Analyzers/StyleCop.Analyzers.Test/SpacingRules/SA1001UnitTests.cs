@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.SpacingRules;
@@ -167,6 +168,61 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             };
 
             await this.TestCommaInStatementOrDeclAsync(spaceOnlyBeforeComma, expected, spaceOnlyAfterComma).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMissingCommaAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    void MethodName()
+    {
+        int[] exp = { 0 0 };
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                new DiagnosticResult
+                {
+                    Id = "CS1003",
+                    Severity = DiagnosticSeverity.Error,
+                    Message = "Syntax error, ',' expected",
+                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 25) }
+                }
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestCommaFollowedByCommentAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    void MethodName()
+    {
+        int[] exp = { 0,/*comment*/ 0 };
+    }
+}
+";
+            string fixedCode = @"
+class ClassName
+{
+    void MethodName()
+    {
+        int[] exp = { 0, /*comment*/ 0 };
+    }
+}
+";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(6, 24);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
