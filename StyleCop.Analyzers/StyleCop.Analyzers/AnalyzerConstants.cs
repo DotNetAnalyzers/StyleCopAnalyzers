@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers
 {
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
 
     internal static class AnalyzerConstants
@@ -27,6 +28,7 @@ namespace StyleCop.Analyzers
         /// <see cref="DiagnosticDescriptor(string, string, string, string, DiagnosticSeverity, bool, string, string, string[])"/>
         /// to disable a diagnostic which is currently untested.
         /// </value>
+        [ExcludeFromCodeCoverage]
         internal static bool DisabledNoTests { get; }
 
         /// <summary>
