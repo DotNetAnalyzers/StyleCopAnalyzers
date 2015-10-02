@@ -503,9 +503,11 @@ namespace StyleCop.Analyzers.Helpers
                 {
                 case Accessibility.NotApplicable:
                 case Accessibility.Private:
+                    return declaredAccessibility;
+
                 case Accessibility.ProtectedAndInternal:
                 case Accessibility.Internal:
-                    return declaredAccessibility;
+                    return Accessibility.ProtectedAndInternal;
 
                 case Accessibility.Protected:
                 case Accessibility.ProtectedOrInternal:
@@ -519,9 +521,9 @@ namespace StyleCop.Analyzers.Helpers
                 {
                 case Accessibility.NotApplicable:
                 case Accessibility.Private:
-                case Accessibility.ProtectedAndInternal:
                     return declaredAccessibility;
 
+                case Accessibility.ProtectedAndInternal:
                 case Accessibility.Protected:
                     return Accessibility.ProtectedAndInternal;
 
@@ -545,7 +547,7 @@ namespace StyleCop.Analyzers.Helpers
 
                 case Accessibility.Public:
                 default:
-                    return Accessibility.Public;
+                    return Accessibility.ProtectedOrInternal;
                 }
 
             case Accessibility.Public:
