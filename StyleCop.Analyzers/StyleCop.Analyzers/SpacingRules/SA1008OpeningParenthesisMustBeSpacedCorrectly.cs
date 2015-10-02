@@ -152,6 +152,7 @@ namespace StyleCop.Analyzers.SpacingRules
             case SyntaxKind.DefaultExpression:
             case SyntaxKind.SizeOfExpression:
             case SyntaxKind.TypeOfExpression:
+            default:
                 haveLeadingSpace = false;
                 break;
 
@@ -181,10 +182,6 @@ namespace StyleCop.Analyzers.SpacingRules
             case SyntaxKind.ParameterList:
                 var partOfLambdaExpression = token.Parent.Parent.IsKind(SyntaxKind.ParenthesizedLambdaExpression);
                 haveLeadingSpace = partOfLambdaExpression;
-                break;
-
-            default:
-                haveLeadingSpace = false;
                 break;
             }
 
