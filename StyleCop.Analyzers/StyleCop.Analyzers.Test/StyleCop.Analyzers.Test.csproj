@@ -173,6 +173,7 @@
     <Compile Include="HelperTests\AccessLevelHelperTests.cs" />
     <Compile Include="HelperTests\TokenHelperTests.cs" />
     <Compile Include="HelperTests\TriviaHelperTests.cs" />
+    <Compile Include="HelperTests\XmlSyntaxFactoryTests.cs" />
     <Compile Include="LayoutRules\SA1500\SA1500UnitTests.Blocks.cs" />
     <Compile Include="LayoutRules\SA1500\SA1500UnitTests.Classes.cs" />
     <Compile Include="LayoutRules\SA1500\SA1500UnitTests.Constructors.cs" />
