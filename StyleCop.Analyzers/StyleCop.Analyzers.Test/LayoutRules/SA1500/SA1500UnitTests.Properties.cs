@@ -415,5 +415,51 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that a single line accessor with an embedded block will be handled correctly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestSingleLineAccessorWithEmbeddedBlockAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public int[] TestProperty
+    {
+        get {
+            {
+                return new[] { 1, 2, 3 }; } }
+    }
+}
+";
+
+            var fixedTestCode = @"
+public class TestClass
+{
+    public int[] TestProperty
+    {
+        get
+        {
+            {
+                return new[] { 1, 2, 3 };
+            }
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(6, 13),
+                this.CSharpDiagnostic().WithLocation(8, 43),
+                this.CSharpDiagnostic().WithLocation(8, 45)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
     }
 }

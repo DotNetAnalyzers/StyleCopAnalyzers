@@ -3,10 +3,8 @@
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -16,7 +14,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
-    using StyleCop.Analyzers.SpacingRules;
 
     /// <summary>
     /// This class provides a code fix for <see cref="SA1106CodeMustNotContainEmptyStatements"/>.
@@ -25,11 +22,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
     [Shared]
     internal class SA1106CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1106CodeMustNotContainEmptyStatements.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; }
+            = ImmutableArray.Create(SA1106CodeMustNotContainEmptyStatements.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -42,11 +37,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!diagnostic.Id.Equals(SA1106CodeMustNotContainEmptyStatements.DiagnosticId))
-                {
-                    continue;
-                }
-
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         ReadabilityResources.SA1106CodeFix,
@@ -62,10 +52,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
-            if (token.IsMissingOrDefault())
-            {
-                return document;
-            }
 
             if (!token.Parent.IsKind(SyntaxKind.EmptyStatement))
             {
@@ -106,20 +92,39 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static async Task<Document> RemoveSemicolonTextAsync(Document document, SyntaxToken token, CancellationToken cancellationToken)
         {
+            TextChange textChange;
+
             SourceText sourceText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
             TextLine line = sourceText.Lines.GetLineFromPosition(token.SpanStart);
             if (sourceText.ToString(line.Span).Trim() == token.Text)
             {
                 // remove the line containing the semicolon token
-                TextChange textChange = new TextChange(line.SpanIncludingLineBreak, string.Empty);
+                textChange = new TextChange(line.SpanIncludingLineBreak, string.Empty);
                 return document.WithText(sourceText.WithChanges(textChange));
+            }
+
+            TextSpan spanToRemove;
+            var whitespaceIndex = TriviaHelper.IndexOfTrailingWhitespace(token.LeadingTrivia);
+            if (whitespaceIndex >= 0)
+            {
+                spanToRemove = TextSpan.FromBounds(token.LeadingTrivia[whitespaceIndex].Span.Start, token.Span.End);
             }
             else
             {
-                // remove just the semicolon
-                TextChange textChange = new TextChange(token.Span, string.Empty);
-                return document.WithText(sourceText.WithChanges(textChange));
+                var previousToken = token.GetPreviousToken();
+                whitespaceIndex = TriviaHelper.IndexOfTrailingWhitespace(previousToken.TrailingTrivia);
+                if (whitespaceIndex >= 0)
+                {
+                    spanToRemove = TextSpan.FromBounds(previousToken.TrailingTrivia[whitespaceIndex].Span.Start, token.Span.End);
+                }
+                else
+                {
+                    spanToRemove = token.Span;
+                }
             }
+
+            textChange = new TextChange(spanToRemove, string.Empty);
+            return document.WithText(sourceText.WithChanges(textChange));
         }
     }
 }

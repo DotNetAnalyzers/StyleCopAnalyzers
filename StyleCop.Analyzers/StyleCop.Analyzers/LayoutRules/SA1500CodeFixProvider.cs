@@ -25,28 +25,20 @@ namespace StyleCop.Analyzers.LayoutRules
     [Shared]
     internal class SA1500CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds
-        {
-            get
-            {
-                return FixableDiagnostics;
-            }
-        }
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return FixAll.Instance;
         }
 
         /// <inheritdoc/>
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
+            foreach (Diagnostic diagnostic in context.Diagnostics)
             {
                 context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1500CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token), equivalenceKey: nameof(SA1500CodeFixProvider)), diagnostic);
             }
@@ -58,79 +50,95 @@ namespace StyleCop.Analyzers.LayoutRules
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
-            var curlyBracketToken = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-            var curlyBracketLine = curlyBracketToken.GetLineSpan().StartLinePosition.Line;
-            var curlyBracketReplacementToken = curlyBracketToken;
+            var braceToken = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
+            var tokenReplacements = GenerateBraceFixes(document, ImmutableArray.Create(braceToken));
 
-            var indentationOptions = IndentationOptions.FromDocument(document);
-            var indentationSteps = DetermineIndentationSteps(indentationOptions, curlyBracketToken);
-
-            var previousToken = curlyBracketToken.GetPreviousToken();
-            var nextToken = curlyBracketToken.GetNextToken();
-
-            var rewriter = new Rewriter();
-
-            if (IsAccessorWithSingleLineBlock(previousToken, curlyBracketToken))
-            {
-                var newTrailingTrivia = previousToken.TrailingTrivia
-                    .WithoutTrailingWhitespace()
-                    .Add(SyntaxFactory.Space);
-
-                rewriter.AddReplacement(previousToken, previousToken.WithTrailingTrivia(newTrailingTrivia));
-
-                curlyBracketReplacementToken = curlyBracketReplacementToken.WithLeadingTrivia(curlyBracketToken.LeadingTrivia.WithoutLeadingWhitespace());
-            }
-            else
-            {
-                // Check if we need to apply a fix before the curly bracket
-                if (previousToken.GetLineSpan().StartLinePosition.Line == curlyBracketLine)
-                {
-                    var sharedTrivia = curlyBracketReplacementToken.LeadingTrivia.WithoutTrailingWhitespace();
-                    var previousTokenNewTrailingTrivia = previousToken.TrailingTrivia
-                        .WithoutTrailingWhitespace()
-                        .AddRange(sharedTrivia)
-                        .Add(SyntaxFactory.CarriageReturnLineFeed);
-
-                    rewriter.AddReplacement(previousToken, previousToken.WithTrailingTrivia(previousTokenNewTrailingTrivia));
-
-                    curlyBracketReplacementToken = curlyBracketReplacementToken.WithLeadingTrivia(IndentationHelper.GenerateWhitespaceTrivia(indentationOptions, indentationSteps));
-                }
-
-                // Check if we need to apply a fix after the curly bracket
-                // if a closing curly bracket is followed by a semi-colon or closing paren, no fix is needed.
-                if ((nextToken.GetLineSpan().StartLinePosition.Line == curlyBracketLine) &&
-                    (!curlyBracketToken.IsKind(SyntaxKind.CloseBraceToken) || !IsValidFollowingToken(nextToken)))
-                {
-                    var sharedTrivia = nextToken.LeadingTrivia.WithoutTrailingWhitespace();
-                    var newTrailingTrivia = curlyBracketReplacementToken.TrailingTrivia
-                        .WithoutTrailingWhitespace()
-                        .AddRange(sharedTrivia)
-                        .Add(SyntaxFactory.CarriageReturnLineFeed);
-
-                    int newIndentationSteps;
-                    if (curlyBracketToken.IsKind(SyntaxKind.OpenBraceToken))
-                    {
-                        newIndentationSteps = indentationSteps + 1;
-                    }
-                    else if (nextToken.IsKind(SyntaxKind.CloseBraceToken))
-                    {
-                        newIndentationSteps = Math.Max(0, indentationSteps - 1);
-                    }
-                    else
-                    {
-                        newIndentationSteps = indentationSteps;
-                    }
-
-                    rewriter.AddReplacement(nextToken, nextToken.WithLeadingTrivia(IndentationHelper.GenerateWhitespaceTrivia(indentationOptions, newIndentationSteps)));
-
-                    curlyBracketReplacementToken = curlyBracketReplacementToken.WithTrailingTrivia(newTrailingTrivia);
-                }
-            }
-
-            rewriter.AddReplacement(curlyBracketToken, curlyBracketReplacementToken);
-
-            var newSyntaxRoot = rewriter.Visit(syntaxRoot).WithoutFormatting();
+            var newSyntaxRoot = syntaxRoot.ReplaceTokens(tokenReplacements.Keys, (originalToken, rewrittenToken) => tokenReplacements[originalToken]);
             return document.WithSyntaxRoot(newSyntaxRoot);
+        }
+
+        private static Dictionary<SyntaxToken, SyntaxToken> GenerateBraceFixes(Document document, ImmutableArray<SyntaxToken> braceTokens)
+        {
+            var tokenReplacements = new Dictionary<SyntaxToken, SyntaxToken>();
+
+            foreach (var braceToken in braceTokens)
+            {
+                var braceLine = LocationHelpers.GetLineSpan(braceToken).StartLinePosition.Line;
+                var braceReplacementToken = braceToken;
+
+                var indentationOptions = IndentationOptions.FromDocument(document);
+                var indentationSteps = DetermineIndentationSteps(indentationOptions, braceToken);
+
+                var previousToken = braceToken.GetPreviousToken();
+                var nextToken = braceToken.GetNextToken();
+
+                if (IsAccessorWithSingleLineBlock(previousToken, braceToken))
+                {
+                    var newTrailingTrivia = previousToken.TrailingTrivia
+                        .WithoutTrailingWhitespace()
+                        .Add(SyntaxFactory.Space);
+
+                    AddReplacement(tokenReplacements, previousToken, previousToken.WithTrailingTrivia(newTrailingTrivia));
+
+                    braceReplacementToken = braceReplacementToken.WithLeadingTrivia(braceToken.LeadingTrivia.WithoutLeadingWhitespace());
+                }
+                else
+                {
+                    // Check if we need to apply a fix before the curly bracket
+                    if (LocationHelpers.GetLineSpan(previousToken).StartLinePosition.Line == braceLine)
+                    {
+                        if (!braceTokens.Contains(previousToken))
+                        {
+                            var sharedTrivia = braceReplacementToken.LeadingTrivia.WithoutTrailingWhitespace();
+                            var previousTokenNewTrailingTrivia = previousToken.TrailingTrivia
+                            .WithoutTrailingWhitespace()
+                            .AddRange(sharedTrivia)
+                            .Add(SyntaxFactory.CarriageReturnLineFeed);
+
+                            AddReplacement(tokenReplacements, previousToken, previousToken.WithTrailingTrivia(previousTokenNewTrailingTrivia));
+                        }
+
+                        braceReplacementToken = braceReplacementToken.WithLeadingTrivia(IndentationHelper.GenerateWhitespaceTrivia(indentationOptions, indentationSteps));
+                    }
+
+                    // Check if we need to apply a fix after the curly bracket
+                    // if a closing curly bracket is followed by a semi-colon or closing paren, no fix is needed.
+                    if ((LocationHelpers.GetLineSpan(nextToken).StartLinePosition.Line == braceLine) &&
+                        (!braceToken.IsKind(SyntaxKind.CloseBraceToken) || !IsValidFollowingToken(nextToken)))
+                    {
+                        var sharedTrivia = nextToken.LeadingTrivia.WithoutTrailingWhitespace();
+                        var newTrailingTrivia = braceReplacementToken.TrailingTrivia
+                            .WithoutTrailingWhitespace()
+                            .AddRange(sharedTrivia)
+                            .Add(SyntaxFactory.CarriageReturnLineFeed);
+
+                        if (!braceTokens.Contains(nextToken))
+                        {
+                            int newIndentationSteps;
+                            if (braceToken.IsKind(SyntaxKind.OpenBraceToken))
+                            {
+                                newIndentationSteps = indentationSteps + 1;
+                            }
+                            else if (nextToken.IsKind(SyntaxKind.CloseBraceToken))
+                            {
+                                newIndentationSteps = Math.Max(0, indentationSteps - 1);
+                            }
+                            else
+                            {
+                                newIndentationSteps = indentationSteps;
+                            }
+
+                            AddReplacement(tokenReplacements, nextToken, nextToken.WithLeadingTrivia(IndentationHelper.GenerateWhitespaceTrivia(indentationOptions, newIndentationSteps)));
+                        }
+
+                        braceReplacementToken = braceReplacementToken.WithTrailingTrivia(newTrailingTrivia);
+                    }
+                }
+
+                AddReplacement(tokenReplacements, braceToken, braceReplacementToken);
+            }
+
+            return tokenReplacements;
         }
 
         private static bool IsAccessorWithSingleLineBlock(SyntaxToken previousToken, SyntaxToken curlyBracketToken)
@@ -170,7 +178,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 }
             }
 
-            return curlyBracketToken.GetLineSpan().StartLinePosition.Line == token.GetLineSpan().StartLinePosition.Line;
+            return LocationHelpers.GetLineSpan(curlyBracketToken).StartLinePosition.Line == LocationHelpers.GetLineSpan(token).StartLinePosition.Line;
         }
 
         private static bool IsValidFollowingToken(SyntaxToken nextToken)
@@ -229,28 +237,40 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static LinePosition GetTokenStartLinePosition(SyntaxToken token)
         {
-            return Location.Create(token.SyntaxTree, token.FullSpan).GetLineSpan().StartLinePosition;
+            return token.SyntaxTree.GetLineSpan(token.FullSpan).StartLinePosition;
         }
 
-        private class Rewriter : CSharpSyntaxRewriter
+        private static void AddReplacement(Dictionary<SyntaxToken, SyntaxToken> tokenReplacements, SyntaxToken originalToken, SyntaxToken replacementToken)
         {
-            private readonly Dictionary<SyntaxToken, SyntaxToken> tokenReplacements = new Dictionary<SyntaxToken, SyntaxToken>();
+            tokenReplacements[originalToken] = replacementToken;
+        }
 
-            public void AddReplacement(SyntaxToken originalToken, SyntaxToken replacementToken)
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; } =
+                new FixAll();
+
+            protected override string CodeActionTitle =>
+                LayoutResources.SA1500CodeFix;
+
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
             {
-                this.tokenReplacements.Add(originalToken, replacementToken);
-            }
-
-            public override SyntaxToken VisitToken(SyntaxToken token)
-            {
-                SyntaxToken replacementToken;
-
-                if (this.tokenReplacements.TryGetValue(token, out replacementToken))
+                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
+                if (diagnostics.IsEmpty)
                 {
-                    return replacementToken;
+                    return null;
                 }
 
-                return base.VisitToken(token);
+                SyntaxNode syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
+
+                var tokens = diagnostics
+                    .Select(diagnostic => syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start))
+                    .OrderBy(token => token.SpanStart)
+                    .ToImmutableArray();
+
+                var tokenReplacements = GenerateBraceFixes(document, tokens);
+
+                return syntaxRoot.ReplaceTokens(tokenReplacements.Keys, (originalToken, rewrittenToken) => tokenReplacements[originalToken]);
             }
         }
     }

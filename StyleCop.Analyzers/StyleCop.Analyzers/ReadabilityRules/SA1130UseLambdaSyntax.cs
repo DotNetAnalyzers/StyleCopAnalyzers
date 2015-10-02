@@ -76,7 +76,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, anonymousMethod.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, anonymousMethod.DelegateKeyword.GetLocation()));
         }
     }
 }

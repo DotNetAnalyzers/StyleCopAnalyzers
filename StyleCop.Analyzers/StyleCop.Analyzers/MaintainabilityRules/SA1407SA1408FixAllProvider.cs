@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -13,8 +14,6 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
     internal sealed class SA1407SA1408FixAllProvider : DocumentBasedFixAllProvider
     {
-        private static readonly SyntaxAnnotation NeedsParenthesisAnnotation = new SyntaxAnnotation("StyleCop.NeedsParenthesis");
-
         protected override string CodeActionTitle => MaintainabilityResources.SA1407SA1408CodeFix;
 
         protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
@@ -25,13 +24,9 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 return null;
             }
 
-            var newDocument = document;
+            var root = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
 
-            var root = await newDocument.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
-
-            // First annotate all expressions that need parenthesis with a temporary annotation.
-            // With this annotation we can find the nodes that need parenthesis even if
-            // the source span changes.
+            List<SyntaxNode> nodes = new List<SyntaxNode>();
             foreach (var diagnostic in diagnostics)
             {
                 SyntaxNode node = root.FindNode(diagnostic.Location.SourceSpan);
@@ -40,13 +35,13 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                     continue;
                 }
 
-                root = root.ReplaceNode(node, node.WithAdditionalAnnotations(NeedsParenthesisAnnotation));
+                nodes.Add(node);
             }
 
-            return root.ReplaceNodes(root.GetAnnotatedNodes(NeedsParenthesisAnnotation), this.AddParentheses);
+            return root.ReplaceNodes(nodes, (originalNode, rewrittenNode) => AddParentheses(originalNode, rewrittenNode));
         }
 
-        private SyntaxNode AddParentheses(SyntaxNode originalNode, SyntaxNode rewrittenNode)
+        private static SyntaxNode AddParentheses(SyntaxNode originalNode, SyntaxNode rewrittenNode)
         {
             BinaryExpressionSyntax syntax = rewrittenNode as BinaryExpressionSyntax;
             if (syntax == null)
@@ -54,9 +49,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 return rewrittenNode;
             }
 
-            BinaryExpressionSyntax trimmedSyntax = syntax
-                .WithoutTrivia()
-                .WithoutAnnotations(NeedsParenthesisAnnotation.Kind);
+            BinaryExpressionSyntax trimmedSyntax = syntax.WithoutTrivia();
 
             return SyntaxFactory.ParenthesizedExpression(trimmedSyntax)
                 .WithTriviaFrom(syntax)

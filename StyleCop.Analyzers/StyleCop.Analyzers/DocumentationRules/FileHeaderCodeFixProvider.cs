@@ -35,7 +35,11 @@ namespace StyleCop.Analyzers.DocumentationRules
                 FileHeaderAnalyzers.SA1633DescriptorMissing.Id,
                 FileHeaderAnalyzers.SA1634Descriptor.Id,
                 FileHeaderAnalyzers.SA1635Descriptor.Id,
-                FileHeaderAnalyzers.SA1636Descriptor.Id);
+                FileHeaderAnalyzers.SA1636Descriptor.Id,
+                FileHeaderAnalyzers.SA1637Descriptor.Id,
+                FileHeaderAnalyzers.SA1638Descriptor.Id,
+                FileHeaderAnalyzers.SA1640Descriptor.Id,
+                FileHeaderAnalyzers.SA1641Descriptor.Id);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()

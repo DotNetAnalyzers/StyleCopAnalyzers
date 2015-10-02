@@ -1140,18 +1140,8 @@ using System.Diagnostics;
 public class FooAttribute : System.Attribute
 {
 }";
-            var fixedCode = @"
-using System.Diagnostics;
-[Conditional(""DEBUG""), Conditional(""TEST1"")]
-public class FooAttribute : System.Attribute
-{
-}";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 1);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
