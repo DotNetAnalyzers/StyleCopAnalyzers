@@ -4,6 +4,7 @@
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -79,6 +80,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         }
 
         /// <inheritdoc/>
+        [ExcludeFromCodeCoverage]
         public override void Initialize(AnalysisContext context)
         {
             // This diagnostic is not implemented (by design) in StyleCopAnalyzers.

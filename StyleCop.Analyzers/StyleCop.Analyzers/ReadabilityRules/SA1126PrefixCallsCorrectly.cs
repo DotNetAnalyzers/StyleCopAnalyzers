@@ -4,6 +4,7 @@
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -49,6 +50,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         }
 
         /// <inheritdoc/>
+        [ExcludeFromCodeCoverage]
         public override void Initialize(AnalysisContext context)
         {
             // This diagnostic is not implemented (by design) in StyleCopAnalyzers.
