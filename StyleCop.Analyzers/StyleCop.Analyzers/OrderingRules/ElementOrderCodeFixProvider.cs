@@ -82,6 +82,11 @@ namespace StyleCop.Analyzers.OrderingRules
 
         private static SyntaxNode UpdateSyntaxRoot(MemberDeclarationSyntax memberDeclaration, ElementOrderingChecks checks, SyntaxNode syntaxRoot, IndentationOptions indentationOptions)
         {
+            if (memberDeclaration.GetLeadingTrivia().Any(trivia => trivia.IsDirective))
+            {
+                return syntaxRoot;
+            }
+
             var parentDeclaration = memberDeclaration.Parent;
             var memberToMove = new MemberOrderHelper(memberDeclaration, checks);
 
@@ -125,7 +130,13 @@ namespace StyleCop.Analyzers.OrderingRules
 
             for (var i = memberIndex - 1; i >= 0; --i)
             {
-                var orderHelper = new MemberOrderHelper(members[i], checks);
+                var member = members[i];
+                if (member.GetLeadingTrivia().Any(trivia => trivia.IsDirective))
+                {
+                    return syntaxRoot;
+                }
+
+                var orderHelper = new MemberOrderHelper(member, checks);
                 if (orderHelper.Priority < memberOrder.Priority)
                 {
                     target = orderHelper;
