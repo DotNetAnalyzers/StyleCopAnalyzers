@@ -1727,6 +1727,41 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1585:
+        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1585
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestCrefAttributeAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    /// <see cref=""Method ()""/>
+    public void Method()
+    {
+    }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    /// <see cref=""Method()""/>
+    public void Method()
+    {
+    }
+}
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(4, 27).WithArguments(" not", "preceded");
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {

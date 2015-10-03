@@ -77,7 +77,7 @@ namespace StyleCop.Analyzers.SpacingRules
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
-            foreach (var token in root.DescendantTokens().Where(t => t.IsKind(SyntaxKind.OpenParenToken)))
+            foreach (var token in root.DescendantTokens(descendIntoTrivia: true).Where(t => t.IsKind(SyntaxKind.OpenParenToken)))
             {
                 HandleOpenParenToken(context, token);
             }
