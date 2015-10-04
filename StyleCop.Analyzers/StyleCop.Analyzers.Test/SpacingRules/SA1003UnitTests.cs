@@ -46,6 +46,12 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         var v11 = + 1; /* SA1022 */
         var v12 = ++ v1; /* SA1020 */
         var v13 = -- v1; /* SA1020 */
+
+        // additional valid cases to improve code coverage
+        var v9_1 = new { Property = v1++ };
+        var v9_2 = v4[v1++];
+        var v9_3 = $""{v1++}"";
+        var v9_4 = v1++;
     }
 }
 ";
@@ -626,6 +632,11 @@ public class Foo : Exception
         {
             var testCode = @"public class TestClass
 {
+    // This empty constructor improves test coverage.
+    public TestClass()
+    {
+    }
+
     public void TestMethod()
     {
         var j = 100;

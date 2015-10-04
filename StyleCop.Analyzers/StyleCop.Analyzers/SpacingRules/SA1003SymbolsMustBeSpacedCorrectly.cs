@@ -280,6 +280,8 @@ namespace StyleCop.Analyzers.SpacingRules
 
         private static void CheckToken(SyntaxNodeAnalysisContext context, SyntaxToken token, bool withLeadingWhitespace, bool allowAtEndOfLine, bool withTrailingWhitespace, string tokenText = null)
         {
+            tokenText = tokenText ?? token.Text;
+
             var precedingToken = token.GetPreviousToken();
             var precedingTriviaList = TriviaHelper.MergeTriviaLists(precedingToken.TrailingTrivia, token.LeadingTrivia);
 
@@ -294,7 +296,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 {
                     var properties = ImmutableDictionary.Create<string, string>()
                         .Add(CodeFixAction, InsertBeforeTag);
-                    context.ReportDiagnostic(Diagnostic.Create(DescriptorPrecededByWhitespace, token.GetLocation(), properties, tokenText ?? token.Text));
+                    context.ReportDiagnostic(Diagnostic.Create(DescriptorPrecededByWhitespace, token.GetLocation(), properties, tokenText));
                 }
             }
             else
@@ -305,7 +307,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 {
                     var properties = ImmutableDictionary.Create<string, string>()
                         .Add(CodeFixAction, RemoveBeforeTag);
-                    context.ReportDiagnostic(Diagnostic.Create(DescriptorNotPrecededByWhitespace, token.GetLocation(), properties, tokenText ?? token.Text));
+                    context.ReportDiagnostic(Diagnostic.Create(DescriptorNotPrecededByWhitespace, token.GetLocation(), properties, tokenText));
                 }
             }
 
@@ -319,7 +321,7 @@ namespace StyleCop.Analyzers.SpacingRules
                     properties = properties.Add(CodeFixAction, withTrailingWhitespace ? RemoveEndOfLineWithTrailingSpaceTag : RemoveEndOfLineTag);
                 }
 
-                context.ReportDiagnostic(Diagnostic.Create(DescriptorNotAtEndOfLine, token.GetLocation(), properties, tokenText ?? token.Text));
+                context.ReportDiagnostic(Diagnostic.Create(DescriptorNotAtEndOfLine, token.GetLocation(), properties, tokenText));
                 return;
             }
 
@@ -329,7 +331,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 {
                     var properties = ImmutableDictionary.Create<string, string>()
                         .Add(CodeFixAction, InsertAfterTag);
-                    context.ReportDiagnostic(Diagnostic.Create(DescriptorFollowedByWhitespace, token.GetLocation(), properties, tokenText ?? token.Text));
+                    context.ReportDiagnostic(Diagnostic.Create(DescriptorFollowedByWhitespace, token.GetLocation(), properties, tokenText));
                 }
             }
             else
@@ -338,7 +340,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 {
                     var properties = ImmutableDictionary.Create<string, string>()
                         .Add(CodeFixAction, RemoveAfterTag);
-                    context.ReportDiagnostic(Diagnostic.Create(DescriptorNotFollowedByWhitespace, token.GetLocation(), properties, tokenText ?? token.Text));
+                    context.ReportDiagnostic(Diagnostic.Create(DescriptorNotFollowedByWhitespace, token.GetLocation(), properties, tokenText));
                 }
             }
         }

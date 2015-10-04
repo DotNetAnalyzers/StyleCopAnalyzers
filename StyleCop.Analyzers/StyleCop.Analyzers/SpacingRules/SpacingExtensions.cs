@@ -20,42 +20,6 @@ namespace StyleCop.Analyzers.SpacingRules
                 || token.IsMissing;
         }
 
-        public static SyntaxToken WithoutLeadingWhitespace(this SyntaxToken token, bool removeEndOfLineTrivia = false)
-        {
-            if (!token.HasLeadingTrivia)
-            {
-                return token;
-            }
-
-            return token.WithLeadingTrivia(token.LeadingTrivia.WithoutWhitespace(removeEndOfLineTrivia));
-        }
-
-        public static SyntaxToken WithoutTrailingWhitespace(this SyntaxToken token, bool removeEndOfLineTrivia = false)
-        {
-            if (!token.HasTrailingTrivia)
-            {
-                return token;
-            }
-
-            return token.WithTrailingTrivia(token.TrailingTrivia.WithoutWhitespace(removeEndOfLineTrivia));
-        }
-
-        public static SyntaxTriviaList WithoutWhitespace(this SyntaxTriviaList syntaxTriviaList, bool removeEndOfLineTrivia = false)
-        {
-            if (syntaxTriviaList.Count == 0)
-            {
-                return syntaxTriviaList;
-            }
-
-            var trivia = syntaxTriviaList.Where(i => !i.IsKind(SyntaxKind.WhitespaceTrivia));
-            if (removeEndOfLineTrivia)
-            {
-                trivia = trivia.Where(i => !i.IsKind(SyntaxKind.EndOfLineTrivia));
-            }
-
-            return SyntaxFactory.TriviaList(trivia);
-        }
-
         /// <summary>
         /// Removes the leading and trailing trivia associated with a syntax token.
         /// </summary>

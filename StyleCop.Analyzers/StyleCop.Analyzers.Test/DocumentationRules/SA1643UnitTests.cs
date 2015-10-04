@@ -80,6 +80,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             return new SA1642SA1643CodeFixProvider();
         }
 
+        [Fact]
         private async Task TestEmptyDestructorAsync()
         {
             var testCode = @"namespace FooNamespace

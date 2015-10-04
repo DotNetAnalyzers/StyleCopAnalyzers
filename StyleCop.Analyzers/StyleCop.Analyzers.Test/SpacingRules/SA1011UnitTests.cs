@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.SpacingRules;
@@ -286,6 +287,47 @@ public class ClassName
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 16).WithArguments(" not", "followed");
 
             await this.TestWhitespaceInStatementOrDeclAsync(invalidStatament, fixedStatament, expected).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMissingTokenAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    void Method()
+    {
+        int[] x = new int[0;
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                new DiagnosticResult
+                {
+                    Id = "CS1003",
+                    Severity = DiagnosticSeverity.Error,
+                    Message = "Syntax error, ',' expected",
+                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 28) }
+                },
+                new DiagnosticResult
+                {
+                    Id = "CS0443",
+                    Severity = DiagnosticSeverity.Error,
+                    Message = "Syntax error; value expected",
+                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 28) }
+                },
+                new DiagnosticResult
+                {
+                    Id = "CS1003",
+                    Severity = DiagnosticSeverity.Error,
+                    Message = "Syntax error, ']' expected",
+                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 28) }
+                }
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

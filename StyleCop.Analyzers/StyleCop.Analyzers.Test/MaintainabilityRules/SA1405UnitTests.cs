@@ -87,10 +87,5 @@ public class Foo
         {
             yield return new SA1405DebugAssertMustProvideMessageText();
         }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            throw new NotSupportedException();
-        }
     }
 }

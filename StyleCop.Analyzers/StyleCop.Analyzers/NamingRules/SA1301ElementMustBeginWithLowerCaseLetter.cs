@@ -4,6 +4,7 @@
 namespace StyleCop.Analyzers.NamingRules
 {
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -40,6 +41,7 @@ namespace StyleCop.Analyzers.NamingRules
         }
 
         /// <inheritdoc/>
+        [ExcludeFromCodeCoverage]
         public override void Initialize(AnalysisContext context)
         {
             // Intentionally empty
