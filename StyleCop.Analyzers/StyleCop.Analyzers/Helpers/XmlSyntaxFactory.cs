@@ -66,7 +66,7 @@ namespace StyleCop.Analyzers.Helpers
 
         public static XmlTextAttributeSyntax TextAttribute(string name, string value)
         {
-            return TextAttribute(name, TextLiteral(value));
+            return TextAttribute(name, TextLiteral(value, true));
         }
 
         public static XmlTextAttributeSyntax TextAttribute(string name, params SyntaxToken[] textTokens)
@@ -143,7 +143,17 @@ namespace StyleCop.Analyzers.Helpers
 
         public static SyntaxToken TextLiteral(string value)
         {
+            return TextLiteral(value, false);
+        }
+
+        public static SyntaxToken TextLiteral(string value, bool escapeQuotes)
+        {
             string encoded = new XText(value).ToString();
+            if (escapeQuotes)
+            {
+                encoded = encoded.Replace("\"", "&quot;");
+            }
+
             return SyntaxFactory.XmlTextLiteral(
                 SyntaxFactory.TriviaList(),
                 encoded,

@@ -17,7 +17,7 @@ namespace StyleCop.Analyzers.Test.HelperTests
             Assert.Equal(" name=\"value\"", XmlSyntaxFactory.TextAttribute("name", "value").ToFullString());
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1590")]
+        [Fact]
         public void TestEscapedTextAttribute()
         {
             Assert.Equal(" name=\"&quot;value&quot;\"", XmlSyntaxFactory.TextAttribute("name", "\"value\"").ToFullString());
