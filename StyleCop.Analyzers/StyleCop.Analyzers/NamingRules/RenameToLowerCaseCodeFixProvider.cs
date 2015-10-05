@@ -34,7 +34,7 @@ namespace StyleCop.Analyzers.NamingRules
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return new RenameFixAllProvider(NamingResources.RenameToCodeFix, symbol => GetNewName(symbol));
         }
 
         /// <inheritdoc/>
@@ -57,6 +57,12 @@ namespace StyleCop.Analyzers.NamingRules
                     context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.RenameToCodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken), equivalenceKey: nameof(RenameToLowerCaseCodeFixProvider)), diagnostic);
                 }
             }
+        }
+
+        private static string GetNewName(ISymbol symbol)
+        {
+            string oldName = symbol.Name;
+            return char.ToLower(oldName[0]) + oldName.Substring(1);
         }
     }
 }

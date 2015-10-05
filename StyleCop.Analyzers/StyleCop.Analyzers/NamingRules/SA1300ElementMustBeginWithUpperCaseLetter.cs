@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.NamingRules
 {
+    using System;
     using System.Collections.Immutable;
     using System.Linq;
     using Microsoft.CodeAnalysis;
@@ -212,7 +213,7 @@ namespace StyleCop.Analyzers.NamingRules
                 return;
             }
 
-            var symbolInfo = context.SemanticModel.GetDeclaredSymbol(identifier.Parent);
+            var symbolInfo = context.SemanticModel.GetDeclaredSymbol(identifier.Parent) ?? context.SemanticModel.GetSymbolInfo(identifier.Parent).Symbol;
             if (symbolInfo != null && NamedTypeHelpers.IsImplementingAnInterfaceMember(symbolInfo))
             {
                 return;
