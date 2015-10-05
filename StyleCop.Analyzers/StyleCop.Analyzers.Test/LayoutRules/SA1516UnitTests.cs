@@ -523,6 +523,26 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that private fields with attributes are handled properly.
+        /// This is a regression test for #1595
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyThatPrivateFieldsAreHandledProperlyAsync()
+        {
+            string testCode = @"using System;
+
+public class TestClass
+{
+    [Obsolete]
+    private int test1;
+    private bool test2;
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1516ElementsMustBeSeparatedByBlankLine();
