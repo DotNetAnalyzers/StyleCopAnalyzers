@@ -1007,7 +1007,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Switch arguments..
+        ///   Looks up a localized string similar to Switch operants..
         /// </summary>
         internal static string SA1131CodeFix {
             get {

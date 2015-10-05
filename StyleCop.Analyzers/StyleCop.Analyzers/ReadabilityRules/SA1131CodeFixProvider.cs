@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
+    using System;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
@@ -13,6 +14,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers;
+    using Microsoft.CodeAnalysis.CSharp;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1131UseReadableConditions"/>.
@@ -65,7 +67,27 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var newLeft = binaryExpression.Right.WithTriviaFrom(binaryExpression.Left);
             var newRight = binaryExpression.Left.WithTriviaFrom(binaryExpression.Right);
-            return binaryExpression.WithLeft(newLeft).WithRight(newRight);
+            return binaryExpression.WithLeft(newLeft).WithRight(newRight).WithOperatorToken(GetCorrectOperatorToken(binaryExpression.OperatorToken));
+        }
+
+        private static SyntaxToken GetCorrectOperatorToken(SyntaxToken operatorToken)
+        {
+            switch (operatorToken.Kind())
+            {
+                case SyntaxKind.EqualsEqualsToken:
+                case SyntaxKind.ExclamationEqualsToken:
+                    return operatorToken;
+                case SyntaxKind.GreaterThanToken:
+                    return SyntaxFactory.Token(operatorToken.LeadingTrivia, SyntaxKind.LessThanToken, operatorToken.TrailingTrivia);
+                case SyntaxKind.GreaterThanEqualsToken:
+                    return SyntaxFactory.Token(operatorToken.LeadingTrivia, SyntaxKind.LessThanEqualsToken, operatorToken.TrailingTrivia);
+                case SyntaxKind.LessThanToken:
+                    return SyntaxFactory.Token(operatorToken.LeadingTrivia, SyntaxKind.GreaterThanToken, operatorToken.TrailingTrivia);
+                case SyntaxKind.LessThanEqualsToken:
+                    return SyntaxFactory.Token(operatorToken.LeadingTrivia, SyntaxKind.GreaterThanEqualsToken, operatorToken.TrailingTrivia);
+                default:
+                    return SyntaxFactory.Token(SyntaxKind.None);
+            }
         }
 
         private class FixAll : DocumentBasedFixAllProvider

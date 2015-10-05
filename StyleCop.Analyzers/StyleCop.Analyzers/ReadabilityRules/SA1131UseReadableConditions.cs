@@ -42,6 +42,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
             context.RegisterSyntaxNodeActionHonorExclusions(HandleBinaryExpression, SyntaxKind.EqualsExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleBinaryExpression, SyntaxKind.NotEqualsExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleBinaryExpression, SyntaxKind.GreaterThanExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleBinaryExpression, SyntaxKind.LessThanExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleBinaryExpression, SyntaxKind.GreaterThanOrEqualExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleBinaryExpression, SyntaxKind.LessThanOrEqualExpression);
         }
 
         private static void HandleBinaryExpression(SyntaxNodeAnalysisContext context)
@@ -50,10 +55,34 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             var semanticModel = context.SemanticModel;
 
-            if (semanticModel.GetConstantValue(binaryExpression.Left).HasValue && !semanticModel.GetConstantValue(binaryExpression.Right).HasValue)
+            if (IsLiteral(binaryExpression.Left, semanticModel) && !IsLiteral(binaryExpression.Right, semanticModel))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, binaryExpression.GetLocation()));
             }
+        }
+
+        private static bool IsLiteral(ExpressionSyntax expression, SemanticModel semanticModel)
+        {
+            // Default expressions are most of the time constants, but not for default(MyStruct).
+            if (expression.IsKind(SyntaxKind.DefaultExpression))
+            {
+                return true;
+            }
+
+            var constantValue = semanticModel.GetConstantValue(expression);
+            if (constantValue.HasValue)
+            {
+                return true;
+            }
+
+            IFieldSymbol fieldSymbol = semanticModel.GetSymbolInfo(expression).Symbol as IFieldSymbol;
+
+            if (fieldSymbol != null)
+            {
+                return fieldSymbol.IsStatic && fieldSymbol.IsReadOnly;
+            }
+
+            return false;
         }
     }
 }

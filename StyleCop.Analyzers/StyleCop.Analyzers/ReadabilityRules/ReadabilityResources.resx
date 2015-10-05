@@ -433,7 +433,7 @@
     <value>Use lambda syntax</value>
   </data>
   <data name="SA1131CodeFix" xml:space="preserve">
-    <value>Switch arguments.</value>
+    <value>Switch operants.</value>
   </data>
   <data name="SA1131Description" xml:space="preserve">
     <value>When a comparison is made between a variable and a literal, the variable should be placed on the left-hand-side to maximize readability.</value>
