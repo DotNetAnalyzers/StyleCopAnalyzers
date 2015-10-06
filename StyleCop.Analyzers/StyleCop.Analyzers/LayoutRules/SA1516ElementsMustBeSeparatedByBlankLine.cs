@@ -192,13 +192,15 @@ namespace StyleCop.Analyzers.LayoutRules
                 if (!members[i - 1].ContainsDiagnostics && !members[i].ContainsDiagnostics)
                 {
                     // Report if
-                    // the previous declaration spans across multiple lines
+                    // the current declaration is not a field declaration
                     // or the previous declaration is of different type
-                    // or the current declaration has documentation
-                    // or the current declaration is not a field declaration,
-                    if (!members[i - 1].IsKind(members[i].Kind())
-                        || !members[i].IsKind(SyntaxKind.FieldDeclaration)
-                        || IsMultiline(members[i - 1]))
+                    // or the previous declaration spans across multiple lines
+                    //
+                    // Note that the order of checking is important, as the call to IsMultiLine requires a FieldDeclarationSyntax,
+                    // something that can only be guaranteed if the first two checks fail.
+                    if (!members[i].IsKind(SyntaxKind.FieldDeclaration)
+                        || !members[i - 1].IsKind(members[i].Kind())
+                        || IsMultiline((FieldDeclarationSyntax)members[i - 1]))
                     {
                         ReportIfThereIsNoBlankLine(context, members[i - 1], members[i]);
                     }
@@ -206,16 +208,17 @@ namespace StyleCop.Analyzers.LayoutRules
             }
         }
 
-        private static bool IsMultiline(SyntaxNode node)
+        private static bool IsMultiline(FieldDeclarationSyntax fieldDeclaration)
         {
-            var lineSpan = node.GetLineSpan();
-            var attributes = GetAttributes(node);
+            var lineSpan = fieldDeclaration.GetLineSpan();
+            var attributeLists = fieldDeclaration.AttributeLists;
+
             int startLine;
 
-            // Exclude attributes when determining if a node spans multiple lines
-            if (attributes.Count > 0)
+            // Exclude attributes when determining if a field declaration spans multiple lines
+            if (attributeLists.Count > 0)
             {
-                var lastAttributeSpan = node.SyntaxTree.GetLineSpan(attributes.Last().FullSpan);
+                var lastAttributeSpan = fieldDeclaration.SyntaxTree.GetLineSpan(attributeLists.Last().FullSpan);
                 startLine = lastAttributeSpan.EndLinePosition.Line;
             }
             else
@@ -224,6 +227,12 @@ namespace StyleCop.Analyzers.LayoutRules
             }
 
             return startLine != lineSpan.EndLinePosition.Line;
+        }
+
+        private static bool IsMultiline(AccessorDeclarationSyntax accessorDeclaration)
+        {
+            var lineSpan = accessorDeclaration.GetLineSpan();
+            return lineSpan.StartLinePosition.Line != lineSpan.EndLinePosition.Line;
         }
 
         private static void ReportIfThereIsNoBlankLine(SyntaxNodeAnalysisContext context, SyntaxNode firstNode, SyntaxNode secondNode)
@@ -282,53 +291,6 @@ namespace StyleCop.Analyzers.LayoutRules
             }
 
             return false;
-        }
-
-        // copied from Roslyn code, as its inaccessible there
-        // (from Microsoft.CodeAnalysis.CSharp.Extensions.MemberDeclarationSyntaxExtensions)
-        private static SyntaxList<AttributeListSyntax> GetAttributes(SyntaxNode node)
-        {
-            var memberDeclaration = node as MemberDeclarationSyntax;
-            if (memberDeclaration != null)
-            {
-                switch (memberDeclaration.Kind())
-                {
-                    case SyntaxKind.EnumDeclaration:
-                        return ((EnumDeclarationSyntax)memberDeclaration).AttributeLists;
-                    case SyntaxKind.EnumMemberDeclaration:
-                        return ((EnumMemberDeclarationSyntax)memberDeclaration).AttributeLists;
-                    case SyntaxKind.ClassDeclaration:
-                    case SyntaxKind.InterfaceDeclaration:
-                    case SyntaxKind.StructDeclaration:
-                        return ((TypeDeclarationSyntax)memberDeclaration).AttributeLists;
-                    case SyntaxKind.DelegateDeclaration:
-                        return ((DelegateDeclarationSyntax)memberDeclaration).AttributeLists;
-                    case SyntaxKind.FieldDeclaration:
-                        return ((FieldDeclarationSyntax)memberDeclaration).AttributeLists;
-                    case SyntaxKind.EventFieldDeclaration:
-                        return ((EventFieldDeclarationSyntax)memberDeclaration).AttributeLists;
-                    case SyntaxKind.ConstructorDeclaration:
-                        return ((ConstructorDeclarationSyntax)memberDeclaration).AttributeLists;
-                    case SyntaxKind.DestructorDeclaration:
-                        return ((DestructorDeclarationSyntax)memberDeclaration).AttributeLists;
-                    case SyntaxKind.PropertyDeclaration:
-                        return ((PropertyDeclarationSyntax)memberDeclaration).AttributeLists;
-                    case SyntaxKind.EventDeclaration:
-                        return ((EventDeclarationSyntax)memberDeclaration).AttributeLists;
-                    case SyntaxKind.IndexerDeclaration:
-                        return ((IndexerDeclarationSyntax)memberDeclaration).AttributeLists;
-                    case SyntaxKind.OperatorDeclaration:
-                        return ((OperatorDeclarationSyntax)memberDeclaration).AttributeLists;
-                    case SyntaxKind.ConversionOperatorDeclaration:
-                        return ((ConversionOperatorDeclarationSyntax)memberDeclaration).AttributeLists;
-                    case SyntaxKind.MethodDeclaration:
-                        return ((MethodDeclarationSyntax)memberDeclaration).AttributeLists;
-                    case SyntaxKind.IncompleteMember:
-                        return ((IncompleteMemberSyntax)memberDeclaration).AttributeLists;
-                }
-            }
-
-            return SyntaxFactory.List<AttributeListSyntax>();
         }
     }
 }
