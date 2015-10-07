@@ -249,6 +249,13 @@ namespace StyleCop.Analyzers.LayoutRules
                         return;
                     }
 
+                    if (nextToken.IsKind(SyntaxKind.ColonToken)
+                        && IsPartOf<ConditionalExpressionSyntax>(token))
+                    {
+                        // the close brace is in the first part of a conditional expression.
+                        return;
+                    }
+
                     if (nextToken.IsKind(SyntaxKind.AddKeyword)
                         || nextToken.IsKind(SyntaxKind.RemoveKeyword)
                         || nextToken.IsKind(SyntaxKind.GetKeyword)
