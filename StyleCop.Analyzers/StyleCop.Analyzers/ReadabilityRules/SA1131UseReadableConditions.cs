@@ -5,6 +5,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -24,7 +26,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1131.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; }
@@ -33,7 +35,53 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterCompilationStartAction(HandleCompilationStart);
+        }
+
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleBinaryExpression, SyntaxKind.EqualsExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleBinaryExpression, SyntaxKind.NotEqualsExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleBinaryExpression, SyntaxKind.GreaterThanExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleBinaryExpression, SyntaxKind.LessThanExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleBinaryExpression, SyntaxKind.GreaterThanOrEqualExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleBinaryExpression, SyntaxKind.LessThanOrEqualExpression);
+        }
+
+        private static void HandleBinaryExpression(SyntaxNodeAnalysisContext context)
+        {
+            var binaryExpression = (BinaryExpressionSyntax)context.Node;
+
+            var semanticModel = context.SemanticModel;
+
+            if (IsLiteral(binaryExpression.Left, semanticModel) && !IsLiteral(binaryExpression.Right, semanticModel))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, binaryExpression.GetLocation()));
+            }
+        }
+
+        private static bool IsLiteral(ExpressionSyntax expression, SemanticModel semanticModel)
+        {
+            // Default expressions are most of the time constants, but not for default(MyStruct).
+            if (expression.IsKind(SyntaxKind.DefaultExpression))
+            {
+                return true;
+            }
+
+            var constantValue = semanticModel.GetConstantValue(expression);
+            if (constantValue.HasValue)
+            {
+                return true;
+            }
+
+            IFieldSymbol fieldSymbol = semanticModel.GetSymbolInfo(expression).Symbol as IFieldSymbol;
+
+            if (fieldSymbol != null)
+            {
+                return fieldSymbol.IsStatic && fieldSymbol.IsReadOnly;
+            }
+
+            return false;
         }
     }
 }

@@ -328,6 +328,7 @@
     <Compile Include="ReadabilityRules\SA1129CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1129DoNotUseDefaultValueTypeConstructor.cs" />
     <Compile Include="ReadabilityRules\SA1130UseLambdaSyntax.cs" />
+    <Compile Include="ReadabilityRules\SA1131CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1131UseReadableConditions.cs" />
     <Compile Include="ReadabilityRules\SA1132CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1132DoNotCombineFields.cs" />

@@ -432,11 +432,14 @@
   <data name="SA1130Title" xml:space="preserve">
     <value>Use lambda syntax</value>
   </data>
+  <data name="SA1131CodeFix" xml:space="preserve">
+    <value>Swap operands</value>
+  </data>
   <data name="SA1131Description" xml:space="preserve">
     <value>When a comparison is made between a variable and a literal, the variable should be placed on the left-hand-side to maximize readability.</value>
   </data>
   <data name="SA1131MessageFormat" xml:space="preserve">
-    <value />
+    <value>Constant values should appear on the right-hand side of comparisons</value>
   </data>
   <data name="SA1131Title" xml:space="preserve">
     <value>Use readable conditions</value>

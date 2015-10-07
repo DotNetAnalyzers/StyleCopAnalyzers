@@ -1007,6 +1007,15 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Swap operands.
+        /// </summary>
+        internal static string SA1131CodeFix {
+            get {
+                return ResourceManager.GetString("SA1131CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to When a comparison is made between a variable and a literal, the variable should be placed on the left-hand-side to maximize readability..
         /// </summary>
         internal static string SA1131Description {
@@ -1016,7 +1025,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Constant values should appear on the right-hand side of comparisons.
         /// </summary>
         internal static string SA1131MessageFormat {
             get {
