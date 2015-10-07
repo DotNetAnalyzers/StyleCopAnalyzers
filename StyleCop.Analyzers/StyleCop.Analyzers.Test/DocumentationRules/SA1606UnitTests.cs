@@ -6,8 +6,10 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using TestHelper;
     using Xunit;
 
@@ -691,6 +693,101 @@ public class ClassName
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 25);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestIncludedDocumentationAsync()
+        {
+            var testCode = @"
+class Class1
+{
+    /// <include file='ClassWithEmptySummary.xml' path='/Class1/MethodName/*'/>
+    public void MethodName()
+    {
+    }
+}
+";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 17);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestIncludedInheritedDocumentationAsync()
+        {
+            var testCode = @"
+class Class1
+{
+    /// <include file='ClassWithInheritedSummary.xml' path='/Class1/MethodName/*'/>
+    public void MethodName()
+    {
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestIncludedIncompleteDocumentationAsync()
+        {
+            var testCode = @"
+class Class1
+{
+    /// <include file='ClassWithSummary.xml' path='/Class1/MethodName/*'/>
+    public void MethodName()
+    {
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
+        protected override Project CreateProject(string[] sources, string language = "C#", string[] filenames = null)
+        {
+            var resolver = new TestXmlReferenceResolver();
+            string contentWithSummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<Class1>
+  <MethodName>
+    <summary>
+      Sample method.
+    </summary>
+    <returns>
+      A <see cref=""Task""/> representing the asynchronous operation.
+    </returns>
+  </MethodName>
+</Class1>
+";
+            resolver.XmlReferences.Add("ClassWithSummary.xml", contentWithSummary);
+
+            string contentWithInheritedSummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<Class1>
+  <MethodName>
+    <inheritdoc/>
+  </MethodName>
+</Class1>
+";
+            resolver.XmlReferences.Add("ClassWithInheritedSummary.xml", contentWithInheritedSummary);
+
+            string contentWithEmptySummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<Class1>
+  <MethodName>
+    <summary>
+    </summary>
+    <returns>
+      A <see cref=""Task""/> representing the asynchronous operation.
+    </returns>
+  </MethodName>
+</Class1>
+";
+            resolver.XmlReferences.Add("ClassWithEmptySummary.xml", contentWithEmptySummary);
+
+            Project project = base.CreateProject(sources, language, filenames);
+            project = project.WithCompilationOptions(project.CompilationOptions.WithXmlReferenceResolver(resolver));
+            return project;
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
