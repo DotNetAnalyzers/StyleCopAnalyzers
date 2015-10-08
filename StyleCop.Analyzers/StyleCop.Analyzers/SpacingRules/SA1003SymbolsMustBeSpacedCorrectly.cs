@@ -238,7 +238,11 @@ namespace StyleCop.Analyzers.SpacingRules
                 && !followingToken.IsKind(SyntaxKind.CommaToken)
                 && !(followingToken.IsKind(SyntaxKind.CloseBraceToken) && (followingToken.Parent is InterpolationSyntax));
 
-            CheckToken(context, unaryExpression.OperatorToken, false, false, mustHaveTrailingWhitespace);
+            // If the next token is a close brace token we are in an anonymous object creation or an initialization.
+            // Then we allow a new line
+            bool allowEndOfLine = followingToken.IsKind(SyntaxKind.CloseBraceToken);
+
+            CheckToken(context, unaryExpression.OperatorToken, false, allowEndOfLine, mustHaveTrailingWhitespace);
         }
 
         private static void HandleAssignmentExpression(SyntaxNodeAnalysisContext context)
