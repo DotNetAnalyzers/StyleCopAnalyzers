@@ -393,6 +393,17 @@ public class Foo
             3
         }
         .Contains(3);
+
+    // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1583
+    public void TestTernaryConstruction()
+    {
+        var target = contained
+            ? new Dictionary<string, string>
+                {
+                    { ""target"", ""_parent"" }
+                }
+            : new Dictionary<string, string>();
+    }
 }
 ";
 
