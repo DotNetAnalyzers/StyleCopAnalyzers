@@ -11,6 +11,7 @@ namespace StyleCop.Analyzers.NamingRules
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Helpers.ObjectPools;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1310FieldNamesMustNotContainUnderscore"/>.
@@ -58,7 +59,7 @@ namespace StyleCop.Analyzers.NamingRules
 
         private static string BuildProposedName(string currentName)
         {
-            StringBuilder builder = new StringBuilder(currentName.Length);
+            StringBuilder builder = StringBuilderPool.Allocate();
 
             bool foundNonUnderscore = false;
             bool capitalizeNextLetter = false;
@@ -93,7 +94,7 @@ namespace StyleCop.Analyzers.NamingRules
                 capitalizeNextLetter = true;
             }
 
-            return builder.ToString();
+            return StringBuilderPool.ReturnAndFree(builder);
         }
     }
 }

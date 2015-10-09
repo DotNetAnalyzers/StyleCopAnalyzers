@@ -15,6 +15,7 @@ namespace StyleCop.Analyzers.SpacingRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
+    using Helpers.ObjectPools;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1027TabsMustNotBeUsed"/>.
@@ -62,7 +63,7 @@ namespace StyleCop.Analyzers.SpacingRules
 
             TextLine startLine = sourceText.Lines.GetLineFromPosition(span.Start);
             string text = sourceText.ToString(TextSpan.FromBounds(startLine.Start, span.End));
-            StringBuilder replacement = new StringBuilder(indentationOptions.TabSize * span.Length);
+            StringBuilder replacement = StringBuilderPool.Allocate();
             int column = 0;
             for (int i = 0; i < text.Length; i++)
             {
@@ -97,7 +98,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 }
             }
 
-            return new TextChange(span, replacement.ToString());
+            return new TextChange(span, StringBuilderPool.ReturnAndFree(replacement));
         }
 
         private class FixAll : DocumentBasedFixAllProvider
