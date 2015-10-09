@@ -377,6 +377,42 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Rename file to match first type name.
+        /// </summary>
+        internal static string SA1649CodeFix {
+            get {
+                return ResourceManager.GetString("SA1649CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file name of a C# code file does not match the first type declared in the file..
+        /// </summary>
+        internal static string SA1649Description {
+            get {
+                return ResourceManager.GetString("SA1649Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File name must match first type name..
+        /// </summary>
+        internal static string SA1649MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1649MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File name must match first type name.
+        /// </summary>
+        internal static string SA1649Title {
+            get {
+                return ResourceManager.GetString("SA1649Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Finalize placeholder text.
         /// </summary>
         internal static string SA1651CodeFix {

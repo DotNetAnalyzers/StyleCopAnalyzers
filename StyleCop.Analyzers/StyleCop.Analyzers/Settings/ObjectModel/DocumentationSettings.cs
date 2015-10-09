@@ -80,6 +80,12 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         private bool documentPrivateFields;
 
         /// <summary>
+        /// This is the backing field for the <see cref="FileNamingConvention"/> property.
+        /// </summary>
+        [JsonProperty("fileNamingConvention", DefaultValueHandling = DefaultValueHandling.Include)]
+        private FileNamingConvention fileNamingConvention;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="DocumentationSettings"/> class during JSON deserialization.
         /// </summary>
         [JsonConstructor]
@@ -95,6 +101,8 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.documentPrivateElements = false;
             this.documentInterfaces = true;
             this.documentPrivateFields = false;
+
+            this.fileNamingConvention = FileNamingConvention.StyleCop;
         }
 
         public string CompanyName
@@ -148,6 +156,9 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
         public bool DocumentPrivateFields =>
             this.documentPrivateFields;
+
+        public FileNamingConvention FileNamingConvention =>
+            this.fileNamingConvention;
 
         private string BuildCopyrightText()
         {
