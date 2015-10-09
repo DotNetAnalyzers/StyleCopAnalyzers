@@ -19,7 +19,7 @@ behavior of certain rules. See [Configuration.md](documentation/Configuration.md
 
 ## Installation
 
-StyleCopAnalyzers can be installed using the NuGet Package Manager in Visual Studio 2015 RC.
+StyleCopAnalyzers can be installed using the NuGet Package Manager in Visual Studio 2015.
 
 ![Install via nuget](https://cloud.githubusercontent.com/assets/1408396/8233513/491f301a-159c-11e5-8b7a-1e16a0695da6.png)
 
@@ -34,3 +34,7 @@ See [Contributing](CONTRIBUTING.md)
 ## Current status
 
 An up-to-date list of which StyleCop rules are implemented and which have code fixes can be found [here](http://stylecop.pdelvo.com/).
+
+## Source browser
+
+The up-to-date source code can be browsed [here](http://source.pdelvo.com/).
