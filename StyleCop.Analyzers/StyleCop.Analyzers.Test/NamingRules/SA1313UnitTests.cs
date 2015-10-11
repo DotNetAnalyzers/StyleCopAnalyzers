@@ -115,25 +115,6 @@ public class TypeName
         }
 
         [Fact]
-        public async Task TestParameterStartingWithAnUnderscoreAsync()
-        {
-            // Makes sure SA1313 is reported for parameters starting with an underscore
-            var testCode = @"public class TypeName
-{
-    public void MethodName(string _bar)
-    {
-    }
-}";
-
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("_bar").WithLocation(3, 35);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-
-            // Verify the code fix doesn't do anything in this case
-            await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
-        }
-
-        [Fact]
         public async Task TestParameterStartingWithLetterAsync()
         {
             var testCode = @"public class TypeName
@@ -503,6 +484,48 @@ public interface IDerivedTest : ITest, IEmptyInterface
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1604:
+        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1604
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestCodeFixProperlyRemovesUnderscoreAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public TestClass(string _text)
+        : this(_text, false)
+    {
+    }
+
+    public TestClass(string text, bool flag)
+    {
+    }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    public TestClass(string text)
+        : this(text, false)
+    {
+    }
+
+    public TestClass(string text, bool flag)
+    {
+    }
+}
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(4, 29).WithArguments("_text");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

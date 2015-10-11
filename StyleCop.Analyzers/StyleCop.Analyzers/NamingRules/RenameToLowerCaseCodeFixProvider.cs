@@ -45,15 +45,11 @@ namespace StyleCop.Analyzers.NamingRules
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!this.FixableDiagnosticIds.Contains(diagnostic.Id))
-                {
-                    continue;
-                }
-
                 var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (!string.IsNullOrEmpty(token.ValueText))
                 {
-                    var newName = char.ToLower(token.ValueText[0]) + token.ValueText.Substring(1);
+                    var newName = token.ValueText.TrimStart('_');
+                    newName = char.ToLower(newName[0]) + newName.Substring(1);
                     context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.RenameToCodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken), equivalenceKey: nameof(RenameToLowerCaseCodeFixProvider)), diagnostic);
                 }
             }

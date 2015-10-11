@@ -148,12 +148,19 @@ public class TypeName
     }
 }";
 
+            var fixedTestCode = @"public class TypeName
+{
+    public void MethodName()
+    {
+        string bar = ""baz"";
+    }
+}";
+
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("_bar").WithLocation(5, 16);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-
-            // Verify the code fix doesn't do anything in this case
-            await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         [Fact]
