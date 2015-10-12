@@ -9,10 +9,34 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
     internal class StyleCopSettings
     {
         /// <summary>
+        /// This is the backing field for the <see cref="SpacingRules"/> property.
+        /// </summary>
+        [JsonProperty("spacingRules", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        private SpacingSettings spacingRules;
+
+        /// <summary>
+        /// This is the backing field for the <see cref="ReadabilityRules"/> property.
+        /// </summary>
+        [JsonProperty("readabilityRules", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        private ReadabilitySettings readabilityRules;
+
+        /// <summary>
+        /// This is the backing field for the <see cref="OrderingRules"/> property.
+        /// </summary>
+        [JsonProperty("orderingRules", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        private OrderingSettings orderingRules;
+
+        /// <summary>
         /// This is the backing field for the <see cref="NamingRules"/> property.
         /// </summary>
         [JsonProperty("namingRules", DefaultValueHandling = DefaultValueHandling.Ignore)]
         private NamingSettings namingRules;
+
+        /// <summary>
+        /// This is the backing field for the <see cref="MaintainabilityRules"/> property.
+        /// </summary>
+        [JsonProperty("maintainabilityRules", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        private MaintainabilitySettings maintainabilityRules;
 
         /// <summary>
         /// This is the backing field for the <see cref="DocumentationRules"/> property.
@@ -26,12 +50,28 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         [JsonConstructor]
         protected internal StyleCopSettings()
         {
+            this.spacingRules = new SpacingSettings();
+            this.readabilityRules = new ReadabilitySettings();
+            this.orderingRules = new OrderingSettings();
             this.namingRules = new NamingSettings();
+            this.maintainabilityRules = new MaintainabilitySettings();
             this.documentationRules = new DocumentationSettings();
         }
 
+        public SpacingSettings SpacingRules =>
+            this.spacingRules;
+
+        public ReadabilitySettings ReadabilityRules =>
+            this.readabilityRules;
+
+        public OrderingSettings OrderingRules =>
+            this.orderingRules;
+
         public NamingSettings NamingRules =>
             this.namingRules;
+
+        public MaintainabilitySettings MaintainabilityRules =>
+            this.maintainabilityRules;
 
         public DocumentationSettings DocumentationRules =>
             this.documentationRules;

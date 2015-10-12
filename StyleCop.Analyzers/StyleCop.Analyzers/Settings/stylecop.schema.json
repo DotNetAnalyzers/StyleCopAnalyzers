@@ -9,6 +9,24 @@
       "type": "object",
       "description": "The top-level object containing configuration properties for built-in rules.",
       "properties": {
+        "spacingRules": {
+          "type": "object",
+          "description": "Configuration for spacing rules (SA1000-)",
+          "properties": {
+          }
+        },
+        "readabilityRules": {
+          "type": "object",
+          "description": "Configuration for readability rules (SA1100-)",
+          "properties": {
+          }
+        },
+        "orderingRules": {
+          "type": "object",
+          "description": "Configuration for ordering rules (SA1200-)",
+          "properties": {
+          }
+        },
         "namingRules": {
           "type": "object",
           "description": "Configuration for naming rules (SA1300-)",
@@ -28,6 +46,12 @@
                 "uniqueItems": true
               }
             }
+          }
+        },
+        "maintainabilityRules": {
+          "type": "object",
+          "description": "Configuration for ordering rules (SA1400-)",
+          "properties": {
           }
         },
         "documentationRules": {

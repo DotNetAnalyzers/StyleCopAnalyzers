@@ -27,6 +27,11 @@ namespace StyleCop.Analyzers.Test.Settings
             Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.CopyrightText);
             Assert.True(styleCopSettings.NamingRules.AllowCommonHungarianPrefixes);
             Assert.Equal(0, styleCopSettings.NamingRules.AllowedHungarianPrefixes.Length);
+
+            Assert.NotNull(styleCopSettings.SpacingRules);
+            Assert.NotNull(styleCopSettings.ReadabilityRules);
+            Assert.NotNull(styleCopSettings.OrderingRules);
+            Assert.NotNull(styleCopSettings.MaintainabilityRules);
         }
 
         /// <summary>
