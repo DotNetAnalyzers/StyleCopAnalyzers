@@ -8,28 +8,33 @@
     "settings": {
       "type": "object",
       "description": "The top-level object containing configuration properties for built-in rules.",
+      "additionalProperties": false,
       "properties": {
         "spacingRules": {
           "type": "object",
           "description": "Configuration for spacing rules (SA1000-)",
+          "additionalProperties": false,
           "properties": {
           }
         },
         "readabilityRules": {
           "type": "object",
           "description": "Configuration for readability rules (SA1100-)",
+          "additionalProperties": false,
           "properties": {
           }
         },
         "orderingRules": {
           "type": "object",
           "description": "Configuration for ordering rules (SA1200-)",
+          "additionalProperties": false,
           "properties": {
           }
         },
         "namingRules": {
           "type": "object",
           "description": "Configuration for naming rules (SA1300-)",
+          "additionalProperties": false,
           "properties": {
             "allowCommonHungarianPrefixes": {
               "type": "boolean",
@@ -51,12 +56,14 @@
         "maintainabilityRules": {
           "type": "object",
           "description": "Configuration for ordering rules (SA1400-)",
+          "additionalProperties": false,
           "properties": {
           }
         },
         "documentationRules": {
           "type": "object",
           "description": "Configuration for documentation rules (SA1600-)",
+          "additionalProperties": false,
           "properties": {
             "documentExposedElements": {
               "type": "boolean",
