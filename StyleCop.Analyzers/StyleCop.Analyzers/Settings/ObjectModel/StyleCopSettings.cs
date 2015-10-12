@@ -9,16 +9,16 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
     internal class StyleCopSettings
     {
         /// <summary>
-        /// This is the backing field for the <see cref="DocumentationRules"/> property.
-        /// </summary>
-        [JsonProperty("documentationRules", DefaultValueHandling = DefaultValueHandling.Ignore)]
-        private DocumentationSettings documentationRules;
-
-        /// <summary>
         /// This is the backing field for the <see cref="NamingRules"/> property.
         /// </summary>
         [JsonProperty("namingRules", DefaultValueHandling = DefaultValueHandling.Ignore)]
         private NamingSettings namingRules;
+
+        /// <summary>
+        /// This is the backing field for the <see cref="DocumentationRules"/> property.
+        /// </summary>
+        [JsonProperty("documentationRules", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        private DocumentationSettings documentationRules;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StyleCopSettings"/> class during JSON deserialization.
@@ -26,24 +26,14 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         [JsonConstructor]
         protected internal StyleCopSettings()
         {
-            this.documentationRules = new DocumentationSettings();
             this.namingRules = new NamingSettings();
+            this.documentationRules = new DocumentationSettings();
         }
 
-        public DocumentationSettings DocumentationRules
-        {
-            get
-            {
-                return this.documentationRules;
-            }
-        }
+        public NamingSettings NamingRules =>
+            this.namingRules;
 
-        public NamingSettings NamingRules
-        {
-            get
-            {
-                return this.namingRules;
-            }
-        }
+        public DocumentationSettings DocumentationRules =>
+            this.documentationRules;
     }
 }
