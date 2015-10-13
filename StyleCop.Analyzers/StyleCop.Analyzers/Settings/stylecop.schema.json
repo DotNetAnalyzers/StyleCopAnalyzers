@@ -8,10 +8,62 @@
     "settings": {
       "type": "object",
       "description": "The top-level object containing configuration properties for built-in rules.",
+      "additionalProperties": false,
       "properties": {
+        "spacingRules": {
+          "type": "object",
+          "description": "Configuration for spacing rules (SA1000-)",
+          "additionalProperties": false,
+          "properties": {
+          }
+        },
+        "readabilityRules": {
+          "type": "object",
+          "description": "Configuration for readability rules (SA1100-)",
+          "additionalProperties": false,
+          "properties": {
+          }
+        },
+        "orderingRules": {
+          "type": "object",
+          "description": "Configuration for ordering rules (SA1200-)",
+          "additionalProperties": false,
+          "properties": {
+          }
+        },
+        "namingRules": {
+          "type": "object",
+          "description": "Configuration for naming rules (SA1300-)",
+          "additionalProperties": false,
+          "properties": {
+            "allowCommonHungarianPrefixes": {
+              "type": "boolean",
+              "description": "Determines whether common Hungarian notation prefixes should be allowed.",
+              "default": true
+            },
+            "allowedHungarianPrefixes": {
+              "type": "array",
+              "description": "Allowed Hungarian notation prefixes.",
+              "default": [ ],
+              "items": {
+                "type": "string",
+                "pattern": "^[a-z]{1,2}$",
+                "uniqueItems": true
+              }
+            }
+          }
+        },
+        "maintainabilityRules": {
+          "type": "object",
+          "description": "Configuration for ordering rules (SA1400-)",
+          "additionalProperties": false,
+          "properties": {
+          }
+        },
         "documentationRules": {
           "type": "object",
           "description": "Configuration for documentation rules (SA1600-)",
+          "additionalProperties": false,
           "properties": {
             "documentExposedElements": {
               "type": "boolean",
@@ -62,27 +114,6 @@
               "type": "boolean",
               "description": "Determines whether the file header should be wrapped in the StyleCop-standard XML structure.",
               "default": true
-            }
-          }
-        },
-        "namingRules": {
-          "type": "object",
-          "description": "Configuration for naming rules (SA1300-)",
-          "properties": {
-            "allowCommonHungarianPrefixes": {
-              "type": "boolean",
-              "description": "Determines whether common Hungarian notation prefixes should be allowed.",
-              "default": true
-            },
-            "allowedHungarianPrefixes": {
-              "type": "array",
-              "description": "Allowed Hungarian notation prefixes.",
-              "default": [ ],
-              "items": {
-                "type": "string",
-                "pattern": "^[a-z]{1,2}$",
-                "uniqueItems": true
-              }
             }
           }
         }

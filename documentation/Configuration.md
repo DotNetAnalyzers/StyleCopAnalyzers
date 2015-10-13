@@ -59,6 +59,103 @@ For best results, **stylecop.json** should be included in source control. This w
 > [Ss]tyle[Cc]op.*
 > ```
 
+## Spacing Rules
+
+This section describes the features of spacing rules which can be configured in **stylecop.json**. Each of the described properties are configured in the `spacingRules` object, which is shown in the following sample file.
+
+```json
+{
+  "settings": {
+    "spacingRules": {
+    }
+  }
+}
+```
+
+> Currently there are no configurable settings for spacing rules.
+
+## Readability Rules
+
+This section describes the features of readability rules which can be configured in **stylecop.json**. Each of the described properties are configured in the `readabilityRules` object, which is shown in the following sample file.
+
+```json
+{
+  "settings": {
+    "readabilityRules": {
+    }
+  }
+}
+```
+
+> Currently there are no configurable settings for readability rules.
+
+## Ordering Rules
+
+This section describes the features of ordering rules which can be configured in **stylecop.json**. Each of the described properties are configured in the `orderingRules` object, which is shown in the following sample file.
+
+```json
+{
+  "settings": {
+    "orderingRules": {
+    }
+  }
+}
+```
+
+> Currently there are no configurable settings for ordering rules.
+
+## Naming Rules
+
+This section describes the features of naming rules which can be configured in **stylecop.json**. Each of the described properties are configured in the `namingRules` object, which is shown in the following sample file.
+
+```json
+{
+  "settings": {
+    "namingRules": {
+    }
+  }
+}
+```
+
+### Hungarian Notation
+
+The following properties are used to configure allowable Hungarian notation prefixes in StyleCop Analyzers.
+
+| Property | Default Value | Summary |
+| --- | --- | --- |
+| `allowCommonHungarianPrefixes` | **true** | Specifies whether common non-Hungarian notation prefixes should be allowed. When true, the two-letter words 'as', 'at', 'by', 'do', 'go', 'if', 'in', 'is', 'it', 'no', 'of', 'on', 'or', and 'to' are allowed to appear as prefixes for variable names. |
+| `allowedHungarianPrefixes` | `[ ]` | Specifies additional prefixes which are allowed to be used in variable names. See the example below for more information. |
+
+The following example shows a settings file which allows the common prefixes as well as the custom prefixes 'md' and 'cd'.
+
+```json
+{
+  "settings": {
+    "namingRules": {
+      "allowedHungarianPrefixes": [
+        "cd",
+        "md"
+      ]
+    }
+  }
+}
+```
+
+## Maintainability Rules
+
+This section describes the features of maintainability rules which can be configured in **stylecop.json**. Each of the described properties are configured in the `maintainabilityRules` object, which is shown in the following sample file.
+
+```json
+{
+  "settings": {
+    "maintainabilityRules": {
+    }
+  }
+}
+```
+
+> Currently there are no configurable settings for maintainability rules.
+
 ## Documentation Rules
 
 This section describes the features of documentation rules which can be configured in **stylecop.json**. Each of the described properties are configured in the `documentationRules` object, which is shown in the following sample file.
@@ -160,43 +257,6 @@ The following example shows a configuration file which requires developers to do
     "documentationRules": {
       "documentInterfaces": true,
       "documentInternalMembers": false
-    }
-  }
-}
-```
-
-## Naming Rules
-
-This section describes the features of naming rules which can be configured in **stylecop.json**. Each of the described properties are configured in the `namingRules` object, which is shown in the following sample file.
-
-```json
-{
-  "settings": {
-    "namingRules": {
-    }
-  }
-}
-```
-
-### Hungarian Notation
-
-The following properties are used to configure allowable Hungarian notation prefixes in StyleCop Analyzers.
-
-| Property | Default Value | Summary |
-| --- | --- | --- |
-| `allowCommonHungarianPrefixes` | **true** | Specifies whether common non-Hungarian notation prefixes should be allowed. When true, the two-letter words 'as', 'at', 'by', 'do', 'go', 'if', 'in', 'is', 'it', 'no', 'of', 'on', 'or', and 'to' are allowed to appear as prefixes for variable names. |
-| `allowedHungarianPrefixes` | `[ ]` | Specifies additional prefixes which are allowed to be used in variable names. See the example below for more information. |
-
-The following example shows a settings file which allows the common prefixes as well as the custom prefixes 'md' and 'cd'.
-
-```json
-{
-  "settings": {
-    "namingRules": {
-      "allowedHungarianPrefixes": [
-        "cd",
-        "md"
-      ]
     }
   }
 }
