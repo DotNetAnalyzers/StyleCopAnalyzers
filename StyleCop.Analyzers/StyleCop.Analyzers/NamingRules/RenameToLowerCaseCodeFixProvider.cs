@@ -49,8 +49,13 @@ namespace StyleCop.Analyzers.NamingRules
                 if (!string.IsNullOrEmpty(token.ValueText))
                 {
                     var newName = token.ValueText.TrimStart('_');
-                    newName = char.ToLower(newName[0]) + newName.Substring(1);
-                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.RenameToCodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken), equivalenceKey: nameof(RenameToLowerCaseCodeFixProvider)), diagnostic);
+
+                    // only offer a codefix if the name does not consist of only underscores.
+                    if (!string.IsNullOrEmpty(newName))
+                    {
+                        newName = char.ToLower(newName[0]) + newName.Substring(1);
+                        context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.RenameToCodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken), equivalenceKey: nameof(RenameToLowerCaseCodeFixProvider)), diagnostic);
+                    }
                 }
             }
         }

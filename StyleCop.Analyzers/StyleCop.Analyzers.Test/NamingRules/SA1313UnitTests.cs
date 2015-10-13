@@ -434,6 +434,7 @@ public class Test : Testbase
                 this.CSharpDiagnostic().WithArguments("__").WithLocation(7, 51)
             };
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
         }
 
         /// <summary>
