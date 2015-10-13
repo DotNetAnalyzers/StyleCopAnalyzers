@@ -92,7 +92,7 @@ namespace StyleCop.Analyzers.SpacingRules
             bool followedBySpace = token.IsFollowedByWhitespace();
             bool lastInLine = token.IsLastInLine();
 
-            if (!firstInLine && precededBySpace && !ignorePrecedingSpaceProblem)
+            if (!firstInLine && precededBySpace && !ignorePrecedingSpaceProblem && !IsPartOfIndexInitializer(token))
             {
                 // Opening square bracket must {not be preceded} by a space.
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingCodeFixProvider.RemovePreceding, "not be preceded"));
@@ -103,6 +103,22 @@ namespace StyleCop.Analyzers.SpacingRules
                 // Opening square bracket must {not be followed} by a space.
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingCodeFixProvider.RemoveFollowing, "not be followed"));
             }
+        }
+
+        private static bool IsPartOfIndexInitializer(SyntaxToken token)
+        {
+            var currentParent = token.Parent;
+            while (currentParent != null)
+            {
+                if (currentParent.IsKind(SyntaxKind.ImplicitElementAccess))
+                {
+                    return true;
+                }
+
+                currentParent = currentParent.Parent;
+            }
+
+            return false;
         }
     }
 }
