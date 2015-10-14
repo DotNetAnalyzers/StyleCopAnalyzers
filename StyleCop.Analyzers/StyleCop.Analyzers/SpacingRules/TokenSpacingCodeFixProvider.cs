@@ -118,7 +118,12 @@ namespace StyleCop.Analyzers.SpacingRules
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                context.RegisterCodeFix(CodeAction.Create(SpacingResources.TokenSpacingCodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token), equivalenceKey: nameof(TokenSpacingCodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        SpacingResources.TokenSpacingCodeFix,
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
+                        nameof(TokenSpacingCodeFixProvider)),
+                    diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;

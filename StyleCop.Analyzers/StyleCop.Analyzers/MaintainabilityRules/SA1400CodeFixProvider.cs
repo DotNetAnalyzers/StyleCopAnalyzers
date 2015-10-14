@@ -53,7 +53,12 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create(MaintainabilityResources.SA1400CodeFix, token => GetTransformedDocumentAsync(context.Document, root, declarationNode), equivalenceKey: nameof(SA1400CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        MaintainabilityResources.SA1400CodeFix,
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, root, declarationNode),
+                        nameof(SA1400CodeFixProvider)),
+                    diagnostic);
             }
         }
 

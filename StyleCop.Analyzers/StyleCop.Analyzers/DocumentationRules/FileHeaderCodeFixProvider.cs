@@ -52,7 +52,12 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             foreach (Diagnostic diagnostic in context.Diagnostics)
             {
-                context.RegisterCodeFix(CodeAction.Create(DocumentationResources.SA1633CodeFix, token => GetTransformedDocumentAsync(context.Document, token), equivalenceKey: nameof(FileHeaderCodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        DocumentationResources.SA1633CodeFix,
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, cancellationToken),
+                        nameof(FileHeaderCodeFixProvider)),
+                    diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;

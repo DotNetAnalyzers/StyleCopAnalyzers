@@ -37,7 +37,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                context.RegisterCodeFix(CodeAction.Create(ReadabilityResources.SA1120CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token), nameof(SA1120CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        ReadabilityResources.SA1120CodeFix,
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
+                        nameof(SA1120CodeFixProvider)),
+                    diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;

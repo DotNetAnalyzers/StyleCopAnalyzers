@@ -43,7 +43,12 @@ namespace StyleCop.Analyzers.SpacingRules
             {
                 if (diagnostic.Properties.ContainsKey(SA1003SymbolsMustBeSpacedCorrectly.CodeFixAction))
                 {
-                    context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1003CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token), equivalenceKey: nameof(SA1003CodeFixProvider)), diagnostic);
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            SpacingResources.SA1003CodeFix,
+                            cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
+                            nameof(SA1003CodeFixProvider)),
+                        diagnostic);
                 }
             }
 

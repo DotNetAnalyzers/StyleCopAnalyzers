@@ -69,7 +69,12 @@ namespace StyleCop.Analyzers.NamingRules
                 if (!string.IsNullOrEmpty(token.ValueText))
                 {
                     var newName = token.ValueText.Substring(numberOfCharsToRemove);
-                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.RenameToCodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken), equivalenceKey: nameof(SA1308CodeFixProvider)), diagnostic);
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            string.Format(NamingResources.RenameToCodeFix, newName),
+                            cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken),
+                            nameof(SA1308CodeFixProvider)),
+                        diagnostic);
                 }
             }
         }

@@ -47,7 +47,12 @@ namespace StyleCop.Analyzers.NamingRules
                 if (!string.IsNullOrEmpty(token.ValueText))
                 {
                     string newName = '_' + token.ValueText;
-                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.RenameToCodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken), equivalenceKey: nameof(SX1309CodeFixProvider)), diagnostic);
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            string.Format(NamingResources.RenameToCodeFix, newName),
+                            cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken),
+                            nameof(SX1309CodeFixProvider)),
+                        diagnostic);
                 }
             }
         }

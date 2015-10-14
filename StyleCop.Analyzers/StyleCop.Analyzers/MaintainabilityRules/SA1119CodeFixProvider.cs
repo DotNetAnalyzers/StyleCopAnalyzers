@@ -52,7 +52,12 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
                 if (syntax != null)
                 {
-                    context.RegisterCodeFix(CodeAction.Create(MaintainabilityResources.SA1119CodeFix, token => GetTransformedDocumentAsync(context.Document, root, syntax), equivalenceKey: nameof(SA1119CodeFixProvider)), diagnostic);
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            MaintainabilityResources.SA1119CodeFix,
+                            cancellationToken => GetTransformedDocumentAsync(context.Document, root, syntax),
+                            nameof(SA1119CodeFixProvider)),
+                        diagnostic);
                 }
             }
         }

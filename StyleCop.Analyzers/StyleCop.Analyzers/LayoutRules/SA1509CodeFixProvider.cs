@@ -41,7 +41,7 @@ namespace StyleCop.Analyzers.LayoutRules
                     CodeAction.Create(
                         LayoutResources.SA1509CodeFix,
                         token => this.GetTransformedDocumentAsync(context.Document, diagnostic, token),
-                        equivalenceKey: nameof(SA1509CodeFixProvider)),
+                        nameof(SA1509CodeFixProvider)),
                     diagnostic);
             }
 

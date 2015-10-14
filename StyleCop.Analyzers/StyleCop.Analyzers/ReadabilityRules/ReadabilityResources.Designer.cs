@@ -62,6 +62,15 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Remove region.
+        /// </summary>
+        internal static string RemoveRegionCodeFix {
+            get {
+                return ResourceManager.GetString("RemoveRegionCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Replace &apos;base.&apos; with &apos;this.&apos;.
         /// </summary>
         internal static string SA1100CodeFix {

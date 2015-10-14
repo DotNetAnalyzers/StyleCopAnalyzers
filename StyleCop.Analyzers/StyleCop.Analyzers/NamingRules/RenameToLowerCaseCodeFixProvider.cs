@@ -47,7 +47,12 @@ namespace StyleCop.Analyzers.NamingRules
                 if (!string.IsNullOrEmpty(token.ValueText))
                 {
                     var newName = char.ToLower(token.ValueText[0]) + token.ValueText.Substring(1);
-                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.RenameToCodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken), equivalenceKey: nameof(RenameToLowerCaseCodeFixProvider)), diagnostic);
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            string.Format(NamingResources.RenameToCodeFix, newName),
+                            cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken),
+                            nameof(RenameToLowerCaseCodeFixProvider)),
+                        diagnostic);
                 }
             }
         }

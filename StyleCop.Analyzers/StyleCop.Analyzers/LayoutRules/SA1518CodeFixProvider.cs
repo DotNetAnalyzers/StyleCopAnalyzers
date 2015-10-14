@@ -36,7 +36,12 @@ namespace StyleCop.Analyzers.LayoutRules
         {
             foreach (Diagnostic diagnostic in context.Diagnostics)
             {
-                context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1518CodeFix, token => GetTransformedDocumentAsync(context.Document, token), equivalenceKey: nameof(SA1518CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        LayoutResources.SA1518CodeFix,
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, cancellationToken),
+                        nameof(SA1518CodeFixProvider)),
+                    diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;

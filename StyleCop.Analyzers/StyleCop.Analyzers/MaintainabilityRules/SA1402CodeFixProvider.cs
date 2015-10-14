@@ -41,7 +41,12 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                context.RegisterCodeFix(CodeAction.Create(MaintainabilityResources.SA1402CodeFix, cancellationToken => GetTransformedSolutionAsync(context.Document, diagnostic, cancellationToken), equivalenceKey: nameof(SA1402CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        MaintainabilityResources.SA1402CodeFix,
+                        cancellationToken => GetTransformedSolutionAsync(context.Document, diagnostic, cancellationToken),
+                        nameof(SA1402CodeFixProvider)),
+                    diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;

@@ -51,7 +51,12 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 BinaryExpressionSyntax syntax = node as BinaryExpressionSyntax;
                 if (syntax != null)
                 {
-                    context.RegisterCodeFix(CodeAction.Create(MaintainabilityResources.SA1407SA1408CodeFix, token => GetTransformedDocumentAsync(context.Document, root, syntax), equivalenceKey: nameof(SA1407SA1408CodeFixProvider)), diagnostic);
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            MaintainabilityResources.SA1407SA1408CodeFix,
+                            cancellationToken => GetTransformedDocumentAsync(context.Document, root, syntax),
+                            nameof(SA1407SA1408CodeFixProvider)),
+                        diagnostic);
                 }
             }
         }

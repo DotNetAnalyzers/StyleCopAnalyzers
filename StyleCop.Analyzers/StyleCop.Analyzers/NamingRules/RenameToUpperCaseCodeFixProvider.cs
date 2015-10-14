@@ -58,7 +58,7 @@ namespace StyleCop.Analyzers.NamingRules
                 if (memberSyntax is NamespaceDeclarationSyntax)
                 {
                     // namespaces are not symbols. So we are just renaming the namespace
-                    Func<CancellationToken, Task<Document>> renameNamespace = t =>
+                    Func<CancellationToken, Task<Document>> renameNamespace = cancellationToken =>
                     {
                         IdentifierNameSyntax identifierSyntax = (IdentifierNameSyntax)token.Parent;
 
@@ -68,7 +68,12 @@ namespace StyleCop.Analyzers.NamingRules
                         return Task.FromResult(context.Document.WithSyntaxRoot(newRoot));
                     };
 
-                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.RenameToCodeFix, newName), renameNamespace, equivalenceKey: nameof(RenameToUpperCaseCodeFixProvider) + "_" + diagnostic.Id), diagnostic);
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            string.Format(NamingResources.RenameToCodeFix, newName),
+                            renameNamespace,
+                            nameof(RenameToUpperCaseCodeFixProvider) + "_" + diagnostic.Id),
+                        diagnostic);
                 }
                 else if (memberSyntax != null)
                 {
@@ -85,7 +90,12 @@ namespace StyleCop.Analyzers.NamingRules
                         newName = newName + Suffix;
                     }
 
-                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.RenameToCodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken), equivalenceKey: nameof(RenameToUpperCaseCodeFixProvider) + "_" + diagnostic.Id), diagnostic);
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            string.Format(NamingResources.RenameToCodeFix, newName),
+                            cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken),
+                            nameof(RenameToUpperCaseCodeFixProvider) + "_" + diagnostic.Id),
+                        diagnostic);
                 }
             }
         }

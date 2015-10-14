@@ -82,10 +82,20 @@ namespace StyleCop.Analyzers.LayoutRules
 
                 if (canOfferSingleLineFix)
                 {
-                    context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1504CodeFixSingleLine, token => GetTransformedDocumentForSingleLineAsync(context.Document, diagnostic, token), equivalenceKey: nameof(SA1504CodeFixProvider) + "SingleLine"), diagnostic);
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            LayoutResources.SA1504CodeFixSingleLine,
+                            cancellationToken => GetTransformedDocumentForSingleLineAsync(context.Document, diagnostic, cancellationToken),
+                            nameof(SA1504CodeFixProvider) + "SingleLine"),
+                        diagnostic);
                 }
 
-                context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1504CodeFixMultipleLines, token => GetTransformedDocumentForMutipleLinesAsync(context.Document, diagnostic, token), equivalenceKey: nameof(SA1504CodeFixProvider) + "MultipleLines"), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        LayoutResources.SA1504CodeFixMultipleLines,
+                        cancellationToken => GetTransformedDocumentForMutipleLinesAsync(context.Document, diagnostic, cancellationToken),
+                        nameof(SA1504CodeFixProvider) + "MultipleLines"),
+                    diagnostic);
             }
         }
 

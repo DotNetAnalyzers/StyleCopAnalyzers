@@ -60,7 +60,12 @@ namespace StyleCop.Analyzers.SpacingRules
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1018CodeFix, cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken), equivalenceKey: nameof(SA1018CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        SpacingResources.SA1018CodeFix,
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
+                        nameof(SA1018CodeFixProvider)),
+                    diagnostic);
             }
         }
 

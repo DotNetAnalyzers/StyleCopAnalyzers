@@ -39,7 +39,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                context.RegisterCodeFix(CodeAction.Create("Remove region", token => GetTransformedDocumentAsync(context.Document, diagnostic), equivalenceKey: nameof(RemoveRegionCodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        ReadabilityResources.RemoveRegionCodeFix,
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic),
+                        nameof(RemoveRegionCodeFixProvider)),
+                    diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;

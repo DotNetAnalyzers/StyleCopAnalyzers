@@ -46,7 +46,12 @@ namespace StyleCop.Analyzers.NamingRules
                 string proposedName = BuildProposedName(currentName);
                 if (proposedName != currentName)
                 {
-                    context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.RenameToCodeFix, proposedName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, proposedName, cancellationToken), equivalenceKey: nameof(SA1310CodeFixProvider)), diagnostic);
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            string.Format(NamingResources.RenameToCodeFix, proposedName),
+                            cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, proposedName, cancellationToken),
+                            nameof(SA1310CodeFixProvider)),
+                        diagnostic);
                 }
             }
         }

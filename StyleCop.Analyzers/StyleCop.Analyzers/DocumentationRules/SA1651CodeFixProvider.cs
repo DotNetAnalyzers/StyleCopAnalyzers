@@ -61,8 +61,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                     continue;
                 }
 
-                string description = DocumentationResources.SA1651CodeFix;
-                context.RegisterCodeFix(CodeAction.Create(description, cancellationToken => this.GetTransformedDocumentAsync(context.Document, xmlElementSyntax, cancellationToken), equivalenceKey: nameof(SA1651CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        DocumentationResources.SA1651CodeFix,
+                        cancellationToken => this.GetTransformedDocumentAsync(context.Document, xmlElementSyntax, cancellationToken),
+                        nameof(SA1651CodeFixProvider)),
+                    diagnostic);
             }
         }
 

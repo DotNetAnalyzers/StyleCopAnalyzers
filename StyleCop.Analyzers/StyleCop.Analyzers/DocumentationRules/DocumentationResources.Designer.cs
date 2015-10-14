@@ -80,6 +80,15 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Document return value.
+        /// </summary>
+        internal static string SA1615SA1616CodeFix {
+            get {
+                return ResourceManager.GetString("SA1615SA1616CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove &lt;returns&gt; XML comment.
         /// </summary>
         internal static string SA1617CodeFix {

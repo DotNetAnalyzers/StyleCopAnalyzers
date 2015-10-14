@@ -64,7 +64,7 @@ namespace StyleCop.Analyzers.OrderingRules
                     CodeAction.Create(
                         OrderingResources.UsingCodeFix,
                         cancellationToken => GetTransformedDocumentAsync(context.Document, syntaxRoot, cancellationToken),
-                        equivalenceKey: nameof(UsingCodeFixProvider)),
+                        nameof(UsingCodeFixProvider)),
                     diagnostic);
             }
         }

@@ -123,6 +123,9 @@
   <data name="SA1609SA1610CodeFix" xml:space="preserve">
     <value>Document value from summary</value>
   </data>
+  <data name="SA1615SA1616CodeFix" xml:space="preserve">
+    <value>Document return value</value>
+  </data>
   <data name="SA1617CodeFix" xml:space="preserve">
     <value>Remove &lt;returns&gt; XML comment</value>
   </data>

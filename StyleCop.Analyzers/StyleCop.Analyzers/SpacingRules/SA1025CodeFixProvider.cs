@@ -45,7 +45,7 @@ namespace StyleCop.Analyzers.SpacingRules
                     CodeAction.Create(
                         SpacingResources.SA1025CodeFix,
                         cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
-                        equivalenceKey: nameof(SA1025CodeFixProvider)),
+                        nameof(SA1025CodeFixProvider)),
                     diagnostic);
             }
 
