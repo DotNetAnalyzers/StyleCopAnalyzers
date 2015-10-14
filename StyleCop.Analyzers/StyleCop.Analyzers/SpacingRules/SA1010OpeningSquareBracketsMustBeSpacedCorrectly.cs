@@ -107,18 +107,8 @@ namespace StyleCop.Analyzers.SpacingRules
 
         private static bool IsPartOfIndexInitializer(SyntaxToken token)
         {
-            var currentParent = token.Parent;
-            while (currentParent != null)
-            {
-                if (currentParent.IsKind(SyntaxKind.ImplicitElementAccess))
-                {
-                    return true;
-                }
-
-                currentParent = currentParent.Parent;
-            }
-
-            return false;
+            return token.Parent.IsKind(SyntaxKind.BracketedArgumentList)
+                && token.Parent.Parent.IsKind(SyntaxKind.ImplicitElementAccess);
         }
     }
 }

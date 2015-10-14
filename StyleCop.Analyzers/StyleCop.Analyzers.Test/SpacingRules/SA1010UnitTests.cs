@@ -183,6 +183,42 @@ public class TestClass
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verify that index initializer scope determination is working as intended.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyThatIndexInitializerScopeIsDeterminedProperlyAsync()
+        {
+            var testCode = @"using System.Collections.Generic;
+
+public class TestClass
+{
+    public void TestMethod(IDictionary<ulong, string> items)
+    {
+        int[] indexes = { 0 };
+        var dictionary = new Dictionary<int, int> { [indexes [0]] = 0 };
+    }
+}
+";
+
+            var fixedTestCode = @"using System.Collections.Generic;
+
+public class TestClass
+{
+    public void TestMethod(IDictionary<ulong, string> items)
+    {
+        int[] indexes = { 0 };
+        var dictionary = new Dictionary<int, int> { [indexes[0]] = 0 };
+    }
+}
+";
+            var expected = this.CSharpDiagnostic().WithLocation(8, 62).WithArguments("not be preceded");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
