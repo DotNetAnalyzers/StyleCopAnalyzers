@@ -38,7 +38,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            foreach (var diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
+            foreach (var diagnostic in context.Diagnostics)
             {
                 context.RegisterCodeFix(CodeAction.Create(ReadabilityResources.SA1104SA1105CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token), equivalenceKey: nameof(SA1104SA1105CodeFixProvider)), diagnostic);
             }

@@ -43,12 +43,6 @@ namespace StyleCop.Analyzers.NamingRules
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!diagnostic.Id.Equals(SX1309FieldNamesMustBeginWithUnderscore.DiagnosticId)
-                    && !diagnostic.Id.Equals(SX1309SStaticFieldNamesMustBeginWithUnderscore.DiagnosticId))
-                {
-                    continue;
-                }
-
                 var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 if (!string.IsNullOrEmpty(token.ValueText))
                 {

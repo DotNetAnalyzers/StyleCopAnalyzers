@@ -42,11 +42,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!diagnostic.Id.Equals(SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists.DiagnosticId))
-                {
-                    continue;
-                }
-
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         ReadabilityResources.SA1100CodeFix,

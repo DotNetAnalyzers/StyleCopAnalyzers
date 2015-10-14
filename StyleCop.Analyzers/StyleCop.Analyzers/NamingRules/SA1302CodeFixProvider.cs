@@ -36,11 +36,6 @@ namespace StyleCop.Analyzers.NamingRules
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!diagnostic.Id.Equals(SA1302InterfaceNamesMustBeginWithI.DiagnosticId))
-                {
-                    continue;
-                }
-
                 var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 var newName = "I" + token.ValueText;
                 context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.RenameToCodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken)), diagnostic);

@@ -43,11 +43,6 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!this.FixableDiagnosticIds.Contains(diagnostic.Id))
-                {
-                    continue;
-                }
-
                 var node = root.FindNode(diagnostic.Location.SourceSpan);
 
                 var attribute = node as AttributeSyntax;

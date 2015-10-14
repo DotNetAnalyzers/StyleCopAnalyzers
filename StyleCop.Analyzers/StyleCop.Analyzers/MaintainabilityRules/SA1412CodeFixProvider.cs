@@ -41,11 +41,6 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!this.FixableDiagnosticIds.Contains(diagnostic.Id))
-                {
-                    continue;
-                }
-
                 string usedEncoding = diagnostic.Properties[SA1412StoreFilesAsUtf8.EncodingProperty];
 
                 context.RegisterCodeFix(

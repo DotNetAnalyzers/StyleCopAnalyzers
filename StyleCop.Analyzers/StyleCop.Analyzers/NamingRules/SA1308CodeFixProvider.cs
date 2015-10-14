@@ -42,11 +42,6 @@ namespace StyleCop.Analyzers.NamingRules
             var root = await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!diagnostic.Id.Equals(SA1308VariableNamesMustNotBePrefixed.DiagnosticId))
-                {
-                    continue;
-                }
-
                 var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
 
                 // The variable name is the full suffix. In this case we cannot generate a valid variable name and thus will not offer a code fix.

@@ -54,11 +54,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!diagnostic.Id.Equals(SA1122UseStringEmptyForEmptyStrings.DiagnosticId))
-                {
-                    continue;
-                }
-
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         ReadabilityResources.SA1122CodeFix,

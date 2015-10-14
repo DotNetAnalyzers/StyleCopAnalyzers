@@ -41,7 +41,7 @@ namespace StyleCop.Analyzers.SpacingRules
         /// <inheritdoc/>
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            foreach (var diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
+            foreach (var diagnostic in context.Diagnostics)
             {
                 if (diagnostic.Properties.ContainsKey(SA1003SymbolsMustBeSpacedCorrectly.CodeFixAction))
                 {

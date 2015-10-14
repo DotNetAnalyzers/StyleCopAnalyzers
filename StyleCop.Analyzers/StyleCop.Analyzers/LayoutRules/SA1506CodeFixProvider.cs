@@ -36,7 +36,7 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            foreach (var diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
+            foreach (var diagnostic in context.Diagnostics)
             {
                 context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1506CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token), equivalenceKey: nameof(SA1506CodeFixProvider)), diagnostic);
             }

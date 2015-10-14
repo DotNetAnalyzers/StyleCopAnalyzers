@@ -43,11 +43,6 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!diagnostic.Id.Equals(SA1402FileMayOnlyContainASingleClass.DiagnosticId))
-                {
-                    continue;
-                }
-
                 context.RegisterCodeFix(CodeAction.Create(MaintainabilityResources.SA1402CodeFix, cancellationToken => GetTransformedSolutionAsync(context.Document, diagnostic, cancellationToken), equivalenceKey: nameof(SA1402CodeFixProvider)), diagnostic);
             }
 

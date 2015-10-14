@@ -41,7 +41,7 @@ namespace StyleCop.Analyzers.LayoutRules
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
-            foreach (var diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
+            foreach (var diagnostic in context.Diagnostics)
             {
                 var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
                 var accessorList = GetAccessorList(node);

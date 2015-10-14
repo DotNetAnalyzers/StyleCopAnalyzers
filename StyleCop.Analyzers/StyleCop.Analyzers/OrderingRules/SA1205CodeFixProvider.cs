@@ -37,7 +37,7 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <inheritdoc/>
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
+            foreach (Diagnostic diagnostic in context.Diagnostics)
             {
                 context.RegisterCodeFix(CodeAction.Create(OrderingResources.SA1205CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token), equivalenceKey: nameof(SA1205CodeFixProvider)), diagnostic);
             }
