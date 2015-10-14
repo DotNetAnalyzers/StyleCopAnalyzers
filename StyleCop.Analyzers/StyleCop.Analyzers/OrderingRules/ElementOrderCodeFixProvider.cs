@@ -23,7 +23,8 @@ namespace StyleCop.Analyzers.OrderingRules
     [Shared]
     internal class ElementOrderCodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
+        /// <inheritdoc/>
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(
                 SA1201ElementsMustAppearInTheCorrectOrder.DiagnosticId,
                 SA1202ElementsMustBeOrderedByAccess.DiagnosticId,
@@ -31,9 +32,6 @@ namespace StyleCop.Analyzers.OrderingRules
                 SA1204StaticElementsMustAppearBeforeInstanceElements.DiagnosticId,
                 SA1214StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements.DiagnosticId,
                 SA1215InstanceReadonlyElementsMustAppearBeforeInstanceNonReadonlyElements.DiagnosticId);
-
-        /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
