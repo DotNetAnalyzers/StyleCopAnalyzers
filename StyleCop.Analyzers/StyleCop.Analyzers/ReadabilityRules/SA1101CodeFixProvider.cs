@@ -28,11 +28,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
     internal class SA1101CodeFixProvider : CodeFixProvider
     {
         private static readonly ThisExpressionSyntax ThisExpressionSyntax = SyntaxFactory.ThisExpression();
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA1101PrefixLocalCallsWithThis.DiagnosticId);
 
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(SA1101PrefixLocalCallsWithThis.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()

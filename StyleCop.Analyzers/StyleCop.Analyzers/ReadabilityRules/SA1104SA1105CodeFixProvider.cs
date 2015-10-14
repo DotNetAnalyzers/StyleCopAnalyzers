@@ -23,11 +23,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
     [Shared]
     internal class SA1104SA1105CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SA110xQueryClauses.SA1104Descriptor.Id, SA110xQueryClauses.SA1105Descriptor.Id);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(
+                SA110xQueryClauses.SA1104Descriptor.Id,
+                SA110xQueryClauses.SA1105Descriptor.Id);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()

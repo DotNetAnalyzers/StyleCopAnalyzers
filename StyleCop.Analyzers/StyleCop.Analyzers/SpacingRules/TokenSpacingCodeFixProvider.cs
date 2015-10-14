@@ -34,7 +34,8 @@ namespace StyleCop.Analyzers.SpacingRules
         private const string LayoutPack = "pack";
         private const string LayoutPreserve = "preserve";
 
-        private static readonly ImmutableArray<string> FixableDiagnostics =
+        /// <inheritdoc/>
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(
                 SA1000KeywordsMustBeSpacedCorrectly.DiagnosticId,
                 SA1001CommasMustBeSpacedCorrectly.DiagnosticId,
@@ -62,9 +63,6 @@ namespace StyleCop.Analyzers.SpacingRules
                 SA1111ClosingParenthesisMustBeOnLineOfLastParameter.DiagnosticId,
                 SA1112ClosingParenthesisMustBeOnLineOfOpeningParenthesis.DiagnosticId,
                 SA1113CommaMustBeOnSameLineAsPreviousParameter.DiagnosticId);
-
-        /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
 
         internal static ImmutableDictionary<string, string> InsertPreceding { get; } =
             ImmutableDictionary<string, string>.Empty

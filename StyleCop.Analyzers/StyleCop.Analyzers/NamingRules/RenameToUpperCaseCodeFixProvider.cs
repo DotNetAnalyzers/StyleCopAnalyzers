@@ -28,16 +28,14 @@ namespace StyleCop.Analyzers.NamingRules
     {
         private const string Suffix = "Value";
 
-        private static readonly ImmutableArray<string> FixableDiagnostics =
+        /// <inheritdoc/>
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(
                 SA1300ElementMustBeginWithUpperCaseLetter.DiagnosticId,
                 SA1303ConstFieldNamesMustBeginWithUpperCaseLetter.DiagnosticId,
                 SA1304NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter.DiagnosticId,
                 SA1307AccessibleFieldsMustBeginWithUpperCaseLetter.DiagnosticId,
                 SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter.DiagnosticId);
-
-        /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()

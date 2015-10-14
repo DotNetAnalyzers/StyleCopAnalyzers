@@ -22,13 +22,11 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     [Shared]
     internal class SA1410SA1411CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
+        /// <inheritdoc/>
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(
                 SA1410RemoveDelegateParenthesisWhenPossible.DiagnosticId,
                 SA1411AttributeConstructorMustNotUseUnnecessaryParenthesis.DiagnosticId);
-
-        /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()

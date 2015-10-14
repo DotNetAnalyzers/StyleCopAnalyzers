@@ -22,14 +22,12 @@ namespace StyleCop.Analyzers.NamingRules
     [Shared]
     internal class RenameToLowerCaseCodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
+        /// <inheritdoc/>
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(
                 SA1306FieldNamesMustBeginWithLowerCaseLetter.DiagnosticId,
                 SA1312VariableNamesMustBeginWithLowerCaseLetter.DiagnosticId,
                 SA1313ParameterNamesMustBeginWithLowerCaseLetter.DiagnosticId);
-
-        /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()

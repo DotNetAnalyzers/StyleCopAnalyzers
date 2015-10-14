@@ -23,11 +23,11 @@ namespace StyleCop.Analyzers.NamingRules
     [Shared]
     internal class SX1309CodeFixProvider : CodeFixProvider
     {
-        private static readonly ImmutableArray<string> FixableDiagnostics =
-            ImmutableArray.Create(SX1309FieldNamesMustBeginWithUnderscore.DiagnosticId, SX1309SStaticFieldNamesMustBeginWithUnderscore.DiagnosticId);
-
         /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
+            ImmutableArray.Create(
+                SX1309FieldNamesMustBeginWithUnderscore.DiagnosticId,
+                SX1309SStaticFieldNamesMustBeginWithUnderscore.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()

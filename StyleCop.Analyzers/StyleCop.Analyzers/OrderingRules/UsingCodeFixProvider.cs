@@ -28,7 +28,8 @@ namespace StyleCop.Analyzers.OrderingRules
     {
         private static readonly List<UsingDirectiveSyntax> EmptyUsingsList = new List<UsingDirectiveSyntax>();
 
-        private static readonly ImmutableArray<string> FixableDiagnostics =
+        /// <inheritdoc/>
+        public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(
                 SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId,
                 SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives.DiagnosticId,
@@ -37,9 +38,6 @@ namespace StyleCop.Analyzers.OrderingRules
                 SA1211UsingAliasDirectivesMustBeOrderedAlphabeticallyByAliasName.DiagnosticId,
                 SA1216UsingStaticDirectivesMustBePlacedAtTheCorrectLocation.DiagnosticId,
                 SA1217UsingStaticDirectivesMustBeOrderedAlphabetically.DiagnosticId);
-
-        /// <inheritdoc/>
-        public override ImmutableArray<string> FixableDiagnosticIds => FixableDiagnostics;
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
