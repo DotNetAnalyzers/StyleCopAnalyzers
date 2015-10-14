@@ -43,11 +43,6 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!diagnostic.Id.Equals(SA1400AccessModifierMustBeDeclared.DiagnosticId))
-                {
-                    continue;
-                }
-
                 SyntaxNode node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
                 if (node == null || node.IsMissing)
                 {

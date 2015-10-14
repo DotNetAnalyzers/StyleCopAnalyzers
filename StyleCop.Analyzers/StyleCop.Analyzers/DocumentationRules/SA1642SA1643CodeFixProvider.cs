@@ -49,11 +49,6 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!FixableDiagnostics.Contains(diagnostic.Id))
-                {
-                    continue;
-                }
-
                 var node = root.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
 
                 var xmlElementSyntax = node as XmlElementSyntax;

@@ -47,11 +47,6 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!FixableDiagnostics.Contains(diagnostic.Id, StringComparer.Ordinal))
-                {
-                    continue;
-                }
-
                 string description = "Document return value";
                 context.RegisterCodeFix(CodeAction.Create(description, cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken), equivalenceKey: nameof(SA1615SA1616CodeFixProvider)), diagnostic);
             }

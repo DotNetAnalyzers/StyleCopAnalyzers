@@ -63,11 +63,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!diagnostic.Id.Equals(SA1121UseBuiltInTypeAlias.DiagnosticId))
-                {
-                    continue;
-                }
-
                 context.RegisterCodeFix(CodeAction.Create(ReadabilityResources.SA1121CodeFix, token => GetTransformedDocumentAsync(context.Document, diagnostic, token), equivalenceKey: nameof(SA1121CodeFixProvider)), diagnostic);
             }
 

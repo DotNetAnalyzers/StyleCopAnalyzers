@@ -40,7 +40,7 @@ namespace StyleCop.Analyzers.LayoutRules
         {
             var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
-            foreach (Diagnostic diagnostic in context.Diagnostics.Where(d => FixableDiagnostics.Contains(d.Id)))
+            foreach (Diagnostic diagnostic in context.Diagnostics)
             {
                 context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1516CodeFix, token => GetTransformedDocumentAsync(context.Document, syntaxRoot, diagnostic, context.CancellationToken), equivalenceKey: nameof(SA1516CodeFixProvider)), diagnostic);
             }

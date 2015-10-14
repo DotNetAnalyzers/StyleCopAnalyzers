@@ -41,11 +41,6 @@ namespace StyleCop.Analyzers.SpacingRules
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!diagnostic.Id.Equals(SA1004DocumentationLinesMustBeginWithSingleSpace.DiagnosticId))
-                {
-                    continue;
-                }
-
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         SpacingResources.SA1004CodeFix,

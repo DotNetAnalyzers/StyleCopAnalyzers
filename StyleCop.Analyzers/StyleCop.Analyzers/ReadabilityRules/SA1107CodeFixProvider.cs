@@ -44,11 +44,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!diagnostic.Id.Equals(SA1107CodeMustNotContainMultipleStatementsOnOneLine.DiagnosticId))
-                {
-                    continue;
-                }
-
                 var node = root?.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
 
                 if (node?.Parent as BlockSyntax != null)

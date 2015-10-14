@@ -40,11 +40,6 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             foreach (Diagnostic diagnostic in context.Diagnostics)
             {
-                if (diagnostic.Id != SA1626SingleLineCommentsMustNotUseDocumentationStyleSlashes.DiagnosticId)
-                {
-                    continue;
-                }
-
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         DocumentationResources.SA1626CodeFix,

@@ -41,11 +41,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!this.FixableDiagnosticIds.Contains(diagnostic.Id))
-                {
-                    continue;
-                }
-
                 context.RegisterCodeFix(CodeAction.Create("Remove region", token => GetTransformedDocumentAsync(context.Document, diagnostic), equivalenceKey: nameof(RemoveRegionCodeFixProvider)), diagnostic);
             }
 

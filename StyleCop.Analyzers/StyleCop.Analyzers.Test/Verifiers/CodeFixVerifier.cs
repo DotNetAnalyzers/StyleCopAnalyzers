@@ -163,6 +163,12 @@ namespace TestHelper
                 done = true;
                 for (var i = 0; i < analyzerDiagnostics.Length; i++)
                 {
+                    if (!codeFixProvider.FixableDiagnosticIds.Contains(analyzerDiagnostics[i].Id))
+                    {
+                        // do not pass unsupported diagnostics to a code fix provider
+                        continue;
+                    }
+
                     var actions = new List<CodeAction>();
                     var context = new CodeFixContext(document, analyzerDiagnostics[i], (a, d) => actions.Add(a), cancellationToken);
                     await codeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
@@ -235,6 +241,12 @@ namespace TestHelper
                 string equivalenceKey = null;
                 foreach (var diagnostic in analyzerDiagnostics)
                 {
+                    if (!codeFixProvider.FixableDiagnosticIds.Contains(diagnostic.Id))
+                    {
+                        // do not pass unsupported diagnostics to a code fix provider
+                        continue;
+                    }
+
                     var actions = new List<CodeAction>();
                     var context = new CodeFixContext(document, diagnostic, (a, d) => actions.Add(a), cancellationToken);
                     await codeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
@@ -342,8 +354,13 @@ namespace TestHelper
             Assert.True(index < analyzerDiagnostics.Count());
 
             var actions = new List<CodeAction>();
-            var context = new CodeFixContext(document, analyzerDiagnostics[index], (a, d) => actions.Add(a), cancellationToken);
-            await codeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
+
+            // do not pass unsupported diagnostics to a code fix provider
+            if (codeFixProvider.FixableDiagnosticIds.Contains(analyzerDiagnostics[index].Id))
+            {
+                var context = new CodeFixContext(document, analyzerDiagnostics[index], (a, d) => actions.Add(a), cancellationToken);
+                await codeFixProvider.RegisterCodeFixesAsync(context).ConfigureAwait(false);
+            }
 
             return actions.ToImmutableArray();
         }

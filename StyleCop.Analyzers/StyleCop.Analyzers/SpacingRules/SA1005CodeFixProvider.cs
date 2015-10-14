@@ -45,11 +45,6 @@ namespace StyleCop.Analyzers.SpacingRules
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (!diagnostic.Id.Equals(SA1005SingleLineCommentsMustBeginWithSingleSpace.DiagnosticId))
-                {
-                    continue;
-                }
-
                 context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1005CodeFix, t => GetTransformedDocumentAsync(context.Document, diagnostic.Location, t), equivalenceKey: nameof(SA1005CodeFixProvider)), diagnostic);
             }
         }
