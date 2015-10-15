@@ -306,6 +306,44 @@ public struct FooStruct { }
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1588:
+        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1588
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestDirectivesAsync()
+        {
+            var testCode = @"
+namespace ClassLibrary1
+{
+    public class Class1
+    {
+        public void Method1()
+        {
+        }
+
+#if true
+        public string Property1 { get; }
+#endif
+
+        public string Property2 { get; }
+
+        private int field1;
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(11, 23).WithArguments("property", "method"),
+                this.CSharpDiagnostic().WithLocation(16, 21).WithArguments("field", "property"),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
