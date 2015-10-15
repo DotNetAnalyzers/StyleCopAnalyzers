@@ -52,6 +52,24 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         var v9_2 = v4[v1++];
         var v9_3 = $""{v1++}"";
         var v9_4 = v1++;
+        var v9_5 = new
+        {
+            Property = v1++
+        };
+        var v9_6 = new
+        {
+            Property = v1--
+        };
+        var v9_7 = new int[]
+        {
+            v1++,
+            v1++
+        };
+        var v9_8 = new int[]
+        {
+            v1--,
+            v1--
+        };
     }
 }
 ";
@@ -84,6 +102,29 @@ v1;
         var v6 = new[] { 1, 2, 3 };
         var v7 = ( (byte)v1 == 0);
         var v8 = v6[ ~v1];
+
+        var v9_1 = new
+        {
+            Property = v1++
+,
+        };
+        var v9_2 = new
+        {
+            Property = v1--
+,
+        };
+        var v9_3 = new int[]
+        {
+            v1++,
+            v1++
+,
+        };
+        var v9_4 = new int[]
+        {
+            v1--,
+            v1--
+,
+        };
     }
 }
 ";
@@ -106,6 +147,25 @@ v1;
         var v6 = new[] { 1, 2, 3 };
         var v7 = ((byte)v1 == 0);
         var v8 = v6[~v1];
+
+        var v9_1 = new
+        {
+            Property = v1++,
+        };
+        var v9_2 = new
+        {
+            Property = v1--,
+        };
+        var v9_3 = new int[]
+        {
+            v1++,
+            v1++,
+        };
+        var v9_4 = new int[]
+        {
+            v1--,
+            v1--,
+        };
     }
 }
 ";
@@ -116,7 +176,11 @@ v1;
                 this.CSharpDiagnostic(DescriptorNotFollowedByComment).WithLocation(13, 18).WithArguments("~"),
                 this.CSharpDiagnostic(DescriptorNotFollowedByComment).WithLocation(15, 18).WithArguments("~"),
                 this.CSharpDiagnostic(DescriptorNotPrecededByWhitespace).WithLocation(17, 20).WithArguments("(byte)"),
-                this.CSharpDiagnostic(DescriptorNotPrecededByWhitespace).WithLocation(18, 22).WithArguments("~")
+                this.CSharpDiagnostic(DescriptorNotPrecededByWhitespace).WithLocation(18, 22).WithArguments("~"),
+                this.CSharpDiagnostic(DescriptorNotAtEndOfLine).WithLocation(22, 26).WithArguments("++"),
+                this.CSharpDiagnostic(DescriptorNotAtEndOfLine).WithLocation(27, 26).WithArguments("--"),
+                this.CSharpDiagnostic(DescriptorNotAtEndOfLine).WithLocation(33, 15).WithArguments("++"),
+                this.CSharpDiagnostic(DescriptorNotAtEndOfLine).WithLocation(39, 15).WithArguments("--")
             };
 
             DiagnosticResult[] fixedExpected =
