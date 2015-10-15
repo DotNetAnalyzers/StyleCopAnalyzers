@@ -44,7 +44,7 @@ namespace StyleCop.Analyzers.SpacingRules
                     CodeAction.Create(
                         SpacingResources.SA1028CodeFix,
                         ct => RemoveWhitespaceAsync(context.Document, diagnostic, ct),
-                        equivalenceKey: nameof(SA1028CodeFixProvider)),
+                        nameof(SA1028CodeFixProvider)),
                     diagnostic);
             }
         }

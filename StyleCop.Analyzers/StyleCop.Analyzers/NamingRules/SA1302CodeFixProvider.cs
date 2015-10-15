@@ -36,7 +36,12 @@ namespace StyleCop.Analyzers.NamingRules
             {
                 var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 var newName = "I" + token.ValueText;
-                context.RegisterCodeFix(CodeAction.Create(string.Format(NamingResources.RenameToCodeFix, newName), cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        string.Format(NamingResources.RenameToCodeFix, newName),
+                        cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken),
+                        nameof(SA1302CodeFixProvider)),
+                    diagnostic);
             }
         }
     }

@@ -39,7 +39,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     CodeAction.Create(
                         ReadabilityResources.SA1129CodeFix,
                         cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
-                        equivalenceKey: nameof(SA1129CodeFixProvider)),
+                        nameof(SA1129CodeFixProvider)),
                     diagnostic);
             }
 

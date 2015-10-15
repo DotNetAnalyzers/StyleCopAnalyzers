@@ -52,7 +52,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     return;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create(ReadabilityResources.SA1101CodeFix, token => GetTransformedDocumentAsync(context.Document, root, node), equivalenceKey: nameof(SA1101CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        ReadabilityResources.SA1101CodeFix,
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, root, node),
+                        nameof(SA1101CodeFixProvider)),
+                    diagnostic);
             }
         }
 

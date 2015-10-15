@@ -45,7 +45,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                     CodeAction.Create(
                         string.Format(MaintainabilityResources.SA1412CodeFix, usedEncoding),
                         cancellationToken => GetTransformedSolutionAsync(context.Document, cancellationToken),
-                        equivalenceKey: nameof(SA1412CodeFixProvider) + "." + usedEncoding),
+                        nameof(SA1412CodeFixProvider) + "." + usedEncoding),
                     diagnostic);
             }
 

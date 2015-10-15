@@ -71,7 +71,12 @@ namespace StyleCop.Analyzers.Settings
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                context.RegisterCodeFix(CodeAction.Create(SettingsResources.SettingsFileCodeFix, token => GetTransformedSolutionAsync(context.Document, diagnostic, token), equivalenceKey: nameof(SettingsFileCodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        SettingsResources.SettingsFileCodeFix,
+                        cancellationToken => GetTransformedSolutionAsync(context.Document, diagnostic, cancellationToken),
+                        nameof(SettingsFileCodeFixProvider)),
+                    diagnostic);
             }
 
             return SpecializedTasks.CompletedTask;

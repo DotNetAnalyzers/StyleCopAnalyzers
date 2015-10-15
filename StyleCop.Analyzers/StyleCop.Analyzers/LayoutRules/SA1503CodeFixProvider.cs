@@ -55,7 +55,12 @@ namespace StyleCop.Analyzers.LayoutRules
                     continue;
                 }
 
-                context.RegisterCodeFix(CodeAction.Create(LayoutResources.SA1503CodeFix, token => GetTransformedDocumentAsync(context.Document, syntaxRoot, node, token), equivalenceKey: nameof(SA1503CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        LayoutResources.SA1503CodeFix,
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, syntaxRoot, node, cancellationToken),
+                        nameof(SA1503CodeFixProvider)),
+                    diagnostic);
             }
         }
 

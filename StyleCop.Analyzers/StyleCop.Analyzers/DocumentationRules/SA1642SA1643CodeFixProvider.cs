@@ -55,12 +55,22 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 if (xmlElementSyntax != null)
                 {
-                    context.RegisterCodeFix(CodeAction.Create(DocumentationResources.SA1642SA1643CodeFix, token => GetTransformedDocumentAsync(context.Document, root, xmlElementSyntax), equivalenceKey: nameof(SA1642SA1643CodeFixProvider)), diagnostic);
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            DocumentationResources.SA1642SA1643CodeFix,
+                            cancellationToken => GetTransformedDocumentAsync(context.Document, root, xmlElementSyntax),
+                            nameof(SA1642SA1643CodeFixProvider)),
+                        diagnostic);
                 }
                 else
                 {
                     var xmlEmptyElementSyntax = (XmlEmptyElementSyntax)node;
-                    context.RegisterCodeFix(CodeAction.Create(DocumentationResources.SA1642SA1643CodeFix, token => GetTransformedDocumentAsync(context.Document, root, xmlEmptyElementSyntax), equivalenceKey: nameof(SA1642SA1643CodeFixProvider)), diagnostic);
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            DocumentationResources.SA1642SA1643CodeFix,
+                            cancellationToken => GetTransformedDocumentAsync(context.Document, root, xmlEmptyElementSyntax),
+                            nameof(SA1642SA1643CodeFixProvider)),
+                        diagnostic);
                 }
             }
         }

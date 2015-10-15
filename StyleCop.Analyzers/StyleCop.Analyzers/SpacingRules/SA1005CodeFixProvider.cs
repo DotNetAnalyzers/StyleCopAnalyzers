@@ -43,7 +43,12 @@ namespace StyleCop.Analyzers.SpacingRules
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                context.RegisterCodeFix(CodeAction.Create(SpacingResources.SA1005CodeFix, t => GetTransformedDocumentAsync(context.Document, diagnostic.Location, t), equivalenceKey: nameof(SA1005CodeFixProvider)), diagnostic);
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        SpacingResources.SA1005CodeFix,
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic.Location, cancellationToken),
+                        nameof(SA1005CodeFixProvider)),
+                    diagnostic);
             }
         }
 

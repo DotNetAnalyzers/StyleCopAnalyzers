@@ -44,7 +44,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     CodeAction.Create(
                         DocumentationResources.SA1626CodeFix,
                         cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
-                        equivalenceKey: nameof(SA1626CodeFixProvider)),
+                        nameof(SA1626CodeFixProvider)),
                     diagnostic);
             }
 
