@@ -42,7 +42,7 @@ namespace StyleCop.Analyzers.SpacingRules
                     CodeAction.Create(
                         SpacingResources.SA1027CodeFix,
                         cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
-                        nameof(SA1027CodeFixProvider)), 
+                        nameof(SA1027CodeFixProvider)),
                     diagnostic);
             }
 
