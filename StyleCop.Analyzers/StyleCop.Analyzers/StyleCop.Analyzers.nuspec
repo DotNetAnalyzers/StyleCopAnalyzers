@@ -27,7 +27,6 @@
     <file src="tools\uninstall.ps1" target="tools\" />
     
     <!-- MSBuild imports -->
-    <file src="build\StyleCop.Analyzers.props" target="build\" />
     <file src="build\StyleCop.Analyzers.targets" target="build\" />
 
     <!-- Source code -->
