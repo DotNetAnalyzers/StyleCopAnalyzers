@@ -11,7 +11,6 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -53,71 +52,84 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTreeAction);
+            var analyzer = new Analyzer(context.Options);
+            context.RegisterSyntaxTreeActionHonorExclusions(analyzer.HandleSyntaxTreeAction);
         }
 
-        private static void HandleSyntaxTreeAction(SyntaxTreeAnalysisContext context)
+        private class Analyzer
         {
-            var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
-            var settings = context.GetStyleCopSettings();
+            private readonly FileNamingConvention fileNamingConvention;
 
-            var firstTypeDeclaration = GetFirstTypeDeclaration(syntaxRoot);
-            if (firstTypeDeclaration == null)
+            public Analyzer(AnalyzerOptions options)
             {
-                return;
+                StyleCopSettings settings = options.GetStyleCopSettings();
+                this.fileNamingConvention = settings.DocumentationRules.FileNamingConvention;
             }
 
-            if (firstTypeDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+            public void HandleSyntaxTreeAction(SyntaxTreeAnalysisContext context)
             {
-                return;
+                var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
+
+                var firstTypeDeclaration = GetFirstTypeDeclaration(syntaxRoot);
+                if (firstTypeDeclaration == null)
+                {
+                    return;
+                }
+
+                if (firstTypeDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword))
+                {
+                    return;
+                }
+
+                var fileName = Path.GetFileName(context.Tree.FilePath);
+                string expectedFileName;
+                switch (this.fileNamingConvention)
+                {
+                    case FileNamingConvention.Metadata:
+                        expectedFileName = GetMetadataFileName(firstTypeDeclaration);
+                        break;
+
+                    default:
+                        expectedFileName = GetStyleCopFileName(firstTypeDeclaration);
+                        break;
+                }
+
+                if (string.Compare(fileName, expectedFileName, StringComparison.OrdinalIgnoreCase) != 0)
+                {
+                    var properties = ImmutableDictionary.Create<string, string>()
+                        .Add(ExpectedFileNameKey, expectedFileName);
+
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstTypeDeclaration.Identifier.GetLocation(), properties));
+                }
             }
 
-            var fileName = Path.GetFileName(context.Tree.FilePath);
-            string expectedFileName;
-            switch (settings.DocumentationRules.FileNamingConvention)
+            private static TypeDeclarationSyntax GetFirstTypeDeclaration(SyntaxNode root)
             {
-                case FileNamingConvention.Metadata:
-                    expectedFileName = GetMetadataFileName(firstTypeDeclaration);
-                    break;
-
-                default:
-                    expectedFileName = GetStyleCopFileName(firstTypeDeclaration);
-                    break;
+                return root.DescendantNodes(descendIntoChildren: node => node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration))
+                    .OfType<TypeDeclarationSyntax>()
+                    .FirstOrDefault();
             }
 
-            if (string.Compare(fileName, expectedFileName, StringComparison.OrdinalIgnoreCase) != 0)
+            private static string GetStyleCopFileName(TypeDeclarationSyntax firstTypeDeclaration)
             {
-                var properties = ImmutableDictionary.Create<string, string>()
-                    .Add(ExpectedFileNameKey, expectedFileName);
+                if (firstTypeDeclaration.TypeParameterList == null)
+                {
+                    return $"{firstTypeDeclaration.Identifier.ValueText}.cs";
+                }
 
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstTypeDeclaration.Identifier.GetLocation(), properties));
-            }
-        }
-
-        private static TypeDeclarationSyntax GetFirstTypeDeclaration(SyntaxNode root)
-        {
-            return (TypeDeclarationSyntax)root.DescendantNodes().FirstOrDefault(node => node is TypeDeclarationSyntax);
-        }
-
-        private static string GetStyleCopFileName(TypeDeclarationSyntax firstTypeDeclaration)
-        {
-            if (firstTypeDeclaration.TypeParameterList == null)
-            {
-                return $"{firstTypeDeclaration.Identifier.ValueText}.cs";
+                var typeParameterList = string.Join(",", firstTypeDeclaration.TypeParameterList.Parameters.Select(p => p.Identifier.ValueText));
+                return $"{firstTypeDeclaration.Identifier.ValueText}{{{typeParameterList}}}.cs";
             }
 
-            var typeParameterList = string.Join(",", firstTypeDeclaration.TypeParameterList.Parameters.Select(p => p.Identifier.ValueText));
-            return $"{firstTypeDeclaration.Identifier.ValueText}{{{typeParameterList}}}.cs";
-        }
-
-        private static string GetMetadataFileName(TypeDeclarationSyntax firstTypeDeclaration)
-        {
-            if (firstTypeDeclaration.TypeParameterList == null)
+            private static string GetMetadataFileName(TypeDeclarationSyntax firstTypeDeclaration)
             {
-                return $"{firstTypeDeclaration.Identifier.ValueText}.cs";
-            }
+                if (firstTypeDeclaration.TypeParameterList == null)
+                {
+                    return $"{firstTypeDeclaration.Identifier.ValueText}.cs";
+                }
 
-            return $"{firstTypeDeclaration.Identifier.ValueText}`{firstTypeDeclaration.Arity}.cs";
+                return $"{firstTypeDeclaration.Identifier.ValueText}`{firstTypeDeclaration.Arity}.cs";
+            }
         }
     }
 }

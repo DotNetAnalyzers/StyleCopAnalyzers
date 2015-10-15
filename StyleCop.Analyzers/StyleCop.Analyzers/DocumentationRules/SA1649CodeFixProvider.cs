@@ -39,8 +39,8 @@ namespace StyleCop.Analyzers.DocumentationRules
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         DocumentationResources.SA1649CodeFix,
-                        token => GetTransformedSolutionAsync(context.Document, diagnostic, token),
-                        equivalenceKey: nameof(SA1649CodeFixProvider)),
+                        cancellationToken => GetTransformedSolutionAsync(context.Document, diagnostic, cancellationToken),
+                        nameof(SA1649CodeFixProvider)),
                     diagnostic);
             }
 
