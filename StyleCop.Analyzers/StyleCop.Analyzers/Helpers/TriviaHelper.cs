@@ -338,52 +338,75 @@ namespace StyleCop.Analyzers.Helpers
         /// </summary>
         /// <param name="token">The token to strip.</param>
         /// <returns>A new token without leading blank lines.</returns>
-        internal static SyntaxToken WithoutLeadingBlankLines(this SyntaxToken token)
+        internal static SyntaxToken WithoutBlankLines(this SyntaxToken token)
         {
-            var triviaList = token.LeadingTrivia;
-            var leadingWhitespaceStart = triviaList.Count - 1;
+            var leadingTrivia = token.LeadingTrivia;
 
-            // skip leading whitespace in front of the while keyword
-            while ((leadingWhitespaceStart > 0) && triviaList[leadingWhitespaceStart - 1].IsKind(SyntaxKind.WhitespaceTrivia))
+            var list = new List<SyntaxTrivia>();
+            for (var i = 0; i < leadingTrivia.Count; i++)
             {
-                leadingWhitespaceStart--;
-            }
-
-            var blankLinesStart = leadingWhitespaceStart - 1;
-            var done = false;
-            while (!done && (blankLinesStart >= 0))
-            {
-                switch (triviaList[blankLinesStart].Kind())
+                var currentTrivia = leadingTrivia[i];
+                if (!currentTrivia.IsKind(SyntaxKind.WhitespaceTrivia) && !currentTrivia.IsKind(SyntaxKind.EndOfLineTrivia))
                 {
-                case SyntaxKind.WhitespaceTrivia:
-                case SyntaxKind.EndOfLineTrivia:
-                    blankLinesStart--;
-                    break;
-
-                case SyntaxKind.IfDirectiveTrivia:
-                case SyntaxKind.ElifDirectiveTrivia:
-                case SyntaxKind.ElseDirectiveTrivia:
-                case SyntaxKind.EndIfDirectiveTrivia:
-                    // directives include an embedded end of line
-                    blankLinesStart++;
-                    done = true;
-                    break;
-
-                default:
-                    // include the first end of line (as it is part of the non blank line trivia)
-                    while (!triviaList[blankLinesStart].HasBuiltinEndLine())
+                    var skipIndex = i > 0 && leadingTrivia[i - 1].IsKind(SyntaxKind.WhitespaceTrivia) ? i - 1 : i;
+                    var takeCount = 1;
+                    if (skipIndex != i)
                     {
-                        blankLinesStart++;
+                        takeCount++;
                     }
 
-                    blankLinesStart++;
-                    done = true;
+                    while (leadingTrivia.Count >= i)
+                    {
+                        takeCount++;
+                        i++;
+                        if (leadingTrivia[i + 1].IsKind(SyntaxKind.EndOfLineTrivia))
+                        {
+                            break;
+                        }
+                    }
+
+                    list.AddRange(leadingTrivia.Skip(skipIndex).Take(takeCount));
+                }
+            }
+
+            if (leadingTrivia.Count > 1)
+            {
+                var lastTrivia = leadingTrivia[leadingTrivia.Count - 1];
+                if (lastTrivia.IsKind(SyntaxKind.WhitespaceTrivia))
+                {
+                    list.Add(lastTrivia);
+                }
+            }
+
+            return token.WithLeadingTrivia(list);
+        }
+
+        /// <summary>
+        /// Strips all leading blank lines from the given token.
+        /// </summary>
+        /// <param name="token">The token to strip.</param>
+        /// <returns>A new token without leading blank lines.</returns>
+        internal static SyntaxToken WithoutLeadingBlankLines(this SyntaxToken token)
+        {
+            var leadingTrivia = token.LeadingTrivia;
+
+            var skipIndex = 0;
+            for (var i = 0; i < leadingTrivia.Count; i++)
+            {
+                var currentTrivia = leadingTrivia[i];
+                if (currentTrivia.IsKind(SyntaxKind.EndOfLineTrivia))
+                {
+                    skipIndex = i + 1;
+                }
+                else if (!currentTrivia.IsKind(SyntaxKind.WhitespaceTrivia))
+                {
+                    // Preceded by whitespace
+                    skipIndex = i > 0 && leadingTrivia[i - 1].IsKind(SyntaxKind.WhitespaceTrivia) ? i - 1 : i;
                     break;
                 }
             }
 
-            var newLeadingTrivia = SyntaxFactory.TriviaList(triviaList.Take(blankLinesStart).Concat(triviaList.Skip(leadingWhitespaceStart)));
-            return token.WithLeadingTrivia(newLeadingTrivia);
+            return token.WithLeadingTrivia(leadingTrivia.Skip(skipIndex));
         }
 
         internal static bool HasBuiltinEndLine(this SyntaxTrivia trivia)
