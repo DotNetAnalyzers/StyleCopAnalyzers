@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
@@ -57,7 +58,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var baseFieldDeclaration = (BaseFieldDeclarationSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
-            List<BaseFieldDeclarationSyntax> newFieldDeclarations = SplitDeclaration(baseFieldDeclaration);
+            List<BaseFieldDeclarationSyntax> newFieldDeclarations = SplitDeclaration(document, baseFieldDeclaration);
 
             if (newFieldDeclarations != null)
             {
@@ -70,59 +71,80 @@ namespace StyleCop.Analyzers.ReadabilityRules
             return document;
         }
 
-        private static List<BaseFieldDeclarationSyntax> SplitDeclaration(BaseFieldDeclarationSyntax baseFieldDeclaration)
+        private static List<BaseFieldDeclarationSyntax> SplitDeclaration(Document document, BaseFieldDeclarationSyntax baseFieldDeclaration)
         {
             var fieldDeclaration = baseFieldDeclaration as FieldDeclarationSyntax;
             if (fieldDeclaration != null)
             {
-                VariableDeclarationSyntax declaration = fieldDeclaration.Declaration;
-                SeparatedSyntaxList<VariableDeclaratorSyntax> variables = declaration.Variables;
-                VariableDeclaratorSyntax first = variables.First();
-                var newFieldDeclarations = new List<BaseFieldDeclarationSyntax>(variables.Count);
-
-                foreach (VariableDeclaratorSyntax variable in variables)
-                {
-                    var variableDeclarator = SyntaxFactory.SingletonSeparatedList(variable);
-                    var newFieldDeclaration = fieldDeclaration.WithDeclaration(declaration.WithVariables(variableDeclarator));
-
-                    if (variable != first)
-                    {
-                        var triviaList = newFieldDeclaration.GetLeadingTrivia().WithoutDirectiveTrivia();
-                        newFieldDeclaration = newFieldDeclaration.WithLeadingTrivia(triviaList);
-                    }
-
-                    newFieldDeclarations.Add(newFieldDeclaration);
-                }
-
-                return newFieldDeclarations;
+                return DeclarationSplitter(
+                    document,
+                    fieldDeclaration.Declaration,
+                    fieldDeclaration.WithDeclaration,
+                    fieldDeclaration.SemicolonToken.TrailingTrivia);
             }
 
             var eventFieldDeclaration = baseFieldDeclaration as EventFieldDeclarationSyntax;
             if (eventFieldDeclaration != null)
             {
-                VariableDeclarationSyntax declaration = eventFieldDeclaration.Declaration;
-                SeparatedSyntaxList<VariableDeclaratorSyntax> variables = declaration.Variables;
-                var first = variables.First();
-                var newEventFieldDeclarations = new List<BaseFieldDeclarationSyntax>(variables.Count);
-
-                foreach (VariableDeclaratorSyntax variable in variables)
-                {
-                    var variableDeclarator = SyntaxFactory.SingletonSeparatedList(variable);
-                    var newEventFieldDeclaration = eventFieldDeclaration.WithDeclaration(declaration.WithVariables(variableDeclarator));
-
-                    if (variable != first)
-                    {
-                        var triviaList = newEventFieldDeclaration.GetLeadingTrivia().WithoutDirectiveTrivia();
-                        newEventFieldDeclaration = newEventFieldDeclaration.WithLeadingTrivia(triviaList);
-                    }
-
-                    newEventFieldDeclarations.Add(newEventFieldDeclaration);
-                }
-
-                return newEventFieldDeclarations;
+                return DeclarationSplitter(
+                    document,
+                    eventFieldDeclaration.Declaration,
+                    eventFieldDeclaration.WithDeclaration,
+                    eventFieldDeclaration.SemicolonToken.TrailingTrivia);
             }
 
             return null;
+        }
+
+        private static List<BaseFieldDeclarationSyntax> DeclarationSplitter(
+            Document document,
+            VariableDeclarationSyntax declaration,
+            Func<VariableDeclarationSyntax, BaseFieldDeclarationSyntax> declarationFactory,
+            SyntaxTriviaList declarationTrailingTrivia)
+        {
+            SeparatedSyntaxList<VariableDeclaratorSyntax> variables = declaration.Variables;
+            VariableDeclaratorSyntax first = variables.First();
+            BaseFieldDeclarationSyntax previous = null;
+            var newFieldDeclarations = new List<BaseFieldDeclarationSyntax>(variables.Count);
+
+            foreach (SyntaxNodeOrToken nodeOrToken in variables.GetWithSeparators())
+            {
+                if (previous == null)
+                {
+                    VariableDeclaratorSyntax variable = (VariableDeclaratorSyntax)nodeOrToken.AsNode();
+                    variable = variable.WithIdentifier(variable.Identifier.WithoutLeadingWhitespace());
+                    var variableDeclarator = SyntaxFactory.SingletonSeparatedList(variable);
+                    previous = declarationFactory(declaration.WithVariables(variableDeclarator));
+
+                    if (variable != first)
+                    {
+                        var triviaList = previous.GetLeadingTrivia().WithoutDirectiveTrivia();
+                        previous = previous.WithLeadingTrivia(triviaList);
+                    }
+                }
+                else
+                {
+                    SyntaxToken commaToken = nodeOrToken.AsToken();
+                    SyntaxTriviaList trailingTrivia = commaToken.TrailingTrivia;
+                    if (trailingTrivia.Any())
+                    {
+                        if (!trailingTrivia.Last().IsKind(SyntaxKind.EndOfLineTrivia))
+                        {
+                            trailingTrivia = trailingTrivia.WithoutTrailingWhitespace().Add(TriviaHelper.GetNewLineTrivia(document));
+                        }
+                    }
+                    else
+                    {
+                        trailingTrivia = SyntaxTriviaList.Create(TriviaHelper.GetNewLineTrivia(document));
+                    }
+
+                    newFieldDeclarations.Add(previous.WithTrailingTrivia(trailingTrivia));
+                    previous = null;
+                }
+            }
+
+            newFieldDeclarations.Add(previous.WithTrailingTrivia(declarationTrailingTrivia));
+            return newFieldDeclarations;
         }
     }
 }
