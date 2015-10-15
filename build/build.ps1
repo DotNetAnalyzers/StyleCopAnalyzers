@@ -2,7 +2,7 @@ param (
 	[switch]$Debug,
 	[string]$VisualStudioVersion = '14.0',
 	[switch]$SkipKeyCheck,
-	[string]$Verbosity = 'normal',
+	[string]$Verbosity = 'minimal',
 	[string]$Logger
 )
 
