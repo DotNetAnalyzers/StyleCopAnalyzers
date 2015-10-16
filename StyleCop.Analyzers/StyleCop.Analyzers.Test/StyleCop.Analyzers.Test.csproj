@@ -359,12 +359,10 @@
     <None Include="..\StyleCop.Analyzers.ruleset">
       <Link>StyleCop.Analyzers.ruleset</Link>
     </None>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <AdditionalFiles Include="..\stylecop.json">
+    <None Include="..\stylecop.json">
       <Link>stylecop.json</Link>
-    </AdditionalFiles>
+    </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\StyleCop.Analyzers\StyleCop.Analyzers.csproj">
