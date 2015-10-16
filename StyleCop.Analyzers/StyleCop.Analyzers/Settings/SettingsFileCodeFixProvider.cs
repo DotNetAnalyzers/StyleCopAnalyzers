@@ -49,7 +49,7 @@ namespace StyleCop.Analyzers.Settings
                 FileHeaderAnalyzers.SA1639Descriptor.Id,
                 FileHeaderAnalyzers.SA1640Descriptor.Id,
                 FileHeaderAnalyzers.SA1641Descriptor.Id,
-                SA1649FileHeaderFileNameDocumentationMustMatchTypeName.DiagnosticId);
+                SA1649FileNameMustMatchTypeName.DiagnosticId);
 
         /// <inheritdoc/>
         public override Task RegisterCodeFixesAsync(CodeFixContext context)

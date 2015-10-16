@@ -261,3 +261,21 @@ The following example shows a configuration file which requires developers to do
   }
 }
 ```
+
+### File naming conventions
+
+The `fileNamingConvention` property will determine how the [SA1649 File name must match type name](SA1649.md) analyzer will check file names.
+Given the following code:
+
+```csharp
+public class Class1<T1, T2, T3>
+{
+}
+```
+
+The analyzer will expect file names according the table below. When the `fileNamingConvention` property is not set, the `stylecop` convention is used as default.
+
+File naming convention | Expected file name
+-----------------------| ------------------
+stylecop               | Class1{T1,T2,T3}.cs
+metadata               | Class1`3.cs

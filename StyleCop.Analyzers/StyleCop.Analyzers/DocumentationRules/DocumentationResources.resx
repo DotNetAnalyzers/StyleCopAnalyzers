@@ -222,6 +222,18 @@
   <data name="SA1642SA1643CodeFix" xml:space="preserve">
     <value>Add standard text</value>
   </data>
+  <data name="SA1649CodeFix" xml:space="preserve">
+    <value>Rename file to match first type name</value>
+  </data>
+  <data name="SA1649Description" xml:space="preserve">
+    <value>The file name of a C# code file does not match the first type declared in the file.</value>
+  </data>
+  <data name="SA1649MessageFormat" xml:space="preserve">
+    <value>File name must match first type name.</value>
+  </data>
+  <data name="SA1649Title" xml:space="preserve">
+    <value>File name must match first type name</value>
+  </data>
   <data name="SA1651CodeFix" xml:space="preserve">
     <value>Finalize placeholder text</value>
   </data>
