@@ -1140,5 +1140,41 @@ namespace StyleCop.Analyzers.ReadabilityRules {
                 return ResourceManager.GetString("SA1134Title", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove &apos;this.&apos; prefix.
+        /// </summary>
+        internal static string SX1101CodeFix {
+            get {
+                return ResourceManager.GetString("SX1101CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A call to an instance member of the local class or a base class is prefixed with `this.`..
+        /// </summary>
+        internal static string SX1101Description {
+            get {
+                return ResourceManager.GetString("SX1101Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do not prefix local calls with &apos;this.&apos;.
+        /// </summary>
+        internal static string SX1101MessageFormat {
+            get {
+                return ResourceManager.GetString("SX1101MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do not prefix local calls with &apos;this.&apos;.
+        /// </summary>
+        internal static string SX1101Title {
+            get {
+                return ResourceManager.GetString("SX1101Title", resourceCulture);
+            }
+        }
     }
 }
