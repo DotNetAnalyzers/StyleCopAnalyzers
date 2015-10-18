@@ -11,7 +11,7 @@ namespace StyleCop.Analyzers.Helpers
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.SpacingRules;
 
-    internal static class DocumentationSyntaxExtensions
+    internal static class DocumentationCommentExtensions
     {
         public static DocumentationCommentTriviaSyntax GetDocumentationCommentTriviaSyntax(this SyntaxNode node)
         {
