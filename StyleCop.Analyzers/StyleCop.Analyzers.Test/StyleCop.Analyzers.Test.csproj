@@ -168,6 +168,7 @@
     <Compile Include="ExportCodeFixProviderAttributeNameTest.cs" />
     <Compile Include="Helpers\CodeFixVerifier.Helper.cs" />
     <Compile Include="Helpers\DiagnosticResult.cs" />
+    <Compile Include="Helpers\DiagnosticResultLocation.cs" />
     <Compile Include="Helpers\DiagnosticVerifier.Helper.cs" />
     <Compile Include="Helpers\ExclusionTestAnalyzer.cs" />
     <Compile Include="Helpers\TestDiagnosticProvider.cs" />
