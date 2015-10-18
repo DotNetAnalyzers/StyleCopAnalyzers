@@ -11,6 +11,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System.Threading;
     using System.Threading.Tasks;
     using System.Xml.Linq;
+    using Helpers.ObjectPools;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -18,7 +19,6 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.Formatting;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Settings.ObjectModel;
-    using Helpers.ObjectPools;
 
     /// <summary>
     /// Implements a code fix for file header diagnostics.

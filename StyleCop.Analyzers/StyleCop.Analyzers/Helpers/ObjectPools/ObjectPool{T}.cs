@@ -1,13 +1,13 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
-// This code was copied from the Roslyn code base (and slightly modified)
-using System;
-using System.Diagnostics;
-using System.Threading;
-
 namespace StyleCop.Analyzers.Helpers.ObjectPools
 {
+    // This code was copied from the Roslyn code base (and slightly modified)
+    using System;
+    using System.Diagnostics;
+    using System.Threading;
+
     /// <summary>
     /// Generic implementation of object pooling pattern with predefined pool size limit. The main
     /// purpose is that limited number of frequently used objects can be kept in the pool for
