@@ -3,9 +3,13 @@
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
+    using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
@@ -42,8 +46,31 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             if (context.Node.Parent.IsKind(SyntaxKind.SimpleMemberAccessExpression))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation()));
+                var memberAccessExpression = (MemberAccessExpressionSyntax)context.Node.Parent;
+                var memberName = memberAccessExpression.Name.ToString();
+
+                var parameters = GetMethodParameters(context.Node);
+                if (!parameters.Contains(memberName))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation()));
+                }
             }
+        }
+
+        private static IList<string> GetMethodParameters(SyntaxNode node)
+        {
+            while ((node != null) && !node.IsKind(SyntaxKind.MethodDeclaration))
+            {
+                node = node.Parent;
+            }
+
+            if (node == null)
+            {
+                return new List<string>();
+            }
+
+            var methodDeclaration = (MethodDeclarationSyntax)node;
+            return methodDeclaration.ParameterList.Parameters.Select(p => p.Identifier.ValueText).ToList();
         }
     }
 }
