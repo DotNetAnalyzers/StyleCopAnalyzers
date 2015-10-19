@@ -77,7 +77,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-            ImmutableArray.Create(SA1102Descriptor, SA1103Descriptor, SA1104Descriptor, SA1105Descriptor);
+            ImmutableArray.Create(
+                SA1102Descriptor,
+                SA1103Descriptor,
+                SA1104Descriptor,
+                SA1105Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
