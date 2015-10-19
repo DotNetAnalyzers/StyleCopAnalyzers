@@ -157,7 +157,7 @@ namespace StyleCop.Analyzers.Test.Settings
             var additionalFiles = ImmutableArray.Create<AdditionalText>(stylecopJSONFile);
             var analyzerOptions = new AnalyzerOptions(additionalFiles);
 
-            return new SyntaxTreeAnalysisContext(syntaxTree, analyzerOptions, rd => { }, isd => { return true; }, CancellationToken.None);
+            return new SyntaxTreeAnalysisContext(syntaxTree, analyzerOptions, rd => { }, isd => true, CancellationToken.None);
         }
 
         private class AdditionalTextHelper : AdditionalText

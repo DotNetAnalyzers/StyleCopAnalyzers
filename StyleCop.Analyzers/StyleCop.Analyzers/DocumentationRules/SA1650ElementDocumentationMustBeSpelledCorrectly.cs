@@ -37,7 +37,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// Joinsnames to a CustomDictionary.xml file.</para>
     ///
     /// <list type="bullet">
-    /// <item>CustomDictionary.xml files can contain words that the spelling checker does not normally recognise.</item>
+    /// <item>CustomDictionary.xml files can contain words that the spelling checker does not normally recognize.</item>
     /// <item>The CustomDictionary.xml file should be placed in the same folder as the StyleCop.dll and the Rules. That
     /// folder (and all subfolders) are checked for the dictionary files.</item>
     /// <item>StyleCop loads CustomDictionary.xml, CustomDictionary.en-GB.xml and then CustomDictionary.en.xml (where

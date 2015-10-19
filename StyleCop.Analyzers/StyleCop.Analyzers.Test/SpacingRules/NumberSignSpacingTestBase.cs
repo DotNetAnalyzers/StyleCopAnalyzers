@@ -80,9 +80,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 }
 ";
 
-            string test;
-
-            test = string.Format(testFormat, this.Sign + "3");
+            string test = string.Format(testFormat, this.Sign + "3");
             await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
@@ -123,9 +121,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 }
 ";
 
-            string test;
-
-            test = string.Format(testFormat, this.Sign + "3");
+            string test = string.Format(testFormat, this.Sign + "3");
             await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
@@ -164,9 +160,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 }
 ";
 
-            string test;
-
-            test = string.Format(testFormat, " " + this.Sign + "3");
+            string test = string.Format(testFormat, " " + this.Sign + "3");
             await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
@@ -229,9 +223,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 }
 ";
 
-            string test;
-
-            test = string.Format(testFormat, this.Sign + "3");
+            string test = string.Format(testFormat, this.Sign + "3");
             await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
@@ -270,9 +262,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 }
 ";
 
-            string test;
-
-            test = string.Format(testFormat, this.Sign + "3");
+            string test = string.Format(testFormat, this.Sign + "3");
             await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
@@ -332,9 +322,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 }
 ";
 
-            string test;
-
-            test = string.Format(testFormat, this.Sign + "3");
+            string test = string.Format(testFormat, this.Sign + "3");
             await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 
@@ -394,9 +382,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 }
 ";
 
-            string test;
-
-            test = string.Format(testFormat, this.Sign + "0");
+            string test = string.Format(testFormat, this.Sign + "0");
             await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
 

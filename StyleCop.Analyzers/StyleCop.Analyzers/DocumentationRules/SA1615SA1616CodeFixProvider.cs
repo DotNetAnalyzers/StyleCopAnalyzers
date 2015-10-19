@@ -94,7 +94,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 isAsynchronousTestMethod = false;
             }
 
-            XmlNodeSyntax returnsElement = documentationComment.Content.GetFirstXmlElement(XmlCommentHelper.ReturnsXmlTag) as XmlNodeSyntax;
+            XmlNodeSyntax returnsElement = documentationComment.Content.GetFirstXmlElement(XmlCommentHelper.ReturnsXmlTag);
             if (returnsElement != null && !isTask)
             {
                 // This code fix doesn't know how to do anything more than document Task-returning methods.

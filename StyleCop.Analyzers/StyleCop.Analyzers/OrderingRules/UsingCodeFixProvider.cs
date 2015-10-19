@@ -705,7 +705,7 @@ namespace StyleCop.Analyzers.OrderingRules
                     return EmptyUsingsList;
                 }
 
-                return groupList.Where(u => usingsList.Contains(u)).ToList();
+                return groupList.Where(usingsList.Contains).ToList();
             }
         }
 

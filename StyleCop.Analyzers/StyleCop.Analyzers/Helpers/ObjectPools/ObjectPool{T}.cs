@@ -60,7 +60,7 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
         /// Note that Free will try to store recycled objects close to the start thus statistically
         /// reducing how far we will typically search.
         /// </remarks>
-        /// <returns>A (poosibly) cached instance of type <typeparamref name="T"/>.</returns>
+        /// <returns>A (possibly) cached instance of type <typeparamref name="T"/>.</returns>
         internal T Allocate()
         {
             // PERF: Examine the first element. If that fails, AllocateSlow will look at the remaining elements.

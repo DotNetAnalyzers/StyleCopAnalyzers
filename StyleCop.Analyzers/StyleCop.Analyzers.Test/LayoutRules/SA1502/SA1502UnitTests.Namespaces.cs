@@ -69,7 +69,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         }
 
         /// <summary>
-        /// Verifies that a namespace with its block defined on a mutiple lines will pass without diagnostic.
+        /// Verifies that a namespace with its block defined on a multiple lines will pass without diagnostic.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
