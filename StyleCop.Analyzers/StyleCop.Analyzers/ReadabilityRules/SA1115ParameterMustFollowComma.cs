@@ -4,6 +4,7 @@
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -53,17 +54,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
-            ImmutableArray.Create(Descriptor);
-
         /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        {
-            get
-            {
-                return SupportedDiagnosticsValue;
-            }
-        }
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+            ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -277,18 +270,44 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
-            var previousLine = parameterListSyntax.Parameters[0].GetLineSpan().EndLinePosition.Line;
+            var previousParameterLine = parameterListSyntax.Parameters[0].GetLineSpan().EndLinePosition.Line;
             for (int i = 1; i < parameterListSyntax.Parameters.Count; i++)
             {
                 var currentParameter = parameterListSyntax.Parameters[i];
-                var lineSpan = currentParameter.GetLineSpan();
-                var currentLine = lineSpan.StartLinePosition.Line;
-                if (currentLine - previousLine > 1)
+                int currentParameterLine;
+
+                if (currentParameter.HasLeadingTrivia && currentParameter.GetLeadingTrivia().All(trivia => IsValidTrivia(trivia)))
+                {
+                    currentParameterLine = currentParameter.SyntaxTree.GetLineSpan(currentParameter.FullSpan).StartLinePosition.Line;
+                }
+                else
+                {
+                    currentParameterLine = currentParameter.GetLineSpan().StartLinePosition.Line;
+                }
+
+                if (currentParameterLine - previousParameterLine > 1)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentParameter.GetLocation()));
                 }
 
-                previousLine = lineSpan.EndLinePosition.Line;
+                previousParameterLine = currentParameterLine;
+            }
+        }
+
+        private static bool IsValidTrivia(SyntaxTrivia trivia)
+        {
+            switch (trivia.Kind())
+            {
+                case SyntaxKind.IfDirectiveTrivia:
+                case SyntaxKind.ElseDirectiveTrivia:
+                case SyntaxKind.ElifDirectiveTrivia:
+                case SyntaxKind.EndIfDirectiveTrivia:
+                case SyntaxKind.DisabledTextTrivia:
+                case SyntaxKind.WhitespaceTrivia:
+                    return true;
+
+                default:
+                    return false;
             }
         }
     }
