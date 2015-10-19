@@ -38,7 +38,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 nodes.Add(node);
             }
 
-            return root.ReplaceNodes(nodes, AddParentheses);
+            return root.ReplaceNodes(nodes, (originalNode, rewrittenNode) => AddParentheses(originalNode, rewrittenNode));
         }
 
         private static SyntaxNode AddParentheses(SyntaxNode originalNode, SyntaxNode rewrittenNode)

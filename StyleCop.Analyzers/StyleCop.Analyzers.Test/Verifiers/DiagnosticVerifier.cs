@@ -284,7 +284,7 @@ namespace TestHelper
             {
                 var diagnosticsId = diagnostics[i].Id;
 
-                builder.AppendLine("// " + diagnostics[i]);
+                builder.Append("// ").AppendLine(diagnostics[i].ToString());
 
                 var applicableAnalyzer = analyzers.FirstOrDefault(a => a.SupportedDiagnostics.Any(dd => dd.Id == diagnosticsId));
                 if (applicableAnalyzer != null)
@@ -300,7 +300,7 @@ namespace TestHelper
                     {
                         Assert.True(
                             location.IsInSource,
-                            string.Format("Test base does not currently handle diagnostics in metadata locations. Diagnostic in metadata:{0}\r\n", diagnostics[i]));
+                            string.Format("Test base does not currently handle diagnostics in metadata locations. Diagnostic in metadata:\r\n{0}", diagnostics[i]));
 
                         string resultMethodName = diagnostics[i].Location.SourceTree.FilePath.EndsWith(".cs") ? "GetCSharpResultAt" : "GetBasicResultAt";
                         var linePosition = diagnostics[i].Location.GetLineSpan().StartLinePosition;
