@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.Helpers
     using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using ObjectPools;
 
     /// <summary>
     /// Helper class used for working with file headers
@@ -30,7 +31,7 @@ namespace StyleCop.Analyzers.Helpers
                 return FileHeader.MissingFileHeader;
             }
 
-            var sb = new StringBuilder();
+            var sb = StringBuilderPool.Allocate();
             var endOfLineCount = 0;
             var done = false;
             var fileHeaderStart = int.MaxValue;
@@ -92,6 +93,7 @@ namespace StyleCop.Analyzers.Helpers
 
             if (fileHeaderStart > fileHeaderEnd)
             {
+                StringBuilderPool.Free(sb);
                 return FileHeader.MissingFileHeader;
             }
 
@@ -102,7 +104,7 @@ namespace StyleCop.Analyzers.Helpers
                 sb.Remove(sb.Length - eolLength, eolLength);
             }
 
-            return new FileHeader(sb.ToString(), fileHeaderStart, fileHeaderEnd);
+            return new FileHeader(StringBuilderPool.ReturnAndFree(sb), fileHeaderStart, fileHeaderEnd);
         }
 
         /// <summary>
@@ -162,7 +164,7 @@ namespace StyleCop.Analyzers.Helpers
 
         private static string ProcessSingleLineCommentsHeader(SyntaxTriviaList triviaList, int startIndex, out int fileHeaderStart, out int fileHeaderEnd)
         {
-            var sb = new StringBuilder();
+            var sb = StringBuilderPool.Allocate();
             var endOfLineCount = 0;
             var done = false;
 
@@ -212,12 +214,12 @@ namespace StyleCop.Analyzers.Helpers
             }
 
             sb.AppendLine("</root>");
-            return sb.ToString();
+            return StringBuilderPool.ReturnAndFree(sb);
         }
 
         private static string ProcessMultiLineCommentsHeader(SyntaxTrivia multiLineComment, out int fileHeaderStart, out int fileHeaderEnd)
         {
-            var sb = new StringBuilder();
+            var sb = StringBuilderPool.Allocate();
 
             // wrap the XML from the file header in a single root element to make XML parsing work.
             sb.AppendLine("<root>");
@@ -237,7 +239,7 @@ namespace StyleCop.Analyzers.Helpers
             }
 
             sb.AppendLine("</root>");
-            return sb.ToString();
+            return StringBuilderPool.ReturnAndFree(sb);
         }
     }
 }

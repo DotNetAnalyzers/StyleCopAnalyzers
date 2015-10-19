@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.Helpers
     using System.Text.RegularExpressions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using ObjectPools;
 
     /// <summary>
     /// Provides helper methods to work with XML comments
@@ -170,14 +171,14 @@ namespace StyleCop.Analyzers.Helpers
                 return null;
             }
 
-            StringBuilder stringBuilder = new StringBuilder();
+            StringBuilder stringBuilder = StringBuilderPool.Allocate();
 
             foreach (var item in textElement.TextTokens)
             {
                 stringBuilder.Append(item);
             }
 
-            string result = stringBuilder.ToString();
+            string result = StringBuilderPool.ReturnAndFree(stringBuilder);
             if (normalizeWhitespace)
             {
                 result = Regex.Replace(result, @"\s+", " ");

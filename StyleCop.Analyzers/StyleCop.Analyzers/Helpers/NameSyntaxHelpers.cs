@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.Helpers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using ObjectPools;
 
     /// <summary>
     /// Class containing the extension methods for the <see cref="NameSyntax"/> class.
@@ -36,11 +37,11 @@ namespace StyleCop.Analyzers.Helpers
         /// <returns>The name contained in the <see cref="NameSyntax"/>, with its alias removed (if any).</returns>
         internal static string ToUnaliasedString(this NameSyntax nameSyntax)
         {
-            var sb = new StringBuilder();
+            var sb = StringBuilderPool.Allocate();
 
             BuildName(nameSyntax, sb, false);
 
-            return sb.ToString();
+            return StringBuilderPool.ReturnAndFree(sb);
         }
 
         private static void BuildName(NameSyntax nameSyntax, StringBuilder builder, bool includeAlias)

@@ -133,6 +133,11 @@
     <Compile Include="Helpers\LocationHelpers.cs" />
     <Compile Include="Helpers\NamedTypeHelpers.cs" />
     <Compile Include="Helpers\NameSyntaxHelpers.cs" />
+    <Compile Include="Helpers\ObjectPools\ObjectPool{T}.cs" />
+    <Compile Include="Helpers\ObjectPools\PooledObject{T}.cs" />
+    <Compile Include="Helpers\ObjectPools\SharedPoolExtensions.cs" />
+    <Compile Include="Helpers\ObjectPools\SharedPools.cs" />
+    <Compile Include="Helpers\ObjectPools\StringBuilderPool.cs" />
     <Compile Include="Helpers\RenameHelper.cs" />
     <Compile Include="Helpers\Requires.cs" />
     <Compile Include="Helpers\SpecializedTasks.cs" />

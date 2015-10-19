@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.NamingRules
     using System.Text;
     using System.Threading.Tasks;
     using Helpers;
+    using Helpers.ObjectPools;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -58,7 +59,7 @@ namespace StyleCop.Analyzers.NamingRules
 
         private static string BuildProposedName(string currentName)
         {
-            StringBuilder builder = new StringBuilder(currentName.Length);
+            StringBuilder builder = StringBuilderPool.Allocate();
 
             bool foundNonUnderscore = false;
             bool capitalizeNextLetter = false;
@@ -93,7 +94,7 @@ namespace StyleCop.Analyzers.NamingRules
                 capitalizeNextLetter = true;
             }
 
-            return builder.ToString();
+            return StringBuilderPool.ReturnAndFree(builder);
         }
     }
 }

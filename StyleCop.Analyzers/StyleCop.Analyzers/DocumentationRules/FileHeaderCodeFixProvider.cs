@@ -11,6 +11,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System.Threading;
     using System.Threading.Tasks;
     using System.Xml.Linq;
+    using Helpers.ObjectPools;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -135,7 +136,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             // Pad line that used to be next to a /*
             triviaStringParts[0] = commentIndentation + interlinePadding + " " + triviaStringParts[0];
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = StringBuilderPool.Allocate();
             var copyrightText = commentIndentation + interlinePadding + " " +
                 GetCopyrightText(commentIndentation + interlinePadding, settings.DocumentationRules.CopyrightText, newLineText);
             var newHeader = WrapInXmlComment(commentIndentation + interlinePadding, copyrightText, document.Name, settings, newLineText);
@@ -196,8 +197,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 sb.Append((i == 0 ? string.Empty : newLineText) + lines[i].TrimEnd());
             }
 
-            var newTrivia = SyntaxFactory.SyntaxTrivia(SyntaxKind.MultiLineCommentTrivia, sb.ToString());
-
+            var newTrivia = SyntaxFactory.SyntaxTrivia(SyntaxKind.MultiLineCommentTrivia, StringBuilderPool.ReturnAndFree(sb));
             return root.WithLeadingTrivia(trivia.Replace(commentTrivia, newTrivia));
         }
 
