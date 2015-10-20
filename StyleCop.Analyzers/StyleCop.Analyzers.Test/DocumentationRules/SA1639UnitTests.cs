@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
@@ -23,13 +24,13 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [Fact]
         public async Task TestFileHeaderWithoutSummaryTagAsync()
         {
-            var testCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-//   Copyright (c) FooCorp. All rights reserved.
+            var testCode = $@"// <copyright file=""Test0.cs"" company=""FooCorp"">
+//   Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1639Descriptor).WithLocation(1, 1);
@@ -43,14 +44,14 @@ namespace Bar
         [Fact]
         public async Task TestFileHeaderWithEmptySummaryTagAsync()
         {
-            var testCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-//   Copyright (c) FooCorp. All rights reserved.
+            var testCode = $@"// <copyright file=""Test0.cs"" company=""FooCorp"">
+//   Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 // <summary/>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1639Descriptor).WithLocation(4, 4);
@@ -64,14 +65,14 @@ namespace Bar
         [Fact]
         public async Task TestFileHeaderWithWhitespaceOnlySummaryTagAsync()
         {
-            var testCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-//   Copyright (c) FooCorp. All rights reserved.
+            var testCode = $@"// <copyright file=""Test0.cs"" company=""FooCorp"">
+//   Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 // <summary>   </summary>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1639Descriptor).WithLocation(4, 4);

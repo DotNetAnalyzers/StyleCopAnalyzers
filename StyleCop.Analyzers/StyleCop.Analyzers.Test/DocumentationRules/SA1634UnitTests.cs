@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -32,8 +33,8 @@ namespace Bar
 {
 }
 ";
-            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-// Copyright (c) FooCorp. All rights reserved.
+            var fixedCode = $@"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 // <author>
 //   John Doe
@@ -41,8 +42,8 @@ namespace Bar
 // <summary>This is a test file.</summary>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1634Descriptor).WithLocation(1, 1);
@@ -58,16 +59,16 @@ namespace Bar
         [Fact]
         public async Task TestValidFileHeaderWithCopyrightLastAsync()
         {
-            var testCode = @"// <author>
+            var testCode = $@"// <author>
 //   John Doe
 // </author>
 // <copyright file=""Test0.cs"" company=""FooCorp"">
-//   Copyright (c) FooCorp. All rights reserved.
+//   Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -86,13 +87,13 @@ namespace Bar
 {
 }
 ";
-            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-// Copyright (c) FooCorp. All rights reserved.
+            var fixedCode = $@"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1635Descriptor).WithLocation(1, 4);
@@ -108,24 +109,24 @@ namespace Bar
         [Fact]
         public async Task TestInvalidFileHeaderWithCopyrightInWrongCaseAsync()
         {
-            var testCode = @"// <Copyright file=""Test0.cs"" company=""FooCorp"">
-//   Copyright (c) FooCorp. All rights reserved.
+            var testCode = $@"// <Copyright file=""Test0.cs"" company=""FooCorp"">
+//   Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </Copyright>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
-            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-// Copyright (c) FooCorp. All rights reserved.
+            var fixedCode = $@"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 // <Copyright file=""Test0.cs"" company=""FooCorp"">
-//   Copyright (c) FooCorp. All rights reserved.
+//   Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </Copyright>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1634Descriptor).WithLocation(1, 1);
@@ -141,25 +142,25 @@ namespace Bar
         [Fact]
         public async Task TestValidMultiLineFileHeaderWithCopyrightLastAsync()
         {
-            var testCode = @"// <author>
+            var testCode = $@"// <author>
 //   John Doe
 // </author>
 // <copyright file=""Test0.cs"" company=""FooCorp"">
-// Copyright (c) FooCorp. All rights reserved.
+// Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 //
 // Licence is FooBar MIT.
 // </copyright>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
             this.multiLineSettings = @"
 {
   ""settings"": {
     ""documentationRules"": {
       ""companyName"": ""FooCorp"",
-      ""copyrightText"": ""Copyright (c) FooCorp. All rights reserved.\n\nLicence is FooBar MIT.""
+      ""copyrightText"": ""{copyright} FooCorp. All rights reserved.\n\nLicence is FooBar MIT.""
     }
   }
 }
@@ -183,8 +184,8 @@ namespace Bar
 {
 }
 ";
-            var fixedCode = @"    // <copyright file=""Test0.cs"" company=""FooCorp"">
-    // Copyright (c) FooCorp. All rights reserved.
+            var fixedCode = $@"    // <copyright file=""Test0.cs"" company=""FooCorp"">
+    // Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
     // </copyright>
     // <author>FooCorp</author>
     // <summary>
@@ -192,8 +193,8 @@ namespace Bar
     // </summary>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1634Descriptor).WithLocation(1, 5);
@@ -218,8 +219,8 @@ namespace Bar
 {
 }
 ";
-            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-// Copyright (c) FooCorp. All rights reserved.
+            var fixedCode = $@"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 // <author>
 //   John Doe
@@ -227,8 +228,8 @@ namespace Bar
 // <summary>This is a test file.</summary>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1634Descriptor).WithLocation(1, 1);
@@ -254,8 +255,8 @@ namespace Bar
 {
 }
 ";
-            var fixedCode = @"/* <copyright file=""Test0.cs"" company=""FooCorp"">
-   Copyright (c) FooCorp. All rights reserved.
+            var fixedCode = $@"/* <copyright file=""Test0.cs"" company=""FooCorp"">
+   Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
    </copyright>
    <author>
      John Doe
@@ -264,8 +265,8 @@ namespace Bar
  */
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1634Descriptor).WithLocation(1, 1);
@@ -291,8 +292,8 @@ namespace Bar
 {
 }
 ";
-            var fixedCode = @"/* <copyright file=""Test0.cs"" company=""FooCorp"">
- * Copyright (c) FooCorp. All rights reserved.
+            var fixedCode = $@"/* <copyright file=""Test0.cs"" company=""FooCorp"">
+ * Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
  * </copyright>
  * <author>
  *   John Doe
@@ -301,8 +302,8 @@ namespace Bar
  */
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1634Descriptor).WithLocation(1, 1);
@@ -323,7 +324,7 @@ namespace Bar
   ""settings"": {
     ""documentationRules"": {
       ""companyName"": ""Foo & Bar \""quote\"" Corp"",
-      ""copyrightText"": ""copyright (c) {companyName}. All rights reserved.\n\nLine #3""
+      ""copyrightText"": ""{copyright} {companyName}. All rights reserved.\n\nLine #3""
     }
   }
 }
@@ -337,8 +338,8 @@ namespace Bar
 }
 ";
 
-            var fixedCode = @"// <copyright file=""Test0.cs"" company=""Foo &amp; Bar &quot;quote&quot; Corp"">
-// copyright (c) Foo &amp; Bar ""quote"" Corp. All rights reserved.
+            var fixedCode = $@"// <copyright file=""Test0.cs"" company=""Foo &amp; Bar &quot;quote&quot; Corp"">
+// Copyright © {DateTime.Now.Year} Foo &amp; Bar ""quote"" Corp. All rights reserved.
 //
 // Line #3
 // </copyright>
@@ -346,8 +347,8 @@ namespace Bar
 // <summary>Foo &amp; Bar Corp Bar Class</summary>
  
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1634Descriptor).WithLocation(1, 1);

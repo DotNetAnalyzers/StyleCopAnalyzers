@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -27,13 +28,13 @@ namespace Bar
 {
 }
 ";
-            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-// Copyright (c) FooCorp. All rights reserved.
+            var fixedCode = $@"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1635Descriptor).WithLocation(1, 4);
@@ -59,7 +60,7 @@ namespace Bar
                 "}\r\n";
             string fixedCode =
                 "// <copyright file=\"Test0.cs\" company=\"FooCorp\">\r\n" +
-                "// Copyright (c) FooCorp. All rights reserved.\r\n" +
+                $"// Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.\r\n" +
                 "// </copyright>\r\n" +
                 "\r\n" +
                 "namespace Bar\r\n" +
