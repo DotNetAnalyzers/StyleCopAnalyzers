@@ -3,8 +3,10 @@
 
 namespace StyleCop.Analyzers.Helpers
 {
+    using System;
+    using System.Collections.Concurrent;
     using System.Linq;
-    using System.Runtime.CompilerServices;
+    using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -18,27 +20,53 @@ namespace StyleCop.Analyzers.Helpers
         /// This allows many analyzers that run on every token in the file to avoid checking
         /// the same state in the document repeatedly.
         /// </remarks>
-        private static readonly ConditionalWeakTable<SyntaxTree, StrongBox<bool?>> UsingAliasPresentCheck
-            = new ConditionalWeakTable<SyntaxTree, StrongBox<bool?>>();
+        private static Tuple<WeakReference<Compilation>, ConcurrentDictionary<SyntaxTree, bool>> usingAliasCache
+            = Tuple.Create(new WeakReference<Compilation>(null), default(ConcurrentDictionary<SyntaxTree, bool>));
 
-        internal static bool ContainsUsingAlias(this SyntaxTree tree)
+        public static ConcurrentDictionary<SyntaxTree, bool> GetOrCreateUsingAliasCache(this Compilation compilation)
         {
-            StrongBox<bool?> cachedResult = UsingAliasPresentCheck.GetOrCreateValue(tree);
-            if (cachedResult.Value.HasValue)
+            var cache = usingAliasCache;
+
+            Compilation cachedCompilation;
+            if (!cache.Item1.TryGetTarget(out cachedCompilation) || cachedCompilation != compilation)
             {
-                return cachedResult.Value.Value;
+                var replacementCache = Tuple.Create(new WeakReference<Compilation>(compilation), new ConcurrentDictionary<SyntaxTree, bool>());
+                while (true)
+                {
+                    var prior = Interlocked.CompareExchange(ref usingAliasCache, replacementCache, cache);
+                    if (prior == cache)
+                    {
+                        cache = replacementCache;
+                        break;
+                    }
+
+                    cache = prior;
+                    if (cache.Item1.TryGetTarget(out cachedCompilation) && cachedCompilation == compilation)
+                    {
+                        break;
+                    }
+                }
             }
 
-            bool hasUsingAlias = ContainsUsingAliasNoCache(tree);
+            return cache.Item2;
+        }
 
-            // Update the strongbox's value with our computed result.
-            // This doesn't change the strongbox reference, and its presence in the
-            // ConditionalWeakTable is already assured, so we're updating in-place.
-            // In the event of a race condition with another thread that set the value,
-            // we'll just be re-setting it to the same value.
-            cachedResult.Value = hasUsingAlias;
+        internal static bool ContainsUsingAlias(this SyntaxTree tree, ConcurrentDictionary<SyntaxTree, bool> cache)
+        {
+            if (tree == null)
+            {
+                return false;
+            }
 
-            return hasUsingAlias;
+            bool result;
+            if (cache.TryGetValue(tree, out result))
+            {
+                return result;
+            }
+
+            bool generated = ContainsUsingAliasNoCache(tree);
+            cache.TryAdd(tree, generated);
+            return generated;
         }
 
         private static bool ContainsUsingAliasNoCache(SyntaxTree tree)
