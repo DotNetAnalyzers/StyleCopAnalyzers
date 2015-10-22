@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.NamingRules
 {
+    using System.Collections.Concurrent;
     using System.Collections.Immutable;
     using System.Linq;
     using Microsoft.CodeAnalysis;
@@ -45,50 +46,66 @@ namespace StyleCop.Analyzers.NamingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSymbolAction(this.HandleFieldDeclaration, SymbolKind.Field);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private void HandleFieldDeclaration(SymbolAnalysisContext context)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            var symbol = context.Symbol as IFieldSymbol;
+            Analyzer analyzer = new Analyzer(context.Compilation.GetOrCreateGeneratedDocumentCache());
+            context.RegisterSymbolAction(analyzer.HandleFieldDeclaration, SymbolKind.Field);
+        }
 
-            if (symbol == null || !symbol.IsConst)
+        private sealed class Analyzer
+        {
+            private readonly ConcurrentDictionary<SyntaxTree, bool> generatedHeaderCache;
+
+            public Analyzer(ConcurrentDictionary<SyntaxTree, bool> generatedHeaderCache)
             {
-                return;
+                this.generatedHeaderCache = generatedHeaderCache;
             }
 
-            if (NamedTypeHelpers.IsContainedInNativeMethodsClass(symbol.ContainingType))
+            public void HandleFieldDeclaration(SymbolAnalysisContext context)
             {
-                return;
-            }
+                var symbol = context.Symbol as IFieldSymbol;
 
-            /* This code uses char.IsLower(...) instead of !char.IsUpper(...) for all of the following reasons:
-             *  1. Fields starting with `_` should be reported as SA1309 instead of this diagnostic
-             *  2. Foreign languages may not have upper case variants for certain characters
-             *  3. This diagnostic appears targeted for "English" identifiers.
-             *
-             * See DotNetAnalyzers/StyleCopAnalyzers#369 for additional information:
-             * https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/369
-             */
-            if (!string.IsNullOrEmpty(symbol.Name) &&
-                char.IsLower(symbol.Name[0]) &&
-                symbol.Locations.Any())
-            {
-                foreach (var location in context.Symbol.Locations)
+                if (symbol == null || !symbol.IsConst)
                 {
-                    if (!location.IsInSource)
-                    {
-                        // assume symbols not defined in a source document are "out of reach"
-                        return;
-                    }
-
-                    if (location.SourceTree.IsGeneratedDocument(context.Compilation, context.CancellationToken))
-                    {
-                        return;
-                    }
+                    return;
                 }
 
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, symbol.Locations[0]));
+                if (NamedTypeHelpers.IsContainedInNativeMethodsClass(symbol.ContainingType))
+                {
+                    return;
+                }
+
+                /* This code uses char.IsLower(...) instead of !char.IsUpper(...) for all of the following reasons:
+                 *  1. Fields starting with `_` should be reported as SA1309 instead of this diagnostic
+                 *  2. Foreign languages may not have upper case variants for certain characters
+                 *  3. This diagnostic appears targeted for "English" identifiers.
+                 *
+                 * See DotNetAnalyzers/StyleCopAnalyzers#369 for additional information:
+                 * https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/369
+                 */
+                if (!string.IsNullOrEmpty(symbol.Name) &&
+                    char.IsLower(symbol.Name[0]) &&
+                    symbol.Locations.Any())
+                {
+                    foreach (var location in context.Symbol.Locations)
+                    {
+                        if (!location.IsInSource)
+                        {
+                            // assume symbols not defined in a source document are "out of reach"
+                            return;
+                        }
+
+                        if (location.SourceTree.IsGeneratedDocument(this.generatedHeaderCache, context.CancellationToken))
+                        {
+                            return;
+                        }
+                    }
+
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, symbol.Locations[0]));
+                }
             }
         }
     }
