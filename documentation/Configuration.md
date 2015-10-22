@@ -177,7 +177,7 @@ The `copyrightText` property is a string which may contain placeholders. Each pl
       "copyrightText": "Copyright (c) {companyName}. All rights reserved.\nLicensed under the {licenseName} license. See {licenseFile} file in the project root for full license information.",
       "variables": {
         "licenseName": "MIT",
-        "licenseFile": "LICENSE",
+        "licenseFile": "LICENSE"
       }
     }
   }
