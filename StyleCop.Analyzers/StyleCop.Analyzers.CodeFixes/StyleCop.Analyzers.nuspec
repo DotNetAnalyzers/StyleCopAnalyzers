@@ -20,6 +20,8 @@
     <!-- Binaries and symbols -->
     <file src="bin\$Configuration$\StyleCop.Analyzers.dll" target="analyzers\dotnet\cs" />
     <file src="bin\$Configuration$\StyleCop.Analyzers.pdb" target="analyzers\dotnet\cs" />
+    <file src="bin\$Configuration$\StyleCop.Analyzers.CodeFixes.dll" target="analyzers\dotnet\cs" />
+    <file src="bin\$Configuration$\StyleCop.Analyzers.CodeFixes.pdb" target="analyzers\dotnet\cs" />
     <file src="..\..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll" target="analyzers\dotnet\cs" />
 
     <!-- Scripts -->
@@ -30,7 +32,8 @@
     <file src="build\StyleCop.Analyzers.targets" target="build\" />
 
     <!-- Source code -->
-    <file src="**\*.cs" exclude="obj\**\*.cs" target="src"/>
+    <file src="..\StyleCop.Analyzers\**\*.cs" exclude="..\StyleCop.Analyzers\obj\**\*.cs" target="src"/>
+    <file src="**\*.cs" exclude="obj\**\*.cs;Properties\AssemblyInfo.cs" target="src"/>
 
   </files>
 </package>

@@ -83,7 +83,7 @@ namespace StyleCop.Analyzers.OrderingRules
             // - There are no global attributes
             // - There is only a single namespace declared at the top level
             var moveInsideNamespace =
-                !document.IsAnalyzerSuppressed(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId)
+                !document.Project.CompilationOptions.IsAnalyzerSuppressed(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId)
                 && !compilationUnit.AttributeLists.Any()
                 && compilationUnit.Members.Count == 1
                 && namespaceCount == 1;
@@ -362,7 +362,7 @@ namespace StyleCop.Analyzers.OrderingRules
             public UsingsHelper(Document document, CompilationUnitSyntax compilationUnit)
             {
                 this.conditionalDirectiveTree = DirectiveSpan.BuildConditionalDirectiveTree(compilationUnit);
-                this.separateSystemDirectives = !document.IsAnalyzerSuppressed(SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives.DiagnosticId);
+                this.separateSystemDirectives = !document.Project.CompilationOptions.IsAnalyzerSuppressed(SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives.DiagnosticId);
 
                 this.ProcessUsingDirectives(compilationUnit.Usings);
                 this.ProcessMembers(compilationUnit.Members);

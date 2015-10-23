@@ -301,7 +301,7 @@ namespace StyleCopTester
 
         private static ImmutableDictionary<string, ImmutableList<CodeFixProvider>> GetAllCodeFixers()
         {
-            Assembly assembly = typeof(StyleCop.Analyzers.NoCodeFixAttribute).Assembly;
+            Assembly assembly = typeof(StyleCop.Analyzers.SpacingRules.SA1027CodeFixProvider).Assembly;
 
             var codeFixProviderType = typeof(CodeFixProvider);
 

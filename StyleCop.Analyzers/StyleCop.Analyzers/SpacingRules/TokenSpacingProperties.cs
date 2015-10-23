@@ -8,10 +8,21 @@ namespace StyleCop.Analyzers.SpacingRules
 
     internal static class TokenSpacingProperties
     {
+        internal const string LocationKey = "location";
+        internal const string ActionKey = "action";
+        internal const string LayoutKey = "layout";
+        internal const string LocationPreceding = "preceding";
+        internal const string LocationFollowing = "following";
+        internal const string ActionInsert = "insert";
+        internal const string ActionRemove = "remove";
+        internal const string ActionRemoveImmediate = "remove-immediate";
+        internal const string LayoutPack = "pack";
+        internal const string LayoutPreserve = "preserve";
+
         internal static ImmutableDictionary<string, string> InsertPreceding { get; } =
             ImmutableDictionary<string, string>.Empty
-                .SetItem(TokenSpacingCodeFixProvider.LocationKey, TokenSpacingCodeFixProvider.LocationPreceding)
-                .SetItem(TokenSpacingCodeFixProvider.ActionKey, TokenSpacingCodeFixProvider.ActionInsert);
+                .SetItem(LocationKey, LocationPreceding)
+                .SetItem(ActionKey, ActionInsert);
 
         /// <summary>
         /// Gets a property collection indicating that the code fix should remove any
@@ -25,30 +36,30 @@ namespace StyleCop.Analyzers.SpacingRules
         /// </value>
         internal static ImmutableDictionary<string, string> RemoveImmediatePreceding { get; } =
             ImmutableDictionary<string, string>.Empty
-                .SetItem(TokenSpacingCodeFixProvider.LocationKey, TokenSpacingCodeFixProvider.LocationPreceding)
-                .SetItem(TokenSpacingCodeFixProvider.ActionKey, TokenSpacingCodeFixProvider.ActionRemoveImmediate)
-                .SetItem(TokenSpacingCodeFixProvider.LayoutKey, TokenSpacingCodeFixProvider.LayoutPack);
+                .SetItem(LocationKey, LocationPreceding)
+                .SetItem(ActionKey, ActionRemoveImmediate)
+                .SetItem(LayoutKey, LayoutPack);
 
         internal static ImmutableDictionary<string, string> RemovePreceding { get; } =
             ImmutableDictionary<string, string>.Empty
-                .SetItem(TokenSpacingCodeFixProvider.LocationKey, TokenSpacingCodeFixProvider.LocationPreceding)
-                .SetItem(TokenSpacingCodeFixProvider.ActionKey, TokenSpacingCodeFixProvider.ActionRemove)
-                .SetItem(TokenSpacingCodeFixProvider.LayoutKey, TokenSpacingCodeFixProvider.LayoutPack);
+                .SetItem(LocationKey, LocationPreceding)
+                .SetItem(ActionKey, ActionRemove)
+                .SetItem(LayoutKey, LayoutPack);
 
         internal static ImmutableDictionary<string, string> RemovePrecedingPreserveLayout { get; } =
             ImmutableDictionary<string, string>.Empty
-                .SetItem(TokenSpacingCodeFixProvider.LocationKey, TokenSpacingCodeFixProvider.LocationPreceding)
-                .SetItem(TokenSpacingCodeFixProvider.ActionKey, TokenSpacingCodeFixProvider.ActionRemove)
-                .SetItem(TokenSpacingCodeFixProvider.LayoutKey, TokenSpacingCodeFixProvider.LayoutPreserve);
+                .SetItem(LocationKey, LocationPreceding)
+                .SetItem(ActionKey, ActionRemove)
+                .SetItem(LayoutKey, LayoutPreserve);
 
         internal static ImmutableDictionary<string, string> InsertFollowing { get; } =
             ImmutableDictionary<string, string>.Empty
-                .SetItem(TokenSpacingCodeFixProvider.LocationKey, TokenSpacingCodeFixProvider.LocationFollowing)
-                .SetItem(TokenSpacingCodeFixProvider.ActionKey, TokenSpacingCodeFixProvider.ActionInsert);
+                .SetItem(LocationKey, LocationFollowing)
+                .SetItem(ActionKey, ActionInsert);
 
         internal static ImmutableDictionary<string, string> RemoveFollowing { get; } =
             ImmutableDictionary<string, string>.Empty
-                .SetItem(TokenSpacingCodeFixProvider.LocationKey, TokenSpacingCodeFixProvider.LocationFollowing)
-                .SetItem(TokenSpacingCodeFixProvider.ActionKey, TokenSpacingCodeFixProvider.ActionRemove);
+                .SetItem(LocationKey, LocationFollowing)
+                .SetItem(ActionKey, ActionRemove);
     }
 }

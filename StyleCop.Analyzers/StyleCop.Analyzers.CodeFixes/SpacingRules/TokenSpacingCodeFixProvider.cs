@@ -24,20 +24,6 @@ namespace StyleCop.Analyzers.SpacingRules
     [Shared]
     internal class TokenSpacingCodeFixProvider : CodeFixProvider
     {
-        /* The following must remain `const` to avoid introducing an indirect reference from an analyzer to the code fix
-         * provider through TokenSpacingProperties.
-         */
-        internal const string LocationKey = "location";
-        internal const string ActionKey = "action";
-        internal const string LayoutKey = "layout";
-        internal const string LocationPreceding = "preceding";
-        internal const string LocationFollowing = "following";
-        internal const string ActionInsert = "insert";
-        internal const string ActionRemove = "remove";
-        internal const string ActionRemoveImmediate = "remove-immediate";
-        internal const string LayoutPack = "pack";
-        internal const string LayoutPreserve = "preserve";
-
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(
@@ -110,31 +96,31 @@ namespace StyleCop.Analyzers.SpacingRules
         private static void UpdateReplaceMap(Dictionary<SyntaxToken, SyntaxToken> replaceMap, SyntaxToken token, Diagnostic diagnostic)
         {
             string location;
-            if (!diagnostic.Properties.TryGetValue(LocationKey, out location))
+            if (!diagnostic.Properties.TryGetValue(TokenSpacingProperties.LocationKey, out location))
             {
                 return;
             }
 
             string action;
-            if (!diagnostic.Properties.TryGetValue(ActionKey, out action))
+            if (!diagnostic.Properties.TryGetValue(TokenSpacingProperties.ActionKey, out action))
             {
                 return;
             }
 
             string layout;
-            if (!diagnostic.Properties.TryGetValue(LayoutKey, out layout))
+            if (!diagnostic.Properties.TryGetValue(TokenSpacingProperties.LayoutKey, out layout))
             {
-                layout = LayoutPack;
+                layout = TokenSpacingProperties.LayoutPack;
             }
 
             SyntaxTriviaList triviaList;
             switch (location)
             {
-            case LocationPreceding:
+            case TokenSpacingProperties.LocationPreceding:
                 var prevToken = token.GetPreviousToken();
                 switch (action)
                 {
-                case ActionInsert:
+                case TokenSpacingProperties.ActionInsert:
                     if (!replaceMap.ContainsKey(prevToken))
                     {
                         replaceMap[token] = token.WithLeadingTrivia(token.LeadingTrivia.Add(SyntaxFactory.Space));
@@ -142,9 +128,9 @@ namespace StyleCop.Analyzers.SpacingRules
 
                     break;
 
-                case ActionRemove:
+                case TokenSpacingProperties.ActionRemove:
                     bool tokenIsFirstInLine = token.IsFirstInLine();
-                    bool preserveLayout = layout == LayoutPreserve;
+                    bool preserveLayout = layout == TokenSpacingProperties.LayoutPreserve;
                     triviaList = prevToken.TrailingTrivia.AddRange(token.LeadingTrivia);
                     if (triviaList.Any(t => t.IsDirective))
                     {
@@ -208,7 +194,7 @@ namespace StyleCop.Analyzers.SpacingRules
 
                     break;
 
-                case ActionRemoveImmediate:
+                case TokenSpacingProperties.ActionRemoveImmediate:
                     SyntaxTriviaList tokenLeadingTrivia = token.LeadingTrivia;
                     while (tokenLeadingTrivia.Any() && tokenLeadingTrivia.Last().IsKind(SyntaxKind.WhitespaceTrivia))
                     {
@@ -233,11 +219,11 @@ namespace StyleCop.Analyzers.SpacingRules
 
                 break;
 
-            case LocationFollowing:
+            case TokenSpacingProperties.LocationFollowing:
                 var nextToken = token.GetNextToken();
                 switch (action)
                 {
-                case ActionInsert:
+                case TokenSpacingProperties.ActionInsert:
                     if (!replaceMap.ContainsKey(nextToken))
                     {
                         replaceMap[token] = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, SyntaxFactory.Space));
@@ -245,7 +231,7 @@ namespace StyleCop.Analyzers.SpacingRules
 
                     break;
 
-                case ActionRemove:
+                case TokenSpacingProperties.ActionRemove:
                     triviaList = token.TrailingTrivia.AddRange(nextToken.LeadingTrivia);
 
                     replaceMap[token] = token.WithTrailingTrivia();
