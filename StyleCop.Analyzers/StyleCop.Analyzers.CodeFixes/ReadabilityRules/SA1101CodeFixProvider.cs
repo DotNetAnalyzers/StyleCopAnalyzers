@@ -13,7 +13,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using WorkspaceHelpers;
 
     /// <summary>
     /// This class provides a code fix for <see cref="SA1101PrefixLocalCallsWithThis"/>.

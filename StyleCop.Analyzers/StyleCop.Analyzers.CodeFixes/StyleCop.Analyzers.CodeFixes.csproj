@@ -57,6 +57,14 @@
     <Compile Include="DocumentationRules\SA1642SA1643CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1649CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1651CodeFixProvider.cs" />
+    <Compile Include="Helpers\CustomBatchFixAllProvider.cs" />
+    <Compile Include="Helpers\CustomFixAllProviders.cs" />
+    <Compile Include="Helpers\DocumentBasedFixAllProvider.cs" />
+    <Compile Include="Helpers\FormattingHelper.cs" />
+    <Compile Include="Helpers\IndentationHelper.cs" />
+    <Compile Include="Helpers\IndentationOptions.cs" />
+    <Compile Include="Helpers\QueryIndentationHelpers.cs" />
+    <Compile Include="Helpers\RenameHelper.cs" />
     <Compile Include="LayoutRules\SA1500CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1501CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1502CodeFixProvider.cs" />
@@ -126,14 +134,6 @@
     <Compile Include="SpacingRules\SA1027CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1028CodeFixProvider.cs" />
     <Compile Include="SpacingRules\TokenSpacingCodeFixProvider.cs" />
-    <Compile Include="WorkspaceHelpers\CustomBatchFixAllProvider.cs" />
-    <Compile Include="WorkspaceHelpers\CustomFixAllProviders.cs" />
-    <Compile Include="WorkspaceHelpers\DocumentBasedFixAllProvider.cs" />
-    <Compile Include="WorkspaceHelpers\FormattingHelper.cs" />
-    <Compile Include="WorkspaceHelpers\IndentationHelper.cs" />
-    <Compile Include="WorkspaceHelpers\IndentationOptions.cs" />
-    <Compile Include="WorkspaceHelpers\QueryIndentationHelpers.cs" />
-    <Compile Include="WorkspaceHelpers\RenameHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\build\keys\StyleCopAnalyzers.dev.snk">

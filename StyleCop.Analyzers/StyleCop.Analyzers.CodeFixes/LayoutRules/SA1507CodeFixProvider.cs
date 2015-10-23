@@ -14,7 +14,6 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Formatting;
     using Microsoft.CodeAnalysis.Text;
-    using WorkspaceHelpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1507CodeMustNotContainMultipleBlankLinesInARow"/>.

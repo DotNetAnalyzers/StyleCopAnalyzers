@@ -14,7 +14,6 @@ namespace StyleCop.Analyzers.SpacingRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Text;
-    using WorkspaceHelpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1004DocumentationLinesMustBeginWithSingleSpace"/>.

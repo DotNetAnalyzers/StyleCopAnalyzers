@@ -9,13 +9,12 @@ namespace StyleCop.Analyzers.OrderingRules
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using StyleCop.Analyzers.Helpers;
-    using WorkspaceHelpers;
 
     /// <summary>
     /// Implements code fixes for element ordering rules.

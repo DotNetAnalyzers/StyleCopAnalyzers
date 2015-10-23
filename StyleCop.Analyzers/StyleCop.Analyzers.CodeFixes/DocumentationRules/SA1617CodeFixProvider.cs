@@ -13,7 +13,6 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers;
-    using WorkspaceHelpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1617VoidReturnValueMustNotBeDocumented"/>.

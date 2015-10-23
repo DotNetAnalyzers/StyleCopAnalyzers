@@ -16,7 +16,6 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Formatting;
     using StyleCop.Analyzers.Helpers;
-    using WorkspaceHelpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1609PropertyDocumentationMustHaveValue"/> and

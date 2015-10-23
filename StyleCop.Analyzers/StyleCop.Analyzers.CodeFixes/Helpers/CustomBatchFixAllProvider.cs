@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
-namespace StyleCop.Analyzers.WorkspaceHelpers
+namespace StyleCop.Analyzers.Helpers
 {
     using System;
     using System.Collections.Concurrent;
@@ -11,7 +11,6 @@ namespace StyleCop.Analyzers.WorkspaceHelpers
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;

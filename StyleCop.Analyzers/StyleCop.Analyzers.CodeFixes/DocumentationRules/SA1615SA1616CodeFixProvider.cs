@@ -17,7 +17,6 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.Formatting;
     using Microsoft.CodeAnalysis.Simplification;
     using StyleCop.Analyzers.Helpers;
-    using WorkspaceHelpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1615ElementReturnValueMustBeDocumented"/> and
