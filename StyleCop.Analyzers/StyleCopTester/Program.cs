@@ -150,7 +150,7 @@ namespace StyleCopTester
                 try
                 {
                     stopwatch.Restart();
-                    Console.WriteLine($"Calculating fix for {fix.CodeFixEquivalenceKey} using {fix.FixAllProvider.ToString()} for {fix.NumberOfDiagnostics} instances.");
+                    Console.WriteLine($"Calculating fix for {fix.CodeFixEquivalenceKey} using {fix.FixAllProvider} for {fix.NumberOfDiagnostics} instances.");
                     await fix.GetOperationsAsync(cancellationToken).ConfigureAwait(true);
                     WriteLine($"Calculating changes completed in {stopwatch.ElapsedMilliseconds}ms. This is {fix.NumberOfDiagnostics / stopwatch.Elapsed.TotalSeconds:0.000} instances/second.", ConsoleColor.Yellow);
                 }

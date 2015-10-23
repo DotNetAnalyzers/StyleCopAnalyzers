@@ -180,7 +180,7 @@ namespace StyleCop.Analyzers.Helpers
         {
             var diagnosticIds = fixAllContext.DiagnosticIds;
             string diagnosticId;
-            if (diagnosticIds.Count() == 1)
+            if (diagnosticIds.Count == 1)
             {
                 diagnosticId = diagnosticIds.Single();
             }

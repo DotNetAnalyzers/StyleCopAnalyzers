@@ -49,7 +49,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         [Fact]
         public async Task TestCodeFixMultipleNodesAsync()
         {
-            // Tests if the code fix works if the SourceSpan of the diagnostic has more then one SynatxNode associated with it
+            // Tests if the code fix works if the SourceSpan of the diagnostic has more then one SyntaxNode associated with it
             // In this case it is a InterpolatedStringInsert and the StringLiteralExpression
             string oldSource = @"public class Foo
 {
