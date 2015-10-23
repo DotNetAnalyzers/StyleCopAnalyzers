@@ -1,0 +1,39 @@
+﻿<?xml version="1.0"?>
+<package>
+  <metadata minClientVersion="2.7">
+    <id>StyleCop.Analyzers</id>
+    <version>0.0.0</version>
+    <title>StyleCop.Analyzers</title>
+    <authors>Sam Harwell et. al.</authors>
+    <owners>Sam Harwell</owners>
+    <licenseUrl>https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/$version$/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/DotNetAnalyzers/StyleCopAnalyzers</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>An implementation of StyleCop's rules using Roslyn analyzers and code fixes</description>
+    <releaseNotes>https://github.com/DotNetAnalyzers/StyleCopAnalyzers/releases/$version$</releaseNotes>
+    <copyright>Copyright Sam Harwell 2015</copyright>
+    <tags>StyleCop DotNetAnalyzers Roslyn Diagnostic Analyzer</tags>
+    <developmentDependency>true</developmentDependency>
+  </metadata>
+  <files>
+
+    <!-- Binaries and symbols -->
+    <file src="bin\$Configuration$\StyleCop.Analyzers.dll" target="analyzers\dotnet\cs" />
+    <file src="bin\$Configuration$\StyleCop.Analyzers.pdb" target="analyzers\dotnet\cs" />
+    <file src="bin\$Configuration$\StyleCop.Analyzers.CodeFixes.dll" target="analyzers\dotnet\cs" />
+    <file src="bin\$Configuration$\StyleCop.Analyzers.CodeFixes.pdb" target="analyzers\dotnet\cs" />
+    <file src="..\..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll" target="analyzers\dotnet\cs" />
+
+    <!-- Scripts -->
+    <file src="tools\install.ps1" target="tools\" />
+    <file src="tools\uninstall.ps1" target="tools\" />
+
+    <!-- MSBuild imports -->
+    <file src="build\StyleCop.Analyzers.targets" target="build\" />
+
+    <!-- Source code -->
+    <file src="..\StyleCop.Analyzers\**\*.cs" exclude="..\StyleCop.Analyzers\obj\**\*.cs" target="src"/>
+    <file src="**\*.cs" exclude="obj\**\*.cs;Properties\AssemblyInfo.cs" target="src"/>
+
+  </files>
+</package>

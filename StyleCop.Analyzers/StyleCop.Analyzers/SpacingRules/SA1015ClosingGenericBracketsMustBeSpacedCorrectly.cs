@@ -133,7 +133,7 @@ namespace StyleCop.Analyzers.SpacingRules
             if (!firstInLine && precededBySpace)
             {
                 // Closing generic bracket must{ not} be {preceded} by a space.
-                var properties = TokenSpacingCodeFixProvider.RemovePreceding;
+                var properties = TokenSpacingProperties.RemovePreceding;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, " not", "preceded"));
             }
 
@@ -142,13 +142,13 @@ namespace StyleCop.Analyzers.SpacingRules
                 if (!allowTrailingNoSpace && !followedBySpace)
                 {
                     // Closing generic bracket must{} be {followed} by a space.
-                    var properties = TokenSpacingCodeFixProvider.InsertFollowing;
+                    var properties = TokenSpacingProperties.InsertFollowing;
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, string.Empty, "followed"));
                 }
                 else if (!allowTrailingSpace && followedBySpace)
                 {
                     // Closing generic bracket must{ not} be {followed} by a space.
-                    var properties = TokenSpacingCodeFixProvider.RemoveFollowing;
+                    var properties = TokenSpacingProperties.RemoveFollowing;
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, " not", "followed"));
                 }
             }

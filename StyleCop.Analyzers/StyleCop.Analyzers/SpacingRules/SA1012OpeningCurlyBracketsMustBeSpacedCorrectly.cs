@@ -81,7 +81,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 if (followedBySpace)
                 {
                     // Opening curly bracket must{} be {followed} by a space.
-                    var properties = TokenSpacingCodeFixProvider.RemoveFollowing;
+                    var properties = TokenSpacingProperties.RemoveFollowing;
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, " not", "followed"));
                 }
 
@@ -93,14 +93,14 @@ namespace StyleCop.Analyzers.SpacingRules
             if (!precededBySpace)
             {
                 // Opening curly bracket must{} be {preceded} by a space.
-                var properties = TokenSpacingCodeFixProvider.InsertPreceding;
+                var properties = TokenSpacingProperties.InsertPreceding;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, string.Empty, "preceded"));
             }
 
             if (!token.IsLastInLine() && !followedBySpace)
             {
                 // Opening curly bracket must{} be {followed} by a space.
-                var properties = TokenSpacingCodeFixProvider.InsertFollowing;
+                var properties = TokenSpacingProperties.InsertFollowing;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, string.Empty, "followed"));
             }
         }

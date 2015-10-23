@@ -74,7 +74,15 @@ if (-not $SkipKeyCheck) {
 	. .\keys.ps1
 
 	foreach ($pair in $Keys.GetEnumerator()) {
-		$assembly = Resolve-FullPath -Path "..\StyleCop.Analyzers\StyleCop.Analyzers\bin\$BuildConfig\StyleCop.Analyzers.dll"
+		$assembly = Resolve-FullPath -Path "..\StyleCop.Analyzers\StyleCop.Analyzers.CodeFixes\bin\$BuildConfig\StyleCop.Analyzers.dll"
+		# Run the actual check in a separate process or the current process will keep the assembly file locked
+		powershell -Command ".\check-key.ps1 -Assembly '$assembly' -ExpectedKey '$($pair.Value)' -Build '$($pair.Key)'"
+		If (-not $?) {
+			$host.ui.WriteErrorLine('Failed to verify strong name key for build, aborting!')
+			exit $LASTEXITCODE
+		}
+
+		$assembly = Resolve-FullPath -Path "..\StyleCop.Analyzers\StyleCop.Analyzers.CodeFixes\bin\$BuildConfig\StyleCop.Analyzers.CodeFixes.dll"
 		# Run the actual check in a separate process or the current process will keep the assembly file locked
 		powershell -Command ".\check-key.ps1 -Assembly '$assembly' -ExpectedKey '$($pair.Value)' -Build '$($pair.Key)'"
 		If (-not $?) {
@@ -88,5 +96,5 @@ if (-not (Test-Path 'nuget')) {
 	mkdir "nuget"
 }
 
-Copy-Item "..\StyleCop.Analyzers\StyleCop.Analyzers\bin\$BuildConfig\StyleCop.Analyzers.$Version.nupkg" 'nuget'
-Copy-Item "..\StyleCop.Analyzers\StyleCop.Analyzers\bin\$BuildConfig\StyleCop.Analyzers.$Version.symbols.nupkg" 'nuget'
+Copy-Item "..\StyleCop.Analyzers\StyleCop.Analyzers.CodeFixes\bin\$BuildConfig\StyleCop.Analyzers.$Version.nupkg" 'nuget'
+Copy-Item "..\StyleCop.Analyzers\StyleCop.Analyzers.CodeFixes\bin\$BuildConfig\StyleCop.Analyzers.$Version.symbols.nupkg" 'nuget'

@@ -89,7 +89,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 }
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingCodeFixProvider.InsertFollowing));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.InsertFollowing));
         }
     }
 }

@@ -242,7 +242,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                     if (previousNode.GetEndLine() < nodeOrToken.GetLineSpan().StartLinePosition.Line)
                     {
-                        var properties = TokenSpacingCodeFixProvider.RemovePrecedingPreserveLayout;
+                        var properties = TokenSpacingProperties.RemovePrecedingPreserveLayout;
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, nodeOrToken.GetLocation(), properties));
                     }
                 }

@@ -181,8 +181,8 @@ namespace StyleCop.Analyzers.SpacingRules
             {
                 // Closing parenthesis must{ not} be {preceded} by a space.
                 var properties = token.IsFirstInLine()
-                    ? TokenSpacingCodeFixProvider.RemovePreceding
-                    : TokenSpacingCodeFixProvider.RemoveImmediatePreceding;
+                    ? TokenSpacingProperties.RemovePreceding
+                    : TokenSpacingProperties.RemoveImmediatePreceding;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, " not", "preceded"));
             }
 
@@ -191,13 +191,13 @@ namespace StyleCop.Analyzers.SpacingRules
                 if (!precedesStickyCharacter && !followedBySpace && !lastInLine)
                 {
                     // Closing parenthesis must{} be {followed} by a space.
-                    var properties = TokenSpacingCodeFixProvider.InsertFollowing;
+                    var properties = TokenSpacingProperties.InsertFollowing;
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, string.Empty, "followed"));
                 }
                 else if (precedesStickyCharacter && followedBySpace && (!lastInLine || !allowEndOfLine))
                 {
                     // Closing parenthesis must{ not} be {followed} by a space.
-                    var properties = TokenSpacingCodeFixProvider.RemoveFollowing;
+                    var properties = TokenSpacingProperties.RemoveFollowing;
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, " not", "followed"));
                 }
             }

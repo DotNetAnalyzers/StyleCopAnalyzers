@@ -7,9 +7,9 @@ namespace StyleCop.Analyzers.Test
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
+    using Analyzers.SpacingRules;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using StyleCop.Analyzers.ReadabilityRules;
     using Xunit;
 
     public class ExportCodeFixProviderAttributeNameTest
@@ -18,7 +18,7 @@ namespace StyleCop.Analyzers.Test
         {
             get
             {
-                var codeFixProviders = typeof(SA1110OpeningParenthesisMustBeOnDeclarationLine)
+                var codeFixProviders = typeof(TokenSpacingCodeFixProvider)
                     .Assembly
                     .GetTypes()
                     .Where(t => typeof(CodeFixProvider).IsAssignableFrom(t));

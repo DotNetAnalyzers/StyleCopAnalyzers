@@ -315,7 +315,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 openParenLine.IsValid &&
                 openParenLine.StartLinePosition.Line != prevTokenLine.StartLinePosition.Line)
             {
-                var properties = preserveLayout ? TokenSpacingCodeFixProvider.RemovePrecedingPreserveLayout : TokenSpacingCodeFixProvider.RemovePreceding;
+                var properties = preserveLayout ? TokenSpacingProperties.RemovePrecedingPreserveLayout : TokenSpacingProperties.RemovePreceding;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, openToken.GetLocation(), properties));
             }
         }

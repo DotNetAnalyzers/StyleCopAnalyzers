@@ -92,7 +92,7 @@ namespace StyleCop.Analyzers.SpacingRules
                     }
 
                     // {Increment|Decrement} symbol '{++|--}' must not be {followed} by a space.
-                    var properties = TokenSpacingCodeFixProvider.RemoveFollowing;
+                    var properties = TokenSpacingProperties.RemoveFollowing;
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, symbolName, token.Text, "followed"));
                 }
 
@@ -114,7 +114,7 @@ namespace StyleCop.Analyzers.SpacingRules
                     }
 
                     // {Increment|Decrement} symbol '{++|--}' must not be {preceded} by a space.
-                    var properties = TokenSpacingCodeFixProvider.RemovePreceding;
+                    var properties = TokenSpacingProperties.RemovePreceding;
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, symbolName, token.Text, "preceded"));
                 }
 

@@ -44,6 +44,9 @@
     <AssemblyOriginatorKeyFile Condition="'$(KeyConfiguration)' == 'Final'">..\..\build\keys\StyleCopAnalyzers.snk</AssemblyOriginatorKeyFile>
     <AssemblyOriginatorKeyFile Condition="'$(KeyConfiguration)' != 'Final'">..\..\build\keys\StyleCopAnalyzers.dev.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(KeyConfiguration)' != 'Final'">
+    <DefineConstants>$(DefineConstants);DEVELOPMENT_KEY</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="AnalyzerCategory.cs" />
     <Compile Include="AnalyzerConstants.cs" />
@@ -55,8 +58,6 @@
     </Compile>
     <Compile Include="DocumentationRules\ElementDocumentationSummaryBase.cs" />
     <Compile Include="DocumentationRules\FileHeaderAnalyzers.cs" />
-    <Compile Include="DocumentationRules\FileHeaderCodeFixProvider.cs" />
-    <Compile Include="DocumentationRules\InheritdocCodeFixProvider.cs" />
     <Compile Include="DocumentationRules\PartialElementDocumentationSummaryBase.cs" />
     <Compile Include="DocumentationRules\PropertyDocumentationSummaryBase.cs" />
     <Compile Include="DocumentationRules\SA1600ElementsMustBeDocumented.cs" />
@@ -69,16 +70,13 @@
     <Compile Include="DocumentationRules\SA1607PartialElementDocumentationMustHaveSummaryText.cs" />
     <Compile Include="DocumentationRules\SA1608ElementDocumentationMustNotHaveDefaultSummary.cs" />
     <Compile Include="DocumentationRules\SA1609PropertyDocumentationMustHaveValue.cs" />
-    <Compile Include="DocumentationRules\SA1609SA1610CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1610PropertyDocumentationMustHaveValueText.cs" />
     <Compile Include="DocumentationRules\SA1611ElementParametersMustBeDocumented.cs" />
     <Compile Include="DocumentationRules\SA1612ElementParameterDocumentationMustMatchElementParameters.cs" />
     <Compile Include="DocumentationRules\SA1613ElementParameterDocumentationMustDeclareParameterName.cs" />
     <Compile Include="DocumentationRules\SA1614ElementParameterDocumentationMustHaveText.cs" />
     <Compile Include="DocumentationRules\SA1615ElementReturnValueMustBeDocumented.cs" />
-    <Compile Include="DocumentationRules\SA1615SA1616CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1616ElementReturnValueDocumentationMustHaveText.cs" />
-    <Compile Include="DocumentationRules\SA1617CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1617VoidReturnValueMustNotBeDocumented.cs" />
     <Compile Include="DocumentationRules\SA1618GenericTypeParametersMustBeDocumented.cs" />
     <Compile Include="DocumentationRules\SA1619GenericTypeParametersMustBeDocumentedPartialClass.cs" />
@@ -88,7 +86,6 @@
     <Compile Include="DocumentationRules\SA1623PropertySummaryDocumentationMustMatchAccessors.cs" />
     <Compile Include="DocumentationRules\SA1624PropertySummaryDocumentationMustOmitSetAccessorWithRestrictedAccess.cs" />
     <Compile Include="DocumentationRules\SA1625ElementDocumentationMustNotBeCopiedAndPasted.cs" />
-    <Compile Include="DocumentationRules\SA1626CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1626SingleLineCommentsMustNotUseDocumentationStyleSlashes.cs" />
     <Compile Include="DocumentationRules\SA1627DocumentationTextMustNotBeEmpty.cs" />
     <Compile Include="DocumentationRules\SA1628DocumentationTextMustBeginWithACapitalLetter.cs" />
@@ -97,17 +94,14 @@
     <Compile Include="DocumentationRules\SA1631DocumentationMustMeetCharacterPercentage.cs" />
     <Compile Include="DocumentationRules\SA1632DocumentationTextMustMeetMinimumCharacterLength.cs" />
     <Compile Include="DocumentationRules\SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.cs" />
-    <Compile Include="DocumentationRules\SA1642SA1643CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1643DestructorSummaryDocumentationMustBeginWithStandardText.cs" />
     <Compile Include="DocumentationRules\SA1644DocumentationHeadersMustNotContainBlankLines.cs" />
     <Compile Include="DocumentationRules\SA1645IncludedDocumentationFileDoesNotExist.cs" />
     <Compile Include="DocumentationRules\SA1646IncludedDocumentationXPathDoesNotExist.cs" />
     <Compile Include="DocumentationRules\SA1647IncludeNodeDoesNotContainValidFileAndPath.cs" />
     <Compile Include="DocumentationRules\SA1648InheritDocMustBeUsedWithInheritingClass.cs" />
-    <Compile Include="DocumentationRules\SA1649CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1649FileNameMustMatchTypeName.cs" />
     <Compile Include="DocumentationRules\SA1650ElementDocumentationMustBeSpelledCorrectly.cs" />
-    <Compile Include="DocumentationRules\SA1651CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1651DoNotUsePlaceholderElements.cs" />
     <Compile Include="DocumentationRules\SA1652EnableXmlDocumentationOutput.cs" />
     <Compile Include="DocumentationRules\StandardTextDiagnosticBase.cs" />
@@ -115,12 +109,10 @@
     <Compile Include="GeneratedCodeAnalysisExtensions.cs" />
     <Compile Include="Helpers\AccessLevel.cs" />
     <Compile Include="Helpers\AccessLevelHelper.cs" />
-    <Compile Include="Helpers\CustomBatchFixAllProvider.cs" />
-    <Compile Include="Helpers\CustomFixAllProviders.cs" />
     <Compile Include="Helpers\DeclarationModifiersHelper.cs" />
     <Compile Include="Helpers\DiagnosticOptionsHelper.cs" />
     <Compile Include="Helpers\DocumentationCommentExtensions.cs" />
-    <Compile Include="Helpers\DocumentBasedFixAllProvider.cs" />
+    <Compile Include="Helpers\ElementOrderingChecks.cs" />
     <Compile Include="Helpers\FileHeader.cs" />
     <Compile Include="Helpers\FileHeaderHelpers.cs" />
     <Compile Include="Helpers\HelpersResources.Designer.cs">
@@ -128,9 +120,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>HelpersResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\IndentationHelper.cs" />
-    <Compile Include="Helpers\IndentationOptions.cs" />
     <Compile Include="Helpers\LocationHelpers.cs" />
+    <Compile Include="Helpers\MemberOrderHelper.cs" />
     <Compile Include="Helpers\NamedTypeHelpers.cs" />
     <Compile Include="Helpers\NameSyntaxHelpers.cs" />
     <Compile Include="Helpers\ObjectPools\ObjectPool`1.cs" />
@@ -138,8 +129,8 @@
     <Compile Include="Helpers\ObjectPools\SharedPoolExtensions.cs" />
     <Compile Include="Helpers\ObjectPools\SharedPools.cs" />
     <Compile Include="Helpers\ObjectPools\StringBuilderPool.cs" />
-    <Compile Include="Helpers\RenameHelper.cs" />
     <Compile Include="Helpers\Requires.cs" />
+    <Compile Include="Helpers\SpacingExtensions.cs" />
     <Compile Include="Helpers\SpecializedTasks.cs" />
     <Compile Include="Helpers\SyntaxTreeHelpers.cs" />
     <Compile Include="Helpers\TokenHelper.cs" />
@@ -153,43 +144,24 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>LayoutResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="LayoutRules\SA1500CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine.cs" />
-    <Compile Include="LayoutRules\SA1501CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1501StatementMustNotBeOnASingleLine.cs" />
-    <Compile Include="LayoutRules\SA1502CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1502ElementMustNotBeOnASingleLine.cs" />
-    <Compile Include="LayoutRules\SA1503CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1503CurlyBracketsMustNotBeOmitted.cs" />
     <Compile Include="LayoutRules\SA1504AllAccessorsMustBeSingleLineOrMultiLine.cs" />
-    <Compile Include="LayoutRules\SA1504CodeFixProvider.cs" />
-    <Compile Include="LayoutRules\SA1505CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1505OpeningCurlyBracketsMustNotBeFollowedByBlankLine.cs" />
-    <Compile Include="LayoutRules\SA1506CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1506ElementDocumentationHeadersMustNotBeFollowedByBlankLine.cs" />
-    <Compile Include="LayoutRules\SA1507CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1507CodeMustNotContainMultipleBlankLinesInARow.cs" />
     <Compile Include="LayoutRules\SA1508ClosingCurlyBracketsMustNotBePrecededByBlankLine.cs" />
-    <Compile Include="LayoutRules\SA1508CodeFixProvider.cs" />
-    <Compile Include="LayoutRules\SA1509CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1509OpeningCurlyBracketsMustNotBePrecededByBlankLine.cs" />
     <Compile Include="LayoutRules\SA1510ChainedStatementBlocksMustNotBePrecededByBlankLine.cs" />
-    <Compile Include="LayoutRules\SA1510CodeFixProvider.cs" />
-    <Compile Include="LayoutRules\SA1511CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1511WhileDoFooterMustNotBePrecededByBlankLine.cs" />
-    <Compile Include="LayoutRules\SA1512CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1512SingleLineCommentsMustNotBeFollowedByBlankLine.cs" />
     <Compile Include="LayoutRules\SA1513ClosingCurlyBracketMustBeFollowedByBlankLine.cs" />
-    <Compile Include="LayoutRules\SA1513CodeFixProvider.cs" />
-    <Compile Include="LayoutRules\SA1514CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1514ElementDocumentationHeaderMustBePrecededByBlankLine.cs" />
-    <Compile Include="LayoutRules\SA1515CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1515SingleLineCommentMustBePrecededByBlankLine.cs" />
-    <Compile Include="LayoutRules\SA1516CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1516ElementsMustBeSeparatedByBlankLine.cs" />
-    <Compile Include="LayoutRules\SA1517CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1517CodeMustNotContainBlankLinesAtStartOfFile.cs" />
-    <Compile Include="LayoutRules\SA1518CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1518CodeMustNotContainBlankLinesAtEndOfFile.cs" />
     <Compile Include="LayoutRules\SA1519CurlyBracketsMustNotBeOmittedFromMultiLineChildStatement.cs" />
     <Compile Include="LayoutRules\SA1520UseCurlyBracketsConsistently.cs" />
@@ -199,28 +171,19 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>MaintainabilityResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="MaintainabilityRules\SA1119CodeFixProvider.cs" />
     <Compile Include="MaintainabilityRules\SA1119StatementMustNotUseUnnecessaryParenthesis.cs" />
     <Compile Include="MaintainabilityRules\SA1400AccessModifierMustBeDeclared.cs" />
-    <Compile Include="MaintainabilityRules\SA1400CodeFixProvider.cs" />
     <Compile Include="MaintainabilityRules\SA1401FieldsMustBePrivate.cs" />
-    <Compile Include="MaintainabilityRules\SA1402CodeFixProvider.cs" />
     <Compile Include="MaintainabilityRules\SA1402FileMayOnlyContainASingleClass.cs" />
     <Compile Include="MaintainabilityRules\SA1403FileMayOnlyContainASingleNamespace.cs" />
     <Compile Include="MaintainabilityRules\SA1404CodeAnalysisSuppressionMustHaveJustification.cs" />
-    <Compile Include="MaintainabilityRules\SA1404CodeFixProvider.cs" />
     <Compile Include="MaintainabilityRules\SA1405DebugAssertMustProvideMessageText.cs" />
     <Compile Include="MaintainabilityRules\SA1406DebugFailMustProvideMessageText.cs" />
     <Compile Include="MaintainabilityRules\SA1407ArithmeticExpressionsMustDeclarePrecedence.cs" />
-    <Compile Include="MaintainabilityRules\SA1407SA1408CodeFixProvider.cs" />
-    <Compile Include="MaintainabilityRules\SA1407SA1408FixAllProvider.cs" />
     <Compile Include="MaintainabilityRules\SA1408ConditionalExpressionsMustDeclarePrecedence.cs" />
     <Compile Include="MaintainabilityRules\SA1409RemoveUnnecessaryCode.cs" />
     <Compile Include="MaintainabilityRules\SA1410RemoveDelegateParenthesisWhenPossible.cs" />
-    <Compile Include="MaintainabilityRules\SA1410SA1411CodeFixProvider.cs" />
     <Compile Include="MaintainabilityRules\SA1411AttributeConstructorMustNotUseUnnecessaryParenthesis.cs" />
-    <Compile Include="MaintainabilityRules\SA1412CodeFixProvider.cs" />
-    <Compile Include="MaintainabilityRules\SA1412FixAllProvider.cs" />
     <Compile Include="MaintainabilityRules\SA1412StoreFilesAsUtf8.cs" />
     <Compile Include="MaintainabilityRules\SystemDiagnosticsDebugDiagnosticBase.cs" />
     <Compile Include="NamingRules\NamingResources.Designer.cs">
@@ -228,34 +191,24 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>NamingResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="NamingRules\RenameToLowerCaseCodeFixProvider.cs" />
-    <Compile Include="NamingRules\RenameToUpperCaseCodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1300ElementMustBeginWithUpperCaseLetter.cs" />
     <Compile Include="NamingRules\SA1301ElementMustBeginWithLowerCaseLetter.cs" />
-    <Compile Include="NamingRules\SA1302CodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1302InterfaceNamesMustBeginWithI.cs" />
     <Compile Include="NamingRules\SA1303ConstFieldNamesMustBeginWithUpperCaseLetter.cs" />
     <Compile Include="NamingRules\SA1304NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter.cs" />
     <Compile Include="NamingRules\SA1305FieldNamesMustNotUseHungarianNotation.cs" />
     <Compile Include="NamingRules\SA1306FieldNamesMustBeginWithLowerCaseLetter.cs" />
     <Compile Include="NamingRules\SA1307AccessibleFieldsMustBeginWithUpperCaseLetter.cs" />
-    <Compile Include="NamingRules\SA1308CodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1308VariableNamesMustNotBePrefixed.cs" />
-    <Compile Include="NamingRules\SA1309CodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1309FieldNamesMustNotBeginWithUnderscore.cs" />
-    <Compile Include="NamingRules\SA1310CodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1310FieldNamesMustNotContainUnderscore.cs" />
     <Compile Include="NamingRules\SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter.cs" />
     <Compile Include="NamingRules\SA1312VariableNamesMustBeginWithLowerCaseLetter.cs" />
     <Compile Include="NamingRules\SA1313ParameterNamesMustBeginWithLowerCaseLetter.cs" />
-    <Compile Include="NamingRules\SX1309CodeFixProvider.cs" />
     <Compile Include="NamingRules\SX1309FieldNamesMustBeginWithUnderscore.cs" />
     <Compile Include="NamingRules\SX1309SStaticFieldNamesMustBeginWithUnderscore.cs" />
     <Compile Include="NoCodeFixAttribute.cs" />
     <Compile Include="NoDiagnosticAttribute.cs" />
-    <Compile Include="OrderingRules\ElementOrderCodeFixProvider.cs" />
-    <Compile Include="OrderingRules\ElementOrderingChecks.cs" />
-    <Compile Include="OrderingRules\MemberOrderHelper.cs" />
     <Compile Include="OrderingRules\OrderingResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -266,44 +219,29 @@
     <Compile Include="OrderingRules\SA1202ElementsMustBeOrderedByAccess.cs" />
     <Compile Include="OrderingRules\SA1203ConstantsMustAppearBeforeFields.cs" />
     <Compile Include="OrderingRules\SA1204StaticElementsMustAppearBeforeInstanceElements.cs" />
-    <Compile Include="OrderingRules\SA1205CodeFixProvider.cs" />
     <Compile Include="OrderingRules\SA1205PartialElementsMustDeclareAccess.cs" />
     <Compile Include="OrderingRules\SA1206DeclarationKeywordsMustFollowOrder.cs" />
-    <Compile Include="OrderingRules\SA1207CodeFixProvider.cs" />
     <Compile Include="OrderingRules\SA1207ProtectedMustComeBeforeInternal.cs" />
     <Compile Include="OrderingRules\SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives.cs" />
     <Compile Include="OrderingRules\SA1209UsingAliasDirectivesMustBePlacedAfterOtherUsingDirectives.cs" />
     <Compile Include="OrderingRules\SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace.cs" />
     <Compile Include="OrderingRules\SA1211UsingAliasDirectivesMustBeOrderedAlphabeticallyByAliasName.cs" />
     <Compile Include="OrderingRules\SA1212PropertyAccessorsMustFollowOrder.cs" />
-    <Compile Include="OrderingRules\SA1212SA1213CodeFixProvider.cs" />
     <Compile Include="OrderingRules\SA1213EventAccessorsMustFollowOrder.cs" />
     <Compile Include="OrderingRules\SA1214StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements.cs" />
     <Compile Include="OrderingRules\SA1215InstanceReadonlyElementsMustAppearBeforeInstanceNonReadonlyElements.cs" />
     <Compile Include="OrderingRules\SA1216UsingStaticDirectivesMustBePlacedAtTheCorrectLocation.cs" />
     <Compile Include="OrderingRules\SA1217UsingStaticDirectivesMustBeOrderedAlphabetically.cs" />
-    <Compile Include="OrderingRules\UsingCodeFixProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReadabilityRules\QueryIndentationHelpers.cs" />
     <Compile Include="ReadabilityRules\ReadabilityResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ReadabilityResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ReadabilityRules\RemoveRegionCodeFixProvider.cs" />
-    <Compile Include="ReadabilityRules\RemoveRegionFixAllProvider.cs" />
-    <Compile Include="ReadabilityRules\SA1100CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1100DoNotPrefixCallsWithBaseUnlessLocalImplementationExists.cs" />
-    <Compile Include="ReadabilityRules\SA1101CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1101PrefixLocalCallsWithThis.cs" />
-    <Compile Include="ReadabilityRules\SA1102CodeFixProvider.cs" />
-    <Compile Include="ReadabilityRules\SA1103CodeFixProvider.cs" />
-    <Compile Include="ReadabilityRules\SA1104SA1105CodeFixProvider.cs" />
-    <Compile Include="ReadabilityRules\SA1106CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1106CodeMustNotContainEmptyStatements.cs" />
-    <Compile Include="ReadabilityRules\SA1107CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1107CodeMustNotContainMultipleStatementsOnOneLine.cs" />
-    <Compile Include="ReadabilityRules\SA1107FixAllProvider.cs" />
     <Compile Include="ReadabilityRules\SA1108BlockStatementsMustNotContainEmbeddedComments.cs" />
     <Compile Include="ReadabilityRules\SA1109BlockStatementsMustNotContainEmbeddedRegions.cs" />
     <Compile Include="ReadabilityRules\SA110xQueryClauses.cs" />
@@ -313,30 +251,21 @@
     <Compile Include="ReadabilityRules\SA1113CommaMustBeOnSameLineAsPreviousParameter.cs" />
     <Compile Include="ReadabilityRules\SA1114ParameterListMustFollowDeclaration.cs" />
     <Compile Include="ReadabilityRules\SA1115ParameterMustFollowComma.cs" />
-    <Compile Include="ReadabilityRules\SA1116CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1116SplitParametersMustStartOnLineAfterDeclaration.cs" />
     <Compile Include="ReadabilityRules\SA1117ParametersMustBeOnSameLineOrSeparateLines.cs" />
     <Compile Include="ReadabilityRules\SA1118ParameterMustNotSpanMultipleLines.cs" />
-    <Compile Include="ReadabilityRules\SA1120CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1120CommentsMustContainText.cs" />
-    <Compile Include="ReadabilityRules\SA1121CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1121UseBuiltInTypeAlias.cs" />
-    <Compile Include="ReadabilityRules\SA1122CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1122UseStringEmptyForEmptyStrings.cs" />
     <Compile Include="ReadabilityRules\SA1123DoNotPlaceRegionsWithinElements.cs" />
     <Compile Include="ReadabilityRules\SA1124DoNotUseRegions.cs" />
     <Compile Include="ReadabilityRules\SA1125UseShorthandForNullableTypes.cs" />
     <Compile Include="ReadabilityRules\SA1126PrefixCallsCorrectly.cs" />
-    <Compile Include="ReadabilityRules\SA1127CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1127GenericTypeConstraintsMustBeOnOwnLine.cs" />
-    <Compile Include="ReadabilityRules\SA1128CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1128ConstructorInitializerMustBeOnOwnLine.cs" />
-    <Compile Include="ReadabilityRules\SA1129CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1129DoNotUseDefaultValueTypeConstructor.cs" />
     <Compile Include="ReadabilityRules\SA1130UseLambdaSyntax.cs" />
-    <Compile Include="ReadabilityRules\SA1131CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1131UseReadableConditions.cs" />
-    <Compile Include="ReadabilityRules\SA1132CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1132DoNotCombineFields.cs" />
     <Compile Include="ReadabilityRules\SA1133DoNotCombineAttributes.cs" />
     <Compile Include="ReadabilityRules\SA1134AttributesMustNotShareLine.cs" />
@@ -349,7 +278,6 @@
     <Compile Include="Settings\ObjectModel\SettingsFile.cs" />
     <Compile Include="Settings\ObjectModel\SpacingSettings.cs" />
     <Compile Include="Settings\ObjectModel\StyleCopSettings.cs" />
-    <Compile Include="Settings\SettingsFileCodeFixProvider.cs" />
     <Compile Include="Settings\SettingsHelper.cs" />
     <Compile Include="Settings\SettingsResources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -359,11 +287,8 @@
     <Compile Include="SpacingRules\SA1000KeywordsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1001CommasMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1002SemicolonsMustBeSpacedCorrectly.cs" />
-    <Compile Include="SpacingRules\SA1003CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1003SymbolsMustBeSpacedCorrectly.cs" />
-    <Compile Include="SpacingRules\SA1004CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1004DocumentationLinesMustBeginWithSingleSpace.cs" />
-    <Compile Include="SpacingRules\SA1005CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1005SingleLineCommentsMustBeginWithSingleSpace.cs" />
     <Compile Include="SpacingRules\SA1006PreprocessorKeywordsMustNotBePrecededBySpace.cs" />
     <Compile Include="SpacingRules\SA1007OperatorKeywordMustBeFollowedBySpace.cs" />
@@ -377,7 +302,6 @@
     <Compile Include="SpacingRules\SA1015ClosingGenericBracketsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1016OpeningAttributeBracketsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1017ClosingAttributeBracketsMustBeSpacedCorrectly.cs" />
-    <Compile Include="SpacingRules\SA1018CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1018NullableTypeSymbolsMustNotBePrecededBySpace.cs" />
     <Compile Include="SpacingRules\SA1019MemberAccessSymbolsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1020IncrementDecrementSymbolsMustBeSpacedCorrectly.cs" />
@@ -385,20 +309,16 @@
     <Compile Include="SpacingRules\SA1022PositiveSignsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1023DereferenceAndAccessOfSymbolsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1024ColonsMustBeSpacedCorrectly.cs" />
-    <Compile Include="SpacingRules\SA1025CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1025CodeMustNotContainMultipleWhitespaceInARow.cs" />
     <Compile Include="SpacingRules\SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation.cs" />
-    <Compile Include="SpacingRules\SA1027CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1027TabsMustNotBeUsed.cs" />
-    <Compile Include="SpacingRules\SA1028CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1028CodeMustNotContainTrailingWhitespace.cs" />
-    <Compile Include="SpacingRules\SpacingExtensions.cs" />
     <Compile Include="SpacingRules\SpacingResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SpacingResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SpacingRules\TokenSpacingCodeFixProvider.cs" />
+    <Compile Include="SpacingRules\TokenSpacingProperties.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\build\keys\StyleCopAnalyzers.dev.snk">
@@ -413,17 +333,8 @@
     <None Include="..\stylecop.json">
       <Link>stylecop.json</Link>
     </None>
-    <None Include="build\StyleCop.Analyzers.targets" />
     <None Include="packages.config" />
-    <NuGetManifest Include="StyleCop.Analyzers.nuspec">
-      <SubType>Designer</SubType>
-      <Symbols>True</Symbols>
-      <PackageAnalysis>False</PackageAnalysis>
-    </NuGetManifest>
     <None Include="Settings\stylecop.schema.json" />
-    <None Include="tools\install.ps1" />
-    <None Include="tools\uninstall.ps1" />
-    <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CodeAnalysis, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -432,14 +343,6 @@
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.CodeAnalysis.CSharp.1.0.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp.Workspaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.CodeAnalysis.CSharp.Workspaces.1.0.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.Workspaces.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.Workspaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.0.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">

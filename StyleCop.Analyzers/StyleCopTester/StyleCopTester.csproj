@@ -147,6 +147,10 @@
     <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0-beta014\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\StyleCop.Analyzers.CodeFixes\StyleCop.Analyzers.CodeFixes.csproj">
+      <Project>{f91f7815-4e63-4698-b053-e57b2d707194}</Project>
+      <Name>StyleCop.Analyzers.CodeFixes</Name>
+    </ProjectReference>
     <ProjectReference Include="..\StyleCop.Analyzers\StyleCop.Analyzers.csproj">
       <Project>{3b052737-06ce-4182-ae0f-08eb82dfa73e}</Project>
       <Name>StyleCop.Analyzers</Name>

@@ -196,18 +196,18 @@ namespace StyleCop.Analyzers.SpacingRules
                 {
                     if (haveLeadingSpace)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(DescriptorPreceded, token.GetLocation(), TokenSpacingCodeFixProvider.InsertPreceding));
+                        context.ReportDiagnostic(Diagnostic.Create(DescriptorPreceded, token.GetLocation(), TokenSpacingProperties.InsertPreceding));
                     }
                     else
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(DescriptorNotPreceded, token.GetLocation(), TokenSpacingCodeFixProvider.RemovePreceding));
+                        context.ReportDiagnostic(Diagnostic.Create(DescriptorNotPreceded, token.GetLocation(), TokenSpacingProperties.RemovePreceding));
                     }
                 }
             }
 
             if (token.IsFollowedByWhitespace())
             {
-                context.ReportDiagnostic(Diagnostic.Create(DescriptorNotFollowed, token.GetLocation(), TokenSpacingCodeFixProvider.RemoveFollowing));
+                context.ReportDiagnostic(Diagnostic.Create(DescriptorNotFollowed, token.GetLocation(), TokenSpacingProperties.RemoveFollowing));
             }
         }
     }
