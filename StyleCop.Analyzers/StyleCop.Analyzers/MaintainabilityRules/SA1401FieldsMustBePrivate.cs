@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
+    using System.Collections.Concurrent;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -41,54 +42,70 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterSymbolAction(AnalyzeField, SymbolKind.Field);
+            context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
-        private static void AnalyzeField(SymbolAnalysisContext symbolAnalysisContext)
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            var fieldDeclarationSyntax = (IFieldSymbol)symbolAnalysisContext.Symbol;
-            if (!IsFieldPrivate(fieldDeclarationSyntax) &&
-                !IsStaticReadonly(fieldDeclarationSyntax) &&
-                IsParentAClass(fieldDeclarationSyntax) &&
-                !fieldDeclarationSyntax.IsConst)
+            Analyzer analyzer = new Analyzer(context.Compilation.GetOrCreateGeneratedDocumentCache());
+            context.RegisterSymbolAction(analyzer.AnalyzeField, SymbolKind.Field);
+        }
+
+        private sealed class Analyzer
+        {
+            private readonly ConcurrentDictionary<SyntaxTree, bool> generatedHeaderCache;
+
+            public Analyzer(ConcurrentDictionary<SyntaxTree, bool> generatedHeaderCache)
             {
-                foreach (var location in symbolAnalysisContext.Symbol.Locations)
+                this.generatedHeaderCache = generatedHeaderCache;
+            }
+
+            public void AnalyzeField(SymbolAnalysisContext symbolAnalysisContext)
+            {
+                var fieldDeclarationSyntax = (IFieldSymbol)symbolAnalysisContext.Symbol;
+                if (!IsFieldPrivate(fieldDeclarationSyntax) &&
+                    !IsStaticReadonly(fieldDeclarationSyntax) &&
+                    IsParentAClass(fieldDeclarationSyntax) &&
+                    !fieldDeclarationSyntax.IsConst)
                 {
-                    if (!location.IsInSource)
+                    foreach (var location in symbolAnalysisContext.Symbol.Locations)
                     {
-                        // assume symbols not defined in a source document are "out of reach"
-                        return;
+                        if (!location.IsInSource)
+                        {
+                            // assume symbols not defined in a source document are "out of reach"
+                            return;
+                        }
+
+                        if (location.SourceTree.IsGeneratedDocument(this.generatedHeaderCache, symbolAnalysisContext.CancellationToken))
+                        {
+                            return;
+                        }
                     }
 
-                    if (location.SourceTree.IsGeneratedDocument(symbolAnalysisContext.Compilation, symbolAnalysisContext.CancellationToken))
-                    {
-                        return;
-                    }
+                    symbolAnalysisContext.ReportDiagnostic(Diagnostic.Create(Descriptor, fieldDeclarationSyntax.Locations[0]));
+                }
+            }
+
+            private static bool IsFieldPrivate(IFieldSymbol fieldDeclarationSyntax)
+            {
+                return fieldDeclarationSyntax.DeclaredAccessibility == Accessibility.Private;
+            }
+
+            private static bool IsStaticReadonly(IFieldSymbol fieldDeclarationSyntax)
+            {
+                return fieldDeclarationSyntax.IsStatic && fieldDeclarationSyntax.IsReadOnly;
+            }
+
+            private static bool IsParentAClass(IFieldSymbol fieldDeclarationSyntax)
+            {
+                if (fieldDeclarationSyntax.ContainingSymbol != null &&
+                    fieldDeclarationSyntax.ContainingSymbol.Kind == SymbolKind.NamedType)
+                {
+                    return ((ITypeSymbol)fieldDeclarationSyntax.ContainingSymbol).TypeKind == TypeKind.Class;
                 }
 
-                symbolAnalysisContext.ReportDiagnostic(Diagnostic.Create(Descriptor, fieldDeclarationSyntax.Locations[0]));
+                return false;
             }
-        }
-
-        private static bool IsFieldPrivate(IFieldSymbol fieldDeclarationSyntax)
-        {
-            return fieldDeclarationSyntax.DeclaredAccessibility == Accessibility.Private;
-        }
-
-        private static bool IsStaticReadonly(IFieldSymbol fieldDeclarationSyntax)
-        {
-            return fieldDeclarationSyntax.IsStatic && fieldDeclarationSyntax.IsReadOnly;
-        }
-
-        private static bool IsParentAClass(IFieldSymbol fieldDeclarationSyntax)
-        {
-            if (fieldDeclarationSyntax.ContainingSymbol != null &&
-                fieldDeclarationSyntax.ContainingSymbol.Kind == SymbolKind.NamedType)
-            {
-                return ((ITypeSymbol)fieldDeclarationSyntax.ContainingSymbol).TypeKind == TypeKind.Class;
-            }
-
-            return false;
         }
     }
 }

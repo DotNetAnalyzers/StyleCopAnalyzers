@@ -65,8 +65,6 @@ namespace StyleCop.Analyzers.NamingRules
 
         private static readonly Regex HungarianRegex = new Regex(@"^(?<notation>[a-z]{1,2})[A-Z]");
 
-        private static NamingSettings namingSettings;
-
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(Descriptor);
@@ -79,63 +77,74 @@ namespace StyleCop.Analyzers.NamingRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            namingSettings = context.Options.GetStyleCopSettings().NamingRules;
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleVariableDeclarationSyntax, SyntaxKind.VariableDeclaration);
+            Analyzer analyzer = new Analyzer(context.Options);
+            context.RegisterSyntaxNodeActionHonorExclusions(analyzer.HandleVariableDeclarationSyntax, SyntaxKind.VariableDeclaration);
         }
 
-        private static void HandleVariableDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private sealed class Analyzer
         {
-            var syntax = (VariableDeclarationSyntax)context.Node;
+            private readonly NamingSettings namingSettings;
 
-            if (syntax.Parent.IsKind(SyntaxKind.EventFieldDeclaration))
+            public Analyzer(AnalyzerOptions options)
             {
-                return;
+                StyleCopSettings settings = options.GetStyleCopSettings();
+                this.namingSettings = settings.NamingRules;
             }
 
-            if (NamedTypeHelpers.IsContainedInNativeMethodsClass(syntax))
+            public void HandleVariableDeclarationSyntax(SyntaxNodeAnalysisContext context)
             {
-                return;
-            }
+                var syntax = (VariableDeclarationSyntax)context.Node;
 
-            var fieldDeclaration = syntax.Parent.IsKind(SyntaxKind.FieldDeclaration);
-            foreach (var variableDeclarator in syntax.Variables)
-            {
-                if (variableDeclarator == null)
+                if (syntax.Parent.IsKind(SyntaxKind.EventFieldDeclaration))
                 {
-                    continue;
+                    return;
                 }
 
-                var identifier = variableDeclarator.Identifier;
-                if (identifier.IsMissing)
+                if (NamedTypeHelpers.IsContainedInNativeMethodsClass(syntax))
                 {
-                    continue;
+                    return;
                 }
 
-                string name = identifier.ValueText;
-                if (string.IsNullOrEmpty(name))
+                var fieldDeclaration = syntax.Parent.IsKind(SyntaxKind.FieldDeclaration);
+                foreach (var variableDeclarator in syntax.Variables)
                 {
-                    continue;
-                }
+                    if (variableDeclarator == null)
+                    {
+                        continue;
+                    }
 
-                var match = HungarianRegex.Match(name);
-                if (!match.Success)
-                {
-                    continue;
-                }
+                    var identifier = variableDeclarator.Identifier;
+                    if (identifier.IsMissing)
+                    {
+                        continue;
+                    }
 
-                var notationValue = match.Groups["notation"].Value;
-                if (namingSettings.AllowCommonHungarianPrefixes && CommonPrefixes.Contains(notationValue))
-                {
-                    continue;
-                }
+                    string name = identifier.ValueText;
+                    if (string.IsNullOrEmpty(name))
+                    {
+                        continue;
+                    }
 
-                if (namingSettings.AllowedHungarianPrefixes.Contains(notationValue))
-                {
-                    continue;
-                }
+                    var match = HungarianRegex.Match(name);
+                    if (!match.Success)
+                    {
+                        continue;
+                    }
 
-                // Variable names must begin with lower-case letter
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), fieldDeclaration ? "field" : "variable", name));
+                    var notationValue = match.Groups["notation"].Value;
+                    if (this.namingSettings.AllowCommonHungarianPrefixes && CommonPrefixes.Contains(notationValue))
+                    {
+                        continue;
+                    }
+
+                    if (this.namingSettings.AllowedHungarianPrefixes.Contains(notationValue))
+                    {
+                        continue;
+                    }
+
+                    // Variable names must begin with lower-case letter
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), fieldDeclaration ? "field" : "variable", name));
+                }
             }
         }
     }

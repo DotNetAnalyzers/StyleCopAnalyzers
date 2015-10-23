@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
+    using System.Collections.Concurrent;
     using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
     using Helpers;
@@ -60,7 +61,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            AnalyzerInstance instance = new AnalyzerInstance();
+            AnalyzerInstance instance = new AnalyzerInstance(context.Compilation.GetOrCreateUsingAliasCache());
             context.RegisterSyntaxNodeActionHonorExclusions(instance.HandleAttributeNode, SyntaxKind.Attribute);
         }
 
@@ -69,18 +70,25 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// </summary>
         private sealed class AnalyzerInstance
         {
+            private readonly ConcurrentDictionary<SyntaxTree, bool> usingAliasCache;
+
             /// <summary>
             /// A lazily-initialized reference to <see cref="SuppressMessageAttribute"/> within the context of a
             /// particular <see cref="Compilation"/>.
             /// </summary>
             private INamedTypeSymbol suppressMessageAttribute;
 
+            public AnalyzerInstance(ConcurrentDictionary<SyntaxTree, bool> usingAliasCache)
+            {
+                this.usingAliasCache = usingAliasCache;
+            }
+
             public void HandleAttributeNode(SyntaxNodeAnalysisContext context)
             {
                 var attribute = (AttributeSyntax)context.Node;
 
                 // Return fast if the name doesn't match and the file doesn't contain any using alias directives
-                if (!attribute.SyntaxTree.ContainsUsingAlias())
+                if (!attribute.SyntaxTree.ContainsUsingAlias(this.usingAliasCache))
                 {
                     SimpleNameSyntax simpleNameSyntax = attribute.Name as SimpleNameSyntax;
                     if (simpleNameSyntax == null)
