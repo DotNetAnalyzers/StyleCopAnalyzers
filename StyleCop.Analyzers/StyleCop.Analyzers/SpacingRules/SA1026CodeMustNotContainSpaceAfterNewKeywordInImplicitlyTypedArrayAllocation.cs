@@ -60,7 +60,7 @@ namespace StyleCop.Analyzers.SpacingRules
 
             if (newKeywordToken.IsFollowedByWhitespace() || newKeywordToken.IsLastInLine())
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, newKeywordToken.GetLocation(), TokenSpacingCodeFixProvider.RemoveFollowing));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, newKeywordToken.GetLocation(), TokenSpacingProperties.RemoveFollowing));
             }
         }
     }

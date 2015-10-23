@@ -339,7 +339,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 closeParenLine.IsValid &&
                 closeParenLine.StartLinePosition.Line != lastParameterLine.EndLinePosition.Line)
             {
-                var properties = TokenSpacingCodeFixProvider.RemovePreceding;
+                var properties = TokenSpacingProperties.RemovePreceding;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, closeToken.GetLocation(), properties));
             }
         }

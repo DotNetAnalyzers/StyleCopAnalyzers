@@ -141,7 +141,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 openParenLine.IsValid &&
                 openParenLine.StartLinePosition.Line != closeParenLine.StartLinePosition.Line)
             {
-                var properties = TokenSpacingCodeFixProvider.RemovePreceding;
+                var properties = TokenSpacingProperties.RemovePreceding;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, closeToken.GetLocation(), properties));
             }
         }

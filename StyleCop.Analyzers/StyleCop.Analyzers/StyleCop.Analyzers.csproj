@@ -392,6 +392,7 @@
       <DependentUpon>SpacingResources.resx</DependentUpon>
     </Compile>
     <Compile Include="SpacingRules\TokenSpacingCodeFixProvider.cs" />
+    <Compile Include="SpacingRules\TokenSpacingProperties.cs" />
     <Compile Include="WorkspaceHelpers\CustomBatchFixAllProvider.cs" />
     <Compile Include="WorkspaceHelpers\CustomFixAllProviders.cs" />
     <Compile Include="WorkspaceHelpers\DocumentBasedFixAllProvider.cs" />

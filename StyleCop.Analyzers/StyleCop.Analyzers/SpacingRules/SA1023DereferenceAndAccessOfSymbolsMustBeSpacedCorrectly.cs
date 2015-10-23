@@ -145,33 +145,33 @@ namespace StyleCop.Analyzers.SpacingRules
             if (!allowAtLineStart && firstInLine)
             {
                 // Dereference symbol '*' must {not appear at the beginning of a line}.
-                var properties = TokenSpacingCodeFixProvider.RemovePreceding;
+                var properties = TokenSpacingProperties.RemovePreceding;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, "not appear at the beginning of a line"));
             }
             else if (!allowPrecedingSpace && precededBySpace)
             {
                 // Dereference symbol '*' must {not be preceded by a space}.
-                var properties = TokenSpacingCodeFixProvider.RemovePreceding;
+                var properties = TokenSpacingProperties.RemovePreceding;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, "not be preceded by a space"));
             }
 
             if (!allowAtLineEnd && lastInLine)
             {
                 // Dereference symbol '*' must {not appear at the end of a line}.
-                var properties = TokenSpacingCodeFixProvider.RemoveFollowing;
+                var properties = TokenSpacingProperties.RemoveFollowing;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, "not appear at the end of a line"));
             }
             else if (!allowTrailingSpace && followedBySpace)
             {
                 // Dereference symbol '*' must {not be followed by a space}.
-                var properties = TokenSpacingCodeFixProvider.RemoveFollowing;
+                var properties = TokenSpacingProperties.RemoveFollowing;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, "not be followed by a space"));
             }
 
             if (!followedBySpace && allowTrailingSpace)
             {
                 // Dereference symbol '*' must {be followed by a space}.
-                var properties = TokenSpacingCodeFixProvider.InsertFollowing;
+                var properties = TokenSpacingProperties.InsertFollowing;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, "be followed by a space"));
             }
         }
