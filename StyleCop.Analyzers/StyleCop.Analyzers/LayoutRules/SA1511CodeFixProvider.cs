@@ -5,13 +5,13 @@ namespace StyleCop.Analyzers.LayoutRules
 {
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using StyleCop.Analyzers.Helpers;
+    using WorkspaceHelpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1511WhileDoFooterMustNotBePrecededByBlankLine"/>.

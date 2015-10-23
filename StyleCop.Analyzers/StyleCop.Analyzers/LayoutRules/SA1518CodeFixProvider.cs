@@ -13,6 +13,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using StyleCop.Analyzers.Helpers;
+    using WorkspaceHelpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1518CodeMustNotContainBlankLinesAtEndOfFile"/>.

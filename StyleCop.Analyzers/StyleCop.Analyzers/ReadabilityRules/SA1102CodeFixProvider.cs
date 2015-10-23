@@ -6,7 +6,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -14,7 +13,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using StyleCop.Analyzers.Helpers;
-    using StyleCop.Analyzers.SpacingRules;
+    using WorkspaceHelpers;
 
     /// <summary>
     /// This class provides a code fix for the SA1102 diagnostic.

@@ -115,12 +115,10 @@
     <Compile Include="GeneratedCodeAnalysisExtensions.cs" />
     <Compile Include="Helpers\AccessLevel.cs" />
     <Compile Include="Helpers\AccessLevelHelper.cs" />
-    <Compile Include="Helpers\CustomBatchFixAllProvider.cs" />
-    <Compile Include="Helpers\CustomFixAllProviders.cs" />
     <Compile Include="Helpers\DeclarationModifiersHelper.cs" />
     <Compile Include="Helpers\DiagnosticOptionsHelper.cs" />
     <Compile Include="Helpers\DocumentationCommentExtensions.cs" />
-    <Compile Include="Helpers\DocumentBasedFixAllProvider.cs" />
+    <Compile Include="Helpers\ElementOrderingChecks.cs" />
     <Compile Include="Helpers\FileHeader.cs" />
     <Compile Include="Helpers\FileHeaderHelpers.cs" />
     <Compile Include="Helpers\HelpersResources.Designer.cs">
@@ -128,9 +126,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>HelpersResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Helpers\IndentationHelper.cs" />
-    <Compile Include="Helpers\IndentationOptions.cs" />
     <Compile Include="Helpers\LocationHelpers.cs" />
+    <Compile Include="Helpers\MemberOrderHelper.cs" />
     <Compile Include="Helpers\NamedTypeHelpers.cs" />
     <Compile Include="Helpers\NameSyntaxHelpers.cs" />
     <Compile Include="Helpers\ObjectPools\ObjectPool`1.cs" />
@@ -138,8 +135,8 @@
     <Compile Include="Helpers\ObjectPools\SharedPoolExtensions.cs" />
     <Compile Include="Helpers\ObjectPools\SharedPools.cs" />
     <Compile Include="Helpers\ObjectPools\StringBuilderPool.cs" />
-    <Compile Include="Helpers\RenameHelper.cs" />
     <Compile Include="Helpers\Requires.cs" />
+    <Compile Include="Helpers\SpacingExtensions.cs" />
     <Compile Include="Helpers\SpecializedTasks.cs" />
     <Compile Include="Helpers\SyntaxTreeHelpers.cs" />
     <Compile Include="Helpers\TokenHelper.cs" />
@@ -254,8 +251,6 @@
     <Compile Include="NoCodeFixAttribute.cs" />
     <Compile Include="NoDiagnosticAttribute.cs" />
     <Compile Include="OrderingRules\ElementOrderCodeFixProvider.cs" />
-    <Compile Include="OrderingRules\ElementOrderingChecks.cs" />
-    <Compile Include="OrderingRules\MemberOrderHelper.cs" />
     <Compile Include="OrderingRules\OrderingResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -284,7 +279,6 @@
     <Compile Include="OrderingRules\SA1217UsingStaticDirectivesMustBeOrderedAlphabetically.cs" />
     <Compile Include="OrderingRules\UsingCodeFixProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReadabilityRules\QueryIndentationHelpers.cs" />
     <Compile Include="ReadabilityRules\ReadabilityResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -392,13 +386,20 @@
     <Compile Include="SpacingRules\SA1027TabsMustNotBeUsed.cs" />
     <Compile Include="SpacingRules\SA1028CodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1028CodeMustNotContainTrailingWhitespace.cs" />
-    <Compile Include="SpacingRules\SpacingExtensions.cs" />
     <Compile Include="SpacingRules\SpacingResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SpacingResources.resx</DependentUpon>
     </Compile>
     <Compile Include="SpacingRules\TokenSpacingCodeFixProvider.cs" />
+    <Compile Include="WorkspaceHelpers\CustomBatchFixAllProvider.cs" />
+    <Compile Include="WorkspaceHelpers\CustomFixAllProviders.cs" />
+    <Compile Include="WorkspaceHelpers\DocumentBasedFixAllProvider.cs" />
+    <Compile Include="WorkspaceHelpers\FormattingHelper.cs" />
+    <Compile Include="WorkspaceHelpers\IndentationHelper.cs" />
+    <Compile Include="WorkspaceHelpers\IndentationOptions.cs" />
+    <Compile Include="WorkspaceHelpers\QueryIndentationHelpers.cs" />
+    <Compile Include="WorkspaceHelpers\RenameHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\build\keys\StyleCopAnalyzers.dev.snk">

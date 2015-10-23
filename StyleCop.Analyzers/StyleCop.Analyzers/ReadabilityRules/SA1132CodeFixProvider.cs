@@ -16,7 +16,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Editing;
     using StyleCop.Analyzers.Helpers;
-    using StyleCop.Analyzers.SpacingRules;
+    using WorkspaceHelpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1132DoNotCombineFields"/>.
@@ -130,12 +130,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     {
                         if (!trailingTrivia.Last().IsKind(SyntaxKind.EndOfLineTrivia))
                         {
-                            trailingTrivia = trailingTrivia.WithoutTrailingWhitespace().Add(TriviaHelper.GetNewLineTrivia(document));
+                            trailingTrivia = trailingTrivia.WithoutTrailingWhitespace().Add(FormattingHelper.GetNewLineTrivia(document));
                         }
                     }
                     else
                     {
-                        trailingTrivia = SyntaxTriviaList.Create(TriviaHelper.GetNewLineTrivia(document));
+                        trailingTrivia = SyntaxTriviaList.Create(FormattingHelper.GetNewLineTrivia(document));
                     }
 
                     newFieldDeclarations.Add(previous.WithTrailingTrivia(trailingTrivia));

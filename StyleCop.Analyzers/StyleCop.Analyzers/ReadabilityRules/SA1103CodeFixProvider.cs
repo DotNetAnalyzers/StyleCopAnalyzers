@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers;
-    using StyleCop.Analyzers.SpacingRules;
+    using WorkspaceHelpers;
 
     /// <summary>
     /// This class provides a code fix for the SA1103 diagnostic.

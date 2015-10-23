@@ -9,7 +9,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Editing;
-    using StyleCop.Analyzers.Helpers;
+    using WorkspaceHelpers;
 
     internal class SA1107FixAllProvider : DocumentBasedFixAllProvider
     {

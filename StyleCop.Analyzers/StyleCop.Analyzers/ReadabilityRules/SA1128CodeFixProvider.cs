@@ -14,6 +14,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers;
+    using WorkspaceHelpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1128ConstructorInitializerMustBeOnOwnLine"/>.
@@ -55,7 +56,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var indentationOptions = IndentationOptions.FromDocument(document);
-            var newLine = TriviaHelper.GetNewLineTrivia(document);
+            var newLine = FormattingHelper.GetNewLineTrivia(document);
 
             var constructorInitializer = (ConstructorInitializerSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
             var constructorDeclaration = (ConstructorDeclarationSyntax)constructorInitializer.Parent;
@@ -109,7 +110,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 var syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
                 var indentationOptions = IndentationOptions.FromDocument(document);
-                var newLine = TriviaHelper.GetNewLineTrivia(document);
+                var newLine = FormattingHelper.GetNewLineTrivia(document);
 
                 var nodes = diagnostics.Select(diagnostic => syntaxRoot.FindNode(diagnostic.Location.SourceSpan).Parent);
 

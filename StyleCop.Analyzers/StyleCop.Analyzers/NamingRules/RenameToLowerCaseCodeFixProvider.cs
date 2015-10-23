@@ -6,10 +6,10 @@ namespace StyleCop.Analyzers.NamingRules
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using WorkspaceHelpers;
 
     /// <summary>
     /// Implements a code fix for diagnostics which are fixed by renaming a symbol to start with a lower case letter.

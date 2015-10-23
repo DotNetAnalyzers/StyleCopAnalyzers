@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
-    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
@@ -14,7 +13,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using SpacingRules;
+    using WorkspaceHelpers;
 
     /// <summary>
     /// This class provides a code fix for <see cref="SA1101PrefixLocalCallsWithThis"/>.

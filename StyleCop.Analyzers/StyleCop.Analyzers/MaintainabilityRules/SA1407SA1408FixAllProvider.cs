@@ -9,8 +9,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using SpacingRules;
     using StyleCop.Analyzers.Helpers;
+    using WorkspaceHelpers;
 
     internal sealed class SA1407SA1408FixAllProvider : DocumentBasedFixAllProvider
     {
