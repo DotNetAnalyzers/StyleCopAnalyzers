@@ -4,6 +4,7 @@
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -64,9 +65,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleBaseMethodDeclaration, SyntaxKind.MethodDeclaration, SyntaxKind.ConstructorDeclaration, SyntaxKind.OperatorDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleMethodInvocation, SyntaxKind.InvocationExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleObjectCreation, SyntaxKind.ObjectCreationExpression);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleArrayCreation, SyntaxKind.ArrayCreationExpression);
@@ -77,13 +77,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeActionHonorExclusions(HandleAnonymousMethod, SyntaxKind.AnonymousMethodExpression);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleLambdaExpression, SyntaxKind.ParenthesizedLambdaExpression);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleConversionOperatorDeclaration, SyntaxKind.ConversionOperatorDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleOperatorDeclaration, SyntaxKind.OperatorDeclaration);
-        }
-
-        private static void HandleOperatorDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            var operatorDeclaration = (OperatorDeclarationSyntax)context.Node;
-            AnalyzeParametersList(context, operatorDeclaration.ParameterList);
         }
 
         private static void HandleConversionOperatorDeclaration(SyntaxNodeAnalysisContext context)
@@ -155,21 +148,15 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
-        private static void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            var constructorDeclaration = (ConstructorDeclarationSyntax)context.Node;
-            AnalyzeParametersList(context, constructorDeclaration.ParameterList);
-        }
-
         private static void HandleMethodInvocation(SyntaxNodeAnalysisContext context)
         {
             var invocationExpression = (InvocationExpressionSyntax)context.Node;
             AnalyzeArgumentList(context, invocationExpression.ArgumentList);
         }
 
-        private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleBaseMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var methodDeclaration = (MethodDeclarationSyntax)context.Node;
+            var methodDeclaration = (BaseMethodDeclarationSyntax)context.Node;
 
             AnalyzeParametersList(context, methodDeclaration.ParameterList);
         }
@@ -391,23 +378,39 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             var firstParameter = parameterListSyntax.Parameters[0];
+            int firstParameterLine;
 
-            var firstParameterLineSpan = firstParameter.GetLineSpan();
-            if (!firstParameterLineSpan.IsValid)
+            if (firstParameter.HasLeadingTrivia && firstParameter.GetLeadingTrivia().All(trivia => IsValidTrivia(trivia)))
             {
-                return;
+                firstParameterLine = firstParameter.SyntaxTree.GetLineSpan(firstParameter.FullSpan).StartLinePosition.Line;
+            }
+            else
+            {
+                firstParameterLine = firstParameter.GetLineSpan().StartLinePosition.Line;
             }
 
-            var openParenLineSpan = parameterListSyntax.OpenParenToken.GetLineSpan();
-            if (!openParenLineSpan.IsValid)
-            {
-                return;
-            }
+            var parenLine = parameterListSyntax.OpenParenToken.GetLineSpan().EndLinePosition.Line;
 
-            if (openParenLineSpan.EndLinePosition.Line != firstParameterLineSpan.StartLinePosition.Line &&
-                openParenLineSpan.EndLinePosition.Line != (firstParameterLineSpan.StartLinePosition.Line - 1))
+            if ((firstParameterLine - parenLine) > 1)
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstParameter.GetLocation()));
+            }
+        }
+
+        private static bool IsValidTrivia(SyntaxTrivia trivia)
+        {
+            switch (trivia.Kind())
+            {
+            case SyntaxKind.IfDirectiveTrivia:
+            case SyntaxKind.ElseDirectiveTrivia:
+            case SyntaxKind.ElifDirectiveTrivia:
+            case SyntaxKind.EndIfDirectiveTrivia:
+            case SyntaxKind.DisabledTextTrivia:
+            case SyntaxKind.WhitespaceTrivia:
+                return true;
+
+            default:
+                return false;
             }
         }
     }
