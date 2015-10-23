@@ -477,4 +477,16 @@
   <data name="SA1134Title" xml:space="preserve">
     <value>Attributes must not share line</value>
   </data>
+  <data name="SX1101CodeFix" xml:space="preserve">
+    <value>Remove 'this.' prefix</value>
+  </data>
+  <data name="SX1101Description" xml:space="preserve">
+    <value>A call to an instance member of the local class or a base class is prefixed with `this.`.</value>
+  </data>
+  <data name="SX1101MessageFormat" xml:space="preserve">
+    <value>Do not prefix local calls with 'this.'</value>
+  </data>
+  <data name="SX1101Title" xml:space="preserve">
+    <value>Do not prefix local calls with 'this.'</value>
+  </data>
 </root>
