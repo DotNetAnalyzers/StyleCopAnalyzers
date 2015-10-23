@@ -22,7 +22,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
   ""settings"": {
     ""documentationRules"": {
       ""companyName"": ""FooCorp"",
-      ""copyrightText"": ""Copyright (c) FooCorp. All rights reserved.""
+      ""copyrightText"": ""{copyright} {companyName}. All rights reserved.""
     }
   }
 }
@@ -53,7 +53,7 @@ namespace Bar
         public async Task TestValidFileHeaderAsync()
         {
             var testCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-//   Copyright (c) FooCorp. All rights reserved.
+//   Copyright © 2015 FooCorp. All rights reserved.
 // </copyright>
 // <summary>This is a test file.</summary>
 
@@ -74,7 +74,7 @@ namespace Bar
         {
             var testCode = @"//----------------------------------------
 // <copyright file=""Test0.cs"" company=""FooCorp"">
-//   Copyright (c) FooCorp. All rights reserved.
+//   Copyright © 2015 FooCorp. All rights reserved.
 // </copyright>
 // <summary>This is a test file.</summary>
 //----------------------------------------
@@ -82,6 +82,79 @@ namespace Bar
 namespace Bar
 {
 }
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the literal use of {copyright} in a header does not match the configured token {copyright}.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestLiteralCopyrightAsync()
+        {
+            var testCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
+//   {copyright} FooCorp. All rights reserved.
+// </copyright>
+// <summary>This is a test file.</summary>
+
+namespace Bar
+{
+}
+";
+
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(1, 4);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that {copyright} correctly requires "Copyright ©" followed by at least a 4-digit year.
+        /// </summary>
+        /// <param name="copyright">The (malformed) string to use in the {copyright} position.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("© 1000")]
+        [InlineData("Copyright 1000")]
+        [InlineData("Copyright ©")]
+        [InlineData("Copyright © 93")]
+        [InlineData("Copyright © 1000-93")]
+        [InlineData("Copyright © 1000, 93")]
+        public async Task TestMalformedCopyrightAsync(string copyright)
+        {
+            var testCode = $@"// <copyright file=""Test0.cs"" company=""FooCorp"">
+//   {copyright} FooCorp. All rights reserved.
+// </copyright>
+// <summary>This is a test file.</summary>
+
+namespace Bar
+{{
+}}
+";
+
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(1, 4);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that {copyright} correctly accepts multiple years (lists, spans, and mixtures of the two).
+        /// </summary>
+        /// <param name="copyright">The string to use in the {copyright} position.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("Copyright © 1000, 1003")]
+        [InlineData("Copyright © 1000-1003")]
+        [InlineData("Copyright © 1000-1003, 1005, 1007-1010")]
+        public async Task TestMultipleCopyrightYearsAsync(string copyright)
+        {
+            var testCode = $@"// <copyright file=""Test0.cs"" company=""FooCorp"">
+//   {copyright} FooCorp. All rights reserved.
+// </copyright>
+// <summary>This is a test file.</summary>
+
+namespace Bar
+{{
+}}
 ";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);

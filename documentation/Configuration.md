@@ -157,9 +157,18 @@ The following properties are used to configure copyright headers in StyleCop Ana
 | Property | Default Value | Summary |
 | --- | --- | --- |
 | `companyName` | `"PlaceholderCompany"` | Specifies the company name which should appear in copyright notices |
+| `copyright` | `"Copyright © 2015"` | Specifies a copyright declaration. The year matches the current year. |
 | `copyrightText` | `"Copyright (c) {companyName}. All rights reserved."` | Specifies the default copyright text which should appear in copyright headers |
 | `xmlHeader` | **true** | Specifies whether file headers should use standard StyleCop XML format, where the copyright notice is wrapped in a `<copyright>` element |
 | `variables` | n/a | Specifies replacement variables which can be referenced in the `copyrightText` value |
+
+The `copyright` property is special, in that it will match any single four-digit year, or any comma-separated list of years or year ranges. Thus, all of the following would match the {copyright} variable:
+
+* Copyright © 2015
+* Copyright © 2010-2015
+* Copyright © 2010, 2012-2013, 2015
+
+When the `copyright` variable is in use, suggested fixes will use the current year.
 
 #### Configuring Copyright Text
 
@@ -167,14 +176,14 @@ In order to successfully use StyleCop-checked file headers, most projects will n
 
 > The `companyName` property is so frequently customized that it is included in the default **stylecop.json** file produced by the code fix.
 
-The `copyrightText` property is a string which may contain placeholders. Each placeholder has the form `{variable}`, where `variable` is either `companyName` or the name of a property in the `variables` property. The following sample file shows a custom **stylecop.json** file which references both `companyName` and two custom variables within the `copyrightText`.
+The `copyrightText` property is a string which may contain placeholders. Each placeholder has the form `{variable}`, where `variable` is either `companyName`, `copyright`, or the name of a property in the `variables` property. The following sample file shows a custom **stylecop.json** file which references `companyName`, `copyright` and two custom variables within the `copyrightText`.
 
 ```json
 {
   "settings": {
     "documentationRules": {
       "companyName": "FooCorp",
-      "copyrightText": "Copyright (c) {companyName}. All rights reserved.\nLicensed under the {licenseName} license. See {licenseFile} file in the project root for full license information.",
+      "copyrightText": "{copyright} {companyName}. All rights reserved.\nLicensed under the {licenseName} license. See {licenseFile} file in the project root for full license information.",
       "variables": {
         "licenseName": "MIT",
         "licenseFile": "LICENSE"
@@ -188,7 +197,7 @@ With the above configuration, a file **TypeName.cs** would be expected to have t
 
 ```csharp
 // <copyright file="TypeName.cs" company="FooCorp">
-// Copyright (c) FooCorp. All rights reserved.
+// Copyright © 2015 FooCorp. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 ```

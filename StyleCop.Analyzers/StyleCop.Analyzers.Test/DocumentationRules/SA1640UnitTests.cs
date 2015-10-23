@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -21,21 +22,21 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [Fact]
         public async Task TestCopyrightElementWithoutCompanyAttributeAsync()
         {
-            var testCode = @"// <copyright file=""Test0.cs"">
-//   Copyright (c) FooCorp. All rights reserved.
+            var testCode = $@"// <copyright file=""Test0.cs"">
+//   Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
-            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-// Copyright (c) FooCorp. All rights reserved.
+            var fixedCode = $@"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1640Descriptor).WithLocation(1, 4);
@@ -51,21 +52,21 @@ namespace Bar
         [Fact]
         public async Task TestCopyrightElementWithEmptyCompanyAttributeAsync()
         {
-            var testCode = @"// <copyright file=""Test0.cs"" company="""">
-//   Copyright (c) FooCorp. All rights reserved.
+            var testCode = $@"// <copyright file=""Test0.cs"" company="""">
+//   Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
-            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-// Copyright (c) FooCorp. All rights reserved.
+            var fixedCode = $@"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1640Descriptor).WithLocation(1, 4);
@@ -81,21 +82,21 @@ namespace Bar
         [Fact]
         public async Task TestCopyrightElementWithWhitespaceOnlyCompanyAttributeAsync()
         {
-            var testCode = @"// <copyright file=""Test0.cs"" company=""   "">
-//   Copyright (c) FooCorp. All rights reserved.
+            var testCode = $@"// <copyright file=""Test0.cs"" company=""   "">
+//   Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
-            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-// Copyright (c) FooCorp. All rights reserved.
+            var fixedCode = $@"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1640Descriptor).WithLocation(1, 4);

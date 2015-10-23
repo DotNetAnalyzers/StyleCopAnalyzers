@@ -98,7 +98,7 @@
             "copyrightText": {
               "type": "string",
               "description": "The copyright text which should appear in file headers.",
-              "default": "Copyright (c) {companyName}. All rights reserved."
+              "default": "{copyright} {companyName}. All rights reserved."
             },
             "variables": {
               "type": "object",

@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -19,7 +20,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
   ""settings"": {
     ""documentationRules"": {
       ""companyName"": ""FooCorp"",
-      ""copyrightText"": ""copyright (c) {companyName}. All rights reserved.\n\nLine #3""
+      ""copyrightText"": ""{copyright} {companyName}. All rights reserved.\n\nLine #3""
     }
   }
 }
@@ -30,7 +31,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
   ""settings"": {
     ""documentationRules"": {
       ""companyName"": ""FooCorp"",
-      ""copyrightText"": ""copyright (c) {companyName}. All rights reserved.\n\nLine #3"",
+      ""copyrightText"": ""{copyright} {companyName}. All rights reserved.\n\nLine #3"",
       ""xmlHeader"": false
     }
   }
@@ -55,13 +56,13 @@ namespace Bar
 {
 }
 ";
-            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-// Copyright (c) FooCorp. All rights reserved.
+            var fixedCode = $@"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(1, 4);
@@ -77,21 +78,21 @@ namespace Bar
         [Fact]
         public async Task TestFileHeaderWithInvalidCaseCopyrightMessageAsync()
         {
-            var testCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-//   copyright (c) FooCorp. All rights reserved.
+            var testCode = $@"// <copyright file=""Test0.cs"" company=""FooCorp"">
+//   Copyright © {DateTime.Now.Year} FooCorp. all rights reserved.
 // </copyright>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
-            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-// Copyright (c) FooCorp. All rights reserved.
+            var fixedCode = $@"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(1, 4);
@@ -110,39 +111,39 @@ namespace Bar
         {
             this.useMultiLineHeaderTestSettings = true;
 
-            var testCode1 = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-//   copyright (c) FooCorp. All rights reserved.
+            var testCode1 = $@"// <copyright file=""Test0.cs"" company=""FooCorp"">
+//   Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 //
 //   Line #3
 // </copyright>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
-            var testCode2 = @"/* <copyright file=""Test1.cs"" company=""FooCorp"">
-  copyright (c) FooCorp. All rights reserved.
+            var testCode2 = $@"/* <copyright file=""Test1.cs"" company=""FooCorp"">
+  Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 
   Line #3
 </copyright> */
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
-            var testCode3 = @"/*
+            var testCode3 = $@"/*
  * <copyright file=""Test2.cs"" company=""FooCorp"">
- *   copyright (c) FooCorp. All rights reserved.
+ *   Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
  *
  *   Line #3
  * </copyright>
  */
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             await this.VerifyCSharpDiagnosticAsync(new[] { testCode1, testCode2, testCode3 }, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -158,35 +159,35 @@ namespace Bar
         {
             this.useNoXmlMultiLineHeaderTestSettings = true;
 
-            var testCode1 = @"//   copyright (c) FooCorp. All rights reserved.
+            var testCode1 = $@"//   Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 //
 //   Line #3
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
-            var testCode2 = @"/*
- *   copyright (c) FooCorp. All rights reserved.
+            var testCode2 = $@"/*
+ *   Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
  *
  *   Line #3
  */
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
-            var testCode3 = @"/*
-  copyright (c) FooCorp. All rights reserved.
+            var testCode3 = $@"/*
+  Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 
   Line #3
 */
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             await this.VerifyCSharpDiagnosticAsync(new[] { testCode1, testCode2, testCode3 }, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -199,29 +200,29 @@ namespace Bar
         [Fact]
         public async Task TestFileHeaderFixWithReplaceCopyrightTagTextAsync()
         {
-            var testCode = @"// <author>
+            var testCode = $@"// <author>
 //   John Doe
 // </author>
 // <copyright file=""Test0.cs"" company=""FooCorp"">
-//   Copyright (c) Not FooCorp. All rights reserved.
+//   Copyright © {DateTime.Now.Year} Not FooCorp. All rights reserved.
 // </copyright>
 // <summary>This is a test file.</summary>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
-            var fixedCode = @"// <author>
+            var fixedCode = $@"// <author>
 //   John Doe
 // </author>
 // <copyright file=""Test0.cs"" company=""FooCorp"">
-// Copyright (c) FooCorp. All rights reserved.
+// Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 // <summary>This is a test file.</summary>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(4, 4);
@@ -239,9 +240,9 @@ namespace Bar
         {
             this.useMultiLineHeaderTestSettings = true;
 
-            var testCode = @"    // <author>FooCorp</author>
+            var testCode = $@"    // <author>FooCorp</author>
     // <copyright file=""Test0.cs"" company=""FooCorp"">
-    //  Not copyright (c) FooCorp. All rights reserved.
+    //  Not Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
     //
     //  Line #3
     // </copyright>
@@ -250,12 +251,12 @@ namespace Bar
     // </summary>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
-            var fixedCode = @"    // <author>FooCorp</author>
+            var fixedCode = $@"    // <author>FooCorp</author>
     // <copyright file=""Test0.cs"" company=""FooCorp"">
-    // copyright (c) FooCorp. All rights reserved.
+    // Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
     //
     // Line #3
     // </copyright>
@@ -264,8 +265,8 @@ namespace Bar
     // </summary>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(2, 8);
@@ -283,10 +284,10 @@ namespace Bar
         {
             this.useMultiLineHeaderTestSettings = true;
 
-            var testCode = @"/*
+            var testCode = $@"/*
    <author>FooCorp</author>
    <copyright file=""Test0.cs"" company=""FooCorp"">
-     NOT copyright (c) FooCorp. All rights reserved.
+     NOT Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 
      Line #3
    </copyright>
@@ -294,14 +295,14 @@ namespace Bar
  */
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
-            var fixedCode = @"/*
+            var fixedCode = $@"/*
    <author>FooCorp</author>
    <copyright file=""Test0.cs"" company=""FooCorp"">
-   copyright (c) FooCorp. All rights reserved.
+   Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 
    Line #3
    </copyright>
@@ -309,8 +310,8 @@ namespace Bar
  */
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(3, 4);
@@ -328,10 +329,10 @@ namespace Bar
         {
             this.useMultiLineHeaderTestSettings = true;
 
-            var testCode = @"/*
+            var testCode = $@"/*
  * <author>FooCorp</author>
  * <copyright file=""Test0.cs"" company=""FooCorp"">
- *   NOT copyright (c) FooCorp. All rights reserved.
+ *   NOT Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
  *
  *   Line #3
  * </copyright>
@@ -339,14 +340,14 @@ namespace Bar
  */
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
-            var fixedCode = @"/*
+            var fixedCode = $@"/*
  * <author>FooCorp</author>
  * <copyright file=""Test0.cs"" company=""FooCorp"">
- * copyright (c) FooCorp. All rights reserved.
+ * Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
  *
  * Line #3
  * </copyright>
@@ -354,8 +355,8 @@ namespace Bar
  */
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(3, 4);
@@ -374,9 +375,9 @@ namespace Bar
         {
             this.useMultiLineHeaderTestSettings = true;
 
-            var testCode = @"/* <author>FooCorp</author>
+            var testCode = $@"/* <author>FooCorp</author>
  * <copyright file=""Test0.cs"" company=""FooCorp"">
- *   NOT copyright (c) FooCorp. All rights reserved.
+ *   NOT Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
  *
  *   Line #3
  * </copyright>
@@ -384,13 +385,13 @@ namespace Bar
  */
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
-            var fixedCode = @"/* <author>FooCorp</author>
+            var fixedCode = $@"/* <author>FooCorp</author>
  * <copyright file=""Test0.cs"" company=""FooCorp"">
- * copyright (c) FooCorp. All rights reserved.
+ * Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
  *
  * Line #3
  * </copyright>
@@ -398,8 +399,8 @@ namespace Bar
  */
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(2, 4);
@@ -418,8 +419,8 @@ namespace Bar
         {
             this.useMultiLineHeaderTestSettings = true;
 
-            var testCode = @"/* <copyright file=""Test0.cs"" company=""FooCorp"">
- *   NOT copyright (c) FooCorp. All rights reserved.
+            var testCode = $@"/* <copyright file=""Test0.cs"" company=""FooCorp"">
+ *   NOT Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
  *
  *   Line #3
  * </copyright>
@@ -428,12 +429,12 @@ namespace Bar
  */
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
-            var fixedCode = @"/* <copyright file=""Test0.cs"" company=""FooCorp"">
- * copyright (c) FooCorp. All rights reserved.
+            var fixedCode = $@"/* <copyright file=""Test0.cs"" company=""FooCorp"">
+ * Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
  *
  * Line #3
  * </copyright>
@@ -442,8 +443,8 @@ namespace Bar
  */
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(1, 4);

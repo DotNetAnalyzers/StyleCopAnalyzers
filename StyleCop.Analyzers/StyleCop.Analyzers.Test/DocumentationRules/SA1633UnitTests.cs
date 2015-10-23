@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -38,8 +39,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [Fact]
         public async Task TestValidFileHeaderNoContentAsync()
         {
-            var testCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-//   Copyright (c) FooCorp. All rights reserved.
+            var testCode = $@"// <copyright file=""Test0.cs"" company=""FooCorp"">
+//   Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 ";
 
@@ -53,26 +54,26 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [Fact]
         public async Task TestValidMultilineCommentFileHeadersAsync()
         {
-            var testCode1 = @"/* <copyright file=""Test0.cs"" company=""FooCorp"">
-  Copyright (c) FooCorp. All rights reserved.
+            var testCode1 = $@"/* <copyright file=""Test0.cs"" company=""FooCorp"">
+  Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 </copyright> */
 ";
 
-            var testCode2 = @"/*
+            var testCode2 = $@"/*
 <copyright file=""Test1.cs"" company=""FooCorp"">
-  Copyright (c) FooCorp. All rights reserved.
+  Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 </copyright>
 */
 ";
 
-            var testCode3 = @"/*<copyright file=""Test2.cs"" company=""FooCorp"">
-  Copyright (c) FooCorp. All rights reserved.
+            var testCode3 = $@"/*<copyright file=""Test2.cs"" company=""FooCorp"">
+  Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 </copyright>*/
 ";
 
-            var testCode4 = @"/*
+            var testCode4 = $@"/*
  * <copyright file=""Test3.cs"" company=""FooCorp"">
- *   Copyright (c) FooCorp. All rights reserved.
+ *   Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
  * </copyright>
 */
 ";
@@ -87,17 +88,17 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [Fact]
         public async Task TestValidFileHeaderWithDirectivesAsync()
         {
-            var testCode = @"#define MYDEFINE
+            var testCode = $@"#define MYDEFINE
 #if (IGNORE_FILE_HEADERS)
 #pragma warning disable SA1633
 #endif
 // <copyright file=""Test0.cs"" company=""FooCorp"">
-//   Copyright (c) FooCorp. All rights reserved.
+//   Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             var expected = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
@@ -111,13 +112,13 @@ namespace Bar
         [Fact]
         public async Task TestValidFileHeaderWithWhitespaceAsync()
         {
-            var testCode = @"    // <copyright file=""Test0.cs"" company=""FooCorp"">
-    //   Copyright (c) FooCorp. All rights reserved.
+            var testCode = $@"    // <copyright file=""Test0.cs"" company=""FooCorp"">
+    //   Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
     // </copyright>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -136,15 +137,15 @@ namespace Foo
 {
 }
 ";
-            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-// Copyright (c) FooCorp. All rights reserved.
+            var fixedCode = $@"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 
 #define MYDEFINE
 
 namespace Foo
-{
-}
+{{
+}}
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
@@ -160,19 +161,19 @@ namespace Foo
         [Fact]
         public async Task TestNonXmlFileHeaderAsync()
         {
-            var testCode = @"// Copyright (c) FooCorp. All rights reserved.
+            var testCode = $@"// Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 
 namespace Foo
-{
-}
+{{
+}}
 ";
-            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-// Copyright (c) FooCorp. All rights reserved.
+            var fixedCode = $@"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 
 namespace Foo
-{
-}
+{{
+}}
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMalformed).WithLocation(1, 1);
@@ -188,20 +189,20 @@ namespace Foo
         [Fact]
         public async Task TestInvalidXmlFileHeaderAsync()
         {
-            var testCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-// Copyright (c) FooCorp. All rights reserved.
+            var testCode = $@"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 
 namespace Foo
-{
-}
+{{
+}}
 ";
-            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-// Copyright (c) FooCorp. All rights reserved.
+            var fixedCode = $@"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 
 namespace Foo
-{
-}
+{{
+}}
 ";
 
             var expected = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMalformed).WithLocation(1, 1);
@@ -217,22 +218,22 @@ namespace Foo
         [Fact]
         public async Task TestMalformedHeaderAsync()
         {
-            var testCode = @"// <copyright test0.cs company=""FooCorp"">
+            var testCode = $@"// <copyright test0.cs company=""FooCorp"">
 #define MYDEFINE
 
 namespace Foo
-{
-}
+{{
+}}
 ";
-            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-// Copyright (c) FooCorp. All rights reserved.
+            var fixedCode = $@"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 
 #define MYDEFINE
 
 namespace Foo
-{
-}
+{{
+}}
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMalformed).WithLocation(1, 1);

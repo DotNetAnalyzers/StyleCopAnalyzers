@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -21,21 +22,21 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [Fact]
         public async Task TestCopyrightElementWithWrongCompanyAttributeAsync()
         {
-            var testCode = @"// <copyright file=""Test0.cs"" company=""WrongCompany"">
-//   Copyright (c) FooCorp. All rights reserved.
+            var testCode = $@"// <copyright file=""Test0.cs"" company=""WrongCompany"">
+//   Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
-            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-// Copyright (c) FooCorp. All rights reserved.
+            var fixedCode = $@"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1641Descriptor).WithLocation(1, 4);
@@ -51,21 +52,21 @@ namespace Bar
         [Fact]
         public async Task TestCopyrightElementWithInvalidCaseCompanyAttributeAsync()
         {
-            var testCode = @"// <copyright file=""Test0.cs"" company=""foocorp"">
-//   Copyright (c) FooCorp. All rights reserved.
+            var testCode = $@"// <copyright file=""Test0.cs"" company=""foocorp"">
+//   Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
-            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-// Copyright (c) FooCorp. All rights reserved.
+            var fixedCode = $@"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1641Descriptor).WithLocation(1, 4);

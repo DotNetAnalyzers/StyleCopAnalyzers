@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
+    using System;
     using System.Collections.Immutable;
     using System.Text.RegularExpressions;
     using Newtonsoft.Json;
@@ -18,7 +19,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// <summary>
         /// The default value for the <see cref="CopyrightText"/> property.
         /// </summary>
-        internal const string DefaultCopyrightText = "Copyright (c) {companyName}. All rights reserved.";
+        internal const string DefaultCopyrightText = "{copyright} {companyName}. All rights reserved.";
 
         /// <summary>
         /// This is the backing field for the <see cref="CompanyName"/> property.
@@ -167,13 +168,16 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                 match =>
                 {
                     string key = match.Groups["Property"].Value;
-                    switch (key)
-                    {
+                switch (key)
+                {
                     case "companyName":
                         return this.CompanyName;
 
                     case "copyrightText":
                         return "[CircularReference]";
+
+                    case "copyright":
+                        return $"Copyright © {DateTime.Now.Year}";
 
                     default:
                         string value;

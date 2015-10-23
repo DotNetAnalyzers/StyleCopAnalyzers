@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System;
     using System.Collections.Immutable;
     using System.IO;
+    using System.Text.RegularExpressions;
     using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -82,6 +83,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly LocalizableString SA1641MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1641MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString SA1641Description = new LocalizableResourceString(nameof(DocumentationResources.SA1641Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly string SA1641HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1641.md";
+
+        private static readonly Regex Copyright = new Regex("Copyright © [0-9]{4}((, [0-9]{4})|(-[0-9]{4}(?!-)))*");
 
         /// <summary>
         /// Gets the diagnostic descriptor for SA1633 with a missing header.
@@ -374,10 +377,10 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static bool CompareCopyrightText(string copyrightText, StyleCopSettings settings)
         {
-            // make sure that both \n and \r\n are accepted from the settings.
+            // Make sure that both \n and \r\n are accepted from the settings.
+            // Convert the file header's copyright declarations into a string that will match the header.
             var reformattedCopyrightTextParts = settings.DocumentationRules.CopyrightText.Replace("\r\n", "\n").Split('\n');
-            var fileHeaderCopyrightTextParts = copyrightText.Replace("\r\n", "\n").Split('\n');
-
+            var fileHeaderCopyrightTextParts = Copyright.Replace(copyrightText.Replace("\r\n", "\n"), $"Copyright © {DateTime.Now.Year}").Split('\n');
             if (reformattedCopyrightTextParts.Length != fileHeaderCopyrightTextParts.Length)
             {
                 return false;

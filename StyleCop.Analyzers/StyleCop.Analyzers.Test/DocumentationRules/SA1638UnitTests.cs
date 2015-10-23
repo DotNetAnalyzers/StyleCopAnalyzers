@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -21,21 +22,21 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [Fact]
         public async Task TestCopyrightElementWithMismatchingFileAttributeAsync()
         {
-            var testCode = @"// <copyright file=""wrongfile.cs"" company=""FooCorp"">
-//   Copyright (c) FooCorp. All rights reserved.
+            var testCode = $@"// <copyright file=""wrongfile.cs"" company=""FooCorp"">
+//   Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
-            var fixedCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
-// Copyright (c) FooCorp. All rights reserved.
+            var fixedCode = $@"// <copyright file=""Test0.cs"" company=""FooCorp"">
+// Copyright © {DateTime.Now.Year} FooCorp. All rights reserved.
 // </copyright>
 
 namespace Bar
-{
-}
+{{
+}}
 ";
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1638Descriptor).WithLocation(1, 4);

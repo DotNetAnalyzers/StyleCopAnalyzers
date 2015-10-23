@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Test.Settings
 {
+    using System;
     using System.Collections.Immutable;
     using System.Threading;
     using System.Threading.Tasks;
@@ -24,7 +25,7 @@ namespace StyleCop.Analyzers.Test.Settings
             var styleCopSettings = SettingsHelper.GetStyleCopSettings(default(SyntaxTreeAnalysisContext));
 
             Assert.Equal("PlaceholderCompany", styleCopSettings.DocumentationRules.CompanyName);
-            Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.CopyrightText);
+            Assert.Equal($"Copyright © {DateTime.Now.Year} PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.CopyrightText);
             Assert.True(styleCopSettings.NamingRules.AllowCommonHungarianPrefixes);
             Assert.Equal(0, styleCopSettings.NamingRules.AllowedHungarianPrefixes.Length);
 
@@ -86,7 +87,7 @@ namespace StyleCop.Analyzers.Test.Settings
             var styleCopSettings = context.GetStyleCopSettings();
 
             Assert.Equal("TestCompany", styleCopSettings.DocumentationRules.CompanyName);
-            Assert.Equal("Copyright (c) TestCompany. All rights reserved.", styleCopSettings.DocumentationRules.CopyrightText);
+            Assert.Equal($"Copyright © {DateTime.Now.Year} TestCompany. All rights reserved.", styleCopSettings.DocumentationRules.CopyrightText);
         }
 
         [Fact]
@@ -137,7 +138,7 @@ namespace StyleCop.Analyzers.Test.Settings
 
             // The result is the same as the default settings.
             Assert.Equal("PlaceholderCompany", styleCopSettings.DocumentationRules.CompanyName);
-            Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.CopyrightText);
+            Assert.Equal($"Copyright © {DateTime.Now.Year} PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.CopyrightText);
         }
 
         private static async Task<SyntaxTreeAnalysisContext> CreateAnalysisContextAsync(string stylecopJSON)
