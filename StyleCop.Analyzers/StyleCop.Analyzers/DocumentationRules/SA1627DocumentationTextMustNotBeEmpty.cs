@@ -54,17 +54,16 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
 
-        /// <inheritdoc/>
-        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-            ImmutableArray.Create(Descriptor);
-
-        private static string[] elementsToCheck =
-            {
+        private static readonly ImmutableArray<string> ElementsToCheck =
+            ImmutableArray.Create(
                 XmlCommentHelper.RemarksXmlTag,
                 XmlCommentHelper.PermissionXmlTag,
                 XmlCommentHelper.ExceptionXmlTag,
-                XmlCommentHelper.ExampleXmlTag
-            };
+                XmlCommentHelper.ExampleXmlTag);
+
+        /// <inheritdoc/>
+        public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
+            ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -84,7 +83,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             var name = element.StartTag?.Name;
 
-            if (elementsToCheck.Contains(name.ToString()) && XmlCommentHelper.IsConsideredEmpty(element))
+            if (ElementsToCheck.Contains(name.ToString()) && XmlCommentHelper.IsConsideredEmpty(element))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, element.GetLocation(), name.ToString()));
             }
@@ -94,7 +93,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var element = (XmlEmptyElementSyntax)context.Node;
 
-            if (elementsToCheck.Contains(element.Name.ToString()))
+            if (ElementsToCheck.Contains(element.Name.ToString()))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, element.GetLocation(), element.Name.ToString()));
             }
