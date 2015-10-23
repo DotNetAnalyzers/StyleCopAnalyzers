@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.SpacingRules
 {
+    using System;
     using System.Collections.Immutable;
     using System.Linq;
     using Microsoft.CodeAnalysis;
@@ -38,6 +39,8 @@ namespace StyleCop.Analyzers.SpacingRules
         private const string MessagePreceded = "Opening parenthesis must be preceded by a space.";
         private const string MessageNotFollowed = "Opening parenthesis must not be followed by a space.";
 
+        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+
         /// <summary>
         /// Gets the diagnostic descriptor for an opening parenthesis that must not be preceded by whitespace.
         /// </summary>
@@ -66,7 +69,7 @@ namespace StyleCop.Analyzers.SpacingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(HandleCompilationStart);
+            context.RegisterCompilationStartAction(CompilationStartAction);
         }
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)

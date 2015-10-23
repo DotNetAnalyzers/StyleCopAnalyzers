@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
@@ -63,6 +64,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         private static readonly DiagnosticDescriptor ParenthesisDescriptor =
             new DiagnosticDescriptor(ParenthesesDiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Hidden, AnalyzerConstants.EnabledByDefault, Description, HelpLink, customTags: new[] { WellKnownDiagnosticTags.Unnecessary, WellKnownDiagnosticTags.NotConfigurable });
 
+        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(
@@ -72,16 +75,18 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(startContext =>
+            context.RegisterCompilationStartAction(CompilationStartAction);
+        }
+
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            // Only register the syntax node action if the diagnostic is enabled. This is important because
+            // otherwise the diagnostic for fading out the parenthesis is still active, even if the main diagnostic
+            // is disabled
+            if (context.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(Descriptor.Id) != Microsoft.CodeAnalysis.ReportDiagnostic.Suppress)
             {
-                // Only register the syntax node action if the diagnostic is enabled. This is important because
-                // otherwise the diagnostic for fading out the parenthesis is still active, even if the main diagnostic
-                // is disabled
-                if (startContext.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(Descriptor.Id) != Microsoft.CodeAnalysis.ReportDiagnostic.Suppress)
-                {
-                    startContext.RegisterSyntaxNodeActionHonorExclusions(HandleParenthesizedExpression, SyntaxKind.ParenthesizedExpression);
-                }
-            });
+                context.RegisterSyntaxNodeActionHonorExclusions(HandleParenthesizedExpression, SyntaxKind.ParenthesizedExpression);
+            }
         }
 
         private static void HandleParenthesizedExpression(SyntaxNodeAnalysisContext context)

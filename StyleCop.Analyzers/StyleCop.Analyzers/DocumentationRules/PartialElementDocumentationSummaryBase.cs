@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
+    using System;
     using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -16,10 +17,17 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     internal abstract class PartialElementDocumentationSummaryBase : DiagnosticAnalyzer
     {
+        private readonly Action<CompilationStartAnalysisContext> compilationStartAction;
+
+        protected PartialElementDocumentationSummaryBase()
+        {
+            this.compilationStartAction = this.HandleCompilationStart;
+        }
+
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(this.HandleCompilationStart);
+            context.RegisterCompilationStartAction(this.compilationStartAction);
         }
 
         /// <summary>
