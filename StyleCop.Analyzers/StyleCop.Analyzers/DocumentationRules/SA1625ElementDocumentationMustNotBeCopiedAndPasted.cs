@@ -3,8 +3,12 @@
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
+    using Helpers;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -60,8 +64,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1625";
+        private const string ParameterNotUsed = "The parameter is not used.";
         private const string Title = "Element documentation must not be copied and pasted";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "Element documentation must not be copied and pasted";
         private const string Description = "The Xml documentation for a C# element contains two or more identical entries, indicating that the documentation has been copied and pasted. This can sometimes indicate invalid or poorly written documentation.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1625.md";
 
@@ -75,7 +80,40 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.RegisterCompilationStartAction(HandleCompilationStart);
+        }
+
+        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        {
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleDocumentationTrivia, SyntaxKind.SingleLineDocumentationCommentTrivia);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleDocumentationTrivia, SyntaxKind.MultiLineDocumentationCommentTrivia);
+        }
+
+        private static void HandleDocumentationTrivia(SyntaxNodeAnalysisContext context)
+        {
+            DocumentationCommentTriviaSyntax syntax = context.Node as DocumentationCommentTriviaSyntax;
+
+            HashSet<string> documentationTexts = new HashSet<string>();
+
+            foreach (var content in syntax.Content)
+            {
+                string text = XmlCommentHelper.GetText(content, true).Trim();
+
+                if (string.IsNullOrWhiteSpace(text) || string.Equals(text, ParameterNotUsed, System.StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                if (documentationTexts.Contains(text))
+                {
+                    // Add violation
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, content.GetLocation()));
+                }
+                else
+                {
+                    documentationTexts.Add(text);
+                }
+            }
         }
     }
 }

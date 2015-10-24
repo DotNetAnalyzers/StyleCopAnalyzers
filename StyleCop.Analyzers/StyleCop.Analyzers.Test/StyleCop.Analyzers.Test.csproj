@@ -141,6 +141,7 @@
     <Compile Include="DocumentationRules\SA1621UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1622UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1623UnitTests.cs" />
+    <Compile Include="DocumentationRules\SA1625UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1624UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1626UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1627UnitTests.cs" />

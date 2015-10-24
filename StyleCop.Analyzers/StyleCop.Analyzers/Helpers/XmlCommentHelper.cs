@@ -163,6 +163,32 @@ namespace StyleCop.Analyzers.Helpers
             return commentTrivia != null && !IsMissingOrEmpty(commentTrivia.ParentTrivia);
         }
 
+        internal static string GetText(XmlNodeSyntax nodeSyntax, bool normalizeWhitespace = false)
+        {
+            var xmlTextSyntax = nodeSyntax as XmlTextSyntax;
+
+            if (xmlTextSyntax != null)
+            {
+                return GetText(xmlTextSyntax, normalizeWhitespace);
+            }
+
+            var xmlElementSyntax = nodeSyntax as XmlElementSyntax;
+
+            if (xmlElementSyntax != null)
+            {
+                var stringBuilder = StringBuilderPool.Allocate();
+
+                foreach (var node in xmlElementSyntax.Content)
+                {
+                    stringBuilder.Append(GetText(node, normalizeWhitespace));
+                }
+
+                return StringBuilderPool.ReturnAndFree(stringBuilder);
+            }
+
+            return null;
+        }
+
         internal static string GetText(XmlTextSyntax textElement)
         {
             return GetText(textElement, false);
