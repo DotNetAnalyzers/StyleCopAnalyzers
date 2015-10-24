@@ -18,10 +18,14 @@ namespace StyleCop.Analyzers.DocumentationRules
     internal abstract class PartialElementDocumentationSummaryBase : DiagnosticAnalyzer
     {
         private readonly Action<CompilationStartAnalysisContext> compilationStartAction;
+        private readonly Action<SyntaxNodeAnalysisContext> typeDeclarationAction;
+        private readonly Action<SyntaxNodeAnalysisContext> methodDeclarationAction;
 
         protected PartialElementDocumentationSummaryBase()
         {
             this.compilationStartAction = this.HandleCompilationStart;
+            this.typeDeclarationAction = this.HandleTypeDeclaration;
+            this.methodDeclarationAction = this.HandleMethodDeclaration;
         }
 
         /// <inheritdoc/>
@@ -41,10 +45,12 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(
+                this.typeDeclarationAction,
+                SyntaxKind.ClassDeclaration,
+                SyntaxKind.StructDeclaration,
+                SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.methodDeclarationAction, SyntaxKind.MethodDeclaration);
         }
 
         private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)

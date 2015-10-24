@@ -16,10 +16,12 @@ namespace StyleCop.Analyzers.DocumentationRules
     internal abstract class PropertyDocumentationSummaryBase : DiagnosticAnalyzer
     {
         private readonly Action<CompilationStartAnalysisContext> compilationStartAction;
+        private readonly Action<SyntaxNodeAnalysisContext> propertyDeclarationAction;
 
         protected PropertyDocumentationSummaryBase()
         {
             this.compilationStartAction = this.HandleCompilationStart;
+            this.propertyDeclarationAction = this.HandlePropertyDeclaration;
         }
 
         /// <inheritdoc/>
@@ -39,7 +41,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandlePropertyDeclaration, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.propertyDeclarationAction, SyntaxKind.PropertyDeclaration);
         }
 
         private void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
