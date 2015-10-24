@@ -54,6 +54,7 @@ namespace StyleCop.Analyzers.LayoutRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -67,10 +68,10 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTreeAnalysis);
+            context.RegisterSyntaxTreeActionHonorExclusions(SyntaxTreeAction);
         }
 
-        private static void HandleSyntaxTreeAnalysis(SyntaxTreeAnalysisContext context)
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens(descendIntoTrivia: false))

@@ -70,7 +70,17 @@ namespace StyleCop.Analyzers.LayoutRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
+        private static readonly ImmutableArray<SyntaxKind> TypeDeclarationKinds =
+            ImmutableArray.Create(SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.InterfaceDeclaration);
+
+        private static readonly ImmutableArray<SyntaxKind> BasePropertyDeclarationKinds =
+            ImmutableArray.Create(SyntaxKind.PropertyDeclaration, SyntaxKind.EventDeclaration, SyntaxKind.IndexerDeclaration);
+
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> TypeDeclarationAction = HandleTypeDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> CompilationUnitAction = HandleCompilationUnit;
+        private static readonly Action<SyntaxNodeAnalysisContext> NamespaceDeclarationAction = HandleNamespaceDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> BasePropertyDeclarationAction = HandleBasePropertyDeclaration;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -84,23 +94,17 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
-
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleCompilationUnit, SyntaxKind.CompilationUnit);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleNamespaceDeclaration, SyntaxKind.NamespaceDeclaration);
-
-            context.RegisterSyntaxNodeActionHonorExclusions(HandlePropertyDeclaration, SyntaxKind.PropertyDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandlePropertyDeclaration, SyntaxKind.EventDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandlePropertyDeclaration, SyntaxKind.IndexerDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(TypeDeclarationAction, TypeDeclarationKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(CompilationUnitAction, SyntaxKind.CompilationUnit);
+            context.RegisterSyntaxNodeActionHonorExclusions(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(BasePropertyDeclarationAction, BasePropertyDeclarationKinds);
         }
 
-        private static void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleBasePropertyDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var propertyDeclaration = context.Node as BasePropertyDeclarationSyntax;
+            var propertyDeclaration = (BasePropertyDeclarationSyntax)context.Node;
 
-            if (propertyDeclaration?.AccessorList?.Accessors != null)
+            if (propertyDeclaration.AccessorList?.Accessors != null)
             {
                 var accessors = propertyDeclaration.AccessorList.Accessors;
 

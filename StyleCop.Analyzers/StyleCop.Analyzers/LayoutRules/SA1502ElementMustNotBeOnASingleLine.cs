@@ -61,6 +61,10 @@ namespace StyleCop.Analyzers.LayoutRules
             ImmutableArray.Create(SyntaxKind.MethodDeclaration, SyntaxKind.ConstructorDeclaration, SyntaxKind.DestructorDeclaration);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> BaseTypeDeclarationAction = HandleBaseTypeDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> BasePropertyDeclarationAction = HandleBasePropertyDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> BaseMethodDeclarationAction = HandleBaseMethodDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> NamespaceDeclarationAction = HandleNamespaceDeclaration;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -74,10 +78,10 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleBaseTypeDeclaration, BaseTypeDeclarationKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleBasePropertyDeclaration, BasePropertyDeclarationKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleBaseMethodDeclaration, BaseMethodDeclarationKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleNamespaceDeclaration, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(BaseTypeDeclarationAction, BaseTypeDeclarationKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(BasePropertyDeclarationAction, BasePropertyDeclarationKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(BaseMethodDeclarationAction, BaseMethodDeclarationKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
         }
 
         private static void HandleBaseTypeDeclaration(SyntaxNodeAnalysisContext context)

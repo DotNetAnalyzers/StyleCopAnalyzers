@@ -51,6 +51,7 @@ namespace StyleCop.Analyzers.LayoutRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> IfStatementAction = HandleIfStatement;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -64,7 +65,7 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleIfStatement, SyntaxKind.IfStatement);
+            context.RegisterSyntaxNodeActionHonorExclusions(IfStatementAction, SyntaxKind.IfStatement);
         }
 
         private static void HandleIfStatement(SyntaxNodeAnalysisContext context)

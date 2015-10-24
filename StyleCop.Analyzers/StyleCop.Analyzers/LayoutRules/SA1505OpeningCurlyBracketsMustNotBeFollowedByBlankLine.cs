@@ -61,6 +61,13 @@ namespace StyleCop.Analyzers.LayoutRules
             ImmutableArray.Create(SyntaxKind.ObjectInitializerExpression, SyntaxKind.CollectionInitializerExpression, SyntaxKind.ArrayInitializerExpression, SyntaxKind.ComplexElementInitializerExpression);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> BlockAction = HandleBlock;
+        private static readonly Action<SyntaxNodeAnalysisContext> InitializerExpressionAction = HandleInitializerExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> AnonymousObjectCreationExpressionAction = HandleAnonymousObjectCreationExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> SwitchStatementAction = HandleSwitchStatement;
+        private static readonly Action<SyntaxNodeAnalysisContext> NamespaceDeclarationAction = HandleNamespaceDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> BaseTypeDeclarationAction = HandleBaseTypeDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> AccessorListAction = HandleAccessorList;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -74,13 +81,13 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleBlock, SyntaxKind.Block);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleInitializerExpression, InitializerExpressionKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleAnonymousObjectCreation, SyntaxKind.AnonymousObjectCreationExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleSwitchStatement, SyntaxKind.SwitchStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleNamespaceDeclaration, SyntaxKind.NamespaceDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleBaseTypeDeclaration, BaseTypeDeclarationKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleAccessorList, SyntaxKind.AccessorList);
+            context.RegisterSyntaxNodeActionHonorExclusions(BlockAction, SyntaxKind.Block);
+            context.RegisterSyntaxNodeActionHonorExclusions(InitializerExpressionAction, InitializerExpressionKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(AnonymousObjectCreationExpressionAction, SyntaxKind.AnonymousObjectCreationExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(SwitchStatementAction, SyntaxKind.SwitchStatement);
+            context.RegisterSyntaxNodeActionHonorExclusions(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(BaseTypeDeclarationAction, BaseTypeDeclarationKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(AccessorListAction, SyntaxKind.AccessorList);
         }
 
         private static void HandleBlock(SyntaxNodeAnalysisContext context)
@@ -95,7 +102,7 @@ namespace StyleCop.Analyzers.LayoutRules
             AnalyzeOpenBrace(context, expression.OpenBraceToken);
         }
 
-        private static void HandleAnonymousObjectCreation(SyntaxNodeAnalysisContext context)
+        private static void HandleAnonymousObjectCreationExpression(SyntaxNodeAnalysisContext context)
         {
             var expression = (AnonymousObjectCreationExpressionSyntax)context.Node;
             AnalyzeOpenBrace(context, expression.OpenBraceToken);

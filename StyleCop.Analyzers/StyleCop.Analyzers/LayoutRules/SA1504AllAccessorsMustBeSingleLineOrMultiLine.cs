@@ -76,6 +76,7 @@ namespace StyleCop.Analyzers.LayoutRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> AccessorListAction = HandleAccessorList;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -89,10 +90,10 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleAccessorListDeclaration, SyntaxKind.AccessorList);
+            context.RegisterSyntaxNodeActionHonorExclusions(AccessorListAction, SyntaxKind.AccessorList);
         }
 
-        private static void HandleAccessorListDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleAccessorList(SyntaxNodeAnalysisContext context)
         {
             var accessorList = (AccessorListSyntax)context.Node;
 
