@@ -69,6 +69,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
+        private static readonly ImmutableArray<SyntaxKind> BaseArgumentListKinds =
+            ImmutableArray.Create(SyntaxKind.ArgumentList, SyntaxKind.BracketedArgumentList);
+
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
 
         private static readonly SyntaxKind[] ArgumentExceptionSyntaxKinds =
@@ -90,7 +93,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleArgumentList, SyntaxKind.ArgumentList, SyntaxKind.BracketedArgumentList);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleBaseArgumentList, BaseArgumentListKinds);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleAttributeArgumentList, SyntaxKind.AttributeArgumentList);
         }
 
@@ -108,7 +111,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
-        private static void HandleArgumentList(SyntaxNodeAnalysisContext context)
+        private static void HandleBaseArgumentList(SyntaxNodeAnalysisContext context)
         {
             var argumentListSyntax = (BaseArgumentListSyntax)context.Node;
 

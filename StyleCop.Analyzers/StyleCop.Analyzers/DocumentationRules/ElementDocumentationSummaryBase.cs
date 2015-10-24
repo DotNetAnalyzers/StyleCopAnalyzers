@@ -4,6 +4,7 @@
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
+    using System.Collections.Immutable;
     using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -16,6 +17,12 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     internal abstract class ElementDocumentationSummaryBase : DiagnosticAnalyzer
     {
+        private static readonly ImmutableArray<SyntaxKind> BaseTypeDeclarationKinds =
+            ImmutableArray.Create(SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.EnumDeclaration);
+
+        private static readonly ImmutableArray<SyntaxKind> BaseFieldDeclarationKinds =
+            ImmutableArray.Create(SyntaxKind.FieldDeclaration, SyntaxKind.EventFieldDeclaration);
+
         private readonly Action<CompilationStartAnalysisContext> compilationStartAction;
         private readonly Action<SyntaxNodeAnalysisContext> typeDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext> methodDeclarationAction;
@@ -58,21 +65,13 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(
-                this.typeDeclarationAction,
-                SyntaxKind.ClassDeclaration,
-                SyntaxKind.StructDeclaration,
-                SyntaxKind.InterfaceDeclaration,
-                SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.typeDeclarationAction, BaseTypeDeclarationKinds);
             context.RegisterSyntaxNodeActionHonorExclusions(this.methodDeclarationAction, SyntaxKind.MethodDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(this.constructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(this.destructorDeclarationAction, SyntaxKind.DestructorDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(this.propertyDeclarationAction, SyntaxKind.PropertyDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(this.indexerDeclarationAction, SyntaxKind.IndexerDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(
-                this.fieldDeclarationAction,
-                SyntaxKind.FieldDeclaration,
-                SyntaxKind.EventFieldDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.fieldDeclarationAction, BaseFieldDeclarationKinds);
             context.RegisterSyntaxNodeActionHonorExclusions(this.delegateDeclarationAction, SyntaxKind.DelegateDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(this.eventDeclarationAction, SyntaxKind.EventDeclaration);
         }

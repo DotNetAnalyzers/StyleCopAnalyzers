@@ -50,6 +50,9 @@ namespace StyleCop.Analyzers.OrderingRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
+        private static readonly ImmutableArray<SyntaxKind> TypeDeclarationKinds =
+            ImmutableArray.Create(SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration);
+
         private static readonly Dictionary<SyntaxKind, string> MemberNames = new Dictionary<SyntaxKind, string>
         {
             [SyntaxKind.DelegateDeclaration] = "delegates",
@@ -83,7 +86,7 @@ namespace StyleCop.Analyzers.OrderingRules
         {
             context.RegisterSyntaxNodeActionHonorExclusions(HandleCompilationUnit, SyntaxKind.CompilationUnit);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleNamespaceDeclaration, SyntaxKind.NamespaceDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeDeclaration, TypeDeclarationKinds);
         }
 
         private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context)

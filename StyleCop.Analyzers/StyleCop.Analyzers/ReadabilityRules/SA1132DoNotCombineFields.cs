@@ -28,6 +28,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
+        private static readonly ImmutableArray<SyntaxKind> BaseFieldDeclarationKinds =
+            ImmutableArray.Create(SyntaxKind.FieldDeclaration, SyntaxKind.EventFieldDeclaration);
+
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
 
         /// <inheritdoc/>
@@ -42,10 +45,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleDeclaration, SyntaxKind.FieldDeclaration, SyntaxKind.EventFieldDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleBaseFieldDeclaration, BaseFieldDeclarationKinds);
         }
 
-        private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleBaseFieldDeclaration(SyntaxNodeAnalysisContext context)
         {
             var fieldDeclaration = (BaseFieldDeclarationSyntax)context.Node;
             var variables = fieldDeclaration.Declaration.Variables;

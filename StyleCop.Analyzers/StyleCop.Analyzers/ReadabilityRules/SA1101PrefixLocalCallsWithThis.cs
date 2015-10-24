@@ -45,6 +45,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
+        private static readonly ImmutableArray<SyntaxKind> SimpleNameKinds =
+            ImmutableArray.Create(SyntaxKind.IdentifierName, SyntaxKind.GenericName);
+
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
 
         /// <inheritdoc/>
@@ -60,7 +63,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
             context.RegisterSyntaxNodeActionHonorExclusions(HandleMemberAccessExpression, SyntaxKind.SimpleMemberAccessExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleIdentifierName, SyntaxKind.IdentifierName, SyntaxKind.GenericName);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleSimpleName, SimpleNameKinds);
         }
 
         /// <summary>
@@ -75,7 +78,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             HandleIdentifierNameImpl(context, nameExpression);
         }
 
-        private static void HandleIdentifierName(SyntaxNodeAnalysisContext context)
+        private static void HandleSimpleName(SyntaxNodeAnalysisContext context)
         {
             switch (context.Node?.Parent?.Kind() ?? SyntaxKind.None)
             {
