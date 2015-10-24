@@ -16,10 +16,17 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     internal abstract class ElementDocumentationSummaryBase : DiagnosticAnalyzer
     {
+        private readonly Action<CompilationStartAnalysisContext> compilationStartAction;
+
+        protected ElementDocumentationSummaryBase()
+        {
+            this.compilationStartAction = this.HandleCompilationStart;
+        }
+
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(this.HandleCompilationStart);
+            context.RegisterCompilationStartAction(this.compilationStartAction);
         }
 
         /// <summary>

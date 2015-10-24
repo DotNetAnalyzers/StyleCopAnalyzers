@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
+    using System;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -14,10 +15,17 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     internal abstract class PropertyDocumentationSummaryBase : DiagnosticAnalyzer
     {
+        private readonly Action<CompilationStartAnalysisContext> compilationStartAction;
+
+        protected PropertyDocumentationSummaryBase()
+        {
+            this.compilationStartAction = this.HandleCompilationStart;
+        }
+
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(this.HandleCompilationStart);
+            context.RegisterCompilationStartAction(this.compilationStartAction);
         }
 
         /// <summary>
