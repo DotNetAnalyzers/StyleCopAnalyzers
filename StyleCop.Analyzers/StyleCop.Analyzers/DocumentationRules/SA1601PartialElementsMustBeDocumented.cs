@@ -82,6 +82,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
+        private static readonly ImmutableArray<SyntaxKind> BaseTypeDeclarationKinds =
+            ImmutableArray.Create(SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.InterfaceDeclaration);
+
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
 
         /// <inheritdoc/>
@@ -97,11 +100,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
             Analyzer analyzer = new Analyzer(context.Options);
-            context.RegisterSyntaxNodeActionHonorExclusions(
-                analyzer.HandleTypeDeclaration,
-                SyntaxKind.ClassDeclaration,
-                SyntaxKind.InterfaceDeclaration,
-                SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(analyzer.HandleBaseTypeDeclaration, BaseTypeDeclarationKinds);
             context.RegisterSyntaxNodeActionHonorExclusions(analyzer.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
         }
 
@@ -115,7 +114,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 this.documentationSettings = settings.DocumentationRules;
             }
 
-            public void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
+            public void HandleBaseTypeDeclaration(SyntaxNodeAnalysisContext context)
             {
                 if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
                 {

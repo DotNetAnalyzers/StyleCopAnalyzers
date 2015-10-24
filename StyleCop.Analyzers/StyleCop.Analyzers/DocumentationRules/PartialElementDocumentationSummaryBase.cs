@@ -4,6 +4,7 @@
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
+    using System.Collections.Immutable;
     using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -17,14 +18,17 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     internal abstract class PartialElementDocumentationSummaryBase : DiagnosticAnalyzer
     {
+        private static readonly ImmutableArray<SyntaxKind> BaseTypeDeclarationKinds =
+            ImmutableArray.Create(SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.InterfaceDeclaration);
+
         private readonly Action<CompilationStartAnalysisContext> compilationStartAction;
-        private readonly Action<SyntaxNodeAnalysisContext> typeDeclarationAction;
+        private readonly Action<SyntaxNodeAnalysisContext> baseTypeDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext> methodDeclarationAction;
 
         protected PartialElementDocumentationSummaryBase()
         {
             this.compilationStartAction = this.HandleCompilationStart;
-            this.typeDeclarationAction = this.HandleTypeDeclaration;
+            this.baseTypeDeclarationAction = this.HandleBaseTypeDeclaration;
             this.methodDeclarationAction = this.HandleMethodDeclaration;
         }
 
@@ -45,15 +49,11 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(
-                this.typeDeclarationAction,
-                SyntaxKind.ClassDeclaration,
-                SyntaxKind.StructDeclaration,
-                SyntaxKind.InterfaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.baseTypeDeclarationAction, BaseTypeDeclarationKinds);
             context.RegisterSyntaxNodeActionHonorExclusions(this.methodDeclarationAction, SyntaxKind.MethodDeclaration);
         }
 
-        private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
+        private void HandleBaseTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
             var node = (BaseTypeDeclarationSyntax)context.Node;
             if (node.Identifier.IsMissing)

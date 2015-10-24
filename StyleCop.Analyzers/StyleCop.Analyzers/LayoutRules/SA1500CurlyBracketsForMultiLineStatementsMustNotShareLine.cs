@@ -70,6 +70,9 @@ namespace StyleCop.Analyzers.LayoutRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
+        private static readonly ImmutableArray<SyntaxKind> InitializerExpressionKinds =
+            ImmutableArray.Create(SyntaxKind.ObjectInitializerExpression, SyntaxKind.ArrayInitializerExpression, SyntaxKind.CollectionInitializerExpression);
+
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
 
         /// <inheritdoc/>
@@ -92,7 +95,7 @@ namespace StyleCop.Analyzers.LayoutRules
             context.RegisterSyntaxNodeActionHonorExclusions(HandleAccessorListSyntax, SyntaxKind.AccessorList);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleBlockSyntax, SyntaxKind.Block);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleSwitchStatementSyntax, SyntaxKind.SwitchStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleInitializerExpressionSyntax, SyntaxKind.ObjectInitializerExpression, SyntaxKind.ArrayInitializerExpression, SyntaxKind.CollectionInitializerExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleInitializerExpressionSyntax, InitializerExpressionKinds);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleAnonymousObjectCreationExpressionSyntax, SyntaxKind.AnonymousObjectCreationExpression);
         }
 
