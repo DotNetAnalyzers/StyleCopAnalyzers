@@ -53,6 +53,9 @@ namespace StyleCop.Analyzers.LayoutRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> ElseStatementAction = HandleElseStatement;
+        private static readonly Action<SyntaxNodeAnalysisContext> CatchClauseAction = HandleCatchClause;
+        private static readonly Action<SyntaxNodeAnalysisContext> FinallyClauseAction = HandleFinallyClause;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -66,9 +69,9 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleElseStatement, SyntaxKind.ElseClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleCatchClause, SyntaxKind.CatchClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleFinallyClause, SyntaxKind.FinallyClause);
+            context.RegisterSyntaxNodeActionHonorExclusions(ElseStatementAction, SyntaxKind.ElseClause);
+            context.RegisterSyntaxNodeActionHonorExclusions(CatchClauseAction, SyntaxKind.CatchClause);
+            context.RegisterSyntaxNodeActionHonorExclusions(FinallyClauseAction, SyntaxKind.FinallyClause);
         }
 
         private static void HandleElseStatement(SyntaxNodeAnalysisContext context)

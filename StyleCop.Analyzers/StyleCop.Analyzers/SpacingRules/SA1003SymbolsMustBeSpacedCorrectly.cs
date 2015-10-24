@@ -68,6 +68,61 @@ namespace StyleCop.Analyzers.SpacingRules
         private const string Description = "The spacing around an operator symbol is incorrect, within a C# code file.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1003.md";
 
+        private static readonly ImmutableArray<SyntaxKind> BinaryExpressionKinds =
+            ImmutableArray.Create(
+                SyntaxKind.CoalesceExpression,
+                SyntaxKind.IsExpression,
+                SyntaxKind.AsExpression,
+                SyntaxKind.BitwiseOrExpression,
+                SyntaxKind.ExclusiveOrExpression,
+                SyntaxKind.BitwiseAndExpression,
+                SyntaxKind.EqualsExpression,
+                SyntaxKind.NotEqualsExpression,
+                SyntaxKind.LessThanExpression,
+                SyntaxKind.LessThanOrEqualExpression,
+                SyntaxKind.GreaterThanExpression,
+                SyntaxKind.GreaterThanOrEqualExpression,
+                SyntaxKind.LeftShiftExpression,
+                SyntaxKind.RightShiftExpression,
+                SyntaxKind.AddExpression,
+                SyntaxKind.SubtractExpression,
+                SyntaxKind.MultiplyExpression,
+                SyntaxKind.DivideExpression,
+                SyntaxKind.ModuloExpression,
+                SyntaxKind.LogicalAndExpression,
+                SyntaxKind.LogicalOrExpression);
+
+        private static readonly ImmutableArray<SyntaxKind> PrefixUnaryExpressionKinds =
+            ImmutableArray.Create(
+                SyntaxKind.UnaryPlusExpression,
+                SyntaxKind.UnaryMinusExpression,
+                SyntaxKind.BitwiseNotExpression,
+                SyntaxKind.LogicalNotExpression,
+                SyntaxKind.PreIncrementExpression,
+                SyntaxKind.PreDecrementExpression,
+                SyntaxKind.AddressOfExpression,
+                SyntaxKind.PointerIndirectionExpression);
+
+        private static readonly ImmutableArray<SyntaxKind> PostfixUnaryExpressionKinds =
+            ImmutableArray.Create(SyntaxKind.PostIncrementExpression, SyntaxKind.PostDecrementExpression);
+
+        private static readonly ImmutableArray<SyntaxKind> AssignmentExpressionKinds =
+            ImmutableArray.Create(
+                SyntaxKind.OrAssignmentExpression,
+                SyntaxKind.AndAssignmentExpression,
+                SyntaxKind.ExclusiveOrAssignmentExpression,
+                SyntaxKind.LeftShiftAssignmentExpression,
+                SyntaxKind.RightShiftAssignmentExpression,
+                SyntaxKind.AddAssignmentExpression,
+                SyntaxKind.SubtractAssignmentExpression,
+                SyntaxKind.MultiplyAssignmentExpression,
+                SyntaxKind.DivideAssignmentExpression,
+                SyntaxKind.ModuloAssignmentExpression,
+                SyntaxKind.SimpleAssignmentExpression);
+
+        private static readonly ImmutableArray<SyntaxKind> LambdaExpressionKinds =
+            ImmutableArray.Create(SyntaxKind.ParenthesizedLambdaExpression, SyntaxKind.SimpleLambdaExpression);
+
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
 
         /// <summary>
@@ -139,13 +194,13 @@ namespace StyleCop.Analyzers.SpacingRules
             context.RegisterSyntaxNodeActionHonorExclusions(HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleConditionalExpression, SyntaxKind.ConditionalExpression);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeParameterConstraint, SyntaxKind.TypeParameterConstraintClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleBinaryExpression, SyntaxKind.CoalesceExpression, SyntaxKind.IsExpression, SyntaxKind.AsExpression, SyntaxKind.BitwiseOrExpression, SyntaxKind.ExclusiveOrExpression, SyntaxKind.BitwiseAndExpression, SyntaxKind.EqualsExpression, SyntaxKind.NotEqualsExpression, SyntaxKind.LessThanExpression, SyntaxKind.LessThanOrEqualExpression, SyntaxKind.GreaterThanExpression, SyntaxKind.GreaterThanOrEqualExpression, SyntaxKind.LeftShiftExpression, SyntaxKind.RightShiftExpression, SyntaxKind.AddExpression, SyntaxKind.SubtractExpression, SyntaxKind.MultiplyExpression, SyntaxKind.DivideExpression, SyntaxKind.ModuloExpression, SyntaxKind.LogicalAndExpression, SyntaxKind.LogicalOrExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandlePrefixUnaryExpression, SyntaxKind.UnaryPlusExpression, SyntaxKind.UnaryMinusExpression, SyntaxKind.BitwiseNotExpression, SyntaxKind.LogicalNotExpression, SyntaxKind.PreIncrementExpression, SyntaxKind.PreDecrementExpression, SyntaxKind.AddressOfExpression, SyntaxKind.PointerIndirectionExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandlePostfixUnaryExpression, SyntaxKind.PostIncrementExpression, SyntaxKind.PostDecrementExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleAssignmentExpression, SyntaxKind.OrAssignmentExpression, SyntaxKind.AndAssignmentExpression, SyntaxKind.ExclusiveOrAssignmentExpression, SyntaxKind.LeftShiftAssignmentExpression, SyntaxKind.RightShiftAssignmentExpression, SyntaxKind.AddAssignmentExpression, SyntaxKind.SubtractAssignmentExpression, SyntaxKind.MultiplyAssignmentExpression, SyntaxKind.DivideAssignmentExpression, SyntaxKind.ModuloAssignmentExpression, SyntaxKind.SimpleAssignmentExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleBinaryExpression, BinaryExpressionKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandlePrefixUnaryExpression, PrefixUnaryExpressionKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandlePostfixUnaryExpression, PostfixUnaryExpressionKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleAssignmentExpression, AssignmentExpressionKinds);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleCastExpression, SyntaxKind.CastExpression);
             context.RegisterSyntaxNodeActionHonorExclusions(HandleEqualsValueClause, SyntaxKind.EqualsValueClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleLambdaExpression, SyntaxKind.ParenthesizedLambdaExpression, SyntaxKind.SimpleLambdaExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleLambdaExpression, LambdaExpressionKinds);
         }
 
         private static void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)

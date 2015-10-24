@@ -4,6 +4,7 @@
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
+    using System.Collections.Immutable;
     using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -16,11 +17,35 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     internal abstract class ElementDocumentationSummaryBase : DiagnosticAnalyzer
     {
+        private static readonly ImmutableArray<SyntaxKind> BaseTypeDeclarationKinds =
+            ImmutableArray.Create(SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.EnumDeclaration);
+
+        private static readonly ImmutableArray<SyntaxKind> BaseFieldDeclarationKinds =
+            ImmutableArray.Create(SyntaxKind.FieldDeclaration, SyntaxKind.EventFieldDeclaration);
+
         private readonly Action<CompilationStartAnalysisContext> compilationStartAction;
+        private readonly Action<SyntaxNodeAnalysisContext> typeDeclarationAction;
+        private readonly Action<SyntaxNodeAnalysisContext> methodDeclarationAction;
+        private readonly Action<SyntaxNodeAnalysisContext> constructorDeclarationAction;
+        private readonly Action<SyntaxNodeAnalysisContext> destructorDeclarationAction;
+        private readonly Action<SyntaxNodeAnalysisContext> propertyDeclarationAction;
+        private readonly Action<SyntaxNodeAnalysisContext> indexerDeclarationAction;
+        private readonly Action<SyntaxNodeAnalysisContext> fieldDeclarationAction;
+        private readonly Action<SyntaxNodeAnalysisContext> delegateDeclarationAction;
+        private readonly Action<SyntaxNodeAnalysisContext> eventDeclarationAction;
 
         protected ElementDocumentationSummaryBase()
         {
             this.compilationStartAction = this.HandleCompilationStart;
+            this.typeDeclarationAction = this.HandleTypeDeclaration;
+            this.methodDeclarationAction = this.HandleMethodDeclaration;
+            this.constructorDeclarationAction = this.HandleConstructorDeclaration;
+            this.destructorDeclarationAction = this.HandleDestructorDeclaration;
+            this.propertyDeclarationAction = this.HandlePropertyDeclaration;
+            this.indexerDeclarationAction = this.HandleIndexerDeclaration;
+            this.fieldDeclarationAction = this.HandleFieldDeclaration;
+            this.delegateDeclarationAction = this.HandleDelegateDeclaration;
+            this.eventDeclarationAction = this.HandleEventDeclaration;
         }
 
         /// <inheritdoc/>
@@ -40,19 +65,15 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.InterfaceDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleTypeDeclaration, SyntaxKind.EnumDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDestructorDeclaration, SyntaxKind.DestructorDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandlePropertyDeclaration, SyntaxKind.PropertyDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleFieldDeclaration, SyntaxKind.FieldDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleEventDeclaration, SyntaxKind.EventDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.HandleFieldDeclaration, SyntaxKind.EventFieldDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.typeDeclarationAction, BaseTypeDeclarationKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.methodDeclarationAction, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.constructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.destructorDeclarationAction, SyntaxKind.DestructorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.propertyDeclarationAction, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.indexerDeclarationAction, SyntaxKind.IndexerDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.fieldDeclarationAction, BaseFieldDeclarationKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.delegateDeclarationAction, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.eventDeclarationAction, SyntaxKind.EventDeclaration);
         }
 
         private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
