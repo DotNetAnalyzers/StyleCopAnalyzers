@@ -119,32 +119,6 @@ namespace StyleCop.Analyzers
         /// <param name="syntaxKinds">The kinds of syntax that should be analyzed.</param>
         /// <typeparam name="TLanguageKindEnum">Enum type giving the syntax node kinds of the source language for which
         /// the action applies.</typeparam>
-        public static void RegisterSyntaxNodeActionHonorExclusions<TLanguageKindEnum>(this CompilationStartAnalysisContext context, Action<SyntaxNodeAnalysisContext> action, params TLanguageKindEnum[] syntaxKinds)
-            where TLanguageKindEnum : struct
-        {
-            if (syntaxKinds == null)
-            {
-                RegisterSyntaxNodeActionHonorExclusions(context, action, default(ImmutableArray<TLanguageKindEnum>));
-            }
-            else
-            {
-                RegisterSyntaxNodeActionHonorExclusions(context, action, syntaxKinds.ToImmutableArray());
-            }
-        }
-
-        /// <summary>
-        /// Register an action to be executed at completion of semantic analysis of a <see cref="SyntaxNode"/> with an
-        /// appropriate kind. A syntax node action can report diagnostics about a <see cref="SyntaxNode"/>, and can also
-        /// collect state information to be used by other syntax node actions or code block end actions.
-        /// </summary>
-        /// <remarks>This method honors exclusions.</remarks>
-        /// <param name="context">Action will be executed only if the kind of a <see cref="SyntaxNode"/> matches one of
-        /// the <paramref name="syntaxKinds"/> values.</param>
-        /// <param name="action">Action to be executed at completion of semantic analysis of a
-        /// <see cref="SyntaxNode"/>.</param>
-        /// <param name="syntaxKinds">The kinds of syntax that should be analyzed.</param>
-        /// <typeparam name="TLanguageKindEnum">Enum type giving the syntax node kinds of the source language for which
-        /// the action applies.</typeparam>
         public static void RegisterSyntaxNodeActionHonorExclusions<TLanguageKindEnum>(this CompilationStartAnalysisContext context, Action<SyntaxNodeAnalysisContext> action, ImmutableArray<TLanguageKindEnum> syntaxKinds)
             where TLanguageKindEnum : struct
         {

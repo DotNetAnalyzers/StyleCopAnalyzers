@@ -37,9 +37,15 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
+        private static readonly ImmutableArray<SyntaxKind> HandledTypeLikeDeclarationKinds =
+            ImmutableArray.Create(SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.EnumDeclaration, SyntaxKind.DelegateDeclaration);
+
+        private static readonly ImmutableArray<SyntaxKind> MemberDeclarationKinds =
+            ImmutableArray.Create(SyntaxKind.ConstructorDeclaration, SyntaxKind.EventDeclaration, SyntaxKind.MethodDeclaration, SyntaxKind.PropertyDeclaration, SyntaxKind.EventFieldDeclaration, SyntaxKind.FieldDeclaration, SyntaxKind.IndexerDeclaration);
+
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
-        private static readonly Action<SyntaxNodeAnalysisContext> BaseTypeDeclarationSyntaxAction = HandleBaseTypeDeclarationSyntax;
-        private static readonly Action<SyntaxNodeAnalysisContext> MemberSyntaxAction = HandleMemberSyntax;
+        private static readonly Action<SyntaxNodeAnalysisContext> BaseTypeLikeDeclarationAction = HandleBaseTypeLikeDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> MemberDeclarationAction = HandleMemberDeclaration;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -53,25 +59,11 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(
-                BaseTypeDeclarationSyntaxAction,
-                SyntaxKind.ClassDeclaration,
-                SyntaxKind.InterfaceDeclaration,
-                SyntaxKind.EnumDeclaration,
-                SyntaxKind.StructDeclaration,
-                SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(
-                MemberSyntaxAction,
-                SyntaxKind.ConstructorDeclaration,
-                SyntaxKind.EventDeclaration,
-                SyntaxKind.MethodDeclaration,
-                SyntaxKind.PropertyDeclaration,
-                SyntaxKind.EventFieldDeclaration,
-                SyntaxKind.FieldDeclaration,
-                SyntaxKind.IndexerDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(BaseTypeLikeDeclarationAction, HandledTypeLikeDeclarationKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(MemberDeclarationAction, MemberDeclarationKinds);
         }
 
-        private static void HandleBaseTypeDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleBaseTypeLikeDeclaration(SyntaxNodeAnalysisContext context)
         {
             BaseTypeDeclarationSyntax baseType = context.Node as BaseTypeDeclarationSyntax;
 
@@ -91,9 +83,9 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
         }
 
-        private static void HandleMemberSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleMemberDeclaration(SyntaxNodeAnalysisContext context)
         {
-            MemberDeclarationSyntax memberSyntax = context.Node as MemberDeclarationSyntax;
+            MemberDeclarationSyntax memberSyntax = (MemberDeclarationSyntax)context.Node;
 
             var modifiers = memberSyntax.GetModifiers();
 
