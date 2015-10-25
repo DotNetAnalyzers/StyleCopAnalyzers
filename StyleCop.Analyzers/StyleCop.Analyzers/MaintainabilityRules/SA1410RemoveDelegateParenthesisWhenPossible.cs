@@ -47,6 +47,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> AnonymousMethodExpressionAction = HandleAnonymousMethodExpression;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -60,10 +61,10 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleAnonymousMethodExpressionSyntax, SyntaxKind.AnonymousMethodExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(AnonymousMethodExpressionAction, SyntaxKind.AnonymousMethodExpression);
         }
 
-        private static void HandleAnonymousMethodExpressionSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleAnonymousMethodExpression(SyntaxNodeAnalysisContext context)
         {
             AnonymousMethodExpressionSyntax syntax = context.Node as AnonymousMethodExpressionSyntax;
             if (syntax == null)

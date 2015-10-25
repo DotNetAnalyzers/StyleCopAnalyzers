@@ -54,7 +54,18 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
+        private static readonly ImmutableArray<SyntaxKind> HandledBinaryExpressionKinds =
+            ImmutableArray.Create(
+                SyntaxKind.AddExpression,
+                SyntaxKind.SubtractExpression,
+                SyntaxKind.MultiplyExpression,
+                SyntaxKind.DivideExpression,
+                SyntaxKind.ModuloExpression,
+                SyntaxKind.LeftShiftExpression,
+                SyntaxKind.RightShiftExpression);
+
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> BinaryExpressionAction = HandleBinaryExpression;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -68,16 +79,10 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleMathExpression, SyntaxKind.AddExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleMathExpression, SyntaxKind.SubtractExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleMathExpression, SyntaxKind.MultiplyExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleMathExpression, SyntaxKind.DivideExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleMathExpression, SyntaxKind.ModuloExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleMathExpression, SyntaxKind.LeftShiftExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleMathExpression, SyntaxKind.RightShiftExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(BinaryExpressionAction, HandledBinaryExpressionKinds);
         }
 
-        private static void HandleMathExpression(SyntaxNodeAnalysisContext context)
+        private static void HandleBinaryExpression(SyntaxNodeAnalysisContext context)
         {
             BinaryExpressionSyntax binSyntax = (BinaryExpressionSyntax)context.Node;
 

@@ -45,6 +45,8 @@ namespace StyleCop.Analyzers.SpacingRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
+        private static readonly Action<SyntaxNodeAnalysisContext> InvocationExpressionAction = HandleInvocationExpression;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -59,10 +61,10 @@ namespace StyleCop.Analyzers.SpacingRules
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
             // handle everything except nameof
-            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
+            context.RegisterSyntaxTreeActionHonorExclusions(SyntaxTreeAction);
 
             // handle nameof (which appears as an invocation expression??)
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleInvocationExpressionSyntax, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(InvocationExpressionAction, SyntaxKind.InvocationExpression);
         }
 
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -135,7 +137,7 @@ namespace StyleCop.Analyzers.SpacingRules
             }
         }
 
-        private static void HandleInvocationExpressionSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleInvocationExpression(SyntaxNodeAnalysisContext context)
         {
             InvocationExpressionSyntax invocationExpressionSyntax = (InvocationExpressionSyntax)context.Node;
             IdentifierNameSyntax identifierNameSyntax = invocationExpressionSyntax.Expression as IdentifierNameSyntax;

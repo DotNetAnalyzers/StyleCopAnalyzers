@@ -37,6 +37,7 @@ namespace StyleCop.Analyzers.SpacingRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> NullableTypeAction = HandleNullableType;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -50,10 +51,10 @@ namespace StyleCop.Analyzers.SpacingRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleQuestionToken, SyntaxKind.NullableType);
+            context.RegisterSyntaxNodeActionHonorExclusions(NullableTypeAction, SyntaxKind.NullableType);
         }
 
-        private static void HandleQuestionToken(SyntaxNodeAnalysisContext context)
+        private static void HandleNullableType(SyntaxNodeAnalysisContext context)
         {
             var nullableType = (NullableTypeSyntax)context.Node;
             var questionToken = nullableType.QuestionToken;

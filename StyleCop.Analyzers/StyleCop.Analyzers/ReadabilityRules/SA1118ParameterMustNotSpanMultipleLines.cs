@@ -73,6 +73,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             ImmutableArray.Create(SyntaxKind.ArgumentList, SyntaxKind.BracketedArgumentList);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> BaseArgumentListAction = HandleBaseArgumentList;
+        private static readonly Action<SyntaxNodeAnalysisContext> AttributeArgumentListAction = HandleAttributeArgumentList;
 
         private static readonly SyntaxKind[] ArgumentExceptionSyntaxKinds =
         {
@@ -93,8 +95,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleBaseArgumentList, BaseArgumentListKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleAttributeArgumentList, SyntaxKind.AttributeArgumentList);
+            context.RegisterSyntaxNodeActionHonorExclusions(BaseArgumentListAction, BaseArgumentListKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(AttributeArgumentListAction, SyntaxKind.AttributeArgumentList);
         }
 
         private static void HandleAttributeArgumentList(SyntaxNodeAnalysisContext context)

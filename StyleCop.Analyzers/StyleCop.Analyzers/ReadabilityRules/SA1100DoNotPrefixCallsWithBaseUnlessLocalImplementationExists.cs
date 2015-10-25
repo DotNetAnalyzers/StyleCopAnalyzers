@@ -67,6 +67,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> BaseExpressionAction = HandleBaseExpression;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -80,10 +81,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(AnalyzeBaseExpression, SyntaxKind.BaseExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(BaseExpressionAction, SyntaxKind.BaseExpression);
         }
 
-        private static void AnalyzeBaseExpression(SyntaxNodeAnalysisContext context)
+        private static void HandleBaseExpression(SyntaxNodeAnalysisContext context)
         {
             var baseExpressionSyntax = (BaseExpressionSyntax)context.Node;
             var parent = baseExpressionSyntax.Parent;

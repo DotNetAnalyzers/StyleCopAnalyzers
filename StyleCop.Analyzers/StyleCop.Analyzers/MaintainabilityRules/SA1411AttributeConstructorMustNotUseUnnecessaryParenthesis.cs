@@ -44,6 +44,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> AttributeArgumentListAction = HandleAttributeArgumentList;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -57,10 +58,10 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleAttributeArgumentListSyntax, SyntaxKind.AttributeArgumentList);
+            context.RegisterSyntaxNodeActionHonorExclusions(AttributeArgumentListAction, SyntaxKind.AttributeArgumentList);
         }
 
-        private static void HandleAttributeArgumentListSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleAttributeArgumentList(SyntaxNodeAnalysisContext context)
         {
             AttributeArgumentListSyntax syntax = (AttributeArgumentListSyntax)context.Node;
             if (syntax.Arguments.Count != 0)

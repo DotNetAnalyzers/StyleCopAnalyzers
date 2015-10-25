@@ -49,6 +49,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             ImmutableArray.Create(SyntaxKind.IdentifierName, SyntaxKind.GenericName);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> MemberAccessExpressionAction = HandleMemberAccessExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> SimpleNameAction = HandleSimpleName;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -62,8 +64,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleMemberAccessExpression, SyntaxKind.SimpleMemberAccessExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleSimpleName, SimpleNameKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(MemberAccessExpressionAction, SyntaxKind.SimpleMemberAccessExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(SimpleNameAction, SimpleNameKinds);
         }
 
         /// <summary>

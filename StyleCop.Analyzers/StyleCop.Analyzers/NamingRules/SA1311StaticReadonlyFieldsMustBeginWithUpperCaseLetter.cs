@@ -34,6 +34,7 @@ namespace StyleCop.Analyzers.NamingRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> FieldDeclarationAction = HandleFieldDeclaration;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -47,10 +48,10 @@ namespace StyleCop.Analyzers.NamingRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleFieldDeclarationm, SyntaxKind.FieldDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(FieldDeclarationAction, SyntaxKind.FieldDeclaration);
         }
 
-        private static void HandleFieldDeclarationm(SyntaxNodeAnalysisContext context)
+        private static void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
         {
             var fieldDeclaration = context.Node as FieldDeclarationSyntax;
             if (fieldDeclaration == null)

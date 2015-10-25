@@ -32,7 +32,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);
 
+        private static readonly ImmutableArray<SyntaxKind> BaseTypeDeclarationKinds =
+            ImmutableArray.Create(SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.EnumDeclaration);
+
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> EmptyStatementAction = HandleEmptyStatement;
+        private static readonly Action<SyntaxNodeAnalysisContext> BaseTypeDeclarationAction = HandleBaseTypeDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> NamespaceDeclarationAction = HandleNamespaceDeclaration;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -46,15 +52,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleEmptyStatementSyntax, SyntaxKind.EmptyStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeSyntax, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeSyntax, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeSyntax, SyntaxKind.InterfaceDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeSyntax, SyntaxKind.EnumDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleNamespaceSyntax, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(EmptyStatementAction, SyntaxKind.EmptyStatement);
+            context.RegisterSyntaxNodeActionHonorExclusions(BaseTypeDeclarationAction, BaseTypeDeclarationKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
         }
 
-        private static void HandleTypeSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleBaseTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
             var declaration = (BaseTypeDeclarationSyntax)context.Node;
 
@@ -64,7 +67,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
-        private static void HandleNamespaceSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context)
         {
             var declaration = (NamespaceDeclarationSyntax)context.Node;
 
@@ -74,7 +77,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
-        private static void HandleEmptyStatementSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleEmptyStatement(SyntaxNodeAnalysisContext context)
         {
             EmptyStatementSyntax syntax = (EmptyStatementSyntax)context.Node;
 

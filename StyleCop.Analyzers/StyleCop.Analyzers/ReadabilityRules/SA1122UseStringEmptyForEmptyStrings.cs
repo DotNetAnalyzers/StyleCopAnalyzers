@@ -43,6 +43,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> StringLiteralExpressionAction = HandleStringLiteralExpression;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -56,10 +57,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleStringLiteral, SyntaxKind.StringLiteralExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(StringLiteralExpressionAction, SyntaxKind.StringLiteralExpression);
         }
 
-        private static void HandleStringLiteral(SyntaxNodeAnalysisContext context)
+        private static void HandleStringLiteralExpression(SyntaxNodeAnalysisContext context)
         {
             LiteralExpressionSyntax literalExpression = (LiteralExpressionSyntax)context.Node;
 

@@ -49,6 +49,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly string SA1105HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1105.md";
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> QueryExpressionAction = HandleQueryExpression;
 
         /// <summary>
         /// Gets the diagnostic descriptor for SA1102.
@@ -94,7 +95,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleQueryExpression, SyntaxKind.QueryExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(QueryExpressionAction, SyntaxKind.QueryExpression);
         }
 
         private static void HandleQueryExpression(SyntaxNodeAnalysisContext context)

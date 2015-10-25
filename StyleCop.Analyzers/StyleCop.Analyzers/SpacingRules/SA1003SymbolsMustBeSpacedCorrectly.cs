@@ -124,6 +124,16 @@ namespace StyleCop.Analyzers.SpacingRules
             ImmutableArray.Create(SyntaxKind.ParenthesizedLambdaExpression, SyntaxKind.SimpleLambdaExpression);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> ConstructorDeclarationAction = HandleConstructorDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> ConditionalExpressionAction = HandleConditionalExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> TypeParameterConstraintClauseAction = HandleTypeParameterConstraintClause;
+        private static readonly Action<SyntaxNodeAnalysisContext> BinaryExpressionAction = HandleBinaryExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> PrefixUnaryExpressionAction = HandlePrefixUnaryExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> PostfixUnaryExpressionAction = HandlePostfixUnaryExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> AssignmentExpressionAction = HandleAssignmentExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> CastExpressionAction = HandleCastExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> EqualsValueClauseAction = HandleEqualsValueClause;
+        private static readonly Action<SyntaxNodeAnalysisContext> LambdaExpressionAction = HandleLambdaExpression;
 
         /// <summary>
         /// Gets the descriptor for prefix unary expression that may not be followed by a comment.
@@ -191,16 +201,16 @@ namespace StyleCop.Analyzers.SpacingRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleConstructorDeclaration, SyntaxKind.ConstructorDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleConditionalExpression, SyntaxKind.ConditionalExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleTypeParameterConstraint, SyntaxKind.TypeParameterConstraintClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleBinaryExpression, BinaryExpressionKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandlePrefixUnaryExpression, PrefixUnaryExpressionKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandlePostfixUnaryExpression, PostfixUnaryExpressionKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleAssignmentExpression, AssignmentExpressionKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleCastExpression, SyntaxKind.CastExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleEqualsValueClause, SyntaxKind.EqualsValueClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleLambdaExpression, LambdaExpressionKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(ConstructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(ConditionalExpressionAction, SyntaxKind.ConditionalExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(TypeParameterConstraintClauseAction, SyntaxKind.TypeParameterConstraintClause);
+            context.RegisterSyntaxNodeActionHonorExclusions(BinaryExpressionAction, BinaryExpressionKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(PrefixUnaryExpressionAction, PrefixUnaryExpressionKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(PostfixUnaryExpressionAction, PostfixUnaryExpressionKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(AssignmentExpressionAction, AssignmentExpressionKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(CastExpressionAction, SyntaxKind.CastExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(EqualsValueClauseAction, SyntaxKind.EqualsValueClause);
+            context.RegisterSyntaxNodeActionHonorExclusions(LambdaExpressionAction, LambdaExpressionKinds);
         }
 
         private static void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
@@ -222,7 +232,7 @@ namespace StyleCop.Analyzers.SpacingRules
             CheckToken(context, conditionalExpression.ColonToken, true, true, true);
         }
 
-        private static void HandleTypeParameterConstraint(SyntaxNodeAnalysisContext context)
+        private static void HandleTypeParameterConstraintClause(SyntaxNodeAnalysisContext context)
         {
             var typeParameterConstraint = (TypeParameterConstraintClauseSyntax)context.Node;
 

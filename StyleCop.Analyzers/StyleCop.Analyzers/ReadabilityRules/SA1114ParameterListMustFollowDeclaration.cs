@@ -58,6 +58,17 @@ namespace StyleCop.Analyzers.ReadabilityRules
             ImmutableArray.Create(SyntaxKind.MethodDeclaration, SyntaxKind.ConstructorDeclaration, SyntaxKind.OperatorDeclaration, SyntaxKind.ConversionOperatorDeclaration);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> BaseMethodDeclarationAction = HandleBaseMethodDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> InvocationExpressionAction = HandleInvocationExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> ObjectCreationExpressionAction = HandleObjectCreationExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> IndexerDeclarationAction = HandleIndexerDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> ArrayCreationExpressionAction = HandleArrayCreationExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> ElementAccessExpressionAction = HandleElementAccessExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> AttributeAction = HandleAttribute;
+        private static readonly Action<SyntaxNodeAnalysisContext> AttributeListAction = HandleAttributeList;
+        private static readonly Action<SyntaxNodeAnalysisContext> DelegateDeclarationAction = HandleDelegateDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> AnonymousMethodExpressionAction = HandleAnonymousMethodExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> ParenthesizedLambdaExpressionAction = HandleParenthesizedLambdaExpression;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -71,26 +82,26 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleBaseMethodDeclaration, BaseMethodDeclarationKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleMethodInvocation, SyntaxKind.InvocationExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleObjectCreation, SyntaxKind.ObjectCreationExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleIndexerDeclaration, SyntaxKind.IndexerDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleArrayCreation, SyntaxKind.ArrayCreationExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleElementAccess, SyntaxKind.ElementAccessExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleAttribute, SyntaxKind.Attribute);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleAttributesList, SyntaxKind.AttributeList);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleDelegateDeclaration, SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleAnonymousMethod, SyntaxKind.AnonymousMethodExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleLambdaExpression, SyntaxKind.ParenthesizedLambdaExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(BaseMethodDeclarationAction, BaseMethodDeclarationKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(InvocationExpressionAction, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(ObjectCreationExpressionAction, SyntaxKind.ObjectCreationExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(IndexerDeclarationAction, SyntaxKind.IndexerDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(ArrayCreationExpressionAction, SyntaxKind.ArrayCreationExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(ElementAccessExpressionAction, SyntaxKind.ElementAccessExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(AttributeAction, SyntaxKind.Attribute);
+            context.RegisterSyntaxNodeActionHonorExclusions(AttributeListAction, SyntaxKind.AttributeList);
+            context.RegisterSyntaxNodeActionHonorExclusions(DelegateDeclarationAction, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(AnonymousMethodExpressionAction, SyntaxKind.AnonymousMethodExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(ParenthesizedLambdaExpressionAction, SyntaxKind.ParenthesizedLambdaExpression);
         }
 
-        private static void HandleLambdaExpression(SyntaxNodeAnalysisContext context)
+        private static void HandleParenthesizedLambdaExpression(SyntaxNodeAnalysisContext context)
         {
             var lambdaExpression = (ParenthesizedLambdaExpressionSyntax)context.Node;
             AnalyzeParametersList(context, lambdaExpression.ParameterList);
         }
 
-        private static void HandleAnonymousMethod(SyntaxNodeAnalysisContext context)
+        private static void HandleAnonymousMethodExpression(SyntaxNodeAnalysisContext context)
         {
             var anonymousMethod = (AnonymousMethodExpressionSyntax)context.Node;
             AnalyzeParametersList(context, anonymousMethod.ParameterList);
@@ -102,7 +113,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             AnalyzeParametersList(context, delegateDeclaration.ParameterList);
         }
 
-        private static void HandleAttributesList(SyntaxNodeAnalysisContext context)
+        private static void HandleAttributeList(SyntaxNodeAnalysisContext context)
         {
             var attributesList = (AttributeListSyntax)context.Node;
 
@@ -115,13 +126,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
             AnalyzeArgumentList(context, attribute.ArgumentList);
         }
 
-        private static void HandleElementAccess(SyntaxNodeAnalysisContext context)
+        private static void HandleElementAccessExpression(SyntaxNodeAnalysisContext context)
         {
             var elementAccess = (ElementAccessExpressionSyntax)context.Node;
             AnalyzeArgumentList(context, elementAccess.ArgumentList);
         }
 
-        private static void HandleArrayCreation(SyntaxNodeAnalysisContext context)
+        private static void HandleArrayCreationExpression(SyntaxNodeAnalysisContext context)
         {
             var arrayCreation = (ArrayCreationExpressionSyntax)context.Node;
             if (arrayCreation.Type == null)
@@ -138,7 +149,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             AnalyzeBracketParametersList(context, indexerDeclaration.ParameterList);
         }
 
-        private static void HandleObjectCreation(SyntaxNodeAnalysisContext context)
+        private static void HandleObjectCreationExpression(SyntaxNodeAnalysisContext context)
         {
             var objectCreation = (ObjectCreationExpressionSyntax)context.Node;
             if (objectCreation?.ArgumentList != null)
@@ -147,7 +158,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
-        private static void HandleMethodInvocation(SyntaxNodeAnalysisContext context)
+        private static void HandleInvocationExpression(SyntaxNodeAnalysisContext context)
         {
             var invocationExpression = (InvocationExpressionSyntax)context.Node;
             AnalyzeArgumentList(context, invocationExpression.ArgumentList);

@@ -65,6 +65,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             new DiagnosticDescriptor(ParenthesesDiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Hidden, AnalyzerConstants.EnabledByDefault, Description, HelpLink, customTags: new[] { WellKnownDiagnosticTags.Unnecessary, WellKnownDiagnosticTags.NotConfigurable });
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> ParenthesizedExpressionAction = HandleParenthesizedExpression;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -85,7 +86,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             // is disabled
             if (context.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(Descriptor.Id) != Microsoft.CodeAnalysis.ReportDiagnostic.Suppress)
             {
-                context.RegisterSyntaxNodeActionHonorExclusions(HandleParenthesizedExpression, SyntaxKind.ParenthesizedExpression);
+                context.RegisterSyntaxNodeActionHonorExclusions(ParenthesizedExpressionAction, SyntaxKind.ParenthesizedExpression);
             }
         }
 

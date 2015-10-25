@@ -62,6 +62,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> BlockAction = HandleBlock;
+        private static readonly Action<SyntaxNodeAnalysisContext> SwitchStatementAction = HandleSwitchStatement;
 
         private static readonly SyntaxKind[] SupportedKinds =
         {
@@ -92,11 +94,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(AnalyzeBlock, SyntaxKind.Block);
-            context.RegisterSyntaxNodeActionHonorExclusions(AnalyzeSwitch, SyntaxKind.SwitchStatement);
+            context.RegisterSyntaxNodeActionHonorExclusions(BlockAction, SyntaxKind.Block);
+            context.RegisterSyntaxNodeActionHonorExclusions(SwitchStatementAction, SyntaxKind.SwitchStatement);
         }
 
-        private static void AnalyzeSwitch(SyntaxNodeAnalysisContext context)
+        private static void HandleSwitchStatement(SyntaxNodeAnalysisContext context)
         {
             var switchStatement = (SwitchStatementSyntax)context.Node;
             var openBraceToken = switchStatement.OpenBraceToken;
@@ -110,7 +112,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             FindAllComments(context, previousToken, openBraceToken);
         }
 
-        private static void AnalyzeBlock(SyntaxNodeAnalysisContext context)
+        private static void HandleBlock(SyntaxNodeAnalysisContext context)
         {
             var block = (BlockSyntax)context.Node;
             if (!SupportedKinds.Any(block.Parent.IsKind))
