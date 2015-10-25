@@ -35,6 +35,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> GenericNameAction = HandleGenericName;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -48,10 +49,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleGenericNameSyntax, SyntaxKind.GenericName);
+            context.RegisterSyntaxNodeActionHonorExclusions(GenericNameAction, SyntaxKind.GenericName);
         }
 
-        private static void HandleGenericNameSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleGenericName(SyntaxNodeAnalysisContext context)
         {
             GenericNameSyntax genericNameSyntax = (GenericNameSyntax)context.Node;
 

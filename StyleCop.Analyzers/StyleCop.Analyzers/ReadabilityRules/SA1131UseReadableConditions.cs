@@ -29,7 +29,17 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
+        private static readonly ImmutableArray<SyntaxKind> HandledBinaryExpressionKinds =
+            ImmutableArray.Create(
+                SyntaxKind.EqualsExpression,
+                SyntaxKind.NotEqualsExpression,
+                SyntaxKind.GreaterThanExpression,
+                SyntaxKind.LessThanExpression,
+                SyntaxKind.GreaterThanOrEqualExpression,
+                SyntaxKind.LessThanOrEqualExpression);
+
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> BinaryExpressionAction = HandleBinaryExpression;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -43,12 +53,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleBinaryExpression, SyntaxKind.EqualsExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleBinaryExpression, SyntaxKind.NotEqualsExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleBinaryExpression, SyntaxKind.GreaterThanExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleBinaryExpression, SyntaxKind.LessThanExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleBinaryExpression, SyntaxKind.GreaterThanOrEqualExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleBinaryExpression, SyntaxKind.LessThanOrEqualExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(BinaryExpressionAction, HandledBinaryExpressionKinds);
         }
 
         private static void HandleBinaryExpression(SyntaxNodeAnalysisContext context)
