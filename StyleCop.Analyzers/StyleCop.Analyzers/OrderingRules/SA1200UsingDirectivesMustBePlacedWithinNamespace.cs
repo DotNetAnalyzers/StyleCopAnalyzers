@@ -164,6 +164,7 @@ namespace StyleCop.Analyzers.OrderingRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> CompilationUnitAction = HandleCompilationUnit;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -177,10 +178,10 @@ namespace StyleCop.Analyzers.OrderingRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleCompilationUnitSyntax, SyntaxKind.CompilationUnit);
+            context.RegisterSyntaxNodeActionHonorExclusions(CompilationUnitAction, SyntaxKind.CompilationUnit);
         }
 
-        private static void HandleCompilationUnitSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context)
         {
             CompilationUnitSyntax syntax = (CompilationUnitSyntax)context.Node;
 

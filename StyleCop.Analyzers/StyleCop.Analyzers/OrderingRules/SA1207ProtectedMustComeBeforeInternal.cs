@@ -50,6 +50,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 SyntaxKind.StructDeclaration);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> DeclarationAction = HandleDeclaration;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -63,7 +64,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleDeclaration, HandledSyntaxKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(DeclarationAction, HandledSyntaxKinds);
         }
 
         private static void HandleDeclaration(SyntaxNodeAnalysisContext context)

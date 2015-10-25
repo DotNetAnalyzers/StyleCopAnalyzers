@@ -62,6 +62,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 SyntaxKind.ConstructorDeclaration);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> DeclarationAction = HandleDeclaration;
 
         /// <summary>
         /// Represents modifier type for implementing SA1206 rule
@@ -101,7 +102,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleDeclaration, HandledSyntaxKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(DeclarationAction, HandledSyntaxKinds);
         }
 
         private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
