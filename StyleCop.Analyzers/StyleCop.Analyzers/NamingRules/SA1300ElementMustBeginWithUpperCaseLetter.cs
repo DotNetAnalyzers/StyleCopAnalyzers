@@ -45,6 +45,15 @@ namespace StyleCop.Analyzers.NamingRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> NamespaceDeclarationAction = HandleNamespaceDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> ClassDeclarationAction = HandleClassDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> EnumDeclarationAction = HandleEnumDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> StructDeclarationAction = HandleStructDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> DelegateDeclarationAction = HandleDelegateDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> EventDeclarationAction = HandleEventDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> EventFieldDeclarationAction = HandleEventFieldDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> MethodDeclarationAction = HandleMethodDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> PropertyDeclarationAction = HandlePropertyDeclaration;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -60,18 +69,18 @@ namespace StyleCop.Analyzers.NamingRules
         {
             // Note: Interfaces are handled by SA1302
             // Note: Fields are handled by SA1303 through SA1311
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleNamespaceDeclarationSyntax, SyntaxKind.NamespaceDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleClassDeclarationSyntax, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleEnumDeclarationSyntax, SyntaxKind.EnumDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleStructDeclarationSyntax, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleDelegateDeclarationSyntax, SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleEventDeclarationSyntax, SyntaxKind.EventDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleEventFieldDeclarationSyntax, SyntaxKind.EventFieldDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleMethodDeclarationSyntax, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandlePropertyDeclarationSyntax, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(ClassDeclarationAction, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(EnumDeclarationAction, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(StructDeclarationAction, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(DelegateDeclarationAction, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(EventDeclarationAction, SyntaxKind.EventDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(EventFieldDeclarationAction, SyntaxKind.EventFieldDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(PropertyDeclarationAction, SyntaxKind.PropertyDeclaration);
         }
 
-        private static void HandleNamespaceDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context)
         {
             NameSyntax nameSyntax = ((NamespaceDeclarationSyntax)context.Node).Name;
             CheckNameSyntax(context, nameSyntax);
@@ -102,27 +111,27 @@ namespace StyleCop.Analyzers.NamingRules
             // TODO: any other cases?
         }
 
-        private static void HandleClassDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleClassDeclaration(SyntaxNodeAnalysisContext context)
         {
             CheckElementNameToken(context, ((ClassDeclarationSyntax)context.Node).Identifier);
         }
 
-        private static void HandleEnumDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleEnumDeclaration(SyntaxNodeAnalysisContext context)
         {
             CheckElementNameToken(context, ((EnumDeclarationSyntax)context.Node).Identifier);
         }
 
-        private static void HandleStructDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleStructDeclaration(SyntaxNodeAnalysisContext context)
         {
             CheckElementNameToken(context, ((StructDeclarationSyntax)context.Node).Identifier);
         }
 
-        private static void HandleDelegateDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
         {
             CheckElementNameToken(context, ((DelegateDeclarationSyntax)context.Node).Identifier);
         }
 
-        private static void HandleEventDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleEventDeclaration(SyntaxNodeAnalysisContext context)
         {
             var eventDeclaration = (EventDeclarationSyntax)context.Node;
             if (eventDeclaration.Modifiers.Any(SyntaxKind.OverrideKeyword))
@@ -134,7 +143,7 @@ namespace StyleCop.Analyzers.NamingRules
             CheckElementNameToken(context, eventDeclaration.Identifier);
         }
 
-        private static void HandleEventFieldDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleEventFieldDeclaration(SyntaxNodeAnalysisContext context)
         {
             EventFieldDeclarationSyntax eventFieldDeclarationSyntax = (EventFieldDeclarationSyntax)context.Node;
             VariableDeclarationSyntax variableDeclarationSyntax = eventFieldDeclarationSyntax.Declaration;
@@ -154,7 +163,7 @@ namespace StyleCop.Analyzers.NamingRules
             }
         }
 
-        private static void HandleMethodDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
             var methodDeclaration = (MethodDeclarationSyntax)context.Node;
             if (methodDeclaration.Modifiers.Any(SyntaxKind.OverrideKeyword))
@@ -166,7 +175,7 @@ namespace StyleCop.Analyzers.NamingRules
             CheckElementNameToken(context, methodDeclaration.Identifier);
         }
 
-        private static void HandlePropertyDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
         {
             var propertyDeclaration = (PropertyDeclarationSyntax)context.Node;
             if (propertyDeclaration.Modifiers.Any(SyntaxKind.OverrideKeyword))

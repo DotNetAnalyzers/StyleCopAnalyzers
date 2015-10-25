@@ -42,6 +42,7 @@ namespace StyleCop.Analyzers.NamingRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> ParameterAction = HandleParameter;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -55,10 +56,10 @@ namespace StyleCop.Analyzers.NamingRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleParameterSyntax, SyntaxKind.Parameter);
+            context.RegisterSyntaxNodeActionHonorExclusions(ParameterAction, SyntaxKind.Parameter);
         }
 
-        private static void HandleParameterSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleParameter(SyntaxNodeAnalysisContext context)
         {
             ParameterSyntax syntax = (ParameterSyntax)context.Node;
             if (NamedTypeHelpers.IsContainedInNativeMethodsClass(syntax))
