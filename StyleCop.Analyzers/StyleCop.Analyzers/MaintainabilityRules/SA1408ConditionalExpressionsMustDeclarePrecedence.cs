@@ -66,7 +66,11 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
+        private static readonly ImmutableArray<SyntaxKind> HandledBinaryExpressionKinds =
+            ImmutableArray.Create(SyntaxKind.LogicalAndExpression, SyntaxKind.LogicalOrExpression);
+
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> BinaryExpressionAction = HandleBinaryExpression;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -80,11 +84,10 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleLogicalExpression, SyntaxKind.LogicalAndExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleLogicalExpression, SyntaxKind.LogicalOrExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(BinaryExpressionAction, HandledBinaryExpressionKinds);
         }
 
-        private static void HandleLogicalExpression(SyntaxNodeAnalysisContext context)
+        private static void HandleBinaryExpression(SyntaxNodeAnalysisContext context)
         {
             BinaryExpressionSyntax binSyntax = (BinaryExpressionSyntax)context.Node;
 

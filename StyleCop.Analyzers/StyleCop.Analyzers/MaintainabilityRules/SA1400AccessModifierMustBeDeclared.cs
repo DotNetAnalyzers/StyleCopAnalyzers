@@ -36,7 +36,21 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
+        private static readonly ImmutableArray<SyntaxKind> BaseTypeDeclarationKinds =
+            ImmutableArray.Create(SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.EnumDeclaration);
+
+        private static readonly ImmutableArray<SyntaxKind> BaseFieldDeclarationKinds =
+            ImmutableArray.Create(SyntaxKind.EventFieldDeclaration, SyntaxKind.FieldDeclaration);
+
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> BaseTypeDeclarationAction = HandleBaseTypeDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> DelegateDeclarationAction = HandleDelegateDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> EventDeclarationAction = HandleEventDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> MethodDeclarationAction = HandleMethodDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> PropertyDeclarationAction = HandlePropertyDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> BaseFieldDeclarationAction = HandleBaseFieldDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> IndexerDeclarationAction = HandleIndexerDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> ConstructorDeclarationAction = HandleConstructorDeclaration;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -50,33 +64,29 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleBaseTypeDeclarationSyntax, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleBaseTypeDeclarationSyntax, SyntaxKind.InterfaceDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleBaseTypeDeclarationSyntax, SyntaxKind.EnumDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleBaseTypeDeclarationSyntax, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleDelegateDeclarationSyntax, SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleEventDeclarationSyntax, SyntaxKind.EventDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleMethodDeclarationSyntax, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandlePropertyDeclarationSyntax, SyntaxKind.PropertyDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleBaseFieldDeclarationSyntax, SyntaxKind.EventFieldDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleBaseFieldDeclarationSyntax, SyntaxKind.FieldDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleIndexerDeclarationSyntax, SyntaxKind.IndexerDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleConstructorDeclarationSyntax, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(BaseTypeDeclarationAction, BaseTypeDeclarationKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(DelegateDeclarationAction, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(EventDeclarationAction, SyntaxKind.EventDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(PropertyDeclarationAction, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(BaseFieldDeclarationAction, BaseFieldDeclarationKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(IndexerDeclarationAction, SyntaxKind.IndexerDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(ConstructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
         }
 
-        private static void HandleBaseTypeDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleBaseTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
             var syntax = (BaseTypeDeclarationSyntax)context.Node;
             CheckAccessModifiers(context, syntax.Identifier, syntax.Modifiers);
         }
 
-        private static void HandleDelegateDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
         {
             var syntax = (DelegateDeclarationSyntax)context.Node;
             CheckAccessModifiers(context, syntax.Identifier, syntax.Modifiers);
         }
 
-        private static void HandleEventDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleEventDeclaration(SyntaxNodeAnalysisContext context)
         {
             var syntax = (EventDeclarationSyntax)context.Node;
             if (syntax.ExplicitInterfaceSpecifier != null)
@@ -92,7 +102,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             CheckAccessModifiers(context, syntax.Identifier, syntax.Modifiers);
         }
 
-        private static void HandleMethodDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
             var syntax = (MethodDeclarationSyntax)context.Node;
             if (syntax.ExplicitInterfaceSpecifier != null)
@@ -108,7 +118,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             CheckAccessModifiers(context, syntax.Identifier, syntax.Modifiers);
         }
 
-        private static void HandlePropertyDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
         {
             var syntax = (PropertyDeclarationSyntax)context.Node;
             if (syntax.ExplicitInterfaceSpecifier != null)
@@ -124,7 +134,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             CheckAccessModifiers(context, syntax.Identifier, syntax.Modifiers);
         }
 
-        private static void HandleBaseFieldDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleBaseFieldDeclaration(SyntaxNodeAnalysisContext context)
         {
             var syntax = (BaseFieldDeclarationSyntax)context.Node;
             if (syntax.Parent.IsKind(SyntaxKind.InterfaceDeclaration))
@@ -148,7 +158,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             CheckAccessModifiers(context, declarator.Identifier, syntax.Modifiers, declarator);
         }
 
-        private static void HandleIndexerDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)
         {
             var syntax = (IndexerDeclarationSyntax)context.Node;
             if (syntax.ExplicitInterfaceSpecifier != null)
@@ -164,7 +174,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             CheckAccessModifiers(context, syntax.ThisKeyword, syntax.Modifiers);
         }
 
-        private static void HandleConstructorDeclarationSyntax(SyntaxNodeAnalysisContext context)
+        private static void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
         {
             var syntax = (ConstructorDeclarationSyntax)context.Node;
             CheckAccessModifiers(context, syntax.Identifier, syntax.Modifiers);
