@@ -40,6 +40,7 @@ namespace StyleCop.Analyzers.SpacingRules
         private const string MessageNotFollowed = "Opening parenthesis must not be followed by a space.";
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
 
         /// <summary>
         /// Gets the diagnostic descriptor for an opening parenthesis that must not be preceded by whitespace.
@@ -74,7 +75,7 @@ namespace StyleCop.Analyzers.SpacingRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(HandleSyntaxTree);
+            context.RegisterSyntaxTreeActionHonorExclusions(SyntaxTreeAction);
         }
 
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)

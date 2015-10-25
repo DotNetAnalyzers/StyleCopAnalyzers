@@ -40,6 +40,7 @@ namespace StyleCop.Analyzers.SpacingRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> ImplicitArrayCreationExpressionAction = HandleImplicitArrayCreationExpression;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -53,10 +54,10 @@ namespace StyleCop.Analyzers.SpacingRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleImplicitArrayCreation, SyntaxKind.ImplicitArrayCreationExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(ImplicitArrayCreationExpressionAction, SyntaxKind.ImplicitArrayCreationExpression);
         }
 
-        private static void HandleImplicitArrayCreation(SyntaxNodeAnalysisContext context)
+        private static void HandleImplicitArrayCreationExpression(SyntaxNodeAnalysisContext context)
         {
             var arrayCreation = (ImplicitArrayCreationExpressionSyntax)context.Node;
             var newKeywordToken = arrayCreation.NewKeyword;
