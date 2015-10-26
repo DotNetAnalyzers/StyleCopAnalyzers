@@ -1,10 +1,13 @@
-﻿namespace StyleCop.Analyzers.Status.Web
+﻿// Copyright (c) Dennis Fischer. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Status.Web
 {
     using System.Web.Optimization;
 
-    public class BundleConfig
+    internal class BundleConfig
     {
-        public static void RegisterBundles(BundleCollection bundles)
+        internal static void RegisterBundles(BundleCollection bundles)
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-{version}.js"));

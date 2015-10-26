@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.Status.Generator
+﻿// Copyright (c) Dennis Fischer. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Status.Generator
 {
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
@@ -90,6 +93,17 @@
         public string HelpLink { get; set; }
 
         /// <summary>
+        /// Creates an instance of the <see cref="StyleCopDiagnostic"/> class
+        /// that is populated with the data stored in <paramref name="value"/>.
+        /// </summary>
+        /// <param name="value">A json representing a <see cref="StyleCopDiagnostic"/></param>
+        /// <returns>A <see cref="StyleCopDiagnostic"/> that is populated with the data stored in <paramref name="value"/>.</returns>
+        public static StyleCopDiagnostic FromJson(string value)
+        {
+            return JsonConvert.DeserializeObject<StyleCopDiagnostic>(value);
+        }
+
+        /// <summary>
         /// Returns a string representing this diagnostic
         /// </summary>
         /// <returns>
@@ -107,17 +121,6 @@
         public string ToJson()
         {
             return JsonConvert.SerializeObject(this);
-        }
-
-        /// <summary>
-        /// Creates an instance of the <see cref="StyleCopDiagnostic"/> class
-        /// that is populated with the data stored in <paramref name="value"/>.
-        /// </summary>
-        /// <param name="value">A json representing a <see cref="StyleCopDiagnostic"/></param>
-        /// <returns>A <see cref="StyleCopDiagnostic"/> that is populated with the data stored in <paramref name="value"/>.</returns>
-        public static StyleCopDiagnostic FromJson(string value)
-        {
-            return JsonConvert.DeserializeObject<StyleCopDiagnostic>(value);
         }
     }
 }

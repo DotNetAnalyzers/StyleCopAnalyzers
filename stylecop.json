@@ -1,0 +1,12 @@
+﻿{
+  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+  "settings": {
+    "documentationRules": {
+      "companyName": "Dennis Fischer",
+      "copyrightText": "Copyright (c) {companyName}. All Rights Reserved.\r\nLicensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.",
+      "xmlHeader": false,
+      "fileNamingConvention": "metadata",
+      "documentInternalElements": false
+    }
+  }
+}

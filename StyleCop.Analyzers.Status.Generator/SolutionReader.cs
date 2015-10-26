@@ -1,8 +1,11 @@
-﻿namespace StyleCop.Analyzers.Status.Generator
+﻿// Copyright (c) Dennis Fischer. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Status.Generator
 {
     using System;
-    using System.Collections.Immutable;
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using System.IO;
     using System.Linq;
     using System.Reflection;
@@ -10,10 +13,10 @@
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.MSBuild;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.MSBuild;
 
     /// <summary>
     /// A class that is used to parse the StyleCop.Analyzers solution to get an overview
@@ -65,7 +68,6 @@
         /// <returns>A <see cref="Task{SolutionReader}"/> representing the asynchronous operation</returns>
         public static async Task<SolutionReader> CreateAsync(string pathToSln, string analyzerProjectName = "StyleCop.Analyzers", string codeFixProjectName = "StyleCop.Analyzers.CodeFixes")
         {
-
             SolutionReader reader = new SolutionReader();
 
             reader.SlnPath = pathToSln;
@@ -78,67 +80,10 @@
             return reader;
         }
 
-        private async Task InitializeAsync()
-        {
-            this.solution = await this.workspace.OpenSolutionAsync(this.SlnPath);
-
-            this.analyzerProject = this.solution.Projects.Single(x => x.Name == this.AnalyzerProjectName);
-            this.analyzerCompilation = await this.analyzerProject.GetCompilationAsync();
-            this.analyzerCompilation = this.analyzerCompilation.WithOptions(this.analyzerCompilation.Options.WithOutputKind(OutputKind.DynamicallyLinkedLibrary));
-
-            this.codeFixProject = this.solution.Projects.Single(x => x.Name == this.CodeFixProjectName);
-            this.codeFixCompilation = await this.codeFixProject.GetCompilationAsync();
-            this.codeFixCompilation = this.codeFixCompilation.WithOptions(this.codeFixCompilation.Options.WithOutputKind(OutputKind.DynamicallyLinkedLibrary));
-
-            this.booleanType = this.analyzerCompilation.GetSpecialType(SpecialType.System_Boolean);
-
-            this.Compile();
-
-            this.noCodeFixAttributeTypeSymbol = this.analyzerCompilation.GetTypeByMetadataName("StyleCop.Analyzers.NoCodeFixAttribute");
-            this.diagnosticAnalyzerTypeSymbol = this.analyzerCompilation.GetTypeByMetadataName(typeof(DiagnosticAnalyzer).FullName);
-
-            this.InitializeCodeFixTypes();
-        }
-
-        private void InitializeCodeFixTypes()
-        {
-            var codeFixTypes = this.codeFixAssembly.GetTypes().Where(x => x.FullName.EndsWith("CodeFixProvider"));
-
-            this.CodeFixProviders = ImmutableArray.Create(
-                codeFixTypes
-                .Select(t => Activator.CreateInstance(t, true))
-                .OfType<CodeFixProvider>()
-                .Where(x => x != null)
-                .Where(x => x.GetType().Name != "SettingsFileCodeFixProvider")
-                .ToArray());
-        }
-
-        private void Compile()
-        {
-            string path = Path.Combine(Path.GetDirectoryName(this.SlnPath), this.AnalyzerProjectName);
-            this.analyzerAssembly = this.GetAssembly(this.analyzerCompilation, ResourceReader.GetResourcesRecursive(path));
-
-            this.codeFixAssembly = this.GetAssembly(this.codeFixCompilation);
-        }
-
-        private Assembly GetAssembly(Compilation compilation, IEnumerable<ResourceDescription> manifestResources = null)
-        {
-            MemoryStream memStream = new MemoryStream();
-
-            var emitResult = compilation.Emit(memStream, manifestResources: manifestResources);
-
-            if (!emitResult.Success)
-            {
-                throw new CompilationFailedException();
-            }
-
-            return Assembly.Load(memStream.ToArray());
-        }
-
         /// <summary>
         /// Analyzes the project and returns information about the diagnostics in it.
         /// </summary>
-        /// <returns>A <see cref="Task{ImmutableList{StyleCopDiagnostic}}"/> representing the asynchronous operation</returns>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         public async Task<ImmutableList<StyleCopDiagnostic>> GetDiagnosticsAsync()
         {
             var diagnostics = ImmutableList.CreateBuilder<StyleCopDiagnostic>();
@@ -226,6 +171,63 @@
             }
 
             return hasImplementation;
+        }
+
+        private async Task InitializeAsync()
+        {
+            this.solution = await this.workspace.OpenSolutionAsync(this.SlnPath);
+
+            this.analyzerProject = this.solution.Projects.Single(x => x.Name == this.AnalyzerProjectName);
+            this.analyzerCompilation = await this.analyzerProject.GetCompilationAsync();
+            this.analyzerCompilation = this.analyzerCompilation.WithOptions(this.analyzerCompilation.Options.WithOutputKind(OutputKind.DynamicallyLinkedLibrary));
+
+            this.codeFixProject = this.solution.Projects.Single(x => x.Name == this.CodeFixProjectName);
+            this.codeFixCompilation = await this.codeFixProject.GetCompilationAsync();
+            this.codeFixCompilation = this.codeFixCompilation.WithOptions(this.codeFixCompilation.Options.WithOutputKind(OutputKind.DynamicallyLinkedLibrary));
+
+            this.booleanType = this.analyzerCompilation.GetSpecialType(SpecialType.System_Boolean);
+
+            this.Compile();
+
+            this.noCodeFixAttributeTypeSymbol = this.analyzerCompilation.GetTypeByMetadataName("StyleCop.Analyzers.NoCodeFixAttribute");
+            this.diagnosticAnalyzerTypeSymbol = this.analyzerCompilation.GetTypeByMetadataName(typeof(DiagnosticAnalyzer).FullName);
+
+            this.InitializeCodeFixTypes();
+        }
+
+        private void InitializeCodeFixTypes()
+        {
+            var codeFixTypes = this.codeFixAssembly.GetTypes().Where(x => x.FullName.EndsWith("CodeFixProvider"));
+
+            this.CodeFixProviders = ImmutableArray.Create(
+                codeFixTypes
+                .Select(t => Activator.CreateInstance(t, true))
+                .OfType<CodeFixProvider>()
+                .Where(x => x != null)
+                .Where(x => x.GetType().Name != "SettingsFileCodeFixProvider")
+                .ToArray());
+        }
+
+        private void Compile()
+        {
+            string path = Path.Combine(Path.GetDirectoryName(this.SlnPath), this.AnalyzerProjectName);
+            this.analyzerAssembly = this.GetAssembly(this.analyzerCompilation, ResourceReader.GetResourcesRecursive(path));
+
+            this.codeFixAssembly = this.GetAssembly(this.codeFixCompilation);
+        }
+
+        private Assembly GetAssembly(Compilation compilation, IEnumerable<ResourceDescription> manifestResources = null)
+        {
+            MemoryStream memStream = new MemoryStream();
+
+            var emitResult = compilation.Emit(memStream, manifestResources: manifestResources);
+
+            if (!emitResult.Success)
+            {
+                throw new CompilationFailedException();
+            }
+
+            return Assembly.Load(memStream.ToArray());
         }
 
         private string GetStatus(INamedTypeSymbol classSymbol, SyntaxNode root, SemanticModel model, DiagnosticDescriptor descriptor)

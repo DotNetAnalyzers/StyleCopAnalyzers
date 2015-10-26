@@ -1,4 +1,7 @@
-﻿namespace StyleCop.Analyzers.Status.Generator
+﻿// Copyright (c) Dennis Fischer. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Status.Generator
 {
     /// <summary>
     /// This enum is used to indicate whether or not a code fix is implemented

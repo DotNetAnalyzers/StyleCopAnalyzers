@@ -1,10 +1,13 @@
-﻿namespace StyleCop.Analyzers.Status.Web.Models
+﻿// Copyright (c) Dennis Fischer. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace StyleCop.Analyzers.Status.Web.Models
 {
     using System.Collections.Generic;
     using Generator;
     using LibGit2Sharp;
 
-    public class MainViewModel
+    internal class MainViewModel
     {
         public string CommitId { get; set; }
 
