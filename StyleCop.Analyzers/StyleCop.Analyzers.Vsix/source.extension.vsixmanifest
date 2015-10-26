@@ -17,5 +17,7 @@
   <Assets>
     <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="StyleCop.Analyzers" Path="|StyleCop.Analyzers|"/>
     <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="Project" d:ProjectName="StyleCop.Analyzers" Path="|StyleCop.Analyzers|"/>
+    <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="StyleCop.Analyzers.CodeFixes" Path="|StyleCop.Analyzers.CodeFixes|"/>
+    <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="Project" d:ProjectName="StyleCop.Analyzers.CodeFixes" Path="|StyleCop.Analyzers.CodeFixes|"/>
   </Assets>
 </PackageManifest>
