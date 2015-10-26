@@ -66,6 +66,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\StyleCop.Analyzers.CodeFixes\StyleCop.Analyzers.CodeFixes.csproj">
+      <Project>{f91f7815-4e63-4698-b053-e57b2d707194}</Project>
+      <Name>StyleCop.Analyzers.CodeFixes</Name>
+    </ProjectReference>
     <ProjectReference Include="..\StyleCop.Analyzers\StyleCop.Analyzers.csproj">
       <Project>{3B052737-06CE-4182-AE0F-08EB82DFA73E}</Project>
       <Name>StyleCop.Analyzers</Name>
