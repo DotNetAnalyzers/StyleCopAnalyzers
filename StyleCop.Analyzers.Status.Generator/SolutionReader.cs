@@ -26,20 +26,33 @@
         private INamedTypeSymbol noCodeFixAttributeTypeSymbol;
 
         private Solution solution;
-        private Project project;
+        private Project analyzerProject;
+        private Project codeFixProject;
         private MSBuildWorkspace workspace;
-        private Assembly assembly;
-        private Compilation compilation;
+        private Assembly analyzerAssembly;
+        private Assembly codeFixAssembly;
+        private Compilation analyzerCompilation;
+        private Compilation codeFixCompilation;
         private ITypeSymbol booleanType;
 
         private SolutionReader()
         {
+            AppDomain.CurrentDomain.AssemblyResolve += (s, e) =>
+            {
+                if (e.Name.Contains(this.AnalyzerProjectName))
+                {
+                    return this.analyzerAssembly;
+                }
 
+                return null;
+            };
         }
 
         private string SlnPath { get; set; }
 
-        private string ProjectName { get; set; }
+        private string AnalyzerProjectName { get; set; }
+
+        private string CodeFixProjectName { get; set; }
 
         private ImmutableArray<CodeFixProvider> CodeFixProviders { get; set; }
 
@@ -47,15 +60,17 @@
         /// Creates a new instance of the <see cref="SolutionReader"/> class.
         /// </summary>
         /// <param name="pathToSln">The path to the StyleCop.Analayzers sln</param>
-        /// <param name="projectName">The project name of the main project</param>
+        /// <param name="analyzerProjectName">The project name of the analyzer project</param>
+        /// <param name="codeFixProjectName">The project name of the code fix project</param>
         /// <returns>A <see cref="Task{SolutionReader}"/> representing the asynchronous operation</returns>
-        public static async Task<SolutionReader> CreateAsync(string pathToSln, string projectName = "StyleCop.Analyzers")
+        public static async Task<SolutionReader> CreateAsync(string pathToSln, string analyzerProjectName = "StyleCop.Analyzers", string codeFixProjectName = "StyleCop.Analyzers.CodeFixes")
         {
 
             SolutionReader reader = new SolutionReader();
 
             reader.SlnPath = pathToSln;
-            reader.ProjectName = projectName;
+            reader.AnalyzerProjectName = analyzerProjectName;
+            reader.CodeFixProjectName = codeFixProjectName;
             reader.workspace = MSBuildWorkspace.Create(properties: new Dictionary<string, string> { { "Configuration", "Release" } });
 
             await reader.InitializeAsync();
@@ -66,21 +81,29 @@
         private async Task InitializeAsync()
         {
             this.solution = await this.workspace.OpenSolutionAsync(this.SlnPath);
-            this.project = this.solution.Projects.Single(x => x.Name == this.ProjectName);
-            this.compilation = await this.project.GetCompilationAsync();
-            this.compilation = this.compilation.WithOptions(this.compilation.Options.WithOutputKind(OutputKind.DynamicallyLinkedLibrary));
-            this.booleanType = this.compilation.GetSpecialType(SpecialType.System_Boolean);
+
+            this.analyzerProject = this.solution.Projects.Single(x => x.Name == this.AnalyzerProjectName);
+            this.analyzerCompilation = await this.analyzerProject.GetCompilationAsync();
+            this.analyzerCompilation = this.analyzerCompilation.WithOptions(this.analyzerCompilation.Options.WithOutputKind(OutputKind.DynamicallyLinkedLibrary));
+
+            this.codeFixProject = this.solution.Projects.Single(x => x.Name == this.CodeFixProjectName);
+            this.codeFixCompilation = await this.codeFixProject.GetCompilationAsync();
+            this.codeFixCompilation = this.codeFixCompilation.WithOptions(this.codeFixCompilation.Options.WithOutputKind(OutputKind.DynamicallyLinkedLibrary));
+
+            this.booleanType = this.analyzerCompilation.GetSpecialType(SpecialType.System_Boolean);
+
             this.Compile();
 
-            this.noCodeFixAttributeTypeSymbol = this.compilation.GetTypeByMetadataName("StyleCop.Analyzers.NoCodeFixAttribute");
-            this.diagnosticAnalyzerTypeSymbol = this.compilation.GetTypeByMetadataName(typeof(DiagnosticAnalyzer).FullName);
+            this.noCodeFixAttributeTypeSymbol = this.analyzerCompilation.GetTypeByMetadataName("StyleCop.Analyzers.NoCodeFixAttribute");
+            this.diagnosticAnalyzerTypeSymbol = this.analyzerCompilation.GetTypeByMetadataName(typeof(DiagnosticAnalyzer).FullName);
 
             this.InitializeCodeFixTypes();
         }
 
         private void InitializeCodeFixTypes()
         {
-            var codeFixTypes = this.assembly.ExportedTypes.Where(x => x.FullName.EndsWith("CodeFixProvider"));
+            var codeFixTypes = this.codeFixAssembly.GetTypes().Where(x => x.FullName.EndsWith("CodeFixProvider"));
+
             this.CodeFixProviders = ImmutableArray.Create(
                 codeFixTypes
                 .Select(t => Activator.CreateInstance(t, true))
@@ -92,18 +115,24 @@
 
         private void Compile()
         {
+            string path = Path.Combine(Path.GetDirectoryName(this.SlnPath), this.AnalyzerProjectName);
+            this.analyzerAssembly = this.GetAssembly(this.analyzerCompilation, ResourceReader.GetResourcesRecursive(path));
+
+            this.codeFixAssembly = this.GetAssembly(this.codeFixCompilation);
+        }
+
+        private Assembly GetAssembly(Compilation compilation, IEnumerable<ResourceDescription> manifestResources = null)
+        {
             MemoryStream memStream = new MemoryStream();
 
-            string path = Path.Combine(Path.GetDirectoryName(this.SlnPath), this.ProjectName);
-
-            var emitResult = this.compilation.Emit(memStream, manifestResources: ResourceReader.GetResourcesRecursive(path));
+            var emitResult = compilation.Emit(memStream, manifestResources: manifestResources);
 
             if (!emitResult.Success)
             {
                 throw new CompilationFailedException();
             }
 
-            this.assembly = Assembly.Load(memStream.ToArray());
+            return Assembly.Load(memStream.ToArray());
         }
 
         /// <summary>
@@ -114,7 +143,7 @@
         {
             var diagnostics = ImmutableList.CreateBuilder<StyleCopDiagnostic>();
 
-            var syntaxTrees = this.compilation.SyntaxTrees;
+            var syntaxTrees = this.analyzerCompilation.SyntaxTrees;
 
             foreach (var syntaxTree in syntaxTrees)
             {
@@ -130,7 +159,7 @@
 
                 // Check if this syntax tree represents a diagnostic
                 SyntaxNode syntaxRoot = await syntaxTree.GetRootAsync();
-                SemanticModel semanticModel = this.compilation.GetSemanticModel(syntaxTree);
+                SemanticModel semanticModel = this.analyzerCompilation.GetSemanticModel(syntaxTree);
                 SyntaxNode classSyntaxNode = syntaxRoot.DescendantNodes().FirstOrDefault(x => x.IsKind(SyntaxKind.ClassDeclaration));
 
                 if (classSyntaxNode == null)
@@ -258,7 +287,7 @@
 
         private IEnumerable<DiagnosticDescriptor> GetDescriptor(INamedTypeSymbol classSymbol)
         {
-            var analyzer = (DiagnosticAnalyzer)Activator.CreateInstance(this.assembly.GetType(classSymbol.ToString()));
+            var analyzer = (DiagnosticAnalyzer)Activator.CreateInstance(this.analyzerAssembly.GetType(classSymbol.ToString()));
 
             // This currently only supports one diagnostic for each analyzer.
             return analyzer.SupportedDiagnostics;
