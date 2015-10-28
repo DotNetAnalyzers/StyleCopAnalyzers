@@ -255,6 +255,8 @@
     <Compile Include="NoDiagnosticAttribute.cs" />
     <Compile Include="OrderingRules\ElementOrderCodeFixProvider.cs" />
     <Compile Include="OrderingRules\ElementOrderingChecks.cs" />
+    <Compile Include="OrderingRules\SA1206CodeFixProvider.cs" />
+    <Compile Include="OrderingRules\KeywordOrderHelper.cs" />
     <Compile Include="OrderingRules\MemberOrderHelper.cs" />
     <Compile Include="OrderingRules\OrderingResources.Designer.cs">
       <AutoGen>True</AutoGen>

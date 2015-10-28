@@ -280,6 +280,7 @@
     <Compile Include="OrderingRules\SA1216UnitTests.cs" />
     <Compile Include="OrderingRules\SA1217UnitTests.cs" />
     <Compile Include="OrderingRules\UsingCodeFixProviderCombinedSystemDirectivesUnitTests.cs" />
+    <Compile Include="OrderingRules\SA1206CodeFixProviderUnitTests.cs" />
     <Compile Include="OrderingRules\UsingCodeFixProviderUnitTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PublicApiTests.cs" />
