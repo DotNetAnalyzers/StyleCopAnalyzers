@@ -618,6 +618,29 @@ public class TestClass
         }
 
         /// <summary>
+        /// Verifies that enum member declarations with valid (or no) documentation will not produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestValidEnumMemberDeclarationsAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public enum TestEnum
+    {
+        /// <summary>
+        /// This is an enum member.
+        /// </summary>
+        Foo = 0,
+        Bar = 1
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that enum member declarations with invalid documentation will produce the expected diagnostics.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
@@ -654,6 +677,33 @@ public class TestClass
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that operator declarations with valid (or no) documentation will not produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestValidOperatorDeclarationsAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public struct Foo
+    {
+        /// <summary>
+        /// This is an operator declaration.
+        /// </summary>
+        public static Foo operator +(Foo x, Foo y)
+        {
+            return new Foo();
+        }
+
+        private int testField1;
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -699,6 +749,33 @@ public class TestClass
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that conversion operator declarations with valid (or no) documentation will not produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestValidConversionOperatorDeclarationsAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public struct Foo
+    {
+        /// <summary>
+        /// This is a conversion operator declaration.
+        /// </summary>
+        public static explicit operator Foo(string s)
+        {
+            return new Foo();
+        }
+
+        private int testField1;
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
