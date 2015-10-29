@@ -120,6 +120,9 @@
   <data name="ElementOrderCodeFix" xml:space="preserve">
     <value>Fix element order</value>
   </data>
+  <data name="ModifierOrderCodeFix" xml:space="preserve">
+    <value>Fix modifier order</value>
+  </data>
   <data name="SA1205CodeFix" xml:space="preserve">
     <value>Add access modifier</value>
   </data>

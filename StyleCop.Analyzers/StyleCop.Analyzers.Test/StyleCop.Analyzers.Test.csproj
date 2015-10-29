@@ -267,6 +267,7 @@
     <Compile Include="OrderingRules\SA1203UnitTests.cs" />
     <Compile Include="OrderingRules\SA1204UnitTests.cs" />
     <Compile Include="OrderingRules\SA1205UnitTests.cs" />
+    <Compile Include="OrderingRules\SA1206CodeFixProviderUnitTests.cs" />
     <Compile Include="OrderingRules\SA1206UnitTests.cs" />
     <Compile Include="OrderingRules\SA1207UnitTests.cs" />
     <Compile Include="OrderingRules\SA1208UnitTests.cs" />
@@ -362,9 +363,9 @@
     <None Include="..\StyleCop.Analyzers.ruleset">
       <Link>StyleCop.Analyzers.ruleset</Link>
     </None>
-    <None Include="..\stylecop.json">
+    <AdditionalFiles Include="..\stylecop.json">
       <Link>stylecop.json</Link>
-    </None>
+    </AdditionalFiles>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

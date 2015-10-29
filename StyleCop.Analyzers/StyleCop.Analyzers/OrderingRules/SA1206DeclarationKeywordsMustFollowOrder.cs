@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using static ModifierOrderHelper;
 
     /// <summary>
     /// The keywords within the declaration of an element do not follow a standard ordering scheme.
@@ -64,32 +65,6 @@ namespace StyleCop.Analyzers.OrderingRules
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> DeclarationAction = HandleDeclaration;
 
-        /// <summary>
-        /// Represents modifier type for implementing SA1206 rule
-        /// </summary>
-        private enum ModifierType
-        {
-            /// <summary>
-            /// Represents default value
-            /// </summary>
-            None,
-
-            /// <summary>
-            /// Represents any of access modifiers i.e public, protected, internal, private
-            /// </summary>
-            Access,
-
-            /// <summary>
-            /// Represents static modifier
-            /// </summary>
-            Static,
-
-            /// <summary>
-            /// Represents other modifiers i.e partial, virtual, abstract, override, extern, unsafe, new, async, const, sealed, readonly, volatile, fixed
-            /// </summary>
-            Other
-        }
-
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(Descriptor);
@@ -111,38 +86,39 @@ namespace StyleCop.Analyzers.OrderingRules
             CheckModifiersOrderAndReportDiagnostics(context, modifiers);
         }
 
+        // TODO: Can this be merged with DeclarationModifiersHelper.GetModifiersFromDeclaration?
         private static SyntaxTokenList GetModifiersFromDeclaration(SyntaxNode node)
         {
             SyntaxTokenList result = default(SyntaxTokenList);
 
             switch (node.Kind())
             {
-            case SyntaxKind.ClassDeclaration:
-            case SyntaxKind.StructDeclaration:
-            case SyntaxKind.InterfaceDeclaration:
-                result = ((BaseTypeDeclarationSyntax)node).Modifiers;
-                break;
-            case SyntaxKind.EnumDeclaration:
-                result = ((EnumDeclarationSyntax)node).Modifiers;
-                break;
-            case SyntaxKind.DelegateDeclaration:
-                result = ((DelegateDeclarationSyntax)node).Modifiers;
-                break;
-            case SyntaxKind.FieldDeclaration:
-            case SyntaxKind.EventFieldDeclaration:
-                result = ((BaseFieldDeclarationSyntax)node).Modifiers;
-                break;
-            case SyntaxKind.PropertyDeclaration:
-            case SyntaxKind.EventDeclaration:
-            case SyntaxKind.IndexerDeclaration:
-                result = ((BasePropertyDeclarationSyntax)node).Modifiers;
-                break;
-            case SyntaxKind.MethodDeclaration:
-            case SyntaxKind.ConstructorDeclaration:
-            case SyntaxKind.OperatorDeclaration:
-            case SyntaxKind.ConversionOperatorDeclaration:
-                result = ((BaseMethodDeclarationSyntax)node).Modifiers;
-                break;
+                case SyntaxKind.ClassDeclaration:
+                case SyntaxKind.StructDeclaration:
+                case SyntaxKind.InterfaceDeclaration:
+                    result = ((BaseTypeDeclarationSyntax)node).Modifiers;
+                    break;
+                case SyntaxKind.EnumDeclaration:
+                    result = ((EnumDeclarationSyntax)node).Modifiers;
+                    break;
+                case SyntaxKind.DelegateDeclaration:
+                    result = ((DelegateDeclarationSyntax)node).Modifiers;
+                    break;
+                case SyntaxKind.FieldDeclaration:
+                case SyntaxKind.EventFieldDeclaration:
+                    result = ((BaseFieldDeclarationSyntax)node).Modifiers;
+                    break;
+                case SyntaxKind.PropertyDeclaration:
+                case SyntaxKind.EventDeclaration:
+                case SyntaxKind.IndexerDeclaration:
+                    result = ((BasePropertyDeclarationSyntax)node).Modifiers;
+                    break;
+                case SyntaxKind.MethodDeclaration:
+                case SyntaxKind.ConstructorDeclaration:
+                case SyntaxKind.OperatorDeclaration:
+                case SyntaxKind.ConversionOperatorDeclaration:
+                    result = ((BaseMethodDeclarationSyntax)node).Modifiers;
+                    break;
             }
 
             return result;
@@ -178,41 +154,6 @@ namespace StyleCop.Analyzers.OrderingRules
                 previousModifierType = currentModifierType;
                 previousModifier = modifier;
             }
-        }
-
-        private static ModifierType GetModifierType(SyntaxToken modifier)
-        {
-            var result = default(ModifierType);
-
-            switch (modifier.Kind())
-            {
-            case SyntaxKind.PublicKeyword:
-            case SyntaxKind.ProtectedKeyword:
-            case SyntaxKind.InternalKeyword:
-            case SyntaxKind.PrivateKeyword:
-                result = ModifierType.Access;
-                break;
-            case SyntaxKind.StaticKeyword:
-                result = ModifierType.Static;
-                break;
-            case SyntaxKind.VirtualKeyword:
-            case SyntaxKind.AbstractKeyword:
-            case SyntaxKind.OverrideKeyword:
-            case SyntaxKind.ExternKeyword:
-            case SyntaxKind.UnsafeKeyword:
-            case SyntaxKind.NewKeyword:
-            case SyntaxKind.SealedKeyword:
-            case SyntaxKind.ReadOnlyKeyword:
-            case SyntaxKind.VolatileKeyword:
-            case SyntaxKind.FixedKeyword:
-            case SyntaxKind.ConstKeyword:
-            case SyntaxKind.AsyncKeyword:
-            case SyntaxKind.PartialKeyword:
-                result = ModifierType.Other;
-                break;
-            }
-
-            return result;
         }
 
         private static int CompareModifiersType(ModifierType first, ModifierType second)
@@ -260,15 +201,15 @@ namespace StyleCop.Analyzers.OrderingRules
 
             switch (modifierType)
             {
-            case ModifierType.Access:
-                result = "access modifier";
-                break;
-            case ModifierType.Static:
-                result = "static";
-                break;
-            case ModifierType.Other:
-                result = "other";
-                break;
+                case ModifierType.Access:
+                    result = "access modifier";
+                    break;
+                case ModifierType.Static:
+                    result = "static";
+                    break;
+                case ModifierType.Other:
+                    result = "other";
+                    break;
             }
 
             return result;

@@ -100,5 +100,56 @@ namespace StyleCop.Analyzers.Helpers
 
             return default(SyntaxTokenList);
         }
+
+        internal static SyntaxNode WithModifiers(this SyntaxNode node, SyntaxTokenList modifiers)
+        {
+            switch (node.Kind())
+            {
+                case SyntaxKind.MethodDeclaration:
+                    return ((MethodDeclarationSyntax)node).WithModifiers(modifiers);
+
+                case SyntaxKind.ConstructorDeclaration:
+                    return ((ConstructorDeclarationSyntax)node).WithModifiers(modifiers);
+
+                case SyntaxKind.OperatorDeclaration:
+                    return ((OperatorDeclarationSyntax)node).WithModifiers(modifiers);
+
+                case SyntaxKind.ConversionOperatorDeclaration:
+                    return ((ConversionOperatorDeclarationSyntax)node).WithModifiers(modifiers);
+
+                case SyntaxKind.PropertyDeclaration:
+                    return ((PropertyDeclarationSyntax)node).WithModifiers(modifiers);
+
+                case SyntaxKind.EventDeclaration:
+                    return ((EventDeclarationSyntax)node).WithModifiers(modifiers);
+
+                case SyntaxKind.IndexerDeclaration:
+                    return ((IndexerDeclarationSyntax)node).WithModifiers(modifiers);
+
+                case SyntaxKind.ClassDeclaration:
+                    return ((ClassDeclarationSyntax)node).WithModifiers(modifiers);
+
+                case SyntaxKind.StructDeclaration:
+                    return ((StructDeclarationSyntax)node).WithModifiers(modifiers);
+
+                case SyntaxKind.InterfaceDeclaration:
+                    return ((InterfaceDeclarationSyntax)node).WithModifiers(modifiers);
+
+                case SyntaxKind.EnumDeclaration:
+                    return ((EnumDeclarationSyntax)node).WithModifiers(modifiers);
+
+                case SyntaxKind.DelegateDeclaration:
+                    return ((DelegateDeclarationSyntax)node).WithModifiers(modifiers);
+
+                case SyntaxKind.FieldDeclaration:
+                    return ((FieldDeclarationSyntax)node).WithModifiers(modifiers);
+
+                case SyntaxKind.EventFieldDeclaration:
+                    return ((EventFieldDeclarationSyntax)node).WithModifiers(modifiers);
+
+                default:
+                    return node;
+            }
+        }
     }
 }

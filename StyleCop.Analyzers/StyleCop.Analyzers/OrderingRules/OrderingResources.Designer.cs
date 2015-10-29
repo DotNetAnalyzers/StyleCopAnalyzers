@@ -71,6 +71,15 @@ namespace StyleCop.Analyzers.OrderingRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fix modifier order.
+        /// </summary>
+        internal static string ModifierOrderCodeFix {
+            get {
+                return ResourceManager.GetString("ModifierOrderCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add access modifier.
         /// </summary>
         internal static string SA1205CodeFix {
@@ -96,7 +105,7 @@ namespace StyleCop.Analyzers.OrderingRules {
                 return ResourceManager.GetString("SA1213CodeFix", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Reorder using statements.
         /// </summary>
