@@ -56,6 +56,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 SyntaxKind.StructDeclaration,
                 SyntaxKind.InterfaceDeclaration,
                 SyntaxKind.EnumDeclaration,
+                SyntaxKind.EnumMemberDeclaration,
                 SyntaxKind.MethodDeclaration,
                 SyntaxKind.ConstructorDeclaration,
                 SyntaxKind.DestructorDeclaration,
@@ -64,7 +65,9 @@ namespace StyleCop.Analyzers.LayoutRules
                 SyntaxKind.FieldDeclaration,
                 SyntaxKind.DelegateDeclaration,
                 SyntaxKind.EventDeclaration,
-                SyntaxKind.EventFieldDeclaration);
+                SyntaxKind.EventFieldDeclaration,
+                SyntaxKind.OperatorDeclaration,
+                SyntaxKind.ConversionOperatorDeclaration);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> DeclarationAction = HandleDeclaration;
@@ -93,25 +96,25 @@ namespace StyleCop.Analyzers.LayoutRules
             {
                 switch (triviaList[i].Kind())
                 {
-                case SyntaxKind.WhitespaceTrivia:
-                    break;
-                case SyntaxKind.EndOfLineTrivia:
-                    eolCount++;
-                    break;
-                case SyntaxKind.SingleLineCommentTrivia:
-                case SyntaxKind.MultiLineCommentTrivia:
-                    eolCount--;
-                    break;
-                case SyntaxKind.SingleLineDocumentationCommentTrivia:
-                    if (eolCount > 0)
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, triviaList[i + 1].GetLocation()));
-                    }
+                    case SyntaxKind.WhitespaceTrivia:
+                        break;
+                    case SyntaxKind.EndOfLineTrivia:
+                        eolCount++;
+                        break;
+                    case SyntaxKind.SingleLineCommentTrivia:
+                    case SyntaxKind.MultiLineCommentTrivia:
+                        eolCount--;
+                        break;
+                    case SyntaxKind.SingleLineDocumentationCommentTrivia:
+                        if (eolCount > 0)
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, triviaList[i + 1].GetLocation()));
+                        }
 
-                    return;
-                default:
-                    // no documentation found
-                    return;
+                        return;
+                    default:
+                        // no documentation found
+                        return;
                 }
             }
         }
