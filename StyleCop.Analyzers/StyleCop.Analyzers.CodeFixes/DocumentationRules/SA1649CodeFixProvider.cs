@@ -34,6 +34,13 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
+            // Do not offer a codefix when there are linked documents.
+            // Roslyn will currently not handle this properly, creating a copy of the file, instead of a link.
+            if (context.Document.GetLinkedDocumentIds().Length > 0)
+            {
+                return SpecializedTasks.CompletedTask;
+            }
+
             foreach (var diagnostic in context.Diagnostics)
             {
                 context.RegisterCodeFix(
@@ -61,12 +68,18 @@ namespace StyleCop.Analyzers.DocumentationRules
                 .RemoveDocument(document.Id)
                 .AddDocument(newDocumentId, expectedFileName, syntaxRoot, document.Folders, newPath);
 
+            /* For future usage:
             // Make sure to also add the file to linked projects
             foreach (var linkedDocumentId in document.GetLinkedDocumentIds())
             {
-                DocumentId linkedExtractedDocumentId = DocumentId.CreateNewId(linkedDocumentId.ProjectId);
-                newSolution = newSolution.AddDocument(linkedExtractedDocumentId, expectedFileName, syntaxRoot, document.Folders);
+                var linkedDocument = solution.GetDocument(linkedDocumentId);
+
+                DocumentId newLinkedDocumentId = DocumentId.CreateNewId(linkedDocumentId.ProjectId);
+                newSolution = newSolution
+                    .RemoveDocument(linkedDocumentId)
+                    .AddDocument(newLinkedDocumentId, expectedFileName, syntaxRoot, linkedDocument.Folders, newPath);
             }
+            */
 
             return newSolution;
         }
