@@ -52,28 +52,45 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 var memberAccessExpression = (MemberAccessExpressionSyntax)context.Node.Parent;
                 var memberName = memberAccessExpression.Name.ToString();
 
-                var parameters = GetMethodParameters(context.Node);
-                if (!parameters.Contains(memberName))
+                var methodDeclaration = GetContainingMethod(context.Node);
+                if (methodDeclaration != null)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation()));
+                    if (HasMethodParameterMatch(methodDeclaration, memberName))
+                    {
+                        // The this expression is allowed if there is a clash with a method parameter
+                        return;
+                    }
+
+                    if (HasLocalVariableMatch(methodDeclaration, memberName))
+                    {
+                        // The this expression is allowed if there is a clash with a local variable declaration
+                        return;
+                    }
                 }
+
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation()));
             }
         }
 
-        private static IList<string> GetMethodParameters(SyntaxNode node)
+        private static bool HasLocalVariableMatch(BaseMethodDeclarationSyntax methodDeclaration, string memberName)
         {
-            while ((node != null) && !node.IsKind(SyntaxKind.MethodDeclaration))
+            var variableDeclarators = methodDeclaration.DescendantNodes().OfType<VariableDeclaratorSyntax>();
+            return variableDeclarators.Any(vd => string.Equals(vd.Identifier.ValueText, memberName, StringComparison.Ordinal));
+        }
+
+        private static bool HasMethodParameterMatch(BaseMethodDeclarationSyntax methodDeclaration, string memberName)
+        {
+            return methodDeclaration.ParameterList.Parameters.Any(p => string.Equals(p.Identifier.ValueText, memberName, StringComparison.Ordinal));
+        }
+
+        private static BaseMethodDeclarationSyntax GetContainingMethod(SyntaxNode node)
+        {
+            while ((node != null) && !(node is BaseMethodDeclarationSyntax))
             {
                 node = node.Parent;
             }
 
-            if (node == null)
-            {
-                return new List<string>();
-            }
-
-            var methodDeclaration = (MethodDeclarationSyntax)node;
-            return methodDeclaration.ParameterList.Parameters.Select(p => p.Identifier.ValueText).ToList();
+            return (BaseMethodDeclarationSyntax)node;
         }
     }
 }
