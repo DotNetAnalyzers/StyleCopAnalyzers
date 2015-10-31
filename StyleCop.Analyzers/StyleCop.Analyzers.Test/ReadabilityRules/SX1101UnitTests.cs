@@ -211,9 +211,41 @@ public class TestClass
 {
     private int test;
 
+    public TestClass(int test)
+    {
+        this.test = test;
+    }
+
     public void TestMethod(int test)
     {
         this.test = test;
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a necessary field reference prefix will not produce any diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyThatNecessaryFieldReferencePrefixWillNotProduceDiagnosticAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    private int test;
+
+    public TestClass()
+    {
+        var test = this.test;
+    }
+
+    public void TestMethod()
+    {
+        var test = this.test;
     }
 }
 ";
