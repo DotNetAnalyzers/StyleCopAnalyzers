@@ -59,16 +59,20 @@ public class TestClass : BaseTestClass
             this.TestMethod1();
         }
 
+        var x = this.listeners;
         this.BaseTestEvent += (s, e) => { };
         var listeners = this.TestEvent;
         if (listeners != null)
         {
             listeners(this, null);
         }
+
+        var y = this.listeners;
     }
+
+    public int listeners;
 }
 ";
-
             var fixedTestCode = @"using System;
 
 public class BaseTestClass
@@ -107,13 +111,18 @@ public class TestClass : BaseTestClass
             TestMethod1();
         }
 
+        var x = this.listeners;
         BaseTestEvent += (s, e) => { };
         var listeners = TestEvent;
         if (listeners != null)
         {
             listeners(this, null);
         }
+
+        var y = this.listeners;
     }
+
+    public int listeners;
 }
 ";
 
@@ -125,8 +134,8 @@ public class TestClass : BaseTestClass
                 this.CSharpDiagnostic().WithLocation(30, 84),
                 this.CSharpDiagnostic().WithLocation(32, 13),
                 this.CSharpDiagnostic().WithLocation(36, 13),
-                this.CSharpDiagnostic().WithLocation(39, 9),
-                this.CSharpDiagnostic().WithLocation(40, 25)
+                this.CSharpDiagnostic().WithLocation(40, 9),
+                this.CSharpDiagnostic().WithLocation(41, 25)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -211,9 +220,145 @@ public class TestClass
 {
     private int test;
 
+    public TestClass(int test)
+    {
+        this.test = test;
+    }
+
     public void TestMethod(int test)
     {
         this.test = test;
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a necessary field reference prefix will not produce any diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyThatNecessaryFieldReferencePrefixWillNotProduceDiagnosticAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    private int test;
+
+    public TestClass()
+    {
+        var test = this.test;
+    }
+
+    public void TestMethod()
+    {
+        var test = this.test;
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestExtensionMethodAsync()
+        {
+            var testCode = @"
+class ClassName
+{
+    string P => string.Empty;
+
+    public void Method()
+    {
+        int value = this.P();
+    }
+}
+
+static class ClassNameExtensions
+{
+    public static int P(this ClassName instance) => 3;
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestTypeArgumentCollisionAsync()
+        {
+            var testCode = @"
+class BaseClass
+{
+    protected int Options => 3;
+}
+
+class DerivedClass : BaseClass
+{
+    void Method<Options>()
+    {
+        int options = this.Options;
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestPropertyValueKeywordCollisionAsync()
+        {
+            var testCode = @"
+class ClassName
+{
+    int value;
+
+    int Value
+    {
+        get { return value; }
+        set { this.value = value; }
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestEscapedParameterCollisionAsync()
+        {
+            var testCode = @"
+class ClassName
+{
+    int @object;
+
+    ClassName(int @object)
+    {
+        this.@object = @object;
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestFieldUseBeforeVariableDefinitionAsync()
+        {
+            var testCode = @"
+class ClassName
+{
+    object p;
+
+    object Property
+    {
+        get
+        {
+            if (this.p != null) return this.p;
+            object p = new object();
+            return this.p = p;
+        }
     }
 }
 ";
