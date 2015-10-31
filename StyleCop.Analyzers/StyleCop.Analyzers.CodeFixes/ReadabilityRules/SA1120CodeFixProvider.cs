@@ -88,6 +88,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static bool TriviaHasLeadingContentOnLine(SyntaxNode root, SyntaxTrivia commentTrivia)
         {
+            if (commentTrivia.SpanStart == 0)
+            {
+                // It is impossible to have leading content at the start of the file.
+                return false;
+            }
+
             var nodeBeforeStart = commentTrivia.SpanStart - 1;
             var nodeBefore = root.FindNode(new Microsoft.CodeAnalysis.Text.TextSpan(nodeBeforeStart, 1));
 
@@ -96,6 +102,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static bool TriviaHasTrailingContentOnLine(SyntaxNode root, SyntaxTrivia commentTrivia)
         {
+            if (commentTrivia.Span.End == root.Span.End)
+            {
+                // It is impossible to have trailing content at the end of the file.
+                return false;
+            }
+
             var nodeAfterTriviaStart = commentTrivia.Span.End + 1;
             var nodeAfterTrivia = root.FindNode(new Microsoft.CodeAnalysis.Text.TextSpan(nodeAfterTriviaStart, 1));
 
