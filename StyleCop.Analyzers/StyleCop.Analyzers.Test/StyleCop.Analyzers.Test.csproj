@@ -365,6 +365,7 @@
     <None Include="..\stylecop.json">
       <Link>stylecop.json</Link>
     </None>
+    <Compile Include="LayoutRules\SA1502\SA1502UnitTests.Operators.cs" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

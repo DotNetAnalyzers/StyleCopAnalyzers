@@ -89,6 +89,33 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A C# element containing opening and closing curly brackets is written completely on a single line..
+        /// </summary>
+        internal static string SA1502Description {
+            get {
+                return ResourceManager.GetString("SA1502Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Element must not be on a single line.
+        /// </summary>
+        internal static string SA1502MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1502MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Element must not be on a single line.
+        /// </summary>
+        internal static string SA1502Title {
+            get {
+                return ResourceManager.GetString("SA1502Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Wrap with curly brackets.
         /// </summary>
         internal static string SA1503CodeFix {

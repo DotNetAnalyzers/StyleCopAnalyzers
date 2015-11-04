@@ -126,6 +126,15 @@
   <data name="SA1502CodeFix" xml:space="preserve">
     <value>Expand element</value>
   </data>
+  <data name="SA1502Description" xml:space="preserve">
+    <value>A C# element containing opening and closing curly brackets is written completely on a single line.</value>
+  </data>
+  <data name="SA1502MessageFormat" xml:space="preserve">
+    <value>Element must not be on a single line</value>
+  </data>
+  <data name="SA1502Title" xml:space="preserve">
+    <value>Element must not be on a single line</value>
+  </data>
   <data name="SA1503CodeFix" xml:space="preserve">
     <value>Wrap with curly brackets</value>
   </data>
