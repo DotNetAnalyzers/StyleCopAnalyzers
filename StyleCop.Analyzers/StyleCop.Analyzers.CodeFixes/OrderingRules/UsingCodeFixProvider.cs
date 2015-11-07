@@ -154,7 +154,8 @@ namespace StyleCop.Analyzers.OrderingRules
             }
 
             var newFirstToken = newSyntaxRoot.GetFirstToken();
-            return newSyntaxRoot.ReplaceToken(newFirstToken, newFirstToken.WithLeadingTrivia(fileHeader));
+            var newLeadingTrivia = newFirstToken.LeadingTrivia.InsertRange(0, fileHeader);
+            return newSyntaxRoot.ReplaceToken(newFirstToken, newFirstToken.WithLeadingTrivia(newLeadingTrivia));
         }
 
         private static int CountNamespaces(SyntaxList<MemberDeclarationSyntax> members)
