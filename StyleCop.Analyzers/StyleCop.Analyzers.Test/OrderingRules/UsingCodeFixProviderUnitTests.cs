@@ -477,6 +477,98 @@ namespace TestNamespace2
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that the code fix will handle using statements with directive trivia outside of namespaces
+        /// This is a regression test for #1733
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyCodefixForDirectiveTriviaOutsideOfNamespacesAsync()
+        {
+            var testCode = @"// <copyright file=""Program.cs"" company=""PlaceholderCompany"" >
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+#if DEBUG
+using Fish;
+#else
+using Fish.Face;
+#endif
+using System.Text;
+using System;
+
+namespace StyleCopBugRepro
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Int32 q;
+            Haddock h;
+            StringBuilder sb;
+        }
+    }
+}
+
+namespace Fish
+{
+    public class Haddock { }
+
+    namespace Face
+    {
+        public class Haddock { }
+    }
+}
+";
+
+            var fixedTestCode = @"// <copyright file=""Program.cs"" company=""PlaceholderCompany"" >
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+#if DEBUG
+using Fish;
+#else
+using Fish.Face;
+#endif
+using System;
+using System.Text;
+
+namespace StyleCopBugRepro
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Int32 q;
+            Haddock h;
+            StringBuilder sb;
+        }
+    }
+}
+
+namespace Fish
+{
+    public class Haddock { }
+
+    namespace Face
+    {
+        public class Haddock { }
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(8, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(10, 1),
+                this.CSharpDiagnostic(SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace.DiagnosticId).WithLocation(10, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(11, 1)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<string> GetDisabledDiagnostics()
         {

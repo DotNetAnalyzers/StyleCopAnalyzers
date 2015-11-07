@@ -208,6 +208,7 @@
     <Compile Include="LayoutRules\SA1502\SA1502UnitTests.Interfaces.cs" />
     <Compile Include="LayoutRules\SA1502\SA1502UnitTests.Methods.cs" />
     <Compile Include="LayoutRules\SA1502\SA1502UnitTests.Namespaces.cs" />
+    <Compile Include="LayoutRules\SA1502\SA1502UnitTests.Operators.cs" />
     <Compile Include="LayoutRules\SA1502\SA1502UnitTests.Properties.cs" />
     <Compile Include="LayoutRules\SA1502\SA1502UnitTests.TypeDeclarations.cs" />
     <Compile Include="LayoutRules\SA1503UnitTests.cs" />
