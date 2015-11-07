@@ -61,6 +61,27 @@ public partial class Bar
         }
 
         [Fact]
+        public async Task TestPreferFilenameClassAsync()
+        {
+            var testCode = @"public class Foo
+{
+}
+public class Test0
+{
+}";
+
+            var fixedCode = @"public class Test0
+{
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(1, 14);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestNestedClassesAsync()
         {
             var testCode = @"public class Foo

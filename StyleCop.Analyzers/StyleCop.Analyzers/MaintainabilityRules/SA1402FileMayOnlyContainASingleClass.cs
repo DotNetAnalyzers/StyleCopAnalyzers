@@ -5,6 +5,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.IO;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -60,34 +62,32 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
-
             var descentNodes = syntaxRoot.DescendantNodes(descendIntoChildren: node => node != null && !node.IsKind(SyntaxKind.ClassDeclaration));
+            var classNodes = from descentNode in descentNodes
+                             where descentNode.IsKind(SyntaxKind.ClassDeclaration)
+                             select descentNode as ClassDeclarationSyntax;
 
-            string foundClassName = null;
-            bool isPartialClass = false;
+            var preferredClassNode = classNodes.FirstOrDefault(n => n.Identifier.Text == Path.GetFileNameWithoutExtension(context.Tree.FilePath)) ?? classNodes.FirstOrDefault();
 
-            foreach (var node in descentNodes)
+            if (preferredClassNode != null)
             {
-                if (node.IsKind(SyntaxKind.ClassDeclaration))
-                {
-                    ClassDeclarationSyntax classDeclaration = node as ClassDeclarationSyntax;
-                    if (foundClassName != null)
-                    {
-                        if (isPartialClass && foundClassName == classDeclaration.Identifier.Text)
-                        {
-                            continue;
-                        }
+                string foundClassName = null;
+                bool isPartialClass = false;
 
-                        var location = NamedTypeHelpers.GetNameOrIdentifierLocation(node);
-                        if (location != null)
-                        {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
-                        }
-                    }
-                    else
+                foundClassName = preferredClassNode.Identifier.Text;
+                isPartialClass = preferredClassNode.Modifiers.Any(SyntaxKind.PartialKeyword);
+
+                foreach (var classNode in classNodes)
+                {
+                    if (classNode == preferredClassNode || (isPartialClass && foundClassName == classNode.Identifier.Text))
                     {
-                        foundClassName = classDeclaration.Identifier.Text;
-                        isPartialClass = classDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword);
+                        continue;
+                    }
+
+                    var location = NamedTypeHelpers.GetNameOrIdentifierLocation(classNode);
+                    if (location != null)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
                     }
                 }
             }
