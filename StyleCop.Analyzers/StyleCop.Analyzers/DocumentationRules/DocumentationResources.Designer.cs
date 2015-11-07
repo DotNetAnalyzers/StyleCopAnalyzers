@@ -134,6 +134,33 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The XML header documentation for a C# code element contains an empty tag..
+        /// </summary>
+        internal static string SA1627Description {
+            get {
+                return ResourceManager.GetString("SA1627Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The documentation text within the \&apos;{0}\&apos; tag must not be empty..
+        /// </summary>
+        internal static string SA1627MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1627MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Documentation text must not be empty.
+        /// </summary>
+        internal static string SA1627Title {
+            get {
+                return ResourceManager.GetString("SA1627Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add file header.
         /// </summary>
         internal static string SA1633CodeFix {

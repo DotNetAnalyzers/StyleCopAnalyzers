@@ -47,13 +47,13 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// The ID for diagnostics produced by the <see cref="SA1627DocumentationTextMustNotBeEmpty"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1627";
-        private const string Title = "Documentation text must not be empty";
-        private const string MessageFormat = "The documentation text within the \'{0}\' tag must not be empty.";
-        private const string Description = "The XML header documentation for a C# code element contains an empty tag.";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1627.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1627Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1627MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1627Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1627.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> XmlElementAction = HandleXmlElement;
