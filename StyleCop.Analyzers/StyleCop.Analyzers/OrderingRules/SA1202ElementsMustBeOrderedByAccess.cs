@@ -122,6 +122,14 @@ namespace StyleCop.Analyzers.OrderingRules
             {
                 var currentSyntaxKind = member.Kind();
                 currentSyntaxKind = currentSyntaxKind == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : currentSyntaxKind;
+
+                // if the syntaxkind of this member (e.g. SyntaxKind.IncompleteMember) will not
+                // be handled, skip early.
+                if (!((ICollection<SyntaxKind>)MemberNames.Keys).Contains(currentSyntaxKind))
+                {
+                    continue;
+                }
+
                 AccessLevel currentAccessLevel;
                 var modifiers = member.GetModifiers();
                 if ((currentSyntaxKind == SyntaxKind.ConstructorDeclaration && modifiers.Any(SyntaxKind.StaticKeyword))

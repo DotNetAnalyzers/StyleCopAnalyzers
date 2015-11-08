@@ -929,6 +929,43 @@ public class TestClass : TestInterface
 {
     private string Test;
     public string
+    private string
+}
+";
+
+            // We don't care about the syntax errors.
+            var expected = new[]
+            {
+                 new DiagnosticResult
+                 {
+                     Id = "CS1585",
+                     Message = "Member modifier 'public' must precede the member type and name",
+                     Severity = DiagnosticSeverity.Error,
+                     Locations = new[] { new DiagnosticResultLocation("Test0.cs", 5, 5) }
+                 },
+                 new DiagnosticResult
+                 {
+                     Id = "CS1519",
+                     Message = "Invalid token '}' in class, struct, or interface member declaration",
+                     Severity = DiagnosticSeverity.Error,
+                     Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 1) }
+                 }
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer will properly handle incomplete members.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task Issue150RegressionAsync()
+        {
+            string testCode = @"public class OuterType
+{
+    private string Test;
+    private string
     public string
 }
 ";
