@@ -101,14 +101,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleArrayCreationExpression(SyntaxNodeAnalysisContext context)
         {
-            var arrayCreation = (ArrayCreationExpressionSyntax)context.Node;
+            var arrayCreationExpression = (ArrayCreationExpressionSyntax)context.Node;
 
-            if (arrayCreation.Type == null)
+            if (arrayCreationExpression.Type == null)
             {
                 return;
             }
 
-            foreach (var arrayRankSpecifierSyntax in arrayCreation.Type.RankSpecifiers)
+            foreach (var arrayRankSpecifierSyntax in arrayCreationExpression.Type.RankSpecifiers)
             {
                 var sizes = arrayRankSpecifierSyntax.Sizes;
                 if (sizes.Count < 2)
@@ -154,8 +154,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleParenthesizedLambdaExpression(SyntaxNodeAnalysisContext context)
         {
-            var lambdaExpression = (ParenthesizedLambdaExpressionSyntax)context.Node;
-            HandleBaseParameterListSyntax(context, lambdaExpression.ParameterList);
+            var parenthesizedLambdaExpression = (ParenthesizedLambdaExpressionSyntax)context.Node;
+            HandleBaseParameterListSyntax(context, parenthesizedLambdaExpression.ParameterList);
         }
 
         private static void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
@@ -166,26 +166,26 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleAnonymousMethodExpression(SyntaxNodeAnalysisContext context)
         {
-            var anonymousMethod = (AnonymousMethodExpressionSyntax)context.Node;
-            HandleBaseParameterListSyntax(context, anonymousMethod.ParameterList);
+            var anonymousMethodExpression = (AnonymousMethodExpressionSyntax)context.Node;
+            HandleBaseParameterListSyntax(context, anonymousMethodExpression.ParameterList);
         }
 
         private static void HandleElementAccessExpression(SyntaxNodeAnalysisContext context)
         {
-            var elementAccess = (ElementAccessExpressionSyntax)context.Node;
-            HandleBaseArgumentListSyntax(context, elementAccess.ArgumentList);
+            var elementAccessExpression = (ElementAccessExpressionSyntax)context.Node;
+            HandleBaseArgumentListSyntax(context, elementAccessExpression.ArgumentList);
         }
 
         private static void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var constructorDeclaration = (IndexerDeclarationSyntax)context.Node;
-            HandleBaseParameterListSyntax(context, constructorDeclaration.ParameterList);
+            var indexerDeclaration = (IndexerDeclarationSyntax)context.Node;
+            HandleBaseParameterListSyntax(context, indexerDeclaration.ParameterList);
         }
 
         private static void HandleObjectCreationExpression(SyntaxNodeAnalysisContext context)
         {
-            var invocationEpression = (ObjectCreationExpressionSyntax)context.Node;
-            HandleBaseArgumentListSyntax(context, invocationEpression.ArgumentList);
+            var objectCreationExpression = (ObjectCreationExpressionSyntax)context.Node;
+            HandleBaseArgumentListSyntax(context, objectCreationExpression.ArgumentList);
         }
 
         private static void HandleInvocationExpression(SyntaxNodeAnalysisContext context)
