@@ -929,7 +929,7 @@ public class TestClass : TestInterface
 {
     private string Test;
     public string
-    private string
+    public string
 }
 ";
 
