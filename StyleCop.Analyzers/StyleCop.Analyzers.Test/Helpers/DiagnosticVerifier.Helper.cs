@@ -224,10 +224,10 @@ namespace TestHelper
         /// </summary>
         /// <param name="diagnostics">A collection of <see cref="Diagnostic"/>s to be sorted.</param>
         /// <returns>A collection containing the input <paramref name="diagnostics"/>, sorted by
-        /// <see cref="Diagnostic.Location"/>.</returns>
+        /// <see cref="Diagnostic.Location"/> and <see cref="Diagnostic.Id"/>.</returns>
         private static Diagnostic[] SortDistinctDiagnostics(IEnumerable<Diagnostic> diagnostics)
         {
-            return diagnostics.OrderBy(d => d.Location.SourceSpan.Start).ToArray();
+            return diagnostics.OrderBy(d => d.Location.SourceSpan.Start).ThenBy(d => d.Id).ToArray();
         }
 
         /// <summary>
