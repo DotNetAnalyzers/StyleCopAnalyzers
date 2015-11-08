@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System.Collections.Immutable;
     using System.IO;
     using System.Linq;
+    using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -54,7 +55,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            var analyzer = new Analyzer(context.Options);
+            var analyzer = new Analyzer(context.Options, context.CancellationToken);
             context.RegisterSyntaxTreeActionHonorExclusions(analyzer.HandleSyntaxTreeAction);
         }
 
@@ -62,9 +63,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             private readonly FileNamingConvention fileNamingConvention;
 
-            public Analyzer(AnalyzerOptions options)
+            public Analyzer(AnalyzerOptions options, CancellationToken cancellationToken)
             {
-                StyleCopSettings settings = options.GetStyleCopSettings();
+                StyleCopSettings settings = options.GetStyleCopSettings(cancellationToken);
                 this.fileNamingConvention = settings.DocumentationRules.FileNamingConvention;
             }
 

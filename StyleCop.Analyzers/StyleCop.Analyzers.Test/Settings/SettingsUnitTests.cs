@@ -21,7 +21,7 @@ namespace StyleCop.Analyzers.Test.Settings
         [Fact]
         public void VerifySettingsDefaults()
         {
-            var styleCopSettings = SettingsHelper.GetStyleCopSettings(default(SyntaxTreeAnalysisContext));
+            var styleCopSettings = SettingsHelper.GetStyleCopSettings(default(SyntaxTreeAnalysisContext), CancellationToken.None);
 
             Assert.Equal("PlaceholderCompany", styleCopSettings.DocumentationRules.CompanyName);
             Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.CopyrightText);
@@ -57,7 +57,7 @@ namespace StyleCop.Analyzers.Test.Settings
 ";
             var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettings();
+            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
 
             Assert.Equal("TestCompany", styleCopSettings.DocumentationRules.CompanyName);
             Assert.Equal("Custom copyright text.", styleCopSettings.DocumentationRules.CopyrightText);
@@ -83,7 +83,7 @@ namespace StyleCop.Analyzers.Test.Settings
 ";
             var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettings();
+            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
 
             Assert.Equal("TestCompany", styleCopSettings.DocumentationRules.CompanyName);
             Assert.Equal("Copyright (c) TestCompany. All rights reserved.", styleCopSettings.DocumentationRules.CopyrightText);
@@ -103,7 +103,7 @@ namespace StyleCop.Analyzers.Test.Settings
 ";
             var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettings();
+            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
 
             Assert.Equal("[CircularReference]", styleCopSettings.DocumentationRules.CopyrightText);
         }
@@ -122,7 +122,7 @@ namespace StyleCop.Analyzers.Test.Settings
 ";
             var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettings();
+            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
 
             Assert.Equal("[InvalidReference]", styleCopSettings.DocumentationRules.CopyrightText);
         }
@@ -133,7 +133,7 @@ namespace StyleCop.Analyzers.Test.Settings
             var settings = @"This is not a JSON file.";
             var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
 
-            var styleCopSettings = context.GetStyleCopSettings();
+            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
 
             // The result is the same as the default settings.
             Assert.Equal("PlaceholderCompany", styleCopSettings.DocumentationRules.CompanyName);

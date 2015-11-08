@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers
 {
     using System.Collections.Immutable;
     using System.IO;
+    using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Newtonsoft.Json;
@@ -21,23 +22,25 @@ namespace StyleCop.Analyzers
         /// Gets the StyleCop settings.
         /// </summary>
         /// <param name="context">The context that will be used to determine the StyleCop settings.</param>
+        /// <param name="cancellationToken">The cancellation token that the operation will observe.</param>
         /// <returns>A <see cref="StyleCopSettings"/> instance that represents the StyleCop settings for the given context.</returns>
-        internal static StyleCopSettings GetStyleCopSettings(this SyntaxTreeAnalysisContext context)
+        internal static StyleCopSettings GetStyleCopSettings(this SyntaxTreeAnalysisContext context, CancellationToken cancellationToken)
         {
-            return context.Options.GetStyleCopSettings();
+            return context.Options.GetStyleCopSettings(cancellationToken);
         }
 
         /// <summary>
         /// Gets the StyleCop settings.
         /// </summary>
         /// <param name="options">The analyzer options that will be used to determine the StyleCop settings.</param>
+        /// <param name="cancellationToken">The cancellation token that the operation will observe.</param>
         /// <returns>A <see cref="StyleCopSettings"/> instance that represents the StyleCop settings for the given context.</returns>
-        internal static StyleCopSettings GetStyleCopSettings(this AnalyzerOptions options)
+        internal static StyleCopSettings GetStyleCopSettings(this AnalyzerOptions options, CancellationToken cancellationToken)
         {
-            return GetStyleCopSettings(options != null ? options.AdditionalFiles : ImmutableArray.Create<AdditionalText>());
+            return GetStyleCopSettings(options != null ? options.AdditionalFiles : ImmutableArray.Create<AdditionalText>(), cancellationToken);
         }
 
-        private static StyleCopSettings GetStyleCopSettings(ImmutableArray<AdditionalText> additionalFiles)
+        private static StyleCopSettings GetStyleCopSettings(ImmutableArray<AdditionalText> additionalFiles, CancellationToken cancellationToken)
         {
             try
             {
@@ -45,7 +48,8 @@ namespace StyleCop.Analyzers
                 {
                     if (Path.GetFileName(additionalFile.Path).ToLowerInvariant() == SettingsFileName)
                     {
-                        var root = JsonConvert.DeserializeObject<SettingsFile>(additionalFile.GetText().ToString());
+                        string additionalTextContent = additionalFile.GetText(cancellationToken).ToString();
+                        var root = JsonConvert.DeserializeObject<SettingsFile>(additionalTextContent);
                         return root.Settings;
                     }
                 }

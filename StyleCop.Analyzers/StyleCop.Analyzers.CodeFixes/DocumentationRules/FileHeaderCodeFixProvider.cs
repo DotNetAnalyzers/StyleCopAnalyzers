@@ -66,7 +66,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static async Task<Document> GetTransformedDocumentAsync(Document document, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var settings = document.Project.AnalyzerOptions.GetStyleCopSettings();
+            var settings = document.Project.AnalyzerOptions.GetStyleCopSettings(cancellationToken);
 
             var fileHeader = FileHeaderHelpers.ParseFileHeader(root);
             SyntaxNode newSyntaxRoot;
