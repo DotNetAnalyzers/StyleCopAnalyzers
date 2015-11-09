@@ -135,14 +135,14 @@ class ClassName
             {
                 new DiagnosticResult()
                 {
-                    Id = "CS1003",
-                    Message = "Syntax error, ',' expected",
+                    Id = "CS0443",
+                    Message = "Syntax error; value expected",
                     Severity = DiagnosticSeverity.Error,
                 },
                 new DiagnosticResult()
                 {
-                    Id = "CS0443",
-                    Message = "Syntax error; value expected",
+                    Id = "CS1003",
+                    Message = "Syntax error, ',' expected",
                     Severity = DiagnosticSeverity.Error,
                 },
                 new DiagnosticResult()

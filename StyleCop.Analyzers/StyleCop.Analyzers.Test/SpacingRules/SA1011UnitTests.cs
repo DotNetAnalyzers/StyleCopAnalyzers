@@ -306,16 +306,16 @@ class ClassName
             {
                 new DiagnosticResult
                 {
-                    Id = "CS1003",
+                    Id = "CS0443",
                     Severity = DiagnosticSeverity.Error,
-                    Message = "Syntax error, ',' expected",
+                    Message = "Syntax error; value expected",
                     Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 28) }
                 },
                 new DiagnosticResult
                 {
-                    Id = "CS0443",
+                    Id = "CS1003",
                     Severity = DiagnosticSeverity.Error,
-                    Message = "Syntax error; value expected",
+                    Message = "Syntax error, ',' expected",
                     Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 28) }
                 },
                 new DiagnosticResult

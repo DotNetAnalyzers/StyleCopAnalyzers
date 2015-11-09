@@ -33,14 +33,14 @@ using System;
 
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(4, column),
                 new DiagnosticResult
                 {
                     Id = "CS0116",
                     Severity = DiagnosticSeverity.Error,
                     Locations = new[] { new DiagnosticResultLocation("Test0.cs", 4, column) },
                     Message = "A namespace cannot directly contain members such as fields or methods"
-                }
+                },
+                this.CSharpDiagnostic().WithLocation(4, column)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
