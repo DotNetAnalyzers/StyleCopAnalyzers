@@ -5,7 +5,6 @@ namespace StyleCop.Analyzers.SpacingRules
 {
     using System;
     using System.Collections.Immutable;
-    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -268,15 +267,13 @@ namespace StyleCop.Analyzers.SpacingRules
             switch (unaryExpression.OperatorToken.Kind())
             {
             case SyntaxKind.PlusToken:
-                analyze = context.IsAnalyzerSuppressed(SA1022PositiveSignsMustBeSpacedCorrectly.DiagnosticId);
-                break;
             case SyntaxKind.MinusToken:
-                analyze = context.IsAnalyzerSuppressed(SA1021NegativeSignsMustBeSpacedCorrectly.DiagnosticId);
-                break;
             case SyntaxKind.PlusPlusToken:
             case SyntaxKind.MinusMinusToken:
-                analyze = context.IsAnalyzerSuppressed(SA1020IncrementDecrementSymbolsMustBeSpacedCorrectly.DiagnosticId);
+                // These expressions are handled by SA1020, SA1021, SA1022
+                analyze = false;
                 break;
+
             default:
                 analyze = true;
                 break;
@@ -284,7 +281,7 @@ namespace StyleCop.Analyzers.SpacingRules
 
             if (analyze)
             {
-                if (followingTrivia.Any(t => t.IsKind(SyntaxKind.SingleLineCommentTrivia)) || followingTrivia.Any(t => t.IsKind(SyntaxKind.MultiLineCommentTrivia)))
+                if (followingTrivia.Any(SyntaxKind.SingleLineCommentTrivia) || followingTrivia.Any(SyntaxKind.MultiLineCommentTrivia))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(DescriptorNotFollowedByComment, unaryExpression.OperatorToken.GetLocation(), unaryExpression.OperatorToken.Text));
                 }
