@@ -485,6 +485,32 @@ namespace StyleCop.Analyzers.Helpers
             {
                 return this[this.Count - 1];
             }
+
+            public bool Any(SyntaxKind kind)
+            {
+                return this.part1.Any(kind) || this.part2.Any(kind);
+            }
+
+            public bool All(Func<SyntaxTrivia, bool> predicate)
+            {
+                foreach (var trivia in this.part1)
+                {
+                    if (!predicate(trivia))
+                    {
+                        return false;
+                    }
+                }
+
+                foreach (var trivia in this.part2)
+                {
+                    if (!predicate(trivia))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
         }
     }
 }

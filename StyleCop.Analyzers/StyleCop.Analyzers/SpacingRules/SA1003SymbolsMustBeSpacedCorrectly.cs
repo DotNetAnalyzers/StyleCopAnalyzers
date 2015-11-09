@@ -5,7 +5,6 @@ namespace StyleCop.Analyzers.SpacingRules
 {
     using System;
     using System.Collections.Immutable;
-    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -281,7 +280,7 @@ namespace StyleCop.Analyzers.SpacingRules
 
             if (analyze)
             {
-                if (followingTrivia.Any(t => t.IsKind(SyntaxKind.SingleLineCommentTrivia)) || followingTrivia.Any(t => t.IsKind(SyntaxKind.MultiLineCommentTrivia)))
+                if (followingTrivia.Any(SyntaxKind.SingleLineCommentTrivia) || followingTrivia.Any(SyntaxKind.MultiLineCommentTrivia))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(DescriptorNotFollowedByComment, unaryExpression.OperatorToken.GetLocation(), unaryExpression.OperatorToken.Text));
                 }
