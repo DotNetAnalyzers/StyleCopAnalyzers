@@ -270,6 +270,7 @@ namespace StyleCop.Analyzers.SpacingRules
             case SyntaxKind.MinusToken:
             case SyntaxKind.PlusPlusToken:
             case SyntaxKind.MinusMinusToken:
+                // These expressions are handled by SA1020, SA1021, SA1022
                 analyze = false;
                 break;
 
