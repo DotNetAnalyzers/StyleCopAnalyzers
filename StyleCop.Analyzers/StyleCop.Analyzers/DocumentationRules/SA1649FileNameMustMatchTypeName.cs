@@ -98,6 +98,12 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 if (string.Compare(fileName, expectedFileName, StringComparison.OrdinalIgnoreCase) != 0)
                 {
+                    if (this.fileNamingConvention == FileNamingConvention.StyleCop
+                        && string.Compare(fileName, GetSimpleFileName(firstTypeDeclaration), StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        return;
+                    }
+
                     var properties = ImmutableDictionary.Create<string, string>()
                         .Add(ExpectedFileNameKey, expectedFileName);
 
@@ -121,6 +127,11 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 var typeParameterList = string.Join(",", firstTypeDeclaration.TypeParameterList.Parameters.Select(p => p.Identifier.ValueText));
                 return $"{firstTypeDeclaration.Identifier.ValueText}{{{typeParameterList}}}.cs";
+            }
+
+            private static string GetSimpleFileName(TypeDeclarationSyntax firstTypeDeclaration)
+            {
+                return $"{firstTypeDeclaration.Identifier.ValueText}.cs";
             }
 
             private static string GetMetadataFileName(TypeDeclarationSyntax firstTypeDeclaration)
