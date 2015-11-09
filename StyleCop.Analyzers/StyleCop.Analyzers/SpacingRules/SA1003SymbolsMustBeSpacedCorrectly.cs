@@ -268,15 +268,12 @@ namespace StyleCop.Analyzers.SpacingRules
             switch (unaryExpression.OperatorToken.Kind())
             {
             case SyntaxKind.PlusToken:
-                analyze = context.IsAnalyzerSuppressed(SA1022PositiveSignsMustBeSpacedCorrectly.DiagnosticId);
-                break;
             case SyntaxKind.MinusToken:
-                analyze = context.IsAnalyzerSuppressed(SA1021NegativeSignsMustBeSpacedCorrectly.DiagnosticId);
-                break;
             case SyntaxKind.PlusPlusToken:
             case SyntaxKind.MinusMinusToken:
-                analyze = context.IsAnalyzerSuppressed(SA1020IncrementDecrementSymbolsMustBeSpacedCorrectly.DiagnosticId);
+                analyze = false;
                 break;
+
             default:
                 analyze = true;
                 break;
