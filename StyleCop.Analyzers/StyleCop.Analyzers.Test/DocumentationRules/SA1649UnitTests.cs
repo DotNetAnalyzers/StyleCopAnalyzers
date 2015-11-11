@@ -169,6 +169,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 
             var expectedDiagnostic = this.CSharpDiagnostic().WithLocation("TestType`3.cs", 3, 13 + typeKeyword.Length);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None, "TestType`3.cs").ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None, "TestType.cs").ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None, "TestType{T1,T2,T3}.cs").ConfigureAwait(false);
             await this.VerifyRenameAsync(testCode, "TestType{T1,T2,T3}.cs", CancellationToken.None).ConfigureAwait(false);
         }
@@ -194,6 +195,9 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 
             var expectedDiagnostic = this.CSharpDiagnostic().WithLocation("TestType{T1,T2,T3}.cs", 3, 13 + typeKeyword.Length);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None, "TestType{T1,T2,T3}.cs").ConfigureAwait(false);
+
+            expectedDiagnostic = this.CSharpDiagnostic().WithLocation("TestType.cs", 3, 13 + typeKeyword.Length);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None, "TestType.cs").ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None, "TestType`3.cs").ConfigureAwait(false);
             await this.VerifyRenameAsync(testCode, "TestType`3.cs", CancellationToken.None).ConfigureAwait(false);
         }

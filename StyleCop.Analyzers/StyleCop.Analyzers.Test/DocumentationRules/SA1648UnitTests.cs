@@ -81,6 +81,9 @@ interface ITest : IBase { }";
         [InlineData("string this [string f] { get { return f; } }")]
         [InlineData("event System.Action foo;")]
         [InlineData("event System.Action Foo { add { } remove { } }")]
+        [InlineData("~Test() { }")]
+        [InlineData("public static Test operator +(Test value) { return value; }")]
+        [InlineData("public static explicit operator Test(int value) { return new Test(); }")]
         public async Task TestMemberThatShouldNotHaveInheritDocAsync(string declaration)
         {
             var testCode = @"class Test

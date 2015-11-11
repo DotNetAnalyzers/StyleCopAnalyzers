@@ -1128,11 +1128,102 @@ public class TestClass
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that a base constructor call with the comma on the wrong line is handled properly.
+        /// This is a regression test for #1654.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyBaseConstructorCallAsync()
+        {
+            var testCode = @"
+abstract class BaseClass
+{
+    protected BaseClass(int x, int y) { }
+}
+
+class ClassName : BaseClass
+{
+    protected ClassName(int x, int y)
+        : base(
+            x
+            , y)
+    {
+    }
+}
+";
+            var fixedCode = @"
+abstract class BaseClass
+{
+    protected BaseClass(int x, int y) { }
+}
+
+class ClassName : BaseClass
+{
+    protected ClassName(int x, int y)
+        : base(
+            x,
+            y)
+    {
+    }
+}
+";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(12, 13);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a this constructor call with the comma on the wrong line is handled properly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyThisConstructorCallAsync()
+        {
+            var testCode = @"
+class ClassName
+{
+    private ClassName(int x, int y) { }
+
+    protected ClassName(int x, int y, int z)
+        : this(
+            x
+            , y)
+    {
+    }
+}
+";
+            var fixedCode = @"
+class ClassName
+{
+    private ClassName(int x, int y) { }
+
+    protected ClassName(int x, int y, int z)
+        : this(
+            x,
+            y)
+    {
+    }
+}
+";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(9, 13);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1113CommaMustBeOnSameLineAsPreviousParameter();
         }
 
+        /// <inheritdoc/>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new TokenSpacingCodeFixProvider();

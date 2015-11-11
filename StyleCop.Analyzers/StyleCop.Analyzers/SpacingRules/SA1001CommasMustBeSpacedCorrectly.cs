@@ -27,7 +27,7 @@ namespace StyleCop.Analyzers.SpacingRules
         /// </summary>
         public const string DiagnosticId = "SA1001";
         private const string Title = "Commas must be spaced correctly";
-        private const string MessageFormat = "Commas must{0} be {1} by a space.";
+        private const string MessageFormat = "Commas must{0} be {1} by whitespace.";
         private const string Description = "The spacing around a comma is incorrect, within a C# code file.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1001.md";
 
@@ -99,21 +99,15 @@ namespace StyleCop.Analyzers.SpacingRules
                 }
             }
 
-            bool hasPrecedingSpace = false;
-            if (!token.IsFirstInLine())
+            if (token.IsFirstInLine() || token.IsPrecededByWhitespace())
             {
-                hasPrecedingSpace = token.IsPrecededByWhitespace();
-            }
-
-            if (hasPrecedingSpace)
-            {
-                // comma must{ not} be {preceded} by a space
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemovePreceding, " not", "preceded"));
+                // comma must{ not} be {preceded} by whitespace
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemovePrecedingPreserveLayout, " not", "preceded"));
             }
 
             if (missingFollowingSpace)
             {
-                // comma must{} be {followed} by a space
+                // comma must{} be {followed} by whitespace
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.InsertFollowing, string.Empty, "followed"));
             }
         }
