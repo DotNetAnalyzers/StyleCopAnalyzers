@@ -430,5 +430,75 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that complex element initializers are handled properly.
+        /// Regression for #1679
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestComplexElementInitializerAsync()
+        {
+            var testCode = @"using System.Collections.Generic;
+
+public class TestClass
+{
+    // Invalid object initializer #1
+    private Dictionary<int, int> test1 = new Dictionary<int, int> {
+        { 1, 1 }
+    };
+
+    // Invalid object initializer #2
+    private Dictionary<int, int> test2 = new Dictionary<int, int>
+    {
+        { 1, 1 } };
+
+    // Invalid object initializer #3
+    private Dictionary<int, int> test3 = new Dictionary<int, int> {
+        { 1, 1 } };
+}
+";
+
+            var fixedCode = @"using System.Collections.Generic;
+
+public class TestClass
+{
+    // Invalid object initializer #1
+    private Dictionary<int, int> test1 = new Dictionary<int, int>
+    {
+        { 1, 1 }
+    };
+
+    // Invalid object initializer #2
+    private Dictionary<int, int> test2 = new Dictionary<int, int>
+    {
+        { 1, 1 }
+    };
+
+    // Invalid object initializer #3
+    private Dictionary<int, int> test3 = new Dictionary<int, int>
+    {
+        { 1, 1 }
+    };
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                // Invalid object initializer #1
+                this.CSharpDiagnostic().WithLocation(6, 67),
+
+                // Invalid object initializer #2
+                this.CSharpDiagnostic().WithLocation(13, 18),
+
+                // Invalid object initializer #3
+                this.CSharpDiagnostic().WithLocation(16, 67),
+                this.CSharpDiagnostic().WithLocation(17, 18)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
     }
 }
