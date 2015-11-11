@@ -23,11 +23,19 @@ namespace StyleCop.Analyzers
     {
         private const string SettingsFileName = "stylecop.json";
 
+        private static readonly bool AvoidAdditionalTextGetText;
+
         private static readonly ConcurrentDictionary<Type, ConcurrentDictionary<string, FieldInfo>> FieldInfos =
             new ConcurrentDictionary<Type, ConcurrentDictionary<string, FieldInfo>>();
 
         private static readonly ConcurrentDictionary<Type, ConcurrentDictionary<string, PropertyInfo>> PropertyInfos =
             new ConcurrentDictionary<Type, ConcurrentDictionary<string, PropertyInfo>>();
+
+        static SettingsHelper()
+        {
+            // dotnet/roslyn#6596 was fixed for Roslyn 1.2
+            AvoidAdditionalTextGetText = typeof(AdditionalText).GetTypeInfo().Assembly.GetName().Version < new Version(1, 2, 0, 0);
+        }
 
         /// <summary>
         /// Gets the StyleCop settings.
@@ -83,19 +91,22 @@ namespace StyleCop.Analyzers
         /// <returns>The content of the additional text file.</returns>
         private static SourceText GetText(AdditionalText additionalText, CancellationToken cancellationToken)
         {
-            object document = GetField(additionalText, "_document");
-            if (document != null)
+            if (AvoidAdditionalTextGetText)
             {
-                object textSource = GetField(document, "textSource");
-                if (textSource != null)
+                object document = GetField(additionalText, "_document");
+                if (document != null)
                 {
-                    object textAndVersion = CallMethod(textSource, "GetValue", new[] { typeof(CancellationToken) }, cancellationToken);
-                    if (textAndVersion != null)
+                    object textSource = GetField(document, "textSource");
+                    if (textSource != null)
                     {
-                        SourceText text = GetProperty(textAndVersion, "Text") as SourceText;
-                        if (text != null)
+                        object textAndVersion = CallMethod(textSource, "GetValue", new[] { typeof(CancellationToken) }, cancellationToken);
+                        if (textAndVersion != null)
                         {
-                            return text;
+                            SourceText text = GetProperty(textAndVersion, "Text") as SourceText;
+                            if (text != null)
+                            {
+                                return text;
+                            }
                         }
                     }
                 }
