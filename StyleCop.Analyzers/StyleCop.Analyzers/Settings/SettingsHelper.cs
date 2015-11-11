@@ -4,12 +4,15 @@
 namespace StyleCop.Analyzers
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Immutable;
     using System.IO;
+    using System.Linq;
     using System.Reflection;
     using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Text;
     using Newtonsoft.Json;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
@@ -20,8 +23,11 @@ namespace StyleCop.Analyzers
     {
         private const string SettingsFileName = "stylecop.json";
 
-        private static Func<string, bool> fileExists;
-        private static Func<string, string> fileReadAllText;
+        private static readonly ConcurrentDictionary<Type, ConcurrentDictionary<string, FieldInfo>> FieldInfos =
+            new ConcurrentDictionary<Type, ConcurrentDictionary<string, FieldInfo>>();
+
+        private static readonly ConcurrentDictionary<Type, ConcurrentDictionary<string, PropertyInfo>> PropertyInfos =
+            new ConcurrentDictionary<Type, ConcurrentDictionary<string, PropertyInfo>>();
 
         /// <summary>
         /// Gets the StyleCop settings.
@@ -53,8 +59,8 @@ namespace StyleCop.Analyzers
                 {
                     if (Path.GetFileName(additionalFile.Path).ToLowerInvariant() == SettingsFileName)
                     {
-                        string additionalTextContent = ReadAdditionalText(additionalFile, cancellationToken);
-                        var root = JsonConvert.DeserializeObject<SettingsFile>(additionalTextContent);
+                        SourceText additionalTextContent = GetText(additionalFile, cancellationToken);
+                        var root = JsonConvert.DeserializeObject<SettingsFile>(additionalTextContent.ToString());
                         return root.Settings;
                     }
                 }
@@ -68,49 +74,74 @@ namespace StyleCop.Analyzers
         }
 
         /// <summary>
-        /// This code works around dotnet/roslyn#6596 by using the file system APIs instead of the Roslyn APIs to read
-        /// the additional text. If the file system APIs are not available, the code falls back to the previous
-        /// behavior.
+        /// This code works around dotnet/roslyn#6596 by using reflection APIs to bypass the problematic method while
+        /// reading the content of an <see cref="AdditionalText"/> file. If the reflection approach fails, the code
+        /// falls back to the previous behavior.
         /// </summary>
         /// <param name="additionalText">The additional text to read.</param>
         /// <param name="cancellationToken">The cancellation token that the operation will observe.</param>
-        /// <returns>The content of the additional text as a string.</returns>
-        private static string ReadAdditionalText(AdditionalText additionalText, CancellationToken cancellationToken)
+        /// <returns>The content of the additional text file.</returns>
+        private static SourceText GetText(AdditionalText additionalText, CancellationToken cancellationToken)
         {
-            if (fileExists == null)
+            object document = GetField(additionalText, "_document");
+            if (document != null)
             {
-                Type fileClass = typeof(string).GetTypeInfo().Assembly.GetType("System.IO.File");
-                if (fileClass != null)
+                object textSource = GetField(document, "textSource");
+                if (textSource != null)
                 {
-                    MethodInfo readAllText = fileClass.GetRuntimeMethod("ReadAllText", new[] { typeof(string) });
-                    MethodInfo exists = fileClass.GetRuntimeMethod("Exists", new[] { typeof(string) });
-                    if (readAllText != null && exists != null)
+                    object textAndVersion = CallMethod(textSource, "GetValue", new[] { typeof(CancellationToken) }, cancellationToken);
+                    if (textAndVersion != null)
                     {
-                        Interlocked.CompareExchange(ref fileReadAllText, (Func<string, string>)readAllText.CreateDelegate(typeof(Func<string, string>)), null);
-                        Interlocked.CompareExchange(ref fileExists, (Func<string, bool>)exists.CreateDelegate(typeof(Func<string, bool>)), null);
+                        SourceText text = GetProperty(textAndVersion, "Text") as SourceText;
+                        if (text != null)
+                        {
+                            return text;
+                        }
                     }
                 }
-
-                if (fileExists == null)
-                {
-                    // this special case allows for a clean fall back to AdditionalText.GetText()
-                    fileExists = _ => false;
-                }
             }
 
-            try
+            return additionalText.GetText(cancellationToken);
+        }
+
+        private static object GetField(object obj, string name)
+        {
+            if (obj == null)
             {
-                if (fileExists(additionalText.Path))
-                {
-                    return fileReadAllText(additionalText.Path);
-                }
-            }
-            catch (IOException)
-            {
-                // fall back to AdditionalFile.GetText()
+                return null;
             }
 
-            return additionalText.GetText(cancellationToken).ToString();
+            ConcurrentDictionary<string, FieldInfo> fieldsForType = FieldInfos.GetOrAdd(obj.GetType(), _ => new ConcurrentDictionary<string, FieldInfo>());
+            FieldInfo fieldInfo;
+            if (!fieldsForType.TryGetValue(name, out fieldInfo))
+            {
+                fieldInfo = fieldsForType.GetOrAdd(name, _ => obj.GetType().GetRuntimeFields().FirstOrDefault(i => i.Name == name));
+            }
+
+            return fieldInfo?.GetValue(obj);
+        }
+
+        private static object CallMethod(object obj, string name, Type[] parameters, params object[] arguments)
+        {
+            MethodInfo methodInfo = obj?.GetType().GetRuntimeMethod(name, parameters);
+            return methodInfo?.Invoke(obj, arguments);
+        }
+
+        private static object GetProperty(object obj, string name)
+        {
+            if (obj == null)
+            {
+                return null;
+            }
+
+            ConcurrentDictionary<string, PropertyInfo> propertiesForType = PropertyInfos.GetOrAdd(obj.GetType(), _ => new ConcurrentDictionary<string, PropertyInfo>());
+            PropertyInfo propertyInfo;
+            if (!propertiesForType.TryGetValue(name, out propertyInfo))
+            {
+                propertyInfo = propertiesForType.GetOrAdd(name, _ => obj.GetType().GetRuntimeProperty(name));
+            }
+
+            return propertyInfo?.GetValue(obj);
         }
     }
 }
