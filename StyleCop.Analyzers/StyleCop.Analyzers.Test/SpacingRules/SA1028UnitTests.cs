@@ -329,11 +329,51 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that trailing whitespace after a multi-line documentation comment is handled properly.
+        /// This is a regression test for #821
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyTrailingWhitespaceInsideMultiLineXmlDocumentationCommentAsync()
+        {
+            string testCode = new StringBuilder()
+                .AppendLine("/**")
+                .AppendLine(" * <summary>  ")
+                .AppendLine(" * Some description    ")
+                .AppendLine(" * </summary>  ")
+                .AppendLine(" */")
+                .AppendLine("class Foo { }")
+                .ToString();
+
+            string fixedCode = new StringBuilder()
+                .AppendLine("/**")
+                .AppendLine(" * <summary>")
+                .AppendLine(" * Some description")
+                .AppendLine(" * </summary>")
+                .AppendLine(" */")
+                .AppendLine("class Foo { }")
+                .ToString();
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(2, 13),
+                this.CSharpDiagnostic().WithLocation(3, 20),
+                this.CSharpDiagnostic().WithLocation(4, 14)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1028CodeMustNotContainTrailingWhitespace();
         }
 
+        /// <inheritdoc/>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new SA1028CodeFixProvider();
