@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.Helpers
 {
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using StyleCop.Analyzers.Helpers.ObjectPools;
 
     /// <summary>
     /// Provides helper methods to work with indentation.
@@ -43,7 +44,7 @@ namespace StyleCop.Analyzers.Helpers
         /// <returns>The number of steps that the node is indented.</returns>
         public static int GetIndentationSteps(IndentationOptions indentationOptions, SyntaxNode node)
         {
-            return GetIndentationSteps(indentationOptions, node.GetLeadingTrivia());
+            return GetIndentationSteps(indentationOptions, node.SyntaxTree, node.GetLeadingTrivia());
         }
 
         /// <summary>
@@ -54,7 +55,7 @@ namespace StyleCop.Analyzers.Helpers
         /// <returns>The number of steps that the token is indented.</returns>
         public static int GetIndentationSteps(IndentationOptions indentationOptions, SyntaxToken token)
         {
-            return GetIndentationSteps(indentationOptions, token.LeadingTrivia);
+            return GetIndentationSteps(indentationOptions, token.SyntaxTree, token.LeadingTrivia);
         }
 
         /// <summary>
@@ -92,25 +93,38 @@ namespace StyleCop.Analyzers.Helpers
             return SyntaxFactory.Whitespace(GenerateIndentationString(indentationOptions, indentationSteps));
         }
 
-        private static int GetIndentationSteps(IndentationOptions indentationOptions, SyntaxTriviaList leadingTrivia)
+        private static int GetIndentationSteps(IndentationOptions indentationOptions, SyntaxTree syntaxTree, SyntaxTriviaList leadingTrivia)
         {
-            SyntaxTriviaList.Reversed reversed = leadingTrivia.Reverse();
-            int indentationCount = 0;
+            var triviaSpan = syntaxTree.GetLineSpan(leadingTrivia.FullSpan);
 
-            foreach (SyntaxTrivia trivia in reversed)
+            // There is no indentation when the leading trivia doesn't begin at the start of the line.
+            if ((triviaSpan.StartLinePosition == triviaSpan.EndLinePosition) && (triviaSpan.StartLinePosition.Character > 0))
+            {
+                return 0;
+            }
+
+            var builder = StringBuilderPool.Allocate();
+
+            foreach (SyntaxTrivia trivia in leadingTrivia.Reverse())
             {
                 if (!trivia.IsKind(SyntaxKind.WhitespaceTrivia))
                 {
                     break;
                 }
 
-                foreach (char c in trivia.ToFullString())
-                {
-                    indentationCount += c == '\t' ? indentationOptions.TabSize : 1;
-                }
+                builder.Insert(0, trivia.ToFullString());
             }
 
-            return indentationCount / indentationOptions.IndentationSize;
+            var tabSize = indentationOptions.TabSize;
+            var indentationCount = 0;
+            for (var i = 0; i < builder.Length; i++)
+            {
+                indentationCount += builder[i] == '\t' ? tabSize - (indentationCount % tabSize) : 1;
+            }
+
+            StringBuilderPool.ReturnAndFree(builder);
+
+            return (indentationCount + (indentationOptions.IndentationSize / 2)) / indentationOptions.IndentationSize;
         }
     }
 }
