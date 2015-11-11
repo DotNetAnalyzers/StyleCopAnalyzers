@@ -739,6 +739,63 @@ public class TestClass
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that having an initializer as last parameter / argument will not raise any diagnostics.
+        /// This is a regression for #1713
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyThatInitializerAsLastParameterWillNotProduceDiagnosticAsync()
+        {
+            var testCode = @"
+using System;
+
+public class Program
+{
+    private class Foo : IDisposable
+    {
+        public int Bar { get; set; }
+
+        public void Dispose()
+        {
+        }
+    }
+
+    public static void Main(string[] args)
+    {
+        foreach (
+            var x in
+            new[]
+            {
+                1,
+                2,
+                3
+            })
+        {
+        }
+
+        using (
+            new Foo
+            {
+                Bar = 1
+            })
+        {
+        }
+
+        Console.WriteLine(
+            new[]
+            {
+                1,
+                2,
+                3
+            });
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {

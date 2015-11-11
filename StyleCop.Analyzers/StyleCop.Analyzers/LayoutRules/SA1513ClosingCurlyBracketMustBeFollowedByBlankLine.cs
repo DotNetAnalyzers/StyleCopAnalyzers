@@ -237,9 +237,8 @@ namespace StyleCop.Analyzers.LayoutRules
                         return;
                     }
 
-                    if (nextToken.IsKind(SyntaxKind.CommaToken) &&
-                        (IsPartOf<InitializerExpressionSyntax>(token) ||
-                         IsPartOf<AnonymousObjectCreationExpressionSyntax>(token)))
+                    if ((nextToken.IsKind(SyntaxKind.CommaToken) || nextToken.IsKind(SyntaxKind.CloseParenToken)) &&
+                        (IsPartOf<InitializerExpressionSyntax>(token) || IsPartOf<AnonymousObjectCreationExpressionSyntax>(token)))
                     {
                         // the close brace is part of an initializer statement.
                         return;
