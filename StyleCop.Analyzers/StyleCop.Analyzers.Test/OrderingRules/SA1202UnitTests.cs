@@ -960,7 +960,7 @@ public class TestClass : TestInterface
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task Issue150RegressionAsync()
+        public async Task Issue1507RegressionAsync()
         {
             string testCode = @"public class OuterType
 {
