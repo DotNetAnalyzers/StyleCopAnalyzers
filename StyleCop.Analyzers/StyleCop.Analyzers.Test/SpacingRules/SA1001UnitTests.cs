@@ -72,15 +72,23 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         [Fact]
         public async Task TestFirstCommaInLineAsync()
         {
-            string statement = $"f(a{Environment.NewLine}, b);";
-            await this.TestCommaInStatementOrDeclAsync(statement, EmptyDiagnosticResults, statement).ConfigureAwait(false);
+            string testStatement = $"f(a{Environment.NewLine}, b);";
+            string fixedStatement = $"f(a,{Environment.NewLine}b);";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(8, 1);
+
+            await this.TestCommaInStatementOrDeclAsync(testStatement, expected, fixedStatement).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestCommentBeforeFirstCommaInLineAsync()
         {
-            string statement = $"f(a // comment{Environment.NewLine}, b);";
-            await this.TestCommaInStatementOrDeclAsync(statement, EmptyDiagnosticResults, statement).ConfigureAwait(false);
+            string testStatement = $"f(a // comment{Environment.NewLine}, b);";
+            string fixedStatement = $"f(a, // comment{Environment.NewLine}b);";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(8, 1);
+
+            await this.TestCommaInStatementOrDeclAsync(testStatement, expected, fixedStatement).ConfigureAwait(false);
         }
 
         [Fact]
