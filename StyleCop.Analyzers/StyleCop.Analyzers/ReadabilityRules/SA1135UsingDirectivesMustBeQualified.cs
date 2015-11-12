@@ -62,7 +62,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 string usingString = usingDirective.Name.ToString();
 
-                // Check for global qualified namepsaces.
+                // Check for global qualified namespaces.
                 if (usingString.IndexOf("::", StringComparison.Ordinal) < 0)
                 {
                     SymbolInfo symbolInfo = context.SemanticModel.GetSymbolInfo(usingDirective.Name, context.CancellationToken);

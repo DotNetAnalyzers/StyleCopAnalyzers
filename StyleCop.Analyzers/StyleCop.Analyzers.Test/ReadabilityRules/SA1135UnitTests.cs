@@ -32,10 +32,10 @@ namespace System.Threading
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(4, 5),
-                this.CSharpDiagnostic().WithLocation(4, 5),
-                this.CSharpDiagnostic().WithLocation(5, 5),
-                this.CSharpDiagnostic().WithLocation(5, 5)
+                this.CSharpDiagnostic().WithLocation(4, 5).WithArguments("System.IO"),
+                this.CSharpDiagnostic().WithLocation(4, 5).WithArguments("System.IO"),
+                this.CSharpDiagnostic().WithLocation(5, 5).WithArguments("System.Threading.Tasks"),
+                this.CSharpDiagnostic().WithLocation(5, 5).WithArguments("System.Threading.Tasks")
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -61,10 +61,10 @@ namespace System.Threading
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(4, 5),
-                this.CSharpDiagnostic().WithLocation(4, 5),
-                this.CSharpDiagnostic().WithLocation(5, 5),
-                this.CSharpDiagnostic().WithLocation(5, 5)
+                this.CSharpDiagnostic().WithLocation(4, 5).WithArguments("System.IO"),
+                this.CSharpDiagnostic().WithLocation(4, 5).WithArguments("System.IO"),
+                this.CSharpDiagnostic().WithLocation(5, 5).WithArguments("System.Threading.Tasks"),
+                this.CSharpDiagnostic().WithLocation(5, 5).WithArguments("System.Threading.Tasks")
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -90,10 +90,10 @@ namespace System.Threading
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(4, 5),
-                this.CSharpDiagnostic().WithLocation(4, 5),
-                this.CSharpDiagnostic().WithLocation(5, 5),
-                this.CSharpDiagnostic().WithLocation(5, 5)
+                this.CSharpDiagnostic().WithLocation(4, 5).WithArguments("System.IO.Path"),
+                this.CSharpDiagnostic().WithLocation(4, 5).WithArguments("System.IO.Path"),
+                this.CSharpDiagnostic().WithLocation(5, 5).WithArguments("System.Threading.Tasks.Task"),
+                this.CSharpDiagnostic().WithLocation(5, 5).WithArguments("System.Threading.Tasks.Task")
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
