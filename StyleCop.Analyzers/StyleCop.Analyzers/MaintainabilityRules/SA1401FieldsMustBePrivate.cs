@@ -79,7 +79,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                             return;
                         }
 
-                        if (location.SourceTree.IsGeneratedDocument(this.generatedHeaderCache, symbolAnalysisContext.CancellationToken))
+                        if (location.SourceTree.IsGeneratedDocument(symbolAnalysisContext.GetStyleCopSettings(), this.generatedHeaderCache, symbolAnalysisContext.CancellationToken))
                         {
                             return;
                         }

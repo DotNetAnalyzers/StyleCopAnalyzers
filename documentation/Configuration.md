@@ -260,3 +260,19 @@ File naming convention | Expected file name
 -----------------------| ------------------
 stylecop               | Class1{T1,T2,T3}.cs
 metadata               | Class1`3.cs
+
+## Generated File Filtering
+
+This section describes how generated file filtering can be configured in **stylecop.json**. The example below shows how to add generated file filters:
+
+```json
+{
+  "settings": {
+    "generatedFileFilters": [ "\\.g\\.cs$", "\\.generated\\.cs$", "\\.g\\.i\\.cs$", "\\.designer\\.cs$" ]
+  }
+}
+```
+
+Each file filter is specified as a [.NET regular expression](https://msdn.microsoft.com/en-us/library/hs600312%28v=vs.110%29.aspx). Note that due to the JSON format of the configuration, each backslash in the regular expression must be doubled.
+
+The example also shows the default generated file filters that will be used if this property is not present.
