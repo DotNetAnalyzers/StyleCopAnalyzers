@@ -123,7 +123,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 var currentSyntaxKind = member.Kind();
                 currentSyntaxKind = currentSyntaxKind == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : currentSyntaxKind;
 
-                // if the syntaxkind of this member (e.g. SyntaxKind.IncompleteMember) will not
+                // if the SyntaxKind of this member (e.g. SyntaxKind.IncompleteMember) will not
                 // be handled, skip early.
                 if (!MemberNames.ContainsKey(currentSyntaxKind))
                 {
