@@ -1215,7 +1215,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
 
         /// <summary>
-        ///   Looks up a localized string similar to The using directive &apos;{0}&apos; must be qualified to &apos;{1}&apos;.
+        ///   Looks up a localized string similar to Using directive for namespace &apos;{0}&apos; must be qualified.
         /// </summary>
         internal static string SA1135MessageFormat {
             get {

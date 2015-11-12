@@ -529,7 +529,7 @@
     <value>All using directives must be qualified.</value>
   </data>
   <data name="SA1135MessageFormat" xml:space="preserve">
-    <value>The using directive '{0}' must be qualified to '{1}'</value>
+    <value>Using directive for namespace '{0}' must be qualified</value>
   </data>
   <data name="SA1135Title" xml:space="preserve">
     <value>Using directives must be qualified</value>

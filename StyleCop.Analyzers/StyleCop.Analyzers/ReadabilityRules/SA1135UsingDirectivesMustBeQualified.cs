@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
+    using System;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -30,7 +31,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1135.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly ImmutableArray<DiagnosticDescriptor> SupportedDiagnosticsValue =
             ImmutableArray.Create(Descriptor);
@@ -46,30 +47,31 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleNamespaceDeclaration, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleUsingDeclaration, SyntaxKind.UsingDirective);
         }
 
-        private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleUsingDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var namespaceDirective = (NamespaceDeclarationSyntax)context.Node;
-            CheckUsingDeclarations(context, namespaceDirective.Usings);
+            var usingDirective = (UsingDirectiveSyntax)context.Node;
+            CheckUsingDeclaration(context, usingDirective);
         }
 
-        private static void CheckUsingDeclarations(SyntaxNodeAnalysisContext context, SyntaxList<UsingDirectiveSyntax> usingDirectives)
+        private static void CheckUsingDeclaration(SyntaxNodeAnalysisContext context, UsingDirectiveSyntax usingDirective)
         {
-            foreach (var usingDirective in usingDirectives)
+            if (usingDirective.StaticKeyword.IsKind(SyntaxKind.None))
             {
-                if (usingDirective.Alias == null && usingDirective.StaticKeyword.IsKind(SyntaxKind.None))
+                string usingString = usingDirective.Name.ToString();
+
+                // Check for global qualified namepsaces.
+                if (usingString.IndexOf("::", StringComparison.Ordinal) < 0)
                 {
                     SymbolInfo symbolInfo = context.SemanticModel.GetSymbolInfo(usingDirective.Name, context.CancellationToken);
-                    if (symbolInfo.Symbol != null && symbolInfo.Symbol.Kind == SymbolKind.Namespace)
+                    if (symbolInfo.Symbol != null && (symbolInfo.Symbol.Kind == SymbolKind.Namespace || symbolInfo.Symbol.Kind == SymbolKind.NamedType))
                     {
                         string symbolString = symbolInfo.Symbol.ToString();
-                        string usingString = usingDirective.Name.ToString();
-
                         if (symbolString != usingString)
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, usingDirective.GetLocation(), new[] { usingString, symbolString }));
+                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, usingDirective.GetLocation(), symbolString));
                         }
                     }
                 }

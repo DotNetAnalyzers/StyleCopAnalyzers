@@ -7,7 +7,6 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading;
     using System.Threading.Tasks;
     using Analyzers.ReadabilityRules;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using TestHelper;
@@ -34,12 +33,97 @@ namespace System.Threading
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(4, 5),
+                this.CSharpDiagnostic().WithLocation(4, 5),
+                this.CSharpDiagnostic().WithLocation(5, 5),
                 this.CSharpDiagnostic().WithLocation(5, 5)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestUnqualifiedAliasedUsingsAsync()
+        {
+            const string testCode = @"
+namespace System.Threading
+{
+    using NA = IO;
+    using NB = Tasks;
+}";
+            const string fixedCode = @"
+namespace System.Threading
+{
+    using NA = System.IO;
+    using NB = System.Threading.Tasks;
+}";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(4, 5),
+                this.CSharpDiagnostic().WithLocation(4, 5),
+                this.CSharpDiagnostic().WithLocation(5, 5),
+                this.CSharpDiagnostic().WithLocation(5, 5)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestUnqualifiedAliasedUsingTypesAsync()
+        {
+            const string testCode = @"
+namespace System.Threading
+{
+    using TP = IO.Path;
+    using TT = Tasks.Task;
+}";
+            const string fixedCode = @"
+namespace System.Threading
+{
+    using TP = System.IO.Path;
+    using TT = System.Threading.Tasks.Task;
+}";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(4, 5),
+                this.CSharpDiagnostic().WithLocation(4, 5),
+                this.CSharpDiagnostic().WithLocation(5, 5),
+                this.CSharpDiagnostic().WithLocation(5, 5)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestGlobalUsingsAsync()
+        {
+            const string testCode = @"
+namespace System.Threading
+{
+    using global::System.IO;
+    using global::System.Threading.Tasks;
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestStaticUsingsAsync()
+        {
+            const string testCode = @"
+namespace System.Threading
+{
+    using static Console;
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
