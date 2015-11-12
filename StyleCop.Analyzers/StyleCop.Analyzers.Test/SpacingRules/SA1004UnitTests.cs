@@ -178,10 +178,12 @@ public class TypeName
 {
     /**
      *<summary>
-     *The summary text.
+     *     The summary text.
      *</summary>
+     *   <param name=""x"">The document root.</param>
+     *    <param name=""y"">The XML header token.</param>
      */
-    private void Method1()
+    private void Method1(int x, int y)
     {
     }
 }
@@ -192,10 +194,12 @@ public class TypeName
 {
     /**
      * <summary>
-     * The summary text.
+     *     The summary text.
      * </summary>
+     * <param name=""x"">The document root.</param>
+     * <param name=""y"">The XML header token.</param>
      */
-    private void Method1()
+    private void Method1(int x, int y)
     {
     }
 }
@@ -204,8 +208,9 @@ public class TypeName
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(5, 7),
-                this.CSharpDiagnostic().WithLocation(6, 7),
-                this.CSharpDiagnostic().WithLocation(7, 7)
+                this.CSharpDiagnostic().WithLocation(7, 7),
+                this.CSharpDiagnostic().WithLocation(8, 7),
+                this.CSharpDiagnostic().WithLocation(9, 7)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
