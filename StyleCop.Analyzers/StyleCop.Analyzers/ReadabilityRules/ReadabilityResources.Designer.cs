@@ -1217,9 +1217,18 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         /// <summary>
         ///   Looks up a localized string similar to Using directive for namespace &apos;{0}&apos; must be qualified.
         /// </summary>
-        internal static string SA1135MessageFormat {
+        internal static string SA1135MessageFormatNamespace {
             get {
-                return ResourceManager.GetString("SA1135MessageFormat", resourceCulture);
+                return ResourceManager.GetString("SA1135MessageFormatNamespace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Using directive for type &apos;{0}&apos; must be qualified.
+        /// </summary>
+        internal static string SA1135MessageFormatType {
+            get {
+                return ResourceManager.GetString("SA1135MessageFormatType", resourceCulture);
             }
         }
         
