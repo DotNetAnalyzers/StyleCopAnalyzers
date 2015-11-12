@@ -125,7 +125,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
                 // if the syntaxkind of this member (e.g. SyntaxKind.IncompleteMember) will not
                 // be handled, skip early.
-                if (!((ICollection<SyntaxKind>)MemberNames.Keys).Contains(currentSyntaxKind))
+                if (MemberNames.ContainsKey(currentSyntaxKind))
                 {
                     continue;
                 }
