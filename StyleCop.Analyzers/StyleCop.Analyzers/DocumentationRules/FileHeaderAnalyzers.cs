@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System;
     using System.Collections.Immutable;
     using System.IO;
+    using System.Threading;
     using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -181,7 +182,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             // Disabling SA1633 will disable all other header related diagnostics.
             if (!compilation.IsAnalyzerSuppressed(SA1633Identifier))
             {
-                Analyzer analyzer = new Analyzer(context.Options);
+                Analyzer analyzer = new Analyzer(context.Options, context.CancellationToken);
                 context.RegisterSyntaxTreeActionHonorExclusions(ctx => analyzer.HandleSyntaxTreeAction(ctx, compilation));
             }
         }
@@ -190,9 +191,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             private readonly DocumentationSettings documentationSettings;
 
-            public Analyzer(AnalyzerOptions options)
+            public Analyzer(AnalyzerOptions options, CancellationToken cancellationToken)
             {
-                StyleCopSettings settings = options.GetStyleCopSettings();
+                StyleCopSettings settings = options.GetStyleCopSettings(cancellationToken);
                 this.documentationSettings = settings.DocumentationRules;
             }
 

@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.NamingRules
     using System;
     using System.Collections.Immutable;
     using System.Text.RegularExpressions;
+    using System.Threading;
     using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -80,7 +81,7 @@ namespace StyleCop.Analyzers.NamingRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            Analyzer analyzer = new Analyzer(context.Options);
+            Analyzer analyzer = new Analyzer(context.Options, context.CancellationToken);
             context.RegisterSyntaxNodeActionHonorExclusions(analyzer.HandleVariableDeclarationSyntax, SyntaxKind.VariableDeclaration);
         }
 
@@ -88,9 +89,9 @@ namespace StyleCop.Analyzers.NamingRules
         {
             private readonly NamingSettings namingSettings;
 
-            public Analyzer(AnalyzerOptions options)
+            public Analyzer(AnalyzerOptions options, CancellationToken cancellationToken)
             {
-                StyleCopSettings settings = options.GetStyleCopSettings();
+                StyleCopSettings settings = options.GetStyleCopSettings(cancellationToken);
                 this.namingSettings = settings.NamingRules;
             }
 
