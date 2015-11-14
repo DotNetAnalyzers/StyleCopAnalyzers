@@ -11,6 +11,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Settings.ObjectModel;
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
@@ -33,6 +34,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// The ID for diagnostics produced by the <see cref="SA1402FileMayOnlyContainASingleClass"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1402";
+
         private const string Title = "File may only contain a single class";
         private const string MessageFormat = "File may only contain a single class";
         private const string Description = "A C# code file contains more than one unique class.";
@@ -42,7 +44,6 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
-        private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -56,21 +57,36 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxTreeActionHonorExclusions(SyntaxTreeAction);
+            var analyzer = new Analyzer(context.Options);
+            context.RegisterSyntaxTreeActionHonorExclusions(analyzer.HandleSyntaxTree);
         }
 
-        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private class Analyzer
         {
-            var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
-            var descentNodes = syntaxRoot.DescendantNodes(descendIntoChildren: node => node != null && !node.IsKind(SyntaxKind.ClassDeclaration));
-            var classNodes = from descentNode in descentNodes
-                             where descentNode.IsKind(SyntaxKind.ClassDeclaration)
-                             select descentNode as ClassDeclarationSyntax;
+            private readonly FileNamingConvention fileNamingConvention;
 
-            var preferredClassNode = classNodes.FirstOrDefault(n => n.Identifier.Text == Path.GetFileNameWithoutExtension(context.Tree.FilePath)) ?? classNodes.FirstOrDefault();
-
-            if (preferredClassNode != null)
+            public Analyzer(AnalyzerOptions options)
             {
+                StyleCopSettings settings = options.GetStyleCopSettings();
+                this.fileNamingConvention = settings.DocumentationRules.FileNamingConvention;
+            }
+
+            public void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+            {
+                var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
+                var descentNodes = syntaxRoot.DescendantNodes(descendIntoChildren: node => node != null && !node.IsKind(SyntaxKind.ClassDeclaration));
+                var classNodes = from descentNode in descentNodes
+                                 where descentNode.IsKind(SyntaxKind.ClassDeclaration)
+                                 select descentNode as ClassDeclarationSyntax;
+
+                var fileName = Path.GetFileName(context.Tree.FilePath);
+                var preferredClassNode = classNodes.FirstOrDefault(n => NamedTypeHelpers.GetConventionalFileName(n, this.fileNamingConvention) == fileName) ?? classNodes.FirstOrDefault();
+
+                if (preferredClassNode == null)
+                {
+                    return;
+                }
+
                 string foundClassName = null;
                 bool isPartialClass = false;
 

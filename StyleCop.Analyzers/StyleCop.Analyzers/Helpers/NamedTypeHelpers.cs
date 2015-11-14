@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.Helpers
     using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Settings.ObjectModel;
 
     internal static class NamedTypeHelpers
     {
@@ -150,6 +151,39 @@ namespace StyleCop.Analyzers.Helpers
                 .SelectMany(m => m.GetMembers(memberSymbol.Name))
                 .Select(typeSymbol.FindImplementationForInterfaceMember)
                 .Any(x => memberSymbol.Equals(x));
+        }
+
+        internal static string GetConventionalFileName(TypeDeclarationSyntax typeDeclaration, FileNamingConvention convention)
+        {
+            if (typeDeclaration.TypeParameterList == null)
+            {
+                return GetSimpleFileName(typeDeclaration);
+            }
+
+            switch (convention)
+            {
+                case FileNamingConvention.Metadata:
+                    return GetMetadataFileName(typeDeclaration);
+
+                default:
+                    return GetStyleCopFileName(typeDeclaration);
+            }
+        }
+
+        internal static string GetSimpleFileName(TypeDeclarationSyntax typeDeclaration)
+        {
+            return $"{typeDeclaration.Identifier.ValueText}.cs";
+        }
+
+        private static string GetMetadataFileName(TypeDeclarationSyntax typeDeclaration)
+        {
+            return $"{typeDeclaration.Identifier.ValueText}`{typeDeclaration.Arity}.cs";
+        }
+
+        private static string GetStyleCopFileName(TypeDeclarationSyntax typeDeclaration)
+        {
+            var typeParameterList = string.Join(",", typeDeclaration.TypeParameterList.Parameters.Select(p => p.Identifier.ValueText));
+            return $"{typeDeclaration.Identifier.ValueText}{{{typeParameterList}}}.cs";
         }
     }
 }
