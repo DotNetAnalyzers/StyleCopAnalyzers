@@ -12,13 +12,13 @@ namespace StyleCop.Analyzers.LayoutRules
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// The opening and closing curly brackets for a multi-line C# statement have been omitted.
+    /// The opening and closing curly braces for a multi-line C# statement have been omitted.
     /// </summary>
     /// <remarks>
-    /// <para>A violation of this rule occurs when the opening and closing curly brackets for a multi-line statement
-    /// have been omitted. In C#, some types of statements may optionally include curly brackets. Examples include
+    /// <para>A violation of this rule occurs when the opening and closing curly braces for a multi-line statement
+    /// have been omitted. In C#, some types of statements may optionally include curly braces. Examples include
     /// <c>if</c>, <c>while</c>, and <c>for</c> statements. For example, an if-statement may be written without curly
-    /// brackets:</para>
+    /// braces:</para>
     ///
     /// <code language="csharp">
     /// if (true)
@@ -26,19 +26,19 @@ namespace StyleCop.Analyzers.LayoutRules
     ///         this.value;
     /// </code>
     ///
-    /// <para>Although this is legal in C#, StyleCop requires the curly brackets to be present when the statement spans
+    /// <para>Although this is legal in C#, StyleCop requires the curly braces to be present when the statement spans
     /// multiple lines, to increase the readability and maintainability of the code.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class SA1519CurlyBracketsMustNotBeOmittedFromMultiLineChildStatement : DiagnosticAnalyzer
+    internal class SA1519CurlyBracesMustNotBeOmittedFromMultiLineChildStatement : DiagnosticAnalyzer
     {
         /// <summary>
-        /// The ID for diagnostics produced by the <see cref="SA1519CurlyBracketsMustNotBeOmittedFromMultiLineChildStatement"/> analyzer.
+        /// The ID for diagnostics produced by the <see cref="SA1519CurlyBracesMustNotBeOmittedFromMultiLineChildStatement"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1519";
-        private const string Title = "Curly brackets must not be omitted from multi-line child statement";
-        private const string MessageFormat = "Curly brackets must not be omitted from multi-line child statement";
-        private const string Description = "The opening and closing curly brackets for a multi-line C# statement have been omitted.";
+        private const string Title = "Curly braces must not be omitted from multi-line child statement";
+        private const string MessageFormat = "Curly braces must not be omitted from multi-line child statement";
+        private const string Description = "The opening and closing curly braces for a multi-line C# statement have been omitted.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1519.md";
 
         private static readonly DiagnosticDescriptor Descriptor =

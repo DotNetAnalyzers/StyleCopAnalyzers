@@ -359,7 +359,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A C# statement contains a comment between the declaration of the statement and the opening curly bracket of the statement..
+        ///   Looks up a localized string similar to A C# statement contains a comment between the declaration of the statement and the opening curly brace of the statement..
         /// </summary>
         internal static string SA1108Description {
             get {
@@ -386,7 +386,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A C# statement contains a region tag between the declaration of the statement and the opening curly bracket of the statement..
+        ///   Looks up a localized string similar to A C# statement contains a region tag between the declaration of the statement and the opening curly brace of the statement..
         /// </summary>
         internal static string SA1109Description {
             get {

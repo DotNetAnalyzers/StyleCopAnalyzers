@@ -16,7 +16,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CSharp;
 
     /// <summary>
-    /// Implements a code fix for <see cref="SA1509OpeningCurlyBracketsMustNotBePrecededByBlankLine"/>.
+    /// Implements a code fix for <see cref="SA1509OpeningCurlyBracesMustNotBePrecededByBlankLine"/>.
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1509CodeFixProvider))]
     [Shared]
@@ -24,7 +24,7 @@ namespace StyleCop.Analyzers.LayoutRules
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(SA1509OpeningCurlyBracketsMustNotBePrecededByBlankLine.DiagnosticId);
+            ImmutableArray.Create(SA1509OpeningCurlyBracesMustNotBePrecededByBlankLine.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()

@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     public class SA1108UnitTests : DiagnosticVerifier
     {
         [Fact]
-        public async Task TestIfStatementCommentBetweenStatementDeclarationAndOpeningCurlyBracketAsync()
+        public async Task TestIfStatementCommentBetweenStatementDeclarationAndOpeningCurlyBraceAsync()
         {
             var testCode = @"
 public class Foo
@@ -42,7 +42,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestIfStatementCommentBetweenStatementDeclarationAndOpeningCurlyBracketCommentedCodeAsync()
+        public async Task TestIfStatementCommentBetweenStatementDeclarationAndOpeningCurlyBraceCommentedCodeAsync()
         {
             var testCode = @"
 public class Foo
@@ -60,7 +60,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestIfWithPreprocessorDirectiveCommentBetweenStatementDeclarationAndOpeningCurlyBracketCommentedCodeAsync()
+        public async Task TestIfWithPreprocessorDirectiveCommentBetweenStatementDeclarationAndOpeningCurlyBraceCommentedCodeAsync()
         {
             var testCode = @"
 public class Foo
@@ -101,7 +101,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestWhileStatementCommentBetweenStatementDeclarationAndOpeningCurlyBracketAsync()
+        public async Task TestWhileStatementCommentBetweenStatementDeclarationAndOpeningCurlyBraceAsync()
         {
             var testCode = @"
 public class Foo
@@ -122,7 +122,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestWhileStatementCommentBetweenStatementDeclarationAndOpeningCurlyBracketOneLineAsync()
+        public async Task TestWhileStatementCommentBetweenStatementDeclarationAndOpeningCurlyBraceOneLineAsync()
         {
             var testCode = @"
 public class Foo
@@ -140,7 +140,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestDoWhileStatementCommentBetweenStatementDeclarationAndOpeningCurlyBracketAsync()
+        public async Task TestDoWhileStatementCommentBetweenStatementDeclarationAndOpeningCurlyBraceAsync()
         {
             var testCode = @"
 public class Foo
@@ -162,7 +162,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestCheckedUncheckedStatementCommentBetweenStatementDeclarationAndOpeningCurlyBracketAsync()
+        public async Task TestCheckedUncheckedStatementCommentBetweenStatementDeclarationAndOpeningCurlyBraceAsync()
         {
             var testCode = @"
 public class Foo
@@ -190,7 +190,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestFixedStatementCommentBetweenStatementDeclarationAndOpeningCurlyBracketAsync()
+        public async Task TestFixedStatementCommentBetweenStatementDeclarationAndOpeningCurlyBraceAsync()
         {
             var testCode = @"
 public class TestUnsafe
@@ -218,7 +218,7 @@ public class TestUnsafe
         }
 
         [Fact]
-        public async Task TestTryCatchFinallyStatementCommentBetweenStatementDeclarationAndOpeningCurlyBracketAsync()
+        public async Task TestTryCatchFinallyStatementCommentBetweenStatementDeclarationAndOpeningCurlyBraceAsync()
         {
             var testCode = @"
 public class Foo
@@ -258,7 +258,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestSwitchStatementCommentBetweenStatementDeclarationAndOpeningCurlyBracketAsync()
+        public async Task TestSwitchStatementCommentBetweenStatementDeclarationAndOpeningCurlyBraceAsync()
         {
             var testCode = @"
 public class Foo
@@ -285,7 +285,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestForStatementCommentBetweenStatementDeclarationAndOpeningCurlyBracketAsync()
+        public async Task TestForStatementCommentBetweenStatementDeclarationAndOpeningCurlyBraceAsync()
         {
             var testCode = @"
 public class Foo
@@ -307,7 +307,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestForeachStatementCommentBetweenStatementDeclarationAndOpeningCurlyBracketAsync()
+        public async Task TestForeachStatementCommentBetweenStatementDeclarationAndOpeningCurlyBraceAsync()
         {
             var testCode = @"
 public class Foo
@@ -329,7 +329,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestLockStatementCommentBetweenStatementDeclarationAndOpeningCurlyBracketAsync()
+        public async Task TestLockStatementCommentBetweenStatementDeclarationAndOpeningCurlyBraceAsync()
         {
             var testCode = @"
 public class Foo
@@ -351,7 +351,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestMethodDeclarationCommentBetweenDeclarationAndOpeningCurlyBracketAsync()
+        public async Task TestMethodDeclarationCommentBetweenDeclarationAndOpeningCurlyBraceAsync()
         {
             var testCode = @"
 public class Bar
@@ -368,7 +368,7 @@ public class Bar
         }
 
         [Fact]
-        public async Task TestClassDeclarationCommentBetweenDeclarationAndOpeningCurlyBracketAsync()
+        public async Task TestClassDeclarationCommentBetweenDeclarationAndOpeningCurlyBraceAsync()
         {
             var testCode = @"
 namespace Foo
@@ -385,7 +385,7 @@ namespace Foo
         }
 
         [Fact]
-        public async Task TestPropertyDeclarationCommentBetweenDeclarationAndOpeningCurlyBracketAsync()
+        public async Task TestPropertyDeclarationCommentBetweenDeclarationAndOpeningCurlyBraceAsync()
         {
             var testCode = @"
 namespace Foo
@@ -411,7 +411,7 @@ namespace Foo
         }
 
         [Fact]
-        public async Task TestNamespaceDeclarationCommentBetweenDeclarationAndOpeningCurlyBracketAsync()
+        public async Task TestNamespaceDeclarationCommentBetweenDeclarationAndOpeningCurlyBraceAsync()
         {
             var testCode = @"
 namespace Foo

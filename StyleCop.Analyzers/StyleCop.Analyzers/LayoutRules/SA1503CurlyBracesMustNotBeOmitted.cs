@@ -14,23 +14,23 @@ namespace StyleCop.Analyzers.LayoutRules
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// The opening and closing curly brackets for a C# statement have been omitted.
+    /// The opening and closing curly braces for a C# statement have been omitted.
     /// </summary>
     /// <remarks>
-    /// <para>A violation of this rule occurs when the opening and closing curly brackets for a statement have been
-    /// omitted. In C#, some types of statements may optionally include curly brackets. Examples include <c>if</c>,
+    /// <para>A violation of this rule occurs when the opening and closing curly braces for a statement have been
+    /// omitted. In C#, some types of statements may optionally include curly braces. Examples include <c>if</c>,
     /// <c>while</c>, and <c>for</c> statements. For example, an if-statement may be written without curly
-    /// brackets:</para>
+    /// braces:</para>
     ///
     /// <code language="csharp">
     /// if (true)
     ///     return this.value;
     /// </code>
     ///
-    /// <para>Although this is legal in C#, StyleCop always requires the curly brackets to be present, to increase the
+    /// <para>Although this is legal in C#, StyleCop always requires the curly braces to be present, to increase the
     /// readability and maintainability of the code.</para>
     ///
-    /// <para>When the curly brackets are omitted, it is possible to introduce an error in the code by inserting an
+    /// <para>When the curly braces are omitted, it is possible to introduce an error in the code by inserting an
     /// additional statement beneath the if-statement. For example:</para>
     ///
     /// <code language="csharp">
@@ -43,7 +43,7 @@ namespace StyleCop.Analyzers.LayoutRules
     /// children of the if-statement. In fact, this is not true. Only the assignment statement is a child of the
     /// if-statement, and the return statement will always execute regardless of the outcome of the if-statement.</para>
     ///
-    /// <para>StyleCop always requires the opening and closing curly brackets to be present, to prevent these kinds of
+    /// <para>StyleCop always requires the opening and closing curly braces to be present, to prevent these kinds of
     /// errors:</para>
     ///
     /// <code language="csharp">
@@ -55,15 +55,15 @@ namespace StyleCop.Analyzers.LayoutRules
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class SA1503CurlyBracketsMustNotBeOmitted : DiagnosticAnalyzer
+    internal class SA1503CurlyBracesMustNotBeOmitted : DiagnosticAnalyzer
     {
         /// <summary>
-        /// The ID for diagnostics produced by the <see cref="SA1503CurlyBracketsMustNotBeOmitted"/> analyzer.
+        /// The ID for diagnostics produced by the <see cref="SA1503CurlyBracesMustNotBeOmitted"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1503";
-        private const string Title = "Curly brackets must not be omitted";
-        private const string MessageFormat = "Curly brackets must not be omitted";
-        private const string Description = "The opening and closing curly brackets for a C# statement have been omitted.";
+        private const string Title = "Curly braces must not be omitted";
+        private const string MessageFormat = "Curly braces must not be omitted";
+        private const string Description = "The opening and closing curly braces for a C# statement have been omitted.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1503.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
@@ -112,7 +112,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 }
             }
 
-            if (context.SemanticModel.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(SA1520UseCurlyBracketsConsistently.DiagnosticId, ReportDiagnostic.Default) != ReportDiagnostic.Suppress)
+            if (context.SemanticModel.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(SA1520UseCurlyBracesConsistently.DiagnosticId, ReportDiagnostic.Default) != ReportDiagnostic.Suppress)
             {
                 // inconsistencies will be reported as SA1520, as long as it's not suppressed
                 if (clauses.OfType<BlockSyntax>().Any())
@@ -134,7 +134,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 return;
             }
 
-            if (context.SemanticModel.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(SA1519CurlyBracketsMustNotBeOmittedFromMultiLineChildStatement.DiagnosticId, ReportDiagnostic.Default) != ReportDiagnostic.Suppress)
+            if (context.SemanticModel.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(SA1519CurlyBracesMustNotBeOmittedFromMultiLineChildStatement.DiagnosticId, ReportDiagnostic.Default) != ReportDiagnostic.Suppress)
             {
                 // diagnostics for multi-line statements is handled by SA1519, as long as it's not suppressed
                 FileLinePositionSpan lineSpan = childStatement.GetLineSpan();

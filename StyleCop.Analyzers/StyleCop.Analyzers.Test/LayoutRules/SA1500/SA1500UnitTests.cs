@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/>.
+    /// Unit tests for <see cref="SA1500CurlyBracesForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
     /// <remarks>
     /// The test cases can be found in the SA1500 subfolder.
@@ -23,7 +23,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine();
+            yield return new SA1500CurlyBracesForMultiLineStatementsMustNotShareLine();
         }
 
         /// <inheritdoc/>

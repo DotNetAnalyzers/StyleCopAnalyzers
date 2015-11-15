@@ -40,7 +40,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TestStatements))]
-        public async Task TestSingleLineStatementWithoutCurlyBracketsAsync(string statementText)
+        public async Task TestSingleLineStatementWithoutCurlyBracesAsync(string statementText)
         {
             await this.VerifyCSharpDiagnosticAsync(this.GenerateSingleLineTestStatement(statementText), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
@@ -53,7 +53,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TestStatements))]
-        public async Task TestMultiLineStatementWithoutCurlyBracketsAsync(string statementText)
+        public async Task TestMultiLineStatementWithoutCurlyBracesAsync(string statementText)
         {
             var expected = this.CSharpDiagnostic().WithLocation(7, 13);
             await this.VerifyCSharpDiagnosticAsync(this.GenerateMultiLineTestStatement(statementText), expected, CancellationToken.None).ConfigureAwait(false);
@@ -128,7 +128,7 @@ public class Foo
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TestStatements))]
-        public async Task TestStatementWithCurlyBracketsAsync(string statementText)
+        public async Task TestStatementWithCurlyBracesAsync(string statementText)
         {
             await this.VerifyCSharpDiagnosticAsync(this.GenerateFixedTestStatement(statementText), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
@@ -139,7 +139,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestSingleLineIfElseStatementWithoutCurlyBracketsAsync()
+        public async Task TestSingleLineIfElseStatementWithoutCurlyBracesAsync()
         {
             var testCode = @"using System.Diagnostics;
 public class Foo
@@ -162,7 +162,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestMultiLineIfElseStatementWithoutCurlyBracketsAsync()
+        public async Task TestMultiLineIfElseStatementWithoutCurlyBracesAsync()
         {
             var testCode = @"using System.Diagnostics;
 public class Foo
@@ -192,7 +192,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestIfElseStatementWithCurlyBracketsAsync()
+        public async Task TestIfElseStatementWithCurlyBracesAsync()
         {
             var testCode = @"using System.Diagnostics;
 public class Foo
@@ -219,7 +219,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestIfElseIfElseStatementWithCurlyBracketsAsync()
+        public async Task TestIfElseIfElseStatementWithCurlyBracesAsync()
         {
             var testCode = @"using System.Diagnostics;
 public class Foo
@@ -250,7 +250,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestMultipleSingleLineIfStatementsWithoutCurlyBracketsAsync()
+        public async Task TestMultipleSingleLineIfStatementsWithoutCurlyBracesAsync()
         {
             var testCode = @"using System.Diagnostics;
 public class Foo
@@ -270,7 +270,7 @@ public class Foo
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestMultipleMultiLineIfStatementsWithoutCurlyBracketsAsync()
+        public async Task TestMultipleMultiLineIfStatementsWithoutCurlyBracesAsync()
         {
             var testCode = @"using System.Diagnostics;
 public class Foo
@@ -503,7 +503,7 @@ public class Foo
         }
 
         /// <summary>
-        /// Verifies that the code fix provider will work properly handle multiple cases of missing brackets.
+        /// Verifies that the code fix provider will work properly handle multiple cases of missing braces.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -564,7 +564,7 @@ public class Foo
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1519CurlyBracketsMustNotBeOmittedFromMultiLineChildStatement();
+            yield return new SA1519CurlyBracesMustNotBeOmittedFromMultiLineChildStatement();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

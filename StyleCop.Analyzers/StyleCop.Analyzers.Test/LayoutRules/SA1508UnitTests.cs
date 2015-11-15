@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using Xunit;
 
     /// <summary>
-    /// Unit tests for the <see cref="SA1508ClosingCurlyBracketsMustNotBePrecededByBlankLine"/> class.
+    /// Unit tests for the <see cref="SA1508ClosingCurlyBracesMustNotBePrecededByBlankLine"/> class.
     /// </summary>
     public class SA1508UnitTests : CodeFixVerifier
     {
@@ -887,7 +887,7 @@ to determine the spacing with the close brace.
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1508ClosingCurlyBracketsMustNotBePrecededByBlankLine();
+            yield return new SA1508ClosingCurlyBracesMustNotBePrecededByBlankLine();
         }
 
         /// <inheritdoc/>

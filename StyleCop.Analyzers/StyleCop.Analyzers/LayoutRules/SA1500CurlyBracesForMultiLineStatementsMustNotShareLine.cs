@@ -12,11 +12,10 @@ namespace StyleCop.Analyzers.LayoutRules
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// The opening or closing curly bracket within a C# statement, element, or expression is not placed on its own
-    /// line.
+    /// The opening or closing curly brace within a C# statement, element, or expression is not placed on its own line.
     /// </summary>
     /// <remarks>
-    /// <para>A violation of this rule occurs when the opening or closing curly bracket within a statement, element, or
+    /// <para>A violation of this rule occurs when the opening or closing curly brace within a statement, element, or
     /// expression is not placed on its own line. For example:</para>
     ///
     /// <code language="cs">
@@ -28,7 +27,7 @@ namespace StyleCop.Analyzers.LayoutRules
     /// }
     /// </code>
     ///
-    /// <para>When StyleCop checks this code, a violation of this rule will occur because the opening curly bracket of
+    /// <para>When StyleCop checks this code, a violation of this rule will occur because the opening curly brace of
     /// the lock statement is placed on the same line as the lock keyword, rather than being placed on its own line, as
     /// follows:</para>
     ///
@@ -42,7 +41,7 @@ namespace StyleCop.Analyzers.LayoutRules
     /// }
     /// </code>
     ///
-    /// <para>A violation will also occur if the closing curly bracket shares a line with other code. For
+    /// <para>A violation will also occur if the closing curly brace shares a line with other code. For
     /// example:</para>
     ///
     /// <code language="cs">
@@ -55,16 +54,16 @@ namespace StyleCop.Analyzers.LayoutRules
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine : DiagnosticAnalyzer
+    internal class SA1500CurlyBracesForMultiLineStatementsMustNotShareLine : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the
-        /// <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/> analyzer.
+        /// <see cref="SA1500CurlyBracesForMultiLineStatementsMustNotShareLine"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1500";
-        private const string Title = "Curly brackets for multi-line statements must not share line";
-        private const string MessageFormat = "Curly brackets for multi-line statements must not share line";
-        private const string Description = "The opening or closing curly bracket within a C# statement, element, or expression is not placed on its own line.";
+        private const string Title = "Curly braces for multi-line statements must not share line";
+        private const string MessageFormat = "Curly braces for multi-line statements must not share line";
+        private const string Description = "The opening or closing curly brace within a C# statement, element, or expression is not placed on its own line.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1500.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
@@ -176,10 +175,10 @@ namespace StyleCop.Analyzers.LayoutRules
                 }
             }
 
-            CheckCurlyBracketToken(context, openBraceToken);
+            CheckCurlyBraceToken(context, openBraceToken);
             if (checkCloseBrace)
             {
-                CheckCurlyBracketToken(context, closeBraceToken);
+                CheckCurlyBraceToken(context, closeBraceToken);
             }
         }
 
@@ -188,7 +187,7 @@ namespace StyleCop.Analyzers.LayoutRules
             return token.GetLineSpan().StartLinePosition.Line;
         }
 
-        private static void CheckCurlyBracketToken(SyntaxNodeAnalysisContext context, SyntaxToken token)
+        private static void CheckCurlyBraceToken(SyntaxNodeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
             {

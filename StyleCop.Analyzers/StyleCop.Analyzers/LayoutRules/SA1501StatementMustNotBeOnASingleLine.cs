@@ -15,10 +15,10 @@ namespace StyleCop.Analyzers.LayoutRules
     using SpacingRules;
 
     /// <summary>
-    /// A C# statement containing opening and closing curly brackets is written completely on a single line.
+    /// A C# statement containing opening and closing curly braces is written completely on a single line.
     /// </summary>
     /// <remarks>
-    /// <para>A violation of this rule occurs when a statement that is wrapped in opening and closing curly brackets is
+    /// <para>A violation of this rule occurs when a statement that is wrapped in opening and closing curly braces is
     /// written on a single line. For example:</para>
     ///
     /// <code language="csharp">
@@ -30,7 +30,7 @@ namespace StyleCop.Analyzers.LayoutRules
     ///
     /// <para>When StyleCop checks this code, a violation of this rule will occur because the entire lock statement is
     /// written on one line. The statement should be written across multiple lines, with the opening and closing curly
-    /// brackets each on their own line, as follows:</para>
+    /// braces each on their own line, as follows:</para>
     ///
     /// <code language="csharp">
     /// public object Method()
@@ -51,7 +51,7 @@ namespace StyleCop.Analyzers.LayoutRules
         public const string DiagnosticId = "SA1501";
         private const string Title = "Statement must not be on a single line";
         private const string MessageFormat = "Statement must not be on a single line";
-        private const string Description = "A C# statement containing opening and closing curly brackets is written completely on a single line.";
+        private const string Description = "A C# statement containing opening and closing curly braces is written completely on a single line.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1501.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
@@ -74,7 +74,7 @@ namespace StyleCop.Analyzers.LayoutRules
             context.RegisterSyntaxNodeActionHonorExclusions(HandleBlock, SyntaxKind.Block);
 
             // If SA1503 is suppressed, we need to handle compound blocks as well.
-            if (context.IsAnalyzerSuppressed(SA1503CurlyBracketsMustNotBeOmitted.DiagnosticId))
+            if (context.IsAnalyzerSuppressed(SA1503CurlyBracesMustNotBeOmitted.DiagnosticId))
             {
                 context.RegisterSyntaxNodeActionHonorExclusions(HandleIfStatement, SyntaxKind.IfStatement);
                 context.RegisterSyntaxNodeActionHonorExclusions(ctx => CheckChildStatement(ctx, ctx.Node, ((DoStatementSyntax)ctx.Node).Statement), SyntaxKind.DoStatement);
@@ -139,7 +139,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 }
             }
 
-            if (!context.IsAnalyzerSuppressed(SA1520UseCurlyBracketsConsistently.DiagnosticId))
+            if (!context.IsAnalyzerSuppressed(SA1520UseCurlyBracesConsistently.DiagnosticId))
             {
                 // inconsistencies will be reported as SA1520, as long as it's not suppressed
                 if (clauses.OfType<BlockSyntax>().Any())
@@ -187,7 +187,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 return;
             }
 
-            if (!context.IsAnalyzerSuppressed(SA1519CurlyBracketsMustNotBeOmittedFromMultiLineChildStatement.DiagnosticId))
+            if (!context.IsAnalyzerSuppressed(SA1519CurlyBracesMustNotBeOmittedFromMultiLineChildStatement.DiagnosticId))
             {
                 // diagnostics for multi-line statements is handled by SA1519, as long as it's not suppressed
                 FileLinePositionSpan lineSpan = childStatement.GetLineSpan();
