@@ -279,6 +279,7 @@
     <Compile Include="Settings\ObjectModel\SettingsFile.cs" />
     <Compile Include="Settings\ObjectModel\SpacingSettings.cs" />
     <Compile Include="Settings\ObjectModel\StyleCopSettings.cs" />
+    <Compile Include="Settings\ObjectModel\UsingDirectivesPlacement.cs" />
     <Compile Include="Settings\SettingsHelper.cs" />
     <Compile Include="Settings\SettingsResources.Designer.cs">
       <AutoGen>True</AutoGen>
