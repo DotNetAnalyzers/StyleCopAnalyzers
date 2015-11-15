@@ -291,7 +291,6 @@ using Microsoft.CodeAnalysis;
             var fixedTestCode = @"using System;
 using Microsoft.VisualStudio;
 using MyList = System.Collections.Generic.List<int>;
-
 #if true
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;

@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Analyzers.Settings.ObjectModel;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.OrderingRules;
@@ -18,7 +19,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     /// </summary>
     public class UsingCodeFixProviderCombinedSystemDirectivesUnitTests : CodeFixVerifier
     {
-        private bool suppressSA1200;
+        private UsingDirectivesPlacement usingDirectivesPlacement;
 
         /// <summary>
         /// Verifies that the code fix will properly reorder using statements.
@@ -136,7 +137,7 @@ using System.Collections;
 using System.Collections.Generic;
 using static System.Math;
 using static System.String;
-using MyFunc = System.Func<int,bool>;
+using MyFunc = System.Func<int, bool>;
 using SystemAction = System.Action;
 
 namespace NamespaceName
@@ -147,7 +148,7 @@ namespace NamespaceName
 }
 ";
 
-            this.suppressSA1200 = true;
+            this.usingDirectivesPlacement = UsingDirectivesPlacement.OutsideNamespace;
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
@@ -186,7 +187,7 @@ namespace Foo
 }
 ";
 
-            this.suppressSA1200 = true;
+            this.usingDirectivesPlacement = UsingDirectivesPlacement.OutsideNamespace;
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
@@ -229,7 +230,7 @@ namespace Foo
 }
 ";
 
-            this.suppressSA1200 = true;
+            this.usingDirectivesPlacement = UsingDirectivesPlacement.OutsideNamespace;
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
@@ -272,7 +273,7 @@ namespace Foo
 }
 ";
 
-            this.suppressSA1200 = true;
+            this.usingDirectivesPlacement = UsingDirectivesPlacement.OutsideNamespace;
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
@@ -399,12 +400,23 @@ namespace NamespaceName
         /// <inheritdoc/>
         protected override IEnumerable<string> GetDisabledDiagnostics()
         {
-            if (this.suppressSA1200)
-            {
-                yield return SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId;
-            }
-
             yield return SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives.DiagnosticId;
+        }
+
+        /// <inheritdoc/>
+        protected override string GetSettings()
+        {
+            string testSettings = $@"
+{{
+  ""settings"": {{
+    ""orderingRules"": {{
+      ""usingDirectivesPlacement"": ""{this.usingDirectivesPlacement}""
+    }}
+  }}
+}}
+";
+
+            return testSettings;
         }
 
         /// <inheritdoc/>
