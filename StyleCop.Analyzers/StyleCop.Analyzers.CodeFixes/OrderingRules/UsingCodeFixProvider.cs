@@ -30,7 +30,7 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(
-                SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId,
+                SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId,
                 SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives.DiagnosticId,
                 SA1209UsingAliasDirectivesMustBePlacedAfterOtherUsingDirectives.DiagnosticId,
                 SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace.DiagnosticId,
@@ -53,7 +53,7 @@ namespace StyleCop.Analyzers.OrderingRules
             foreach (Diagnostic diagnostic in context.Diagnostics)
             {
                 // do not offer a code fix for SA1200 when there are multiple namespaces in the source file
-                if ((diagnostic.Id == SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId)
+                if ((diagnostic.Id == SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId)
                     && (CountNamespaces(compilationUnit.Members) > 1))
                 {
                     continue;
@@ -82,7 +82,7 @@ namespace StyleCop.Analyzers.OrderingRules
             // - There are no global attributes
             // - There is only a single namespace declared at the top level
             var moveInsideNamespace =
-                !document.Project.CompilationOptions.IsAnalyzerSuppressed(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId)
+                !document.Project.CompilationOptions.IsAnalyzerSuppressed(SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId)
                 && !compilationUnit.AttributeLists.Any()
                 && compilationUnit.Members.Count == 1
                 && namespaceCount == 1;

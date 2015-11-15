@@ -330,14 +330,14 @@ namespace TestNamespace2
             // The code fix is not able to correct all violations due to the use of multiple namespaces in a single file
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(1, 1),
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(2, 1),
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(3, 1),
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(4, 1),
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(5, 1),
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(6, 1),
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(7, 1),
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(8, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId).WithLocation(1, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId).WithLocation(2, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId).WithLocation(3, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId).WithLocation(4, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId).WithLocation(5, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId).WithLocation(6, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId).WithLocation(7, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId).WithLocation(8, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -559,10 +559,10 @@ namespace Fish
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(8, 1),
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(10, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId).WithLocation(8, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId).WithLocation(10, 1),
                 this.CSharpDiagnostic(SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace.DiagnosticId).WithLocation(10, 1),
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(11, 1)
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId).WithLocation(11, 1)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -574,14 +574,14 @@ namespace Fish
         {
             if (this.suppressSA1200)
             {
-                yield return SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId;
+                yield return SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId;
             }
         }
 
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1200UsingDirectivesMustBePlacedWithinNamespace();
+            yield return new SA1200UsingDirectivesMustBePlacedCorrectly();
             yield return new SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives();
             yield return new SA1209UsingAliasDirectivesMustBePlacedAfterOtherUsingDirectives();
             yield return new SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace();

@@ -214,7 +214,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>OrderingResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="OrderingRules\SA1200UsingDirectivesMustBePlacedWithinNamespace.cs" />
+    <Compile Include="OrderingRules\SA1200UsingDirectivesMustBePlacedCorrectly.cs" />
     <Compile Include="OrderingRules\SA1201ElementsMustAppearInTheCorrectOrder.cs" />
     <Compile Include="OrderingRules\SA1202ElementsMustBeOrderedByAccess.cs" />
     <Compile Include="OrderingRules\SA1203ConstantsMustAppearBeforeFields.cs" />

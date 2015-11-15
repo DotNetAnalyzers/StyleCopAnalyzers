@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Analyzers.Settings.ObjectModel;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.OrderingRules;
@@ -13,10 +14,22 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using Xunit;
 
     /// <summary>
-    /// Unit tests for the <see cref="SA1200UsingDirectivesMustBePlacedCorrectly"/>
+    /// Unit tests for the <see cref="SA1200UsingDirectivesMustBePlacedCorrectly"/> when configured to use
+    /// <see cref="UsingDirectivesPlacement.Preserve"/>.
     /// </summary>
-    public class SA1200UnitTests : CodeFixVerifier
+    public class SA1200PreserveUnitTests : CodeFixVerifier
     {
+        private const string SettingsFileName = "stylecop.json";
+        private const string TestSettings = @"
+{
+  ""settings"": {
+    ""orderingRules"": {
+      ""usingDirectivesPlacement"": ""preserve""
+    }
+  }
+}
+";
+
         private const string ClassDefinition = @"public class TestClass
 {
 }";
@@ -96,11 +109,12 @@ namespace TestNamespace
         }
 
         /// <summary>
-        /// Verifies that having using statements in the compilation unit will produce the expected diagnostics.
+        /// Verifies that having using statements in the compilation unit will not diagnostics, even if they could be
+        /// moved inside a namespace.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestInvalidUsingStatementsInCompilationUnitAsync()
+        public async Task TestIgnoredUsingStatementsInCompilationUnitAsync()
         {
             var testCode = @"using System;
 using System.Threading;
@@ -110,22 +124,13 @@ namespace TestNamespace
 }
 ";
 
-            var fixedTestCode = @"namespace TestNamespace
-{
-    using System;
-    using System.Threading;
-}
-";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
 
-            DiagnosticResult[] expectedResults =
-            {
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(1, 1),
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(2, 1)
-            };
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        /// <inheritdoc/>
+        protected override string GetSettings()
+        {
+            return TestSettings;
         }
 
         /// <inheritdoc/>
