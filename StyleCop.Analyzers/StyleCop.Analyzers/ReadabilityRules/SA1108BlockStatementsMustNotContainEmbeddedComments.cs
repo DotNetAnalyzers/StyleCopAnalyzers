@@ -12,12 +12,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
-    /// A C# statement contains a comment between the declaration of the statement and the opening curly bracket of the
+    /// A C# statement contains a comment between the declaration of the statement and the opening brace of the
     /// statement.
     /// </summary>
     /// <remarks>
     /// <para>A violation of this rule occurs when the code contains a comment in between the declaration and the
-    /// opening curly bracket. For example:</para>
+    /// opening brace. For example:</para>
     /// <code language="csharp">
     /// if (x != y)
     /// // Make sure x does not equal y

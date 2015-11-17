@@ -144,27 +144,27 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>LayoutResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="LayoutRules\SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine.cs" />
+    <Compile Include="LayoutRules\SA1500BracesForMultiLineStatementsMustNotShareLine.cs" />
     <Compile Include="LayoutRules\SA1501StatementMustNotBeOnASingleLine.cs" />
     <Compile Include="LayoutRules\SA1502ElementMustNotBeOnASingleLine.cs" />
-    <Compile Include="LayoutRules\SA1503CurlyBracketsMustNotBeOmitted.cs" />
+    <Compile Include="LayoutRules\SA1503BracesMustNotBeOmitted.cs" />
     <Compile Include="LayoutRules\SA1504AllAccessorsMustBeSingleLineOrMultiLine.cs" />
-    <Compile Include="LayoutRules\SA1505OpeningCurlyBracketsMustNotBeFollowedByBlankLine.cs" />
+    <Compile Include="LayoutRules\SA1505OpeningBracesMustNotBeFollowedByBlankLine.cs" />
     <Compile Include="LayoutRules\SA1506ElementDocumentationHeadersMustNotBeFollowedByBlankLine.cs" />
     <Compile Include="LayoutRules\SA1507CodeMustNotContainMultipleBlankLinesInARow.cs" />
-    <Compile Include="LayoutRules\SA1508ClosingCurlyBracketsMustNotBePrecededByBlankLine.cs" />
-    <Compile Include="LayoutRules\SA1509OpeningCurlyBracketsMustNotBePrecededByBlankLine.cs" />
+    <Compile Include="LayoutRules\SA1508ClosingBracesMustNotBePrecededByBlankLine.cs" />
+    <Compile Include="LayoutRules\SA1509OpeningBracesMustNotBePrecededByBlankLine.cs" />
     <Compile Include="LayoutRules\SA1510ChainedStatementBlocksMustNotBePrecededByBlankLine.cs" />
     <Compile Include="LayoutRules\SA1511WhileDoFooterMustNotBePrecededByBlankLine.cs" />
     <Compile Include="LayoutRules\SA1512SingleLineCommentsMustNotBeFollowedByBlankLine.cs" />
-    <Compile Include="LayoutRules\SA1513ClosingCurlyBracketMustBeFollowedByBlankLine.cs" />
+    <Compile Include="LayoutRules\SA1513ClosingBraceMustBeFollowedByBlankLine.cs" />
     <Compile Include="LayoutRules\SA1514ElementDocumentationHeaderMustBePrecededByBlankLine.cs" />
     <Compile Include="LayoutRules\SA1515SingleLineCommentMustBePrecededByBlankLine.cs" />
     <Compile Include="LayoutRules\SA1516ElementsMustBeSeparatedByBlankLine.cs" />
     <Compile Include="LayoutRules\SA1517CodeMustNotContainBlankLinesAtStartOfFile.cs" />
     <Compile Include="LayoutRules\SA1518CodeMustNotContainBlankLinesAtEndOfFile.cs" />
-    <Compile Include="LayoutRules\SA1519CurlyBracketsMustNotBeOmittedFromMultiLineChildStatement.cs" />
-    <Compile Include="LayoutRules\SA1520UseCurlyBracketsConsistently.cs" />
+    <Compile Include="LayoutRules\SA1519BracesMustNotBeOmittedFromMultiLineChildStatement.cs" />
+    <Compile Include="LayoutRules\SA1520UseBracesConsistently.cs" />
     <Compile Include="LinqHelpers\SyntaxTriviaListEnumerable.cs" />
     <Compile Include="MaintainabilityRules\MaintainabilityResources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -297,8 +297,8 @@
     <Compile Include="SpacingRules\SA1009ClosingParenthesisMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1010OpeningSquareBracketsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1011ClosingSquareBracketsMustBeSpacedCorrectly.cs" />
-    <Compile Include="SpacingRules\SA1012OpeningCurlyBracketsMustBeSpacedCorrectly.cs" />
-    <Compile Include="SpacingRules\SA1013ClosingCurlyBracketsMustBeSpacedCorrectly.cs" />
+    <Compile Include="SpacingRules\SA1012OpeningBracesMustBeSpacedCorrectly.cs" />
+    <Compile Include="SpacingRules\SA1013ClosingBracesMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1014OpeningGenericBracketsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1015ClosingGenericBracketsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1016OpeningAttributeBracketsMustBeSpacedCorrectly.cs" />

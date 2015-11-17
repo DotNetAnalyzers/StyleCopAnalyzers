@@ -16,7 +16,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     public class SA1110UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestMethodDeclarationOpeningBracketInTheNextLineAsync()
+        public async Task TestMethodDeclarationOpeningParenthesisInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -44,7 +44,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestConstructorDeclarationOpeningBracketInTheNextLineAsync()
+        public async Task TestConstructorDeclarationOpeningParenthesisInTheNextLineAsync()
         {
             var testCode = @"
 public class Foo
@@ -70,7 +70,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestMethodDeclarationOpeningBracketInTheSameLineAsync()
+        public async Task TestMethodDeclarationOpeningParenthesisInTheSameLineAsync()
         {
             var testCode = @"
 class Foo
@@ -86,7 +86,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestConstructorDeclarationOpeningBracketInTheSameLineAsync()
+        public async Task TestConstructorDeclarationOpeningParenthesisInTheSameLineAsync()
         {
             var testCode = @"
 public class Foo
@@ -100,7 +100,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestMethodCallOpeningBracketInTheNextLineAsync()
+        public async Task TestMethodCallOpeningParenthesisInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -128,7 +128,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestMethodCallUsingThisOpeningBracketInTheNextLineAsync()
+        public async Task TestMethodCallUsingThisOpeningParenthesisInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -156,7 +156,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestMethodCallUsingBaseOpeningBracketInTheNextLineAsync()
+        public async Task TestMethodCallUsingBaseOpeningParenthesisInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -184,7 +184,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestMethodCallUsingVariableOpeningBracketInTheNextLineAsync()
+        public async Task TestMethodCallUsingVariableOpeningParenthesisInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -234,7 +234,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestStaticMethodCallOpeningBracketInTheNextLineAsync()
+        public async Task TestStaticMethodCallOpeningParenthesisInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -270,7 +270,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestStaticMethodCallOpeningBracketInTheNextLineAsClassNameAsync()
+        public async Task TestStaticMethodCallOpeningParenthesisInTheNextLineAsClassNameAsync()
         {
             var testCode = @"
 class Foo
@@ -290,7 +290,7 @@ Baz();
         }
 
         [Fact]
-        public async Task TestStaticMethodCallWithAnotherStaticCallOpeningBracketInTheNextLineAsync()
+        public async Task TestStaticMethodCallWithAnotherStaticCallOpeningParenthesisInTheNextLineAsync()
         {
             var testCode = @"
 using System;
@@ -313,7 +313,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestConstructorCallOpeningBracketInTheNextLineAsync()
+        public async Task TestConstructorCallOpeningParenthesisInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
@@ -356,7 +356,7 @@ public class Foo
         }
 
         [Fact]
-        public async Task TestConstructorWithQualifiedNameCallOpeningBracketInTheNextLineAsync()
+        public async Task TestConstructorWithQualifiedNameCallOpeningParenthesisInTheNextLineAsync()
         {
             var testCode = @"
 class Foo
