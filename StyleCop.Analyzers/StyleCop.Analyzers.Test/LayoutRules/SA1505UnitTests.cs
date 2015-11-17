@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using Xunit;
 
     /// <summary>
-    /// Unit tests for the <see cref="SA1505OpeningCurlyBracesMustNotBeFollowedByBlankLine"/> class.
+    /// Unit tests for the <see cref="SA1505OpeningBracesMustNotBeFollowedByBlankLine"/> class.
     /// </summary>
     public class SA1505UnitTests : CodeFixVerifier
     {
@@ -825,7 +825,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         }
 
         /// <summary>
-        /// Verifies that an opening curly brace followed by a comment will not trigger any diagnostics.
+        /// Verifies that an opening brace followed by a comment will not trigger any diagnostics.
         /// </summary>
         /// <remarks>Tests regression for #971.</remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
@@ -855,7 +855,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         }
 
         /// <summary>
-        /// Verifies that an opening curly brace at the end of the file will not trigger any diagnostics.
+        /// Verifies that an opening brace at the end of the file will not trigger any diagnostics.
         /// </summary>
         /// <remarks>
         /// <para>This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#981.</para>
@@ -883,7 +883,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1505OpeningCurlyBracesMustNotBeFollowedByBlankLine();
+            yield return new SA1505OpeningBracesMustNotBeFollowedByBlankLine();
         }
 
         /// <inheritdoc/>

@@ -516,14 +516,14 @@ class TypeName
         }
 
         /// <summary>
-        /// Verifies that a statement followed by a block without curly braces will produce a warning.
+        /// Verifies that a statement followed by a block without braces will produce a warning.
         /// </summary>
         /// <param name="statementText">The source code for the first part of a compound statement whose child can be
         /// either a statement block or a single statement.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TestStatements))]
-        public async Task TestNoSA1503StatementWithoutCurlyBracesAsync(string statementText)
+        public async Task TestNoSA1503StatementWithoutBracesAsync(string statementText)
         {
             this.suppressSA1503 = true;
 
@@ -532,7 +532,7 @@ class TypeName
         }
 
         /// <summary>
-        /// Verifies that a <c>do</c> statement followed by a block without curly braces will produce a warning, and the
+        /// Verifies that a <c>do</c> statement followed by a block without braces will produce a warning, and the
         /// code fix for this warning results in valid code.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
@@ -721,14 +721,14 @@ else if (i == 13)
         }
 
         /// <summary>
-        /// Verifies that a statement followed by a block with curly braces will produce no diagnostics results.
+        /// Verifies that a statement followed by a block with braces will produce no diagnostics results.
         /// </summary>
         /// <param name="statementText">The source code for the first part of a compound statement whose child can be
         /// either a statement block or a single statement.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TestStatements))]
-        public async Task TestNoSA1503StatementWithCurlyBracesAsync(string statementText)
+        public async Task TestNoSA1503StatementWithBracesAsync(string statementText)
         {
             this.suppressSA1503 = true;
 
@@ -736,11 +736,11 @@ else if (i == 13)
         }
 
         /// <summary>
-        /// Verifies that an if / else statement followed by a block without curly braces will produce a warning.
+        /// Verifies that an if / else statement followed by a block without braces will produce a warning.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestNoSA1503IfElseStatementWithoutCurlyBracesAsync()
+        public async Task TestNoSA1503IfElseStatementWithoutBracesAsync()
         {
             this.suppressSA1503 = true;
 
@@ -758,11 +758,11 @@ public class TypeName
         }
 
         /// <summary>
-        /// Verifies that nested if statements followed by a block without curly braces will produce warnings.
+        /// Verifies that nested if statements followed by a block without braces will produce warnings.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestNoSA1503MultipleIfStatementsWithoutCurlyBracesAsync()
+        public async Task TestNoSA1503MultipleIfStatementsWithoutBracesAsync()
         {
             this.suppressSA1503 = true;
 
@@ -972,7 +972,7 @@ public class TypeName
         {
             if (this.suppressSA1503)
             {
-                yield return SA1503CurlyBracesMustNotBeOmitted.DiagnosticId;
+                yield return SA1503BracesMustNotBeOmitted.DiagnosticId;
             }
         }
 

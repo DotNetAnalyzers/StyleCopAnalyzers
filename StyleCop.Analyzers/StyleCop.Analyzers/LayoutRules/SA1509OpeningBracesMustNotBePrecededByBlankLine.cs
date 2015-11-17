@@ -12,15 +12,14 @@ namespace StyleCop.Analyzers.LayoutRules
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// An opening curly brace within a C# element, statement, or expression is preceded by a blank line.
+    /// An opening brace within a C# element, statement, or expression is preceded by a blank line.
     /// </summary>
     /// <remarks>
     /// <para>To improve the readability of the code, StyleCop requires blank lines in certain situations, and prohibits
     /// blank lines in other situations. This results in a consistent visual pattern across the code, which can improve
     /// recognition and readability of unfamiliar code.</para>
     ///
-    /// <para>A violation of this rule occurs when an opening curly brace is preceded by a blank line. For
-    /// example:</para>
+    /// <para>A violation of this rule occurs when an opening brace is preceded by a blank line. For example:</para>
     ///
     /// <code language="csharp">
     /// public bool Enabled
@@ -35,19 +34,19 @@ namespace StyleCop.Analyzers.LayoutRules
     /// </code>
     ///
     /// <para>The code above would generate two instances of this violation, since there are two places where opening
-    /// curly braces are preceded by blank lines.</para>
+    /// braces are preceded by blank lines.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class SA1509OpeningCurlyBracesMustNotBePrecededByBlankLine : DiagnosticAnalyzer
+    internal class SA1509OpeningBracesMustNotBePrecededByBlankLine : DiagnosticAnalyzer
     {
         /// <summary>
-        /// The ID for diagnostics produced by the <see cref="SA1509OpeningCurlyBracesMustNotBePrecededByBlankLine"/>
+        /// The ID for diagnostics produced by the <see cref="SA1509OpeningBracesMustNotBePrecededByBlankLine"/>
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1509";
-        private const string Title = "Opening curly braces must not be preceded by blank line";
-        private const string MessageFormat = "Opening curly braces must not be preceded by blank line.";
-        private const string Description = "An opening curly brace within a C# element, statement, or expression is preceded by a blank line.";
+        private const string Title = "Opening braces must not be preceded by blank line";
+        private const string MessageFormat = "Opening braces must not be preceded by blank line.";
+        private const string Description = "An opening brace within a C# element, statement, or expression is preceded by a blank line.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1509.md";
 
         private static readonly DiagnosticDescriptor Descriptor =

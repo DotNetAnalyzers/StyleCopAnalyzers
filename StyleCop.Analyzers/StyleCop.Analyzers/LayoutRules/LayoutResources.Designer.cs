@@ -62,7 +62,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Align curly braces.
+        ///   Looks up a localized string similar to Align braces.
         /// </summary>
         internal static string SA1500CodeFix {
             get {
@@ -89,7 +89,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A C# element containing opening and closing curly braces is written completely on a single line..
+        ///   Looks up a localized string similar to A C# element containing opening and closing braces is written completely on a single line..
         /// </summary>
         internal static string SA1502Description {
             get {
@@ -116,7 +116,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Wrap with curly braces.
+        ///   Looks up a localized string similar to Wrap with braces.
         /// </summary>
         internal static string SA1503CodeFix {
             get {
@@ -143,7 +143,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Remove blank lines following this curly brace.
+        ///   Looks up a localized string similar to Remove blank lines following this brace.
         /// </summary>
         internal static string SA1505CodeFix {
             get {
@@ -170,7 +170,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Remove blank lines preceding this curly brace.
+        ///   Looks up a localized string similar to Remove blank lines preceding this brace.
         /// </summary>
         internal static string SA1508CodeFix {
             get {
@@ -179,7 +179,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Remove blank lines preceding this curly brace.
+        ///   Looks up a localized string similar to Remove blank lines preceding this brace.
         /// </summary>
         internal static string SA1509CodeFix {
             get {
@@ -215,7 +215,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Insert blank line after curly brace.
+        ///   Looks up a localized string similar to Insert blank line after brace.
         /// </summary>
         internal static string SA1513CodeFix {
             get {

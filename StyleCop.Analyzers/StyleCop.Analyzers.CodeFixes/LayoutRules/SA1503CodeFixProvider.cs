@@ -16,7 +16,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     /// <summary>
-    /// Implements a code fix for <see cref="SA1503CurlyBracesMustNotBeOmitted"/>.
+    /// Implements a code fix for <see cref="SA1503BracesMustNotBeOmitted"/>.
     /// </summary>
     /// <remarks>
     /// <para>To fix a violation of this rule, the violating statement will be converted to a block statement.</para>
@@ -27,7 +27,7 @@ namespace StyleCop.Analyzers.LayoutRules
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(SA1503CurlyBracesMustNotBeOmitted.DiagnosticId, SA1519CurlyBracesMustNotBeOmittedFromMultiLineChildStatement.DiagnosticId, SA1520UseCurlyBracesConsistently.DiagnosticId);
+            ImmutableArray.Create(SA1503BracesMustNotBeOmitted.DiagnosticId, SA1519BracesMustNotBeOmittedFromMultiLineChildStatement.DiagnosticId, SA1520UseBracesConsistently.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()

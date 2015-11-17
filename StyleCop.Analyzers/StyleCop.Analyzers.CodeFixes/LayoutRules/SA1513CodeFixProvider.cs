@@ -14,10 +14,10 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CSharp;
 
     /// <summary>
-    /// Implements a code fix for <see cref="SA1513ClosingCurlyBraceMustBeFollowedByBlankLine"/>.
+    /// Implements a code fix for <see cref="SA1513ClosingBraceMustBeFollowedByBlankLine"/>.
     /// </summary>
     /// <remarks>
-    /// <para>To fix a violation of this rule, ensure a blank line follows closing curly braces.</para>
+    /// <para>To fix a violation of this rule, ensure a blank line follows closing braces.</para>
     /// </remarks>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1513CodeFixProvider))]
     [Shared]
@@ -25,7 +25,7 @@ namespace StyleCop.Analyzers.LayoutRules
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(SA1513ClosingCurlyBraceMustBeFollowedByBlankLine.DiagnosticId);
+            ImmutableArray.Create(SA1513ClosingBraceMustBeFollowedByBlankLine.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()

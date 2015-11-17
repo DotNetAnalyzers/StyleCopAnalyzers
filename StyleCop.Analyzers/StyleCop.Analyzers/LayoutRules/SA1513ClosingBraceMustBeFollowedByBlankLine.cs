@@ -15,15 +15,14 @@ namespace StyleCop.Analyzers.LayoutRules
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// A closing curly brace within a C# element, statement, or expression is not followed by a blank line.
+    /// A closing brace within a C# element, statement, or expression is not followed by a blank line.
     /// </summary>
     /// <remarks>
     /// <para>To improve the readability of the code, StyleCop requires blank lines in certain situations, and prohibits
     /// blank lines in other situations. This results in a consistent visual pattern across the code, which can improve
     /// recognition and readability of unfamiliar code.</para>
     ///
-    /// <para>A violation of this rule occurs when a closing curly brace is not followed by a blank line. For
-    /// example:</para>
+    /// <para>A violation of this rule occurs when a closing brace is not followed by a blank line. For example:</para>
     ///
     /// <code language="csharp">
     /// public bool Enabled
@@ -35,19 +34,19 @@ namespace StyleCop.Analyzers.LayoutRules
     /// </code>
     ///
     /// <para>The code above would generate one instance of this violation, since there is one place where a closing
-    /// curly brace is not followed by a blank line.</para>
+    /// brace is not followed by a blank line.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class SA1513ClosingCurlyBraceMustBeFollowedByBlankLine : DiagnosticAnalyzer
+    internal class SA1513ClosingBraceMustBeFollowedByBlankLine : DiagnosticAnalyzer
     {
         /// <summary>
-        /// The ID for diagnostics produced by the <see cref="SA1513ClosingCurlyBraceMustBeFollowedByBlankLine"/>
+        /// The ID for diagnostics produced by the <see cref="SA1513ClosingBraceMustBeFollowedByBlankLine"/>
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1513";
-        private const string Title = "Closing curly brace must be followed by blank line";
-        private const string MessageFormat = "Closing curly brace must be followed by blank line";
-        private const string Description = "A closing curly brace within a C# element, statement, or expression is not followed by a blank line.";
+        private const string Title = "Closing brace must be followed by blank line";
+        private const string MessageFormat = "Closing brace must be followed by blank line";
+        private const string Description = "A closing brace within a C# element, statement, or expression is not followed by a blank line.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1513.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
@@ -75,16 +74,16 @@ namespace StyleCop.Analyzers.LayoutRules
         {
             var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
 
-            var visitor = new CurlyBracesVisitor(context);
+            var visitor = new BracesVisitor(context);
             visitor.Visit(syntaxRoot);
         }
 
-        private class CurlyBracesVisitor : CSharpSyntaxWalker
+        private class BracesVisitor : CSharpSyntaxWalker
         {
             private readonly SyntaxTreeAnalysisContext context;
-            private readonly Stack<SyntaxToken> curlyBracesStack = new Stack<SyntaxToken>();
+            private readonly Stack<SyntaxToken> bracesStack = new Stack<SyntaxToken>();
 
-            public CurlyBracesVisitor(SyntaxTreeAnalysisContext context)
+            public BracesVisitor(SyntaxTreeAnalysisContext context)
                 : base(SyntaxWalkerDepth.Token)
             {
                 this.context = context;
@@ -94,13 +93,13 @@ namespace StyleCop.Analyzers.LayoutRules
             {
                 if (token.IsKind(SyntaxKind.OpenBraceToken))
                 {
-                    this.curlyBracesStack.Push(token);
+                    this.bracesStack.Push(token);
                 }
                 else if (token.IsKind(SyntaxKind.CloseBraceToken))
                 {
                     this.AnalyzeCloseBrace(token);
 
-                    this.curlyBracesStack.Pop();
+                    this.bracesStack.Pop();
                 }
 
                 base.VisitToken(token);
@@ -285,7 +284,7 @@ namespace StyleCop.Analyzers.LayoutRules
 
             private bool IsOnSameLineAsOpeningBrace(SyntaxToken closeBrace)
             {
-                var matchingOpenBrace = this.curlyBracesStack.Peek();
+                var matchingOpenBrace = this.bracesStack.Peek();
                 return matchingOpenBrace.GetLineSpan().EndLinePosition.Line == closeBrace.GetLineSpan().StartLinePosition.Line;
             }
         }

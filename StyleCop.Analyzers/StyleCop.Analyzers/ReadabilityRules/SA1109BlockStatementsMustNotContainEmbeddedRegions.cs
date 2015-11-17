@@ -9,14 +9,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
-    /// A C# statement contains a region tag between the declaration of the statement and the opening curly brace of
-    /// the statement.
+    /// A C# statement contains a region tag between the declaration of the statement and the opening brace of the
+    /// statement.
     /// </summary>
     /// <remarks>
     /// <para>This diagnostic is not implemented in StyleCopAnalyzers.</para>
     ///
     /// <para>A violation of this rule occurs when the code contains a region tag in between the declaration and the
-    /// opening curly brace. For example:</para>
+    /// opening brace. For example:</para>
     /// <code language="csharp">
     /// if (x != y)
     /// #region

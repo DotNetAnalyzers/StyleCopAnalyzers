@@ -18,7 +18,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.Text;
 
     /// <summary>
-    /// Implements a code fix for <see cref="SA1500CurlyBracesForMultiLineStatementsMustNotShareLine"/>.
+    /// Implements a code fix for <see cref="SA1500BracesForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1500CodeFixProvider))]
     [Shared]
@@ -26,7 +26,7 @@ namespace StyleCop.Analyzers.LayoutRules
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(SA1500CurlyBracesForMultiLineStatementsMustNotShareLine.DiagnosticId);
+            ImmutableArray.Create(SA1500BracesForMultiLineStatementsMustNotShareLine.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -88,7 +88,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 }
                 else
                 {
-                    // Check if we need to apply a fix before the curly brace
+                    // Check if we need to apply a fix before the brace
                     if (LocationHelpers.GetLineSpan(previousToken).StartLinePosition.Line == braceLine)
                     {
                         if (!braceTokens.Contains(previousToken))
@@ -105,8 +105,8 @@ namespace StyleCop.Analyzers.LayoutRules
                         braceReplacementToken = braceReplacementToken.WithLeadingTrivia(IndentationHelper.GenerateWhitespaceTrivia(indentationOptions, indentationSteps));
                     }
 
-                    // Check if we need to apply a fix after the curly brace
-                    // if a closing curly brace is followed by a semi-colon or closing paren, no fix is needed.
+                    // Check if we need to apply a fix after the brace
+                    // if a closing brace is followed by a semi-colon or closing paren, no fix is needed.
                     if ((LocationHelpers.GetLineSpan(nextToken).StartLinePosition.Line == braceLine) &&
                         (!braceToken.IsKind(SyntaxKind.CloseBraceToken) || !IsValidFollowingToken(nextToken)))
                     {
@@ -145,9 +145,9 @@ namespace StyleCop.Analyzers.LayoutRules
             return tokenReplacements;
         }
 
-        private static bool IsAccessorWithSingleLineBlock(SyntaxToken previousToken, SyntaxToken curlyBraceToken)
+        private static bool IsAccessorWithSingleLineBlock(SyntaxToken previousToken, SyntaxToken braceToken)
         {
-            if (!curlyBraceToken.IsKind(SyntaxKind.OpenBraceToken))
+            if (!braceToken.IsKind(SyntaxKind.OpenBraceToken))
             {
                 return false;
             }
@@ -164,7 +164,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 return false;
             }
 
-            var token = curlyBraceToken;
+            var token = braceToken;
             var depth = 1;
 
             while (depth > 0)
@@ -182,7 +182,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 }
             }
 
-            return LocationHelpers.GetLineSpan(curlyBraceToken).StartLinePosition.Line == LocationHelpers.GetLineSpan(token).StartLinePosition.Line;
+            return LocationHelpers.GetLineSpan(braceToken).StartLinePosition.Line == LocationHelpers.GetLineSpan(token).StartLinePosition.Line;
         }
 
         private static bool IsValidFollowingToken(SyntaxToken nextToken)
@@ -201,7 +201,7 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static int DetermineIndentationSteps(IndentationOptions indentationOptions, SyntaxToken token)
         {
-            // For a closing curly brace use the indentation of the corresponding opening curly bracket
+            // For a closing brace use the indentation of the corresponding opening brace
             if (token.IsKind(SyntaxKind.CloseBraceToken))
             {
                 var depth = 1;
