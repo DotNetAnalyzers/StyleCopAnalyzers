@@ -25,8 +25,9 @@ namespace StyleCop.Analyzers.Helpers
         internal static FileHeader ParseFileHeader(SyntaxNode root)
         {
             var firstToken = root.GetFirstToken(includeZeroWidth: true);
+            var firstNonWhitespaceTrivia = TriviaHelper.IndexOfFirstNonWhitespaceTrivia(firstToken.LeadingTrivia, true);
 
-            if (!firstToken.HasLeadingTrivia)
+            if (firstNonWhitespaceTrivia == -1)
             {
                 return FileHeader.MissingFileHeader;
             }
@@ -37,8 +38,7 @@ namespace StyleCop.Analyzers.Helpers
             var fileHeaderStart = int.MaxValue;
             var fileHeaderEnd = int.MinValue;
 
-            int i;
-            for (i = 0; !done && (i < firstToken.LeadingTrivia.Count); i++)
+            for (var i = firstNonWhitespaceTrivia; !done && (i < firstToken.LeadingTrivia.Count); i++)
             {
                 var trivia = firstToken.LeadingTrivia[i];
 
@@ -119,7 +119,7 @@ namespace StyleCop.Analyzers.Helpers
             int fileHeaderStart;
             int fileHeaderEnd;
 
-            var firstNonWhitespaceTrivia = TriviaHelper.IndexOfFirstNonWhitespaceTrivia(firstToken.LeadingTrivia, false);
+            var firstNonWhitespaceTrivia = TriviaHelper.IndexOfFirstNonWhitespaceTrivia(firstToken.LeadingTrivia, true);
             if (firstNonWhitespaceTrivia == -1)
             {
                 return XmlFileHeader.MissingFileHeader;
