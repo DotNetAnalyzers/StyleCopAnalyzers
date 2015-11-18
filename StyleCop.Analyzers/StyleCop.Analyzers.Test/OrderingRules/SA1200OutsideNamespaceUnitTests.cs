@@ -116,6 +116,40 @@ namespace System
         }
 
         /// <summary>
+        /// Verifies that simplified using statements in a namespace are expanded during the code fix operation.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestInvalidSimplifiedUsingStatementsInExtensionNamespaceAsync()
+        {
+            var testCode = @"namespace System.MyExtension
+{
+    using System.Threading;
+    using Reflection;
+}
+";
+            var fixedTestCode = @"using System.Reflection;
+using System.Threading;
+
+namespace System.MyExtension
+{
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(3, 5),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(3, 5),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(4, 5),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(4, 5),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that having using statements in the compilation unit will not produce any diagnostics when there are type definition present.
         /// </summary>
         /// <param name="typeDefinition">The type definition to test.</param>

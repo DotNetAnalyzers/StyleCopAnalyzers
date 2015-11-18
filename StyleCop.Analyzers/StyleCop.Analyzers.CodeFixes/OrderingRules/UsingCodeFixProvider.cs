@@ -17,7 +17,6 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using ReadabilityRules;
     using Settings.ObjectModel;
 
     /// <summary>
@@ -599,7 +598,7 @@ namespace StyleCop.Analyzers.OrderingRules
                                             // TODO: Preserve inner trivia
                                             // TODO: simplify after qualification
                                             string fullName;
-                                            if (SA1121CodeFixProvider.PredefinedSpecialTypes.ContainsKey(((INamedTypeSymbol)symbol).OriginalDefinition.SpecialType))
+                                            if (SpecialTypeHelper.IsPredefinedType(((INamedTypeSymbol)symbol).OriginalDefinition.SpecialType))
                                             {
                                                 fullName = "global::System." + symbol.Name;
                                             }
