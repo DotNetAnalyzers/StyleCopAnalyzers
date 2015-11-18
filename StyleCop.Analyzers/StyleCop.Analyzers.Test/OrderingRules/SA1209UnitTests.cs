@@ -59,6 +59,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using TasksNamespace = System.Threading.Tasks;
+
 class A
 {
 }";
@@ -248,6 +249,7 @@ using Microsoft.CodeAnalysis;
             var fixedTestCode = @"using System;
 using Microsoft.VisualStudio;
 using MyList = System.Collections.Generic.List<int>;
+
 #if true
 using Microsoft.CodeAnalysis;
 using Threads = System.Threading;

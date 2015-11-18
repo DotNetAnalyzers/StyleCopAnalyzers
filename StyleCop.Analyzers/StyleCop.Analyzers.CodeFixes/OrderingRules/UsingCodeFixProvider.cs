@@ -27,6 +27,7 @@ namespace StyleCop.Analyzers.OrderingRules
     internal sealed class UsingCodeFixProvider : CodeFixProvider
     {
         private static readonly List<UsingDirectiveSyntax> EmptyUsingsList = new List<UsingDirectiveSyntax>();
+        private static readonly SyntaxAnnotation UsingCodeFixAnnotation = new SyntaxAnnotation(nameof(UsingCodeFixProvider));
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
@@ -90,11 +91,15 @@ namespace StyleCop.Analyzers.OrderingRules
             {
             case UsingDirectivesPlacement.InsideNamespace:
                 if (compilationUnit.AttributeLists.Any()
-                    || compilationUnit.Members.Count != 1
-                    || namespaceCount != 1)
+                    || compilationUnit.Members.Count > 1
+                    || namespaceCount > 1)
                 {
                     // Override the user's setting with a more conservative one
                     usingDirectivesPlacement = UsingDirectivesPlacement.Preserve;
+                }
+                else if (namespaceCount == 0)
+                {
+                    usingDirectivesPlacement = UsingDirectivesPlacement.OutsideNamespace;
                 }
                 else
                 {
@@ -158,6 +163,8 @@ namespace StyleCop.Analyzers.OrderingRules
                 newSyntaxRoot = AddUsingsToCompilationRoot(newSyntaxRoot, usingsHelper, usingsIndentation, replaceMap.Any());
             }
 
+            // Final cleanup
+            newSyntaxRoot = StripMultipleBlankLines(newSyntaxRoot);
             newSyntaxRoot = ReAddFileHeader(syntaxRoot, newSyntaxRoot);
 
             var newDocument = document.WithSyntaxRoot(newSyntaxRoot.WithoutFormatting());
@@ -173,7 +180,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 return newSyntaxRoot;
             }
 
-            var fileHeader = UsingsHelper.GetFileHeader(oldFirstToken.LeadingTrivia.ToList());
+            var fileHeader = UsingsHelper.GetFileHeader(oldFirstToken.LeadingTrivia);
             if (!fileHeader.Any())
             {
                 return newSyntaxRoot;
@@ -270,9 +277,10 @@ namespace StyleCop.Analyzers.OrderingRules
 
             var groupedUsings = usingsHelper.GenerateGroupedUsings(usingsHelper.RootSpan, usingsIndentation, withTrailingBlankLine, qualifyNames: false);
             groupedUsings = groupedUsings.AddRange(rootNamespace.Usings);
-            var newRootNamespace = rootNamespace.WithUsings(groupedUsings);
 
+            var newRootNamespace = rootNamespace.WithUsings(groupedUsings);
             newSyntaxRoot = newSyntaxRoot.ReplaceNode(rootNamespace, newRootNamespace);
+
             return newSyntaxRoot;
         }
 
@@ -284,6 +292,52 @@ namespace StyleCop.Analyzers.OrderingRules
             var groupedUsings = usingsHelper.GenerateGroupedUsings(usingsHelper.RootSpan, usingsIndentation, withTrailingBlankLine, qualifyNames: true);
             groupedUsings = groupedUsings.AddRange(newCompilationUnit.Usings);
             newSyntaxRoot = newCompilationUnit.WithUsings(groupedUsings);
+
+            return newSyntaxRoot;
+        }
+
+        private static SyntaxNode StripMultipleBlankLines(SyntaxNode syntaxRoot)
+        {
+            var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>();
+
+            var usingDirectives = syntaxRoot.GetAnnotatedNodes(UsingCodeFixAnnotation).Cast<UsingDirectiveSyntax>();
+
+            foreach (var usingDirective in usingDirectives)
+            {
+                var nextToken = usingDirective.SemicolonToken.GetNextToken(true);
+
+                // start at -1 to compensate for the always present end-of-line.
+                var count = -1;
+
+                // count the blanks lines at the end of the using statement.
+                foreach (var trivia in usingDirective.SemicolonToken.TrailingTrivia.Reverse())
+                {
+                    if (!trivia.IsKind(SyntaxKind.EndOfLineTrivia))
+                    {
+                        break;
+                    }
+
+                    count++;
+                }
+
+                // count the blank lines at the start of the next token
+                foreach (var trivia in nextToken.LeadingTrivia)
+                {
+                    if (!trivia.IsKind(SyntaxKind.EndOfLineTrivia))
+                    {
+                        break;
+                    }
+
+                    count++;
+                }
+
+                if (count > 1)
+                {
+                    replaceMap[nextToken] = nextToken.WithLeadingTrivia(nextToken.LeadingTrivia.Skip(count - 1));
+                }
+            }
+
+            var newSyntaxRoot = syntaxRoot.ReplaceTokens(replaceMap.Keys, (original, rewritten) => replaceMap[original]);
             return newSyntaxRoot;
         }
 
@@ -478,7 +532,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 return SyntaxFactory.List(usingList);
             }
 
-            internal static List<SyntaxTrivia> GetFileHeader(List<SyntaxTrivia> newLeadingTrivia)
+            internal static List<SyntaxTrivia> GetFileHeader(SyntaxTriviaList newLeadingTrivia)
             {
                 var onBlankLine = false;
                 var hasHeader = false;
@@ -527,10 +581,10 @@ namespace StyleCop.Analyzers.OrderingRules
                 return hasHeader ? fileHeader : new List<SyntaxTrivia>();
             }
 
-            private static List<SyntaxTrivia> StripFileHeader(List<SyntaxTrivia> newLeadingTrivia)
+            private static List<SyntaxTrivia> StripFileHeader(SyntaxTriviaList leadingTrivia)
             {
-                var fileHeader = GetFileHeader(newLeadingTrivia);
-                return newLeadingTrivia.Skip(fileHeader.Count).ToList();
+                var fileHeader = GetFileHeader(leadingTrivia);
+                return leadingTrivia.Skip(fileHeader.Count).ToList();
             }
 
             private List<UsingDirectiveSyntax> GenerateUsings(Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>> usingsGroup, DirectiveSpan directiveSpan, string indentation, List<SyntaxTrivia> triviaToMove, bool qualifyNames)
@@ -564,18 +618,19 @@ namespace StyleCop.Analyzers.OrderingRules
                         currentUsing = this.QualifyUsingDirective(currentUsing);
                     }
 
-                    triviaToMove.AddRange(currentUsing.GetLeadingTrivia().Where(tr => tr.IsDirective || tr.IsKind(SyntaxKind.DisabledTextTrivia)));
+                    // when there is a directive trivia, add it (and any trivia before it) to the triviaToMove collection.
+                    var leadingTrivia = (i == 0) ? StripFileHeader(currentUsing.GetLeadingTrivia()) : currentUsing.GetLeadingTrivia().ToList();
+                    for (var m = leadingTrivia.Count - 1; m >= 0; m--)
+                    {
+                        if (leadingTrivia[m].IsDirective)
+                        {
+                            triviaToMove.AddRange(leadingTrivia.Take(m + 1));
+                            break;
+                        }
+                    }
 
                     // preserve leading trivia (excluding directive trivia), indenting each line as appropriate
-                    var newLeadingTrivia = currentUsing
-                        .GetLeadingTrivia()
-                        .Where(tr => !tr.IsDirective && !tr.IsKind(SyntaxKind.DisabledTextTrivia))
-                        .ToList();
-
-                    if (i == 0)
-                    {
-                        newLeadingTrivia = StripFileHeader(newLeadingTrivia);
-                    }
+                    var newLeadingTrivia = leadingTrivia.Except(triviaToMove).ToList();
 
                     // strip any leading whitespace on each line (and also all blank lines)
                     var k = 0;
@@ -626,7 +681,10 @@ namespace StyleCop.Analyzers.OrderingRules
                         newTrailingTrivia = newTrailingTrivia.Add(SyntaxFactory.CarriageReturnLineFeed);
                     }
 
-                    var processedUsing = currentUsing.WithLeadingTrivia(newLeadingTrivia).WithTrailingTrivia(newTrailingTrivia);
+                    var processedUsing = currentUsing
+                        .WithLeadingTrivia(newLeadingTrivia)
+                        .WithTrailingTrivia(newTrailingTrivia)
+                        .WithAdditionalAnnotations(UsingCodeFixAnnotation);
 
                     // filter duplicate using declarations, preferring to keep the one with an alias
                     var existingUsing = result.Find(u => string.Equals(u.Name.ToUnaliasedString(), processedUsing.Name.ToUnaliasedString(), StringComparison.Ordinal));
