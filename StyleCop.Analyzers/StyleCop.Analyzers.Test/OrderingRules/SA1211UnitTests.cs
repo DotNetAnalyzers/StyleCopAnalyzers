@@ -179,6 +179,7 @@ using AThing = System.Threading;
             var fixedTestCode = @"using System;
 using Microsoft.VisualStudio;
 using MyList = System.Collections.Generic.List<int>;
+
 #if true
 using AThing = System.Threading;
 using BThing = System.Threading.Tasks;
