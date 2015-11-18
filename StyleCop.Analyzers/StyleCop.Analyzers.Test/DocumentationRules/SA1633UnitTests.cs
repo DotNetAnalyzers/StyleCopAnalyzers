@@ -262,6 +262,10 @@ namespace Foo
         /// <param name="prefix">The string to add before the header.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
+        [InlineData("  ")]
+        [InlineData("\t\t")]
+        [InlineData(" \t")]
+        [InlineData("  \r\n\t\r\n")]
         [InlineData("\r\n")]
         [InlineData("\r\n\r\n")]
         public async Task TestValidXmlFileHeaderWithLeadingBlankLinesAsync(string prefix)
@@ -281,6 +285,10 @@ namespace Foo
         /// <param name="prefix">The string to add before the header.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
+        [InlineData("  ")]
+        [InlineData("\t\t")]
+        [InlineData(" \t")]
+        [InlineData("  \r\n\t\r\n")]
         [InlineData("\r\n")]
         [InlineData("\r\n\r\n")]
         public async Task TestValidFileHeaderWithLeadingBlankLinesAsync(string prefix)
