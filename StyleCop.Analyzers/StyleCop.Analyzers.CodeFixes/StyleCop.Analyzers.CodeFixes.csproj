@@ -150,7 +150,6 @@
     <None Include="..\stylecop.json">
       <Link>stylecop.json</Link>
     </None>
-    <None Include="build\StyleCop.Analyzers.targets" />
     <None Include="packages.config" />
     <NuGetManifest Include="StyleCop.Analyzers.nuspec">
       <SubType>Designer</SubType>
