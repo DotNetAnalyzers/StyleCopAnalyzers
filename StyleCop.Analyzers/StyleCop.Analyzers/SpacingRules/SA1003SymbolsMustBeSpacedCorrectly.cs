@@ -99,8 +99,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 SyntaxKind.LogicalNotExpression,
                 SyntaxKind.PreIncrementExpression,
                 SyntaxKind.PreDecrementExpression,
-                SyntaxKind.AddressOfExpression,
-                SyntaxKind.PointerIndirectionExpression);
+                SyntaxKind.AddressOfExpression);
 
         private static readonly ImmutableArray<SyntaxKind> PostfixUnaryExpressionKinds =
             ImmutableArray.Create(SyntaxKind.PostIncrementExpression, SyntaxKind.PostDecrementExpression);
