@@ -83,7 +83,49 @@ This section describes the features of ordering rules which can be configured in
 }
 ```
 
-> Currently there are no configurable settings for ordering rules.
+### Using Directives
+
+The following properties are used to configure using directives in StyleCop Analyzers.
+
+| Property | Default Value | Summary |
+| --- | --- | --- |
+| `usingDirectivesPlacement` | `"insideNamespace"` | Specifies the desired placement of using directives |
+
+#### Using Directives Placement
+
+The `usingDirectivesPlacement` property affects the behavior of the following rules which report incorrectly placed
+using directives.
+
+* [SA1200 Using directives must be placed correctly](SA1200.md)
+
+> :warning: Use of certain features, including but not limited to preprocessor directives, may cause the using
+> directives code fix to not relocate using directives automatically. If SA1200 is still reported after applying the Fix
+> All operation for using directives, the remaining cases will need to be resolved manually.
+
+This property has three allowed values, which are described as follows.
+
+##### `"insideNamespace"`
+
+In this mode, using directives should be placed *inside* of namespace declarations. This is the default mode, and
+adheres to the original SA1200 behavior from StyleCop Classic.
+
+* SA1200 reports using directives which are located outside of a namespace declaration (a few exceptions exist for cases
+  where this is required)
+* Using directives code fix moves using directives inside of namespace declarations where possible
+
+##### `"outsideNamespace"`
+
+In this mode, using directives should be placed *outside* of namespace declarations.
+
+* SA1200 reports using directives which are located inside of a namespace declaration
+* Using directives code fix moves using directives outside of namespace declarations where possible
+
+##### `"preserve"`
+
+In this mode, using directives may be placed inside or outside of namespaces.
+
+* SA1200 does not report any violations
+* Using directives code fix may reorder using directives, but does not relocate them
 
 ## Naming Rules
 
