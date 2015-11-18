@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.OrderingRules;
+    using StyleCop.Analyzers.Settings.ObjectModel;
     using TestHelper;
     using Xunit;
 
@@ -18,7 +19,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     /// </summary>
     public class UsingCodeFixProviderCombinedSystemDirectivesUnitTests : CodeFixVerifier
     {
-        private bool suppressSA1200;
+        private UsingDirectivesPlacement usingDirectivesPlacement;
 
         /// <summary>
         /// Verifies that the code fix will properly reorder using statements.
@@ -136,7 +137,7 @@ using System.Collections;
 using System.Collections.Generic;
 using static System.Math;
 using static System.String;
-using MyFunc = System.Func<int,bool>;
+using MyFunc = System.Func<int, bool>;
 using SystemAction = System.Action;
 
 namespace NamespaceName
@@ -147,7 +148,7 @@ namespace NamespaceName
 }
 ";
 
-            this.suppressSA1200 = true;
+            this.usingDirectivesPlacement = UsingDirectivesPlacement.OutsideNamespace;
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
@@ -186,7 +187,7 @@ namespace Foo
 }
 ";
 
-            this.suppressSA1200 = true;
+            this.usingDirectivesPlacement = UsingDirectivesPlacement.OutsideNamespace;
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
@@ -229,7 +230,7 @@ namespace Foo
 }
 ";
 
-            this.suppressSA1200 = true;
+            this.usingDirectivesPlacement = UsingDirectivesPlacement.OutsideNamespace;
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
@@ -272,7 +273,7 @@ namespace Foo
 }
 ";
 
-            this.suppressSA1200 = true;
+            this.usingDirectivesPlacement = UsingDirectivesPlacement.OutsideNamespace;
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
@@ -331,14 +332,14 @@ namespace TestNamespace2
             // The code fix is not able to correct all violations due to the use of multiple namespaces in a single file
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(1, 1),
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(2, 1),
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(3, 1),
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(4, 1),
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(5, 1),
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(6, 1),
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(7, 1),
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId).WithLocation(8, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId).WithLocation(1, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId).WithLocation(2, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId).WithLocation(3, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId).WithLocation(4, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId).WithLocation(5, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId).WithLocation(6, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId).WithLocation(7, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId).WithLocation(8, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -399,18 +400,29 @@ namespace NamespaceName
         /// <inheritdoc/>
         protected override IEnumerable<string> GetDisabledDiagnostics()
         {
-            if (this.suppressSA1200)
-            {
-                yield return SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId;
-            }
-
             yield return SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives.DiagnosticId;
+        }
+
+        /// <inheritdoc/>
+        protected override string GetSettings()
+        {
+            string testSettings = $@"
+{{
+  ""settings"": {{
+    ""orderingRules"": {{
+      ""usingDirectivesPlacement"": ""{this.usingDirectivesPlacement}""
+    }}
+  }}
+}}
+";
+
+            return testSettings;
         }
 
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1200UsingDirectivesMustBePlacedWithinNamespace();
+            yield return new SA1200UsingDirectivesMustBePlacedCorrectly();
             yield return new SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives();
             yield return new SA1209UsingAliasDirectivesMustBePlacedAfterOtherUsingDirectives();
             yield return new SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace();

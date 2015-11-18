@@ -9,11 +9,21 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
     internal class OrderingSettings
     {
         /// <summary>
+        /// This is the backing field for the <see cref="UsingDirectivesPlacement"/> property.
+        /// </summary>
+        [JsonProperty("usingDirectivesPlacement", DefaultValueHandling = DefaultValueHandling.Include)]
+        private UsingDirectivesPlacement usingDirectivesPlacement;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="OrderingSettings"/> class during JSON deserialization.
         /// </summary>
         [JsonConstructor]
         protected internal OrderingSettings()
         {
+            this.usingDirectivesPlacement = UsingDirectivesPlacement.InsideNamespace;
         }
+
+        public UsingDirectivesPlacement UsingDirectivesPlacement =>
+            this.usingDirectivesPlacement;
     }
 }
