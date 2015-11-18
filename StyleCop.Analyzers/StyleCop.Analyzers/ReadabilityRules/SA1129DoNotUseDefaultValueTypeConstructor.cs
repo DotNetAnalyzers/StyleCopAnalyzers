@@ -51,7 +51,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             ObjectCreationExpressionSyntax newExpression = (ObjectCreationExpressionSyntax)context.Node;
 
             var typeToCreate = context.SemanticModel.GetTypeInfo(newExpression, context.CancellationToken);
-            if (typeToCreate.Type.IsReferenceType || IsReferenceTypeParameter(typeToCreate.Type))
+            if ((typeToCreate.Type == null) || typeToCreate.Type.IsReferenceType || IsReferenceTypeParameter(typeToCreate.Type))
             {
                 return;
             }
