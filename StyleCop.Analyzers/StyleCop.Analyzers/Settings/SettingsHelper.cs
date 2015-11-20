@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers
     using System.IO;
     using System.Linq;
     using System.Reflection;
+    using System.Runtime.ExceptionServices;
     using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -134,8 +135,16 @@ namespace StyleCop.Analyzers
 
         private static object CallMethod(object obj, string name, Type[] parameters, params object[] arguments)
         {
-            MethodInfo methodInfo = obj?.GetType().GetRuntimeMethod(name, parameters);
-            return methodInfo?.Invoke(obj, arguments);
+            try
+            {
+                MethodInfo methodInfo = obj?.GetType().GetRuntimeMethod(name, parameters);
+                return methodInfo?.Invoke(obj, arguments);
+            }
+            catch (TargetInvocationException ex)
+            {
+                ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
+                throw;
+            }
         }
 
         private static object GetProperty(object obj, string name)
@@ -152,7 +161,15 @@ namespace StyleCop.Analyzers
                 propertyInfo = propertiesForType.GetOrAdd(name, _ => obj.GetType().GetRuntimeProperty(name));
             }
 
-            return propertyInfo?.GetValue(obj);
+            try
+            {
+                return propertyInfo?.GetValue(obj);
+            }
+            catch (TargetInvocationException ex)
+            {
+                ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
+                throw;
+            }
         }
     }
 }
