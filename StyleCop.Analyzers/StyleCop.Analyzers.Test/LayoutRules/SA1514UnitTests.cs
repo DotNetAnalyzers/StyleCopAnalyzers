@@ -397,6 +397,154 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         }
 
         /// <summary>
+        /// Verifies that operator declarations with valid (or no) documentation will not produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestValidOperatorDeclarationsAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass  
+    {
+        /// <summary>
+        /// This is an operator.
+        /// </summary>
+        public static TestClass operator +(TestClass t1, TestClass t2)
+        {
+            return new TestClass();
+        }
+
+        public int testField1;
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that operator declarations with invalid documentation will produce the expected diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestInvalidOperatorDeclarationsAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass  
+    {
+        public int testField1;
+        /// <summary>
+        /// This is an operator.
+        /// </summary>
+        public static TestClass operator +(TestClass t1, TestClass t2)
+        {
+            return new TestClass();
+        }
+    }
+}
+";
+
+            var fixedTestCode = @"namespace TestNamespace
+{
+    public class TestClass  
+    {
+        public int testField1;
+
+        /// <summary>
+        /// This is an operator.
+        /// </summary>
+        public static TestClass operator +(TestClass t1, TestClass t2)
+        {
+            return new TestClass();
+        }
+    }
+}
+";
+
+            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(6, 9);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that conversion operator declarations with valid (or no) documentation will not produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestValidConversionOperatorDeclarationsAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass  
+    {
+        /// <summary>
+        /// This is a conversion operator.
+        /// </summary>
+        public static explicit operator TestClass(string foo)
+        {
+            return new TestClass();
+        }
+
+        public int testField1;
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that conversion operator declarations with invalid documentation will produce the expected diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestInvalidConversionOperatorDeclarationsAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass  
+    {
+        public int testField1;
+        /// <summary>
+        /// This is a conversion operator.
+        /// </summary>
+        public static explicit operator TestClass(string foo)
+        {
+            return new TestClass();
+        }
+    }
+}
+";
+
+            var fixedTestCode = @"namespace TestNamespace
+{
+    public class TestClass  
+    {
+        public int testField1;
+
+        /// <summary>
+        /// This is a conversion operator.
+        /// </summary>
+        public static explicit operator TestClass(string foo)
+        {
+            return new TestClass();
+        }
+    }
+}
+";
+
+            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(6, 9);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that delegate declarations with valid (or no) documentation will not produce diagnostics.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>

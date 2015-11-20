@@ -13,6 +13,7 @@ namespace TestHelper
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
+    using StyleCop.Analyzers.Test.Helpers;
 
     /// <summary>
     /// Class for turning strings into documents and getting the diagnostics on them.
@@ -21,12 +22,6 @@ namespace TestHelper
     public abstract partial class DiagnosticVerifier
     {
         private const string SettingsFileName = "stylecop.json";
-
-        private static readonly MetadataReference CorlibReference = MetadataReference.CreateFromFile(typeof(object).Assembly.Location).WithAliases(ImmutableArray.Create("global", "corlib"));
-        private static readonly MetadataReference SystemReference = MetadataReference.CreateFromFile(typeof(System.Diagnostics.Debug).Assembly.Location).WithAliases(ImmutableArray.Create("global", "system"));
-        private static readonly MetadataReference SystemCoreReference = MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location);
-        private static readonly MetadataReference CSharpSymbolsReference = MetadataReference.CreateFromFile(typeof(CSharpCompilation).Assembly.Location);
-        private static readonly MetadataReference CodeAnalysisReference = MetadataReference.CreateFromFile(typeof(Compilation).Assembly.Location);
 
         private static readonly string DefaultFilePathPrefix = "Test";
         private static readonly string CSharpDefaultFileExt = "cs";
@@ -135,11 +130,11 @@ namespace TestHelper
                 .CurrentSolution
                 .AddProject(projectId, TestProjectName, TestProjectName, language)
                 .WithProjectCompilationOptions(projectId, compilationOptions)
-                .AddMetadataReference(projectId, CorlibReference)
-                .AddMetadataReference(projectId, SystemReference)
-                .AddMetadataReference(projectId, SystemCoreReference)
-                .AddMetadataReference(projectId, CSharpSymbolsReference)
-                .AddMetadataReference(projectId, CodeAnalysisReference);
+                .AddMetadataReference(projectId, MetadataReferences.CorlibReference)
+                .AddMetadataReference(projectId, MetadataReferences.SystemReference)
+                .AddMetadataReference(projectId, MetadataReferences.SystemCoreReference)
+                .AddMetadataReference(projectId, MetadataReferences.CSharpSymbolsReference)
+                .AddMetadataReference(projectId, MetadataReferences.CodeAnalysisReference);
 
             var settings = this.GetSettings();
             if (!string.IsNullOrEmpty(settings))
@@ -224,10 +219,10 @@ namespace TestHelper
         /// </summary>
         /// <param name="diagnostics">A collection of <see cref="Diagnostic"/>s to be sorted.</param>
         /// <returns>A collection containing the input <paramref name="diagnostics"/>, sorted by
-        /// <see cref="Diagnostic.Location"/>.</returns>
+        /// <see cref="Diagnostic.Location"/> and <see cref="Diagnostic.Id"/>.</returns>
         private static Diagnostic[] SortDistinctDiagnostics(IEnumerable<Diagnostic> diagnostics)
         {
-            return diagnostics.OrderBy(d => d.Location.SourceSpan.Start).ToArray();
+            return diagnostics.OrderBy(d => d.Location.SourceSpan.Start).ThenBy(d => d.Id).ToArray();
         }
 
         /// <summary>

@@ -41,7 +41,17 @@ namespace StyleCop.Analyzers.DocumentationRules
             ImmutableArray.Create(SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.EnumDeclaration, SyntaxKind.DelegateDeclaration);
 
         private static readonly ImmutableArray<SyntaxKind> MemberDeclarationKinds =
-            ImmutableArray.Create(SyntaxKind.ConstructorDeclaration, SyntaxKind.EventDeclaration, SyntaxKind.MethodDeclaration, SyntaxKind.PropertyDeclaration, SyntaxKind.EventFieldDeclaration, SyntaxKind.FieldDeclaration, SyntaxKind.IndexerDeclaration);
+            ImmutableArray.Create(
+                SyntaxKind.ConstructorDeclaration,
+                SyntaxKind.DestructorDeclaration,
+                SyntaxKind.EventDeclaration,
+                SyntaxKind.MethodDeclaration,
+                SyntaxKind.PropertyDeclaration,
+                SyntaxKind.EventFieldDeclaration,
+                SyntaxKind.FieldDeclaration,
+                SyntaxKind.IndexerDeclaration,
+                SyntaxKind.OperatorDeclaration,
+                SyntaxKind.ConversionOperatorDeclaration);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> BaseTypeLikeDeclarationAction = HandleBaseTypeLikeDeclaration;

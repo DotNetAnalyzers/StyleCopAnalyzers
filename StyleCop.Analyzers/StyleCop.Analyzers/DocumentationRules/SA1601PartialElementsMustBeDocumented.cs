@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System;
     using System.Collections.Immutable;
     using System.Linq;
+    using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -99,7 +100,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            Analyzer analyzer = new Analyzer(context.Options);
+            Analyzer analyzer = new Analyzer(context.Options, context.CancellationToken);
             context.RegisterSyntaxNodeActionHonorExclusions(analyzer.HandleBaseTypeDeclaration, BaseTypeDeclarationKinds);
             context.RegisterSyntaxNodeActionHonorExclusions(analyzer.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
         }
@@ -108,9 +109,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             private readonly DocumentationSettings documentationSettings;
 
-            public Analyzer(AnalyzerOptions options)
+            public Analyzer(AnalyzerOptions options, CancellationToken cancellationToken)
             {
-                StyleCopSettings settings = options.GetStyleCopSettings();
+                StyleCopSettings settings = options.GetStyleCopSettings(cancellationToken);
                 this.documentationSettings = settings.DocumentationRules;
             }
 

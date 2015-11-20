@@ -51,9 +51,15 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
+        private static readonly ImmutableArray<SyntaxKind> HandledMethodSyntaxKinds =
+            ImmutableArray.Create(
+                SyntaxKind.MethodDeclaration,
+                SyntaxKind.ConstructorDeclaration,
+                SyntaxKind.OperatorDeclaration,
+                SyntaxKind.ConversionOperatorDeclaration);
+
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
-        private static readonly Action<SyntaxNodeAnalysisContext> MethodDeclarationAction = HandleMethodDeclaration;
-        private static readonly Action<SyntaxNodeAnalysisContext> ConstructorDeclarationAction = HandleConstructorDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> BaseMethodDeclarationAction = HandleBaseMethodDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> InvocationExpressionAction = HandleInvocationExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> ObjectCreationExpressionAction = HandleObjectCreationExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> IndexerDeclarationAction = HandleIndexerDeclaration;
@@ -76,8 +82,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(ConstructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(BaseMethodDeclarationAction, HandledMethodSyntaxKinds);
             context.RegisterSyntaxNodeActionHonorExclusions(InvocationExpressionAction, SyntaxKind.InvocationExpression);
             context.RegisterSyntaxNodeActionHonorExclusions(ObjectCreationExpressionAction, SyntaxKind.ObjectCreationExpression);
             context.RegisterSyntaxNodeActionHonorExclusions(IndexerDeclarationAction, SyntaxKind.IndexerDeclaration);
@@ -238,18 +243,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
-        private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            var methodDeclaration = (MethodDeclarationSyntax)context.Node;
-            HandleBaseMethodDeclaration(context, methodDeclaration);
-        }
-
-        private static void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            var constructotDeclarationSyntax = (ConstructorDeclarationSyntax)context.Node;
-            HandleBaseMethodDeclaration(context, constructotDeclarationSyntax);
-        }
-
         private static void HandleInvocationExpression(SyntaxNodeAnalysisContext context)
         {
             var invocationExpression = (InvocationExpressionSyntax)context.Node;
@@ -321,10 +314,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
-        private static void HandleBaseMethodDeclaration(
-            SyntaxNodeAnalysisContext context,
-            BaseMethodDeclarationSyntax baseMethodDeclarationSyntax)
+        private static void HandleBaseMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
+            var baseMethodDeclarationSyntax = (BaseMethodDeclarationSyntax)context.Node;
+
             if (baseMethodDeclarationSyntax.ParameterList == null ||
                 baseMethodDeclarationSyntax.ParameterList.IsMissing ||
                 !baseMethodDeclarationSyntax.ParameterList.Parameters.Any())

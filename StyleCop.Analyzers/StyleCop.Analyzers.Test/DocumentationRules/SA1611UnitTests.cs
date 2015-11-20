@@ -142,7 +142,7 @@ public class ClassName
     /// </summary>
     public ##
 }";
-            var expected = new[]
+            DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(10, 38).WithArguments("param1"),
                 this.CSharpDiagnostic().WithLocation(10, 53).WithArguments("param2"),
@@ -152,6 +152,83 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that valid operator declarations will not produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyValidOperatorDeclarationsAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Test class
+/// </summary>
+public class TestClass
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <param name=""value"">The value to use.</param>
+    public static TestClass operator +(TestClass value)
+    {   
+        return value;
+    }
+
+    /// <summary>
+    /// Foo
+    /// </summary>
+    /// <param name=""value"">The value to use.</param>
+    public static explicit operator TestClass(int value)
+    {   
+        return new TestClass();
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that invalid operator declarations will produce the expected diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyInvalidOperatorDeclarationsAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Test class
+/// </summary>
+public class TestClass
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    public static TestClass operator +(TestClass value)
+    {   
+        return value;
+    }
+
+    /// <summary>
+    /// Foo
+    /// </summary>
+    public static explicit operator TestClass(int value)
+    {   
+        return new TestClass();
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(10, 50).WithArguments("value"),
+                this.CSharpDiagnostic().WithLocation(18, 51).WithArguments("value")
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1611ElementParametersMustBeDocumented();

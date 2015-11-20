@@ -80,6 +80,33 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A C# method, constructor, delegate or indexer element is missing documentation for one or more of its parameters..
+        /// </summary>
+        internal static string SA1611Description {
+            get {
+                return ResourceManager.GetString("SA1611Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The documentation for parameter &apos;{0}&apos; is missing.
+        /// </summary>
+        internal static string SA1611MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1611MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Element parameters must be documented.
+        /// </summary>
+        internal static string SA1611Title {
+            get {
+                return ResourceManager.GetString("SA1611Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Document return value.
         /// </summary>
         internal static string SA1615SA1616CodeFix {
@@ -103,6 +130,33 @@ namespace StyleCop.Analyzers.DocumentationRules {
         internal static string SA1626CodeFix {
             get {
                 return ResourceManager.GetString("SA1626CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The XML header documentation for a C# code element contains an empty tag..
+        /// </summary>
+        internal static string SA1627Description {
+            get {
+                return ResourceManager.GetString("SA1627Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The documentation text within the \&apos;{0}\&apos; tag must not be empty..
+        /// </summary>
+        internal static string SA1627MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1627MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Documentation text must not be empty.
+        /// </summary>
+        internal static string SA1627Title {
+            get {
+                return ResourceManager.GetString("SA1627Title", resourceCulture);
             }
         }
         

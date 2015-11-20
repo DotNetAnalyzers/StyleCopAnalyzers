@@ -853,10 +853,10 @@ to determine the spacing with the close brace.
             {
                 new DiagnosticResult
                 {
-                    Id = "CS1514",
+                    Id = "CS1022",
                     Severity = DiagnosticSeverity.Error,
                     Locations = new[] { new DiagnosticResultLocation("Test0.cs", 3, 28) },
-                    Message = "{ expected"
+                    Message = "Type or namespace definition, or end-of-file expected"
                 },
                 new DiagnosticResult
                 {
@@ -867,10 +867,10 @@ to determine the spacing with the close brace.
                 },
                 new DiagnosticResult
                 {
-                    Id = "CS1022",
+                    Id = "CS1514",
                     Severity = DiagnosticSeverity.Error,
                     Locations = new[] { new DiagnosticResultLocation("Test0.cs", 3, 28) },
-                    Message = "Type or namespace definition, or end-of-file expected"
+                    Message = "{ expected"
                 },
                 new DiagnosticResult
                 {

@@ -123,6 +123,15 @@
   <data name="SA1609SA1610CodeFix" xml:space="preserve">
     <value>Document value from summary</value>
   </data>
+  <data name="SA1611Description" xml:space="preserve">
+    <value>A C# method, constructor, delegate or indexer element is missing documentation for one or more of its parameters.</value>
+  </data>
+  <data name="SA1611MessageFormat" xml:space="preserve">
+    <value>The documentation for parameter '{0}' is missing</value>
+  </data>
+  <data name="SA1611Title" xml:space="preserve">
+    <value>Element parameters must be documented</value>
+  </data>
   <data name="SA1615SA1616CodeFix" xml:space="preserve">
     <value>Document return value</value>
   </data>
@@ -131,6 +140,15 @@
   </data>
   <data name="SA1626CodeFix" xml:space="preserve">
     <value>Convert to line comment</value>
+  </data>
+  <data name="SA1627Description" xml:space="preserve">
+    <value>The XML header documentation for a C# code element contains an empty tag.</value>
+  </data>
+  <data name="SA1627MessageFormat" xml:space="preserve">
+    <value>The documentation text within the \'{0}\' tag must not be empty.</value>
+  </data>
+  <data name="SA1627Title" xml:space="preserve">
+    <value>Documentation text must not be empty</value>
   </data>
   <data name="SA1633CodeFix" xml:space="preserve">
     <value>Add file header</value>

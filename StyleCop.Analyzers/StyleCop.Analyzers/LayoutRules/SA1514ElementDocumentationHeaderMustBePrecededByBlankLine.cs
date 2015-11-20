@@ -89,7 +89,9 @@ namespace StyleCop.Analyzers.LayoutRules
                 SyntaxKind.FieldDeclaration,
                 SyntaxKind.DelegateDeclaration,
                 SyntaxKind.EventDeclaration,
-                SyntaxKind.EventFieldDeclaration);
+                SyntaxKind.EventFieldDeclaration,
+                SyntaxKind.OperatorDeclaration,
+                SyntaxKind.ConversionOperatorDeclaration);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> DeclarationAction = HandleDeclaration;

@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
     using Microsoft.CodeAnalysis;
@@ -25,7 +24,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SX1101.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledAlternative, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledAlternative, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> ThisExpressionAction = HandleThisExpression;
@@ -47,33 +46,56 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleThisExpression(SyntaxNodeAnalysisContext context)
         {
-            if (context.Node.Parent.IsKind(SyntaxKind.SimpleMemberAccessExpression))
+            if (!context.Node.Parent.IsKind(SyntaxKind.SimpleMemberAccessExpression))
             {
-                var memberAccessExpression = (MemberAccessExpressionSyntax)context.Node.Parent;
-                var memberName = memberAccessExpression.Name.ToString();
+                return;
+            }
 
-                var parameters = GetMethodParameters(context.Node);
-                if (!parameters.Contains(memberName))
+            var memberAccessExpression = (MemberAccessExpressionSyntax)context.Node.Parent;
+            var originalSymbolInfo = context.SemanticModel.GetSymbolInfo(memberAccessExpression, context.CancellationToken);
+            if (originalSymbolInfo.Symbol == null)
+            {
+                return;
+            }
+
+            SyntaxNode speculationRoot;
+            var annotation = new SyntaxAnnotation();
+            SemanticModel speculativeModel;
+
+            StatementSyntax statement = context.Node.FirstAncestorOrSelf<StatementSyntax>();
+            if (statement != null)
+            {
+                var modifiedStatement = statement.ReplaceNode(memberAccessExpression, memberAccessExpression.Name.WithAdditionalAnnotations(annotation));
+                speculationRoot = modifiedStatement;
+                if (!context.SemanticModel.TryGetSpeculativeSemanticModel(statement.SpanStart, modifiedStatement, out speculativeModel))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation()));
+                    return;
                 }
             }
-        }
-
-        private static IList<string> GetMethodParameters(SyntaxNode node)
-        {
-            while ((node != null) && !node.IsKind(SyntaxKind.MethodDeclaration))
+            else
             {
-                node = node.Parent;
+                ArrowExpressionClauseSyntax arrowExpressionClause = context.Node.FirstAncestorOrSelf<ArrowExpressionClauseSyntax>();
+                if (arrowExpressionClause == null)
+                {
+                    return;
+                }
+
+                var modifiedArrowExpressionClause = arrowExpressionClause.ReplaceNode(memberAccessExpression, memberAccessExpression.Name.WithAdditionalAnnotations(annotation));
+                speculationRoot = modifiedArrowExpressionClause;
+                if (!context.SemanticModel.TryGetSpeculativeSemanticModel(arrowExpressionClause.SpanStart, modifiedArrowExpressionClause, out speculativeModel))
+                {
+                    return;
+                }
             }
 
-            if (node == null)
+            SyntaxNode mappedNode = speculationRoot.GetAnnotatedNodes(annotation).Single();
+            var newSymbolInfo = speculativeModel.GetSymbolInfo(mappedNode, context.CancellationToken);
+            if (!Equals(originalSymbolInfo.Symbol, newSymbolInfo.Symbol))
             {
-                return new List<string>();
+                return;
             }
 
-            var methodDeclaration = (MethodDeclarationSyntax)node;
-            return methodDeclaration.ParameterList.Parameters.Select(p => p.Identifier.ValueText).ToList();
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation()));
         }
     }
 }
