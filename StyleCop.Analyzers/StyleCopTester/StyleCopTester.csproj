@@ -133,9 +133,9 @@
     <None Include="..\StyleCop.Analyzers.ruleset">
       <Link>StyleCop.Analyzers.ruleset</Link>
     </None>
-    <AdditionalFiles Include="..\stylecop.json">
+    <None Include="..\stylecop.json">
       <Link>stylecop.json</Link>
-    </AdditionalFiles>
+    </None>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
