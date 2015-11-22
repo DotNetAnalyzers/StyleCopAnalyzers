@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="DocumentationRules\FileHeaderCodeFixProvider.cs" />
     <Compile Include="DocumentationRules\InheritdocCodeFixProvider.cs" />
+    <Compile Include="DocumentationRules\PropertySummaryDocumentationCodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1609SA1610CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1615SA1616CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1617CodeFixProvider.cs" />
