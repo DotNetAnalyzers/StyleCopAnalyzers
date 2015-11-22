@@ -6,15 +6,16 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Analyzers.OrderingRules;
+    using Analyzers.Settings.ObjectModel;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using StyleCop.Analyzers.OrderingRules;
     using TestHelper;
     using Xunit;
 
     /// <summary>
     /// Unit tests for <see cref="SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace"/> for the special case
-    /// where <see cref="SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives"/> is disabled.
+    /// where <see cref="OrderingSettings.SystemUsingDirectivesFirst"/> is <see langword="false"/>.
     /// </summary>
     public class SA1210CombinedSystemDirectivesUnitTests : CodeFixVerifier
     {
@@ -209,9 +210,19 @@ using Microsoft.CodeAnalysis;
         }
 
         /// <inheritdoc/>
-        protected override IEnumerable<string> GetDisabledDiagnostics()
+        protected override string GetSettings()
         {
-            yield return SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives.DiagnosticId;
+            const string CombinedUsingDirectivesTestSettings = @"
+{
+  ""settings"": {
+    ""orderingRules"": {
+      ""systemUsingDirectivesFirst"": false
+    }
+  }
+}
+";
+
+            return CombinedUsingDirectivesTestSettings;
         }
 
         /// <inheritdoc/>

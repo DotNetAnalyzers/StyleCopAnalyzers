@@ -9,6 +9,12 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
     internal class OrderingSettings
     {
         /// <summary>
+        /// This is the backing field for the <see cref="SystemUsingDirectivesFirst"/> property.
+        /// </summary>
+        [JsonProperty("systemUsingDirectivesFirst", DefaultValueHandling = DefaultValueHandling.Include)]
+        private bool systemUsingDirectivesFirst;
+
+        /// <summary>
         /// This is the backing field for the <see cref="UsingDirectivesPlacement"/> property.
         /// </summary>
         [JsonProperty("usingDirectivesPlacement", DefaultValueHandling = DefaultValueHandling.Include)]
@@ -20,8 +26,12 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         [JsonConstructor]
         protected internal OrderingSettings()
         {
+            this.systemUsingDirectivesFirst = true;
             this.usingDirectivesPlacement = UsingDirectivesPlacement.InsideNamespace;
         }
+
+        public bool SystemUsingDirectivesFirst =>
+            this.systemUsingDirectivesFirst;
 
         public UsingDirectivesPlacement UsingDirectivesPlacement =>
             this.usingDirectivesPlacement;

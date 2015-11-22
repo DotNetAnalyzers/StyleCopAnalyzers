@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
 
     /// <summary>
     /// Unit tests for the <see cref="UsingCodeFixProvider"/> for the special case where
-    /// <see cref="SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives"/> is disabled.
+    /// <see cref="OrderingSettings.SystemUsingDirectivesFirst"/> is <see langword="false"/>.
     /// </summary>
     public class UsingCodeFixProviderCombinedSystemDirectivesUnitTests : CodeFixVerifier
     {
@@ -398,18 +398,13 @@ namespace NamespaceName
         }
 
         /// <inheritdoc/>
-        protected override IEnumerable<string> GetDisabledDiagnostics()
-        {
-            yield return SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives.DiagnosticId;
-        }
-
-        /// <inheritdoc/>
         protected override string GetSettings()
         {
             string testSettings = $@"
 {{
   ""settings"": {{
     ""orderingRules"": {{
+      ""systemUsingDirectivesFirst"": false,
       ""usingDirectivesPlacement"": ""{this.usingDirectivesPlacement}""
     }}
   }}
