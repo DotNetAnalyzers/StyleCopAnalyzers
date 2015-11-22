@@ -13,16 +13,22 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// <summary>
     /// This is the base class for analyzers which examine the <c>&lt;value&gt;</c> text of a documentation comment on a property declaration.
     /// </summary>
-    internal abstract class PropertyDocumentationSummaryBase : DiagnosticAnalyzer
+    internal abstract class PropertyDocumentationBase : DiagnosticAnalyzer
     {
         private readonly Action<CompilationStartAnalysisContext> compilationStartAction;
         private readonly Action<SyntaxNodeAnalysisContext> propertyDeclarationAction;
 
-        protected PropertyDocumentationSummaryBase()
+        protected PropertyDocumentationBase()
         {
             this.compilationStartAction = this.HandleCompilationStart;
             this.propertyDeclarationAction = this.HandlePropertyDeclaration;
         }
+
+        /// <summary>
+        /// Gets the XML tag within the property documentation that should be handled.
+        /// </summary>
+        /// <value>The XML tag to handle.</value>
+        protected abstract string XmlTagToHandle { get; }
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -36,8 +42,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <param name="context">The current analysis context.</param>
         /// <param name="syntax">The <see cref="XmlElementSyntax"/> or <see cref="XmlEmptyElementSyntax"/> of the node
         /// to examine.</param>
-        /// <param name="diagnosticLocations">The location(s) where diagnostics, if any, should be reported.</param>
-        protected abstract void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, params Location[] diagnosticLocations);
+        /// <param name="diagnosticLocation">The location where diagnostics, if any, should be reported.</param>
+        protected abstract void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location diagnosticLocation);
 
         private void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
@@ -55,7 +61,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             this.HandleDeclaration(context, node, node.Identifier.GetLocation());
         }
 
-        private void HandleDeclaration(SyntaxNodeAnalysisContext context, SyntaxNode node, params Location[] locations)
+        private void HandleDeclaration(SyntaxNodeAnalysisContext context, SyntaxNode node, Location location)
         {
             var documentation = node.GetDocumentationCommentTriviaSyntax();
             if (documentation == null)
@@ -70,8 +76,8 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            var valueXmlElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.ValueXmlTag);
-            this.HandleXmlElement(context, valueXmlElement, locations);
+            var valueXmlElement = documentation.Content.GetFirstXmlElement(this.XmlTagToHandle);
+            this.HandleXmlElement(context, valueXmlElement, location);
         }
     }
 }
