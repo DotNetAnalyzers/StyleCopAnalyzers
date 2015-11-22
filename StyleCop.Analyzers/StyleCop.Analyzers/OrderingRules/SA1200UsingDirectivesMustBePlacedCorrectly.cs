@@ -172,8 +172,8 @@ namespace StyleCop.Analyzers.OrderingRules
         private const string DescriptionOutside = "A C# using directive is placed inside of a namespace declaration.";
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
-        private static readonly Action<SyntaxNodeAnalysisContext> CompilationUnitAction = HandleCompilationUnit;
-        private static readonly Action<SyntaxNodeAnalysisContext> NamespaceDeclarationAction = HandleNamespaceDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CompilationUnitAction = HandleCompilationUnit;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> NamespaceDeclarationAction = HandleNamespaceDeclaration;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -187,32 +187,24 @@ namespace StyleCop.Analyzers.OrderingRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            StyleCopSettings settings = SettingsHelper.GetStyleCopSettings(context.Options, context.CancellationToken);
-            switch (settings.OrderingRules.UsingDirectivesPlacement)
-            {
-            case UsingDirectivesPlacement.InsideNamespace:
-                context.RegisterSyntaxNodeActionHonorExclusions(CompilationUnitAction, SyntaxKind.CompilationUnit);
-                break;
-
-            case UsingDirectivesPlacement.OutsideNamespace:
-                context.RegisterSyntaxNodeActionHonorExclusions(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
-                break;
-
-            case UsingDirectivesPlacement.Preserve:
-            default:
-                return;
-            }
+            context.RegisterSyntaxNodeActionHonorExclusions(CompilationUnitAction, SyntaxKind.CompilationUnit);
+            context.RegisterSyntaxNodeActionHonorExclusions(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
         }
 
         /// <summary>
-        /// This method reports a diagnostic for any using directive placed outside a namespace declaration. It should
-        /// only be registered with the analyzer infrastructure when
-        /// <see cref="OrderingSettings.UsingDirectivesPlacement"/> is
+        /// This method reports a diagnostic for any using directive placed outside a namespace declaration. No
+        /// diagnostics are reported unless <see cref="OrderingSettings.UsingDirectivesPlacement"/> is
         /// <see cref="UsingDirectivesPlacement.InsideNamespace"/>.
         /// </summary>
         /// <param name="context">The analysis context.</param>
-        private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context)
+        /// <param name="settings">The effective StyleCop analysis settings.</param>
+        private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
+            if (settings.OrderingRules.UsingDirectivesPlacement != UsingDirectivesPlacement.InsideNamespace)
+            {
+                return;
+            }
+
             CompilationUnitSyntax syntax = (CompilationUnitSyntax)context.Node;
 
             List<SyntaxNode> usingDirectives = new List<SyntaxNode>();
@@ -251,14 +243,19 @@ namespace StyleCop.Analyzers.OrderingRules
         }
 
         /// <summary>
-        /// This method reports a diagnostic for any using directive placed within a namespace declaration. It should
-        /// only be registered with the analyzer infrastructure when
-        /// <see cref="OrderingSettings.UsingDirectivesPlacement"/> is
+        /// This method reports a diagnostic for any using directive placed within a namespace declaration. No
+        /// diagnostics are reported unless <see cref="OrderingSettings.UsingDirectivesPlacement"/> is
         /// <see cref="UsingDirectivesPlacement.OutsideNamespace"/>.
         /// </summary>
         /// <param name="context">The analysis context.</param>
-        private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context)
+        /// <param name="settings">The effective StyleCop analysis settings.</param>
+        private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
+            if (settings.OrderingRules.UsingDirectivesPlacement != UsingDirectivesPlacement.OutsideNamespace)
+            {
+                return;
+            }
+
             NamespaceDeclarationSyntax syntax = (NamespaceDeclarationSyntax)context.Node;
             foreach (UsingDirectiveSyntax directive in syntax.Usings)
             {
