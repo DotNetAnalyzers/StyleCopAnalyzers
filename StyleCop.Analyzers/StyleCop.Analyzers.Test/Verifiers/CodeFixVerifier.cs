@@ -6,6 +6,7 @@ namespace TestHelper
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Diagnostics;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -87,13 +88,37 @@ namespace TestHelper
             }
             else
             {
+                if (Debugger.IsAttached)
+                {
+                    await t1;
+                }
+
                 var t2 = this.VerifyFixInternalAsync(LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), this.GetCSharpCodeFixProvider(), oldSource, batchNewSource ?? newSource, codeFixIndex, allowNewCompilerDiagnostics, maxNumberOfIterations, GetFixAllAnalyzerDocumentAsync, cancellationToken).ConfigureAwait(false);
+                if (Debugger.IsAttached)
+                {
+                    await t2;
+                }
+
                 var t3 = this.VerifyFixInternalAsync(LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), this.GetCSharpCodeFixProvider(), oldSource, batchNewSource ?? newSource, codeFixIndex, allowNewCompilerDiagnostics, maxNumberOfIterations, GetFixAllAnalyzerProjectAsync, cancellationToken).ConfigureAwait(false);
+                if (Debugger.IsAttached)
+                {
+                    await t3;
+                }
+
                 var t4 = this.VerifyFixInternalAsync(LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), this.GetCSharpCodeFixProvider(), oldSource, batchNewSource ?? newSource, codeFixIndex, allowNewCompilerDiagnostics, maxNumberOfIterations, GetFixAllAnalyzerSolutionAsync, cancellationToken).ConfigureAwait(false);
-                await t1;
-                await t2;
-                await t3;
-                await t4;
+                if (Debugger.IsAttached)
+                {
+                    await t4;
+                }
+
+                if (!Debugger.IsAttached)
+                {
+                    // Allow the operations to run in parallel
+                    await t1;
+                    await t2;
+                    await t3;
+                    await t4;
+                }
             }
         }
 
