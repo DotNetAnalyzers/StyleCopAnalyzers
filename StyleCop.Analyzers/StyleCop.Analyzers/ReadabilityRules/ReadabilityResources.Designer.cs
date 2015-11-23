@@ -1088,6 +1088,15 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Give each attribute its own square brackets.
+        /// </summary>
+        internal static string SA1133CodeFix {
+            get {
+                return ResourceManager.GetString("SA1133CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Each attribute usage should be placed in its own set of square brackets for maximum readability..
         /// </summary>
         internal static string SA1133Description {
@@ -1097,7 +1106,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Each attribute should be placed in its own set of square brackets..
         /// </summary>
         internal static string SA1133MessageFormat {
             get {

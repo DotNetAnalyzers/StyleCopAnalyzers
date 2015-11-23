@@ -459,11 +459,14 @@
   <data name="SA1132Title" xml:space="preserve">
     <value>Do not combine fields</value>
   </data>
+  <data name="SA1133CodeFix" xml:space="preserve">
+    <value>Give each attribute its own square brackets</value>
+  </data>
   <data name="SA1133Description" xml:space="preserve">
     <value>Each attribute usage should be placed in its own set of square brackets for maximum readability.</value>
   </data>
   <data name="SA1133MessageFormat" xml:space="preserve">
-    <value />
+    <value>Each attribute should be placed in its own set of square brackets.</value>
   </data>
   <data name="SA1133Title" xml:space="preserve">
     <value>Do not combine attributes</value>
