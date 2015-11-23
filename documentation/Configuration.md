@@ -89,6 +89,7 @@ The following properties are used to configure using directives in StyleCop Anal
 
 | Property | Default Value | Summary |
 | --- | --- | --- |
+| `systemUsingDirectivesFirst` | true | Specifies whether `System` using directives are placed before other using directives |
 | `usingDirectivesPlacement` | `"insideNamespace"` | Specifies the desired placement of using directives |
 
 #### Using Directives Placement
