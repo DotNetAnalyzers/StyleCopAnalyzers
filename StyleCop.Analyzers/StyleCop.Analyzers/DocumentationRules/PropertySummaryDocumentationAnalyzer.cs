@@ -113,10 +113,42 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 if (setter != null)
                 {
-                    var getterIsVisible = IsPubliclyVisible(propertyDeclaration, getter);
-                    var setterIsVisible = IsPubliclyVisible(propertyDeclaration, setter);
+                    var getterAccessibility = getter.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+                    var setterAccessibility = setter.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+                    bool getterVisible;
+                    bool setterVisible;
 
-                    if (getterIsVisible && !setterIsVisible)
+                    switch (getterAccessibility)
+                    {
+                        case Accessibility.Public:
+                        case Accessibility.ProtectedOrInternal:
+                        case Accessibility.Protected:
+                            getterVisible = true;
+                            break;
+                        case Accessibility.Internal:
+                            getterVisible = setterAccessibility == Accessibility.Private;
+                            break;
+                        default:
+                            getterVisible = false;
+                            break;
+                    }
+
+                    switch (setterAccessibility)
+                    {
+                        case Accessibility.Public:
+                        case Accessibility.ProtectedOrInternal:
+                        case Accessibility.Protected:
+                            setterVisible = true;
+                            break;
+                        case Accessibility.Internal:
+                            setterVisible = getterAccessibility == Accessibility.Private;
+                            break;
+                        default:
+                            setterVisible = false;
+                            break;
+                    }
+
+                    if (getterVisible && !setterVisible)
                     {
                         if (startsWithGetOrSet)
                         {
@@ -130,7 +162,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                             context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextGets));
                         }
                     }
-                    else if (!getterIsVisible && setterIsVisible)
+                    else if (!getterVisible && setterVisible)
                     {
                         if (startsWithGetOrSet)
                         {
@@ -170,46 +202,6 @@ namespace StyleCop.Analyzers.DocumentationRules
                     context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextSets));
                 }
             }
-        }
-
-        private static bool IsPubliclyVisible(PropertyDeclarationSyntax propertyDeclaration, AccessorDeclarationSyntax accessor)
-        {
-            if (accessor == null)
-            {
-                return false;
-            }
-
-            if (accessor.Modifiers.Any(SyntaxKind.PrivateKeyword))
-            {
-                return false;
-            }
-
-            var current = accessor.Parent;
-            while (current != null)
-            {
-                switch (current.Kind())
-                {
-                case SyntaxKind.ClassDeclaration:
-                    if (((ClassDeclarationSyntax)current).Modifiers.Any(SyntaxKind.PrivateKeyword))
-                    {
-                        return false;
-                    }
-
-                    break;
-
-                case SyntaxKind.StructDeclaration:
-                    if (((StructDeclarationSyntax)current).Modifiers.Any(SyntaxKind.PrivateKeyword))
-                    {
-                        return false;
-                    }
-
-                    break;
-                }
-
-                current = current.Parent;
-            }
-
-            return true;
         }
     }
 }

@@ -234,6 +234,21 @@ namespace StyleCop.Analyzers.Helpers
             return declaredSymbol?.DeclaredAccessibility ?? Accessibility.NotApplicable;
         }
 
+        internal static Accessibility GetDeclaredAccessibility(this AccessorDeclarationSyntax syntax, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            Requires.NotNull(syntax, nameof(syntax));
+            Requires.NotNull(semanticModel, nameof(semanticModel));
+
+            AccessLevel accessLevel = GetAccessLevel(syntax.Modifiers);
+            if (accessLevel != AccessLevel.NotSpecified)
+            {
+                return accessLevel.ToAccessibility();
+            }
+
+            BasePropertyDeclarationSyntax propertyDefinition = syntax.FirstAncestorOrSelf<BasePropertyDeclarationSyntax>();
+            return propertyDefinition.GetDeclaredAccessibility(semanticModel, cancellationToken);
+        }
+
         internal static Accessibility GetDeclaredAccessibility(this BaseFieldDeclarationSyntax syntax, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             Requires.NotNull(syntax, nameof(syntax));
@@ -334,6 +349,27 @@ namespace StyleCop.Analyzers.Helpers
             }
 
             BaseTypeDeclarationSyntax enclosingType = syntax.Parent as BaseTypeDeclarationSyntax;
+            if (enclosingType == null)
+            {
+                return declaredAccessibility;
+            }
+
+            Accessibility enclosingAccessibility = enclosingType.GetEffectiveAccessibility(semanticModel, cancellationToken);
+            return CombineEffectiveAccessibility(declaredAccessibility, enclosingAccessibility);
+        }
+
+        internal static Accessibility GetEffectiveAccessibility(this AccessorDeclarationSyntax syntax, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            Requires.NotNull(syntax, nameof(syntax));
+            Requires.NotNull(semanticModel, nameof(semanticModel));
+
+            Accessibility declaredAccessibility = syntax.GetDeclaredAccessibility(semanticModel, cancellationToken);
+            if (declaredAccessibility <= Accessibility.Private)
+            {
+                return declaredAccessibility;
+            }
+
+            BaseTypeDeclarationSyntax enclosingType = syntax.FirstAncestorOrSelf<BaseTypeDeclarationSyntax>();
             if (enclosingType == null)
             {
                 return declaredAccessibility;
