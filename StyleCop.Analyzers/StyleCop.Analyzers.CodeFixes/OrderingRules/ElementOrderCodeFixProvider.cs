@@ -31,8 +31,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 SA1202ElementsMustBeOrderedByAccess.DiagnosticId,
                 SA1203ConstantsMustAppearBeforeFields.DiagnosticId,
                 SA1204StaticElementsMustAppearBeforeInstanceElements.DiagnosticId,
-                SA1214StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements.DiagnosticId,
-                SA1215InstanceReadonlyElementsMustAppearBeforeInstanceNonReadonlyElements.DiagnosticId);
+                SA1214ReadonlyElementsMustAppearBeforeNonReadonlyElements.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()

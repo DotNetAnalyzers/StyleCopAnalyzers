@@ -26,6 +26,7 @@ lists each of these issues, along with a link to the issue where the decision wa
 | --- | --- | --- |
 | SA1109 | Block statements must not contain embedded regions | [#998](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/998) |
 | SA1126 | Prefix calls correctly | [#59](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/59) |
+| SA1215 | Instance readonly elements must appear before instance non-readonly elements | [#1812](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/pull/1812) |
 | SA1409 | Remove unnecessary code | [#1058](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1058) |
 | SA1603 | Documentation must contain valid XML | [#1291](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1291) |
 | SA1628 | Documentation text must begin with a capital letter | [#1057](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1057) |
@@ -150,7 +151,13 @@ var a = new[] { 1, 2, 3 }.ToArray();
 
 ## Ordering Rules
 
-There are no known changes at this time.
+### SA1214
+
+StyleCop Classic only reports SA1214 for violations involving static fields. In StyleCop Analyzers, SA1214 and SA1215
+were merged into a single rule to improve the ability of users to customize the behavior of several ordering rules
+involving members of a type.
+
+:warning: Violations reported as SA1215 in StyleCop Classic are reported as SA1214 in StyleCop Analyzers.
 
 ## Naming Rules
 

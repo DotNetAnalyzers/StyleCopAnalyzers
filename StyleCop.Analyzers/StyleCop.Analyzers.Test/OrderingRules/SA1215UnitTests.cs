@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1215InstanceReadonlyElementsMustAppearBeforeInstanceNonReadonlyElements"/>.
+    /// Unit tests for <see cref="SA1214ReadonlyElementsMustAppearBeforeNonReadonlyElements"/>.
     /// </summary>
     public class SA1215UnitTests : CodeFixVerifier
     {
@@ -120,7 +120,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
 }
 ";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 25).WithArguments("public");
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 25);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
@@ -148,7 +148,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
 }
 ";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 25).WithArguments("public");
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 25);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
@@ -199,7 +199,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1215InstanceReadonlyElementsMustAppearBeforeInstanceNonReadonlyElements();
+            yield return new SA1214ReadonlyElementsMustAppearBeforeNonReadonlyElements();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

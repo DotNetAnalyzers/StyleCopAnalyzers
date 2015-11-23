@@ -226,8 +226,7 @@
     <Compile Include="OrderingRules\SA1211UsingAliasDirectivesMustBeOrderedAlphabeticallyByAliasName.cs" />
     <Compile Include="OrderingRules\SA1212PropertyAccessorsMustFollowOrder.cs" />
     <Compile Include="OrderingRules\SA1213EventAccessorsMustFollowOrder.cs" />
-    <Compile Include="OrderingRules\SA1214StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements.cs" />
-    <Compile Include="OrderingRules\SA1215InstanceReadonlyElementsMustAppearBeforeInstanceNonReadonlyElements.cs" />
+    <Compile Include="OrderingRules\SA1214ReadonlyElementsMustAppearBeforeNonReadonlyElements.cs" />
     <Compile Include="OrderingRules\SA1216UsingStaticDirectivesMustBePlacedAtTheCorrectLocation.cs" />
     <Compile Include="OrderingRules\SA1217UsingStaticDirectivesMustBeOrderedAlphabetically.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
