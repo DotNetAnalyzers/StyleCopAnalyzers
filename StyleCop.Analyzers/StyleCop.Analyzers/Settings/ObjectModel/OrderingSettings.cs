@@ -3,11 +3,26 @@
 
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
+    using System.Collections.Immutable;
     using Newtonsoft.Json;
 
     [JsonObject(MemberSerialization.OptIn)]
     internal class OrderingSettings
     {
+        private static readonly ImmutableArray<OrderingTrait> DefaultElementOrder =
+            ImmutableArray.Create(
+                OrderingTrait.Kind,
+                OrderingTrait.Accessibility,
+                OrderingTrait.Constant,
+                OrderingTrait.Static,
+                OrderingTrait.Readonly);
+
+        /// <summary>
+        /// This is the backing field for the <see cref="ElementOrder"/> property.
+        /// </summary>
+        [JsonProperty("elementOrder", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        private ImmutableArray<OrderingTrait>.Builder elementOrder;
+
         /// <summary>
         /// This is the backing field for the <see cref="UsingDirectivesPlacement"/> property.
         /// </summary>
@@ -20,7 +35,16 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         [JsonConstructor]
         protected internal OrderingSettings()
         {
+            this.elementOrder = ImmutableArray.CreateBuilder<OrderingTrait>();
             this.usingDirectivesPlacement = UsingDirectivesPlacement.InsideNamespace;
+        }
+
+        public ImmutableArray<OrderingTrait> ElementOrder
+        {
+            get
+            {
+                return this.elementOrder.Count > 0 ? this.elementOrder.ToImmutable() : DefaultElementOrder;
+            }
         }
 
         public UsingDirectivesPlacement UsingDirectivesPlacement =>

@@ -29,6 +29,29 @@
           "description": "Configuration for ordering rules (SA1200-)",
           "additionalProperties": false,
           "properties": {
+            "elementOrder": {
+              "type": "array",
+              "description": "Specifies the traits used for ordering elements within a document, along with their precedence.",
+              "default": [
+                "kind",
+                "accessibility",
+                "constant",
+                "static",
+                "readonly"
+              ],
+              "items": {
+                "type": "string",
+                "description": "",
+                "enum": [
+                  "accessibility",
+                  "kind",
+                  "constant",
+                  "static",
+                  "readonly"
+                ]
+              },
+              "uniqueItems": true
+            },
             "usingDirectivesPlacement": {
               "type": "string",
               "description": "Specifies the desired placement of using directives.\r\ninsideNamespace: Place using directives inside the namespace definition\r\noutsideNamespace: Place using directives outside the namespace definition\r\npreserve: Allow using directives inside or outside the namespace definition",

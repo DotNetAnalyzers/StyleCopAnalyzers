@@ -111,7 +111,6 @@
     <Compile Include="Helpers\DeclarationModifiersHelper.cs" />
     <Compile Include="Helpers\DiagnosticOptionsHelper.cs" />
     <Compile Include="Helpers\DocumentationCommentExtensions.cs" />
-    <Compile Include="Helpers\ElementOrderingChecks.cs" />
     <Compile Include="Helpers\FileHeader.cs" />
     <Compile Include="Helpers\FileHeaderHelpers.cs" />
     <Compile Include="Helpers\HelpersResources.Designer.cs">
@@ -274,6 +273,7 @@
     <Compile Include="Settings\ObjectModel\MaintainabilitySettings.cs" />
     <Compile Include="Settings\ObjectModel\NamingSettings.cs" />
     <Compile Include="Settings\ObjectModel\OrderingSettings.cs" />
+    <Compile Include="Settings\ObjectModel\OrderingTrait.cs" />
     <Compile Include="Settings\ObjectModel\ReadabilitySettings.cs" />
     <Compile Include="Settings\ObjectModel\SettingsFile.cs" />
     <Compile Include="Settings\ObjectModel\SpacingSettings.cs" />

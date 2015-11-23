@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// An instance readonly element is positioned beneath an instance non-readonly element of the same type.
@@ -38,7 +39,7 @@ namespace StyleCop.Analyzers.OrderingRules
             ImmutableArray.Create(SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
-        private static readonly Action<SyntaxNodeAnalysisContext> TypeDeclarationAction = HandleTypeDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> TypeDeclarationAction = HandleTypeDeclaration;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -55,8 +56,15 @@ namespace StyleCop.Analyzers.OrderingRules
             context.RegisterSyntaxNodeActionHonorExclusions(TypeDeclarationAction, TypeDeclarationKinds);
         }
 
-        private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
+            var elementOrder = settings.OrderingRules.ElementOrder;
+            int readonlyIndex = elementOrder.IndexOf(OrderingTrait.Readonly);
+            if (readonlyIndex < 0)
+            {
+                return;
+            }
+
             var typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
             var previousFieldReadonly = true;

@@ -11,6 +11,7 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Settings.ObjectModel;
 
     /// <summary>
     /// An element within a C# code file is out of order in relation to the other elements in the code.
@@ -169,9 +170,9 @@ namespace StyleCop.Analyzers.OrderingRules
         };
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
-        private static readonly Action<SyntaxNodeAnalysisContext> CompilationUnitAction = HandleCompilationUnit;
-        private static readonly Action<SyntaxNodeAnalysisContext> NamespaceDeclarationAction = HandleNamespaceDeclaration;
-        private static readonly Action<SyntaxNodeAnalysisContext> TypeDeclarationAction = HandleTypeDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CompilationUnitAction = HandleCompilationUnit;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> NamespaceDeclarationAction = HandleNamespaceDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> TypeDeclarationAction = HandleTypeDeclaration;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -190,28 +191,49 @@ namespace StyleCop.Analyzers.OrderingRules
             context.RegisterSyntaxNodeActionHonorExclusions(TypeDeclarationAction, TypeDeclarationKinds);
         }
 
-        private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
-            var typeDeclaration = context.Node as TypeDeclarationSyntax;
+            var elementOrder = settings.OrderingRules.ElementOrder;
+            int kindIndex = elementOrder.IndexOf(OrderingTrait.Kind);
+            if (kindIndex < 0)
+            {
+                return;
+            }
 
-            HandleMemberList(context, typeDeclaration.Members, TypeMemberOrder);
+            var typeDeclaration = (TypeDeclarationSyntax)context.Node;
+
+            HandleMemberList(context, elementOrder, kindIndex, typeDeclaration.Members, TypeMemberOrder);
         }
 
-        private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context)
+        private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
-            var compilationUnit = context.Node as CompilationUnitSyntax;
+            var elementOrder = settings.OrderingRules.ElementOrder;
+            int kindIndex = elementOrder.IndexOf(OrderingTrait.Kind);
+            if (kindIndex < 0)
+            {
+                return;
+            }
 
-            HandleMemberList(context, compilationUnit.Members, OuterOrder);
+            var compilationUnit = (CompilationUnitSyntax)context.Node;
+
+            HandleMemberList(context, elementOrder, kindIndex, compilationUnit.Members, OuterOrder);
         }
 
-        private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
-            var compilationUnit = context.Node as NamespaceDeclarationSyntax;
+            var elementOrder = settings.OrderingRules.ElementOrder;
+            int kindIndex = elementOrder.IndexOf(OrderingTrait.Kind);
+            if (kindIndex < 0)
+            {
+                return;
+            }
 
-            HandleMemberList(context, compilationUnit.Members, OuterOrder);
+            var compilationUnit = (NamespaceDeclarationSyntax)context.Node;
+
+            HandleMemberList(context, elementOrder, kindIndex, compilationUnit.Members, OuterOrder);
         }
 
-        private static void HandleMemberList(SyntaxNodeAnalysisContext context, SyntaxList<MemberDeclarationSyntax> members, ImmutableArray<SyntaxKind> order)
+        private static void HandleMemberList(SyntaxNodeAnalysisContext context, ImmutableArray<OrderingTrait> elementOrder, int kindIndex, SyntaxList<MemberDeclarationSyntax> members, ImmutableArray<SyntaxKind> order)
         {
             for (int i = 0; i < members.Count - 1; i++)
             {
@@ -222,6 +244,46 @@ namespace StyleCop.Analyzers.OrderingRules
                 }
 
                 if (members[i].IsKind(SyntaxKind.IncompleteMember))
+                {
+                    continue;
+                }
+
+                bool compareKind = true;
+                for (int j = 0; compareKind && j < kindIndex; j++)
+                {
+                    switch (elementOrder[j])
+                    {
+                    case OrderingTrait.Accessibility:
+                        if (MemberOrderHelper.GetAccessLevelForOrdering(members[i + 1], members[i + 1].GetModifiers())
+                            != MemberOrderHelper.GetAccessLevelForOrdering(members[i], members[i].GetModifiers()))
+                        {
+                            compareKind = false;
+                        }
+
+                        continue;
+
+                    case OrderingTrait.Constant:
+                    case OrderingTrait.Readonly:
+                        // Only fields may be marked const or readonly, and all fields have the same kind.
+                        continue;
+
+                    case OrderingTrait.Static:
+                        bool currentIsStatic = members[i].GetModifiers().Any(SyntaxKind.StaticKeyword);
+                        bool nextIsStatic = members[i + 1].GetModifiers().Any(SyntaxKind.StaticKeyword);
+                        if (currentIsStatic != nextIsStatic)
+                        {
+                            compareKind = false;
+                        }
+
+                        continue;
+
+                    case OrderingTrait.Kind:
+                    default:
+                        continue;
+                    }
+                }
+
+                if (!compareKind)
                 {
                     continue;
                 }

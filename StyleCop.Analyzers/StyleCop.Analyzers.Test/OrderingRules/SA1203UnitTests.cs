@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
 
     public class SA1203UnitTests : CodeFixVerifier
     {
-        private bool suppressSA1202 = false;
+        private bool orderByAccess = true;
 
         [Fact]
         public async Task TestNoDiagnosticAsync()
@@ -385,13 +385,14 @@ const string foo = ""a"";
         }
 
         /// <summary>
-        /// Verifies that the code fix will move the non constant fields before the constant ones with SA1202 suppressed.
+        /// Verifies that the code fix will move the non-constant fields before the constant ones when element access is
+        /// not considered for ordering.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestCodeFixWithSA1202SuppressedAsync()
+        public async Task TestCodeFixWithoutOrderByAccessAsync()
         {
-            this.suppressSA1202 = true;
+            this.orderByAccess = false;
 
             var testCode = @"public class Foo
 {
@@ -435,6 +436,29 @@ const string foo = ""a"";
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        protected override string GetSettings()
+        {
+            if (!this.orderByAccess)
+            {
+                return @"
+{
+  ""settings"": {
+    ""orderingRules"": {
+      ""elementOrder"": [
+        ""kind"",
+        ""constant"",
+        ""static"",
+        ""readonly"",
+      ]
+    }
+  }
+}
+";
+            }
+
+            return base.GetSettings();
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1203ConstantsMustAppearBeforeFields();
@@ -443,14 +467,6 @@ const string foo = ""a"";
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new ElementOrderCodeFixProvider();
-        }
-
-        protected override IEnumerable<string> GetDisabledDiagnostics()
-        {
-            if (this.suppressSA1202)
-            {
-                yield return SA1202ElementsMustBeOrderedByAccess.DiagnosticId;
-            }
         }
     }
 }
