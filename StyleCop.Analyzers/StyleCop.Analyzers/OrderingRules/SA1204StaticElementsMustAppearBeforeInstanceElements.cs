@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.OrderingRules
 {
     using System;
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
     using Microsoft.CodeAnalysis;
@@ -31,8 +30,8 @@ namespace StyleCop.Analyzers.OrderingRules
         /// </summary>
         public const string DiagnosticId = "SA1204";
         private const string Title = "Static elements must appear before instance elements";
-        private const string MessageFormat = "All {0} static {1} must appear before {0} non-static {1}.";
-        private const string Description = "A static element is positioned beneath an instance element of the same type.";
+        private const string MessageFormat = "Static members must appear before non-static members";
+        private const string Description = "A static element is positioned beneath an instance element.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1204.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
@@ -45,23 +44,6 @@ namespace StyleCop.Analyzers.OrderingRules
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CompilationUnitAction = HandleCompilationUnit;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> NamespaceDeclarationAction = HandleNamespaceDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> TypeDeclarationAction = HandleTypeDeclaration;
-
-        private static readonly Dictionary<SyntaxKind, string> MemberNames = new Dictionary<SyntaxKind, string>
-        {
-            [SyntaxKind.DelegateDeclaration] = "delegates",
-            [SyntaxKind.EnumDeclaration] = "enums",
-            [SyntaxKind.InterfaceDeclaration] = "interfaces",
-            [SyntaxKind.StructDeclaration] = "structs",
-            [SyntaxKind.ClassDeclaration] = "classes",
-            [SyntaxKind.FieldDeclaration] = "fields",
-            [SyntaxKind.ConstructorDeclaration] = "constructors",
-            [SyntaxKind.EventDeclaration] = "events",
-            [SyntaxKind.PropertyDeclaration] = "properties",
-            [SyntaxKind.IndexerDeclaration] = "indexers",
-            [SyntaxKind.MethodDeclaration] = "methods",
-            [SyntaxKind.ConversionOperatorDeclaration] = "conversions",
-            [SyntaxKind.OperatorDeclaration] = "operators"
-        };
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -191,8 +173,7 @@ namespace StyleCop.Analyzers.OrderingRules
                             Diagnostic.Create(
                                 Descriptor,
                                 NamedTypeHelpers.GetNameOrIdentifierLocation(member),
-                                AccessLevelHelper.GetName(currentAccessLevel),
-                                MemberNames[currentSyntaxKind]));
+                                AccessLevelHelper.GetName(currentAccessLevel)));
                     }
                 }
 

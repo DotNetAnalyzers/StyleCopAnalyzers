@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.OrderingRules
 {
     using System;
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -44,8 +43,8 @@ namespace StyleCop.Analyzers.OrderingRules
         /// </summary>
         public const string DiagnosticId = "SA1202";
         private const string Title = "Elements must be ordered by access";
-        private const string MessageFormat = "All {0} {1} must come before {2} {1}.";
-        private const string Description = "An element within a C# code file is out of order within regard to access level, in relation to other elements in the code.";
+        private const string MessageFormat = "'{0}' members must come before '{1}' members";
+        private const string Description = "An element within a C# code file is out of order in relation to other elements in the code.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1202.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
@@ -54,22 +53,20 @@ namespace StyleCop.Analyzers.OrderingRules
         private static readonly ImmutableArray<SyntaxKind> TypeDeclarationKinds =
             ImmutableArray.Create(SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration);
 
-        private static readonly Dictionary<SyntaxKind, string> MemberNames = new Dictionary<SyntaxKind, string>
-        {
-            [SyntaxKind.DelegateDeclaration] = "delegates",
-            [SyntaxKind.EnumDeclaration] = "enums",
-            [SyntaxKind.InterfaceDeclaration] = "interfaces",
-            [SyntaxKind.StructDeclaration] = "structs",
-            [SyntaxKind.ClassDeclaration] = "classes",
-            [SyntaxKind.FieldDeclaration] = "fields",
-            [SyntaxKind.ConstructorDeclaration] = "constructors",
-            [SyntaxKind.EventDeclaration] = "events",
-            [SyntaxKind.PropertyDeclaration] = "properties",
-            [SyntaxKind.IndexerDeclaration] = "indexers",
-            [SyntaxKind.MethodDeclaration] = "methods",
-            [SyntaxKind.ConversionOperatorDeclaration] = "conversions",
-            [SyntaxKind.OperatorDeclaration] = "operators"
-        };
+        private static readonly ImmutableHashSet<SyntaxKind> MemberKinds = ImmutableHashSet.Create(
+            SyntaxKind.DelegateDeclaration,
+            SyntaxKind.EnumDeclaration,
+            SyntaxKind.InterfaceDeclaration,
+            SyntaxKind.StructDeclaration,
+            SyntaxKind.ClassDeclaration,
+            SyntaxKind.FieldDeclaration,
+            SyntaxKind.ConstructorDeclaration,
+            SyntaxKind.EventDeclaration,
+            SyntaxKind.PropertyDeclaration,
+            SyntaxKind.IndexerDeclaration,
+            SyntaxKind.MethodDeclaration,
+            SyntaxKind.ConversionOperatorDeclaration,
+            SyntaxKind.OperatorDeclaration);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CompilationUnitAction = HandleCompilationUnit;
@@ -148,7 +145,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
                 // if the SyntaxKind of this member (e.g. SyntaxKind.IncompleteMember) will not
                 // be handled, skip early.
-                if (!MemberNames.ContainsKey(currentSyntaxKind))
+                if (!MemberKinds.Contains(currentSyntaxKind))
                 {
                     continue;
                 }
@@ -216,7 +213,6 @@ namespace StyleCop.Analyzers.OrderingRules
                                 Descriptor,
                                 NamedTypeHelpers.GetNameOrIdentifierLocation(member),
                                 AccessLevelHelper.GetName(currentAccessLevel),
-                                MemberNames[currentSyntaxKind],
                                 AccessLevelHelper.GetName(previousAccessLevel)));
                     }
                 }

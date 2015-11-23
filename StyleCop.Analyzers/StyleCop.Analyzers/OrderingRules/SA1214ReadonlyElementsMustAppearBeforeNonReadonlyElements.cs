@@ -23,8 +23,8 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <see cref="SA1214ReadonlyElementsMustAppearBeforeNonReadonlyElements"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1214";
-        private const string Title = "Readonly elements must appear before non-readonly elements";
-        private const string MessageFormat = "Readonly fields must appear before non-readonly fields.";
+        private const string Title = "Readonly fields must appear before non-readonly fields";
+        private const string MessageFormat = "Readonly fields must appear before non-readonly fields";
         private const string Description = "A readonly field is positioned beneath a non-readonly field.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1214.md";
 
@@ -135,7 +135,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 {
                     if ((currentFieldReadonly || currentFieldConst) && !previousFieldReadonly && !previousFieldConst)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(member), AccessLevelHelper.GetName(currentAccessLevel)));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(member)));
                     }
                 }
 

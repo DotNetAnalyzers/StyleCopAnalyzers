@@ -101,7 +101,7 @@ public class Foo
     private int Baz = 1;
     private const int Bar = 2;
 }";
-            var firstDiagnostic = this.CSharpDiagnostic().WithLocation(5, 23).WithArguments("private");
+            var firstDiagnostic = this.CSharpDiagnostic().WithLocation(5, 23);
             await this.VerifyCSharpDiagnosticAsync(testCode, firstDiagnostic, CancellationToken.None).ConfigureAwait(false);
 
             var fixedTestCode = @"
@@ -123,7 +123,7 @@ public struct Foo
     private int baz;
     private const int Bar = 2;
 }";
-            var firstDiagnostic = this.CSharpDiagnostic().WithLocation(5, 23).WithArguments("private");
+            var firstDiagnostic = this.CSharpDiagnostic().WithLocation(5, 23);
             await this.VerifyCSharpDiagnosticAsync(testCode, firstDiagnostic, CancellationToken.None).ConfigureAwait(false);
 
             var fixedTestCode = @"
@@ -146,7 +146,7 @@ public class Foo
     private int Baz = 1;
     private const int FooBar = 2;
 }";
-            var firstDiagnostic = this.CSharpDiagnostic().WithLocation(6, 23).WithArguments("private");
+            var firstDiagnostic = this.CSharpDiagnostic().WithLocation(6, 23);
             await this.VerifyCSharpDiagnosticAsync(testCode, firstDiagnostic, CancellationToken.None).ConfigureAwait(false);
 
             var fixedTestCode = @"
@@ -171,7 +171,7 @@ public class Test
     const int Test3 = 3;
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(5, 15).WithArguments("private");
+            var expected = this.CSharpDiagnostic().WithLocation(5, 15);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
@@ -182,7 +182,7 @@ public class Test
     private int Test1 = 1;
     const int Test3 = 3;
 }";
-            expected = this.CSharpDiagnostic().WithLocation(6, 15).WithArguments("private");
+            expected = this.CSharpDiagnostic().WithLocation(6, 15);
             await this.VerifyCSharpDiagnosticAsync(testCodeAfterFix1, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixCode = @"
@@ -240,8 +240,8 @@ public class Foo
 
             var diagnosticResults = new[]
             {
-                this.CSharpDiagnostic().WithLocation(10, 25).WithArguments("public"),
-                this.CSharpDiagnostic().WithLocation(14, 25).WithArguments("public")
+                this.CSharpDiagnostic().WithLocation(10, 25),
+                this.CSharpDiagnostic().WithLocation(14, 25)
             };
             await this.VerifyCSharpDiagnosticAsync(testCode, diagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -289,8 +289,8 @@ public class Foo
 
             var diagnosticResults = new[]
             {
-                this.CSharpDiagnostic().WithLocation(9, 26).WithArguments("private"),
-                this.CSharpDiagnostic().WithLocation(13, 25).WithArguments("public")
+                this.CSharpDiagnostic().WithLocation(9, 26),
+                this.CSharpDiagnostic().WithLocation(13, 25)
             };
             await this.VerifyCSharpDiagnosticAsync(testCode, diagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -340,8 +340,8 @@ public class Foo
 
             var diagnosticResults = new[]
             {
-                this.CSharpDiagnostic().WithLocation(10, 26).WithArguments("private"),
-                this.CSharpDiagnostic().WithLocation(14, 25).WithArguments("public")
+                this.CSharpDiagnostic().WithLocation(10, 26),
+                this.CSharpDiagnostic().WithLocation(14, 25)
             };
             await this.VerifyCSharpDiagnosticAsync(testCode, diagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -367,7 +367,7 @@ const string foo = ""a"";
 
             var diagnosticResults = new[]
             {
-                this.CSharpDiagnostic().WithLocation(7, 14).WithArguments("private"),
+                this.CSharpDiagnostic().WithLocation(7, 14),
             };
             await this.VerifyCSharpDiagnosticAsync(testCode, diagnosticResults, CancellationToken.None).ConfigureAwait(false);
 
@@ -428,8 +428,8 @@ const string foo = ""a"";
 
             var diagnosticResults = new[]
             {
-                this.CSharpDiagnostic().WithLocation(9, 26).WithArguments("private"),
-                this.CSharpDiagnostic().WithLocation(13, 25).WithArguments("public")
+                this.CSharpDiagnostic().WithLocation(9, 26),
+                this.CSharpDiagnostic().WithLocation(13, 25)
             };
             await this.VerifyCSharpDiagnosticAsync(testCode, diagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);

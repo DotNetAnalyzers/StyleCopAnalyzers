@@ -28,7 +28,7 @@ namespace StyleCop.Analyzers.OrderingRules
         /// </summary>
         public const string DiagnosticId = "SA1203";
         private const string Title = "Constants must appear before fields";
-        private const string MessageFormat = "All {0} constants must appear before {0} fields";
+        private const string MessageFormat = "Constant fields must appear before non-constant fields";
         private const string Description = "A constant field is placed beneath a non-constant field.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1203.md";
 
@@ -129,7 +129,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 {
                     if (!previousFieldConstant && currentFieldConstant)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(member), AccessLevelHelper.GetName(currentAccessLevel)));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(member)));
                     }
                 }
 
