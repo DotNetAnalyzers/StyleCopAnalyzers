@@ -245,8 +245,8 @@ namespace StyleCop.Analyzers.Helpers
                 return accessLevel.ToAccessibility();
             }
 
-            BasePropertyDeclarationSyntax propertyDefinition = syntax.FirstAncestorOrSelf<BasePropertyDeclarationSyntax>();
-            return propertyDefinition.GetDeclaredAccessibility(semanticModel, cancellationToken);
+            ISymbol declaredSymbol = semanticModel.GetDeclaredSymbol(syntax, cancellationToken);
+            return declaredSymbol?.DeclaredAccessibility ?? Accessibility.NotApplicable;
         }
 
         internal static Accessibility GetDeclaredAccessibility(this BaseFieldDeclarationSyntax syntax, SemanticModel semanticModel, CancellationToken cancellationToken)
@@ -369,13 +369,13 @@ namespace StyleCop.Analyzers.Helpers
                 return declaredAccessibility;
             }
 
-            BaseTypeDeclarationSyntax enclosingType = syntax.FirstAncestorOrSelf<BaseTypeDeclarationSyntax>();
-            if (enclosingType == null)
+            BasePropertyDeclarationSyntax enclosingProperty = syntax.Parent.Parent as BasePropertyDeclarationSyntax;
+            if (enclosingProperty == null)
             {
                 return declaredAccessibility;
             }
 
-            Accessibility enclosingAccessibility = enclosingType.GetEffectiveAccessibility(semanticModel, cancellationToken);
+            Accessibility enclosingAccessibility = enclosingProperty.GetEffectiveAccessibility(semanticModel, cancellationToken);
             return CombineEffectiveAccessibility(declaredAccessibility, enclosingAccessibility);
         }
 
