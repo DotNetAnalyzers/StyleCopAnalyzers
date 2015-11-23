@@ -6,7 +6,6 @@ namespace StyleCop.Analyzers.NamingRules
     using System;
     using System.Collections.Immutable;
     using System.Text.RegularExpressions;
-    using System.Threading;
     using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -68,6 +67,7 @@ namespace StyleCop.Analyzers.NamingRules
         private static readonly Regex HungarianRegex = new Regex(@"^(?<notation>[a-z]{1,2})[A-Z]");
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> VariableDeclarationAction = Analyzer.HandleVariableDeclaration;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -81,21 +81,12 @@ namespace StyleCop.Analyzers.NamingRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            Analyzer analyzer = new Analyzer(context.Options, context.CancellationToken);
-            context.RegisterSyntaxNodeActionHonorExclusions(analyzer.HandleVariableDeclarationSyntax, SyntaxKind.VariableDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(VariableDeclarationAction, SyntaxKind.VariableDeclaration);
         }
 
-        private sealed class Analyzer
+        private static class Analyzer
         {
-            private readonly NamingSettings namingSettings;
-
-            public Analyzer(AnalyzerOptions options, CancellationToken cancellationToken)
-            {
-                StyleCopSettings settings = options.GetStyleCopSettings(cancellationToken);
-                this.namingSettings = settings.NamingRules;
-            }
-
-            public void HandleVariableDeclarationSyntax(SyntaxNodeAnalysisContext context)
+            public static void HandleVariableDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
             {
                 var syntax = (VariableDeclarationSyntax)context.Node;
 
@@ -136,12 +127,12 @@ namespace StyleCop.Analyzers.NamingRules
                     }
 
                     var notationValue = match.Groups["notation"].Value;
-                    if (this.namingSettings.AllowCommonHungarianPrefixes && CommonPrefixes.Contains(notationValue))
+                    if (settings.NamingRules.AllowCommonHungarianPrefixes && CommonPrefixes.Contains(notationValue))
                     {
                         continue;
                     }
 
-                    if (this.namingSettings.AllowedHungarianPrefixes.Contains(notationValue))
+                    if (settings.NamingRules.AllowedHungarianPrefixes.Contains(notationValue))
                     {
                         continue;
                     }

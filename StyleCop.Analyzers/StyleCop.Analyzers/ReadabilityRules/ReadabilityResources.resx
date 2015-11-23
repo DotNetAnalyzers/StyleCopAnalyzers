@@ -217,7 +217,7 @@
     <value>Code must not contain multiple statements on one line</value>
   </data>
   <data name="SA1108Description" xml:space="preserve">
-    <value>A C# statement contains a comment between the declaration of the statement and the opening curly bracket of the statement.</value>
+    <value>A C# statement contains a comment between the declaration of the statement and the opening brace of the statement.</value>
   </data>
   <data name="SA1108MessageFormat" xml:space="preserve">
     <value>Block statements must not contain embedded comments</value>
@@ -226,7 +226,7 @@
     <value>Block statements must not contain embedded comments</value>
   </data>
   <data name="SA1109Description" xml:space="preserve">
-    <value>A C# statement contains a region tag between the declaration of the statement and the opening curly bracket of the statement.</value>
+    <value>A C# statement contains a region tag between the declaration of the statement and the opening brace of the statement.</value>
   </data>
   <data name="SA1109MessageFormat" xml:space="preserve">
     <value />

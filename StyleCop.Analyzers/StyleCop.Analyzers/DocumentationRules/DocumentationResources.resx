@@ -120,6 +120,9 @@
   <data name="InheritdocCodeFix" xml:space="preserve">
     <value>Inherit documentation</value>
   </data>
+  <data name="PropertySummaryStartTextCodeFix" xml:space="preserve">
+    <value>Add standard text</value>
+  </data>
   <data name="SA1609SA1610CodeFix" xml:space="preserve">
     <value>Document value from summary</value>
   </data>
@@ -137,6 +140,24 @@
   </data>
   <data name="SA1617CodeFix" xml:space="preserve">
     <value>Remove &lt;returns&gt; XML comment</value>
+  </data>
+  <data name="SA1623Description" xml:space="preserve">
+    <value>The documentation text within a C# property’s &lt;summary&gt; tag does not match the accessors within the property.</value>
+  </data>
+  <data name="SA1623MessageFormat" xml:space="preserve">
+    <value>The property's documentation summary text must begin with: '{0}'</value>
+  </data>
+  <data name="SA1623Title" xml:space="preserve">
+    <value>Property summary documentation must match accessors.</value>
+  </data>
+  <data name="SA1624Description" xml:space="preserve">
+    <value>The documentation text within a C# property’s &lt;summary&gt; tag takes into account all of the accessors within the property, but one of the accessors has limited access.</value>
+  </data>
+  <data name="SA1624MessageFormat" xml:space="preserve">
+    <value>Because the property only contains a visible {0} accessor, the documentation summary text must begin with '{1}'.</value>
+  </data>
+  <data name="SA1624Title" xml:space="preserve">
+    <value>Property summary documentation must omit accessor with restricted access.</value>
   </data>
   <data name="SA1626CodeFix" xml:space="preserve">
     <value>Convert to line comment</value>
@@ -263,5 +284,23 @@
   </data>
   <data name="SA1652Title" xml:space="preserve">
     <value>Enable XML documentation output</value>
+  </data>
+  <data name="StartingTextGets" xml:space="preserve">
+    <value>Gets</value>
+  </data>
+  <data name="StartingTextGetsOrSets" xml:space="preserve">
+    <value>Gets or sets</value>
+  </data>
+  <data name="StartingTextGetsOrSetsWhether" xml:space="preserve">
+    <value>Gets or sets a value indicating whether</value>
+  </data>
+  <data name="StartingTextGetsWhether" xml:space="preserve">
+    <value>Gets a value indicating whether</value>
+  </data>
+  <data name="StartingTextSets" xml:space="preserve">
+    <value>Sets</value>
+  </data>
+  <data name="StartingTextSetsWhether" xml:space="preserve">
+    <value>Sets a value indicating whether</value>
   </data>
 </root>

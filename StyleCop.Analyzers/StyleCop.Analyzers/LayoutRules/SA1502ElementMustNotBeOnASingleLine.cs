@@ -13,18 +13,18 @@ namespace StyleCop.Analyzers.LayoutRules
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// A C# element containing opening and closing curly brackets is written completely on a single line.
+    /// A C# element containing opening and closing braces is written completely on a single line.
     /// </summary>
     /// <remarks>
-    /// <para>A violation of this rule occurs when an element that is wrapped in opening and closing curly brackets is
-    /// written on a single line. For example:</para>
+    /// <para>A violation of this rule occurs when an element that is wrapped in opening and closing braces is written
+    /// on a single line. For example:</para>
     /// <code language="csharp">
     /// public object Method() { return null; }
     /// </code>
     ///
     /// <para>When StyleCop checks this code, a violation of this rule will occur because the entire method is written
-    /// on one line. The method should be written across multiple lines, with the opening and closing curly brackets
-    /// each on their own line, as follows:</para>
+    /// on one line. The method should be written across multiple lines, with the opening and closing braces each on
+    /// their own line, as follows:</para>
     ///
     /// <code language="csharp">
     /// public object Method()

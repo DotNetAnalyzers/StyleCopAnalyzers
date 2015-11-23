@@ -7,7 +7,6 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System.Collections.Immutable;
     using System.IO;
     using System.Linq;
-    using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -42,6 +41,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxTreeAnalysisContext, StyleCopSettings> SyntaxTreeAction = Analyzer.HandleSyntaxTree;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -55,21 +55,12 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            var analyzer = new Analyzer(context.Options, context.CancellationToken);
-            context.RegisterSyntaxTreeActionHonorExclusions(analyzer.HandleSyntaxTreeAction);
+            context.RegisterSyntaxTreeActionHonorExclusions(SyntaxTreeAction);
         }
 
-        private class Analyzer
+        private static class Analyzer
         {
-            private readonly FileNamingConvention fileNamingConvention;
-
-            public Analyzer(AnalyzerOptions options, CancellationToken cancellationToken)
-            {
-                StyleCopSettings settings = options.GetStyleCopSettings(cancellationToken);
-                this.fileNamingConvention = settings.DocumentationRules.FileNamingConvention;
-            }
-
-            public void HandleSyntaxTreeAction(SyntaxTreeAnalysisContext context)
+            public static void HandleSyntaxTree(SyntaxTreeAnalysisContext context, StyleCopSettings settings)
             {
                 var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
 
@@ -86,7 +77,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 var fileName = Path.GetFileName(context.Tree.FilePath);
                 string expectedFileName;
-                switch (this.fileNamingConvention)
+                switch (settings.DocumentationRules.FileNamingConvention)
                 {
                 case FileNamingConvention.Metadata:
                     expectedFileName = GetMetadataFileName(firstTypeDeclaration);
@@ -99,7 +90,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 if (string.Compare(fileName, expectedFileName, StringComparison.OrdinalIgnoreCase) != 0)
                 {
-                    if (this.fileNamingConvention == FileNamingConvention.StyleCop
+                    if (settings.DocumentationRules.FileNamingConvention == FileNamingConvention.StyleCop
                         && string.Compare(fileName, GetSimpleFileName(firstTypeDeclaration), StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         return;

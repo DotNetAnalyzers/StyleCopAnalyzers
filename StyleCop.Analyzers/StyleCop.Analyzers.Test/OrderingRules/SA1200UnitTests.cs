@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using Xunit;
 
     /// <summary>
-    /// Unit tests for the <see cref="SA1200UsingDirectivesMustBePlacedWithinNamespace"/>
+    /// Unit tests for the <see cref="SA1200UsingDirectivesMustBePlacedCorrectly"/>
     /// </summary>
     public class SA1200UnitTests : CodeFixVerifier
     {
@@ -119,8 +119,8 @@ namespace TestNamespace
 
             DiagnosticResult[] expectedResults =
             {
-                this.CSharpDiagnostic().WithLocation(1, 1),
-                this.CSharpDiagnostic().WithLocation(2, 1)
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(1, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(2, 1)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
@@ -131,7 +131,7 @@ namespace TestNamespace
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1200UsingDirectivesMustBePlacedWithinNamespace();
+            yield return new SA1200UsingDirectivesMustBePlacedCorrectly();
         }
 
         /// <inheritdoc/>

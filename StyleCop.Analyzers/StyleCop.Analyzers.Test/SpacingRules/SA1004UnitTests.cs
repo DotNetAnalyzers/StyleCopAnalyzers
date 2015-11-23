@@ -166,6 +166,58 @@ public class TypeName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that a multi-line documentation comment without leading spaces is handled correctly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestMultilineDocumentationCommentWithoutLeadingSpacesAsync()
+        {
+            string testCode = @"
+public class TypeName
+{
+    /**
+     *<summary>
+     *     The summary text.
+     *</summary>
+     *   <param name=""x"">The document root.</param>
+     *    <param name=""y"">The XML header token.</param>
+     */
+    private void Method1(int x, int y)
+    {
+    }
+}
+";
+
+            string fixedCode = @"
+public class TypeName
+{
+    /**
+     * <summary>
+     *     The summary text.
+     * </summary>
+     * <param name=""x"">The document root.</param>
+     * <param name=""y"">The XML header token.</param>
+     */
+    private void Method1(int x, int y)
+    {
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(5, 7),
+                this.CSharpDiagnostic().WithLocation(7, 7),
+                this.CSharpDiagnostic().WithLocation(8, 7),
+                this.CSharpDiagnostic().WithLocation(9, 7)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {

@@ -71,6 +71,15 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add standard text.
+        /// </summary>
+        internal static string PropertySummaryStartTextCodeFix {
+            get {
+                return ResourceManager.GetString("PropertySummaryStartTextCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Document value from summary.
         /// </summary>
         internal static string SA1609SA1610CodeFix {
@@ -121,6 +130,60 @@ namespace StyleCop.Analyzers.DocumentationRules {
         internal static string SA1617CodeFix {
             get {
                 return ResourceManager.GetString("SA1617CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The documentation text within a C# property’s &lt;summary&gt; tag does not match the accessors within the property..
+        /// </summary>
+        internal static string SA1623Description {
+            get {
+                return ResourceManager.GetString("SA1623Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The property&apos;s documentation summary text must begin with: &apos;{0}&apos;.
+        /// </summary>
+        internal static string SA1623MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1623MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property summary documentation must match accessors..
+        /// </summary>
+        internal static string SA1623Title {
+            get {
+                return ResourceManager.GetString("SA1623Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The documentation text within a C# property’s &lt;summary&gt; tag takes into account all of the accessors within the property, but one of the accessors has limited access..
+        /// </summary>
+        internal static string SA1624Description {
+            get {
+                return ResourceManager.GetString("SA1624Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Because the property only contains a visible {0} accessor, the documentation summary text must begin with &apos;{1}&apos;..
+        /// </summary>
+        internal static string SA1624MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1624MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Property summary documentation must omit accessor with restricted access..
+        /// </summary>
+        internal static string SA1624Title {
+            get {
+                return ResourceManager.GetString("SA1624Title", resourceCulture);
             }
         }
         
@@ -499,6 +562,60 @@ namespace StyleCop.Analyzers.DocumentationRules {
         internal static string SA1652Title {
             get {
                 return ResourceManager.GetString("SA1652Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gets.
+        /// </summary>
+        internal static string StartingTextGets {
+            get {
+                return ResourceManager.GetString("StartingTextGets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gets or sets.
+        /// </summary>
+        internal static string StartingTextGetsOrSets {
+            get {
+                return ResourceManager.GetString("StartingTextGetsOrSets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gets or sets a value indicating whether.
+        /// </summary>
+        internal static string StartingTextGetsOrSetsWhether {
+            get {
+                return ResourceManager.GetString("StartingTextGetsOrSetsWhether", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gets a value indicating whether.
+        /// </summary>
+        internal static string StartingTextGetsWhether {
+            get {
+                return ResourceManager.GetString("StartingTextGetsWhether", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sets.
+        /// </summary>
+        internal static string StartingTextSets {
+            get {
+                return ResourceManager.GetString("StartingTextSets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sets a value indicating whether.
+        /// </summary>
+        internal static string StartingTextSetsWhether {
+            get {
+                return ResourceManager.GetString("StartingTextSetsWhether", resourceCulture);
             }
         }
     }

@@ -99,8 +99,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 SyntaxKind.LogicalNotExpression,
                 SyntaxKind.PreIncrementExpression,
                 SyntaxKind.PreDecrementExpression,
-                SyntaxKind.AddressOfExpression,
-                SyntaxKind.PointerIndirectionExpression);
+                SyntaxKind.AddressOfExpression);
 
         private static readonly ImmutableArray<SyntaxKind> PostfixUnaryExpressionKinds =
             ImmutableArray.Create(SyntaxKind.PostIncrementExpression, SyntaxKind.PostDecrementExpression);
@@ -133,6 +132,11 @@ namespace StyleCop.Analyzers.SpacingRules
         private static readonly Action<SyntaxNodeAnalysisContext> CastExpressionAction = HandleCastExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> EqualsValueClauseAction = HandleEqualsValueClause;
         private static readonly Action<SyntaxNodeAnalysisContext> LambdaExpressionAction = HandleLambdaExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> PropertyDeclarationAction = HandlePropertyDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> MethodDeclarationAction = HandleMethodDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> OperatorDeclarationAction = HandleOperatorDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> ConversionOperatorDeclarationAction = HandleConversionOperatorDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> IndexerDeclarationAction = HandleIndexerDeclaration;
 
         /// <summary>
         /// Gets the descriptor for prefix unary expression that may not be followed by a comment.
@@ -210,6 +214,11 @@ namespace StyleCop.Analyzers.SpacingRules
             context.RegisterSyntaxNodeActionHonorExclusions(CastExpressionAction, SyntaxKind.CastExpression);
             context.RegisterSyntaxNodeActionHonorExclusions(EqualsValueClauseAction, SyntaxKind.EqualsValueClause);
             context.RegisterSyntaxNodeActionHonorExclusions(LambdaExpressionAction, LambdaExpressionKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(PropertyDeclarationAction, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(IndexerDeclarationAction, SyntaxKind.IndexerDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(OperatorDeclarationAction, SyntaxKind.OperatorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(ConversionOperatorDeclarationAction, SyntaxKind.ConversionOperatorDeclaration);
         }
 
         private static void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
@@ -345,6 +354,44 @@ namespace StyleCop.Analyzers.SpacingRules
             var lambdaExpression = (LambdaExpressionSyntax)context.Node;
 
             CheckToken(context, lambdaExpression.ArrowToken, true, true, true);
+        }
+
+        private static void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var propertyDeclaration = (PropertyDeclarationSyntax)context.Node;
+            HandleArrowExpressionClause(context, propertyDeclaration.ExpressionBody);
+        }
+
+        private static void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var indexerDeclaration = (IndexerDeclarationSyntax)context.Node;
+            HandleArrowExpressionClause(context, indexerDeclaration.ExpressionBody);
+        }
+
+        private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var methodDeclaration = (MethodDeclarationSyntax)context.Node;
+            HandleArrowExpressionClause(context, methodDeclaration.ExpressionBody);
+        }
+
+        private static void HandleOperatorDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var operatorDeclaration = (OperatorDeclarationSyntax)context.Node;
+            HandleArrowExpressionClause(context, operatorDeclaration.ExpressionBody);
+        }
+
+        private static void HandleConversionOperatorDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var conversionOperatorDeclaration = (ConversionOperatorDeclarationSyntax)context.Node;
+            HandleArrowExpressionClause(context, conversionOperatorDeclaration.ExpressionBody);
+        }
+
+        private static void HandleArrowExpressionClause(SyntaxNodeAnalysisContext context, ArrowExpressionClauseSyntax arrowExpressionClause)
+        {
+            if (arrowExpressionClause != null)
+            {
+                CheckToken(context, arrowExpressionClause.ArrowToken, true, true, true);
+            }
         }
 
         private static void CheckToken(SyntaxNodeAnalysisContext context, SyntaxToken token, bool withLeadingWhitespace, bool allowAtEndOfLine, bool withTrailingWhitespace, string tokenText = null)

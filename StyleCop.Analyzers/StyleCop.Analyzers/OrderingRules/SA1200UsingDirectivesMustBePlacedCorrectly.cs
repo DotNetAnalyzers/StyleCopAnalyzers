@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Settings.ObjectModel;
 
     /// <summary>
     /// A C# using directive is placed outside of a namespace element.
@@ -148,27 +149,35 @@ namespace StyleCop.Analyzers.OrderingRules
     /// are placed outside of the namespace.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class SA1200UsingDirectivesMustBePlacedWithinNamespace : DiagnosticAnalyzer
+    internal class SA1200UsingDirectivesMustBePlacedCorrectly : DiagnosticAnalyzer
     {
         /// <summary>
-        /// The ID for diagnostics produced by the <see cref="SA1200UsingDirectivesMustBePlacedWithinNamespace"/>
+        /// The ID for diagnostics produced by the <see cref="SA1200UsingDirectivesMustBePlacedCorrectly"/>
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1200";
-        private const string Title = "Using directives must be placed within namespace";
-        private const string MessageFormat = "Using directive must appear within a namespace declaration";
-        private const string Description = "A C# using directive is placed outside of a namespace element.";
+
+        internal static readonly DiagnosticDescriptor DescriptorInside =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatInside, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, DescriptionInside, HelpLink);
+
+        internal static readonly DiagnosticDescriptor DescriptorOutside =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatOutside, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, DescriptionOutside, HelpLink);
+
+        private const string Title = "Using directives must be placed correctly";
+        private const string MessageFormatInside = "Using directive must appear within a namespace declaration";
+        private const string DescriptionInside = "A C# using directive is placed outside of a namespace element.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1200.md";
 
-        private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+        private const string MessageFormatOutside = "Using directive must appear outside a namespace declaration";
+        private const string DescriptionOutside = "A C# using directive is placed inside of a namespace declaration.";
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
-        private static readonly Action<SyntaxNodeAnalysisContext> CompilationUnitAction = HandleCompilationUnit;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CompilationUnitAction = HandleCompilationUnit;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> NamespaceDeclarationAction = HandleNamespaceDeclaration;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-            ImmutableArray.Create(Descriptor);
+            ImmutableArray.Create(DescriptorInside);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -179,10 +188,23 @@ namespace StyleCop.Analyzers.OrderingRules
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
             context.RegisterSyntaxNodeActionHonorExclusions(CompilationUnitAction, SyntaxKind.CompilationUnit);
+            context.RegisterSyntaxNodeActionHonorExclusions(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
         }
 
-        private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context)
+        /// <summary>
+        /// This method reports a diagnostic for any using directive placed outside a namespace declaration. No
+        /// diagnostics are reported unless <see cref="OrderingSettings.UsingDirectivesPlacement"/> is
+        /// <see cref="UsingDirectivesPlacement.InsideNamespace"/>.
+        /// </summary>
+        /// <param name="context">The analysis context.</param>
+        /// <param name="settings">The effective StyleCop analysis settings.</param>
+        private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
+            if (settings.OrderingRules.UsingDirectivesPlacement != UsingDirectivesPlacement.InsideNamespace)
+            {
+                return;
+            }
+
             CompilationUnitSyntax syntax = (CompilationUnitSyntax)context.Node;
 
             List<SyntaxNode> usingDirectives = new List<SyntaxNode>();
@@ -216,7 +238,29 @@ namespace StyleCop.Analyzers.OrderingRules
             foreach (var directive in usingDirectives)
             {
                 // Using directive must appear within a namespace declaration
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, directive.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(DescriptorInside, directive.GetLocation()));
+            }
+        }
+
+        /// <summary>
+        /// This method reports a diagnostic for any using directive placed within a namespace declaration. No
+        /// diagnostics are reported unless <see cref="OrderingSettings.UsingDirectivesPlacement"/> is
+        /// <see cref="UsingDirectivesPlacement.OutsideNamespace"/>.
+        /// </summary>
+        /// <param name="context">The analysis context.</param>
+        /// <param name="settings">The effective StyleCop analysis settings.</param>
+        private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+        {
+            if (settings.OrderingRules.UsingDirectivesPlacement != UsingDirectivesPlacement.OutsideNamespace)
+            {
+                return;
+            }
+
+            NamespaceDeclarationSyntax syntax = (NamespaceDeclarationSyntax)context.Node;
+            foreach (UsingDirectiveSyntax directive in syntax.Usings)
+            {
+                // Using directive must appear outside a namespace declaration
+                context.ReportDiagnostic(Diagnostic.Create(DescriptorOutside, directive.GetLocation()));
             }
         }
     }

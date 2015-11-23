@@ -756,7 +756,7 @@ namespace TestNamespace
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1509OpeningCurlyBracketsMustNotBePrecededByBlankLine();
+            yield return new SA1509OpeningBracesMustNotBePrecededByBlankLine();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

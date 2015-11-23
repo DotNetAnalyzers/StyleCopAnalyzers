@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The XML header documentation for a C# property does not contain a <c>&lt;value&gt;</c> tag.
@@ -24,7 +25,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// <para>A violation of this rule occurs when the <c>&lt;value&gt;</c> tag for a property is missing.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class SA1609PropertyDocumentationMustHaveValue : PropertyDocumentationSummaryBase
+    internal class SA1609PropertyDocumentationMustHaveValue : PropertyDocumentationBase
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1609PropertyDocumentationMustHaveValue"/> analyzer.
@@ -43,14 +44,14 @@ namespace StyleCop.Analyzers.DocumentationRules
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, params Location[] diagnosticLocations)
+        protected override string XmlTagToHandle => XmlCommentHelper.ValueXmlTag;
+
+        /// <inheritdoc/>
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location diagnosticLocation)
         {
             if (syntax == null)
             {
-                foreach (var location in diagnosticLocations)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
-                }
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, diagnosticLocation));
             }
         }
     }

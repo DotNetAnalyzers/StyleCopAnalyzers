@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="SA1500CodeFix" xml:space="preserve">
-    <value>Align curly brackets</value>
+    <value>Align braces</value>
   </data>
   <data name="SA1501CodeFix" xml:space="preserve">
     <value>Expand single line block</value>
@@ -127,7 +127,7 @@
     <value>Expand element</value>
   </data>
   <data name="SA1502Description" xml:space="preserve">
-    <value>A C# element containing opening and closing curly brackets is written completely on a single line.</value>
+    <value>A C# element containing opening and closing braces is written completely on a single line.</value>
   </data>
   <data name="SA1502MessageFormat" xml:space="preserve">
     <value>Element must not be on a single line</value>
@@ -136,7 +136,7 @@
     <value>Element must not be on a single line</value>
   </data>
   <data name="SA1503CodeFix" xml:space="preserve">
-    <value>Wrap with curly brackets</value>
+    <value>Wrap with braces</value>
   </data>
   <data name="SA1504CodeFixMultipleLines" xml:space="preserve">
     <value>Reformat accessors to multiple lines style</value>
@@ -145,7 +145,7 @@
     <value>Reformat accessors to single line style</value>
   </data>
   <data name="SA1505CodeFix" xml:space="preserve">
-    <value>Remove blank lines following this curly bracket</value>
+    <value>Remove blank lines following this brace</value>
   </data>
   <data name="SA1506CodeFix" xml:space="preserve">
     <value>Remove blank line(s) after documentation header</value>
@@ -154,10 +154,10 @@
     <value>Remove multiple blank lines</value>
   </data>
   <data name="SA1508CodeFix" xml:space="preserve">
-    <value>Remove blank lines preceding this curly bracket</value>
+    <value>Remove blank lines preceding this brace</value>
   </data>
   <data name="SA1509CodeFix" xml:space="preserve">
-    <value>Remove blank lines preceding this curly bracket</value>
+    <value>Remove blank lines preceding this brace</value>
   </data>
   <data name="SA1510CodeFix" xml:space="preserve">
     <value>Remove blank line before chained statement</value>
@@ -169,7 +169,7 @@
     <value>Remove blank line after comment</value>
   </data>
   <data name="SA1513CodeFix" xml:space="preserve">
-    <value>Insert blank line after curly brace</value>
+    <value>Insert blank line after brace</value>
   </data>
   <data name="SA1514CodeFix" xml:space="preserve">
     <value>Insert blank line before documentation header</value>

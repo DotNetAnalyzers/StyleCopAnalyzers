@@ -13,12 +13,12 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1513ClosingCurlyBracketMustBeFollowedByBlankLine"/>
+    /// Unit tests for <see cref="SA1513ClosingBraceMustBeFollowedByBlankLine"/>
     /// </summary>
     public class SA1513UnitTests : CodeFixVerifier
     {
         /// <summary>
-        /// Verifies that all valid usages of a closing curly brace without a following blank line will report no diagnostic.
+        /// Verifies that all valid usages of a closing brace without a following blank line will report no diagnostic.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -411,7 +411,7 @@ public class Foo
         }
 
         /// <summary>
-        /// Verifies that all invalid usages of a closing curly brace without a following blank line will report a diagnostic.
+        /// Verifies that all invalid usages of a closing brace without a following blank line will report a diagnostic.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -799,7 +799,7 @@ public class Program
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1513ClosingCurlyBracketMustBeFollowedByBlankLine();
+            yield return new SA1513ClosingBraceMustBeFollowedByBlankLine();
         }
 
         /// <inheritdoc/>

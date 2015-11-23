@@ -17,6 +17,7 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Settings.ObjectModel;
 
     /// <summary>
     /// Implements a code fix for all misaligned using statements.
@@ -26,11 +27,12 @@ namespace StyleCop.Analyzers.OrderingRules
     internal sealed class UsingCodeFixProvider : CodeFixProvider
     {
         private static readonly List<UsingDirectiveSyntax> EmptyUsingsList = new List<UsingDirectiveSyntax>();
+        private static readonly SyntaxAnnotation UsingCodeFixAnnotation = new SyntaxAnnotation(nameof(UsingCodeFixProvider));
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(
-                SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId,
+                SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId,
                 SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives.DiagnosticId,
                 SA1209UsingAliasDirectivesMustBePlacedAfterOtherUsingDirectives.DiagnosticId,
                 SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace.DiagnosticId,
@@ -53,7 +55,7 @@ namespace StyleCop.Analyzers.OrderingRules
             foreach (Diagnostic diagnostic in context.Diagnostics)
             {
                 // do not offer a code fix for SA1200 when there are multiple namespaces in the source file
-                if ((diagnostic.Id == SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId)
+                if ((diagnostic.Id == SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId)
                     && (CountNamespaces(compilationUnit.Members) > 1))
                 {
                     continue;
@@ -68,28 +70,57 @@ namespace StyleCop.Analyzers.OrderingRules
             }
         }
 
-        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode syntaxRoot, CancellationToken cancellationToken)
+        private static async Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode syntaxRoot, CancellationToken cancellationToken)
         {
             var compilationUnit = (CompilationUnitSyntax)syntaxRoot;
 
+            var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             var indentationOptions = IndentationOptions.FromDocument(document);
 
-            var usingsHelper = new UsingsHelper(document, compilationUnit);
+            var usingsHelper = new UsingsHelper(semanticModel, document, compilationUnit);
             var namespaceCount = CountNamespaces(compilationUnit.Members);
 
             // Only move using declarations inside the namespace when
-            // - SA1200 is enabled
             // - There are no global attributes
             // - There is only a single namespace declared at the top level
-            var moveInsideNamespace =
-                !document.Project.CompilationOptions.IsAnalyzerSuppressed(SA1200UsingDirectivesMustBePlacedWithinNamespace.DiagnosticId)
-                && !compilationUnit.AttributeLists.Any()
-                && compilationUnit.Members.Count == 1
-                && namespaceCount == 1;
+            // - OrderingSettings.UsingDirectivesPlacement is set to InsideNamespace
+            UsingDirectivesPlacement usingDirectivesPlacement;
+
+            OrderingSettings orderingSettings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken).OrderingRules;
+            switch (orderingSettings.UsingDirectivesPlacement)
+            {
+            case UsingDirectivesPlacement.InsideNamespace:
+                if (compilationUnit.AttributeLists.Any()
+                    || compilationUnit.Members.Count > 1
+                    || namespaceCount > 1)
+                {
+                    // Override the user's setting with a more conservative one
+                    usingDirectivesPlacement = UsingDirectivesPlacement.Preserve;
+                }
+                else if (namespaceCount == 0)
+                {
+                    usingDirectivesPlacement = UsingDirectivesPlacement.OutsideNamespace;
+                }
+                else
+                {
+                    usingDirectivesPlacement = UsingDirectivesPlacement.InsideNamespace;
+                }
+
+                break;
+
+            case UsingDirectivesPlacement.OutsideNamespace:
+                usingDirectivesPlacement = UsingDirectivesPlacement.OutsideNamespace;
+                break;
+
+            case UsingDirectivesPlacement.Preserve:
+            default:
+                usingDirectivesPlacement = UsingDirectivesPlacement.Preserve;
+                break;
+            }
 
             string usingsIndentation;
 
-            if (moveInsideNamespace)
+            if (usingDirectivesPlacement == UsingDirectivesPlacement.InsideNamespace)
             {
                 var rootNamespace = compilationUnit.Members.OfType<NamespaceDeclarationSyntax>().First();
                 var indentationLevel = IndentationHelper.GetIndentationSteps(indentationOptions, rootNamespace);
@@ -108,9 +139,9 @@ namespace StyleCop.Analyzers.OrderingRules
             var replaceMap = new Dictionary<UsingDirectiveSyntax, UsingDirectiveSyntax>();
 
             // When there are multiple namespaces, do not move using statements outside of them, only sort.
-            if (namespaceCount > 1)
+            if (usingDirectivesPlacement == UsingDirectivesPlacement.Preserve)
             {
-                BuildReplaceMapForNamespaces(usingsHelper, replaceMap, indentationOptions);
+                BuildReplaceMapForNamespaces(usingsHelper, replaceMap, indentationOptions, false);
                 stripList = new List<UsingDirectiveSyntax>();
             }
             else
@@ -123,20 +154,22 @@ namespace StyleCop.Analyzers.OrderingRules
             var usingSyntaxRewriter = new UsingSyntaxRewriter(stripList, replaceMap);
             var newSyntaxRoot = usingSyntaxRewriter.Visit(syntaxRoot);
 
-            if (moveInsideNamespace)
+            if (usingDirectivesPlacement == UsingDirectivesPlacement.InsideNamespace)
             {
                 newSyntaxRoot = AddUsingsToNamespace(newSyntaxRoot, usingsHelper, usingsIndentation, replaceMap.Any());
             }
-            else if (namespaceCount <= 1)
+            else if (usingDirectivesPlacement == UsingDirectivesPlacement.OutsideNamespace)
             {
                 newSyntaxRoot = AddUsingsToCompilationRoot(newSyntaxRoot, usingsHelper, usingsIndentation, replaceMap.Any());
             }
 
+            // Final cleanup
+            newSyntaxRoot = StripMultipleBlankLines(newSyntaxRoot);
             newSyntaxRoot = ReAddFileHeader(syntaxRoot, newSyntaxRoot);
 
             var newDocument = document.WithSyntaxRoot(newSyntaxRoot.WithoutFormatting());
 
-            return Task.FromResult(newDocument);
+            return newDocument;
         }
 
         private static SyntaxNode ReAddFileHeader(SyntaxNode syntaxRoot, SyntaxNode newSyntaxRoot)
@@ -147,7 +180,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 return newSyntaxRoot;
             }
 
-            var fileHeader = UsingsHelper.GetFileHeader(oldFirstToken.LeadingTrivia.ToList());
+            var fileHeader = UsingsHelper.GetFileHeader(oldFirstToken.LeadingTrivia);
             if (!fileHeader.Any())
             {
                 return newSyntaxRoot;
@@ -170,7 +203,7 @@ namespace StyleCop.Analyzers.OrderingRules
             return result;
         }
 
-        private static void BuildReplaceMapForNamespaces(UsingsHelper usingsHelper, Dictionary<UsingDirectiveSyntax, UsingDirectiveSyntax> replaceMap, IndentationOptions indentationOptions)
+        private static void BuildReplaceMapForNamespaces(UsingsHelper usingsHelper, Dictionary<UsingDirectiveSyntax, UsingDirectiveSyntax> replaceMap, IndentationOptions indentationOptions, bool qualifyNames)
         {
             var usingsPerNamespace = usingsHelper
                 .GetContainedUsings(usingsHelper.RootSpan)
@@ -192,7 +225,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
                     var indentation = IndentationHelper.GenerateIndentationString(indentationOptions, indentationSteps);
 
-                    var modifiedUsings = usingsHelper.GenerateGroupedUsings(usingList, indentation, false);
+                    var modifiedUsings = usingsHelper.GenerateGroupedUsings(usingList, indentation, false, qualifyNames);
 
                     for (var i = 0; i < usingList.Count; i++)
                     {
@@ -220,7 +253,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
                     var indentation = IndentationHelper.GenerateIndentationString(indentationOptions, indentationSteps);
 
-                    var modifiedUsings = usingsHelper.GenerateGroupedUsings(childSpan, indentation, false);
+                    var modifiedUsings = usingsHelper.GenerateGroupedUsings(childSpan, indentation, false, qualifyNames: false);
 
                     for (var i = 0; i < originalUsings.Count; i++)
                     {
@@ -242,11 +275,12 @@ namespace StyleCop.Analyzers.OrderingRules
             var rootNamespace = ((CompilationUnitSyntax)newSyntaxRoot).Members.OfType<NamespaceDeclarationSyntax>().First();
             var withTrailingBlankLine = hasConditionalDirectives || rootNamespace.Members.Any() || rootNamespace.Externs.Any();
 
-            var groupedUsings = usingsHelper.GenerateGroupedUsings(usingsHelper.RootSpan, usingsIndentation, withTrailingBlankLine);
+            var groupedUsings = usingsHelper.GenerateGroupedUsings(usingsHelper.RootSpan, usingsIndentation, withTrailingBlankLine, qualifyNames: false);
             groupedUsings = groupedUsings.AddRange(rootNamespace.Usings);
-            var newRootNamespace = rootNamespace.WithUsings(groupedUsings);
 
+            var newRootNamespace = rootNamespace.WithUsings(groupedUsings);
             newSyntaxRoot = newSyntaxRoot.ReplaceNode(rootNamespace, newRootNamespace);
+
             return newSyntaxRoot;
         }
 
@@ -255,9 +289,55 @@ namespace StyleCop.Analyzers.OrderingRules
             var newCompilationUnit = (CompilationUnitSyntax)newSyntaxRoot;
             var withTrailingBlankLine = hasConditionalDirectives || newCompilationUnit.AttributeLists.Any() || newCompilationUnit.Members.Any() || newCompilationUnit.Externs.Any();
 
-            var groupedUsings = usingsHelper.GenerateGroupedUsings(usingsHelper.RootSpan, usingsIndentation, withTrailingBlankLine);
+            var groupedUsings = usingsHelper.GenerateGroupedUsings(usingsHelper.RootSpan, usingsIndentation, withTrailingBlankLine, qualifyNames: true);
             groupedUsings = groupedUsings.AddRange(newCompilationUnit.Usings);
             newSyntaxRoot = newCompilationUnit.WithUsings(groupedUsings);
+
+            return newSyntaxRoot;
+        }
+
+        private static SyntaxNode StripMultipleBlankLines(SyntaxNode syntaxRoot)
+        {
+            var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>();
+
+            var usingDirectives = syntaxRoot.GetAnnotatedNodes(UsingCodeFixAnnotation).Cast<UsingDirectiveSyntax>();
+
+            foreach (var usingDirective in usingDirectives)
+            {
+                var nextToken = usingDirective.SemicolonToken.GetNextToken(true);
+
+                // start at -1 to compensate for the always present end-of-line.
+                var count = -1;
+
+                // count the blanks lines at the end of the using statement.
+                foreach (var trivia in usingDirective.SemicolonToken.TrailingTrivia.Reverse())
+                {
+                    if (!trivia.IsKind(SyntaxKind.EndOfLineTrivia))
+                    {
+                        break;
+                    }
+
+                    count++;
+                }
+
+                // count the blank lines at the start of the next token
+                foreach (var trivia in nextToken.LeadingTrivia)
+                {
+                    if (!trivia.IsKind(SyntaxKind.EndOfLineTrivia))
+                    {
+                        break;
+                    }
+
+                    count++;
+                }
+
+                if (count > 1)
+                {
+                    replaceMap[nextToken] = nextToken.WithLeadingTrivia(nextToken.LeadingTrivia.Skip(count - 1));
+                }
+            }
+
+            var newSyntaxRoot = syntaxRoot.ReplaceTokens(replaceMap.Keys, (original, rewritten) => replaceMap[original]);
             return newSyntaxRoot;
         }
 
@@ -356,11 +436,13 @@ namespace StyleCop.Analyzers.OrderingRules
 
         private class UsingsHelper
         {
+            private readonly SemanticModel semanticModel;
             private readonly DirectiveSpan conditionalDirectiveTree;
             private readonly bool separateSystemDirectives;
 
-            public UsingsHelper(Document document, CompilationUnitSyntax compilationUnit)
+            public UsingsHelper(SemanticModel semanticModel, Document document, CompilationUnitSyntax compilationUnit)
             {
+                this.semanticModel = semanticModel;
                 this.conditionalDirectiveTree = DirectiveSpan.BuildConditionalDirectiveTree(compilationUnit);
                 this.separateSystemDirectives = !document.Project.CompilationOptions.IsAnalyzerSuppressed(SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives.DiagnosticId);
 
@@ -402,14 +484,14 @@ namespace StyleCop.Analyzers.OrderingRules
                 return result;
             }
 
-            public SyntaxList<UsingDirectiveSyntax> GenerateGroupedUsings(DirectiveSpan directiveSpan, string indentation, bool withTrailingBlankLine)
+            public SyntaxList<UsingDirectiveSyntax> GenerateGroupedUsings(DirectiveSpan directiveSpan, string indentation, bool withTrailingBlankLine, bool qualifyNames)
             {
                 var usingList = new List<UsingDirectiveSyntax>();
                 List<SyntaxTrivia> triviaToMove = new List<SyntaxTrivia>();
 
-                usingList.AddRange(this.GenerateUsings(this.NamespaceUsings, directiveSpan, indentation, triviaToMove));
-                usingList.AddRange(this.GenerateUsings(this.StaticImports, directiveSpan, indentation, triviaToMove));
-                usingList.AddRange(this.GenerateUsings(this.Aliases, directiveSpan, indentation, triviaToMove));
+                usingList.AddRange(this.GenerateUsings(this.NamespaceUsings, directiveSpan, indentation, triviaToMove, qualifyNames));
+                usingList.AddRange(this.GenerateUsings(this.StaticImports, directiveSpan, indentation, triviaToMove, qualifyNames));
+                usingList.AddRange(this.GenerateUsings(this.Aliases, directiveSpan, indentation, triviaToMove, qualifyNames));
 
                 if (triviaToMove.Count > 0)
                 {
@@ -426,14 +508,14 @@ namespace StyleCop.Analyzers.OrderingRules
                 return SyntaxFactory.List(usingList);
             }
 
-            public SyntaxList<UsingDirectiveSyntax> GenerateGroupedUsings(List<UsingDirectiveSyntax> usingsList, string indentation, bool withTrailingBlankLine)
+            public SyntaxList<UsingDirectiveSyntax> GenerateGroupedUsings(List<UsingDirectiveSyntax> usingsList, string indentation, bool withTrailingBlankLine, bool qualifyNames)
             {
                 var usingList = new List<UsingDirectiveSyntax>();
                 List<SyntaxTrivia> triviaToMove = new List<SyntaxTrivia>();
 
-                usingList.AddRange(this.GenerateUsings(this.NamespaceUsings, usingsList, indentation, triviaToMove));
-                usingList.AddRange(this.GenerateUsings(this.StaticImports, usingsList, indentation, triviaToMove));
-                usingList.AddRange(this.GenerateUsings(this.Aliases, usingsList, indentation, triviaToMove));
+                usingList.AddRange(this.GenerateUsings(this.NamespaceUsings, usingsList, indentation, triviaToMove, qualifyNames));
+                usingList.AddRange(this.GenerateUsings(this.StaticImports, usingsList, indentation, triviaToMove, qualifyNames));
+                usingList.AddRange(this.GenerateUsings(this.Aliases, usingsList, indentation, triviaToMove, qualifyNames));
 
                 if (triviaToMove.Count > 0)
                 {
@@ -450,7 +532,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 return SyntaxFactory.List(usingList);
             }
 
-            internal static List<SyntaxTrivia> GetFileHeader(List<SyntaxTrivia> newLeadingTrivia)
+            internal static List<SyntaxTrivia> GetFileHeader(SyntaxTriviaList newLeadingTrivia)
             {
                 var onBlankLine = false;
                 var hasHeader = false;
@@ -499,13 +581,13 @@ namespace StyleCop.Analyzers.OrderingRules
                 return hasHeader ? fileHeader : new List<SyntaxTrivia>();
             }
 
-            private static List<SyntaxTrivia> StripFileHeader(List<SyntaxTrivia> newLeadingTrivia)
+            private static List<SyntaxTrivia> StripFileHeader(SyntaxTriviaList leadingTrivia)
             {
-                var fileHeader = GetFileHeader(newLeadingTrivia);
-                return newLeadingTrivia.Skip(fileHeader.Count).ToList();
+                var fileHeader = GetFileHeader(leadingTrivia);
+                return leadingTrivia.Skip(fileHeader.Count).ToList();
             }
 
-            private List<UsingDirectiveSyntax> GenerateUsings(Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>> usingsGroup, DirectiveSpan directiveSpan, string indentation, List<SyntaxTrivia> triviaToMove)
+            private List<UsingDirectiveSyntax> GenerateUsings(Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>> usingsGroup, DirectiveSpan directiveSpan, string indentation, List<SyntaxTrivia> triviaToMove, bool qualifyNames)
             {
                 List<UsingDirectiveSyntax> result = new List<UsingDirectiveSyntax>();
                 List<UsingDirectiveSyntax> usingsList;
@@ -515,10 +597,10 @@ namespace StyleCop.Analyzers.OrderingRules
                     return result;
                 }
 
-                return this.GenerateUsings(usingsList, indentation, triviaToMove);
+                return this.GenerateUsings(usingsList, indentation, triviaToMove, qualifyNames);
             }
 
-            private List<UsingDirectiveSyntax> GenerateUsings(List<UsingDirectiveSyntax> usingsList, string indentation, List<SyntaxTrivia> triviaToMove)
+            private List<UsingDirectiveSyntax> GenerateUsings(List<UsingDirectiveSyntax> usingsList, string indentation, List<SyntaxTrivia> triviaToMove, bool qualifyNames)
             {
                 List<UsingDirectiveSyntax> result = new List<UsingDirectiveSyntax>();
 
@@ -531,18 +613,24 @@ namespace StyleCop.Analyzers.OrderingRules
                 {
                     var currentUsing = usingsList[i];
 
-                    triviaToMove.AddRange(currentUsing.GetLeadingTrivia().Where(tr => tr.IsDirective || tr.IsKind(SyntaxKind.DisabledTextTrivia)));
+                    if (qualifyNames)
+                    {
+                        currentUsing = this.QualifyUsingDirective(currentUsing);
+                    }
+
+                    // when there is a directive trivia, add it (and any trivia before it) to the triviaToMove collection.
+                    var leadingTrivia = (i == 0) ? StripFileHeader(currentUsing.GetLeadingTrivia()) : currentUsing.GetLeadingTrivia().ToList();
+                    for (var m = leadingTrivia.Count - 1; m >= 0; m--)
+                    {
+                        if (leadingTrivia[m].IsDirective)
+                        {
+                            triviaToMove.AddRange(leadingTrivia.Take(m + 1));
+                            break;
+                        }
+                    }
 
                     // preserve leading trivia (excluding directive trivia), indenting each line as appropriate
-                    var newLeadingTrivia = currentUsing
-                        .GetLeadingTrivia()
-                        .Where(tr => !tr.IsDirective && !tr.IsKind(SyntaxKind.DisabledTextTrivia))
-                        .ToList();
-
-                    if (i == 0)
-                    {
-                        newLeadingTrivia = StripFileHeader(newLeadingTrivia);
-                    }
+                    var newLeadingTrivia = leadingTrivia.Except(triviaToMove).ToList();
 
                     // strip any leading whitespace on each line (and also all blank lines)
                     var k = 0;
@@ -593,7 +681,10 @@ namespace StyleCop.Analyzers.OrderingRules
                         newTrailingTrivia = newTrailingTrivia.Add(SyntaxFactory.CarriageReturnLineFeed);
                     }
 
-                    var processedUsing = currentUsing.WithLeadingTrivia(newLeadingTrivia).WithTrailingTrivia(newTrailingTrivia);
+                    var processedUsing = currentUsing
+                        .WithLeadingTrivia(newLeadingTrivia)
+                        .WithTrailingTrivia(newTrailingTrivia)
+                        .WithAdditionalAnnotations(UsingCodeFixAnnotation);
 
                     // filter duplicate using declarations, preferring to keep the one with an alias
                     var existingUsing = result.Find(u => string.Equals(u.Name.ToUnaliasedString(), processedUsing.Name.ToUnaliasedString(), StringComparison.Ordinal));
@@ -614,6 +705,92 @@ namespace StyleCop.Analyzers.OrderingRules
                 result.Sort(this.CompareUsings);
 
                 return result;
+            }
+
+            private UsingDirectiveSyntax QualifyUsingDirective(UsingDirectiveSyntax usingDirective)
+            {
+                NameSyntax originalName = usingDirective.Name;
+                NameSyntax rewrittenName;
+                switch (originalName.Kind())
+                {
+                case SyntaxKind.QualifiedName:
+                case SyntaxKind.IdentifierName:
+                case SyntaxKind.GenericName:
+                    if (originalName.Parent.IsKind(SyntaxKind.UsingDirective)
+                        || originalName.Parent.IsKind(SyntaxKind.TypeArgumentList))
+                    {
+                        var symbol = this.semanticModel.GetSymbolInfo(originalName, cancellationToken: CancellationToken.None).Symbol;
+                        if (symbol == null)
+                        {
+                            rewrittenName = originalName;
+                            break;
+                        }
+
+                        if (symbol is INamespaceSymbol)
+                        {
+                            // TODO: Preserve inner trivia
+                            string fullName = symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+                            NameSyntax replacement = SyntaxFactory.ParseName(fullName);
+                            if (!originalName.DescendantNodesAndSelf().OfType<AliasQualifiedNameSyntax>().Any())
+                            {
+                                replacement = replacement.ReplaceNodes(
+                                    replacement.DescendantNodesAndSelf().OfType<AliasQualifiedNameSyntax>(),
+                                    (originalNode2, rewrittenNode2) => rewrittenNode2.Name);
+                            }
+
+                            rewrittenName = replacement.WithTriviaFrom(originalName);
+                            break;
+                        }
+                        else if (symbol is INamedTypeSymbol)
+                        {
+                            // TODO: Preserve inner trivia
+                            // TODO: simplify after qualification
+                            string fullName;
+                            if (SpecialTypeHelper.IsPredefinedType(((INamedTypeSymbol)symbol).OriginalDefinition.SpecialType))
+                            {
+                                fullName = "global::System." + symbol.Name;
+                            }
+                            else
+                            {
+                                fullName = symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+                            }
+
+                            NameSyntax replacement = SyntaxFactory.ParseName(fullName);
+                            if (!originalName.DescendantNodesAndSelf().OfType<AliasQualifiedNameSyntax>().Any())
+                            {
+                                replacement = replacement.ReplaceNodes(
+                                    replacement.DescendantNodesAndSelf().OfType<AliasQualifiedNameSyntax>(),
+                                    (originalNode2, rewrittenNode2) => rewrittenNode2.Name);
+                            }
+
+                            rewrittenName = replacement.WithTriviaFrom(originalName);
+                            break;
+                        }
+                        else
+                        {
+                            rewrittenName = originalName;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        rewrittenName = originalName;
+                        break;
+                    }
+
+                case SyntaxKind.AliasQualifiedName:
+                case SyntaxKind.PredefinedType:
+                default:
+                    rewrittenName = originalName;
+                    break;
+                }
+
+                if (rewrittenName == originalName)
+                {
+                    return usingDirective;
+                }
+
+                return usingDirective.ReplaceNode(originalName, rewrittenName);
             }
 
             private int CompareUsings(UsingDirectiveSyntax left, UsingDirectiveSyntax right)
@@ -689,11 +866,11 @@ namespace StyleCop.Analyzers.OrderingRules
                 usingList.Add(usingDirective);
             }
 
-            private List<UsingDirectiveSyntax> GenerateUsings(Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>> usingsGroup, List<UsingDirectiveSyntax> usingsList, string indentation, List<SyntaxTrivia> triviaToMove)
+            private List<UsingDirectiveSyntax> GenerateUsings(Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>> usingsGroup, List<UsingDirectiveSyntax> usingsList, string indentation, List<SyntaxTrivia> triviaToMove, bool qualifyNames)
             {
                 var filteredUsingsList = this.FilterRelevantUsings(usingsGroup, usingsList);
 
-                return this.GenerateUsings(filteredUsingsList, indentation, triviaToMove);
+                return this.GenerateUsings(filteredUsingsList, indentation, triviaToMove, qualifyNames);
             }
 
             private List<UsingDirectiveSyntax> FilterRelevantUsings(Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>> usingsGroup, List<UsingDirectiveSyntax> usingsList)

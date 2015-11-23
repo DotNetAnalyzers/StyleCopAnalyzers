@@ -14,13 +14,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// The opening parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or
+    /// The opening parenthesis or brace in a call to a C# method or indexer, or the declaration of a method or
     /// indexer, is not placed on the same line as the method or indexer name.
     /// </summary>
     /// <remarks>
-    /// <para>A violation of this rule occurs when the opening bracket of a method or indexer call or declaration is not
+    /// <para>A violation of this rule occurs when the opening brace of a method or indexer call or declaration is not
     /// placed on the same line as the method or indexer. The following examples show correct placement of the opening
-    /// bracket:</para>
+    /// brace:</para>
     /// <code language="csharp">
     /// public string JoinName(string first, string last)
     /// {

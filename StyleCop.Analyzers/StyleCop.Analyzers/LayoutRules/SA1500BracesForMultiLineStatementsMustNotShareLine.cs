@@ -12,11 +12,10 @@ namespace StyleCop.Analyzers.LayoutRules
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// The opening or closing curly bracket within a C# statement, element, or expression is not placed on its own
-    /// line.
+    /// The opening or closing brace within a C# statement, element, or expression is not placed on its own line.
     /// </summary>
     /// <remarks>
-    /// <para>A violation of this rule occurs when the opening or closing curly bracket within a statement, element, or
+    /// <para>A violation of this rule occurs when the opening or closing brace within a statement, element, or
     /// expression is not placed on its own line. For example:</para>
     ///
     /// <code language="cs">
@@ -28,8 +27,8 @@ namespace StyleCop.Analyzers.LayoutRules
     /// }
     /// </code>
     ///
-    /// <para>When StyleCop checks this code, a violation of this rule will occur because the opening curly bracket of
-    /// the lock statement is placed on the same line as the lock keyword, rather than being placed on its own line, as
+    /// <para>When StyleCop checks this code, a violation of this rule will occur because the opening brace of the lock
+    /// statement is placed on the same line as the lock keyword, rather than being placed on its own line, as
     /// follows:</para>
     ///
     /// <code language="cs">
@@ -42,8 +41,7 @@ namespace StyleCop.Analyzers.LayoutRules
     /// }
     /// </code>
     ///
-    /// <para>A violation will also occur if the closing curly bracket shares a line with other code. For
-    /// example:</para>
+    /// <para>A violation will also occur if the closing brace shares a line with other code. For example:</para>
     ///
     /// <code language="cs">
     /// public object Method()
@@ -55,16 +53,16 @@ namespace StyleCop.Analyzers.LayoutRules
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine : DiagnosticAnalyzer
+    internal class SA1500BracesForMultiLineStatementsMustNotShareLine : DiagnosticAnalyzer
     {
         /// <summary>
         /// The ID for diagnostics produced by the
-        /// <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/> analyzer.
+        /// <see cref="SA1500BracesForMultiLineStatementsMustNotShareLine"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1500";
-        private const string Title = "Curly brackets for multi-line statements must not share line";
-        private const string MessageFormat = "Curly brackets for multi-line statements must not share line";
-        private const string Description = "The opening or closing curly bracket within a C# statement, element, or expression is not placed on its own line.";
+        private const string Title = "Braces for multi-line statements must not share line";
+        private const string MessageFormat = "Braces for multi-line statements must not share line";
+        private const string Description = "The opening or closing brace within a C# statement, element, or expression is not placed on its own line.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1500.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
@@ -109,46 +107,46 @@ namespace StyleCop.Analyzers.LayoutRules
         private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context)
         {
             var syntax = (NamespaceDeclarationSyntax)context.Node;
-            CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
+            CheckBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
         }
 
         private static void HandleBaseTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
             var syntax = (BaseTypeDeclarationSyntax)context.Node;
-            CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
+            CheckBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
         }
 
         private static void HandleAccessorList(SyntaxNodeAnalysisContext context)
         {
             var syntax = (AccessorListSyntax)context.Node;
-            CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
+            CheckBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
         }
 
         private static void HandleBlock(SyntaxNodeAnalysisContext context)
         {
             var syntax = (BlockSyntax)context.Node;
-            CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
+            CheckBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
         }
 
         private static void HandleSwitchStatement(SyntaxNodeAnalysisContext context)
         {
             var syntax = (SwitchStatementSyntax)context.Node;
-            CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
+            CheckBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
         }
 
         private static void HandleInitializerExpression(SyntaxNodeAnalysisContext context)
         {
             var syntax = (InitializerExpressionSyntax)context.Node;
-            CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
+            CheckBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
         }
 
         private static void HandleAnonymousObjectCreationExpression(SyntaxNodeAnalysisContext context)
         {
             var syntax = (AnonymousObjectCreationExpressionSyntax)context.Node;
-            CheckCurlyBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
+            CheckBraces(context, syntax.OpenBraceToken, syntax.CloseBraceToken);
         }
 
-        private static void CheckCurlyBraces(SyntaxNodeAnalysisContext context, SyntaxToken openBraceToken, SyntaxToken closeBraceToken)
+        private static void CheckBraces(SyntaxNodeAnalysisContext context, SyntaxToken openBraceToken, SyntaxToken closeBraceToken)
         {
             bool checkCloseBrace = true;
 
@@ -176,10 +174,10 @@ namespace StyleCop.Analyzers.LayoutRules
                 }
             }
 
-            CheckCurlyBracketToken(context, openBraceToken);
+            CheckBraceToken(context, openBraceToken);
             if (checkCloseBrace)
             {
-                CheckCurlyBracketToken(context, closeBraceToken);
+                CheckBraceToken(context, closeBraceToken);
             }
         }
 
@@ -188,7 +186,7 @@ namespace StyleCop.Analyzers.LayoutRules
             return token.GetLineSpan().StartLinePosition.Line;
         }
 
-        private static void CheckCurlyBracketToken(SyntaxNodeAnalysisContext context, SyntaxToken token)
+        private static void CheckBraceToken(SyntaxNodeAnalysisContext context, SyntaxToken token)
         {
             if (token.IsMissing)
             {

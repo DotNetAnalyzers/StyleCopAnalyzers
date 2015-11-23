@@ -14,16 +14,16 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1012OpeningCurlyBracketsMustBeSpacedCorrectly"/>
+    /// Unit tests for <see cref="SA1012OpeningBracesMustBeSpacedCorrectly"/>
     /// </summary>
     public class SA1012UnitTests : CodeFixVerifier
     {
         /// <summary>
-        /// Verifies that the analyzer will properly handle valid opening curly brackets.
+        /// Verifies that the analyzer will properly handle valid opening braces.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestValidCurlyBracketSpacingAsync()
+        public async Task TestValidBraceSpacingAsync()
         {
             var testCode = @"namespace TestNamespace
 {
@@ -64,7 +64,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         }
 
         /// <summary>
-        /// Verifies that the analyzer will properly handle opening curly brackets in string interpolation.
+        /// Verifies that the analyzer will properly handle opening braces in string interpolation.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -118,7 +118,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         }
 
         /// <summary>
-        /// Verifies that the analyzer will properly handle opening curly brackets in property declaration.
+        /// Verifies that the analyzer will properly handle opening braces in property declaration.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -162,11 +162,11 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         }
 
         /// <summary>
-        /// Verifies that the analyzer will properly handle opening curly brackets in nested curly brackets.
+        /// Verifies that the analyzer will properly handle opening braces in nested braces.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestNestedCurlyBracketsAsync()
+        public async Task TestNestedBracesAsync()
         {
             var testCode = @"namespace TestNamespace
 {
@@ -251,7 +251,7 @@ class ClassName
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1012OpeningCurlyBracketsMustBeSpacedCorrectly();
+            yield return new SA1012OpeningBracesMustBeSpacedCorrectly();
         }
 
         /// <inheritdoc/>

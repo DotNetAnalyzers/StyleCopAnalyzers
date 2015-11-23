@@ -29,6 +29,16 @@
           "description": "Configuration for ordering rules (SA1200-)",
           "additionalProperties": false,
           "properties": {
+            "usingDirectivesPlacement": {
+              "type": "string",
+              "description": "Specifies the desired placement of using directives.\r\ninsideNamespace: Place using directives inside the namespace definition\r\noutsideNamespace: Place using directives outside the namespace definition\r\npreserve: Allow using directives inside or outside the namespace definition",
+              "enum": [
+                "insideNamespace",
+                "outsideNamespace",
+                "preserve"
+              ],
+              "default": "insideNamespace"
+            }
           }
         },
         "namingRules": {
