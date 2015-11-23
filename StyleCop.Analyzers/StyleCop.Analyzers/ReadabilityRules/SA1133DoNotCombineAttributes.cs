@@ -52,7 +52,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             if (attributeList.Attributes.Count > 1)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, attributeList.Attributes[1].GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, attributeList.Attributes[1].Name.GetLocation()));
             }
         }
     }

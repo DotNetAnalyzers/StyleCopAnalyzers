@@ -51,7 +51,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var violatingAttribute = (AttributeSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
+            var violatingAttribute = (AttributeSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan).Parent;
             var attributeList = (AttributeListSyntax)violatingAttribute.Parent;
             var newAttributeLists = new List<AttributeListSyntax>();
 
@@ -61,7 +61,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             for (var i = 0; i < attributeList.Attributes.Count; i++)
             {
-                var newAttributes = SyntaxFactory.SeparatedList(new[] { attributeList.Attributes[i] });
+                var newAttributes = SyntaxFactory.SingletonSeparatedList(attributeList.Attributes[i]);
                 var newAttributeList = SyntaxFactory.AttributeList(attributeList.Target, newAttributes);
 
                 newAttributeList = (i == 0)

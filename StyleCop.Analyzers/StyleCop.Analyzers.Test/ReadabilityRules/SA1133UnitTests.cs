@@ -103,6 +103,69 @@ public class TestClass
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that multiple attribute list are handled correctly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyThatMultipleAttributeListsAreHandledCorrectlyAsync()
+        {
+            var testCode = @"using System.ComponentModel;
+
+[EditorBrowsable(EditorBrowsableState.Never), DesignOnly(true)]
+#if false
+[DataObject(true), Browsable(true)]
+#else
+[DataObject(true), Browsable(false)]
+#endif
+public class TestClass
+{
+    /// <summary>
+    /// Test method.
+    /// </summary>
+    [EditorBrowsable(EditorBrowsableState.Never), DesignOnly(true), DisplayName(""Test"")] // test comment
+    public void TestMethod()
+    {
+    }
+}
+";
+
+            var fixedTestCode = @"using System.ComponentModel;
+
+[EditorBrowsable(EditorBrowsableState.Never)]
+[DesignOnly(true)]
+#if false
+[DataObject(true), Browsable(true)]
+#else
+[DataObject(true)]
+[Browsable(false)]
+#endif
+public class TestClass
+{
+    /// <summary>
+    /// Test method.
+    /// </summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [DesignOnly(true)]
+    [DisplayName(""Test"")] // test comment
+    public void TestMethod()
+    {
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(3, 47),
+                this.CSharpDiagnostic().WithLocation(7, 20),
+                this.CSharpDiagnostic().WithLocation(14, 51)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
