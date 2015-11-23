@@ -96,8 +96,9 @@ and SA1215) evaluate these traits in the order they are defined to identify orde
 this property when reordering code elements. Any traits which are omitted from the array are ignored. The following
 traits are supported:
 
-* `kind`: Elements are ordered according to their kind
-* `accessibility`: Elements are ordered according to their declared accessibility
+* `kind`: Elements are ordered according to their kind (see [SA1201](SA1201.md) for this predefined order)
+* `accessibility`: Elements are ordered according to their declared accessibility (see [SA1202](SA1202.md) for this
+  predefined order)
 * `constant`: Constant elements are ordered before non-constant elements
 * `static`: Static elements are ordered before non-static elements
 * `readonly`: Readonly elements are ordered before non-readonly elements
