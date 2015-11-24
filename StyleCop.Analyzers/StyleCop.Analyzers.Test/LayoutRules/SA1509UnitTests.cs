@@ -674,6 +674,122 @@ class Foo
         }
 
         [Fact]
+        public async Task TestBlockStatementsWithBlockCommentAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    void Bar()
+    {
+        /* Comment */
+
+        {
+        }
+
+        {
+        }
+    }
+}";
+
+            var fixedCode = @"
+class Foo
+{
+    void Bar()
+    {
+        /* Comment */
+        {
+        }
+
+        {
+        }
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 9);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestBlockStatementsWithLineCommentAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    void Bar()
+    {
+        // Comment
+
+        {
+        }
+
+        {
+        }
+    }
+}";
+
+            var fixedCode = @"
+class Foo
+{
+    void Bar()
+    {
+        // Comment
+        {
+        }
+
+        {
+        }
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 9);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestBlockStatementsWithRegionAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    void Bar()
+    {
+        #region Region
+
+        {
+        }
+
+        {
+        }
+        #endregion
+    }
+}";
+
+            var fixedCode = @"
+class Foo
+{
+    void Bar()
+    {
+        #region Region
+        {
+        }
+
+        {
+        }
+        #endregion
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 9);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestComplex1Async()
         {
             var testCode = @"namespace Test
