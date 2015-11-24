@@ -91,6 +91,31 @@ class Foo
         }
 
         [Fact]
+        public async Task TestMethodCallWithThreeParametersSecondSpansMultipleLinesThirdSpansMultipleLinesButIsInvocationExpressionAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Fun(int i, int j, int k)
+    {
+    }
+
+    public void Bar()
+    {
+        Fun(1,
+            3
+            + 4,
+            System.Linq.Enumerable.Count(
+                new int[0]));
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(11, 13);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestMethodCallWithTwoParametersFirstIsMultilineSecondIsOneLineAsync()
         {
             var testCode = @"
@@ -150,6 +175,27 @@ class Foo
           (k) => 
             {
             });
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestAnonymousMethodCallSecondParameterIsInvocationAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar()
+    {
+        System.Action<int,int> d = delegate(int i, int a)
+                                    {
+
+                                    };
+        d(1,
+          System.Linq.Enumerable.Count(
+                new int[0]));
     }
 }";
 
