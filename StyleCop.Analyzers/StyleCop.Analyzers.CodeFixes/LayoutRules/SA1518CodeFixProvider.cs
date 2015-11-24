@@ -5,14 +5,14 @@ namespace StyleCop.Analyzers.LayoutRules
 {
     using System.Collections.Immutable;
     using System.Composition;
-    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.Text;
+    using Settings.ObjectModel;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1518CodeMustNotContainBlankLinesAtEndOfFile"/>.
@@ -34,12 +34,13 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            foreach (Diagnostic diagnostic in context.Diagnostics)
+            var settings = SettingsHelper.GetStyleCopSettings(context.Document.Project.AnalyzerOptions, context.CancellationToken);
+            foreach (var diagnostic in context.Diagnostics)
             {
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         LayoutResources.SA1518CodeFix,
-                        cancellationToken => GetTransformedDocumentAsync(context.Document, cancellationToken),
+                        cancellationToken => FixEndOfFileAsync(context.Document, diagnostic, settings.LayoutRules.NewlineAtEndOfFile, cancellationToken),
                         nameof(SA1518CodeFixProvider)),
                     diagnostic);
             }
@@ -47,31 +48,41 @@ namespace StyleCop.Analyzers.LayoutRules
             return SpecializedTasks.CompletedTask;
         }
 
-        private static async Task<Document> GetTransformedDocumentAsync(Document document, CancellationToken token)
+        /// <summary>
+        /// Fixes the whitespace at the end of a document.
+        /// </summary>
+        /// <param name="document">The document to be changed.</param>
+        /// <param name="diagnostic">The diagnostic to fix.</param>
+        /// <param name="newlineAtEndOfFile">A <see cref="EndOfFileHandling"/> value indicating the desired behavior.</param>
+        /// <param name="cancellationToken">The cancellation token associated with the fix action.</param>
+        /// <returns>The transformed document.</returns>
+        private static async Task<Document> FixEndOfFileAsync(Document document, Diagnostic diagnostic, EndOfFileHandling newlineAtEndOfFile, CancellationToken cancellationToken)
         {
-            var syntaxRoot = await document.GetSyntaxRootAsync(token).ConfigureAwait(false);
-
-            var lastToken = syntaxRoot.GetLastToken(includeZeroWidth: true);
-
-            var newLastToken = StripViolatingWhitespace(lastToken);
-            var newSyntaxRoot = syntaxRoot.ReplaceToken(lastToken, newLastToken);
-            var newDocument = document.WithSyntaxRoot(newSyntaxRoot);
-
-            return newDocument;
+            var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+            string replacement = newlineAtEndOfFile == EndOfFileHandling.Omit ? string.Empty : "\r\n";
+            return document.WithText(text.WithChanges(new TextChange(diagnostic.Location.SourceSpan, replacement)));
         }
 
-        private static SyntaxToken StripViolatingWhitespace(SyntaxToken token)
+        private class FixAll : DocumentBasedFixAllProvider
         {
-            SyntaxToken result = token;
+            public static FixAllProvider Instance { get; } =
+                new FixAll();
 
-            var trailingWhitespaceIndex = TriviaHelper.IndexOfTrailingWhitespace(token.LeadingTrivia);
-            if (trailingWhitespaceIndex != -1)
+            protected override string CodeActionTitle =>
+                LayoutResources.SA1518CodeFix;
+
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
             {
-                var newTriviaList = SyntaxFactory.TriviaList(token.LeadingTrivia.Take(trailingWhitespaceIndex));
-                result = token.WithLeadingTrivia(newTriviaList);
-            }
+                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
+                if (diagnostics.IsEmpty)
+                {
+                    return null;
+                }
 
-            return result;
+                var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, fixAllContext.CancellationToken);
+                Document updatedDocument = await FixEndOfFileAsync(document, diagnostics[0], settings.LayoutRules.NewlineAtEndOfFile, fixAllContext.CancellationToken).ConfigureAwait(false);
+                return await updatedDocument.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+            }
         }
     }
 }

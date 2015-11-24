@@ -75,6 +75,23 @@
           "properties": {
           }
         },
+        "layoutRules": {
+          "type": "object",
+          "description": "Configuration for layout rules (SA1500-)",
+          "additionalProperties": false,
+          "properties": {
+            "newlineAtEndOfFile": {
+              "type": "string",
+              "description": "Specifies the handling for newline characters which appear at the end of a file\r\nallow: Files are allowed to end with a single newline character, but it is not required\r\nrequire: Files are required to end with a single newline character\r\nomit: Files may not end with a newline character",
+              "enum": [
+                "allow",
+                "require",
+                "omit"
+              ],
+              "default": "allow"
+            }
+          }
+        },
         "documentationRules": {
           "type": "object",
           "description": "Configuration for documentation rules (SA1600-)",

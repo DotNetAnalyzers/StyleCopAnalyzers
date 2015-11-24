@@ -34,7 +34,12 @@ public class Foo
         public async Task TestWithBlankLinesAtEndOfFileAsync()
         {
             var testCode = BaseCode + "\r\n\r\n";
-            await this.VerifyCSharpDiagnosticAsync(testCode, this.GenerateExpectedWarning(9, 1), CancellationToken.None).ConfigureAwait(false);
+            var fixedCode = BaseCode + "\r\n";
+
+            var expected = this.CSharpDiagnostic().WithLocation(8, 2);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -45,7 +50,12 @@ public class Foo
         public async Task TestWithLineFeedOnlyBlankLinesAtEndOfFileAsync()
         {
             var testCode = BaseCode + "\n\n";
-            await this.VerifyCSharpDiagnosticAsync(testCode, this.GenerateExpectedWarning(9, 1), CancellationToken.None).ConfigureAwait(false);
+            var fixedCode = BaseCode + "\r\n";
+
+            var expected = this.CSharpDiagnostic().WithLocation(8, 2);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -88,7 +98,12 @@ public class Foo
         public async Task TestFileEndsWithSpacesAsync()
         {
             var testCode = BaseCode + "\r\n          ";
-            await this.VerifyCSharpDiagnosticAsync(testCode, this.GenerateExpectedWarning(9, 1), CancellationToken.None).ConfigureAwait(false);
+            var fixedCode = BaseCode + "\r\n";
+
+            var expected = this.CSharpDiagnostic().WithLocation(8, 2);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -110,7 +125,12 @@ public class Foo
         public async Task TestFileEndingWithCommentAndSpuriousWhitespaceAsync()
         {
             var testCode = BaseCode + "\r\n// Test comment\r\n   \r\n";
-            await this.VerifyCSharpDiagnosticAsync(testCode, this.GenerateExpectedWarning(10, 1), CancellationToken.None).ConfigureAwait(false);
+            var fixedCode = BaseCode + "\r\n// Test comment\r\n";
+
+            var expected = this.CSharpDiagnostic().WithLocation(9, 16);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -132,7 +152,12 @@ public class Foo
         public async Task TestFileEndingWithEndIfWithSpuriousWhitespaceAsync()
         {
             var testCode = "#if true\r\n" + BaseCode + "\r\n#endif\r\n   \r\n";
-            await this.VerifyCSharpDiagnosticAsync(testCode, this.GenerateExpectedWarning(11, 1), CancellationToken.None).ConfigureAwait(false);
+            var fixedCode = "#if true\r\n" + BaseCode + "\r\n#endif\r\n";
+
+            var expected = this.CSharpDiagnostic().WithLocation(10, 7);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -144,9 +169,12 @@ public class Foo
         public async Task TestCodeFixProviderStripsTrailingBlankLinesAsync()
         {
             var testCode = BaseCode + "\r\n\r\n";
-            var fixedTestCode = BaseCode + "\r\n";
+            var fixedCode = BaseCode + "\r\n";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expected = this.CSharpDiagnostic().WithLocation(8, 2);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -158,9 +186,12 @@ public class Foo
         public async Task TestCodeFixProviderStripsTrailingBlankLinesIncludingWhitespaceAsync()
         {
             var testCode = BaseCode + "\r\n   \r\n   \r\n";
-            var fixedTestCode = BaseCode + "\r\n";
+            var fixedCode = BaseCode + "\r\n";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expected = this.CSharpDiagnostic().WithLocation(8, 2);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -172,9 +203,12 @@ public class Foo
         public async Task TestCodeFixProviderStripsTrailingLinefeedOnlyBlankLinesIncludingWhitespaceAsync()
         {
             var testCode = BaseCode + "\n   \n   \n";
-            var fixedTestCode = BaseCode + "\n";
+            var fixedCode = BaseCode + "\r\n";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expected = this.CSharpDiagnostic().WithLocation(8, 2);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -186,9 +220,12 @@ public class Foo
         public async Task TestCodeFixProviderOnlyStripsTrailingBlankLinesAsync()
         {
             var testCode = "#if true\r\n" + BaseCode + "\r\n#endif\r\n   \r\n";
-            var fixedTestCode = "#if true\r\n" + BaseCode + "\r\n#endif\r\n";
+            var fixedCode = "#if true\r\n" + BaseCode + "\r\n#endif\r\n";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expected = this.CSharpDiagnostic().WithLocation(10, 7);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -201,11 +238,6 @@ public class Foo
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new SA1518CodeFixProvider();
-        }
-
-        private DiagnosticResult GenerateExpectedWarning(int line, int column)
-        {
-            return this.CSharpDiagnostic().WithLocation(line, column);
         }
     }
 }
