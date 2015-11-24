@@ -78,15 +78,8 @@ namespace StyleCop.Analyzers.LayoutRules
                 }
                 else
                 {
-                    if (leadingTrivia.Count == 0)
-                    {
-                        checkPrecedingToken = true;
-                    }
-                    else
-                    {
-                        checkPrecedingToken = false;
-                        precedingTrivia = leadingTrivia.Last();
-                    }
+                    checkPrecedingToken = false;
+                    precedingTrivia = leadingTrivia.Last();
                 }
             }
             else
@@ -149,7 +142,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 break;
 
             case EndOfFileHandling.Require:
-                if (firstNewline > 0 && secondNewline < 0)
+                if (firstNewline >= 0 && firstNewline == trailingWhitespaceText.Length - 1)
                 {
                     return;
                 }
