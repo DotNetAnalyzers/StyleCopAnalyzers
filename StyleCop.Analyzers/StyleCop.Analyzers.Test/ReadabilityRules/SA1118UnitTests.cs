@@ -103,8 +103,8 @@ class Foo
     public void Bar()
     {
         Fun(1,
-            3
-            + 4,
+            System.Linq.Enumerable.Count(
+                new int[0]) + 4,
             System.Linq.Enumerable.Count(
                 new int[0]));
     }
@@ -182,24 +182,28 @@ class Foo
         }
 
         [Fact]
-        public async Task TestAnonymousMethodCallSecondParameterIsInvocationAsync()
+        public async Task TestAnonymousMethodCallSecondParameterSpansMultipleLinesThirdParameterIsInvocationAsync()
         {
             var testCode = @"
 class Foo
 {
     public void Bar()
     {
-        System.Action<int,int> d = delegate(int i, int a)
+        System.Action<int, int, int> d = delegate(int i, int j, int k)
                                     {
 
                                     };
         d(1,
           System.Linq.Enumerable.Count(
+                new int[0]) + 1,
+          System.Linq.Enumerable.Count(
                 new int[0]));
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(11, 11);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
