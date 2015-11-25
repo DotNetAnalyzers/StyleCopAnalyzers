@@ -32,6 +32,9 @@ namespace StyleCop.Analyzers.Test.Settings
             Assert.NotNull(styleCopSettings.OrderingRules);
             Assert.Equal(UsingDirectivesPlacement.InsideNamespace, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
 
+            Assert.NotNull(styleCopSettings.LayoutRules);
+            Assert.Equal(EndOfFileHandling.Allow, styleCopSettings.LayoutRules.NewlineAtEndOfFile);
+
             Assert.NotNull(styleCopSettings.SpacingRules);
             Assert.NotNull(styleCopSettings.ReadabilityRules);
             Assert.NotNull(styleCopSettings.MaintainabilityRules);

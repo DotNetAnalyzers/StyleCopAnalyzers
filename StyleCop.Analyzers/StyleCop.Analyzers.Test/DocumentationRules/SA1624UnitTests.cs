@@ -20,6 +20,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         /// <summary>
         /// Verifies that documentation that starts with the proper text for multiple accessors will produce a diagnostic when one of the accessors has reduced visibility.
         /// </summary>
+        /// <param name="accessibility">The accessibility of the property.</param>
         /// <param name="type">The type to use for the property.</param>
         /// <param name="accessors">The accessors for the property.</param>
         /// <param name="summaryPrefix">The prefix to use in the summary text.</param>
@@ -27,11 +28,21 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         /// <param name="expectedArgument2">The second expected argument for the diagnostic.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("int", "get; private set;", "Gets or sets", "get", "Gets")]
-        [InlineData("int", "private get; set;", "Gets or sets", "set", "Sets")]
-        [InlineData("bool", "get; private set;", "Gets or sets a value indicating whether", "get", "Gets a value indicating whether")]
-        [InlineData("bool", "private get; set;", "Gets or sets a value indicating whether", "set", "Sets a value indicating whether")]
-        public async Task VerifyThatInvalidDocumentationWillReportDiagnosticAsync(string type, string accessors, string summaryPrefix, string expectedArgument1, string expectedArgument2)
+        [InlineData("public", "int", "get; internal set;", "Gets or sets", "get", "Gets")]
+        [InlineData("public", "int", "get; private set;", "Gets or sets", "get", "Gets")]
+        [InlineData("public", "int", "internal get; set;", "Gets or sets", "set", "Sets")]
+        [InlineData("public", "int", "private get; set;", "Gets or sets", "set", "Sets")]
+        [InlineData("public", "bool", "get; private set;", "Gets or sets a value indicating whether", "get", "Gets a value indicating whether")]
+        [InlineData("public", "bool", "private get; set;", "Gets or sets a value indicating whether", "set", "Sets a value indicating whether")]
+        [InlineData("protected", "int", "get; private set;", "Gets or sets", "get", "Gets")]
+        [InlineData("protected", "int", "private get; set;", "Gets or sets", "set", "Sets")]
+        [InlineData("protected internal", "int", "get; internal set;", "Gets or sets", "get", "Gets")]
+        [InlineData("protected internal", "int", "get; private set;", "Gets or sets", "get", "Gets")]
+        [InlineData("protected internal", "int", "internal get; set;", "Gets or sets", "set", "Sets")]
+        [InlineData("protected internal", "int", "private get; set;", "Gets or sets", "set", "Sets")]
+        [InlineData("internal", "int", "get; private set;", "Gets or sets", "get", "Gets")]
+        [InlineData("internal", "int", "private get; set;", "Gets or sets", "set", "Sets")]
+        public async Task VerifyThatInvalidDocumentationWillReportDiagnosticAsync(string accessibility, string type, string accessors, string summaryPrefix, string expectedArgument1, string expectedArgument2)
         {
             var testCode = $@"
 public class TestClass
@@ -39,7 +50,7 @@ public class TestClass
     /// <summary>
     /// {summaryPrefix} the test property.
     /// </summary>
-    public {type} TestProperty
+    {accessibility} {type} TestProperty
     {{
         {accessors}
     }}
@@ -52,14 +63,14 @@ public class TestClass
     /// <summary>
     /// {expectedArgument2} the test property.
     /// </summary>
-    public {type} TestProperty
+    {accessibility} {type} TestProperty
     {{
         {accessors}
     }}
 }}
 ";
 
-            var expected = this.CSharpDiagnostic(PropertySummaryDocumentationAnalyzer.SA1624Descriptor).WithLocation(7, 13 + type.Length).WithArguments(expectedArgument1, expectedArgument2);
+            var expected = this.CSharpDiagnostic(PropertySummaryDocumentationAnalyzer.SA1624Descriptor).WithLocation(7, 7 + accessibility.Length + type.Length).WithArguments(expectedArgument1, expectedArgument2);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);

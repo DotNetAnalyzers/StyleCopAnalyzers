@@ -184,6 +184,6 @@
     <value>Remove blank lines at the start of the file</value>
   </data>
   <data name="SA1518CodeFix" xml:space="preserve">
-    <value>Remove blank lines at the end of the file</value>
+    <value>Fix whitespace at the end of the file</value>
   </data>
 </root>

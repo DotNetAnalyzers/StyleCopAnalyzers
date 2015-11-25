@@ -152,6 +152,7 @@ The following properties are used to configure using directives in StyleCop Anal
 
 | Property | Default Value | Summary |
 | --- | --- | --- |
+| `systemUsingDirectivesFirst` | true | Specifies whether `System` using directives are placed before other using directives |
 | `usingDirectivesPlacement` | `"insideNamespace"` | Specifies the desired placement of using directives |
 
 #### Using Directives Placement
@@ -241,6 +242,34 @@ This section describes the features of maintainability rules which can be config
 ```
 
 > Currently there are no configurable settings for maintainability rules.
+
+## Layout Rules
+
+This section describes the features of layout rules which can be configured in **stylecop.json**. Each of the described properties are configured in the `layoutRules` object, which is shown in the following sample file.
+
+```json
+{
+  "settings": {
+    "layoutRules": {
+    }
+  }
+}
+```
+
+The following properties are used to configure layout rules in StyleCop Analyzers.
+
+| Property | Default Value | Summary |
+| --- | --- | --- |
+| `newlineAtEndOfFile` | `"allow"` | Specifies the handling for newline characters which appear at the end of a file |
+
+### Lines at End of File
+
+The behavior of [SA1518](SA1518.md) can be customized regarding the manner in which newline characters at the end of a
+file are handled. The `newlineAtEndOfFile` property supports the following values:
+
+* `"allow"`: Files are allowed to end with a single newline character, but it is not required
+* `"require"`: Files are required to end with a single newline character
+* `"omit"`: Files may not end with a newline character
 
 ## Documentation Rules
 

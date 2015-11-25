@@ -260,7 +260,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Remove blank lines at the end of the file.
+        ///   Looks up a localized string similar to Fix whitespace at the end of the file.
         /// </summary>
         internal static string SA1518CodeFix {
             get {

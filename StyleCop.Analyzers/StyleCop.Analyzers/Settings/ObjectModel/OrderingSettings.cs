@@ -24,6 +24,12 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         private ImmutableArray<OrderingTrait>.Builder elementOrder;
 
         /// <summary>
+        /// This is the backing field for the <see cref="SystemUsingDirectivesFirst"/> property.
+        /// </summary>
+        [JsonProperty("systemUsingDirectivesFirst", DefaultValueHandling = DefaultValueHandling.Include)]
+        private bool systemUsingDirectivesFirst;
+
+        /// <summary>
         /// This is the backing field for the <see cref="UsingDirectivesPlacement"/> property.
         /// </summary>
         [JsonProperty("usingDirectivesPlacement", DefaultValueHandling = DefaultValueHandling.Include)]
@@ -36,6 +42,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         protected internal OrderingSettings()
         {
             this.elementOrder = ImmutableArray.CreateBuilder<OrderingTrait>();
+            this.systemUsingDirectivesFirst = true;
             this.usingDirectivesPlacement = UsingDirectivesPlacement.InsideNamespace;
         }
 
@@ -46,6 +53,9 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                 return this.elementOrder.Count > 0 ? this.elementOrder.ToImmutable() : DefaultElementOrder;
             }
         }
+
+        public bool SystemUsingDirectivesFirst =>
+            this.systemUsingDirectivesFirst;
 
         public UsingDirectivesPlacement UsingDirectivesPlacement =>
             this.usingDirectivesPlacement;
