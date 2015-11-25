@@ -115,13 +115,13 @@ namespace StyleCop.Analyzers.OrderingRules
             foreach (var member in members)
             {
                 var modifiers = member.GetModifiers();
-                var currentMemberStatic = modifiers.Any(SyntaxKind.StaticKeyword);
 
                 var currentSyntaxKind = member.Kind();
                 currentSyntaxKind = currentSyntaxKind == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : currentSyntaxKind;
                 var currentAccessLevel = MemberOrderHelper.GetAccessLevelForOrdering(member, modifiers);
                 bool currentMemberConstant = modifiers.Any(SyntaxKind.ConstKeyword);
-                bool currentMemberReadonly = modifiers.Any(SyntaxKind.ReadOnlyKeyword);
+                bool currentMemberReadonly = currentMemberConstant || modifiers.Any(SyntaxKind.ReadOnlyKeyword);
+                bool currentMemberStatic = currentMemberConstant || modifiers.Any(SyntaxKind.StaticKeyword);
                 bool compareStatic = true;
                 for (int j = 0; compareStatic && j < staticIndex; j++)
                 {

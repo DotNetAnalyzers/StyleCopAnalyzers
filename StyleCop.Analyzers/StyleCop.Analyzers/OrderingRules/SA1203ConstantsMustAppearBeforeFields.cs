@@ -82,8 +82,9 @@ namespace StyleCop.Analyzers.OrderingRules
                 }
 
                 AccessLevel currentAccessLevel = MemberOrderHelper.GetAccessLevelForOrdering(field, field.Modifiers);
-                bool currentFieldReadonly = field.Modifiers.Any(SyntaxKind.ReadOnlyKeyword);
-                bool currentFieldStatic = field.Modifiers.Any(SyntaxKind.StaticKeyword);
+                bool currentFieldConstant = field.Modifiers.Any(SyntaxKind.ConstKeyword);
+                bool currentFieldReadonly = currentFieldConstant || field.Modifiers.Any(SyntaxKind.ReadOnlyKeyword);
+                bool currentFieldStatic = currentFieldConstant || field.Modifiers.Any(SyntaxKind.StaticKeyword);
                 bool compareConst = true;
                 for (int j = 0; compareConst && j < constantIndex; j++)
                 {
@@ -122,8 +123,6 @@ namespace StyleCop.Analyzers.OrderingRules
                         continue;
                     }
                 }
-
-                bool currentFieldConstant = field.Modifiers.Any(SyntaxKind.ConstKeyword);
 
                 if (compareConst)
                 {

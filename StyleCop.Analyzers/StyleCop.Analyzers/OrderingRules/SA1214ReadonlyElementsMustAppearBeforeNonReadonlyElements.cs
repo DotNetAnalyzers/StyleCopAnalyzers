@@ -81,8 +81,8 @@ namespace StyleCop.Analyzers.OrderingRules
                 var modifiers = member.GetModifiers();
                 var currentAccessLevel = MemberOrderHelper.GetAccessLevelForOrdering(member, modifiers);
                 bool currentFieldConst = modifiers.Any(SyntaxKind.ConstKeyword);
-                bool currentFieldStatic = modifiers.Any(SyntaxKind.StaticKeyword);
-                bool currentFieldReadonly = modifiers.Any(SyntaxKind.ReadOnlyKeyword);
+                bool currentFieldStatic = currentFieldConst || modifiers.Any(SyntaxKind.StaticKeyword);
+                bool currentFieldReadonly = currentFieldConst || modifiers.Any(SyntaxKind.ReadOnlyKeyword);
                 if (previousField == null)
                 {
                     previousField = field;
