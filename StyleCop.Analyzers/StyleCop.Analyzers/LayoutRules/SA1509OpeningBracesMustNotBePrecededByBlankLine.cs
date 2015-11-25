@@ -75,24 +75,21 @@ namespace StyleCop.Analyzers.LayoutRules
         {
             var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
 
-            var openBraces = syntaxRoot.DescendantTokens()
-                .Where(t => t.IsKind(SyntaxKind.OpenBraceToken));
-
-            foreach (var openBrace in openBraces)
+            SyntaxToken previousToken = default(SyntaxToken);
+            foreach (var token in syntaxRoot.DescendantTokens())
             {
-                if (openBrace.GetPreviousToken().IsKind(SyntaxKind.CloseBraceToken))
+                if (token.IsKind(SyntaxKind.OpenBraceToken) && !previousToken.IsKind(SyntaxKind.CloseBraceToken))
                 {
-                    continue;
+                    AnalyzeOpenBrace(context, token, previousToken);
                 }
 
-                AnalyzeOpenBrace(context, openBrace);
+                previousToken = token;
             }
         }
 
-        private static void AnalyzeOpenBrace(SyntaxTreeAnalysisContext context, SyntaxToken openBrace)
+        private static void AnalyzeOpenBrace(SyntaxTreeAnalysisContext context, SyntaxToken openBrace, SyntaxToken previousToken)
         {
-            var prevToken = openBrace.GetPreviousToken();
-            var triviaList = TriviaHelper.MergeTriviaLists(prevToken.TrailingTrivia, openBrace.LeadingTrivia);
+            var triviaList = TriviaHelper.MergeTriviaLists(previousToken.TrailingTrivia, openBrace.LeadingTrivia);
 
             var done = false;
             var eolCount = 0;
