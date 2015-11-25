@@ -63,7 +63,8 @@ namespace StyleCop.Analyzers.OrderingRules
 
             var typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
-            FieldDeclarationSyntax previousMember = null;
+            // This variable is null when the previous member is not a field.
+            FieldDeclarationSyntax previousField = null;
             var previousFieldConst = true;
             var previousFieldStatic = false;
             var previousFieldReadonly = false;
@@ -73,7 +74,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 FieldDeclarationSyntax field = member as FieldDeclarationSyntax;
                 if (field == null)
                 {
-                    previousMember = null;
+                    previousField = null;
                     continue;
                 }
 
@@ -82,9 +83,9 @@ namespace StyleCop.Analyzers.OrderingRules
                 bool currentFieldConst = modifiers.Any(SyntaxKind.ConstKeyword);
                 bool currentFieldStatic = modifiers.Any(SyntaxKind.StaticKeyword);
                 bool currentFieldReadonly = modifiers.Any(SyntaxKind.ReadOnlyKeyword);
-                if (previousMember == null)
+                if (previousField == null)
                 {
-                    previousMember = field;
+                    previousField = field;
                     previousFieldConst = currentFieldConst;
                     previousFieldStatic = currentFieldStatic;
                     previousFieldReadonly = currentFieldReadonly;
@@ -93,7 +94,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 }
 
                 bool compareReadonly = true;
-                for (int j = 0; j < readonlyIndex; j++)
+                for (int j = 0; compareReadonly && j < readonlyIndex; j++)
                 {
                     switch (elementOrder[j])
                     {
@@ -110,7 +111,7 @@ namespace StyleCop.Analyzers.OrderingRules
                         continue;
 
                     case OrderingTrait.Constant:
-                        if (previousFieldConst || currentFieldConst)
+                        if (previousFieldConst != currentFieldConst)
                         {
                             compareReadonly = false;
                         }
@@ -133,13 +134,13 @@ namespace StyleCop.Analyzers.OrderingRules
 
                 if (compareReadonly)
                 {
-                    if ((currentFieldReadonly || currentFieldConst) && !previousFieldReadonly && !previousFieldConst)
+                    if (currentFieldReadonly && !previousFieldReadonly)
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(member)));
                     }
                 }
 
-                previousMember = field;
+                previousField = field;
                 previousFieldConst = currentFieldConst;
                 previousFieldStatic = currentFieldStatic;
                 previousFieldReadonly = currentFieldReadonly;

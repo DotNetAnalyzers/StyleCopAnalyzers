@@ -137,6 +137,9 @@ namespace StyleCop.Analyzers.OrderingRules
             MemberDeclarationSyntax previousMember = null;
             var previousSyntaxKind = SyntaxKind.None;
             var previousAccessLevel = AccessLevel.NotSpecified;
+            bool previousIsConst = false;
+            bool previousIsReadonly = false;
+            bool previousIsStatic = false;
 
             foreach (var member in members)
             {
@@ -152,8 +155,11 @@ namespace StyleCop.Analyzers.OrderingRules
 
                 var modifiers = member.GetModifiers();
                 AccessLevel currentAccessLevel = MemberOrderHelper.GetAccessLevelForOrdering(member, modifiers);
+                bool currentIsConst = modifiers.Any(SyntaxKind.ConstKeyword);
+                bool currentIsReadonly = modifiers.Any(SyntaxKind.ReadOnlyKeyword);
+                bool currentIsStatic = modifiers.Any(SyntaxKind.StaticKeyword);
 
-                if (previousMember != null && previousAccessLevel != AccessLevel.NotSpecified)
+                if (previousAccessLevel != AccessLevel.NotSpecified)
                 {
                     bool compareAccessLevel = true;
                     for (int j = 0; compareAccessLevel && j < accessibilityIndex; j++)
@@ -169,9 +175,6 @@ namespace StyleCop.Analyzers.OrderingRules
                             continue;
 
                         case OrderingTrait.Constant:
-                            // Only fields may be marked const
-                            bool previousIsConst = previousMember.IsKind(SyntaxKind.FieldDeclaration) && previousMember.GetModifiers().Any(SyntaxKind.ConstKeyword);
-                            bool currentIsConst = member.IsKind(SyntaxKind.FieldDeclaration) && modifiers.Any(SyntaxKind.ConstKeyword);
                             if (previousIsConst != currentIsConst)
                             {
                                 compareAccessLevel = false;
@@ -180,9 +183,6 @@ namespace StyleCop.Analyzers.OrderingRules
                             continue;
 
                         case OrderingTrait.Readonly:
-                            // Only fields may be marked readonly
-                            bool previousIsReadonly = previousMember.IsKind(SyntaxKind.FieldDeclaration) && previousMember.GetModifiers().Any(SyntaxKind.ReadOnlyKeyword);
-                            bool currentIsReadonly = member.IsKind(SyntaxKind.FieldDeclaration) && modifiers.Any(SyntaxKind.ReadOnlyKeyword);
                             if (previousIsReadonly != currentIsReadonly)
                             {
                                 compareAccessLevel = false;
@@ -191,8 +191,6 @@ namespace StyleCop.Analyzers.OrderingRules
                             continue;
 
                         case OrderingTrait.Static:
-                            bool previousIsStatic = previousMember.GetModifiers().Any(SyntaxKind.StaticKeyword);
-                            bool currentIsStatic = modifiers.Any(SyntaxKind.StaticKeyword);
                             if (previousIsStatic != currentIsStatic)
                             {
                                 compareAccessLevel = false;
@@ -220,6 +218,9 @@ namespace StyleCop.Analyzers.OrderingRules
                 previousMember = member;
                 previousSyntaxKind = currentSyntaxKind;
                 previousAccessLevel = currentAccessLevel;
+                previousIsConst = currentIsConst;
+                previousIsReadonly = currentIsReadonly;
+                previousIsStatic = currentIsStatic;
             }
         }
     }
