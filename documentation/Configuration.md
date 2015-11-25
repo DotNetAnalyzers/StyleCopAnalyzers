@@ -83,6 +83,69 @@ This section describes the features of ordering rules which can be configured in
 }
 ```
 
+### Element Order
+
+The following properties are used to configure element ordering in StyleCop Analyzers.
+
+| Property | Default Value | Summary |
+| --- | --- | --- |
+| `elementOrder` | `[ "kind", "accessibility", "constant", "static", "readonly" ]` | Specifies the traits used for ordering elements within a document, along with their precedence |
+
+The `elementOrder` property is an array of element traits. The ordering rules (SA1201, SA1202, SA1203, SA1204, SA1214,
+and SA1215) evaluate these traits in the order they are defined to identify ordering problems, and the code fix uses
+this property when reordering code elements. Any traits which are omitted from the array are ignored. The following
+traits are supported:
+
+* `kind`: Elements are ordered according to their kind (see [SA1201](SA1201.md) for this predefined order)
+* `accessibility`: Elements are ordered according to their declared accessibility (see [SA1202](SA1202.md) for this
+  predefined order)
+* `constant`: Constant elements are ordered before non-constant elements
+* `static`: Static elements are ordered before non-static elements
+* `readonly`: Readonly elements are ordered before non-readonly elements
+
+This configuration property allows for a wide variety of ordering configurations, as shown in the following examples.
+
+#### Example: All Constants First
+
+The following example shows a customized element order where *all* constant fields are placed before non-constant
+fields, regardless of accessibility.
+
+```json
+{
+  "settings": {
+    "orderingRules": {
+      "elementOrder": [
+        "kind",
+        "constant",
+        "accessibility",
+        "static",
+        "readonly"
+      ]
+    }
+  }
+}
+```
+
+#### Example: Ignore Accessibility
+
+The following example shows a customized element order where element accessibility is simply ignored, but other ordering
+rules remain enforced.
+
+```json
+{
+  "settings": {
+    "orderingRules": {
+      "elementOrder": [
+        "kind",
+        "constant",
+        "static",
+        "readonly"
+      ]
+    }
+  }
+}
+```
+
 ### Using Directives
 
 The following properties are used to configure using directives in StyleCop Analyzers.

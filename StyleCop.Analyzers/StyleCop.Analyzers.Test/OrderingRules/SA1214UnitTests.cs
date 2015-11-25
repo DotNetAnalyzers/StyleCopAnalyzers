@@ -95,7 +95,7 @@ public class Foo
 
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(5, 33).WithArguments("private")
+                this.CSharpDiagnostic().WithLocation(5, 33)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -135,7 +135,7 @@ public class Foo
 
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(4, 58).WithArguments("private")
+                this.CSharpDiagnostic().WithLocation(4, 58)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -172,8 +172,18 @@ public class Foo
     private int i = 0;
     private readonly int j = 0;
 }";
+            var fixedCode = @"
+public class Foo
+{
+    private readonly int j = 0;
+    private int i = 0;
+}";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            var expected = this.CSharpDiagnostic().WithLocation(5, 26);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -188,7 +198,7 @@ public struct Foo
 
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(5, 33).WithArguments("private")
+                this.CSharpDiagnostic().WithLocation(5, 33)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -232,8 +242,8 @@ public class Foo
 
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(11, 33).WithArguments("public"),
-                this.CSharpDiagnostic().WithLocation(18, 37).WithArguments("private")
+                this.CSharpDiagnostic().WithLocation(11, 33),
+                this.CSharpDiagnostic().WithLocation(18, 37)
 
                 // line 21 should be reported by SA1201
             };
@@ -310,7 +320,7 @@ public class Foo
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1214StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements();
+            yield return new SA1214ReadonlyElementsMustAppearBeforeNonReadonlyElements();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

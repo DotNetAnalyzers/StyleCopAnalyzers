@@ -29,6 +29,29 @@
           "description": "Configuration for ordering rules (SA1200-)",
           "additionalProperties": false,
           "properties": {
+            "elementOrder": {
+              "type": "array",
+              "description": "Specifies the traits used for ordering elements within a document, along with their precedence.",
+              "default": [
+                "kind",
+                "accessibility",
+                "constant",
+                "static",
+                "readonly"
+              ],
+              "items": {
+                "type": "string",
+                "description": "",
+                "enum": [
+                  "accessibility",
+                  "kind",
+                  "constant",
+                  "static",
+                  "readonly"
+                ]
+              },
+              "uniqueItems": true
+            },
             "systemUsingDirectivesFirst": {
               "type": "boolean",
               "description": "When true, System using directives must be placed before other using directives.",
