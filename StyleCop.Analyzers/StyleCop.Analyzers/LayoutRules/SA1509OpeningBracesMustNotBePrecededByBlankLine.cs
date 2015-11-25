@@ -80,16 +80,9 @@ namespace StyleCop.Analyzers.LayoutRules
 
             foreach (var openBrace in openBraces)
             {
-                BlockSyntax blockSyntax = openBrace.Parent as BlockSyntax;
-                if (blockSyntax != null)
+                if (openBrace.GetPreviousToken().IsKind(SyntaxKind.CloseBraceToken))
                 {
-                    BlockSyntax parentBlock = blockSyntax.Parent as BlockSyntax;
-                    if (parentBlock != null && parentBlock.Statements[0] != blockSyntax)
-                    {
-                        // Do not disallow a blank line before an independent block, unless it is the first child of its
-                        // parent.
-                        continue;
-                    }
+                    continue;
                 }
 
                 AnalyzeOpenBrace(context, openBrace);
