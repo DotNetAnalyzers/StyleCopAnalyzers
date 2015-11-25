@@ -80,7 +80,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             SyntaxKind.AnonymousMethodExpression,
             SyntaxKind.ParenthesizedLambdaExpression,
-            SyntaxKind.SimpleLambdaExpression
+            SyntaxKind.SimpleLambdaExpression,
+            SyntaxKind.InvocationExpression
         };
 
         /// <inheritdoc/>
