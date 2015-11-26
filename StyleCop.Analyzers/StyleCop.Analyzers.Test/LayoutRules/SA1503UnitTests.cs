@@ -410,7 +410,8 @@ public class Foo
         /// <param name="statementText">The source code for the first part of a compound statement whose child can be
         /// either a statement block or a single statement.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Theory, MemberData(nameof(TestStatements))]
+        [Theory]
+        [MemberData(nameof(TestStatements))]
         private async Task TestCodeFixForStatementAsync(string statementText)
         {
             await this.VerifyCSharpFixAsync(this.GenerateTestStatement(statementText), this.GenerateFixedTestStatement(statementText)).ConfigureAwait(false);
