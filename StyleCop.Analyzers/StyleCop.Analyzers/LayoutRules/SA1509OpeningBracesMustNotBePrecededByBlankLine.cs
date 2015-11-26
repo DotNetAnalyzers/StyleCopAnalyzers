@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
 
@@ -74,19 +75,21 @@ namespace StyleCop.Analyzers.LayoutRules
         {
             var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
 
-            var openBraces = syntaxRoot.DescendantTokens()
-                .Where(t => t.IsKind(SyntaxKind.OpenBraceToken));
-
-            foreach (var openBrace in openBraces)
+            SyntaxToken previousToken = default(SyntaxToken);
+            foreach (var token in syntaxRoot.DescendantTokens())
             {
-                AnalyzeOpenBrace(context, openBrace);
+                if (token.IsKind(SyntaxKind.OpenBraceToken) && !previousToken.IsKind(SyntaxKind.CloseBraceToken))
+                {
+                    AnalyzeOpenBrace(context, token, previousToken);
+                }
+
+                previousToken = token;
             }
         }
 
-        private static void AnalyzeOpenBrace(SyntaxTreeAnalysisContext context, SyntaxToken openBrace)
+        private static void AnalyzeOpenBrace(SyntaxTreeAnalysisContext context, SyntaxToken openBrace, SyntaxToken previousToken)
         {
-            var prevToken = openBrace.GetPreviousToken();
-            var triviaList = TriviaHelper.MergeTriviaLists(prevToken.TrailingTrivia, openBrace.LeadingTrivia);
+            var triviaList = TriviaHelper.MergeTriviaLists(previousToken.TrailingTrivia, openBrace.LeadingTrivia);
 
             var done = false;
             var eolCount = 0;
