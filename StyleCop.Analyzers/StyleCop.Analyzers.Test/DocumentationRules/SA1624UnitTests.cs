@@ -125,7 +125,7 @@ public class ContainerTestClass
         public {typeKeyword} TestType
         {{
             /// <summary>
-            /// Gets or sets the test property.
+            /// Gets the test property.
             /// </summary>
             public int TestProperty
             {{
