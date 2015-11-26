@@ -117,6 +117,38 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         }
 
         /// <summary>
+        /// Verifies that a wrong file name with no extension is correctly reported and fixed. This is a regression test
+        /// for DotNetAnalyzers/StyleCopAnalyzers#1829.
+        /// </summary>
+        /// <param name="typeKeyword">The type keyword to use during the test.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [MemberData(nameof(TypeKeywords))]
+        public async Task VerifyWrongFileNameNoExtensionAsync(string typeKeyword)
+        {
+            var testCode = $@"namespace TestNameSpace
+{{
+    public {typeKeyword} TestType
+    {{
+    }}
+}}
+";
+
+            var fixedCode = $@"namespace TestNamespace
+{{
+    public {typeKeyword} TestType
+    {{
+    }}
+}}
+";
+
+            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation("WrongFileName", 3, 13 + typeKeyword.Length);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None, "WrongFileName").ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None, "TestType").ConfigureAwait(false);
+            await this.VerifyRenameAsync(testCode, "WrongFileName", "TestType", CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that the file name is not case sensitive.
         /// </summary>
         /// <param name="typeKeyword">The type keyword to use during the test.</param>
@@ -232,6 +264,40 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None, "TestType.cs").ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None, "TestType`3.cs").ConfigureAwait(false);
             await this.VerifyRenameAsync(testCode, "TestType.cs", "TestType`3.cs", CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a wrong metadata file name with multiple extensions is correctly reported and fixed. This is a
+        /// regression test for DotNetAnalyzers/StyleCopAnalyzers#1829.
+        /// </summary>
+        /// <param name="typeKeyword">The type keyword to use during the test.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [MemberData(nameof(TypeKeywords))]
+        public async Task VerifyMetadataNamingConventionForGenericTypeMultipleExtensionsAsync(string typeKeyword)
+        {
+            this.useMetadataSettings = true;
+
+            var testCode = $@"namespace TestNameSpace
+{{
+    public {typeKeyword} TestType<T>
+    {{
+    }}
+}}
+";
+
+            var fixedCode = $@"namespace TestNamespace
+{{
+    public {typeKeyword} TestType<T>
+    {{
+    }}
+}}
+";
+
+            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation("TestType.svc.cs", 3, 13 + typeKeyword.Length);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None, "TestType.svc.cs").ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None, "TestType`1.svc.cs").ConfigureAwait(false);
+            await this.VerifyRenameAsync(testCode, "TestType.svc.cs", "TestType`1.svc.cs", CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
