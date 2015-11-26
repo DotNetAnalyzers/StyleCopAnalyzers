@@ -128,7 +128,8 @@ namespace StyleCop.Analyzers.SpacingRules
                 break;
 
             case SyntaxKind.DotToken:
-                // allow a space for this case, but only if the ')' character is the last on the line
+            case SyntaxKind.MinusGreaterThanToken:
+                // allow a space for these cases, but only if the ')' character is the last on the line
                 allowEndOfLine = true;
                 precedesStickyCharacter = true;
                 break;
