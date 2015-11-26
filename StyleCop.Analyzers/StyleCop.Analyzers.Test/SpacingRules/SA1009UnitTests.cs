@@ -325,6 +325,17 @@ public class Foo
         }
 
         [Fact]
+        public async Task TestSpaceMethodCallFollowedByPointerDereferenceAsync()
+        {
+            var invalidStatement = @"var o = GetPointer() ->ToString();";
+            var validStatement = @"var o = GetPointer()->ToString();";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 32);
+
+            await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, validStatement, expected).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestSpaceOperationInDoubleSetOfParenthesisAsync()
         {
             var invalidStatement = @"var o = ((1 + 1) );";
@@ -820,7 +831,7 @@ class ClassName
 {{
     class Bar
     {{
-        void DoIt()
+        unsafe void DoIt()
         {{
             {0}
         }}
@@ -831,6 +842,11 @@ class ClassName
         }}
 
         Baz GetB()
+        {{
+            return null;
+        }}
+
+        unsafe int* GetPointer()
         {{
             return null;
         }}
