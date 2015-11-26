@@ -118,43 +118,80 @@ namespace StyleCop.Analyzers.DocumentationRules
                 if (setter != null)
                 {
                     // There is no way getter is null (can't have expression body and accessor list)
-                    var getterAccessibility = getter.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
-                    var setterAccessibility = setter.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
                     bool getterVisible;
                     bool setterVisible;
 
-                    switch (getterAccessibility)
+                    if (!getter.Modifiers.Any() && !setter.Modifiers.Any())
                     {
-                    case Accessibility.Public:
-                    case Accessibility.ProtectedOrInternal:
-                    case Accessibility.Protected:
+                        // Case 1: The getter and setter have the same declared accessibility
                         getterVisible = true;
-                        break;
-
-                    case Accessibility.Internal:
-                        getterVisible = setterAccessibility == Accessibility.Private;
-                        break;
-
-                    default:
-                        getterVisible = false;
-                        break;
-                    }
-
-                    switch (setterAccessibility)
-                    {
-                    case Accessibility.Public:
-                    case Accessibility.ProtectedOrInternal:
-                    case Accessibility.Protected:
                         setterVisible = true;
-                        break;
-
-                    case Accessibility.Internal:
-                        setterVisible = getterAccessibility == Accessibility.Private;
-                        break;
-
-                    default:
+                    }
+                    else if (getter.Modifiers.Any(SyntaxKind.PrivateKeyword))
+                    {
+                        // Case 3
+                        getterVisible = false;
+                        setterVisible = true;
+                    }
+                    else if (setter.Modifiers.Any(SyntaxKind.PrivateKeyword))
+                    {
+                        // Case 3
+                        getterVisible = true;
                         setterVisible = false;
-                        break;
+                    }
+                    else
+                    {
+                        var propertyAccessibility = propertyDeclaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+                        bool propertyOnlyInternal = propertyAccessibility == Accessibility.Internal
+                            || propertyAccessibility == Accessibility.ProtectedAndInternal
+                            || propertyAccessibility == Accessibility.Private;
+                        if (propertyOnlyInternal)
+                        {
+                            // Case 2: Property only internal and no accessor is explicitly private
+                            getterVisible = true;
+                            setterVisible = true;
+                        }
+                        else
+                        {
+                            var getterAccessibility = getter.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+                            var setterAccessibility = setter.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+
+                            switch (getterAccessibility)
+                            {
+                            case Accessibility.Public:
+                            case Accessibility.ProtectedOrInternal:
+                            case Accessibility.Protected:
+                                // Case 4
+                                getterVisible = true;
+                                break;
+
+                            case Accessibility.Internal:
+                            case Accessibility.ProtectedAndInternal:
+                            case Accessibility.Private:
+                            default:
+                                // The property is externally accessible, so the setter must be more accessible.
+                                getterVisible = false;
+                                break;
+                            }
+
+                            switch (setterAccessibility)
+                            {
+                            case Accessibility.Public:
+                            case Accessibility.ProtectedOrInternal:
+                            case Accessibility.Protected:
+                                // Case 4
+                                setterVisible = true;
+                                break;
+
+                            case Accessibility.Internal:
+                            case Accessibility.ProtectedAndInternal:
+                            case Accessibility.Private:
+                            default:
+                                // The property is externally accessible, so the getter must be more accessible.
+                                setterVisible = false;
+                                break;
+                            }
+                        }
                     }
 
                     if (getterVisible && !setterVisible)
