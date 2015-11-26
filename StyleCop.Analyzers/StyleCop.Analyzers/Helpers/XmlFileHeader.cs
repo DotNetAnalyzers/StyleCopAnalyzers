@@ -67,7 +67,7 @@ namespace StyleCop.Analyzers.Helpers
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the file header is missing.
+        /// Gets a value indicating whether the file header is missing.
         /// </summary>
         /// <value>
         /// True if the file header is missing.
@@ -75,7 +75,7 @@ namespace StyleCop.Analyzers.Helpers
         internal bool IsMissing { get; private set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the file header contains a properly formatted XML structure.
+        /// Gets a value indicating whether the file header contains a properly formatted XML structure.
         /// </summary>
         /// <value>
         /// True if the file header is not properly formatted XML.
