@@ -107,7 +107,7 @@ public  class   Foo
                 "\tpublic class Foo\r\n" +
                 "\t{\r\n" +
                 "\t \t/// <MyElement>\tValue </MyElement>\r\n" +
-                "\t\t/** <MyElement> Value </MyElement>\t*/\r\n" +
+                "\t\t/**\t \t<MyElement> Value </MyElement>\t*/\r\n" +
                 "\t}\r\n";
 
             var fixedTestCode = @"    /// <summary>
@@ -116,7 +116,7 @@ public  class   Foo
     public class Foo
     {
         /// <MyElement> Value </MyElement>
-        /** <MyElement> Value </MyElement>  */
+        /**     <MyElement> Value </MyElement>  */
     }
 ";
 
@@ -133,7 +133,8 @@ public  class   Foo
                 this.CSharpDiagnostic().WithLocation(6, 1),
                 this.CSharpDiagnostic().WithLocation(6, 19),
                 this.CSharpDiagnostic().WithLocation(7, 1),
-                this.CSharpDiagnostic().WithLocation(7, 37),
+                this.CSharpDiagnostic().WithLocation(7, 6),
+                this.CSharpDiagnostic().WithLocation(7, 39),
                 this.CSharpDiagnostic().WithLocation(8, 1),
             };
 
