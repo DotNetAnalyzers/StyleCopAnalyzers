@@ -80,20 +80,24 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static void AnalyzeSummaryElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location diagnosticLocation, PropertyDeclarationSyntax propertyDeclaration, string startingTextGets, string startingTextSets, string startingTextGetsOrSets)
         {
             var diagnosticProperties = ImmutableDictionary.CreateBuilder<string, string>();
+            ArrowExpressionClauseSyntax expressionBody = propertyDeclaration.ExpressionBody;
             AccessorDeclarationSyntax getter = null;
             AccessorDeclarationSyntax setter = null;
 
-            foreach (var accessor in propertyDeclaration.AccessorList.Accessors)
+            if (propertyDeclaration.AccessorList != null)
             {
-                switch (accessor.Keyword.Kind())
+                foreach (var accessor in propertyDeclaration.AccessorList.Accessors)
                 {
-                case SyntaxKind.GetKeyword:
-                    getter = accessor;
-                    break;
+                    switch (accessor.Keyword.Kind())
+                    {
+                    case SyntaxKind.GetKeyword:
+                        getter = accessor;
+                        break;
 
-                case SyntaxKind.SetKeyword:
-                    setter = accessor;
-                    break;
+                    case SyntaxKind.SetKeyword:
+                        setter = accessor;
+                        break;
+                    }
                 }
             }
 
@@ -107,12 +111,13 @@ namespace StyleCop.Analyzers.DocumentationRules
             var textElement = summaryElement.Content.FirstOrDefault() as XmlTextSyntax;
             var text = textElement == null ? string.Empty : XmlCommentHelper.GetText(textElement, true).TrimStart();
 
-            if (getter != null)
+            if (getter != null || expressionBody != null)
             {
                 bool startsWithGetOrSet = text.StartsWith(startingTextGetsOrSets, StringComparison.Ordinal);
 
                 if (setter != null)
                 {
+                    // There is no way getter is null (can't have expression body and accessor list)
                     var getterAccessibility = getter.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
                     var setterAccessibility = setter.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
                     bool getterVisible;
