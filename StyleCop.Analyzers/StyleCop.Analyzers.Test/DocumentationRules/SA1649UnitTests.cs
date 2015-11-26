@@ -81,7 +81,39 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             var expectedDiagnostic = this.CSharpDiagnostic().WithLocation("WrongFileName.cs", 3, 13 + typeKeyword.Length);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None, "WrongFileName.cs").ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None, "TestType.cs").ConfigureAwait(false);
-            await this.VerifyRenameAsync(testCode, "TestType.cs", CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyRenameAsync(testCode, "WrongFileName.cs", "TestType.cs", CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a wrong file name with multiple extensions is correctly reported and fixed. This is a
+        /// regression test for DotNetAnalyzers/StyleCopAnalyzers#1829.
+        /// </summary>
+        /// <param name="typeKeyword">The type keyword to use during the test.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [MemberData(nameof(TypeKeywords))]
+        public async Task VerifyWrongFileNameMultipleExtensionsAsync(string typeKeyword)
+        {
+            var testCode = $@"namespace TestNameSpace
+{{
+    public {typeKeyword} TestType
+    {{
+    }}
+}}
+";
+
+            var fixedCode = $@"namespace TestNamespace
+{{
+    public {typeKeyword} TestType
+    {{
+    }}
+}}
+";
+
+            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation("WrongFileName.svc.cs", 3, 13 + typeKeyword.Length);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None, "WrongFileName.svc.cs").ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None, "TestType.svc.cs").ConfigureAwait(false);
+            await this.VerifyRenameAsync(testCode, "WrongFileName.svc.cs", "TestType.svc.cs", CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -171,7 +203,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None, "TestType`3.cs").ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None, "TestType.cs").ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None, "TestType{T1,T2,T3}.cs").ConfigureAwait(false);
-            await this.VerifyRenameAsync(testCode, "TestType{T1,T2,T3}.cs", CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyRenameAsync(testCode, "TestType`3.cs", "TestType{T1,T2,T3}.cs", CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -199,7 +231,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             expectedDiagnostic = this.CSharpDiagnostic().WithLocation("TestType.cs", 3, 13 + typeKeyword.Length);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None, "TestType.cs").ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None, "TestType`3.cs").ConfigureAwait(false);
-            await this.VerifyRenameAsync(testCode, "TestType`3.cs", CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyRenameAsync(testCode, "TestType.cs", "TestType`3.cs", CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -235,10 +267,10 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             return this.useMetadataSettings ? MetadataSettings : StyleCopSettings;
         }
 
-        private async Task VerifyRenameAsync(string source, string expectedFileName, CancellationToken cancellationToken)
+        private async Task VerifyRenameAsync(string source, string sourceFileName, string expectedFileName, CancellationToken cancellationToken)
         {
             var analyzers = this.GetCSharpDiagnosticAnalyzers().ToImmutableArray();
-            var document = this.CreateDocument(source, LanguageNames.CSharp);
+            var document = this.CreateDocument(source, LanguageNames.CSharp, sourceFileName);
             var analyzerDiagnostics = await GetSortedDiagnosticsFromDocumentsAsync(analyzers, new[] { document }, cancellationToken).ConfigureAwait(false);
 
             Assert.Equal(1, analyzerDiagnostics.Length);
