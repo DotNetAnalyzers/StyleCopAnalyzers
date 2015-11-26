@@ -75,7 +75,8 @@ namespace StyleCop.Analyzers.DocumentationRules
                     return;
                 }
 
-                var fileName = Path.GetFileName(context.Tree.FilePath);
+                string suffix;
+                var fileName = GetFileNameAndSuffix(context.Tree.FilePath, out suffix);
                 string expectedFileName;
                 switch (settings.DocumentationRules.FileNamingConvention)
                 {
@@ -97,10 +98,27 @@ namespace StyleCop.Analyzers.DocumentationRules
                     }
 
                     var properties = ImmutableDictionary.Create<string, string>()
-                        .Add(ExpectedFileNameKey, expectedFileName);
+                        .Add(ExpectedFileNameKey, expectedFileName + suffix);
 
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstTypeDeclaration.Identifier.GetLocation(), properties));
                 }
+            }
+
+            private static string GetFileNameAndSuffix(string path, out string suffix)
+            {
+                string fileName = Path.GetFileName(path);
+                int firstDot = fileName.IndexOf('.');
+                if (firstDot >= 0)
+                {
+                    suffix = fileName.Substring(firstDot);
+                    fileName = fileName.Substring(0, firstDot);
+                }
+                else
+                {
+                    suffix = string.Empty;
+                }
+
+                return fileName;
             }
 
             private static TypeDeclarationSyntax GetFirstTypeDeclaration(SyntaxNode root)
@@ -114,26 +132,26 @@ namespace StyleCop.Analyzers.DocumentationRules
             {
                 if (firstTypeDeclaration.TypeParameterList == null)
                 {
-                    return $"{firstTypeDeclaration.Identifier.ValueText}.cs";
+                    return $"{firstTypeDeclaration.Identifier.ValueText}";
                 }
 
                 var typeParameterList = string.Join(",", firstTypeDeclaration.TypeParameterList.Parameters.Select(p => p.Identifier.ValueText));
-                return $"{firstTypeDeclaration.Identifier.ValueText}{{{typeParameterList}}}.cs";
+                return $"{firstTypeDeclaration.Identifier.ValueText}{{{typeParameterList}}}";
             }
 
             private static string GetSimpleFileName(TypeDeclarationSyntax firstTypeDeclaration)
             {
-                return $"{firstTypeDeclaration.Identifier.ValueText}.cs";
+                return $"{firstTypeDeclaration.Identifier.ValueText}";
             }
 
             private static string GetMetadataFileName(TypeDeclarationSyntax firstTypeDeclaration)
             {
                 if (firstTypeDeclaration.TypeParameterList == null)
                 {
-                    return $"{firstTypeDeclaration.Identifier.ValueText}.cs";
+                    return $"{firstTypeDeclaration.Identifier.ValueText}";
                 }
 
-                return $"{firstTypeDeclaration.Identifier.ValueText}`{firstTypeDeclaration.Arity}.cs";
+                return $"{firstTypeDeclaration.Identifier.ValueText}`{firstTypeDeclaration.Arity}";
             }
         }
     }
