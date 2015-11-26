@@ -78,6 +78,36 @@ public class TestClass
         }
 
         /// <summary>
+        /// Verifies that documentation that starts with the proper text for multiple accessors will not produce this
+        /// diagnostic when the property has an expression body.
+        /// </summary>
+        /// <param name="accessibility">The accessibility of the property.</param>
+        /// <param name="type">The type to use for the property.</param>
+        /// <param name="summaryPrefix">The prefix to use in the summary text.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("public", "int", "Gets or sets")]
+        [InlineData("public", "bool", "Gets or sets a value indicating whether")]
+        [InlineData("protected", "int", "Gets or sets")]
+        [InlineData("protected internal", "int", "Gets or sets")]
+        [InlineData("internal", "int", "Gets or sets")]
+        public async Task VerifyThatInvalidDocumentationWillReportDiagnosticForExpressionBodyAsync(string accessibility, string type, string summaryPrefix)
+        {
+            var testCode = $@"
+public class TestClass
+{{
+    /// <summary>
+    /// {summaryPrefix} the test property.
+    /// </summary>
+    {accessibility} {type} TestProperty =>
+        default({type});
+}}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verify that no diagnostic will be reported when a public and a private accessor are present within a property that is defined in a contained class of a private class.
         /// </summary>
         /// <param name="typeKeyword">The type keyword to use.</param>
@@ -107,6 +137,12 @@ public class ContainerTestClass
 ";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
+        protected override IEnumerable<string> GetDisabledDiagnostics()
+        {
+            yield return PropertySummaryDocumentationAnalyzer.SA1623Descriptor.Id;
         }
 
         /// <inheritdoc/>
