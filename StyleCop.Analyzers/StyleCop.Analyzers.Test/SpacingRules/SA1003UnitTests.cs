@@ -892,6 +892,10 @@ public class Foo : Exception
 #if! NOT
         return 1;
 #endif
+
+#if! NOT&&! Y
+        return 1;
+#endif
     }
 }
 ";
@@ -902,6 +906,10 @@ public class Foo : Exception
 #if !NOT
         return 1;
 #endif
+
+#if !NOT && !Y
+        return 1;
+#endif
     }
 }
 ";
@@ -910,6 +918,15 @@ public class Foo : Exception
             {
                 this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(5, 4).WithArguments("!"),
                 this.CSharpDiagnostic(DescriptorNotFollowedByWhitespace).WithLocation(5, 4).WithArguments("!"),
+
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(9, 4).WithArguments("!"),
+                this.CSharpDiagnostic(DescriptorNotFollowedByWhitespace).WithLocation(9, 4).WithArguments("!"),
+
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(9, 9).WithArguments("&&"),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(9, 9).WithArguments("&&"),
+
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(9, 11).WithArguments("!"),
+                this.CSharpDiagnostic(DescriptorNotFollowedByWhitespace).WithLocation(9, 11).WithArguments("!"),
             };
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
