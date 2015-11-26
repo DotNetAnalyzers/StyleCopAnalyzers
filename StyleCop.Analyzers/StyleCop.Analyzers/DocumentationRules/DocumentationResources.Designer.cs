@@ -152,7 +152,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Property summary documentation must match accessors..
+        ///   Looks up a localized string similar to Property summary documentation must match accessors.
         /// </summary>
         internal static string SA1623Title {
             get {
@@ -179,7 +179,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Property summary documentation must omit accessor with restricted access..
+        ///   Looks up a localized string similar to Property summary documentation must omit accessor with restricted access.
         /// </summary>
         internal static string SA1624Title {
             get {
