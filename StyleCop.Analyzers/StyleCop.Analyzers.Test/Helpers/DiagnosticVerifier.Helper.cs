@@ -106,6 +106,8 @@ namespace TestHelper
         /// <param name="source">Classes in the form of a string.</param>
         /// <param name="language">The language the source classes are in. Values may be taken from the
         /// <see cref="LanguageNames"/> class.</param>
+        /// <param name="fileName">The file name for the document, or <see langword="null"/> to generate a default
+        /// filename according to the specified <paramref name="language"/>.</param>
         /// <returns>A <see cref="Document"/> created from the source string.</returns>
         protected Document CreateDocument(string source, string language = LanguageNames.CSharp, string fileName = null)
         {
