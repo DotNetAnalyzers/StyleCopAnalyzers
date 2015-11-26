@@ -47,7 +47,8 @@ namespace TestHelper
         }
 
         /// <summary>
-        /// Gets or sets the value of the <see cref="FormattingOptions.UseTabs"/> to apply to the test workspace.
+        /// Gets or sets a value indicating whether the <see cref="FormattingOptions.UseTabs"/> option is applied to the
+        /// test workspace.
         /// </summary>
         /// <value>
         /// The value of the <see cref="FormattingOptions.UseTabs"/> to apply to the test workspace.
