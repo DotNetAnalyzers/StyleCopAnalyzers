@@ -54,25 +54,10 @@ namespace StyleCop.Analyzers.NamingRules
 
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             var declaredSymbol = semanticModel.GetDeclaredSymbol(token.Parent, cancellationToken);
-            INamedTypeSymbol interfaceType = declaredSymbol as INamedTypeSymbol;
-            if (interfaceType != null)
+            while (!RenameHelper.IsValidNewMemberName(semanticModel, declaredSymbol, newName))
             {
-                var containingSymbol = interfaceType.ContainingSymbol as INamespaceOrTypeSymbol;
-                var containingNamespace = containingSymbol as INamespaceSymbol;
-                if (containingNamespace != null)
-                {
-                    // Make sure to use the compilation namespace so interfaces in referenced assemblies are considered
-                    containingSymbol = semanticModel.Compilation.GetCompilationNamespace(containingNamespace);
-                }
-
-                if (containingSymbol != null)
-                {
-                    while (containingSymbol.GetMembers(newName).Any())
-                    {
-                        index++;
-                        newName = baseName + index;
-                    }
-                }
+                index++;
+                newName = baseName + index;
             }
 
             return await RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken).ConfigureAwait(false);
