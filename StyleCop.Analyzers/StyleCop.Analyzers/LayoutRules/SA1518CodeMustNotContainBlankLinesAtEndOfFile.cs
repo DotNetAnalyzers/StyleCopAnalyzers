@@ -38,10 +38,10 @@ namespace StyleCop.Analyzers.LayoutRules
         internal static readonly DiagnosticDescriptor DescriptorForOmitSetting =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatForOmitSetting, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, DescriptionForOmitSetting, HelpLink);
 
-        private const string Title = "Fix blank lines at the end of the file";
+        private const string Title = "Use line endings correctly at the end of the file";
 
-        private const string MessageFormatForAllowSetting = "Code must not contain blank lines at end of file";
-        private const string DescriptionForAllowSetting = "Code must not contain blank lines at end of file";
+        private const string MessageFormatForAllowSetting = "Code must not contain blank lines at the end of the file";
+        private const string DescriptionForAllowSetting = "Code must not contain blank lines at the end of the file";
 
         private const string MessageFormatForRequireSetting = "Code is required to end with a single newline character";
         private const string DescriptionForRequireSetting = "Code is required to end with a single newline character";
