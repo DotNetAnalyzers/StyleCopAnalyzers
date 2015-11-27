@@ -209,7 +209,7 @@ public interface IFoo { }";
         }
 
         [Fact]
-        public async Task TestInterfaceDeclarationDoesNotStartWithIWithMemberConflictAsync()
+        public async Task TestInterfaceDeclarationDoesNotStartWithIWithMemberMatchingTargetNameAsync()
         {
             string testCode = @"
 public interface Foo
@@ -217,7 +217,7 @@ public interface Foo
     int IFoo { get; }
 }";
             string fixedCode = @"
-public interface IFoo1
+public interface IFoo
 {
     int IFoo { get; }
 }";
