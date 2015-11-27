@@ -253,6 +253,25 @@ public class Test { }";
         }
 
         [Fact]
+        public async Task TestLowerCaseEnumWithMemberMatchingTargetNameAsync()
+        {
+            var testCode = @"public enum test
+{
+    Test
+}";
+            var fixedCode = @"public enum Test
+{
+    Test
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("test").WithLocation(1, 13);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestUpperCaseDelegateAsync()
         {
             var testCode = @"public class TestClass
@@ -807,8 +826,9 @@ public abstract class BaseClass
 
     public void foo()
     {
-
     }
+
+    public string iInterface { get; }
 }
 
 public interface IInterface
@@ -816,6 +836,7 @@ public interface IInterface
     void foo();
     int bar { get; }
     event System.EventHandler fooBar;
+    string iInterface { get; }
 }";
             var fixedCode = @"public class TestClass : IInterface
 {
@@ -835,8 +856,9 @@ public interface IInterface
 
     public void Foo()
     {
-
     }
+
+    public string IInterface { get; }
 }
 
 public interface IInterface
@@ -844,13 +866,15 @@ public interface IInterface
     void Foo();
     int Bar { get; }
     event System.EventHandler FooBar;
+    string IInterface { get; }
 }";
 
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(25, 10).WithArguments("foo"),
-                this.CSharpDiagnostic().WithLocation(26, 9).WithArguments("bar"),
-                this.CSharpDiagnostic().WithLocation(27, 31).WithArguments("fooBar"),
+                this.CSharpDiagnostic().WithLocation(26, 10).WithArguments("foo"),
+                this.CSharpDiagnostic().WithLocation(27, 9).WithArguments("bar"),
+                this.CSharpDiagnostic().WithLocation(28, 31).WithArguments("fooBar"),
+                this.CSharpDiagnostic().WithLocation(29, 12).WithArguments("iInterface"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
