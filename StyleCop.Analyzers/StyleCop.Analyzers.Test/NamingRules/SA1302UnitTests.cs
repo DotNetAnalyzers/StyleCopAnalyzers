@@ -185,6 +185,160 @@ public class MyNativeMethods
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestInterfaceDeclarationDoesNotStartWithIWithConflictAsync()
+        {
+            string testCode = @"
+public interface Foo
+{
+}
+
+public interface IFoo { }";
+            string fixedCode = @"
+public interface IFoo1
+{
+}
+
+public interface IFoo { }";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 18);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestInterfaceDeclarationDoesNotStartWithIWithMemberConflictAsync()
+        {
+            string testCode = @"
+public interface Foo
+{
+    int IFoo { get; }
+}";
+            string fixedCode = @"
+public interface IFoo1
+{
+    int IFoo { get; }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 18);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestNestedInterfaceDeclarationDoesNotStartWithIWithConflictAsync()
+        {
+            string testCode = @"
+public class Outer
+{
+    public interface Foo
+    {
+    }
+
+    public interface IFoo { }
+}";
+            string fixedCode = @"
+public class Outer
+{
+    public interface IFoo1
+    {
+    }
+
+    public interface IFoo { }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 22);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestNestedInterfaceDeclarationDoesNotStartWithIWithContainingTypeConflictAsync()
+        {
+            string testCode = @"
+public class IFoo
+{
+    public interface Foo
+    {
+    }
+}";
+            string fixedCode = @"
+public class IFoo
+{
+    public interface IFoo1
+    {
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 22);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestNestedInterfaceDeclarationDoesNotStartWithIWithNonInterfaceConflictAsync()
+        {
+            string testCode = @"
+public class Outer
+{
+    public interface Foo
+    {
+    }
+
+    private int IFoo => 0;
+}";
+            string fixedCode = @"
+public class Outer
+{
+    public interface IFoo1
+    {
+    }
+
+    private int IFoo => 0;
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 22);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestInterfaceDeclarationDoesNotStartWithIWithConflictInAnotherAssemblyAsync()
+        {
+            string testCode = @"
+namespace System
+{
+    public interface Disposable
+    {
+    }
+}
+";
+            string fixedCode = @"
+namespace System
+{
+    public interface IDisposable1
+    {
+    }
+}
+";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 22);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1302InterfaceNamesMustBeginWithI();

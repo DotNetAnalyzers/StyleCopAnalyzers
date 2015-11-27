@@ -28,5 +28,43 @@ namespace StyleCop.Analyzers.Helpers
             // TODO: return annotatedSolution instead of newSolution if newSolution contains any new errors (for any project)
             return newSolution;
         }
+
+        public static bool IsValidNewMemberName(SemanticModel semanticModel, ISymbol symbol, string name)
+        {
+            var members = (symbol as INamedTypeSymbol)?.GetMembers(name);
+            if (members.HasValue && !members.Value.IsDefaultOrEmpty)
+            {
+                return false;
+            }
+
+            var containingSymbol = symbol.ContainingSymbol as INamespaceOrTypeSymbol;
+            if (containingSymbol == null)
+            {
+                return true;
+            }
+
+            if (containingSymbol.Kind == SymbolKind.Namespace)
+            {
+                // Make sure to use the compilation namespace so interfaces in referenced assemblies are considered
+                containingSymbol = semanticModel.Compilation.GetCompilationNamespace((INamespaceSymbol)containingSymbol);
+            }
+            else if (containingSymbol.Kind == SymbolKind.NamedType)
+            {
+                // The name can't be the same as the name of the containing type
+                if (containingSymbol.Name == name)
+                {
+                    return false;
+                }
+            }
+
+            // The name can't be the same as the name of an other member of the same type
+            members = containingSymbol.GetMembers(name);
+            if (!members.Value.IsDefaultOrEmpty)
+            {
+                return false;
+            }
+
+            return true;
+        }
     }
 }
