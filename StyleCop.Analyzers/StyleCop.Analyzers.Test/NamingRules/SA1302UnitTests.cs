@@ -209,6 +209,27 @@ public interface IFoo { }";
         }
 
         [Fact]
+        public async Task TestInterfaceDeclarationDoesNotStartWithIWithMemberConflictAsync()
+        {
+            string testCode = @"
+public interface Foo
+{
+    int IFoo { get; }
+}";
+            string fixedCode = @"
+public interface IFoo1
+{
+    int IFoo { get; }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 18);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestNestedInterfaceDeclarationDoesNotStartWithIWithConflictAsync()
         {
             string testCode = @"
@@ -228,6 +249,31 @@ public class Outer
     }
 
     public interface IFoo { }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 22);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestNestedInterfaceDeclarationDoesNotStartWithIWithContainingTypeConflictAsync()
+        {
+            string testCode = @"
+public class IFoo
+{
+    public interface Foo
+    {
+    }
+}";
+            string fixedCode = @"
+public class IFoo
+{
+    public interface IFoo1
+    {
+    }
 }";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 22);
