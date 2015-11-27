@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Helpers
 {
+    using System.Collections.Immutable;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -31,10 +32,19 @@ namespace StyleCop.Analyzers.Helpers
 
         public static bool IsValidNewMemberName(SemanticModel semanticModel, ISymbol symbol, string name)
         {
-            var members = (symbol as INamedTypeSymbol)?.GetMembers(name);
-            if (members.HasValue && !members.Value.IsDefaultOrEmpty)
+            if (symbol.Kind == SymbolKind.NamedType)
             {
-                return false;
+                TypeKind typeKind = ((INamedTypeSymbol)symbol).TypeKind;
+
+                // If the symbol is a class or struct, the name can't be the same as any of its members.
+                if (typeKind == TypeKind.Class || typeKind == TypeKind.Struct)
+                {
+                    var members = (symbol as INamedTypeSymbol)?.GetMembers(name);
+                    if (members.HasValue && !members.Value.IsDefaultOrEmpty)
+                    {
+                        return false;
+                    }
+                }
             }
 
             var containingSymbol = symbol.ContainingSymbol as INamespaceOrTypeSymbol;
@@ -50,16 +60,21 @@ namespace StyleCop.Analyzers.Helpers
             }
             else if (containingSymbol.Kind == SymbolKind.NamedType)
             {
-                // The name can't be the same as the name of the containing type
-                if (containingSymbol.Name == name)
+                TypeKind typeKind = ((INamedTypeSymbol)containingSymbol).TypeKind;
+
+                // If the containing type is a class or struct, the name can't be the same as the name of the containing
+                // type.
+                if ((typeKind == TypeKind.Class || typeKind == TypeKind.Struct)
+                    && containingSymbol.Name == name)
                 {
                     return false;
                 }
             }
 
-            // The name can't be the same as the name of an other member of the same type
-            members = containingSymbol.GetMembers(name);
-            if (!members.Value.IsDefaultOrEmpty)
+            // The name can't be the same as the name of an other member of the same type. At this point no special
+            // consideration is given to overloaded methods.
+            ImmutableArray<ISymbol> siblings = containingSymbol.GetMembers(name);
+            if (!siblings.IsDefaultOrEmpty)
             {
                 return false;
             }
