@@ -186,4 +186,25 @@
   <data name="SA1518CodeFix" xml:space="preserve">
     <value>Fix whitespace at the end of the file</value>
   </data>
+  <data name="SA1518DescriptionAllow" xml:space="preserve">
+    <value>Code must not contain blank lines at the end of the file</value>
+  </data>
+  <data name="SA1518DescriptionOmit" xml:space="preserve">
+    <value>File may not end with a newline character</value>
+  </data>
+  <data name="SA1518DescriptionRequire" xml:space="preserve">
+    <value>File is required to end with a single newline character</value>
+  </data>
+  <data name="SA1518MessageFormatAllow" xml:space="preserve">
+    <value>Code must not contain blank lines at the end of the file</value>
+  </data>
+  <data name="SA1518MessageFormatOmit" xml:space="preserve">
+    <value>File may not end with a newline character</value>
+  </data>
+  <data name="SA1518MessageFormatRequire" xml:space="preserve">
+    <value>File is required to end with a single newline character</value>
+  </data>
+  <data name="SA1518Title" xml:space="preserve">
+    <value>Use line endings correctly at end of file</value>
+  </data>
 </root>

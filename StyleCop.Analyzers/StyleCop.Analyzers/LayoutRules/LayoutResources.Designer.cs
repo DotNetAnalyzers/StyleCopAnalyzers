@@ -267,5 +267,68 @@ namespace StyleCop.Analyzers.LayoutRules {
                 return ResourceManager.GetString("SA1518CodeFix", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Code must not contain blank lines at the end of the file.
+        /// </summary>
+        internal static string SA1518DescriptionAllow {
+            get {
+                return ResourceManager.GetString("SA1518DescriptionAllow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File may not end with a newline character.
+        /// </summary>
+        internal static string SA1518DescriptionOmit {
+            get {
+                return ResourceManager.GetString("SA1518DescriptionOmit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File is required to end with a single newline character.
+        /// </summary>
+        internal static string SA1518DescriptionRequire {
+            get {
+                return ResourceManager.GetString("SA1518DescriptionRequire", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Code must not contain blank lines at the end of the file.
+        /// </summary>
+        internal static string SA1518MessageFormatAllow {
+            get {
+                return ResourceManager.GetString("SA1518MessageFormatAllow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File may not end with a newline character.
+        /// </summary>
+        internal static string SA1518MessageFormatOmit {
+            get {
+                return ResourceManager.GetString("SA1518MessageFormatOmit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File is required to end with a single newline character.
+        /// </summary>
+        internal static string SA1518MessageFormatRequire {
+            get {
+                return ResourceManager.GetString("SA1518MessageFormatRequire", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use line endings correctly at end of file.
+        /// </summary>
+        internal static string SA1518Title {
+            get {
+                return ResourceManager.GetString("SA1518Title", resourceCulture);
+            }
+        }
     }
 }

@@ -22,41 +22,38 @@ namespace StyleCop.Analyzers.LayoutRules
     /// <para>A violation of this rule occurs when one or more blank lines are at the end of the file.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class SA1518CodeMustNotContainBlankLinesAtEndOfFile : DiagnosticAnalyzer
+    internal class SA1518UseLineEndingsCorrectlyAtEndOfFile : DiagnosticAnalyzer
     {
         /// <summary>
-        /// The ID for diagnostics produced by the <see cref="SA1518CodeMustNotContainBlankLinesAtEndOfFile"/> analyzer.
+        /// The ID for diagnostics produced by the <see cref="SA1518UseLineEndingsCorrectlyAtEndOfFile"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1518";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(LayoutResources.SA1518Title), LayoutResources.ResourceManager, typeof(LayoutResources));
 
-        internal static readonly DiagnosticDescriptor DescriptorForAllowSetting =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatForAllowSetting, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, DescriptionForAllowSetting, HelpLink);
+        private static readonly LocalizableString MessageFormatAllow = new LocalizableResourceString(nameof(LayoutResources.SA1518MessageFormatAllow), LayoutResources.ResourceManager, typeof(LayoutResources));
+        private static readonly LocalizableString DescriptionAllow = new LocalizableResourceString(nameof(LayoutResources.SA1518DescriptionAllow), LayoutResources.ResourceManager, typeof(LayoutResources));
+        private static readonly LocalizableString MessageFormatRequire = new LocalizableResourceString(nameof(LayoutResources.SA1518MessageFormatRequire), LayoutResources.ResourceManager, typeof(LayoutResources));
+        private static readonly LocalizableString DescriptionRequire = new LocalizableResourceString(nameof(LayoutResources.SA1518DescriptionRequire), LayoutResources.ResourceManager, typeof(LayoutResources));
+        private static readonly LocalizableString MessageFormatOmit = new LocalizableResourceString(nameof(LayoutResources.SA1518MessageFormatOmit), LayoutResources.ResourceManager, typeof(LayoutResources));
+        private static readonly LocalizableString DescriptionOmit = new LocalizableResourceString(nameof(LayoutResources.SA1518DescriptionOmit), LayoutResources.ResourceManager, typeof(LayoutResources));
 
-        internal static readonly DiagnosticDescriptor DescriptorForRequireSetting =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatForRequireSetting, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, DescriptionForRequireSetting, HelpLink);
-
-        internal static readonly DiagnosticDescriptor DescriptorForOmitSetting =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatForOmitSetting, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, DescriptionForOmitSetting, HelpLink);
-
-        private const string Title = "Use line endings correctly at the end of the file";
-
-        private const string MessageFormatForAllowSetting = "Code must not contain blank lines at the end of the file";
-        private const string DescriptionForAllowSetting = "Code must not contain blank lines at the end of the file";
-
-        private const string MessageFormatForRequireSetting = "Code is required to end with a single newline character";
-        private const string DescriptionForRequireSetting = "Code is required to end with a single newline character";
-
-        private const string MessageFormatForOmitSetting = "Code may not end with a newline character";
-        private const string DescriptionForOmitSetting = "Code may not end with a newline character";
-
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1518.md";
+        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1518.md";
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxTreeAnalysisContext, StyleCopSettings> SyntaxTreeAction = HandleSyntaxTree;
 
+        public static DiagnosticDescriptor DescriptorAllow { get; } =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatAllow, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, DescriptionAllow, HelpLink);
+
+        public static DiagnosticDescriptor DescriptorRequire { get; } =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatRequire, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, DescriptionRequire, HelpLink);
+
+        public static DiagnosticDescriptor DescriptorOmit { get; } =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatOmit, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, DescriptionOmit, HelpLink);
+
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-            ImmutableArray.Create(DescriptorForAllowSetting);
+            ImmutableArray.Create(DescriptorAllow);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -156,7 +153,7 @@ namespace StyleCop.Analyzers.LayoutRules
                     return;
                 }
 
-                descriptorToReport = DescriptorForOmitSetting;
+                descriptorToReport = DescriptorOmit;
                 break;
 
             case EndOfFileHandling.Require:
@@ -165,7 +162,7 @@ namespace StyleCop.Analyzers.LayoutRules
                     return;
                 }
 
-                descriptorToReport = DescriptorForRequireSetting;
+                descriptorToReport = DescriptorRequire;
                 break;
 
             case EndOfFileHandling.Allow:
@@ -180,7 +177,7 @@ namespace StyleCop.Analyzers.LayoutRules
                     }
                 }
 
-                descriptorToReport = DescriptorForAllowSetting;
+                descriptorToReport = DescriptorAllow;
                 break;
             }
 
