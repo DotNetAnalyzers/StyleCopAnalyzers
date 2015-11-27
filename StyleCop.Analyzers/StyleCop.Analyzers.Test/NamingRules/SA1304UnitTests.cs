@@ -80,6 +80,50 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [Fact]
+        public async Task TestInternalReadonlyFieldStartingWithLowerCaseWithConflictAsync()
+        {
+            var testCode = @"public class Foo
+{
+    internal readonly string bar = ""baz"";
+    public string Bar => this.bar;
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 30);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedCode = @"public class Foo
+{
+    internal readonly string BarValue = ""baz"";
+    public string Bar => this.BarValue;
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestInternalReadonlyFieldStartingWithLowerCaseWithTwoConflictsAsync()
+        {
+            var testCode = @"public class Foo
+{
+    internal readonly string bar = ""baz"";
+    public string Bar => this.bar;
+    public string BarValue => this.bar;
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 30);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedCode = @"public class Foo
+{
+    internal readonly string Bar1 = ""baz"";
+    public string Bar => this.Bar1;
+    public string BarValue => this.Bar1;
+}";
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestInternalReadonlyFieldStartingWithUpperCaseAsync()
         {
             var testCode = @"public class Foo
