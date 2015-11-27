@@ -69,6 +69,11 @@ namespace StyleCop.Analyzers.SpacingRules
                     HandleWhitespaceTrivia(context, trivia);
                     break;
 
+                case SyntaxKind.SingleLineDocumentationCommentTrivia:
+                case SyntaxKind.MultiLineDocumentationCommentTrivia:
+                    HandleDocumentationCommentTrivia(context, trivia);
+                    break;
+
                 default:
                     break;
                 }
@@ -92,6 +97,35 @@ namespace StyleCop.Analyzers.SpacingRules
 
             // Tabs must not be used.
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, trivia.GetLocation()));
+        }
+
+        private static void HandleWhitespaceToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
+        {
+            string fullString = token.ToFullString();
+            if (fullString.IndexOf('\t') < 0)
+            {
+                // No hard tabs were found.
+                return;
+            }
+
+            // Tabs must not be used.
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));
+        }
+
+        private static void HandleDocumentationCommentTrivia(SyntaxTreeAnalysisContext context, SyntaxTrivia trivia)
+        {
+            foreach (var token in trivia.GetStructure().DescendantTokens(descendIntoTrivia: true))
+            {
+                switch (token.Kind())
+                {
+                case SyntaxKind.XmlTextLiteralToken:
+                    HandleWhitespaceToken(context, token);
+                    break;
+
+                default:
+                    break;
+                }
+            }
         }
     }
 }
