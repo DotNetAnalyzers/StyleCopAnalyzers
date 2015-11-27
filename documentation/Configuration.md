@@ -29,6 +29,7 @@ A JSON schema is available for **stylecop.json**. By including a reference in **
 ```
 
 > :bulb: The code fix described previously automatically configures **stylecop.json** to reference the schema.
+> If the schema appears to be out-of-date in Visual Studio, right click anywhere in the **stylecop.json** document and then select **Reload Schemas**.
 
 ### Source Control
 
