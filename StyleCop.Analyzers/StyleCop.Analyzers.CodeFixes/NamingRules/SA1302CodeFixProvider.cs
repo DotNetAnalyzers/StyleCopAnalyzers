@@ -5,6 +5,8 @@ namespace StyleCop.Analyzers.NamingRules
 {
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
     using Helpers;
     using Microsoft.CodeAnalysis;
@@ -27,22 +29,43 @@ namespace StyleCop.Analyzers.NamingRules
             ImmutableArray.Create(SA1302InterfaceNamesMustBeginWithI.DiagnosticId);
 
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var document = context.Document;
-            var root = await document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-
             foreach (var diagnostic in context.Diagnostics)
             {
-                var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
-                var newName = "I" + token.ValueText;
                 context.RegisterCodeFix(
                     CodeAction.Create(
-                        string.Format(NamingResources.RenameToCodeFix, newName),
-                        cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken),
+                        NamingResources.SA1302CodeFix,
+                        cancellationToken => CreateChangedSolutionAsync(context.Document, diagnostic, cancellationToken),
                         nameof(SA1302CodeFixProvider)),
                     diagnostic);
             }
+
+            return SpecializedTasks.CompletedTask;
+        }
+
+        private static async Task<Solution> CreateChangedSolutionAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+        {
+            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
+            var baseName = "I" + token.ValueText;
+            var index = 0;
+            var newName = baseName;
+
+            var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+            var declaredSymbol = semanticModel.GetDeclaredSymbol(token.Parent, cancellationToken);
+            INamedTypeSymbol interfaceType = declaredSymbol as INamedTypeSymbol;
+            if (interfaceType != null)
+            {
+                var containingNamespace = semanticModel.Compilation.GetCompilationNamespace(interfaceType.ContainingNamespace);
+                while (containingNamespace.GetMembers(newName).Any())
+                {
+                    index++;
+                    newName = baseName + index;
+                }
+            }
+
+            return await RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken).ConfigureAwait(false);
         }
     }
 }
