@@ -209,6 +209,64 @@ public interface IFoo { }";
         }
 
         [Fact]
+        public async Task TestNestedInterfaceDeclarationDoesNotStartWithIWithConflictAsync()
+        {
+            string testCode = @"
+public class Outer
+{
+    public interface Foo
+    {
+    }
+
+    public interface IFoo { }
+}";
+            string fixedCode = @"
+public class Outer
+{
+    public interface IFoo1
+    {
+    }
+
+    public interface IFoo { }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 22);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestNestedInterfaceDeclarationDoesNotStartWithIWithNonInterfaceConflictAsync()
+        {
+            string testCode = @"
+public class Outer
+{
+    public interface Foo
+    {
+    }
+
+    private int IFoo => 0;
+}";
+            string fixedCode = @"
+public class Outer
+{
+    public interface IFoo1
+    {
+    }
+
+    private int IFoo => 0;
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 22);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestInterfaceDeclarationDoesNotStartWithIWithConflictInAnotherAssemblyAsync()
         {
             string testCode = @"

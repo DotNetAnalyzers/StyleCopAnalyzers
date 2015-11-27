@@ -57,11 +57,21 @@ namespace StyleCop.Analyzers.NamingRules
             INamedTypeSymbol interfaceType = declaredSymbol as INamedTypeSymbol;
             if (interfaceType != null)
             {
-                var containingNamespace = semanticModel.Compilation.GetCompilationNamespace(interfaceType.ContainingNamespace);
-                while (containingNamespace.GetMembers(newName).Any())
+                var containingSymbol = interfaceType.ContainingSymbol as INamespaceOrTypeSymbol;
+                var containingNamespace = containingSymbol as INamespaceSymbol;
+                if (containingNamespace != null)
                 {
-                    index++;
-                    newName = baseName + index;
+                    // Make sure to use the compilation namespace so interfaces in referenced assemblies are considered
+                    containingSymbol = semanticModel.Compilation.GetCompilationNamespace(containingNamespace);
+                }
+
+                if (containingSymbol != null)
+                {
+                    while (containingSymbol.GetMembers(newName).Any())
+                    {
+                        index++;
+                        newName = baseName + index;
+                    }
                 }
             }
 
