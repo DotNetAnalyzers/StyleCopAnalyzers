@@ -48,6 +48,7 @@ namespace StyleCop.Analyzers.NamingRules
         private static readonly Action<SyntaxNodeAnalysisContext> NamespaceDeclarationAction = HandleNamespaceDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> ClassDeclarationAction = HandleClassDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> EnumDeclarationAction = HandleEnumDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> EnumMemberDeclarationAction = HandleEnumMemberDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> StructDeclarationAction = HandleStructDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> DelegateDeclarationAction = HandleDelegateDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> EventDeclarationAction = HandleEventDeclaration;
@@ -72,6 +73,7 @@ namespace StyleCop.Analyzers.NamingRules
             context.RegisterSyntaxNodeActionHonorExclusions(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(ClassDeclarationAction, SyntaxKind.ClassDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(EnumDeclarationAction, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(EnumMemberDeclarationAction, SyntaxKind.EnumMemberDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(StructDeclarationAction, SyntaxKind.StructDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(DelegateDeclarationAction, SyntaxKind.DelegateDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(EventDeclarationAction, SyntaxKind.EventDeclaration);
@@ -119,6 +121,11 @@ namespace StyleCop.Analyzers.NamingRules
         private static void HandleEnumDeclaration(SyntaxNodeAnalysisContext context)
         {
             CheckElementNameToken(context, ((EnumDeclarationSyntax)context.Node).Identifier);
+        }
+
+        private static void HandleEnumMemberDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            CheckElementNameToken(context, ((EnumMemberDeclarationSyntax)context.Node).Identifier);
         }
 
         private static void HandleStructDeclaration(SyntaxNodeAnalysisContext context)
