@@ -28,23 +28,28 @@ namespace StyleCop.Analyzers.LayoutRules
         /// The ID for diagnostics produced by the <see cref="SA1518CodeMustNotContainBlankLinesAtEndOfFile"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1518";
-        private const string TitleForAllowSetting = "Code must not contain blank lines at end of file";
+
+        private const string Title = "Fix blank lines at the end of the file";
+
         private const string MessageFormatForAllowSetting = "Code must not contain blank lines at end of file";
-        private const string TitleForRequireSetting = "Code is required to end with a single newline character";
+        private const string DescriptionForAllowSetting = "Code must not contain blank lines at end of file";
+
         private const string MessageFormatForRequireSetting = "Code is required to end with a single newline character";
-        private const string TitleForOmitSetting = "Code may not end with a newline character";
+        private const string DescriptionForRequireSetting = "Code is required to end with a single newline character";
+
         private const string MessageFormatForOmitSetting = "Code may not end with a newline character";
-        private const string Description = "Fix blank lines at the end of the file.";
+        private const string DescriptionForOmitSetting = "Code may not end with a newline character";
+
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1518.md";
 
         private static readonly DiagnosticDescriptor DescriptorForAllowSetting =
-            new DiagnosticDescriptor(DiagnosticId, TitleForAllowSetting, MessageFormatForAllowSetting, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatForAllowSetting, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, DescriptionForAllowSetting, HelpLink);
 
         private static readonly DiagnosticDescriptor DescriptorForRequireSetting =
-            new DiagnosticDescriptor(DiagnosticId, TitleForRequireSetting, MessageFormatForRequireSetting, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatForRequireSetting, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, DescriptionForRequireSetting, HelpLink);
 
         private static readonly DiagnosticDescriptor DescriptorForOmitSetting =
-            new DiagnosticDescriptor(DiagnosticId, TitleForOmitSetting, MessageFormatForOmitSetting, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatForOmitSetting, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, DescriptionForOmitSetting, HelpLink);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxTreeAnalysisContext, StyleCopSettings> SyntaxTreeAction = HandleSyntaxTree;
