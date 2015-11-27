@@ -6,7 +6,6 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -16,7 +15,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1518CodeMustNotContainBlankLinesAtEndOfFile"/>.
+    /// Unit tests for <see cref="SA1518UseLineEndingsCorrectlyAtEndOfFile"/>.
     /// </summary>
     public class SA1518UnitTests : CodeFixVerifier
     {
@@ -428,7 +427,7 @@ public class Foo
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1518CodeMustNotContainBlankLinesAtEndOfFile();
+            yield return new SA1518UseLineEndingsCorrectlyAtEndOfFile();
         }
 
         /// <inheritdoc/>
@@ -441,14 +440,16 @@ public class Foo
         {
             switch (endOfFileHandling)
             {
-                case EndOfFileHandling.Require:
-                    return SA1518CodeMustNotContainBlankLinesAtEndOfFile.DescriptorForRequireSetting;
-                case EndOfFileHandling.Omit:
-                    return SA1518CodeMustNotContainBlankLinesAtEndOfFile.DescriptorForOmitSetting;
-                case EndOfFileHandling.Allow:
-                case null:
-                default:
-                    return SA1518CodeMustNotContainBlankLinesAtEndOfFile.DescriptorForAllowSetting;
+            case EndOfFileHandling.Require:
+                return SA1518UseLineEndingsCorrectlyAtEndOfFile.DescriptorRequire;
+
+            case EndOfFileHandling.Omit:
+                return SA1518UseLineEndingsCorrectlyAtEndOfFile.DescriptorOmit;
+
+            case EndOfFileHandling.Allow:
+            case null:
+            default:
+                return SA1518UseLineEndingsCorrectlyAtEndOfFile.DescriptorAllow;
             }
         }
     }

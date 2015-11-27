@@ -160,7 +160,7 @@
     <Compile Include="LayoutRules\SA1515SingleLineCommentMustBePrecededByBlankLine.cs" />
     <Compile Include="LayoutRules\SA1516ElementsMustBeSeparatedByBlankLine.cs" />
     <Compile Include="LayoutRules\SA1517CodeMustNotContainBlankLinesAtStartOfFile.cs" />
-    <Compile Include="LayoutRules\SA1518CodeMustNotContainBlankLinesAtEndOfFile.cs" />
+    <Compile Include="LayoutRules\SA1518UseLineEndingsCorrectlyAtEndOfFile.cs" />
     <Compile Include="LayoutRules\SA1519BracesMustNotBeOmittedFromMultiLineChildStatement.cs" />
     <Compile Include="LayoutRules\SA1520UseBracesConsistently.cs" />
     <Compile Include="LinqHelpers\SyntaxTriviaListEnumerable.cs" />
