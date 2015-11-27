@@ -57,19 +57,14 @@ namespace StyleCop.Analyzers.OrderingRules
         {
             var typeDeclarationNode = (TypeDeclarationSyntax)context.Node;
 
-            if (ContainsModifier(typeDeclarationNode.Modifiers, SyntaxKind.PartialKeyword))
+            if (typeDeclarationNode.Modifiers.Any(SyntaxKind.PartialKeyword))
             {
-                if (!ContainsModifier(typeDeclarationNode.Modifiers, SyntaxKind.PublicKeyword) &&
-                    !ContainsModifier(typeDeclarationNode.Modifiers, SyntaxKind.InternalKeyword))
+                if (!typeDeclarationNode.Modifiers.Any(SyntaxKind.PublicKeyword)
+                    && !typeDeclarationNode.Modifiers.Any(SyntaxKind.InternalKeyword))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, typeDeclarationNode.Identifier.GetLocation()));
                 }
             }
-        }
-
-        private static bool ContainsModifier(SyntaxTokenList modifiers, SyntaxKind expectedKeyword)
-        {
-            return modifiers.Any(modifier => modifier.Kind() == expectedKeyword);
         }
     }
 }
