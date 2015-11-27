@@ -6,7 +6,6 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -441,14 +440,16 @@ public class Foo
         {
             switch (endOfFileHandling)
             {
-                case EndOfFileHandling.Require:
-                    return SA1518UseLineEndingsCorrectlyAtEndOfFile.DescriptorRequire;
-                case EndOfFileHandling.Omit:
-                    return SA1518UseLineEndingsCorrectlyAtEndOfFile.DescriptorOmit;
-                case EndOfFileHandling.Allow:
-                case null:
-                default:
-                    return SA1518UseLineEndingsCorrectlyAtEndOfFile.DescriptorAllow;
+            case EndOfFileHandling.Require:
+                return SA1518UseLineEndingsCorrectlyAtEndOfFile.DescriptorRequire;
+
+            case EndOfFileHandling.Omit:
+                return SA1518UseLineEndingsCorrectlyAtEndOfFile.DescriptorOmit;
+
+            case EndOfFileHandling.Allow:
+            case null:
+            default:
+                return SA1518UseLineEndingsCorrectlyAtEndOfFile.DescriptorAllow;
             }
         }
     }
