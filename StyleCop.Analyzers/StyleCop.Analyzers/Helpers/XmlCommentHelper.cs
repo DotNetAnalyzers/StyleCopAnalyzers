@@ -3,8 +3,6 @@
 
 namespace StyleCop.Analyzers.Helpers
 {
-    using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
@@ -161,6 +159,32 @@ namespace StyleCop.Analyzers.Helpers
             var commentTrivia = node.GetDocumentationCommentTriviaSyntax();
 
             return commentTrivia != null && !IsMissingOrEmpty(commentTrivia.ParentTrivia);
+        }
+
+        internal static string GetText(XmlNodeSyntax nodeSyntax, bool normalizeWhitespace = false)
+        {
+            var xmlTextSyntax = nodeSyntax as XmlTextSyntax;
+
+            if (xmlTextSyntax != null)
+            {
+                return GetText(xmlTextSyntax, normalizeWhitespace);
+            }
+
+            var xmlElementSyntax = nodeSyntax as XmlElementSyntax;
+
+            if (xmlElementSyntax != null)
+            {
+                var stringBuilder = StringBuilderPool.Allocate();
+
+                foreach (var node in xmlElementSyntax.Content)
+                {
+                    stringBuilder.Append(GetText(node, normalizeWhitespace));
+                }
+
+                return StringBuilderPool.ReturnAndFree(stringBuilder);
+            }
+
+            return null;
         }
 
         internal static string GetText(XmlTextSyntax textElement)
