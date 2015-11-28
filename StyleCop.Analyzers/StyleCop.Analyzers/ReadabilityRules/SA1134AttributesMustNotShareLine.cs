@@ -63,9 +63,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
             AttributeListSyntax attributeList = (AttributeListSyntax)context.Node;
             bool violation = false;
 
-            if (attributeList.Parent.IsKind(SyntaxKind.Parameter))
+            if (attributeList.Parent.IsKind(SyntaxKind.Parameter) || attributeList.Parent.IsKind(SyntaxKind.TypeParameter))
             {
-                // no analysis required for parameters
+                // no analysis required for parameters or type (generic) parameters
                 return;
             }
 

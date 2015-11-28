@@ -139,6 +139,42 @@ using System.Runtime.InteropServices;
         }
 
         /// <summary>
+        /// Verifies that multiple attributes on the same line, directly in front of a namespace declaration will produce the expected diagnostic.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyMultipleAttributesBeforeNamespaceAsync()
+        {
+            var testCode = @"using System;
+using System.Runtime.InteropServices;
+
+[assembly:CLSCompliant(false)][assembly:ComVisible(true)]
+namespace TestNamespace
+{
+}
+";
+
+            var fixedTestCode = @"using System;
+using System.Runtime.InteropServices;
+
+[assembly:CLSCompliant(false)]
+[assembly:ComVisible(true)]
+namespace TestNamespace
+{
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(4, 31)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that multiple attributes on the same line for module level will produce the expected diagnostic.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
@@ -364,6 +400,33 @@ namespace TestNamespace
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that multiple attributes on the same line for a generic parameter will produce the expected diagnostic.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyMultipleAttributesOnSameLineForGenericParameterAsync()
+        {
+            var testCode = @"using System;
+
+namespace TestNamespace
+{
+    [AttributeUsage(System.AttributeTargets.All, AllowMultiple = true)]
+    public sealed class TestAttribute : Attribute
+    {
+        public string Param { get; private set; }
+        public TestAttribute(string param) { Param = param; }
+    }
+
+    public class TestClass<[Test(""Test1"")][Test(""Test2"")]T>
+    {
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
