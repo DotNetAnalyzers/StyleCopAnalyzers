@@ -54,7 +54,7 @@ namespace StyleCop.Analyzers.NamingRules
 
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             var declaredSymbol = semanticModel.GetDeclaredSymbol(token.Parent, cancellationToken);
-            while (!RenameHelper.IsValidNewMemberName(semanticModel, declaredSymbol, newName))
+            while (!await RenameHelper.IsValidNewMemberNameAsync(semanticModel, declaredSymbol, newName, cancellationToken).ConfigureAwait(false))
             {
                 index++;
                 newName = baseName + index;
