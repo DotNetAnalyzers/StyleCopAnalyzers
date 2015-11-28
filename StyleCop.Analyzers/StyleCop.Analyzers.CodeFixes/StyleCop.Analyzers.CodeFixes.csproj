@@ -95,6 +95,7 @@
     <Compile Include="MaintainabilityRules\SA1410SA1411CodeFixProvider.cs" />
     <Compile Include="MaintainabilityRules\SA1412CodeFixProvider.cs" />
     <Compile Include="MaintainabilityRules\SA1412FixAllProvider.cs" />
+    <Compile Include="MaintainabilityRules\SA1653CodeFixProvider.cs" />
     <Compile Include="NamingRules\RenameToLowerCaseCodeFixProvider.cs" />
     <Compile Include="NamingRules\RenameToUpperCaseCodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1302CodeFixProvider.cs" />
