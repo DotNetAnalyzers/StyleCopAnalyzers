@@ -191,7 +191,7 @@ public class TypeName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1315")]
+        [Fact]
         public async Task TestRenameConflictsWithVariableAsync()
         {
             var testCode = @"public class TypeName
@@ -203,7 +203,7 @@ public class TypeName
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("Variable").WithLocation(5, 16);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("Variable").WithLocation(6, 16);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
@@ -212,7 +212,7 @@ public class TypeName
     public void MethodName()
     {
         string variable = ""Text"";
-        string variableValue = variable.ToString();
+        string variable1 = variable.ToString();
     }
 }";
 
@@ -247,7 +247,7 @@ public class TypeName
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1315")]
+        [Fact]
         public async Task TestRenameConflictsWithParameterAsync()
         {
             var testCode = @"public class TypeName
@@ -266,7 +266,7 @@ public class TypeName
 {
     public void MethodName(int parameter)
     {
-        string parameterValue = parameter.ToString();
+        string parameter1 = parameter.ToString();
     }
 }";
 

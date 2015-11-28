@@ -57,7 +57,7 @@ namespace StyleCop.Analyzers.NamingRules
                 var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
                 var baseName = char.ToUpper(token.ValueText[0]) + token.ValueText.Substring(1);
                 var newName = baseName;
-                var memberSyntax = GetParentTypeDeclaration(token);
+                var memberSyntax = RenameHelper.GetParentDeclaration(token);
 
                 if (memberSyntax is NamespaceDeclarationSyntax)
                 {
@@ -90,14 +90,14 @@ namespace StyleCop.Analyzers.NamingRules
                     }
 
                     bool usedSuffix = false;
-                    if (declaredSymbol.Kind == SymbolKind.Field && !RenameHelper.IsValidNewMemberName(semanticModel, declaredSymbol, newName))
+                    if (declaredSymbol.Kind == SymbolKind.Field && !await RenameHelper.IsValidNewMemberNameAsync(semanticModel, declaredSymbol, newName, context.CancellationToken).ConfigureAwait(false))
                     {
                         usedSuffix = true;
                         newName = newName + Suffix;
                     }
 
                     int index = 0;
-                    while (!RenameHelper.IsValidNewMemberName(semanticModel, declaredSymbol, newName))
+                    while (!await RenameHelper.IsValidNewMemberNameAsync(semanticModel, declaredSymbol, newName, context.CancellationToken).ConfigureAwait(false))
                     {
                         usedSuffix = false;
                         index++;
@@ -112,25 +112,6 @@ namespace StyleCop.Analyzers.NamingRules
                         diagnostic);
                 }
             }
-        }
-
-        private static SyntaxNode GetParentTypeDeclaration(SyntaxToken token)
-        {
-            SyntaxNode parent = token.Parent;
-
-            while (parent != null)
-            {
-                var declarationParent = parent as MemberDeclarationSyntax
-                    ?? (SyntaxNode)(parent as VariableDeclaratorSyntax);
-                if (declarationParent != null)
-                {
-                    return declarationParent;
-                }
-
-                parent = parent.Parent;
-            }
-
-            return null;
         }
     }
 }
