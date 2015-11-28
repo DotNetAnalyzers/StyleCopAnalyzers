@@ -323,6 +323,50 @@ public class Test { }";
         }
 
         [Fact]
+        public async Task TestLowerCaseEnumMemberWithTwoConflictsAsync()
+        {
+            var testCode = @"public enum Test
+{
+    member,
+    Member,
+    Member1,
+}";
+            var fixedCode = @"public enum Test
+{
+    Member2,
+    Member,
+    Member1,
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("member").WithLocation(3, 5);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestLowerCaseEnumMemberWithNumberAndConflictAsync()
+        {
+            var testCode = @"public enum Test
+{
+    member1,
+    Member1
+}";
+            var fixedCode = @"public enum Test
+{
+    Member11,
+    Member1
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("member1").WithLocation(3, 5);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestUpperCaseDelegateAsync()
         {
             var testCode = @"public class TestClass
