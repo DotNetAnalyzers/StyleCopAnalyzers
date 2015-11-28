@@ -3,9 +3,11 @@
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using Helpers;
+    using Helpers.ObjectPools;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -73,6 +75,10 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
+        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> DocumentationTriviaAction = HandleDocumentationTrivia;
+        private static readonly ImmutableArray<SyntaxKind> DocumentationSyntaxKinds = ImmutableArray.Create(SyntaxKind.SingleLineDocumentationCommentTrivia, SyntaxKind.MultiLineDocumentationCommentTrivia);
+
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(Descriptor);
@@ -80,26 +86,26 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(HandleCompilationStart);
+            context.RegisterCompilationStartAction(CompilationStartAction);
         }
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleDocumentationTrivia, SyntaxKind.SingleLineDocumentationCommentTrivia);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleDocumentationTrivia, SyntaxKind.MultiLineDocumentationCommentTrivia);
+            context.RegisterSyntaxNodeActionHonorExclusions(DocumentationTriviaAction, DocumentationSyntaxKinds);
         }
 
         private static void HandleDocumentationTrivia(SyntaxNodeAnalysisContext context)
         {
             DocumentationCommentTriviaSyntax syntax = context.Node as DocumentationCommentTriviaSyntax;
 
-            HashSet<string> documentationTexts = new HashSet<string>();
+            var objectPool = SharedPools.Default<HashSet<string>>();
+            HashSet<string> documentationTexts = objectPool.Allocate();
 
             foreach (var content in syntax.Content)
             {
-                string text = XmlCommentHelper.GetText(content, true).Trim();
+                string text = XmlCommentHelper.GetText(content, true)?.Trim();
 
-                if (string.IsNullOrWhiteSpace(text) || string.Equals(text, ParameterNotUsed, System.StringComparison.Ordinal))
+                if (string.IsNullOrWhiteSpace(text) || string.Equals(text, ParameterNotUsed, StringComparison.Ordinal))
                 {
                     continue;
                 }
@@ -114,6 +120,8 @@ namespace StyleCop.Analyzers.DocumentationRules
                     documentationTexts.Add(text);
                 }
             }
+
+            objectPool.ClearAndFree(documentationTexts);
         }
     }
 }

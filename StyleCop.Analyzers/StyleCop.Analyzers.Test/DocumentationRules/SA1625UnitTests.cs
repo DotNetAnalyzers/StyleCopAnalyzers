@@ -50,6 +50,20 @@ public class TestClass
 
         [Theory]
         [MemberData(nameof(Members))]
+        public async Task VerifyThatTheAnalyzerDoesNotCrashOnInheritDocAsync(string member)
+        {
+            var testCode = $@"
+public class TestClass
+{{
+    /// <inheritdoc/>
+    {member}
+}}
+";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(Members))]
         public async Task VerifyThatDublicatedDocumentationDoesReportADiagnosticAsync(string member)
         {
             var testCode = $@"
