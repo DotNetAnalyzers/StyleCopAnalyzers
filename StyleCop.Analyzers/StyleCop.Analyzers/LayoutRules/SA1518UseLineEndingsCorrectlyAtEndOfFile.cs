@@ -22,26 +22,38 @@ namespace StyleCop.Analyzers.LayoutRules
     /// <para>A violation of this rule occurs when one or more blank lines are at the end of the file.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class SA1518CodeMustNotContainBlankLinesAtEndOfFile : DiagnosticAnalyzer
+    internal class SA1518UseLineEndingsCorrectlyAtEndOfFile : DiagnosticAnalyzer
     {
         /// <summary>
-        /// The ID for diagnostics produced by the <see cref="SA1518CodeMustNotContainBlankLinesAtEndOfFile"/> analyzer.
+        /// The ID for diagnostics produced by the <see cref="SA1518UseLineEndingsCorrectlyAtEndOfFile"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1518";
-        private const string Title = "Code must not contain blank lines at end of file";
-        private const string MessageFormat = "Code must not contain blank lines at end of file";
-        private const string Description = "The code file has blank lines at the end.";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1518.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(LayoutResources.SA1518Title), LayoutResources.ResourceManager, typeof(LayoutResources));
 
-        private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+        private static readonly LocalizableString MessageFormatAllow = new LocalizableResourceString(nameof(LayoutResources.SA1518MessageFormatAllow), LayoutResources.ResourceManager, typeof(LayoutResources));
+        private static readonly LocalizableString DescriptionAllow = new LocalizableResourceString(nameof(LayoutResources.SA1518DescriptionAllow), LayoutResources.ResourceManager, typeof(LayoutResources));
+        private static readonly LocalizableString MessageFormatRequire = new LocalizableResourceString(nameof(LayoutResources.SA1518MessageFormatRequire), LayoutResources.ResourceManager, typeof(LayoutResources));
+        private static readonly LocalizableString DescriptionRequire = new LocalizableResourceString(nameof(LayoutResources.SA1518DescriptionRequire), LayoutResources.ResourceManager, typeof(LayoutResources));
+        private static readonly LocalizableString MessageFormatOmit = new LocalizableResourceString(nameof(LayoutResources.SA1518MessageFormatOmit), LayoutResources.ResourceManager, typeof(LayoutResources));
+        private static readonly LocalizableString DescriptionOmit = new LocalizableResourceString(nameof(LayoutResources.SA1518DescriptionOmit), LayoutResources.ResourceManager, typeof(LayoutResources));
+
+        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1518.md";
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxTreeAnalysisContext, StyleCopSettings> SyntaxTreeAction = HandleSyntaxTree;
 
+        public static DiagnosticDescriptor DescriptorAllow { get; } =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatAllow, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, DescriptionAllow, HelpLink);
+
+        public static DiagnosticDescriptor DescriptorRequire { get; } =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatRequire, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, DescriptionRequire, HelpLink);
+
+        public static DiagnosticDescriptor DescriptorOmit { get; } =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatOmit, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, DescriptionOmit, HelpLink);
+
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-            ImmutableArray.Create(Descriptor);
+            ImmutableArray.Create(DescriptorAllow);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -131,6 +143,8 @@ namespace StyleCop.Analyzers.LayoutRules
             string trailingWhitespaceText = sourceText.ToString(reportedSpan);
             int firstNewline = trailingWhitespaceText.IndexOf('\n');
             int secondNewline = firstNewline >= 0 ? trailingWhitespaceText.IndexOf('\n', firstNewline + 1) : -1;
+
+            DiagnosticDescriptor descriptorToReport;
             switch (settings.LayoutRules.NewlineAtEndOfFile)
             {
             case EndOfFileHandling.Omit:
@@ -139,6 +153,7 @@ namespace StyleCop.Analyzers.LayoutRules
                     return;
                 }
 
+                descriptorToReport = DescriptorOmit;
                 break;
 
             case EndOfFileHandling.Require:
@@ -147,6 +162,7 @@ namespace StyleCop.Analyzers.LayoutRules
                     return;
                 }
 
+                descriptorToReport = DescriptorRequire;
                 break;
 
             case EndOfFileHandling.Allow:
@@ -161,10 +177,11 @@ namespace StyleCop.Analyzers.LayoutRules
                     }
                 }
 
+                descriptorToReport = DescriptorAllow;
                 break;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, Location.Create(context.Tree, reportedSpan)));
+            context.ReportDiagnostic(Diagnostic.Create(descriptorToReport, Location.Create(context.Tree, reportedSpan)));
         }
     }
 }
