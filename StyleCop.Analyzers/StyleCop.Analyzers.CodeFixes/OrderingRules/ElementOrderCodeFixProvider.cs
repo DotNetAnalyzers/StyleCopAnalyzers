@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.OrderingRules
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
@@ -78,37 +79,57 @@ namespace StyleCop.Analyzers.OrderingRules
             var parentDeclaration = memberDeclaration.Parent;
             var memberToMove = new MemberOrderHelper(memberDeclaration, elementOrder);
 
-            if (parentDeclaration is TypeDeclarationSyntax)
-            {
-                return HandleTypeDeclaration(memberToMove, (TypeDeclarationSyntax)parentDeclaration, elementOrder, syntaxRoot, indentationOptions);
-            }
-
-            if (parentDeclaration is NamespaceDeclarationSyntax)
-            {
-                return HandleNamespaceDeclaration(memberToMove, (NamespaceDeclarationSyntax)parentDeclaration, elementOrder, syntaxRoot, indentationOptions);
-            }
-
-            if (parentDeclaration is CompilationUnitSyntax)
-            {
-                return HandleCompilationUnitDeclaration(memberToMove, (CompilationUnitSyntax)parentDeclaration, elementOrder, syntaxRoot, indentationOptions);
-            }
-
-            return syntaxRoot;
+            return OrderMember(memberToMove, GetMembers(parentDeclaration), elementOrder, syntaxRoot, indentationOptions);
         }
 
-        private static SyntaxNode HandleTypeDeclaration(MemberOrderHelper memberOrder, TypeDeclarationSyntax typeDeclarationNode, ImmutableArray<OrderingTrait> elementOrder, SyntaxNode syntaxRoot, IndentationOptions indentationOptions)
+        private static SyntaxList<MemberDeclarationSyntax> GetMembers(SyntaxNode node)
         {
-            return OrderMember(memberOrder, typeDeclarationNode.Members, elementOrder, syntaxRoot, indentationOptions);
+            if (node is TypeDeclarationSyntax)
+            {
+                return ((TypeDeclarationSyntax)node).Members;
+            }
+
+            if (node is NamespaceDeclarationSyntax)
+            {
+                return ((NamespaceDeclarationSyntax)node).Members;
+            }
+
+            if (node is CompilationUnitSyntax)
+            {
+                return ((CompilationUnitSyntax)node).Members;
+            }
+
+            throw new ArgumentException($"{nameof(node)} does not have a member list", nameof(node));
         }
 
-        private static SyntaxNode HandleCompilationUnitDeclaration(MemberOrderHelper memberOrder, CompilationUnitSyntax compilationUnitDeclaration, ImmutableArray<OrderingTrait> elementOrder, SyntaxNode syntaxRoot, IndentationOptions indentationOptions)
+        private static SyntaxNode WithMembers(SyntaxNode node, SyntaxList<MemberDeclarationSyntax> members)
         {
-            return OrderMember(memberOrder, compilationUnitDeclaration.Members, elementOrder, syntaxRoot, indentationOptions);
-        }
+            if (node is ClassDeclarationSyntax)
+            {
+                return ((ClassDeclarationSyntax)node).WithMembers(members);
+            }
 
-        private static SyntaxNode HandleNamespaceDeclaration(MemberOrderHelper memberOrder, NamespaceDeclarationSyntax namespaceDeclaration, ImmutableArray<OrderingTrait> elementOrder, SyntaxNode syntaxRoot, IndentationOptions indentationOptions)
-        {
-            return OrderMember(memberOrder, namespaceDeclaration.Members, elementOrder, syntaxRoot, indentationOptions);
+            if (node is CompilationUnitSyntax)
+            {
+                return ((CompilationUnitSyntax)node).WithMembers(members);
+            }
+
+            if (node is InterfaceDeclarationSyntax)
+            {
+                return ((InterfaceDeclarationSyntax)node).WithMembers(members);
+            }
+
+            if (node is NamespaceDeclarationSyntax)
+            {
+                return ((NamespaceDeclarationSyntax)node).WithMembers(members);
+            }
+
+            if (node is StructDeclarationSyntax)
+            {
+                return ((StructDeclarationSyntax)node).WithMembers(members);
+            }
+
+            throw new ArgumentException($"{nameof(node)} does not have a member list", nameof(node));
         }
 
         private static SyntaxNode OrderMember(MemberOrderHelper memberOrder, SyntaxList<MemberDeclarationSyntax> members, ImmutableArray<OrderingTrait> elementOrder, SyntaxNode syntaxRoot, IndentationOptions indentationOptions)
@@ -270,7 +291,8 @@ namespace StyleCop.Analyzers.OrderingRules
                 var elementOrder = settings.OrderingRules.ElementOrder;
                 var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
 
-                var trackedDiagnosticMembers = new List<MemberDeclarationSyntax>();
+                // trackedParents are the elements that have elements that are not in order
+                var trackedParents = new HashSet<SyntaxNode>();
                 foreach (var diagnostic in diagnostics)
                 {
                     var memberDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<MemberDeclarationSyntax>();
@@ -279,16 +301,39 @@ namespace StyleCop.Analyzers.OrderingRules
                         continue;
                     }
 
-                    trackedDiagnosticMembers.Add(memberDeclaration);
+                    trackedParents.Add(memberDeclaration.Parent);
                 }
 
-                syntaxRoot = syntaxRoot.TrackNodes(trackedDiagnosticMembers);
+                syntaxRoot = syntaxRoot.TrackNodes(trackedParents);
 
-                foreach (var member in trackedDiagnosticMembers)
+                foreach (var member in trackedParents)
                 {
-                    var memberDeclaration = syntaxRoot.GetCurrentNode(member);
-                    syntaxRoot = UpdateSyntaxRoot(memberDeclaration, elementOrder, syntaxRoot, indentationOptions);
+                    var parent = syntaxRoot.GetCurrentNode(member);
+                    syntaxRoot = SortChildren(parent, elementOrder, syntaxRoot, indentationOptions);
                 }
+
+                return syntaxRoot;
+            }
+
+            private static SyntaxNode SortChildren(SyntaxNode parent, ImmutableArray<OrderingTrait> elementOrder, SyntaxNode syntaxRoot, IndentationOptions indentationOptions)
+            {
+                SyntaxList<MemberDeclarationSyntax> memberList = GetMembers(parent);
+
+                List<MemberOrderHelper> orderHelpers = new List<MemberOrderHelper>(memberList.Count);
+
+                foreach (var member in memberList)
+                {
+                    orderHelpers.Add(new MemberOrderHelper(member, elementOrder));
+                }
+
+                syntaxRoot = syntaxRoot.TrackNodes(memberList);
+
+                var orderHelperArray = orderHelpers.ToArray();
+                Action<MemberOrderHelper, MemberOrderHelper> moveMember = (i, j) =>
+                    {
+                        syntaxRoot = MoveMember(syntaxRoot, syntaxRoot.GetCurrentNode(i.Member), syntaxRoot.GetCurrentNode(j.Member), indentationOptions);
+                    };
+                SortingHelper.InsertionSort(orderHelperArray, (a, b) => b.Priority - a.Priority, moveMember);
 
                 return syntaxRoot;
             }

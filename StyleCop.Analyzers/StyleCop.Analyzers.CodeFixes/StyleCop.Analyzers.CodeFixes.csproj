@@ -66,6 +66,7 @@
     <Compile Include="Helpers\IndentationOptions.cs" />
     <Compile Include="Helpers\QueryIndentationHelpers.cs" />
     <Compile Include="Helpers\RenameHelper.cs" />
+    <Compile Include="Helpers\SortingHelper.cs" />
     <Compile Include="Helpers\SpecialTypeHelper.cs" />
     <Compile Include="LayoutRules\SA1500CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1501CodeFixProvider.cs" />
