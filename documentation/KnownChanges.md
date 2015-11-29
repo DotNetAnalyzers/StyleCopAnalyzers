@@ -161,6 +161,12 @@ involving members of a type.
 
 ## Naming Rules
 
+### SA1300
+
+StyleCop Analyzers adds enum members to the list of elements which must start with an upper-case letter, and reports
+SA1300 for violations. StyleCop Classic did not report any messages for enum members that did not start with an
+upper-case letter.
+
 ### SA1305
 
 This rule is disabled by default in StyleCop Analyzers, but can be enabled by users via a rule set file.
