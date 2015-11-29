@@ -1124,6 +1124,15 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Place attribute on own line..
+        /// </summary>
+        internal static string SA1134CodeFix {
+            get {
+                return ResourceManager.GetString("SA1134CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Each attribute should be placed on its own line of code..
         /// </summary>
         internal static string SA1134Description {
@@ -1133,7 +1142,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Each attribute should be placed on its own line of code..
         /// </summary>
         internal static string SA1134MessageFormat {
             get {

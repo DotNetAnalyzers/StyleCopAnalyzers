@@ -471,11 +471,14 @@
   <data name="SA1133Title" xml:space="preserve">
     <value>Do not combine attributes</value>
   </data>
+  <data name="SA1134CodeFix" xml:space="preserve">
+    <value>Place attribute on own line.</value>
+  </data>
   <data name="SA1134Description" xml:space="preserve">
     <value>Each attribute should be placed on its own line of code.</value>
   </data>
   <data name="SA1134MessageFormat" xml:space="preserve">
-    <value />
+    <value>Each attribute should be placed on its own line of code.</value>
   </data>
   <data name="SA1134Title" xml:space="preserve">
     <value>Attributes must not share line</value>
