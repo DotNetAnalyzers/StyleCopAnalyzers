@@ -61,7 +61,7 @@ namespace StyleCop.Analyzers.NamingRules
 
                 baseName = char.ToLower(baseName[0]) + baseName.Substring(1);
                 int underscoreCount = originalName.Length - baseName.Length;
-                var newName = originalName.Substring(0, underscoreCount) + baseName;
+
                 var memberSyntax = RenameHelper.GetParentDeclaration(token);
 
                 SemanticModel semanticModel = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
@@ -72,11 +72,15 @@ namespace StyleCop.Analyzers.NamingRules
                     continue;
                 }
 
+                // preserve the underscores, but only for fields.
+                var prefix = declaredSymbol.Kind == SymbolKind.Field ? originalName.Substring(0, underscoreCount) : string.Empty;
+                var newName = prefix + baseName;
+
                 int index = 0;
                 while (!await RenameHelper.IsValidNewMemberNameAsync(semanticModel, declaredSymbol, newName, context.CancellationToken).ConfigureAwait(false))
                 {
                     index++;
-                    newName = originalName.Substring(0, underscoreCount) + baseName + index;
+                    newName = prefix + baseName + index;
                 }
 
                 context.RegisterCodeFix(
