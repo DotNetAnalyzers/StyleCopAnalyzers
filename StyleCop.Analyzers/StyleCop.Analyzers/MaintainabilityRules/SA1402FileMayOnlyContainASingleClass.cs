@@ -5,10 +5,12 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Settings.ObjectModel;
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
@@ -40,7 +42,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
-        private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
+        private static readonly Action<SyntaxTreeAnalysisContext, StyleCopSettings> SyntaxTreeAction = HandleSyntaxTree;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -57,38 +59,41 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             context.RegisterSyntaxTreeActionHonorExclusions(SyntaxTreeAction);
         }
 
-        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
+        private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context, StyleCopSettings settings)
         {
             var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
 
             var descentNodes = syntaxRoot.DescendantNodes(descendIntoChildren: node => node != null && !node.IsKind(SyntaxKind.ClassDeclaration));
+            var classNodes = from descentNode in descentNodes
+                                where descentNode.IsKind(SyntaxKind.ClassDeclaration)
+                                select descentNode as ClassDeclarationSyntax;
+
+            string suffix;
+            var fileName = FileNameHelpers.GetFileNameAndSuffix(context.Tree.FilePath, out suffix);
+            var preferredClassNode = classNodes.FirstOrDefault(n => FileNameHelpers.GetConventionalFileName(n, settings.DocumentationRules.FileNamingConvention) == fileName) ?? classNodes.FirstOrDefault();
+
+            if (preferredClassNode == null)
+            {
+                return;
+            }
 
             string foundClassName = null;
             bool isPartialClass = false;
 
-            foreach (var node in descentNodes)
-            {
-                if (node.IsKind(SyntaxKind.ClassDeclaration))
-                {
-                    ClassDeclarationSyntax classDeclaration = node as ClassDeclarationSyntax;
-                    if (foundClassName != null)
-                    {
-                        if (isPartialClass && foundClassName == classDeclaration.Identifier.Text)
-                        {
-                            continue;
-                        }
+            foundClassName = preferredClassNode.Identifier.Text;
+            isPartialClass = preferredClassNode.Modifiers.Any(SyntaxKind.PartialKeyword);
 
-                        var location = NamedTypeHelpers.GetNameOrIdentifierLocation(node);
-                        if (location != null)
-                        {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
-                        }
-                    }
-                    else
-                    {
-                        foundClassName = classDeclaration.Identifier.Text;
-                        isPartialClass = classDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword);
-                    }
+            foreach (var classNode in classNodes)
+            {
+                if (classNode == preferredClassNode || (isPartialClass && foundClassName == classNode.Identifier.Text))
+                {
+                    continue;
+                }
+
+                var location = NamedTypeHelpers.GetNameOrIdentifierLocation(classNode);
+                if (location != null)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
                 }
             }
         }

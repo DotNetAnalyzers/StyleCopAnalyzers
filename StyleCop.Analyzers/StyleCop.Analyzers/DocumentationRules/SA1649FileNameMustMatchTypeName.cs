@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System.Collections.Immutable;
     using System.IO;
     using System.Linq;
+    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -76,23 +77,13 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
 
                 string suffix;
-                var fileName = GetFileNameAndSuffix(context.Tree.FilePath, out suffix);
-                string expectedFileName;
-                switch (settings.DocumentationRules.FileNamingConvention)
-                {
-                case FileNamingConvention.Metadata:
-                    expectedFileName = GetMetadataFileName(firstTypeDeclaration);
-                    break;
-
-                default:
-                    expectedFileName = GetStyleCopFileName(firstTypeDeclaration);
-                    break;
-                }
+                var fileName = FileNameHelpers.GetFileNameAndSuffix(context.Tree.FilePath, out suffix);
+                var expectedFileName = FileNameHelpers.GetConventionalFileName(firstTypeDeclaration, settings.DocumentationRules.FileNamingConvention);
 
                 if (string.Compare(fileName, expectedFileName, StringComparison.OrdinalIgnoreCase) != 0)
                 {
                     if (settings.DocumentationRules.FileNamingConvention == FileNamingConvention.StyleCop
-                        && string.Compare(fileName, GetSimpleFileName(firstTypeDeclaration), StringComparison.OrdinalIgnoreCase) == 0)
+                        && string.Compare(fileName, FileNameHelpers.GetSimpleFileName(firstTypeDeclaration), StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         return;
                     }
@@ -104,54 +95,11 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
             }
 
-            private static string GetFileNameAndSuffix(string path, out string suffix)
-            {
-                string fileName = Path.GetFileName(path);
-                int firstDot = fileName.IndexOf('.');
-                if (firstDot >= 0)
-                {
-                    suffix = fileName.Substring(firstDot);
-                    fileName = fileName.Substring(0, firstDot);
-                }
-                else
-                {
-                    suffix = string.Empty;
-                }
-
-                return fileName;
-            }
-
             private static TypeDeclarationSyntax GetFirstTypeDeclaration(SyntaxNode root)
             {
                 return root.DescendantNodes(descendIntoChildren: node => node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration))
                     .OfType<TypeDeclarationSyntax>()
                     .FirstOrDefault();
-            }
-
-            private static string GetStyleCopFileName(TypeDeclarationSyntax firstTypeDeclaration)
-            {
-                if (firstTypeDeclaration.TypeParameterList == null)
-                {
-                    return $"{firstTypeDeclaration.Identifier.ValueText}";
-                }
-
-                var typeParameterList = string.Join(",", firstTypeDeclaration.TypeParameterList.Parameters.Select(p => p.Identifier.ValueText));
-                return $"{firstTypeDeclaration.Identifier.ValueText}{{{typeParameterList}}}";
-            }
-
-            private static string GetSimpleFileName(TypeDeclarationSyntax firstTypeDeclaration)
-            {
-                return $"{firstTypeDeclaration.Identifier.ValueText}";
-            }
-
-            private static string GetMetadataFileName(TypeDeclarationSyntax firstTypeDeclaration)
-            {
-                if (firstTypeDeclaration.TypeParameterList == null)
-                {
-                    return $"{firstTypeDeclaration.Identifier.ValueText}";
-                }
-
-                return $"{firstTypeDeclaration.Identifier.ValueText}`{firstTypeDeclaration.Arity}";
             }
         }
     }
