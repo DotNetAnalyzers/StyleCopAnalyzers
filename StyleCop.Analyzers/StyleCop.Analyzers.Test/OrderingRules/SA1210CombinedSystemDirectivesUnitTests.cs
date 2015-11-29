@@ -102,6 +102,7 @@ namespace Food
     using global::System;
     using global::System.IO;
     using global::System.Linq;
+    using System;
     using System.Threading;
     using XYZ = System.IO;
 }";
@@ -135,10 +136,12 @@ namespace Food
 
             var fixedTestCode = @"namespace Food
 {
+    using Food;
     using global::Food;
     using global::System;
     using global::System.IO;
     using global::System.Linq;
+    using System;
     using System.Threading;
 }";
 
@@ -223,6 +226,13 @@ using Microsoft.CodeAnalysis;
 ";
 
             return CombinedUsingDirectivesTestSettings;
+        }
+
+        /// <inheritdoc/>
+        protected override IEnumerable<string> GetDisabledDiagnostics()
+        {
+            // Using directive appeared previously in this namespace
+            yield return "CS0105";
         }
 
         /// <inheritdoc/>
