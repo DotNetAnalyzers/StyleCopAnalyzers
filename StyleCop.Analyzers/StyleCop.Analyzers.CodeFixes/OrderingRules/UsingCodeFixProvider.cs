@@ -690,7 +690,7 @@ namespace StyleCop.Analyzers.OrderingRules
                         .WithAdditionalAnnotations(UsingCodeFixAnnotation);
 
                     // filter duplicate using declarations, preferring to keep the one with an alias
-                    var existingUsing = result.Find(u => string.Equals(u.Name.ToUnaliasedString(), processedUsing.Name.ToUnaliasedString(), StringComparison.Ordinal));
+                    var existingUsing = result.Find(u => string.Equals(u.Name.ToNormalizedString(), processedUsing.Name.ToNormalizedString(), StringComparison.Ordinal));
                     if (existingUsing != null)
                     {
                         if (!existingUsing.HasNamespaceAliasQualifier() && processedUsing.HasNamespaceAliasQualifier())
