@@ -143,6 +143,10 @@ string _Far;
 string __gar;
 {0}
 string __Har;
+{0}
+string ___iar;
+{0}
+string ___Jar;
 }}";
 
             DiagnosticResult[] expected =
@@ -151,6 +155,7 @@ string __Har;
                     this.CSharpDiagnostic().WithArguments("Dar").WithLocation(8, 8),
                     this.CSharpDiagnostic().WithArguments("_Far").WithLocation(12, 8),
                     this.CSharpDiagnostic().WithArguments("__Har").WithLocation(16, 8),
+                    this.CSharpDiagnostic().WithArguments("___Jar").WithLocation(20, 8),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), expected, CancellationToken.None).ConfigureAwait(false);
@@ -171,6 +176,10 @@ string _far;
 string __gar;
 {0}
 string __har;
+{0}
+string ___iar;
+{0}
+string ___jar;
 }}";
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(fixedCode, modifiers), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -226,7 +235,20 @@ string bar, car, dar;
         {
             var testCode = @"public class Foo
 {
+    private string _ = ""bar"";
     private string __ = ""baz"";
+    private string ___ = ""qux"";
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestFieldWithTrailingUnderscoreAsync()
+        {
+            var testCode = @"public class Foo
+{
+    private string someVar_ = ""bar"";
 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
