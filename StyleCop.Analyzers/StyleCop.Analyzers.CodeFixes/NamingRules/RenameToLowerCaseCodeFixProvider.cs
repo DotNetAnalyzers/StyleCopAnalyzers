@@ -51,6 +51,7 @@ namespace StyleCop.Analyzers.NamingRules
                 }
 
                 var originalName = token.ValueText;
+
                 var baseName = originalName.TrimStart('_');
                 if (baseName.Length == 0)
                 {
@@ -60,7 +61,7 @@ namespace StyleCop.Analyzers.NamingRules
 
                 baseName = char.ToLower(baseName[0]) + baseName.Substring(1);
                 int underscoreCount = originalName.Length - baseName.Length;
-                var newName = baseName;
+                var newName = originalName.Substring(0, underscoreCount) + baseName;
                 var memberSyntax = RenameHelper.GetParentDeclaration(token);
 
                 SemanticModel semanticModel = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
@@ -75,7 +76,7 @@ namespace StyleCop.Analyzers.NamingRules
                 while (!await RenameHelper.IsValidNewMemberNameAsync(semanticModel, declaredSymbol, newName, context.CancellationToken).ConfigureAwait(false))
                 {
                     index++;
-                    newName = baseName + index;
+                    newName = originalName.Substring(0, underscoreCount) + baseName + index;
                 }
 
                 context.RegisterCodeFix(
