@@ -57,10 +57,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 attributeList = (AttributeListSyntax)nodeInSourceSpan.Parent;
             }
-            else
+            else if (nodeInSourceSpan.Parent is AttributeSyntax)
             {
                 var violatingAttribute = (AttributeSyntax)nodeInSourceSpan.Parent;
                 attributeList = (AttributeListSyntax)violatingAttribute.Parent;
+            }
+            else
+            {
+                return document;
             }
 
             var newAttributeLists = new List<AttributeListSyntax>();
