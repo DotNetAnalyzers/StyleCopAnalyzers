@@ -166,11 +166,12 @@ public class TestClass
         }
 
         /// <summary>
-        /// Repro test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1878.
+        /// Regression test for issue 1878 (SA1133CodeFixProvider crash), https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1878
+        /// Fixing exception "Unable to cast object of type 'Microsoft.CodeAnalysis.CSharp.Syntax.AttributeListSyntax' to type 'Microsoft.CodeAnalysis.CSharp.Syntax.AttributeSyntax'."
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task ReproFor1878Async()
+        public async Task TestRegressionIssue1878Async()
         {
             var testCode = @"namespace Stylecop_rc1_bug_repro
 {

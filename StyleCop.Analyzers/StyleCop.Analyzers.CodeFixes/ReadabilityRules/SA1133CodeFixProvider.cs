@@ -51,8 +51,18 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var violatingAttribute = (AttributeSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan).Parent;
-            var attributeList = (AttributeListSyntax)violatingAttribute.Parent;
+            var nodeInSourceSpan = syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
+            AttributeListSyntax attributeList;
+            if (nodeInSourceSpan.Parent is AttributeListSyntax)
+            {
+                attributeList = (AttributeListSyntax)nodeInSourceSpan.Parent;
+            }
+            else
+            {
+                var violatingAttribute = (AttributeSyntax)nodeInSourceSpan.Parent;
+                attributeList = (AttributeListSyntax)violatingAttribute.Parent;
+            }
+
             var newAttributeLists = new List<AttributeListSyntax>();
 
             var indentationOptions = IndentationOptions.FromDocument(document);
