@@ -20,7 +20,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// <summary>
     /// Implements code fixes for element ordering rules.
     /// </summary>
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ElementOrderCodeFixProvider))]
+    [NoCodeFix("Disabled until stable")]
     [Shared]
     internal class ElementOrderCodeFixProvider : CodeFixProvider
     {
