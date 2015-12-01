@@ -165,6 +165,68 @@ public class TestClass
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Repro test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1878.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task ReproFor1878Async()
+        {
+            var testCode = @"namespace Stylecop_rc1_bug_repro
+{
+    using System;
+
+    internal class Program
+    {
+        [Foo, Bar]
+        private static void Main(string[] args)
+        {
+        }
+    }
+
+    internal class FooAttribute : Attribute
+    {
+    }
+
+    internal class BarAttribute : Attribute
+    {
+    }
+}
+";
+
+            var fixedTestCode = @"namespace Stylecop_rc1_bug_repro
+{
+    using System;
+
+    internal class Program
+    {
+        [Foo]
+        [Bar]
+        private static void Main(string[] args)
+        {
+        }
+    }
+
+    internal class FooAttribute : Attribute
+    {
+    }
+
+    internal class BarAttribute : Attribute
+    {
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(7, 15)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
