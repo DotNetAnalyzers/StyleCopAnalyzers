@@ -165,6 +165,117 @@ public class TestClass
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that a combination of attributes without parameters will produce the required diagnostics.
+        /// </summary>
+        /// <param name="before">The code part before the code fix.</param>
+        /// <param name="after">The code part after the code fix.</param>
+        /// <param name="line">The line on which the diagnostic is expected.</param>
+        /// <param name="column">The column on which the diagnostic is expected.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("[Foo]\r\n[Bar, Car]", "[Foo]\r\n[Bar]\r\n[Car]", 3, 7)]
+        [InlineData("[Foo, Bar]\r\n[Car]", "[Foo]\r\n[Bar]\r\n[Car]", 2, 7)]
+        [InlineData("[Foo]\r\n[Bar, Car]\r\n[Ear]", "[Foo]\r\n[Bar]\r\n[Car]\r\n[Ear]", 3, 7)]
+        public async Task VerifyAttributeCombinationsWithoutParametersAreHandledCorrectlyAsync(string before, string after, int line, int column)
+        {
+            var testCode = @"using System;
+{0}
+public class TestClass
+{{
+}}
+
+public class Foo : Attribute
+{{
+}}
+
+public class Bar : Attribute
+{{
+}}
+
+public class Car : Attribute
+{{
+}}
+
+public class Ear : Attribute
+{{
+}}";
+            var codeBefore = string.Format(testCode, before);
+            var codeAfter = string.Format(testCode, after);
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(line, column)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(codeBefore, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(codeAfter, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(codeBefore, codeAfter).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Regression test for issue 1878 (SA1133CodeFixProvider crash), https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1878
+        /// Fixing exception "Unable to cast object of type 'Microsoft.CodeAnalysis.CSharp.Syntax.AttributeListSyntax' to type 'Microsoft.CodeAnalysis.CSharp.Syntax.AttributeSyntax'."
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestRegressionIssue1878Async()
+        {
+            var testCode = @"namespace Stylecop_rc1_bug_repro
+{
+    using System;
+
+    internal class Program
+    {
+        [Foo, Bar]
+        private static void Main(string[] args)
+        {
+        }
+    }
+
+    internal class FooAttribute : Attribute
+    {
+    }
+
+    internal class BarAttribute : Attribute
+    {
+    }
+}
+";
+
+            var fixedTestCode = @"namespace Stylecop_rc1_bug_repro
+{
+    using System;
+
+    internal class Program
+    {
+        [Foo]
+        [Bar]
+        private static void Main(string[] args)
+        {
+        }
+    }
+
+    internal class FooAttribute : Attribute
+    {
+    }
+
+    internal class BarAttribute : Attribute
+    {
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(7, 15)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {

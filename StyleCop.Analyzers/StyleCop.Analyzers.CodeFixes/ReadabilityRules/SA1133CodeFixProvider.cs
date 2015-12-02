@@ -18,6 +18,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// <summary>
     /// Implements a code fix for <see cref="SA1133DoNotCombineAttributes"/>.
     /// </summary>
+    /// <remarks>
+    /// The SA1133 code fix adds the new lines to make sure that it doesn't immediately introduces a SA1134 after code fixing,
+    /// but it will not / should not attempt to fix any preexisting SA1134 cases.
+    /// </remarks>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1133CodeFixProvider))]
     [Shared]
     internal class SA1133CodeFixProvider : CodeFixProvider
@@ -51,8 +55,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var violatingAttribute = (AttributeSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan).Parent;
-            var attributeList = (AttributeListSyntax)violatingAttribute.Parent;
+            var nodeInSourceSpan = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
+            AttributeListSyntax attributeList = nodeInSourceSpan.FirstAncestorOrSelf<AttributeListSyntax>();
+
             var newAttributeLists = new List<AttributeListSyntax>();
 
             var indentationOptions = IndentationOptions.FromDocument(document);
