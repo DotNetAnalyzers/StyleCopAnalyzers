@@ -180,6 +180,31 @@ class Foo
         }
 
         [Fact]
+        public async Task TestMethodCallPragmaDirectiveBetweenParametersAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar(int i, int z)
+    {
+    }
+
+    public void Baz()
+    {
+        Bar(
+#pragma warning disable CS4014
+            1,
+#pragma warning restore CS4014
+            2);
+    }
+}";
+
+            DiagnosticResult[] expected = EmptyDiagnosticResults;
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestMethodCallSecondParameterOnTheNextLineAsync()
         {
             var testCode = @"
