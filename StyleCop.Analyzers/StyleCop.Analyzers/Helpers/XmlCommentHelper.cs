@@ -184,6 +184,13 @@ namespace StyleCop.Analyzers.Helpers
                 return StringBuilderPool.ReturnAndFree(stringBuilder);
             }
 
+            var emptyXmlElement = nodeSyntax as XmlEmptyElementSyntax;
+
+            if (emptyXmlElement != null)
+            {
+                return emptyXmlElement.NormalizeWhitespace(string.Empty).ToString();
+            }
+
             return null;
         }
 
