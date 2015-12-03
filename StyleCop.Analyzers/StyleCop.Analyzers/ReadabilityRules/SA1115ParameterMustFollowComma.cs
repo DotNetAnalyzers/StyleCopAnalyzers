@@ -333,15 +333,15 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static bool IsValidTrivia(SyntaxTrivia trivia)
         {
+            if (trivia.IsDirective)
+            {
+                return true;
+            }
+
             switch (trivia.Kind())
             {
-            case SyntaxKind.IfDirectiveTrivia:
-            case SyntaxKind.ElseDirectiveTrivia:
-            case SyntaxKind.ElifDirectiveTrivia:
-            case SyntaxKind.EndIfDirectiveTrivia:
             case SyntaxKind.DisabledTextTrivia:
             case SyntaxKind.WhitespaceTrivia:
-            case SyntaxKind.PragmaWarningDirectiveTrivia:
                 return true;
 
             default:
