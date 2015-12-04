@@ -276,6 +276,36 @@ public class Ear : Attribute
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that attribute list with multiple attributes for (generic) parameters will not produce diagnostics.
+        /// Regression test for #1882
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyAttributeListForParametersAsync()
+        {
+            var testCode = @"using System;
+
+internal class TestClass
+{
+    internal T TestMethod<[Foo, Bar]T>([Bar, Foo] int value)
+    {
+        return default(T);
+    }
+}
+
+internal class FooAttribute : Attribute
+{
+}
+
+internal class BarAttribute : Attribute
+{
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
