@@ -151,6 +151,12 @@ var a = new[] { 1, 2, 3 }.ToArray();
 
 ## Ordering Rules
 
+### SA1208
+
+StyleCop Analyzers only considers using directives to be "System" using directives if they are not alias-qualified,
+while StyleCop Classic ignored the alias. For example, `using global::System;` would be not be considered a System using
+directive by StyleCop Analyzers, but it would be considered a System using directive by StyleCop Classic.
+
 ### SA1214
 
 StyleCop Classic only reports SA1214 for violations involving static fields. In StyleCop Analyzers, SA1214 and SA1215
