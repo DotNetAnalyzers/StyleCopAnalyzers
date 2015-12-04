@@ -182,6 +182,7 @@ using global::System.Linq;
 using global::System;
 using global::Foo;
 using Foo;
+using Microsoft;
 
 namespace Foo
 {
@@ -200,6 +201,7 @@ namespace Foo
     using global::System;
     using global::System.IO;
     using global::System.Linq;
+    using Microsoft;
 }";
 
             DiagnosticResult[] expected =
