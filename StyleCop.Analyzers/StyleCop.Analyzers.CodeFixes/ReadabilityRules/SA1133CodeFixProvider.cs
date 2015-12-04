@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Helpers;
@@ -33,7 +34,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return FixAll.Instance;
         }
 
         /// <inheritdoc/>
@@ -58,11 +59,21 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var nodeInSourceSpan = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
             AttributeListSyntax attributeList = nodeInSourceSpan.FirstAncestorOrSelf<AttributeListSyntax>();
 
-            var newAttributeLists = new List<AttributeListSyntax>();
-
             var indentationOptions = IndentationOptions.FromDocument(document);
             var indentationSteps = IndentationHelper.GetIndentationSteps(indentationOptions, attributeList);
             var indentationTrivia = IndentationHelper.GenerateWhitespaceTrivia(indentationOptions, indentationSteps);
+
+            List<AttributeListSyntax> newAttributeLists = GetNewAttributeList(attributeList, indentationTrivia);
+
+            var newSyntaxRoot = syntaxRoot.ReplaceNode(attributeList, newAttributeLists);
+            var newDocument = document.WithSyntaxRoot(newSyntaxRoot.WithoutFormatting());
+
+            return newDocument;
+        }
+
+        private static List<AttributeListSyntax> GetNewAttributeList(AttributeListSyntax attributeList, SyntaxTrivia indentationTrivia)
+        {
+            var newAttributeLists = new List<AttributeListSyntax>();
 
             for (var i = 0; i < attributeList.Attributes.Count; i++)
             {
@@ -80,10 +91,41 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 newAttributeLists.Add(newAttributeList);
             }
 
-            var newSyntaxRoot = syntaxRoot.ReplaceNode(attributeList, newAttributeLists);
-            var newDocument = document.WithSyntaxRoot(newSyntaxRoot.WithoutFormatting());
+            return newAttributeLists;
+        }
 
-            return newDocument;
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; } =
+                new FixAll();
+
+            protected override string CodeActionTitle =>
+                ReadabilityResources.SA1133CodeFix;
+
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            {
+                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
+                if (diagnostics.IsEmpty)
+                {
+                    return null;
+                }
+
+                var indentationOptions = IndentationOptions.FromDocument(document);
+                var syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+
+                var nodes = diagnostics.Select(diagnostic => syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true).FirstAncestorOrSelf<AttributeListSyntax>());
+
+                var newRoot = syntaxRoot.TrackNodes(nodes);
+
+                foreach (var attributeList in nodes)
+                {
+                    var indentationSteps = IndentationHelper.GetIndentationSteps(indentationOptions, attributeList);
+                    var indentationTrivia = IndentationHelper.GenerateWhitespaceTrivia(indentationOptions, indentationSteps);
+                    newRoot = newRoot.ReplaceNode(newRoot.GetCurrentNode(attributeList), GetNewAttributeList(attributeList, indentationTrivia));
+                }
+
+                return newRoot;
+            }
         }
     }
 }

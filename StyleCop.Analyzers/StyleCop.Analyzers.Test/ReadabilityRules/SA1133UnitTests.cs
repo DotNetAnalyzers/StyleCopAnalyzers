@@ -306,6 +306,121 @@ internal class BarAttribute : Attribute
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Regression test for issue 1879 (SA1133CodeFixProvider does only half the work), https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1879
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestFixAllAsync()
+        {
+            var testCode = @"
+namespace Stylecop_rc1_bug_repro
+{
+    class Foo
+    {
+        [CanBeNull, UsedImplicitly(ImplicitUseKindFlags.Assign)]
+        public string Foo1{ get; set; }
+
+        [CanBeNull, UsedImplicitly(ImplicitUseKindFlags.Assign)]
+        public string Foo2{ get; set; }
+
+        [CanBeNull, UsedImplicitly(ImplicitUseKindFlags.Assign)]
+        public string Foo3 { get; set; }
+
+        [CanBeNull, UsedImplicitly(ImplicitUseKindFlags.Assign)]
+        public string Foo4{ get; set; }
+
+        [CanBeNull, UsedImplicitly(ImplicitUseKindFlags.Assign)]
+        public string Foo5{ get; set; }
+
+        [CanBeNull, UsedImplicitly(ImplicitUseKindFlags.Assign)]
+        public string Foo6{ get; set; }
+
+        [CanBeNull, UsedImplicitly(ImplicitUseKindFlags.Assign)]
+        public string Foo7{ get; set; }
+
+        [CanBeNull, UsedImplicitly(ImplicitUseKindFlags.Assign)]
+        public string Foo8{ get; set; }
+
+    }
+}
+
+public class CanBeNullAttribute : System.Attribute { }
+public class UsedImplicitly : System.Attribute
+{
+    public UsedImplicitly (ImplicitUseKindFlags flags) { }
+}
+
+public enum ImplicitUseKindFlags { Assign }
+";
+
+            var fixedTestCode = @"
+namespace Stylecop_rc1_bug_repro
+{
+    class Foo
+    {
+        [CanBeNull]
+        [UsedImplicitly(ImplicitUseKindFlags.Assign)]
+        public string Foo1{ get; set; }
+
+        [CanBeNull]
+        [UsedImplicitly(ImplicitUseKindFlags.Assign)]
+        public string Foo2{ get; set; }
+
+        [CanBeNull]
+        [UsedImplicitly(ImplicitUseKindFlags.Assign)]
+        public string Foo3 { get; set; }
+
+        [CanBeNull]
+        [UsedImplicitly(ImplicitUseKindFlags.Assign)]
+        public string Foo4{ get; set; }
+
+        [CanBeNull]
+        [UsedImplicitly(ImplicitUseKindFlags.Assign)]
+        public string Foo5{ get; set; }
+
+        [CanBeNull]
+        [UsedImplicitly(ImplicitUseKindFlags.Assign)]
+        public string Foo6{ get; set; }
+
+        [CanBeNull]
+        [UsedImplicitly(ImplicitUseKindFlags.Assign)]
+        public string Foo7{ get; set; }
+
+        [CanBeNull]
+        [UsedImplicitly(ImplicitUseKindFlags.Assign)]
+        public string Foo8{ get; set; }
+
+    }
+}
+
+public class CanBeNullAttribute : System.Attribute { }
+public class UsedImplicitly : System.Attribute
+{
+    public UsedImplicitly (ImplicitUseKindFlags flags) { }
+}
+
+public enum ImplicitUseKindFlags { Assign }
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(6, 21),
+                this.CSharpDiagnostic().WithLocation(9, 21),
+                this.CSharpDiagnostic().WithLocation(12, 21),
+                this.CSharpDiagnostic().WithLocation(15, 21),
+                this.CSharpDiagnostic().WithLocation(18, 21),
+                this.CSharpDiagnostic().WithLocation(21, 21),
+                this.CSharpDiagnostic().WithLocation(24, 21),
+                this.CSharpDiagnostic().WithLocation(27, 21)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await this.VerifyCSharpFixAllFixAsync(testCode, fixedTestCode, maxNumberOfIterations: 1).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
