@@ -160,9 +160,7 @@ namespace Test
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation("Test3.cs", 2, 1).WithArguments("global::System.IO", "global::AnotherNamespace"),
                 this.CSharpDiagnostic().WithLocation("Test3.cs", 8, 5).WithArguments("System.Threading", "Xyz"),
-                this.CSharpDiagnostic().WithLocation("Test3.cs", 9, 5).WithArguments("global::System", "Xyz")
             };
 
             await this.VerifyCSharpDiagnosticAsync(sources, expected, CancellationToken.None).ConfigureAwait(false);
@@ -334,6 +332,31 @@ using System.Collections;
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1818.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        [Fact]
+        public async Task TestValidUsingDirectivesWithGlobalAliasAsync()
+        {
+            var testCode = @"
+namespace Foo
+{
+    extern alias corlib;
+    using System;
+    using System.Threading;
+    using corlib::System;
+    using Foo;
+    using global::Foo;
+    using global::System;
+    using global::System.IO;
+    using global::System.Linq;
+    using Microsoft;
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
