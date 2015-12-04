@@ -317,6 +317,61 @@ using Microsoft.CodeAnalysis;
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1897.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestInvalidOrderedUsingDirectivesInNamespaceDeclarationWithFileHeaderAsync()
+        {
+            var testCode = @"// <copyright file=""VoiceCommandService.cs"" company=""Foo Corporation"">
+// Copyright (c) FooCorporation. All rights reserved.
+// </copyright>
+
+namespace Foo.Garage.XYZ
+{
+    using System;
+    using Newtonsoft.Json;
+    using Foo.Garage.XYZ;
+}
+
+namespace Newtonsoft.Json
+{
+}
+";
+
+            var fixedTestCode = @"// <copyright file=""VoiceCommandService.cs"" company=""Foo Corporation"">
+// Copyright (c) FooCorporation. All rights reserved.
+// </copyright>
+
+// <copyright file=""VoiceCommandService.cs"" company=""Foo Corporation"">
+// Copyright (c) FooCorporation. All rights reserved.
+// </copyright>
+
+namespace Foo.Garage.XYZ
+{
+    using System;
+    using Foo.Garage.XYZ;
+    using Newtonsoft.Json;
+}
+
+namespace Newtonsoft.Json
+{
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(8, 5),
+                this.CSharpDiagnostic().WithLocation(8, 5),
+                this.CSharpDiagnostic().WithLocation(8, 5),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<string> GetDisabledDiagnostics()
         {
