@@ -45,6 +45,20 @@ class A
         }
 
         [Fact]
+        public async Task TestSystemUsingDirectivesWithEscapeSequenceAsync()
+        {
+            string usingsInNamespaceDeclaration = @"namespace Test
+{
+    using @System;
+    using System.Diagnostics;
+    using \u0053ystem.IO;
+    using System.Threading;
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(usingsInNamespaceDeclaration, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestWhenSystemUsingDirectivesAreNotOnTopInCompilationAsync()
         {
             var usingsInCompilationUnit = new[]
