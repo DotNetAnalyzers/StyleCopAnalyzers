@@ -61,6 +61,33 @@ public class Foo
         }
 
         [Fact]
+        public async Task TestDocumentationMethodReferenceWithWhitespaceBeforeClosingParenthesisAsync()
+        {
+            const string testCode = @"
+public class Foo
+{
+    /// <see cref=""Method( )""/>
+    public void Method()
+    {
+    }
+}";
+            const string fixedCode = @"
+public class Foo
+{
+    /// <see cref=""Method()""/>
+    public void Method()
+    {
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(4, 28);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestMethodWith2CorrectlySpacedParametersAsync()
         {
             const string testCode = @"using System;
@@ -320,6 +347,17 @@ public class Foo
             var validStatement = @"var o = new Baz()?.Test;";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 29);
+
+            await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, validStatement, expected).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestSpaceMethodCallFollowedByPointerDereferenceAsync()
+        {
+            var invalidStatement = @"var o = GetPointer() ->ToString();";
+            var validStatement = @"var o = GetPointer()->ToString();";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 32);
 
             await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, validStatement, expected).ConfigureAwait(false);
         }
@@ -656,6 +694,13 @@ int a )
     }
 
     public int TestMethod3(int a) { return a; }
+
+    public int TestMethod4(string[] args)
+    {
+#if !(X || NOT )
+        return 1;
+#endif
+    }
 }
 ";
 
@@ -687,6 +732,13 @@ int a)
     }
 
     public int TestMethod3(int a) { return a; }
+
+    public int TestMethod4(string[] args)
+    {
+#if !(X || NOT)
+        return 1;
+#endif
+    }
 }
 ";
 
@@ -695,7 +747,8 @@ int a)
                 this.CSharpDiagnostic().WithLocation(10, 9).WithArguments(" not", "preceded"),
                 this.CSharpDiagnostic().WithLocation(16, 7).WithArguments(" not", "preceded"),
                 this.CSharpDiagnostic().WithLocation(21, 19).WithArguments(" not", "preceded"),
-                this.CSharpDiagnostic().WithLocation(25, 17).WithArguments(" not", "preceded")
+                this.CSharpDiagnostic().WithLocation(25, 17).WithArguments(" not", "preceded"),
+                this.CSharpDiagnostic().WithLocation(32, 16).WithArguments(" not", "preceded"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -820,7 +873,7 @@ class ClassName
 {{
     class Bar
     {{
-        void DoIt()
+        unsafe void DoIt()
         {{
             {0}
         }}
@@ -831,6 +884,11 @@ class ClassName
         }}
 
         Baz GetB()
+        {{
+            return null;
+        }}
+
+        unsafe int* GetPointer()
         {{
             return null;
         }}

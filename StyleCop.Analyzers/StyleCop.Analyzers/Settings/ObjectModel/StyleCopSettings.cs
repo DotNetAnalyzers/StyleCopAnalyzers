@@ -39,6 +39,12 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         private MaintainabilitySettings maintainabilityRules;
 
         /// <summary>
+        /// This is the backing field for the <see cref="LayoutRules"/> property.
+        /// </summary>
+        [JsonProperty("layoutRules", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        private LayoutSettings layoutRules;
+
+        /// <summary>
         /// This is the backing field for the <see cref="DocumentationRules"/> property.
         /// </summary>
         [JsonProperty("documentationRules", DefaultValueHandling = DefaultValueHandling.Ignore)]
@@ -55,6 +61,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.orderingRules = new OrderingSettings();
             this.namingRules = new NamingSettings();
             this.maintainabilityRules = new MaintainabilitySettings();
+            this.layoutRules = new LayoutSettings();
             this.documentationRules = new DocumentationSettings();
         }
 
@@ -72,6 +79,9 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
         public MaintainabilitySettings MaintainabilityRules =>
             this.maintainabilityRules;
+
+        public LayoutSettings LayoutRules =>
+            this.layoutRules;
 
         public DocumentationSettings DocumentationRules =>
             this.documentationRules;

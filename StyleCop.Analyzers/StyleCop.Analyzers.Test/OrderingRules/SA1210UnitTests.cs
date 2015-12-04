@@ -155,6 +155,7 @@ namespace Foo
 
             var fixedTestCode = @"namespace Foo
 {
+    using System;
     using System.Threading;
     using global::Foo;
     using global::System;
@@ -173,7 +174,9 @@ namespace Foo
         [Fact]
         public async Task TestInvalidOrderedUsingDirectivesWithNamespaceAliasQualifierAsync()
         {
-            var testCode = @"using System.Threading;
+            var testCode = @"extern alias corlib;
+using System.Threading;
+using corlib::System;
 using global::System.IO;
 using global::System.Linq;
 using global::System;
@@ -186,9 +189,13 @@ namespace Foo
     using System;
 }";
 
-            var fixedTestCode = @"namespace Foo
+            var fixedTestCode = @"extern alias corlib;
+namespace Foo
 {
+    using System;
     using System.Threading;
+    using corlib::System;
+    using Foo;
     using global::Foo;
     using global::System;
     using global::System.IO;
@@ -197,9 +204,9 @@ namespace Foo
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(3, 1),
-                this.CSharpDiagnostic().WithLocation(4, 1),
-                this.CSharpDiagnostic().WithLocation(5, 1)
+                this.CSharpDiagnostic().WithLocation(5, 1),
+                this.CSharpDiagnostic().WithLocation(6, 1),
+                this.CSharpDiagnostic().WithLocation(7, 1)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -306,6 +313,13 @@ using Microsoft.CodeAnalysis;
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
+        protected override IEnumerable<string> GetDisabledDiagnostics()
+        {
+            // Using directive appeared previously in this namespace
+            yield return "CS0105";
         }
 
         /// <inheritdoc/>

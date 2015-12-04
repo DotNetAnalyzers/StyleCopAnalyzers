@@ -114,14 +114,25 @@ namespace StyleCop.Analyzers.NamingRules
                 }
 
                 string name = identifier.ValueText;
-                if (string.IsNullOrEmpty(name) || char.IsLower(name[0]))
+                if (string.IsNullOrEmpty(name))
                 {
                     continue;
                 }
 
-                if (name[0] == '_')
+                var index = 0;
+                while ((index < name.Length) && name[index] == '_')
                 {
-                    // `_foo` is handled by SA1309
+                    index++;
+                }
+
+                if (index == name.Length)
+                {
+                    // ignore fields with all underscores
+                    continue;
+                }
+
+                if (char.IsLower(name, index))
+                {
                     continue;
                 }
 

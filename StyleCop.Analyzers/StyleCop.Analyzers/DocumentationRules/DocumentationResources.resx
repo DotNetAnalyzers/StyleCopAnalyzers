@@ -148,7 +148,7 @@
     <value>The property's documentation summary text must begin with: '{0}'</value>
   </data>
   <data name="SA1623Title" xml:space="preserve">
-    <value>Property summary documentation must match accessors.</value>
+    <value>Property summary documentation must match accessors</value>
   </data>
   <data name="SA1624Description" xml:space="preserve">
     <value>The documentation text within a C# property’s &lt;summary&gt; tag takes into account all of the accessors within the property, but one of the accessors has limited access.</value>
@@ -157,7 +157,7 @@
     <value>Because the property only contains a visible {0} accessor, the documentation summary text must begin with '{1}'.</value>
   </data>
   <data name="SA1624Title" xml:space="preserve">
-    <value>Property summary documentation must omit accessor with restricted access.</value>
+    <value>Property summary documentation must omit accessor with restricted access</value>
   </data>
   <data name="SA1626CodeFix" xml:space="preserve">
     <value>Convert to line comment</value>

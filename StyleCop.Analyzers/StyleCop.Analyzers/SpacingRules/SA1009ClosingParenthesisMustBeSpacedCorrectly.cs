@@ -63,7 +63,7 @@ namespace StyleCop.Analyzers.SpacingRules
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
-            foreach (var token in root.DescendantTokens())
+            foreach (var token in root.DescendantTokens(descendIntoTrivia: true))
             {
                 if (token.IsKind(SyntaxKind.CloseParenToken))
                 {
@@ -96,6 +96,7 @@ namespace StyleCop.Analyzers.SpacingRules
             case SyntaxKind.CloseBracketToken:
             case SyntaxKind.SemicolonToken:
             case SyntaxKind.CommaToken:
+            case SyntaxKind.DoubleQuoteToken:
                 precedesStickyCharacter = true;
                 break;
 
@@ -128,7 +129,8 @@ namespace StyleCop.Analyzers.SpacingRules
                 break;
 
             case SyntaxKind.DotToken:
-                // allow a space for this case, but only if the ')' character is the last on the line
+            case SyntaxKind.MinusGreaterThanToken:
+                // allow a space for these cases, but only if the ')' character is the last on the line
                 allowEndOfLine = true;
                 precedesStickyCharacter = true;
                 break;

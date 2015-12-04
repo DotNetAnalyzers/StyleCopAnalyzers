@@ -12,8 +12,7 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
-    /// The partial element does not have an access modifier defined. StyleCop may not be able to determine the correct
-    /// placement of the elements in the file. Please declare an access modifier for all partial elements.
+    /// The partial element does not have an access modifier defined.
     /// </summary>
     /// <remarks>
     /// <para>A violation of this rule occurs when the partial elements does not have an access modifier defined.</para>
@@ -27,7 +26,7 @@ namespace StyleCop.Analyzers.OrderingRules
         public const string DiagnosticId = "SA1205";
         private const string Title = "Partial elements must declare access";
         private const string MessageFormat = "Partial elements must declare an access modifier";
-        private const string Description = "The partial element does not have an access modifier defined. StyleCop may not be able to determine the correct placement of the elements in the file. Please declare an access modifier for all partial elements.";
+        private const string Description = "The partial element does not have an access modifier defined.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1205.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
@@ -58,19 +57,14 @@ namespace StyleCop.Analyzers.OrderingRules
         {
             var typeDeclarationNode = (TypeDeclarationSyntax)context.Node;
 
-            if (ContainsModifier(typeDeclarationNode.Modifiers, SyntaxKind.PartialKeyword))
+            if (typeDeclarationNode.Modifiers.Any(SyntaxKind.PartialKeyword))
             {
-                if (!ContainsModifier(typeDeclarationNode.Modifiers, SyntaxKind.PublicKeyword) &&
-                    !ContainsModifier(typeDeclarationNode.Modifiers, SyntaxKind.InternalKeyword))
+                if (!typeDeclarationNode.Modifiers.Any(SyntaxKind.PublicKeyword)
+                    && !typeDeclarationNode.Modifiers.Any(SyntaxKind.InternalKeyword))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, typeDeclarationNode.Identifier.GetLocation()));
                 }
             }
-        }
-
-        private static bool ContainsModifier(SyntaxTokenList modifiers, SyntaxKind expectedKeyword)
-        {
-            return modifiers.Any(modifier => modifier.Kind() == expectedKeyword);
         }
     }
 }

@@ -74,10 +74,11 @@ namespace StyleCop.Analyzers.OrderingRules
         {
             var compilationUnit = (CompilationUnitSyntax)syntaxRoot;
 
+            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             var indentationOptions = IndentationOptions.FromDocument(document);
 
-            var usingsHelper = new UsingsHelper(semanticModel, document, compilationUnit);
+            var usingsHelper = new UsingsHelper(settings, semanticModel, document, compilationUnit);
             var namespaceCount = CountNamespaces(compilationUnit.Members);
 
             // Only move using declarations inside the namespace when
@@ -436,15 +437,17 @@ namespace StyleCop.Analyzers.OrderingRules
 
         private class UsingsHelper
         {
+            private readonly StyleCopSettings settings;
             private readonly SemanticModel semanticModel;
             private readonly DirectiveSpan conditionalDirectiveTree;
             private readonly bool separateSystemDirectives;
 
-            public UsingsHelper(SemanticModel semanticModel, Document document, CompilationUnitSyntax compilationUnit)
+            public UsingsHelper(StyleCopSettings settings, SemanticModel semanticModel, Document document, CompilationUnitSyntax compilationUnit)
             {
+                this.settings = settings;
                 this.semanticModel = semanticModel;
                 this.conditionalDirectiveTree = DirectiveSpan.BuildConditionalDirectiveTree(compilationUnit);
-                this.separateSystemDirectives = !document.Project.CompilationOptions.IsAnalyzerSuppressed(SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives.DiagnosticId);
+                this.separateSystemDirectives = settings.OrderingRules.SystemUsingDirectivesFirst;
 
                 this.ProcessUsingDirectives(compilationUnit.Usings);
                 this.ProcessMembers(compilationUnit.Members);
@@ -687,7 +690,7 @@ namespace StyleCop.Analyzers.OrderingRules
                         .WithAdditionalAnnotations(UsingCodeFixAnnotation);
 
                     // filter duplicate using declarations, preferring to keep the one with an alias
-                    var existingUsing = result.Find(u => string.Equals(u.Name.ToUnaliasedString(), processedUsing.Name.ToUnaliasedString(), StringComparison.Ordinal));
+                    var existingUsing = result.Find(u => string.Equals(u.Name.ToNormalizedString(), processedUsing.Name.ToNormalizedString(), StringComparison.Ordinal));
                     if (existingUsing != null)
                     {
                         if (!existingUsing.HasNamespaceAliasQualifier() && processedUsing.HasNamespaceAliasQualifier())

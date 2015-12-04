@@ -101,13 +101,13 @@ public  class   Foo
         public async Task TestInvalidTabsInDocumentationCommentsAsync()
         {
             var testCode =
-                "\t/// <summary>\r\n" +
-                "\t/// foo bar\r\n" +
-                "\t/// </summary>\r\n" +
+                "\t///\t<summary>\r\n" +
+                "\t/// foo\tbar\r\n" +
+                "\t///\t</summary>\r\n" +
                 "\tpublic class Foo\r\n" +
                 "\t{\r\n" +
-                "\t \t/// <MyElement> Value </MyElement>\r\n" +
-                "\t\t/// <MyElement> Value </MyElement>\r\n" +
+                "\t \t/// <MyElement>\tValue </MyElement>\r\n" +
+                "\t\t/**\t \t<MyElement> Value </MyElement>\t*/\r\n" +
                 "\t}\r\n";
 
             var fixedTestCode = @"    /// <summary>
@@ -116,19 +116,25 @@ public  class   Foo
     public class Foo
     {
         /// <MyElement> Value </MyElement>
-        /// <MyElement> Value </MyElement>
+        /**     <MyElement> Value </MyElement>  */
     }
 ";
 
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(1, 1),
+                this.CSharpDiagnostic().WithLocation(1, 5),
                 this.CSharpDiagnostic().WithLocation(2, 1),
+                this.CSharpDiagnostic().WithLocation(2, 5),
                 this.CSharpDiagnostic().WithLocation(3, 1),
+                this.CSharpDiagnostic().WithLocation(3, 5),
                 this.CSharpDiagnostic().WithLocation(4, 1),
                 this.CSharpDiagnostic().WithLocation(5, 1),
                 this.CSharpDiagnostic().WithLocation(6, 1),
+                this.CSharpDiagnostic().WithLocation(6, 19),
                 this.CSharpDiagnostic().WithLocation(7, 1),
+                this.CSharpDiagnostic().WithLocation(7, 6),
+                this.CSharpDiagnostic().WithLocation(7, 39),
                 this.CSharpDiagnostic().WithLocation(8, 1),
             };
 

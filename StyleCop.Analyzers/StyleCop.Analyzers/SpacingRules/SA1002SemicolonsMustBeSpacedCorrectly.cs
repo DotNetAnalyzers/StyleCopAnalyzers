@@ -92,11 +92,26 @@ namespace StyleCop.Analyzers.SpacingRules
             else
             {
                 SyntaxToken nextToken = token.GetNextToken();
-                if (nextToken.IsKind(SyntaxKind.CloseParenToken))
+                switch (nextToken.Kind())
                 {
+                case SyntaxKind.CloseParenToken:
                     // Special handling for the following case:
                     // for (; ;)
                     missingFollowingSpace = false;
+                    break;
+
+                case SyntaxKind.SemicolonToken:
+                    // Special handling for the following case:
+                    // Statement();;
+                    if (nextToken.Parent.IsKind(SyntaxKind.EmptyStatement))
+                    {
+                        missingFollowingSpace = false;
+                    }
+
+                    break;
+
+                default:
+                    break;
                 }
             }
 

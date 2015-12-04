@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     public class SA1311UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestStaticReadonlyFieldStartingWithLoweCaseAsync()
+        public async Task TestStaticReadonlyFieldStartingWithLowerCaseAsync()
         {
             var testCode = @"public class Foo
 {
@@ -29,6 +29,28 @@ namespace StyleCop.Analyzers.Test.NamingRules
             var fixedCode = @"public class Foo
 {
     public static readonly string Bar = ""baz"";
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestStaticReadonlyFieldStartingWithLowerCaseWithConflictAsync()
+        {
+            var testCode = @"public class Foo
+{
+    public static readonly string bar = ""baz"";
+    public int Bar => 0;
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 35);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedCode = @"public class Foo
+{
+    public static readonly string BarValue = ""baz"";
+    public int Bar => 0;
 }";
 
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);

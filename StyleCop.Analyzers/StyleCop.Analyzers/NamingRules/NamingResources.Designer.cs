@@ -71,6 +71,15 @@ namespace StyleCop.Analyzers.NamingRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Prefix interface name with &apos;I&apos;.
+        /// </summary>
+        internal static string SA1302CodeFix {
+            get {
+                return ResourceManager.GetString("SA1302CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The name of a variable in C# does not begin with a lower-case letter..
         /// </summary>
         internal static string SA1312Description {

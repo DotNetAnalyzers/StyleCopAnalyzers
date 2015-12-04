@@ -80,20 +80,24 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static void AnalyzeSummaryElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location diagnosticLocation, PropertyDeclarationSyntax propertyDeclaration, string startingTextGets, string startingTextSets, string startingTextGetsOrSets)
         {
             var diagnosticProperties = ImmutableDictionary.CreateBuilder<string, string>();
+            ArrowExpressionClauseSyntax expressionBody = propertyDeclaration.ExpressionBody;
             AccessorDeclarationSyntax getter = null;
             AccessorDeclarationSyntax setter = null;
 
-            foreach (var accessor in propertyDeclaration.AccessorList.Accessors)
+            if (propertyDeclaration.AccessorList != null)
             {
-                switch (accessor.Keyword.Kind())
+                foreach (var accessor in propertyDeclaration.AccessorList.Accessors)
                 {
-                case SyntaxKind.GetKeyword:
-                    getter = accessor;
-                    break;
+                    switch (accessor.Keyword.Kind())
+                    {
+                    case SyntaxKind.GetKeyword:
+                        getter = accessor;
+                        break;
 
-                case SyntaxKind.SetKeyword:
-                    setter = accessor;
-                    break;
+                    case SyntaxKind.SetKeyword:
+                        setter = accessor;
+                        break;
+                    }
                 }
             }
 
@@ -107,16 +111,90 @@ namespace StyleCop.Analyzers.DocumentationRules
             var textElement = summaryElement.Content.FirstOrDefault() as XmlTextSyntax;
             var text = textElement == null ? string.Empty : XmlCommentHelper.GetText(textElement, true).TrimStart();
 
-            if (getter != null)
+            if (getter != null || expressionBody != null)
             {
                 bool startsWithGetOrSet = text.StartsWith(startingTextGetsOrSets, StringComparison.Ordinal);
 
                 if (setter != null)
                 {
-                    var getterIsVisible = IsPubliclyVisible(propertyDeclaration, getter);
-                    var setterIsVisible = IsPubliclyVisible(propertyDeclaration, setter);
+                    // There is no way getter is null (can't have expression body and accessor list)
+                    bool getterVisible;
+                    bool setterVisible;
 
-                    if (getterIsVisible && !setterIsVisible)
+                    if (!getter.Modifiers.Any() && !setter.Modifiers.Any())
+                    {
+                        // Case 1: The getter and setter have the same declared accessibility
+                        getterVisible = true;
+                        setterVisible = true;
+                    }
+                    else if (getter.Modifiers.Any(SyntaxKind.PrivateKeyword))
+                    {
+                        // Case 3
+                        getterVisible = false;
+                        setterVisible = true;
+                    }
+                    else if (setter.Modifiers.Any(SyntaxKind.PrivateKeyword))
+                    {
+                        // Case 3
+                        getterVisible = true;
+                        setterVisible = false;
+                    }
+                    else
+                    {
+                        var propertyAccessibility = propertyDeclaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+                        bool propertyOnlyInternal = propertyAccessibility == Accessibility.Internal
+                            || propertyAccessibility == Accessibility.ProtectedAndInternal
+                            || propertyAccessibility == Accessibility.Private;
+                        if (propertyOnlyInternal)
+                        {
+                            // Case 2: Property only internal and no accessor is explicitly private
+                            getterVisible = true;
+                            setterVisible = true;
+                        }
+                        else
+                        {
+                            var getterAccessibility = getter.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+                            var setterAccessibility = setter.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+
+                            switch (getterAccessibility)
+                            {
+                            case Accessibility.Public:
+                            case Accessibility.ProtectedOrInternal:
+                            case Accessibility.Protected:
+                                // Case 4
+                                getterVisible = true;
+                                break;
+
+                            case Accessibility.Internal:
+                            case Accessibility.ProtectedAndInternal:
+                            case Accessibility.Private:
+                            default:
+                                // The property is externally accessible, so the setter must be more accessible.
+                                getterVisible = false;
+                                break;
+                            }
+
+                            switch (setterAccessibility)
+                            {
+                            case Accessibility.Public:
+                            case Accessibility.ProtectedOrInternal:
+                            case Accessibility.Protected:
+                                // Case 4
+                                setterVisible = true;
+                                break;
+
+                            case Accessibility.Internal:
+                            case Accessibility.ProtectedAndInternal:
+                            case Accessibility.Private:
+                            default:
+                                // The property is externally accessible, so the getter must be more accessible.
+                                setterVisible = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (getterVisible && !setterVisible)
                     {
                         if (startsWithGetOrSet)
                         {
@@ -130,7 +208,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                             context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextGets));
                         }
                     }
-                    else if (!getterIsVisible && setterIsVisible)
+                    else if (!getterVisible && setterVisible)
                     {
                         if (startsWithGetOrSet)
                         {
@@ -170,46 +248,6 @@ namespace StyleCop.Analyzers.DocumentationRules
                     context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextSets));
                 }
             }
-        }
-
-        private static bool IsPubliclyVisible(PropertyDeclarationSyntax propertyDeclaration, AccessorDeclarationSyntax accessor)
-        {
-            if (accessor == null)
-            {
-                return false;
-            }
-
-            if (accessor.Modifiers.Any(SyntaxKind.PrivateKeyword))
-            {
-                return false;
-            }
-
-            var current = accessor.Parent;
-            while (current != null)
-            {
-                switch (current.Kind())
-                {
-                case SyntaxKind.ClassDeclaration:
-                    if (((ClassDeclarationSyntax)current).Modifiers.Any(SyntaxKind.PrivateKeyword))
-                    {
-                        return false;
-                    }
-
-                    break;
-
-                case SyntaxKind.StructDeclaration:
-                    if (((StructDeclarationSyntax)current).Modifiers.Any(SyntaxKind.PrivateKeyword))
-                    {
-                        return false;
-                    }
-
-                    break;
-                }
-
-                current = current.Parent;
-            }
-
-            return true;
         }
     }
 }

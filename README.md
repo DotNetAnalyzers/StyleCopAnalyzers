@@ -36,8 +36,8 @@ See [Contributing](CONTRIBUTING.md)
 
 ## Current status
 
-An up-to-date list of which StyleCop rules are implemented and which have code fixes can be found [here](http://stylecop.pdelvo.com/).
+An up-to-date list of which StyleCop rules are implemented and which have code fixes can be found [here](https://stylecop.pdelvo.com/).
 
 ## Source browser
 
-The up-to-date source code can be browsed [here](http://source.pdelvo.com/).
+The up-to-date source code can be browsed [here](https://source.pdelvo.com/).

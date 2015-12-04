@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.Helpers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// Helper for dealing with member priority.
@@ -31,52 +32,65 @@ namespace StyleCop.Analyzers.Helpers
             SyntaxKind.FieldDeclaration,
             SyntaxKind.NamespaceDeclaration);
 
-        private readonly ModifierFlags modifierFlags;
-        private readonly int elementPriority;
-        private readonly AccessLevel accessibilty;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="MemberOrderHelper"/> struct.
         /// </summary>
         /// <param name="member">The member to wrap.</param>
-        /// <param name="checks">The element ordering checks.</param>
-        internal MemberOrderHelper(MemberDeclarationSyntax member, ElementOrderingChecks checks)
+        /// <param name="elementOrder">The element ordering traits.</param>
+        internal MemberOrderHelper(MemberDeclarationSyntax member, ImmutableArray<OrderingTrait> elementOrder)
         {
             this.Member = member;
             var modifiers = member.GetModifiers();
             var type = member.Kind();
             type = type == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : type;
 
-            this.elementPriority = checks.ElementType ? TypeMemberOrder.IndexOf(type) : 0;
-            this.modifierFlags = GetModifierFlags(modifiers, checks);
-            if (checks.AccessLevel)
+            this.Priority = 0;
+            foreach (OrderingTrait trait in elementOrder)
             {
-                if ((type == SyntaxKind.ConstructorDeclaration && this.modifierFlags.HasFlag(ModifierFlags.Static))
-                    || (type == SyntaxKind.MethodDeclaration && ((MethodDeclarationSyntax)member).ExplicitInterfaceSpecifier != null)
-                    || (type == SyntaxKind.PropertyDeclaration && ((PropertyDeclarationSyntax)member).ExplicitInterfaceSpecifier != null)
-                    || (type == SyntaxKind.IndexerDeclaration && ((IndexerDeclarationSyntax)member).ExplicitInterfaceSpecifier != null))
+                switch (trait)
                 {
-                    this.accessibilty = AccessLevel.Public;
-                }
-                else
-                {
-                    this.accessibilty = AccessLevelHelper.GetAccessLevel(modifiers);
-                    if (this.accessibilty == AccessLevel.NotSpecified)
+                case OrderingTrait.Kind:
+                    // 4 bits are required to store this.
+                    this.Priority <<= 4;
+                    this.Priority |= TypeMemberOrder.IndexOf(type) & 0x0F;
+                    break;
+
+                case OrderingTrait.Accessibility:
+                    // 3 bits are required to store this.
+                    this.Priority <<= 3;
+                    this.Priority |= (int)GetAccessLevelForOrdering(member, modifiers) & 0x07;
+                    break;
+
+                case OrderingTrait.Constant:
+                    this.Priority <<= 1;
+                    if (modifiers.Any(SyntaxKind.ConstKeyword))
                     {
-                        if (member.Parent.IsKind(SyntaxKind.CompilationUnit) || member.Parent.IsKind(SyntaxKind.NamespaceDeclaration))
-                        {
-                            this.accessibilty = AccessLevel.Internal;
-                        }
-                        else
-                        {
-                            this.accessibilty = AccessLevel.Private;
-                        }
+                        this.Priority |= 1;
                     }
+
+                    break;
+
+                case OrderingTrait.Static:
+                    this.Priority <<= 1;
+                    if (modifiers.Any(SyntaxKind.StaticKeyword))
+                    {
+                        this.Priority |= 1;
+                    }
+
+                    break;
+
+                case OrderingTrait.Readonly:
+                    this.Priority <<= 1;
+                    if (modifiers.Any(SyntaxKind.ReadOnlyKeyword))
+                    {
+                        this.Priority |= 1;
+                    }
+
+                    break;
+
+                default:
+                    continue;
                 }
-            }
-            else
-            {
-                this.accessibilty = AccessLevel.Public;
             }
         }
 
@@ -105,7 +119,7 @@ namespace StyleCop.Analyzers.Helpers
         }
 
         /// <summary>
-        /// The wrapped member.
+        /// Gets the wrapped member.
         /// </summary>
         /// <value>
         /// The wrapped member.
@@ -113,63 +127,42 @@ namespace StyleCop.Analyzers.Helpers
         internal MemberDeclarationSyntax Member { get; }
 
         /// <summary>
-        /// The priority for this member.
+        /// Gets the priority for this member.
         /// </summary>
         /// <value>
         /// The priority for this member.
         /// </value>
-        internal int Priority
+        internal int Priority { get; }
+
+        internal static AccessLevel GetAccessLevelForOrdering(SyntaxNode member, SyntaxTokenList modifiers)
         {
-            get
+            SyntaxKind type = member.Kind();
+
+            AccessLevel accessibility;
+            if ((type == SyntaxKind.ConstructorDeclaration && modifiers.Any(SyntaxKind.StaticKeyword))
+                || (type == SyntaxKind.MethodDeclaration && ((MethodDeclarationSyntax)member).ExplicitInterfaceSpecifier != null)
+                || (type == SyntaxKind.PropertyDeclaration && ((PropertyDeclarationSyntax)member).ExplicitInterfaceSpecifier != null)
+                || (type == SyntaxKind.IndexerDeclaration && ((IndexerDeclarationSyntax)member).ExplicitInterfaceSpecifier != null))
             {
-                var priority = this.ModifierPriority;
-
-                // accessibility is more important than the modifiers
-                priority += (this.AccessibilityPriority + 1) * 100;
-
-                // element type is more important than accessibility
-                priority += (this.elementPriority + 1) * 1000;
-                return priority;
-            }
-        }
-
-        /// <summary>
-        /// The priority for this member only from accessibility.
-        /// </summary>
-        /// <value>
-        /// The priority for this member.
-        /// </value>
-        internal int AccessibilityPriority => (int)this.accessibilty;
-
-        /// <summary>
-        /// The priority for this member only from modifiers.
-        /// </summary>
-        /// <value>
-        /// The priority for this member.
-        /// </value>
-        internal int ModifierPriority => (int)this.modifierFlags;
-
-        private static ModifierFlags GetModifierFlags(SyntaxTokenList syntax, ElementOrderingChecks checks)
-        {
-            var flags = ModifierFlags.None;
-            if (checks.Const && syntax.Any(SyntaxKind.ConstKeyword))
-            {
-                flags |= ModifierFlags.Const;
+                accessibility = AccessLevel.Public;
             }
             else
             {
-                if (checks.Static && syntax.Any(SyntaxKind.StaticKeyword))
+                accessibility = AccessLevelHelper.GetAccessLevel(modifiers);
+                if (accessibility == AccessLevel.NotSpecified)
                 {
-                    flags |= ModifierFlags.Static;
-                }
-
-                if (checks.Readonly && syntax.Any(SyntaxKind.ReadOnlyKeyword))
-                {
-                    flags |= ModifierFlags.Readonly;
+                    if (member.Parent.IsKind(SyntaxKind.CompilationUnit) || member.Parent.IsKind(SyntaxKind.NamespaceDeclaration))
+                    {
+                        accessibility = AccessLevel.Internal;
+                    }
+                    else
+                    {
+                        accessibility = AccessLevel.Private;
+                    }
                 }
             }
 
-            return flags;
+            return accessibility;
         }
     }
 }

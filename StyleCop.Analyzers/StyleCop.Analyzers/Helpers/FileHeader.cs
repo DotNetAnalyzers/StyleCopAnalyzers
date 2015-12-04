@@ -49,7 +49,7 @@ namespace StyleCop.Analyzers.Helpers
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the file header is missing.
+        /// Gets a value indicating whether the file header is missing.
         /// </summary>
         /// <value>
         /// True if the file header is missing.

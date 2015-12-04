@@ -34,6 +34,27 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [Fact]
+        public async Task TestConstFieldStartingWithLowerCaseWithConflictAsync()
+        {
+            var testCode = @"public class Foo
+{
+    public const string bar = ""baz"";
+    public const int Bar = 0;
+}";
+            var fixedCode = @"public class Foo
+{
+    public const string BarValue = ""baz"";
+    public const int Bar = 0;
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 25);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestConstFieldStartingWithLowerCaseNativeMethodsExampleOneAsync()
         {
             var testCode = @"public class NativeMethods

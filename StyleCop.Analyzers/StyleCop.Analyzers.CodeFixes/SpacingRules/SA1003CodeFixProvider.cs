@@ -59,7 +59,7 @@ namespace StyleCop.Analyzers.SpacingRules
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var replacements = new Dictionary<SyntaxToken, SyntaxToken>();
 
-            var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
+            var token = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start, findInsideTrivia: true);
             SyntaxToken followingToken;
 
             switch (diagnostic.Properties[SA1003SymbolsMustBeSpacedCorrectly.CodeFixAction])
@@ -67,24 +67,29 @@ namespace StyleCop.Analyzers.SpacingRules
             case SA1003SymbolsMustBeSpacedCorrectly.InsertBeforeTag:
                 replacements[token] = token.WithLeadingTrivia(token.LeadingTrivia.Add(SyntaxFactory.Space));
                 break;
+
             case SA1003SymbolsMustBeSpacedCorrectly.InsertAfterTag:
                 replacements[token] = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, SyntaxFactory.Space));
                 break;
+
             case SA1003SymbolsMustBeSpacedCorrectly.RemoveBeforeTag:
                 var precedingToken = token.GetPreviousToken();
                 replacements[precedingToken] = precedingToken.WithTrailingTrivia(precedingToken.TrailingTrivia.WithoutTrailingWhitespace());
                 replacements[token] = token.WithLeadingTrivia(token.LeadingTrivia.WithoutLeadingWhitespace());
                 break;
+
             case SA1003SymbolsMustBeSpacedCorrectly.RemoveAfterTag:
                 followingToken = token.GetNextToken();
                 replacements[token] = token.WithTrailingTrivia(token.TrailingTrivia.WithoutLeadingWhitespace());
                 replacements[followingToken] = followingToken.WithLeadingTrivia(followingToken.LeadingTrivia.WithoutLeadingWhitespace());
                 break;
+
             case SA1003SymbolsMustBeSpacedCorrectly.RemoveEndOfLineTag:
                 followingToken = token.GetNextToken();
                 replacements[token] = token.WithTrailingTrivia(token.TrailingTrivia.WithoutTrailingWhitespace());
                 replacements[followingToken] = followingToken.WithLeadingTrivia(followingToken.LeadingTrivia.WithoutLeadingWhitespace());
                 break;
+
             case SA1003SymbolsMustBeSpacedCorrectly.RemoveEndOfLineWithTrailingSpaceTag:
                 followingToken = token.GetNextToken();
                 replacements[token] = token.WithTrailingTrivia(token.TrailingTrivia.WithoutTrailingWhitespace().Add(SyntaxFactory.Space));

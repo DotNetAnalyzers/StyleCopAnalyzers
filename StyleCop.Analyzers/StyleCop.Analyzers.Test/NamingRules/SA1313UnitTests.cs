@@ -140,7 +140,7 @@ public class TypeName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1315")]
+        [Fact]
         public async Task TestRenameConflictsWithVariableAsync()
         {
             var testCode = @"public class TypeName
@@ -157,7 +157,7 @@ public class TypeName
 
             var fixedCode = @"public class TypeName
 {
-    public void MethodName(string parameterValue)
+    public void MethodName(string parameter1)
     {
         string parameter = ""Text"";
     }
@@ -192,7 +192,7 @@ public class TypeName
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1315")]
+        [Fact]
         public async Task TestRenameConflictsWithLaterParameterAsync()
         {
             var testCode = @"public class TypeName
@@ -208,7 +208,7 @@ public class TypeName
 
             var fixedCode = @"public class TypeName
 {
-    public void MethodName(string parameterValue, int parameter)
+    public void MethodName(string parameter1, int parameter)
     {
     }
 }";
@@ -217,7 +217,7 @@ public class TypeName
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1315")]
+        [Fact]
         public async Task TestRenameConflictsWithEarlierParameterAsync()
         {
             var testCode = @"public class TypeName
@@ -233,7 +233,7 @@ public class TypeName
 
             var fixedCode = @"public class TypeName
 {
-    public void MethodName(string parameter, int parameterValue)
+    public void MethodName(string parameter, int parameter1)
     {
     }
 }";

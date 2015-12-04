@@ -877,6 +877,62 @@ public class Foo : Exception
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that spacing errors in conditional directives are fixed correctly. This is a regression test for
+        /// DotNetAnalyzers/StyleCopAnalyzers#1831.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestConditionalDirectivesCorrectlyFixedAsync()
+        {
+            var testCode = @"class Program
+{
+    static int Main(string[] args)
+    {
+#if! NOT
+        return 1;
+#endif
+
+#if! NOT&&! Y
+        return 1;
+#endif
+    }
+}
+";
+            var fixedCode = @"class Program
+{
+    static int Main(string[] args)
+    {
+#if !NOT
+        return 1;
+#endif
+
+#if !NOT && !Y
+        return 1;
+#endif
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(5, 4).WithArguments("!"),
+                this.CSharpDiagnostic(DescriptorNotFollowedByWhitespace).WithLocation(5, 4).WithArguments("!"),
+
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(9, 4).WithArguments("!"),
+                this.CSharpDiagnostic(DescriptorNotFollowedByWhitespace).WithLocation(9, 4).WithArguments("!"),
+
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(9, 9).WithArguments("&&"),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(9, 9).WithArguments("&&"),
+
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(9, 11).WithArguments("!"),
+                this.CSharpDiagnostic(DescriptorNotFollowedByWhitespace).WithLocation(9, 11).WithArguments("!"),
+            };
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
