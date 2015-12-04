@@ -395,9 +395,7 @@ namespace StyleCopTester
             CompilationWithAnalyzers compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, cancellationToken: cancellationToken);
 
             var allDiagnostics = await compilationWithAnalyzers.GetAllDiagnosticsAsync().ConfigureAwait(false);
-
-            // We want analyzer diagnostics and analyzer exceptions
-            return allDiagnostics.RemoveRange(compilation.GetDiagnostics());
+            return allDiagnostics;
         }
 
         private static void PrintHelp()
