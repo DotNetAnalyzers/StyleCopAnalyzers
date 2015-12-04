@@ -4,6 +4,8 @@
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Immutable;
+    using System.Linq;
+    using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -43,17 +45,38 @@ namespace StyleCop.Analyzers.DocumentationRules
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location[] diagnosticLocations)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, XElement completeDocumentation, Location[] diagnosticLocations)
         {
-            if (syntax != null)
+            if (syntax == null)
             {
-                if (XmlCommentHelper.IsConsideredEmpty(syntax))
+                return;
+            }
+
+            if (completeDocumentation != null)
+            {
+                XElement summaryNode = completeDocumentation.Nodes().OfType<XElement>().FirstOrDefault(element => element.Name == XmlCommentHelper.SummaryXmlTag);
+                if (summaryNode == null)
                 {
-                    foreach (var location in diagnosticLocations)
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
-                    }
+                    // Handled by SA1604
+                    return;
                 }
+
+                if (!XmlCommentHelper.IsConsideredEmpty(summaryNode))
+                {
+                    return;
+                }
+            }
+            else
+            {
+                if (!XmlCommentHelper.IsConsideredEmpty(syntax))
+                {
+                    return;
+                }
+            }
+
+            foreach (var location in diagnosticLocations)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
             }
         }
     }

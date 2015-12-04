@@ -98,7 +98,7 @@ namespace StyleCop.Analyzers.OrderingRules
                     continue;
                 }
 
-                if (usingDirective.IsSystemUsingDirective())
+                if (usingDirective.IsSystemUsingDirective() && !usingDirective.HasNamespaceAliasQualifier())
                 {
                     if (systemUsingDirectivesShouldBeBeforeThisName != null)
                     {
@@ -108,7 +108,9 @@ namespace StyleCop.Analyzers.OrderingRules
 
                     var previousUsing = usings[i - 1];
 
-                    if (!previousUsing.IsSystemUsingDirective() || previousUsing.StaticKeyword.Kind() != SyntaxKind.None)
+                    if (!previousUsing.IsSystemUsingDirective()
+                        || previousUsing.HasNamespaceAliasQualifier()
+                        || previousUsing.StaticKeyword.Kind() != SyntaxKind.None)
                     {
                         systemUsingDirectivesShouldBeBeforeThisName = previousUsing.Name.ToNormalizedString();
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, usingDirective.GetLocation(), usingDirective.Name.ToNormalizedString(), systemUsingDirectivesShouldBeBeforeThisName));

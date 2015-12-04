@@ -49,6 +49,27 @@ public class TestClass
 
         [Theory]
         [MemberData(nameof(Members))]
+        public async Task VerifyThatCorrectDocumentationWithEmptyElementsDoesNotReportADiagnosticAsync(string member)
+        {
+            var testCode = $@"
+public class TestClass
+{{
+    /// <summary>
+    /// Some documentation <see cref=""TestClass""/>.
+    /// </summary>
+    /// <summary>
+    /// Some documentation <see cref=""TestClass2""/>.
+    /// </summary>
+    /// <remark>Some remark.</remark>
+    {member}
+}}
+public class TestClass2 {{ }}
+";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(Members))]
         public async Task VerifyThatTheAnalyzerDoesNotCrashOnInheritDocAsync(string member)
         {
             var testCode = $@"
@@ -59,6 +80,27 @@ public class TestClass
 }}
 ";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(Members))]
+        public async Task VerifyThatWhitespacesAreNormalizedForEmptyXmlElementsAsync(string member)
+        {
+            var testCode = $@"
+public class TestClass
+{{
+    /// <summary>
+    /// Some documentation <see cref=""TestClass""/>.
+    /// </summary>
+    /// <summary>
+    /// Some documentation <see       cref  =   ""TestClass""     />.
+    /// </summary>
+    /// <remark>Some remark.</remark>
+    {member}
+}}
+";
+            var expected = this.CSharpDiagnostic().WithLocation(7, 9);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]

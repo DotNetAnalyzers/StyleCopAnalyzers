@@ -50,6 +50,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             AttributeListSyntax attributeList = (AttributeListSyntax)context.Node;
 
+            if (attributeList.Parent.IsKind(SyntaxKind.Parameter) || attributeList.Parent.IsKind(SyntaxKind.TypeParameter))
+            {
+                // no analysis required for parameters or type (generic) parameters
+                return;
+            }
+
             if (attributeList.Attributes.Count > 1)
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, attributeList.Attributes[1].Name.GetLocation()));

@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System;
     using System.Collections.Immutable;
     using System.Linq;
+    using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -60,8 +61,12 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <param name="context">The current analysis context.</param>
         /// <param name="syntax">The <see cref="XmlElementSyntax"/> or <see cref="XmlEmptyElementSyntax"/> of the node
         /// to examine.</param>
+        /// <param name="completeDocumentation">The complete documentation for the declared symbol, with any
+        /// <c>&lt;include&gt;</c> elements expanded. If the XML documentation comment included a <c>&lt;summary&gt;</c>
+        /// element, this value will be <see langword="null"/>, even if the XML documentation comment also included an
+        /// <c>&lt;include&gt;</c> element.</param>
         /// <param name="diagnosticLocations">The location(s) where diagnostics, if any, should be reported.</param>
-        protected abstract void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, params Location[] diagnosticLocations);
+        protected abstract void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, XElement completeDocumentation, params Location[] diagnosticLocations);
 
         private void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
@@ -220,8 +225,25 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            var summaryXmlElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.SummaryXmlTag);
-            this.HandleXmlElement(context, summaryXmlElement, locations);
+            XElement completeDocumentation = null;
+            var relevantXmlElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.SummaryXmlTag);
+            if (relevantXmlElement == null)
+            {
+                relevantXmlElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag);
+                if (relevantXmlElement != null)
+                {
+                    var declaration = context.SemanticModel.GetDeclaredSymbol(node, context.CancellationToken);
+                    var rawDocumentation = declaration?.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
+                    completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
+                    if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.InheritdocXmlTag))
+                    {
+                        // Ignore nodes with an <inheritdoc/> tag in the included XML.
+                        return;
+                    }
+                }
+            }
+
+            this.HandleXmlElement(context, relevantXmlElement, completeDocumentation, locations);
         }
     }
 }
