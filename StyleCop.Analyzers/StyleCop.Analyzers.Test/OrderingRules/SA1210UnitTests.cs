@@ -344,10 +344,6 @@ namespace Newtonsoft.Json
 // Copyright (c) FooCorporation. All rights reserved.
 // </copyright>
 
-// <copyright file=""VoiceCommandService.cs"" company=""Foo Corporation"">
-// Copyright (c) FooCorporation. All rights reserved.
-// </copyright>
-
 namespace Foo.Garage.XYZ
 {
     using System;
@@ -360,11 +356,56 @@ namespace Newtonsoft.Json
 }
 ";
 
+            // The same diagnostic is reported multiple times due to a bug in Roslyn 1.0
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(8, 5),
                 this.CSharpDiagnostic().WithLocation(8, 5),
                 this.CSharpDiagnostic().WithLocation(8, 5),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the first using statement will preserve its leading comment.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestLeadingCommentForFirstUsingInNamespaceIsPreservedAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    // With test comment
+    using System;
+    using TestNamespace;
+    using Newtonsoft.Json;
+}
+
+namespace Newtonsoft.Json
+{
+}
+";
+
+            var fixedTestCode = @"namespace TestNamespace
+{
+    // With test comment
+    using System;
+    using Newtonsoft.Json;
+    using TestNamespace;
+}
+
+namespace Newtonsoft.Json
+{
+}
+";
+
+            // The same diagnostic is reported multiple times due to a bug in Roslyn 1.0
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(5, 5),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
