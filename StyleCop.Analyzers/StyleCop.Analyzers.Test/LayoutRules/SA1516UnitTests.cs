@@ -543,6 +543,45 @@ public class TestClass
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies consistency with classic StyleCop when assembly-wide attribute is not separated by a blank line from the class definition.
+        /// Regression test for #1923
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestWithAssemblyWideAttributeAndClassAsync()
+        {
+            var testCode = @"using System;
+
+[assembly: CLSCompliant(false)]
+namespace SomeNamespace
+{
+    public class Startup
+    {
+    }
+}";
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(2, 1)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedCode = @"using System;
+
+[assembly: CLSCompliant(false)]
+
+namespace SomeNamespace
+{
+    public class Startup
+    {
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1516ElementsMustBeSeparatedByBlankLine();
