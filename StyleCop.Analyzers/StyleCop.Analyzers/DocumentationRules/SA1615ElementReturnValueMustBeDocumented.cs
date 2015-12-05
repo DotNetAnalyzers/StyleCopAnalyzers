@@ -5,6 +5,8 @@ namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.Linq;
+    using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -96,10 +98,33 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            if (documentationStructure.Content.GetFirstXmlElement(XmlCommentHelper.ReturnsXmlTag) == null)
+            var relevantXmlElement = documentationStructure.Content.GetFirstXmlElement(XmlCommentHelper.ReturnsXmlTag);
+            if (relevantXmlElement != null)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, returnType.GetLocation()));
+                // A <returns> element was located.
+                return;
             }
+
+            relevantXmlElement = documentationStructure.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag);
+            if (relevantXmlElement != null)
+            {
+                var declaration = context.SemanticModel.GetDeclaredSymbol(context.Node, context.CancellationToken);
+                var rawDocumentation = declaration?.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
+                XElement completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
+                if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.InheritdocXmlTag))
+                {
+                    // Ignore nodes with an <inheritdoc/> tag in the included XML.
+                    return;
+                }
+
+                if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.ReturnsXmlTag))
+                {
+                    // A <returns> element was located.
+                    return;
+                }
+            }
+
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, returnType.GetLocation()));
         }
     }
 }

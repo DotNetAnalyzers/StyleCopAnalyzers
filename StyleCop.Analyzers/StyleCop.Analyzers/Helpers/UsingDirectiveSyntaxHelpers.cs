@@ -21,7 +21,7 @@ namespace StyleCop.Analyzers.Helpers
         /// </summary>
         /// <param name="usingDirective">The <see cref="UsingDirectiveSyntax"/> that will be checked.</param>
         /// <returns>Return true if the <see cref="UsingDirectiveSyntax"/>is system using directive, otherwise false.</returns>
-        internal static bool IsSystemUsingDirective(this UsingDirectiveSyntax usingDirective) => string.Equals(SystemUsingDirectiveIdentifier, GetFirstIdentifierInUsingDirective(usingDirective)?.Text, StringComparison.Ordinal);
+        internal static bool IsSystemUsingDirective(this UsingDirectiveSyntax usingDirective) => string.Equals(SystemUsingDirectiveIdentifier, GetFirstIdentifierInUsingDirective(usingDirective)?.ValueText, StringComparison.Ordinal);
 
         /// <summary>
         /// Check if <see cref="UsingDirectiveSyntax"/> is preceded by a preprocessor directive.
