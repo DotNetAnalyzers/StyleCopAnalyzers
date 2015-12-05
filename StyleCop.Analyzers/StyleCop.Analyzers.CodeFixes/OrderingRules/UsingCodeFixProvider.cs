@@ -27,7 +27,8 @@ namespace StyleCop.Analyzers.OrderingRules
     internal sealed class UsingCodeFixProvider : CodeFixProvider
     {
         private static readonly List<UsingDirectiveSyntax> EmptyUsingsList = new List<UsingDirectiveSyntax>();
-        private static readonly SyntaxAnnotation UsingCodeFixAnnotation = new SyntaxAnnotation(nameof(UsingCodeFixProvider));
+        private static readonly SyntaxAnnotation UsingCodeFixAnnotation = new SyntaxAnnotation(nameof(UsingCodeFixAnnotation));
+        private static readonly SyntaxAnnotation FileHeaderStrippedAnnotation = new SyntaxAnnotation(nameof(FileHeaderStrippedAnnotation));
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
@@ -175,6 +176,13 @@ namespace StyleCop.Analyzers.OrderingRules
 
         private static SyntaxNode ReAddFileHeader(SyntaxNode syntaxRoot, SyntaxNode newSyntaxRoot)
         {
+            // Only re-add the file header if it was stripped.
+            var usingDirectives = newSyntaxRoot.GetAnnotatedNodes(FileHeaderStrippedAnnotation);
+            if (!usingDirectives.Any())
+            {
+                return newSyntaxRoot;
+            }
+
             var oldFirstToken = syntaxRoot.GetFirstToken();
             if (!oldFirstToken.HasLeadingTrivia)
             {
@@ -584,12 +592,6 @@ namespace StyleCop.Analyzers.OrderingRules
                 return hasHeader ? fileHeader : new List<SyntaxTrivia>();
             }
 
-            private static List<SyntaxTrivia> StripFileHeader(SyntaxTriviaList leadingTrivia)
-            {
-                var fileHeader = GetFileHeader(leadingTrivia);
-                return leadingTrivia.Skip(fileHeader.Count).ToList();
-            }
-
             private List<UsingDirectiveSyntax> GenerateUsings(Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>> usingsGroup, DirectiveSpan directiveSpan, string indentation, List<SyntaxTrivia> triviaToMove, bool qualifyNames)
             {
                 List<UsingDirectiveSyntax> result = new List<UsingDirectiveSyntax>();
@@ -614,6 +616,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
                 for (var i = 0; i < usingsList.Count; i++)
                 {
+                    bool strippedFileHeader = false;
                     var currentUsing = usingsList[i];
 
                     if (qualifyNames)
@@ -621,8 +624,21 @@ namespace StyleCop.Analyzers.OrderingRules
                         currentUsing = this.QualifyUsingDirective(currentUsing);
                     }
 
+                    // strip the file header, if the using is the first node in the source file.
+                    List<SyntaxTrivia> leadingTrivia;
+                    if ((i == 0) && currentUsing.GetFirstToken().GetPreviousToken().IsMissingOrDefault())
+                    {
+                        var trivia = currentUsing.GetLeadingTrivia();
+                        var fileHeader = GetFileHeader(trivia);
+                        leadingTrivia = trivia.Skip(fileHeader.Count).ToList();
+                        strippedFileHeader = fileHeader.Count > 0;
+                    }
+                    else
+                    {
+                        leadingTrivia = currentUsing.GetLeadingTrivia().ToList();
+                    }
+
                     // when there is a directive trivia, add it (and any trivia before it) to the triviaToMove collection.
-                    var leadingTrivia = (i == 0) ? StripFileHeader(currentUsing.GetLeadingTrivia()) : currentUsing.GetLeadingTrivia().ToList();
                     for (var m = leadingTrivia.Count - 1; m >= 0; m--)
                     {
                         if (leadingTrivia[m].IsDirective)
@@ -688,6 +704,11 @@ namespace StyleCop.Analyzers.OrderingRules
                         .WithLeadingTrivia(newLeadingTrivia)
                         .WithTrailingTrivia(newTrailingTrivia)
                         .WithAdditionalAnnotations(UsingCodeFixAnnotation);
+
+                    if (strippedFileHeader)
+                    {
+                        processedUsing = processedUsing.WithAdditionalAnnotations(FileHeaderStrippedAnnotation);
+                    }
 
                     // filter duplicate using declarations, preferring to keep the one with an alias
                     var existingUsing = result.Find(u => string.Equals(u.Name.ToNormalizedString(), processedUsing.Name.ToNormalizedString(), StringComparison.Ordinal));
