@@ -52,6 +52,20 @@ namespace StyleCop.Analyzers.Helpers
 
             var containingSymbol = symbol.ContainingSymbol;
 
+            if (symbol.Kind == SymbolKind.TypeParameter)
+            {
+                // If the symbol is a type parameter, the name can't be the same any type parameters
+                // of the containing type.
+                var parentSymbol = containingSymbol?.ContainingSymbol as INamedTypeSymbol;
+                if (parentSymbol == null)
+                {
+                    return true;
+                }
+
+                bool conflict = parentSymbol.TypeParameters.Any(t => t.Name == name);
+                return !conflict;
+            }
+
             var containingNamespaceOrTypeSymbol = containingSymbol as INamespaceOrTypeSymbol;
             if (containingNamespaceOrTypeSymbol != null)
             {

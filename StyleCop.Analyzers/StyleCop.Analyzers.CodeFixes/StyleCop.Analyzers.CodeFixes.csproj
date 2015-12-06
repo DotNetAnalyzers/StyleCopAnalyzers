@@ -101,6 +101,7 @@
     <Compile Include="NamingRules\SA1308CodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1309CodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1310CodeFixProvider.cs" />
+    <Compile Include="NamingRules\SA1654CodeFixProvider.cs" />
     <Compile Include="NamingRules\SX1309CodeFixProvider.cs" />
     <Compile Include="OrderingRules\ElementOrderCodeFixProvider.cs" />
     <Compile Include="OrderingRules\SA1205CodeFixProvider.cs" />
