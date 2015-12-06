@@ -32,6 +32,10 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> HandleObjectInitializerAction = HandleObjectInitializer;
+        private static readonly Action<SyntaxNodeAnalysisContext> HandleAnonymousObjectInitializerAction = HandleAnonymousObjectInitializer;
+
+        private static readonly ImmutableArray<SyntaxKind> ObjectInitializerKinds =
+            ImmutableArray.Create(SyntaxKind.ObjectInitializerExpression, SyntaxKind.ArrayInitializerExpression, SyntaxKind.CollectionInitializerExpression);
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -45,33 +49,36 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleObjectInitializerAction, SyntaxKind.ObjectInitializerExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleObjectInitializerAction, SyntaxKind.AnonymousObjectCreationExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleObjectInitializerAction, SyntaxKind.ArrayInitializerExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleObjectInitializerAction, SyntaxKind.CollectionInitializerExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleObjectInitializerAction, ObjectInitializerKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(HandleAnonymousObjectInitializerAction, SyntaxKind.AnonymousObjectCreationExpression);
         }
 
         private static void HandleObjectInitializer(SyntaxNodeAnalysisContext context)
         {
-            var initializer = (ExpressionSyntax)context.Node;
-            if (initializer == null
-                || !IsMultiline(initializer))
+            var initializer = (InitializerExpressionSyntax)context.Node;
+            if (initializer == null || !initializer.SpansMultipleLines())
             {
                 return;
             }
 
-            var childNodesAndTokens = initializer.ChildNodesAndTokens().ToList();
-            var lastToken = childNodesAndTokens[childNodesAndTokens.Count - 2];
-            if (!lastToken.IsKind(SyntaxKind.CommaToken))
+            if (initializer.Expressions.SeparatorCount < initializer.Expressions.Count)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, lastToken.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, initializer.Expressions.Last().GetLocation()));
             }
         }
 
-        private static bool IsMultiline(ExpressionSyntax initializer)
+        private static void HandleAnonymousObjectInitializer(SyntaxNodeAnalysisContext context)
         {
-            var lineSpan = initializer.GetLineSpan();
-            return lineSpan.StartLinePosition.Line != lineSpan.EndLinePosition.Line;
+            var initializer = (AnonymousObjectCreationExpressionSyntax)context.Node;
+            if (initializer == null || !initializer.SpansMultipleLines())
+            {
+                return;
+            }
+
+            if (initializer.Initializers.SeparatorCount < initializer.Initializers.Count)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, initializer.Initializers.Last().GetLocation()));
+            }
         }
     }
 }

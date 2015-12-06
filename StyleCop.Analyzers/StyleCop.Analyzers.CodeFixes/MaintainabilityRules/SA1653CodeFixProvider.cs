@@ -84,7 +84,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             var existingItems = new List<ExpressionSyntax>(initializer.Expressions);
             var last = existingItems.Last();
             existingItems.Remove(last);
-            existingItems.Add(last.WithTrailingTrivia(last.GetTrailingTrivia().WithoutTrailingWhitespace()));
+            existingItems.Add(last.WithoutTrailingTrivia());
 
             var existingSeparators = initializer.Expressions.GetSeparators();
             var newSeparators = new List<SyntaxToken>(existingSeparators);
@@ -94,13 +94,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 existingItems,
                 newSeparators);
 
-            var newInitializer = SyntaxFactory.InitializerExpression(
-                initializer.Kind(),
-                initializer.OpenBraceToken,
-                newInitializerExpressions,
-                initializer.CloseBraceToken);
-
-            return newInitializer;
+            var fixedInitializer = initializer.WithExpressions(newInitializerExpressions);
+            return fixedInitializer;
         }
 
         private static SyntaxNode RewriteAnonymousObjectInitializer(AnonymousObjectCreationExpressionSyntax initializer)
@@ -108,7 +103,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             var existingItems = new List<AnonymousObjectMemberDeclaratorSyntax>(initializer.Initializers);
             var last = existingItems.Last();
             existingItems.Remove(last);
-            existingItems.Add(last.WithTrailingTrivia(last.GetTrailingTrivia().WithoutTrailingWhitespace()));
+            existingItems.Add(last.WithoutTrailingTrivia());
 
             var existingSeparators = initializer.Initializers.GetSeparators();
             var newSeparators = new List<SyntaxToken>(existingSeparators);
@@ -118,12 +113,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 existingItems,
                 newSeparators);
 
-            var newInitializer = SyntaxFactory.AnonymousObjectCreationExpression(
-                initializer.NewKeyword,
-                initializer.OpenBraceToken,
-                newInitializerExpressions,
-                initializer.CloseBraceToken);
-            return newInitializer;
+            var fixedInitializer = initializer.WithInitializers(newInitializerExpressions);
+            return fixedInitializer;
         }
     }
 }

@@ -76,7 +76,7 @@ namespace TestNamespace
         }
 
         /// <summary>
-        /// Verifies that an object initialiezr without a trailing comma produces a diagnostic.
+        /// Verifies that an object initializer without a trailing comma produces a diagnostic.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -143,7 +143,7 @@ namespace TestNamespace
         }
 
         /// <summary>
-        /// Verifies that an anonymous object initialiezr without a trailing comma produces a diagnostic.
+        /// Verifies that an anonymous object initializer without a trailing comma produces a diagnostic.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -188,7 +188,53 @@ class TestClass
         }
 
         /// <summary>
-        /// Verifies that an array initialiezr without a trailing comma produces a diagnostic.
+        /// Verifies that an anonymous object initializer without a trailing comma produces a diagnostic,
+        /// and the code fix preserves trailing trivia.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyAnonymousObjectInitializerWithTrailingTriviaAsync()
+        {
+            var testCode = @"
+class TestClass
+{
+    void Foo()
+    {
+        var x = new
+        {
+            Min = 0,
+            Max = 0 // trivia?
+        };
+    }
+}
+";
+
+            var fixedTestCode = @"
+class TestClass
+{
+    void Foo()
+    {
+        var x = new
+        {
+            Min = 0,
+            Max = 0, // trivia?
+        };
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(9, 13),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that an array initializer without a trailing comma produces a diagnostic.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -235,7 +281,55 @@ class TestClass
         }
 
         /// <summary>
-        /// Verifies that a collection initialiezr without a trailing comma produces a diagnostic.
+        /// Verifies that an array initializer without a trailing comma produces a diagnostic,
+        /// and the code fix preserves existing trivia.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyArrayInitializerWithTrailingTriviaAsync()
+        {
+            var testCode = @"
+class TestClass
+{
+    void Foo()
+    {
+        var x = new[]
+        {
+            1,
+            2,
+            3 /* last item */
+        };
+    }
+}
+";
+
+            var fixedTestCode = @"
+class TestClass
+{
+    void Foo()
+    {
+        var x = new[]
+        {
+            1,
+            2,
+            3, /* last item */
+        };
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(10, 13),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a collection initializer without a trailing comma produces a diagnostic.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -284,7 +378,7 @@ class TestClass
         }
 
         /// <summary>
-        /// Verifies that an array initialiezr without a trailing comma produces a diagnostic.
+        /// Verifies that an array initializer without a trailing comma produces a diagnostic.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
