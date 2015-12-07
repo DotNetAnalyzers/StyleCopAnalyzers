@@ -270,18 +270,32 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
-            var previousLine = argumentListSyntax.Arguments[0].GetLineSpan().EndLinePosition.Line;
+            var previousArgumentLine = argumentListSyntax.Arguments[0].GetLineSpan().EndLinePosition.Line;
             for (int i = 1; i < argumentListSyntax.Arguments.Count; i++)
             {
                 var currentArgument = argumentListSyntax.Arguments[i];
-                var lineSpan = currentArgument.GetLineSpan();
-                var currentLine = lineSpan.StartLinePosition.Line;
-                if (currentLine - previousLine > 1)
+                int currentArgumentStartLine;
+                int currentArgumentEndLine;
+
+                if (currentArgument.HasLeadingTrivia && currentArgument.GetLeadingTrivia().All(trivia => IsValidTrivia(trivia)))
+                {
+                    var lineSpan = currentArgument.SyntaxTree.GetLineSpan(currentArgument.FullSpan);
+                    currentArgumentStartLine = lineSpan.StartLinePosition.Line;
+                    currentArgumentEndLine = lineSpan.EndLinePosition.Line;
+                }
+                else
+                {
+                    var lineSpan = currentArgument.GetLineSpan();
+                    currentArgumentStartLine = lineSpan.StartLinePosition.Line;
+                    currentArgumentEndLine = lineSpan.EndLinePosition.Line;
+                }
+
+                if (currentArgumentStartLine - previousArgumentLine > 1)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentArgument.GetLocation()));
                 }
 
-                previousLine = lineSpan.EndLinePosition.Line;
+                previousArgumentLine = currentArgumentEndLine;
             }
         }
 
@@ -319,12 +333,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static bool IsValidTrivia(SyntaxTrivia trivia)
         {
+            if (trivia.IsDirective)
+            {
+                return true;
+            }
+
             switch (trivia.Kind())
             {
-            case SyntaxKind.IfDirectiveTrivia:
-            case SyntaxKind.ElseDirectiveTrivia:
-            case SyntaxKind.ElifDirectiveTrivia:
-            case SyntaxKind.EndIfDirectiveTrivia:
             case SyntaxKind.DisabledTextTrivia:
             case SyntaxKind.WhitespaceTrivia:
                 return true;
