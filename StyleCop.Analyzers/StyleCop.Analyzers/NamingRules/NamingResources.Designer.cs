@@ -134,38 +134,38 @@ namespace StyleCop.Analyzers.NamingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Prefix generic parameter name with &apos;T&apos;.
+        ///   Looks up a localized string similar to Prefix type parameter name with &apos;T&apos;.
         /// </summary>
-        internal static string SA1654CodeFix {
+        internal static string SA1314CodeFix {
             get {
-                return ResourceManager.GetString("SA1654CodeFix", resourceCulture);
+                return ResourceManager.GetString("SA1314CodeFix", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The name of a C# generic parameter does not begin with the capital letter T..
+        ///   Looks up a localized string similar to The name of a C# type parameter does not begin with the capital letter T..
         /// </summary>
-        internal static string SA1654Description {
+        internal static string SA1314Description {
             get {
-                return ResourceManager.GetString("SA1654Description", resourceCulture);
+                return ResourceManager.GetString("SA1314Description", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Generic parameter names must begin with T.
+        ///   Looks up a localized string similar to Type parameter names must begin with T.
         /// </summary>
-        internal static string SA1654MessageFormat {
+        internal static string SA1314MessageFormat {
             get {
-                return ResourceManager.GetString("SA1654MessageFormat", resourceCulture);
+                return ResourceManager.GetString("SA1314MessageFormat", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Generic parameter names must begin with T.
+        ///   Looks up a localized string similar to Type parameter names must begin with T.
         /// </summary>
-        internal static string SA1654Title {
+        internal static string SA1314Title {
             get {
-                return ResourceManager.GetString("SA1654Title", resourceCulture);
+                return ResourceManager.GetString("SA1314Title", resourceCulture);
             }
         }
     }

@@ -11,23 +11,23 @@ namespace StyleCop.Analyzers.NamingRules
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
-    /// The name of a C# generic parameter does not begin with the capital letter T.
+    /// The name of a C# type parameter does not begin with the capital letter T.
     /// </summary>
     /// <remarks>
-    /// A violation of this rule occurs when the name of a generic parameter does not begin with the capital letter T.
-    /// Generic parameter names should always begin with T. For example, <c>T</c> or <c>TKey</c>.
+    /// A violation of this rule occurs when the name of a C# type parameter does not begin with the capital letter T.
+    /// Type parameter names should always begin with T. For example, <c>T</c> or <c>TKey</c>.
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class SA1654GenericParameterNamesMustBeginWithT : DiagnosticAnalyzer
+    internal class SA1314TypeParameterNamesMustBeginWithT : DiagnosticAnalyzer
     {
         /// <summary>
-        /// The ID for diagnostics produced by the <see cref="SA1654GenericParameterNamesMustBeginWithT"/> analyzer.
+        /// The ID for diagnostics produced by the <see cref="SA1314TypeParameterNamesMustBeginWithT"/> analyzer.
         /// </summary>
-        public const string DiagnosticId = "SA1654";
-        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(NamingResources.SA1654Title), NamingResources.ResourceManager, typeof(NamingResources));
-        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(NamingResources.SA1654MessageFormat), NamingResources.ResourceManager, typeof(NamingResources));
-        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(NamingResources.SA1654Description), NamingResources.ResourceManager, typeof(NamingResources));
-        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1654.md";
+        public const string DiagnosticId = "SA1314";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(NamingResources.SA1314Title), NamingResources.ResourceManager, typeof(NamingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(NamingResources.SA1314MessageFormat), NamingResources.ResourceManager, typeof(NamingResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(NamingResources.SA1314Description), NamingResources.ResourceManager, typeof(NamingResources));
+        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1314.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

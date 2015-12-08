@@ -12,7 +12,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     using TestHelper;
     using Xunit;
 
-    public class SA1654UnitTests : CodeFixVerifier
+    public class SA1314UnitTests : CodeFixVerifier
     {
         [Fact]
         public async Task TestGenericParameterDoesNotStartWithTAsync()
@@ -210,12 +210,12 @@ public class Outer<TKey>
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1654GenericParameterNamesMustBeginWithT();
+            yield return new SA1314TypeParameterNamesMustBeginWithT();
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1654CodeFixProvider();
+            return new SA1314CodeFixProvider();
         }
     }
 }

@@ -13,18 +13,18 @@ namespace StyleCop.Analyzers.NamingRules
     using Microsoft.CodeAnalysis.CodeFixes;
 
     /// <summary>
-    /// Implements a code fix for <see cref="SA1654GenericParameterNamesMustBeginWithT"/>.
+    /// Implements a code fix for <see cref="SA1314TypeParameterNamesMustBeginWithT"/>.
     /// </summary>
     /// <remarks>
-    /// <para>To fix a violation of this rule, add the capital letter T to the front of the generic parameter name.</para>
+    /// <para>To fix a violation of this rule, add the capital letter T to the front of the type parameter name.</para>
     /// </remarks>
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1654CodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1314CodeFixProvider))]
     [Shared]
-    internal class SA1654CodeFixProvider : CodeFixProvider
+    internal class SA1314CodeFixProvider : CodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(SA1654GenericParameterNamesMustBeginWithT.DiagnosticId);
+            ImmutableArray.Create(SA1314TypeParameterNamesMustBeginWithT.DiagnosticId);
 
         /// <inheritdoc/>
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -33,9 +33,9 @@ namespace StyleCop.Analyzers.NamingRules
             {
                 context.RegisterCodeFix(
                     CodeAction.Create(
-                        NamingResources.SA1654CodeFix,
+                        NamingResources.SA1314CodeFix,
                         cancellationToken => CreateChangedSolutionAsync(context.Document, diagnostic, cancellationToken),
-                        nameof(SA1654CodeFixProvider)),
+                        nameof(SA1314CodeFixProvider)),
                     diagnostic);
             }
 
