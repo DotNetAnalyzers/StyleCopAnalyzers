@@ -14,9 +14,9 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using Xunit;
 
     /// <summary>
-    /// This class contains unit tests for SA1134.
+    /// This class contains unit tests for <see cref="SA1413UseTrailingCommasInMultiLineInitializers"/>.
     /// </summary>
-    public class SA1653UnitTests : CodeFixVerifier
+    public class SA1413UnitTests : CodeFixVerifier
     {
         /// <summary>
         /// Verifies that code without an initializer will not fire the diagnostic.
@@ -429,13 +429,13 @@ class TestClass
         /// <inheritdoc/>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new SA1653CodeFixProvider();
+            return new SA1413CodeFixProvider();
         }
 
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1653UseTrailingCommasInMultiLineInitializers();
+            yield return new SA1413UseTrailingCommasInMultiLineInitializers();
         }
     }
 }

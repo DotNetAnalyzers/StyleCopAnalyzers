@@ -19,15 +19,15 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using Microsoft.CodeAnalysis.Editing;
 
     /// <summary>
-    /// Implements a code fix for <see cref="SA1653UseTrailingCommasInMultiLineInitializers"/>.
+    /// Implements a code fix for <see cref="SA1413UseTrailingCommasInMultiLineInitializers"/>.
     /// </summary>
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1653CodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1413CodeFixProvider))]
     [Shared]
-    internal class SA1653CodeFixProvider : CodeFixProvider
+    internal class SA1413CodeFixProvider : CodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(SA1653UseTrailingCommasInMultiLineInitializers.DiagnosticId);
+            ImmutableArray.Create(SA1413UseTrailingCommasInMultiLineInitializers.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -42,9 +42,9 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             {
                 context.RegisterCodeFix(
                     CodeAction.Create(
-                        MaintainabilityResources.SA1653CodeFix,
+                        MaintainabilityResources.SA1413CodeFix,
                         cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
-                        nameof(SA1653CodeFixProvider)),
+                        nameof(SA1413CodeFixProvider)),
                     diagnostic);
             }
 

@@ -15,17 +15,43 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     /// <summary>
     /// A multi-line initializer must use a comma on the last item.
     /// </summary>
+    /// <remarks>
+    /// <para>The last statement in a multi-line C# initializer is missing a trailing comma.</para>
+    ///
+    /// <para>A violation of this rule occurs when the last statement of a C# initializer is missing a trailing comma.
+    /// For example, the following code would generate one instance of this violation:</para>
+    ///
+    /// <code language="csharp">
+    /// var x = new Barnacle
+    /// {
+    ///     Age = 100,
+    ///     Height = 0.2M,
+    ///     Weight = 0.88M
+    /// };
+    /// </code>
+    ///
+    /// <para>The following code would not produce any violations:</para>
+    ///
+    /// <code language="csharp">
+    /// var x = new Barnacle
+    /// {
+    ///     Age = 100,
+    ///     Height = 0.2M,
+    ///     Weight = 0.88M,
+    /// };
+    /// </code>
+    /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class SA1653UseTrailingCommasInMultiLineInitializers : DiagnosticAnalyzer
+    internal class SA1413UseTrailingCommasInMultiLineInitializers : DiagnosticAnalyzer
     {
         /// <summary>
-        /// The ID for diagnostics produced by the <see cref="SA1653UseTrailingCommasInMultiLineInitializers"/> analyzer.
+        /// The ID for diagnostics produced by the <see cref="SA1413UseTrailingCommasInMultiLineInitializers"/> analyzer.
         /// </summary>
-        public const string DiagnosticId = "SA1653";
-        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(MaintainabilityResources.SA1653Title), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
-        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(MaintainabilityResources.SA1653MessageFormat), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
-        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(MaintainabilityResources.SA1653Description), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
-        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1653.md";
+        public const string DiagnosticId = "SA1413";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(MaintainabilityResources.SA1413Title), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(MaintainabilityResources.SA1413MessageFormat), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(MaintainabilityResources.SA1413Description), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
+        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1413.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
