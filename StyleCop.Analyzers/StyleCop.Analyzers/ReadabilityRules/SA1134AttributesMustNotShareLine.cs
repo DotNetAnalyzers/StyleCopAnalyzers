@@ -12,7 +12,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// Two or more attribute appeared on the same line of code.
+    /// An attribute is placed on the same line of code as another attribute or element.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class SA1134AttributesMustNotShareLine : DiagnosticAnalyzer
