@@ -745,6 +745,27 @@ class Class1
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact(DisplayName = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1944")]
+        public async Task TestOverriddenInheritDocAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    ///
+    /// </summary>
+    /// <inheritdoc/>
+    public string Property => ""P"";
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(11, 19);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override Project CreateProject(string[] sources, string language = "C#", string[] filenames = null)
         {
