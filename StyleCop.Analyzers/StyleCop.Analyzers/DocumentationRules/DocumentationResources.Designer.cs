@@ -494,6 +494,33 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;inheritdoc&gt; has been used on an element that doesn&apos;t inherit from a base class or implement an interface..
+        /// </summary>
+        internal static string SA1648Description {
+            get {
+                return ResourceManager.GetString("SA1648Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to inheritdoc must be used with inheriting class.
+        /// </summary>
+        internal static string SA1648MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1648MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to inheritdoc must be used with inheriting class.
+        /// </summary>
+        internal static string SA1648Title {
+            get {
+                return ResourceManager.GetString("SA1648Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Rename file to match first type name.
         /// </summary>
         internal static string SA1649CodeFix {
