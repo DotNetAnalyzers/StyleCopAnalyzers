@@ -246,6 +246,12 @@ public class ApiStatus
 }
 ```
 
+### SA1648
+
+This rule has been modified to adhere more closely to the use of `<inheritdoc>` with Sandcastle Help File Builder. As a
+result, some code which resulted in SA1648 being reported by StyleCop Classic will no longer report this warning in
+StyleCop Analyzers.
+
 ### SA1649
 
 StyleCop Analyzers modified SA1649 to check the first type against the actual file name as opposed to checking against a
