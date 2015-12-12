@@ -59,10 +59,14 @@ namespace StyleCop.Analyzers.DocumentationRules
             var documentation = node.GetDocumentationCommentTriviaSyntax();
 
             var summaryElement = (XmlElementSyntax)documentation.Content.GetFirstXmlElement(XmlCommentHelper.SummaryXmlTag);
-            var textElement = (XmlTextSyntax)summaryElement.Content.First();
+            var textElement = (XmlTextSyntax)summaryElement.Content.FirstOrDefault();
+            if (textElement == null)
+            {
+                return document;
+            }
+
             var textToken = textElement.TextTokens.First(token => token.IsKind(SyntaxKind.XmlTextLiteralToken));
             var text = textToken.ValueText;
-            var newTextBuilder = StringBuilderPool.Allocate();
 
             // preserve leading whitespace
             int index = 0;
