@@ -551,9 +551,7 @@ public class TestClass
         [Fact]
         public async Task TestWithAssemblyWideAttributeAndClassAsync()
         {
-            var testCode = @"using System;
-
-[assembly: CLSCompliant(false)]
+            var testCode = @"[assembly: System.CLSCompliant(false)]
 namespace SomeNamespace
 {
     public class Startup
@@ -567,9 +565,7 @@ namespace SomeNamespace
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
-            var fixedCode = @"using System;
-
-[assembly: CLSCompliant(false)]
+            var fixedCode = @"[assembly: System.CLSCompliant(false)]
 
 namespace SomeNamespace
 {
