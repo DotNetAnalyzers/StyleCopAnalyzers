@@ -62,7 +62,10 @@ namespace StyleCop.Analyzers.DocumentationRules
             var textElement = (XmlTextSyntax)summaryElement.Content.FirstOrDefault();
             if (textElement == null)
             {
-                return document;
+                var newTextToken = SyntaxFactory.XmlTextLiteral(SyntaxTriviaList.Empty, "the value", "the value", SyntaxTriviaList.Empty);
+                textElement = SyntaxFactory.XmlText(SyntaxTokenList.Create(newTextToken));
+                var updatedReturns = summaryElement.WithContent(XmlSyntaxFactory.List(textElement));
+                syntaxRoot = syntaxRoot.ReplaceNode(summaryElement, updatedReturns);
             }
 
             var textToken = textElement.TextTokens.First(token => token.IsKind(SyntaxKind.XmlTextLiteralToken));
@@ -70,7 +73,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             // preserve leading whitespace
             int index = 0;
-            while (char.IsWhiteSpace(text, index))
+            while (text.Length > index && char.IsWhiteSpace(text, index))
             {
                 index++;
             }
@@ -89,14 +92,18 @@ namespace StyleCop.Analyzers.DocumentationRules
                 modifiedText = text.Substring(index);
             }
 
-            modifiedText = char.ToLowerInvariant(modifiedText[0]) + modifiedText.Substring(1);
+            if (modifiedText.Length > 0)
+            {
+                modifiedText = char.ToLowerInvariant(modifiedText[0]) + modifiedText.Substring(1);
+            }
 
             // create the new text string
             var textToAdd = diagnostic.Properties[PropertySummaryDocumentationAnalyzer.ExpectedTextKey];
             var newText = $"{preservedWhitespace}{textToAdd} {modifiedText}";
 
             // replace the token
-            var newTextTokens = textElement.TextTokens.Replace(textToken, SyntaxFactory.XmlTextLiteral(textToken.LeadingTrivia, newText, newText, textToken.TrailingTrivia));
+            var newXmlTextLiteral = SyntaxFactory.XmlTextLiteral(textToken.LeadingTrivia, newText, newText, textToken.TrailingTrivia);
+            var newTextTokens = textElement.TextTokens.Replace(textToken, newXmlTextLiteral);
             var newTextElement = textElement.WithTextTokens(newTextTokens);
 
             var newSyntaxRoot = syntaxRoot.ReplaceNode(textElement, newTextElement);

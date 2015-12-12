@@ -171,7 +171,7 @@ public class TestClass
 
             var fixedTestCode = @"public class ClassName
 {
-    /// <summary>Gets Property</summary>
+    /// <summary>Gets the value</summary>
     public int Property
     {
         get;
