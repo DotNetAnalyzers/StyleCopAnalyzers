@@ -54,16 +54,16 @@ namespace StyleCop.Analyzers.Helpers
 
             if (symbol.Kind == SymbolKind.TypeParameter)
             {
-                // If the symbol is a type parameter, the name can't be the same any type parameters
-                // of the containing type.
+                // If the symbol is a type parameter, the name can't be the same as any type parameters of the containing type.
                 var parentSymbol = containingSymbol?.ContainingSymbol as INamedTypeSymbol;
-                if (parentSymbol == null)
+                if (parentSymbol != null
+                    && parentSymbol.TypeParameters.Any(t => t.Name == name))
                 {
-                    return true;
+                    return false;
                 }
 
-                bool conflict = parentSymbol.TypeParameters.Any(t => t.Name == name);
-                return !conflict;
+                // Move up one level for the next validation step.
+                containingSymbol = containingSymbol?.ContainingSymbol;
             }
 
             var containingNamespaceOrTypeSymbol = containingSymbol as INamespaceOrTypeSymbol;
@@ -144,30 +144,30 @@ namespace StyleCop.Analyzers.Helpers
             {
                 switch (parent.Kind())
                 {
-                case SyntaxKind.VariableDeclarator:
-                case SyntaxKind.Parameter:
-                case SyntaxKind.TypeParameter:
-                case SyntaxKind.CatchDeclaration:
-                case SyntaxKind.ExternAliasDirective:
-                case SyntaxKind.QueryContinuation:
-                case SyntaxKind.FromClause:
-                case SyntaxKind.LetClause:
-                case SyntaxKind.JoinClause:
-                case SyntaxKind.JoinIntoClause:
-                case SyntaxKind.ForEachStatement:
-                case SyntaxKind.UsingDirective:
-                case SyntaxKind.LabeledStatement:
-                case SyntaxKind.AnonymousObjectMemberDeclarator:
-                    return parent;
+                    case SyntaxKind.VariableDeclarator:
+                    case SyntaxKind.Parameter:
+                    case SyntaxKind.TypeParameter:
+                    case SyntaxKind.CatchDeclaration:
+                    case SyntaxKind.ExternAliasDirective:
+                    case SyntaxKind.QueryContinuation:
+                    case SyntaxKind.FromClause:
+                    case SyntaxKind.LetClause:
+                    case SyntaxKind.JoinClause:
+                    case SyntaxKind.JoinIntoClause:
+                    case SyntaxKind.ForEachStatement:
+                    case SyntaxKind.UsingDirective:
+                    case SyntaxKind.LabeledStatement:
+                    case SyntaxKind.AnonymousObjectMemberDeclarator:
+                        return parent;
 
-                default:
-                    var declarationParent = parent as MemberDeclarationSyntax;
-                    if (declarationParent != null)
-                    {
-                        return declarationParent;
-                    }
+                    default:
+                        var declarationParent = parent as MemberDeclarationSyntax;
+                        if (declarationParent != null)
+                        {
+                            return declarationParent;
+                        }
 
-                    break;
+                        break;
                 }
 
                 parent = parent.Parent;

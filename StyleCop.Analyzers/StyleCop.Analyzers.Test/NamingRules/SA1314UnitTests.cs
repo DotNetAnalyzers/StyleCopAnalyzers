@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     public class SA1314UnitTests : CodeFixVerifier
     {
         [Fact]
-        public async Task TestGenericParameterDoesNotStartWithTAsync()
+        public async Task TestTypeParameterDoesNotStartWithTAsync()
         {
             var testCode = @"
 public interface IFoo<Key>
@@ -35,7 +35,7 @@ public interface IFoo<TKey>
         }
 
         [Fact]
-        public async Task TestGenericParameterDoesNotStartWithTPlusParameterUsedAsync()
+        public async Task TestTypeParameterDoesNotStartWithTPlusParameterUsedAsync()
         {
             var testCode = @"
 public class Foo<Key>
@@ -65,7 +65,7 @@ public class Foo<TKey>
         }
 
         [Fact]
-        public async Task TestGenericParameterStartsWithLowerTAsync()
+        public async Task TestTypeParameterStartsWithLowerTAsync()
         {
             var testCode = @"
 public interface IFoo<tKey>
@@ -85,7 +85,7 @@ public interface IFoo<TtKey>
         }
 
         [Fact]
-        public async Task TestInnerGenericParameterDoesNotStartWithTAsync()
+        public async Task TestInnerTypeParameterDoesNotStartWithTAsync()
         {
             var testCode = @"
 public class Bar
@@ -111,7 +111,7 @@ public class Bar
         }
 
         [Fact]
-        public async Task TestGenericParameterDoesStartWithTAsync()
+        public async Task TestTypeParameterDoesStartWithTAsync()
         {
             var testCode = @"public interface IFoo<TKey>
 {
@@ -121,7 +121,7 @@ public class Bar
         }
 
         [Fact]
-        public async Task TestInnerGenericParameterDoesStartWithTAsync()
+        public async Task TestInnerTypeParameterDoesStartWithTAsync()
         {
             var testCode = @"
 public class Bar
@@ -135,7 +135,7 @@ public class Bar
         }
 
         [Fact]
-        public async Task TestGenericParameterDoesNotStartWithTWithMemberMatchingTargetTypeAsync()
+        public async Task TestTypeParameterDoesNotStartWithTWithMemberMatchingTargetTypeAsync()
         {
             string testCode = @"
 public class Foo<Key>
@@ -157,7 +157,7 @@ public class Foo<TKey>
         }
 
         [Fact]
-        public async Task TestNestedGenericParameterDoesNotStartWithTWithConflictAsync()
+        public async Task TestNestedTypeParameterDoesNotStartWithTWithConflictAsync()
         {
             string testCode = @"
 public class Outer<TKey>
@@ -182,7 +182,7 @@ public class Outer<TKey>
         }
 
         [Fact]
-        public async Task TestNestedGenericParameterDoesNotStartWithTWithMemberConflictAsync()
+        public async Task TestNestedTypeParameterDoesNotStartWithTWithMemberConflictAsync()
         {
             string testCode = @"
 public class Outer<TKey>
@@ -206,6 +206,59 @@ public class Outer<TKey>
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestTypeParameterDoesNotStartWithTAndTypeConflictAsync()
+        {
+            string testCode = @"
+public class TFoo
+{
+}
+
+public class Bar<Foo>
+{
+}";
+            string fixedCode = @"
+public class TFoo
+{
+}
+
+public class Bar<TFoo1>
+{
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 18);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestTypeParameterInMethodSignatureDoesNotStartWithTAsync()
+        {
+            var testCode = @"
+public class Foo
+{
+    public void Bar<Baz>()
+    {
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 21);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var fixedCode = @"
+public class Foo
+{
+    public void Bar<TBaz>()
+    {
+    }
+}";
+
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
