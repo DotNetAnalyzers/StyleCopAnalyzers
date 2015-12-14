@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
+using Xunit;
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     using System.Collections.Generic;
@@ -419,6 +420,51 @@ public enum ImplicitUseKindFlags { Assign }
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
             await this.VerifyCSharpFixAllFixAsync(testCode, fixedTestCode, maxNumberOfIterations: 1).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Regression test for issue 1883 (whitespace is preserved incorrectly): https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1883
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestWhitespaceIsHandledCorrectlyAsync()
+        {
+            var testCode = @"
+namespace SA1133CodeFix
+{
+    using System.ComponentModel;
+    using System.Diagnostics.CodeAnalysis;
+
+    [DefaultValue(true),
+    SuppressMessage(null, null)]
+    internal class Foo
+    {
+    }
+}
+";
+
+            var fixedTestCode = @"
+namespace SA1133CodeFix
+{
+    using System.ComponentModel;
+    using System.Diagnostics.CodeAnalysis;
+
+    [DefaultValue(true)]
+    [SuppressMessage(null, null)]
+    internal class Foo
+    {
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(8, 5)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
