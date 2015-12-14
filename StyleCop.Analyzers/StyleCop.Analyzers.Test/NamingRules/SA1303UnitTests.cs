@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
+using System.Threading.Tasks;
 namespace StyleCop.Analyzers.Test.NamingRules
 {
     using System.Collections.Generic;
@@ -197,6 +198,24 @@ namespace Test
 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1936.
+        /// </summary>
+        /// <remarks>SA1303 should not be reported on <c>enum</c> declarations. SA1300 will be reported in this case.</remarks>
+        /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
+        [Fact]
+        public async Task TestEnumDeclarationsDoNotReportAsync()
+        {
+            var testCode = @"
+public enum SpecialFile
+{
+    iTunesMetadata
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
