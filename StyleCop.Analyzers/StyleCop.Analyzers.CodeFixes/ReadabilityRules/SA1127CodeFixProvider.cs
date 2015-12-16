@@ -92,8 +92,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var parentTrivia = token.Parent.Parent.GetLeadingTrivia();
 
             return parentTrivia
-                .Where(t => t.IsKind(SyntaxKind.WhitespaceTrivia))
-                .LastOrDefault()
+                .LastOrDefault(SyntaxKind.WhitespaceTrivia)
                 .ToString();
         }
 
