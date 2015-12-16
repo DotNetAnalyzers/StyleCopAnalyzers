@@ -28,7 +28,6 @@ namespace StyleCop.Analyzers.OrderingRules
     {
         private static readonly List<UsingDirectiveSyntax> EmptyUsingsList = new List<UsingDirectiveSyntax>();
         private static readonly SyntaxAnnotation UsingCodeFixAnnotation = new SyntaxAnnotation(nameof(UsingCodeFixAnnotation));
-        private static readonly SyntaxAnnotation FileHeaderStrippedAnnotation = new SyntaxAnnotation(nameof(FileHeaderStrippedAnnotation));
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
@@ -73,13 +72,14 @@ namespace StyleCop.Analyzers.OrderingRules
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode syntaxRoot, CancellationToken cancellationToken)
         {
+            var fileHeader = GetFileHeader(syntaxRoot);
             var compilationUnit = (CompilationUnitSyntax)syntaxRoot;
 
             var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
             var indentationOptions = IndentationOptions.FromDocument(document);
 
-            var usingsHelper = new UsingsHelper(settings, semanticModel, document, compilationUnit);
+            var usingsHelper = new UsingsHelper(settings, semanticModel, compilationUnit, fileHeader);
             var namespaceCount = CountNamespaces(compilationUnit.Members);
 
             // Only move using declarations inside the namespace when
@@ -88,8 +88,7 @@ namespace StyleCop.Analyzers.OrderingRules
             // - OrderingSettings.UsingDirectivesPlacement is set to InsideNamespace
             UsingDirectivesPlacement usingDirectivesPlacement;
 
-            OrderingSettings orderingSettings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken).OrderingRules;
-            switch (orderingSettings.UsingDirectivesPlacement)
+            switch (settings.OrderingRules.UsingDirectivesPlacement)
             {
             case UsingDirectivesPlacement.InsideNamespace:
                 if (compilationUnit.AttributeLists.Any()
@@ -153,7 +152,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
             BuildReplaceMapForConditionalDirectives(usingsHelper, replaceMap, indentationOptions, usingsHelper.RootSpan);
 
-            var usingSyntaxRewriter = new UsingSyntaxRewriter(stripList, replaceMap);
+            var usingSyntaxRewriter = new UsingSyntaxRewriter(stripList, replaceMap, fileHeader);
             var newSyntaxRoot = usingSyntaxRewriter.Visit(syntaxRoot);
 
             if (usingDirectivesPlacement == UsingDirectivesPlacement.InsideNamespace)
@@ -167,37 +166,11 @@ namespace StyleCop.Analyzers.OrderingRules
 
             // Final cleanup
             newSyntaxRoot = StripMultipleBlankLines(newSyntaxRoot);
-            newSyntaxRoot = ReAddFileHeader(syntaxRoot, newSyntaxRoot);
+            newSyntaxRoot = ReAddFileHeader(newSyntaxRoot, fileHeader);
 
             var newDocument = document.WithSyntaxRoot(newSyntaxRoot.WithoutFormatting());
 
             return newDocument;
-        }
-
-        private static SyntaxNode ReAddFileHeader(SyntaxNode syntaxRoot, SyntaxNode newSyntaxRoot)
-        {
-            // Only re-add the file header if it was stripped.
-            var usingDirectives = newSyntaxRoot.GetAnnotatedNodes(FileHeaderStrippedAnnotation);
-            if (!usingDirectives.Any())
-            {
-                return newSyntaxRoot;
-            }
-
-            var oldFirstToken = syntaxRoot.GetFirstToken();
-            if (!oldFirstToken.HasLeadingTrivia)
-            {
-                return newSyntaxRoot;
-            }
-
-            var fileHeader = UsingsHelper.GetFileHeader(oldFirstToken.LeadingTrivia);
-            if (!fileHeader.Any())
-            {
-                return newSyntaxRoot;
-            }
-
-            var newFirstToken = newSyntaxRoot.GetFirstToken();
-            var newLeadingTrivia = newFirstToken.LeadingTrivia.InsertRange(0, fileHeader);
-            return newSyntaxRoot.ReplaceToken(newFirstToken, newFirstToken.WithLeadingTrivia(newLeadingTrivia));
         }
 
         private static int CountNamespaces(SyntaxList<MemberDeclarationSyntax> members)
@@ -350,6 +323,73 @@ namespace StyleCop.Analyzers.OrderingRules
             return newSyntaxRoot;
         }
 
+        private static ImmutableArray<SyntaxTrivia> GetFileHeader(SyntaxNode syntaxRoot)
+        {
+            var onBlankLine = false;
+            var hasHeader = false;
+            var fileHeaderBuilder = ImmutableArray.CreateBuilder<SyntaxTrivia>();
+
+            var firstToken = syntaxRoot.GetFirstToken(includeZeroWidth: true);
+            var firstTokenLeadingTrivia = firstToken.LeadingTrivia;
+
+            int i;
+            for (i = 0; i < firstTokenLeadingTrivia.Count; i++)
+            {
+                bool done = false;
+                switch (firstTokenLeadingTrivia[i].Kind())
+                {
+                    case SyntaxKind.SingleLineCommentTrivia:
+                    case SyntaxKind.MultiLineCommentTrivia:
+                        fileHeaderBuilder.Add(firstTokenLeadingTrivia[i]);
+                        onBlankLine = false;
+                        hasHeader = true;
+                        break;
+
+                    case SyntaxKind.WhitespaceTrivia:
+                        fileHeaderBuilder.Add(firstTokenLeadingTrivia[i]);
+                        break;
+
+                    case SyntaxKind.EndOfLineTrivia:
+                        fileHeaderBuilder.Add(firstTokenLeadingTrivia[i]);
+
+                        if (onBlankLine)
+                        {
+                            done = true;
+                        }
+                        else
+                        {
+                            onBlankLine = true;
+                        }
+
+                        break;
+
+                    default:
+                        done = true;
+                        break;
+                }
+
+                if (done)
+                {
+                    break;
+                }
+            }
+
+            return hasHeader ? fileHeaderBuilder.ToImmutableArray() : ImmutableArray.Create<SyntaxTrivia>();
+        }
+
+        private static SyntaxNode ReAddFileHeader(SyntaxNode syntaxRoot, ImmutableArray<SyntaxTrivia> fileHeader)
+        {
+            if (fileHeader.IsEmpty)
+            {
+                // Only re-add the file header if it was stripped.
+                return syntaxRoot;
+            }
+
+            var firstToken = syntaxRoot.GetFirstToken(includeZeroWidth: true);
+            var newLeadingTrivia = firstToken.LeadingTrivia.InsertRange(0, fileHeader);
+            return syntaxRoot.ReplaceToken(firstToken, firstToken.WithLeadingTrivia(newLeadingTrivia));
+        }
+
         private class DirectiveSpan
         {
             private List<DirectiveSpan> children = new List<DirectiveSpan>();
@@ -447,13 +487,16 @@ namespace StyleCop.Analyzers.OrderingRules
         {
             private readonly StyleCopSettings settings;
             private readonly SemanticModel semanticModel;
+            private readonly ImmutableArray<SyntaxTrivia> fileHeader;
             private readonly DirectiveSpan conditionalDirectiveTree;
             private readonly bool separateSystemDirectives;
 
-            public UsingsHelper(StyleCopSettings settings, SemanticModel semanticModel, Document document, CompilationUnitSyntax compilationUnit)
+            public UsingsHelper(StyleCopSettings settings, SemanticModel semanticModel, CompilationUnitSyntax compilationUnit, ImmutableArray<SyntaxTrivia> fileHeader)
             {
                 this.settings = settings;
                 this.semanticModel = semanticModel;
+                this.fileHeader = fileHeader;
+
                 this.conditionalDirectiveTree = DirectiveSpan.BuildConditionalDirectiveTree(compilationUnit);
                 this.separateSystemDirectives = settings.OrderingRules.SystemUsingDirectivesFirst;
 
@@ -543,55 +586,6 @@ namespace StyleCop.Analyzers.OrderingRules
                 return SyntaxFactory.List(usingList);
             }
 
-            internal static List<SyntaxTrivia> GetFileHeader(SyntaxTriviaList newLeadingTrivia)
-            {
-                var onBlankLine = false;
-                var hasHeader = false;
-                var fileHeader = new List<SyntaxTrivia>();
-                for (var i = 0; i < newLeadingTrivia.Count; i++)
-                {
-                    bool done = false;
-                    switch (newLeadingTrivia[i].Kind())
-                    {
-                    case SyntaxKind.SingleLineCommentTrivia:
-                    case SyntaxKind.MultiLineCommentTrivia:
-                        fileHeader.Add(newLeadingTrivia[i]);
-                        onBlankLine = false;
-                        hasHeader = true;
-                        break;
-
-                    case SyntaxKind.WhitespaceTrivia:
-                        fileHeader.Add(newLeadingTrivia[i]);
-                        break;
-
-                    case SyntaxKind.EndOfLineTrivia:
-                        fileHeader.Add(newLeadingTrivia[i]);
-
-                        if (onBlankLine)
-                        {
-                            done = true;
-                        }
-                        else
-                        {
-                            onBlankLine = true;
-                        }
-
-                        break;
-
-                    default:
-                        done = true;
-                        break;
-                    }
-
-                    if (done)
-                    {
-                        break;
-                    }
-                }
-
-                return hasHeader ? fileHeader : new List<SyntaxTrivia>();
-            }
-
             private List<UsingDirectiveSyntax> GenerateUsings(Dictionary<DirectiveSpan, List<UsingDirectiveSyntax>> usingsGroup, DirectiveSpan directiveSpan, string indentation, List<SyntaxTrivia> triviaToMove, bool qualifyNames)
             {
                 List<UsingDirectiveSyntax> result = new List<UsingDirectiveSyntax>();
@@ -616,22 +610,13 @@ namespace StyleCop.Analyzers.OrderingRules
 
                 for (var i = 0; i < usingsList.Count; i++)
                 {
-                    bool strippedFileHeader = false;
                     var currentUsing = usingsList[i];
-
-                    if (qualifyNames)
-                    {
-                        currentUsing = this.QualifyUsingDirective(currentUsing);
-                    }
 
                     // strip the file header, if the using is the first node in the source file.
                     List<SyntaxTrivia> leadingTrivia;
                     if ((i == 0) && currentUsing.GetFirstToken().GetPreviousToken().IsMissingOrDefault())
                     {
-                        var trivia = currentUsing.GetLeadingTrivia();
-                        var fileHeader = GetFileHeader(trivia);
-                        leadingTrivia = trivia.Skip(fileHeader.Count).ToList();
-                        strippedFileHeader = fileHeader.Count > 0;
+                        leadingTrivia = currentUsing.GetLeadingTrivia().Except(this.fileHeader).ToList();
                     }
                     else
                     {
@@ -700,15 +685,10 @@ namespace StyleCop.Analyzers.OrderingRules
                         newTrailingTrivia = newTrailingTrivia.Add(SyntaxFactory.CarriageReturnLineFeed);
                     }
 
-                    var processedUsing = currentUsing
+                    var processedUsing = (qualifyNames ? this.QualifyUsingDirective(currentUsing) : currentUsing)
                         .WithLeadingTrivia(newLeadingTrivia)
                         .WithTrailingTrivia(newTrailingTrivia)
                         .WithAdditionalAnnotations(UsingCodeFixAnnotation);
-
-                    if (strippedFileHeader)
-                    {
-                        processedUsing = processedUsing.WithAdditionalAnnotations(FileHeaderStrippedAnnotation);
-                    }
 
                     // filter duplicate using declarations, preferring to keep the one with an alias
                     var existingUsing = result.Find(u => string.Equals(u.Name.ToNormalizedString(), processedUsing.Name.ToNormalizedString(), StringComparison.Ordinal));
@@ -912,14 +892,16 @@ namespace StyleCop.Analyzers.OrderingRules
 
         private class UsingSyntaxRewriter : CSharpSyntaxRewriter
         {
-            private List<UsingDirectiveSyntax> stripList;
-            private Dictionary<UsingDirectiveSyntax, UsingDirectiveSyntax> replaceMap;
+            private readonly List<UsingDirectiveSyntax> stripList;
+            private readonly Dictionary<UsingDirectiveSyntax, UsingDirectiveSyntax> replaceMap;
+            private readonly ImmutableArray<SyntaxTrivia> fileHeader;
             private LinkedList<SyntaxToken> tokensToStrip = new LinkedList<SyntaxToken>();
 
-            public UsingSyntaxRewriter(List<UsingDirectiveSyntax> stripList, Dictionary<UsingDirectiveSyntax, UsingDirectiveSyntax> replaceMap)
+            public UsingSyntaxRewriter(List<UsingDirectiveSyntax> stripList, Dictionary<UsingDirectiveSyntax, UsingDirectiveSyntax> replaceMap, ImmutableArray<SyntaxTrivia> fileHeader)
             {
                 this.stripList = stripList;
                 this.replaceMap = replaceMap;
+                this.fileHeader = fileHeader;
             }
 
             public override SyntaxNode VisitUsingDirective(UsingDirectiveSyntax node)
@@ -963,6 +945,16 @@ namespace StyleCop.Analyzers.OrderingRules
                 }
 
                 return base.VisitToken(token);
+            }
+
+            public override SyntaxTrivia VisitTrivia(SyntaxTrivia trivia)
+            {
+                if (this.fileHeader.Contains(trivia))
+                {
+                    return default(SyntaxTrivia);
+                }
+
+                return base.VisitTrivia(trivia);
             }
         }
 
