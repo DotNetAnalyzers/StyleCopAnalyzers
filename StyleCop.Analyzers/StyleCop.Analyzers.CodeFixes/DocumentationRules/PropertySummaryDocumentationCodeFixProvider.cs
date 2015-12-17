@@ -62,10 +62,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             var textElement = (XmlTextSyntax)summaryElement.Content.FirstOrDefault();
             if (textElement == null)
             {
-                var newTextToken = SyntaxFactory.XmlTextLiteral(SyntaxTriviaList.Empty, "the value", "the value", SyntaxTriviaList.Empty);
-                textElement = SyntaxFactory.XmlText(SyntaxTokenList.Create(newTextToken));
-                var updatedReturns = summaryElement.WithContent(XmlSyntaxFactory.List(textElement));
-                syntaxRoot = syntaxRoot.ReplaceNode(summaryElement, updatedReturns);
+                return document;
             }
 
             var textToken = textElement.TextTokens.First(token => token.IsKind(SyntaxKind.XmlTextLiteralToken));

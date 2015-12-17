@@ -169,20 +169,14 @@ public class TestClass
     }
 }";
 
-            var fixedTestCode = @"public class ClassName
-{
-    /// <summary>Gets the value</summary>
-    public int Property
-    {
-        get;
-    }
-}";
-
             var expected = this.CSharpDiagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(4, 16).WithArguments("Gets");
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+
+            // Intentionally do not provide a code fix: https://github.com/DotNetAnalyzers/StyleCopAnalyzers/pull/1957#discussion_r47703520
+            //// await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+
+            await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
