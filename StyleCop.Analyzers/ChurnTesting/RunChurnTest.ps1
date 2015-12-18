@@ -1,4 +1,5 @@
 $NuGet = '..\..\.nuget\NuGet.exe'
+&$NuGet update -Self -Verbosity quiet
 
 # Make sure the project binaries are up-to-date
 &$NuGet restore ..\..\StyleCopAnalyzers.sln
@@ -47,20 +48,34 @@ Copy-Item ..\..\packages\Microsoft.CodeAnalysis.CSharp.Workspaces.1.1.1\lib\net4
 Copy-Item ..\..\packages\Microsoft.CodeAnalysis.VisualBasic.1.1.1\lib\net45\*.dll .\bin\StyleCopTester-Roslyn.1.1.1
 Copy-Item ..\..\packages\Microsoft.CodeAnalysis.VisualBasic.Workspaces.1.1.1\lib\net45\*.dll .\bin\StyleCopTester-Roslyn.1.1.1
 
-# Clone the project
+#
+# Testing DartVS/DartVS@6f54d1d2
+#
+
 git clone https://github.com/DartVS/DartVS.git bin\DartVS
 Push-Location
 cd bin\DartVS
 git checkout 6f54d1d2bf6a16aaac5a6add7e073716e35e21ba
 Pop-Location
 
-&$NuGet restore bin\DartVS\DanTup.DartVS.sln
+&$NuGet restore bin\DartVS\DanTup.DartVS.sln -Verbosity quiet
 
-$StyleCopTester = '.\bin\StyleCopTester-Roslyn.1.0.0\StyleCopTester.exe'
-&$StyleCopTester bin\DartVS\DanTup.DartVS.sln /all /log:bin\DartVS-1.0.0.txt | Out-Null
+.\bin\StyleCopTester-Roslyn.1.0.0\StyleCopTester.exe bin\DartVS\DanTup.DartVS.sln /all /log:bin\DartVS-1.0.0.txt | Out-Null
+.\bin\StyleCopTester-Roslyn.1.1.0\StyleCopTester.exe bin\DartVS\DanTup.DartVS.sln /all /log:bin\DartVS-1.1.0.txt | Out-Null
+.\bin\StyleCopTester-Roslyn.1.1.1\StyleCopTester.exe bin\DartVS\DanTup.DartVS.sln /all /log:bin\DartVS-1.1.1.txt | Out-Null
 
-$StyleCopTester = '.\bin\StyleCopTester-Roslyn.1.1.0\StyleCopTester.exe'
-&$StyleCopTester bin\DartVS\DanTup.DartVS.sln /all /log:bin\DartVS-1.1.0.txt | Out-Null
+#
+# Testing JamesNK/Newtonsoft.Json@48786adc
+#
 
-$StyleCopTester = '.\bin\StyleCopTester-Roslyn.1.1.1\StyleCopTester.exe'
-&$StyleCopTester bin\DartVS\DanTup.DartVS.sln /all /log:bin\DartVS-1.1.1.txt | Out-Null
+git clone https://github.com/JamesNK/Newtonsoft.Json.git bin\Newtonsoft.Json
+Push-Location
+cd bin\Newtonsoft.Json
+git checkout 48786adc5bf9e9bcaea52147f09d6022ae14082c
+Pop-Location
+
+&$NuGet restore bin\Newtonsoft.Json\Src\Newtonsoft.Json.Portable.sln -Verbosity quiet
+
+.\bin\StyleCopTester-Roslyn.1.0.0\StyleCopTester.exe bin\Newtonsoft.Json\Src\Newtonsoft.Json.Portable.sln /all /log:bin\Newtonsoft.Json-1.0.0.txt | Out-Null
+.\bin\StyleCopTester-Roslyn.1.1.0\StyleCopTester.exe bin\Newtonsoft.Json\Src\Newtonsoft.Json.Portable.sln /all /log:bin\Newtonsoft.Json-1.1.0.txt | Out-Null
+.\bin\StyleCopTester-Roslyn.1.1.1\StyleCopTester.exe bin\Newtonsoft.Json\Src\Newtonsoft.Json.Portable.sln /all /log:bin\Newtonsoft.Json-1.1.1.txt | Out-Null
