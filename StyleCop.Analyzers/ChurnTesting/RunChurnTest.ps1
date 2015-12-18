@@ -1,4 +1,12 @@
 $NuGet = '..\..\.nuget\NuGet.exe'
+
+# Make sure the project binaries are up-to-date
+&$NuGet restore ..\..\StyleCopAnalyzers.sln
+Push-Location
+cd ..\..\build
+.\build.ps1 -Incremental
+Pop-Location
+
 &$NuGet install Microsoft.CodeAnalysis -Version 1.1.0 -OutputDirectory ..\..\packages -Verbosity quiet
 &$NuGet install Microsoft.CodeAnalysis -Version 1.1.1 -OutputDirectory ..\..\packages -Verbosity quiet
 
@@ -41,9 +49,10 @@ Copy-Item ..\..\packages\Microsoft.CodeAnalysis.VisualBasic.Workspaces.1.1.1\lib
 
 # Clone the project
 git clone https://github.com/DartVS/DartVS.git bin\DartVS
+Push-Location
 cd bin\DartVS
 git checkout 6f54d1d2bf6a16aaac5a6add7e073716e35e21ba
-cd ..\..
+Pop-Location
 
 &$NuGet restore bin\DartVS\DanTup.DartVS.sln
 
