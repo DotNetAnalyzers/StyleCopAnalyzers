@@ -10,6 +10,7 @@ namespace StyleCopTester
     using System.Diagnostics;
     using System.Linq;
     using System.Reflection;
+    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Threading;
@@ -18,6 +19,8 @@ namespace StyleCopTester
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.MSBuild;
+    using File = System.IO.File;
+    using Path = System.IO.Path;
 
     /// <summary>
     /// StyleCopTester is a tool that will analyze a solution, find diagnostics in it and will print out the number of
@@ -116,6 +119,13 @@ namespace StyleCopTester
                     }
                 }
 
+                string logArgument = args.FirstOrDefault(x => x.StartsWith("/log:"));
+                if (logArgument != null)
+                {
+                    string fileName = logArgument.Substring(logArgument.IndexOf(':') + 1);
+                    WriteDiagnosticResults(diagnostics.SelectMany(i => i.Value.Select(j => Tuple.Create(i.Key, j))).ToImmutableArray(), fileName);
+                }
+
                 if (args.Contains("/codefixes"))
                 {
                     await TestCodeFixesAsync(stopwatch, solution, allDiagnostics, cancellationToken).ConfigureAwait(true);
@@ -126,6 +136,38 @@ namespace StyleCopTester
                     await TestFixAllAsync(stopwatch, solution, diagnostics, cancellationToken).ConfigureAwait(true);
                 }
             }
+        }
+
+        private static void WriteDiagnosticResults(ImmutableArray<Tuple<ProjectId, Diagnostic>> diagnostics, string fileName)
+        {
+            var orderedDiagnostics =
+                diagnostics
+                .OrderBy(i => i.Item2.Id)
+                .ThenBy(i => i.Item2.Location.SourceTree?.FilePath, StringComparer.OrdinalIgnoreCase)
+                .ThenBy(i => i.Item2.Location.SourceSpan.Start)
+                .ThenBy(i => i.Item2.Location.SourceSpan.End);
+
+            var uniqueLines = new HashSet<string>();
+            StringBuilder completeOutput = new StringBuilder();
+            StringBuilder uniqueOutput = new StringBuilder();
+            foreach (var diagnostic in orderedDiagnostics)
+            {
+                string message = diagnostic.Item2.ToString();
+                string uniqueMessage = $"{diagnostic.Item1}: {diagnostic.Item2}";
+                completeOutput.AppendLine(message);
+                if (uniqueLines.Add(uniqueMessage))
+                {
+                    uniqueOutput.AppendLine(message);
+                }
+            }
+
+            string directoryName = Path.GetDirectoryName(fileName);
+            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
+            string extension = Path.GetExtension(fileName);
+            string uniqueFileName = Path.Combine(directoryName, $"{fileNameWithoutExtension}-Unique{extension}");
+
+            File.WriteAllText(fileName, completeOutput.ToString(), Encoding.UTF8);
+            File.WriteAllText(uniqueFileName, uniqueOutput.ToString(), Encoding.UTF8);
         }
 
         private static async Task TestFixAllAsync(Stopwatch stopwatch, Solution solution, ImmutableDictionary<ProjectId, ImmutableArray<Diagnostic>> diagnostics, CancellationToken cancellationToken)
