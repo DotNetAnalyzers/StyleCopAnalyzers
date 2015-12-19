@@ -15,13 +15,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// <c>&lt;inheritdoc&gt;</c> has been used on an element that doesn't inherit from a base class or implement an
     /// interface.
     /// </summary>
-    /// <remarks>
-    /// <para>Verifies that an <c>inheritdoc</c> tag is not used when the class or interface does not inherit from a
-    /// base class or interface.</para>
-    ///
-    /// <para>A violation of this rule occurs when the element having the <c>inheritdoc</c> tag doesn't inherit from a
-    /// base case or implement an interface.</para>
-    /// </remarks>
+    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1648.md">SA1648</seealso>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class SA1648InheritDocMustBeUsedWithInheritingClass : DiagnosticAnalyzer
     {
@@ -29,10 +23,10 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// The ID for diagnostics produced by the <see cref="SA1648InheritDocMustBeUsedWithInheritingClass"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1648";
-        private const string Title = "inheritdoc must be used with inheriting class";
-        private const string MessageFormat = "inheritdoc must be used with inheriting class";
-        private const string Description = "<inheritdoc> has been used on an element that doesn't inherit from a base class or implement an interface.";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1648.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1648Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1648MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1648Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1648.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -86,11 +80,17 @@ namespace StyleCop.Analyzers.DocumentationRules
             DocumentationCommentTriviaSyntax documentation = context.Node.GetDocumentationCommentTriviaSyntax();
 
             XmlNodeSyntax inheritDocElement = documentation?.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag);
-
-            if (inheritDocElement != null)
+            if (inheritDocElement == null)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, inheritDocElement.GetLocation()));
+                return;
             }
+
+            if (HasXmlCrefAttribute(inheritDocElement))
+            {
+                return;
+            }
+
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, inheritDocElement.GetLocation()));
         }
 
         private static void HandleMemberDeclaration(SyntaxNodeAnalysisContext context)
@@ -107,27 +107,50 @@ namespace StyleCop.Analyzers.DocumentationRules
             DocumentationCommentTriviaSyntax documentation = memberSyntax.GetDocumentationCommentTriviaSyntax();
 
             XmlNodeSyntax inheritDocElement = documentation?.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag);
-
-            if (inheritDocElement != null)
+            if (inheritDocElement == null)
             {
-                ISymbol declaredSymbol = context.SemanticModel.GetDeclaredSymbol(memberSyntax, context.CancellationToken);
-                if (declaredSymbol == null && memberSyntax.IsKind(SyntaxKind.EventFieldDeclaration))
-                {
-                    var eventFieldDeclarationSyntax = (EventFieldDeclarationSyntax)memberSyntax;
-                    VariableDeclaratorSyntax firstVariable = eventFieldDeclarationSyntax.Declaration?.Variables.FirstOrDefault();
-                    if (firstVariable != null)
-                    {
-                        declaredSymbol = context.SemanticModel.GetDeclaredSymbol(firstVariable, context.CancellationToken);
-                    }
-                }
+                return;
+            }
 
-                // If we don't have a declared symbol we have some kind of field declaration. A field can not override or
-                // implement anything so we want to report a diagnostic.
-                if (declaredSymbol == null || !NamedTypeHelpers.IsImplementingAnInterfaceMember(declaredSymbol))
+            if (HasXmlCrefAttribute(inheritDocElement))
+            {
+                return;
+            }
+
+            ISymbol declaredSymbol = context.SemanticModel.GetDeclaredSymbol(memberSyntax, context.CancellationToken);
+            if (declaredSymbol == null && memberSyntax.IsKind(SyntaxKind.EventFieldDeclaration))
+            {
+                var eventFieldDeclarationSyntax = (EventFieldDeclarationSyntax)memberSyntax;
+                VariableDeclaratorSyntax firstVariable = eventFieldDeclarationSyntax.Declaration?.Variables.FirstOrDefault();
+                if (firstVariable != null)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, inheritDocElement.GetLocation()));
+                    declaredSymbol = context.SemanticModel.GetDeclaredSymbol(firstVariable, context.CancellationToken);
                 }
             }
+
+            // If we don't have a declared symbol we have some kind of field declaration. A field can not override or
+            // implement anything so we want to report a diagnostic.
+            if (declaredSymbol == null || !NamedTypeHelpers.IsImplementingAnInterfaceMember(declaredSymbol))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, inheritDocElement.GetLocation()));
+            }
+        }
+
+        private static bool HasXmlCrefAttribute(XmlNodeSyntax inheritDocElement)
+        {
+            XmlElementSyntax xmlElementSyntax = inheritDocElement as XmlElementSyntax;
+            if (xmlElementSyntax?.StartTag?.Attributes.Any(SyntaxKind.XmlCrefAttribute) ?? false)
+            {
+                return true;
+            }
+
+            XmlEmptyElementSyntax xmlEmptyElementSyntax = inheritDocElement as XmlEmptyElementSyntax;
+            if (xmlEmptyElementSyntax?.Attributes.Any(SyntaxKind.XmlCrefAttribute) ?? false)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }
