@@ -228,7 +228,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                 if (relevantXmlElement != null)
                 {
                     var declaration = context.SemanticModel.GetDeclaredSymbol(node, context.CancellationToken);
-                    var rawDocumentation = declaration?.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
+                    if (declaration == null)
+                    {
+                        return;
+                    }
+
+                    var rawDocumentation = declaration.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
                     completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
                 }
             }
