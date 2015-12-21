@@ -58,13 +58,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static SyntaxNode GetReplacementNode(SyntaxNode node)
         {
             var newExpression = (ObjectCreationExpressionSyntax)node;
-            var identifierName = (newExpression.Type as IdentifierNameSyntax)
-                ?.Identifier.Text;
+            var nameSyntax = newExpression.Type as NameSyntax;
+            var identifierName = NameSyntaxHelpers.ToNormalizedString(nameSyntax);
 
             SyntaxNode replacement = null;
-            if (identifierName.Equals(nameof(CancellationToken), System.StringComparison.OrdinalIgnoreCase))
+            if (identifierName.EndsWith(nameof(CancellationToken), System.StringComparison.OrdinalIgnoreCase))
             {
-                replacement = GetCancellationTokenNoneSyntax();
+                replacement = GetCancellationTokenNoneSyntax(nameSyntax);
             }
             else
             {
@@ -76,11 +76,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 .WithTrailingTrivia(newExpression.GetTrailingTrivia());
         }
 
-        private static SyntaxNode GetCancellationTokenNoneSyntax()
+        private static SyntaxNode GetCancellationTokenNoneSyntax(NameSyntax nameSyntax)
         {
             return SyntaxFactory.MemberAccessExpression(
                 SyntaxKind.SimpleMemberAccessExpression,
-                SyntaxFactory.IdentifierName(nameof(CancellationToken)),
+                nameSyntax,
                 SyntaxFactory.IdentifierName(nameof(CancellationToken.None)));
         }
 
