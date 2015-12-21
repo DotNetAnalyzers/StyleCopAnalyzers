@@ -237,6 +237,47 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that <c>new CancellationTokenI()</c> is replaced by <c>CancellationToken.None</c>.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyCancellationTokenFixUsesNoneSyntaxAsync()
+        {
+            var testCode = @"
+using System.Threading;
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var ct = new CancellationToken();
+    }
+}
+";
+
+            var fixedTestCode = @"
+using System.Threading;
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var ct = CancellationToken.None;
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(8, 18),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {

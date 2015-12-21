@@ -58,10 +58,30 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static SyntaxNode GetReplacementNode(SyntaxNode node)
         {
             var newExpression = (ObjectCreationExpressionSyntax)node;
+            var identifierName = (newExpression.Type as IdentifierNameSyntax)
+                ?.Identifier.Text;
 
-            return SyntaxFactory.DefaultExpression(newExpression.Type)
+            SyntaxNode replacement = null;
+            if (identifierName.Equals(nameof(CancellationToken), System.StringComparison.OrdinalIgnoreCase))
+            {
+                replacement = GetCancellationTokenNoneSyntax();
+            }
+            else
+            {
+                replacement = SyntaxFactory.DefaultExpression(newExpression.Type);
+            }
+
+            return replacement
                 .WithLeadingTrivia(newExpression.GetLeadingTrivia())
                 .WithTrailingTrivia(newExpression.GetTrailingTrivia());
+        }
+
+        private static SyntaxNode GetCancellationTokenNoneSyntax()
+        {
+            return SyntaxFactory.MemberAccessExpression(
+                SyntaxKind.SimpleMemberAccessExpression,
+                SyntaxFactory.IdentifierName(nameof(CancellationToken)),
+                SyntaxFactory.IdentifierName(nameof(CancellationToken.None)));
         }
 
         private class FixAll : DocumentBasedFixAllProvider
