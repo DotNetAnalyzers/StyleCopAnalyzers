@@ -277,7 +277,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 int currentArgumentStartLine;
                 int currentArgumentEndLine;
 
-                if (currentArgument.HasLeadingTrivia && currentArgument.GetLeadingTrivia().All(trivia => IsValidTrivia(trivia)))
+                if (currentArgument.HasLeadingTrivia && IsValidTrivia(currentArgument.GetLeadingTrivia()))
                 {
                     var lineSpan = currentArgument.SyntaxTree.GetLineSpan(currentArgument.FullSpan);
                     currentArgumentStartLine = lineSpan.StartLinePosition.Line;
@@ -313,7 +313,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 var currentParameter = parameterListSyntax.Parameters[i];
                 int currentParameterLine;
 
-                if (currentParameter.HasLeadingTrivia && currentParameter.GetLeadingTrivia().All(trivia => IsValidTrivia(trivia)))
+                if (currentParameter.HasLeadingTrivia && IsValidTrivia(currentParameter.GetLeadingTrivia()))
                 {
                     currentParameterLine = currentParameter.SyntaxTree.GetLineSpan(currentParameter.FullSpan).StartLinePosition.Line;
                 }
@@ -331,22 +331,46 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
-        private static bool IsValidTrivia(SyntaxTrivia trivia)
+        private static bool IsValidTrivia(SyntaxTriviaList triviaList)
         {
-            if (trivia.IsDirective)
+            var inBlankLine = true;
+
+            for (var i = 0; i < triviaList.Count; i++)
             {
-                return true;
+                var trivia = triviaList[i];
+
+                if (trivia.IsDirective)
+                {
+                    inBlankLine = false;
+                    continue;
+                }
+
+                switch (trivia.Kind())
+                {
+                    case SyntaxKind.WhitespaceTrivia:
+                        break;
+
+                    case SyntaxKind.EndOfLineTrivia:
+                        if (inBlankLine)
+                        {
+                            return false;
+                        }
+
+                        inBlankLine = true;
+                        break;
+
+                    case SyntaxKind.DisabledTextTrivia:
+                    case SyntaxKind.SingleLineCommentTrivia:
+                    case SyntaxKind.MultiLineCommentTrivia:
+                        inBlankLine = false;
+                        break;
+
+                    default:
+                        return false;
+                }
             }
 
-            switch (trivia.Kind())
-            {
-            case SyntaxKind.DisabledTextTrivia:
-            case SyntaxKind.WhitespaceTrivia:
-                return true;
-
-            default:
-                return false;
-            }
+            return true;
         }
     }
 }
