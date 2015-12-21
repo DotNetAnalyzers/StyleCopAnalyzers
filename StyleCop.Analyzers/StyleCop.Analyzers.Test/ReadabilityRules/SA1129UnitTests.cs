@@ -238,7 +238,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         }
 
         /// <summary>
-        /// Verifies that <c>new CancellationTokenI()</c> is replaced by <c>CancellationToken.None</c>.
+        /// Verifies that <c>new CancellationToken()</c> is replaced by <c>CancellationToken.None</c>.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -271,6 +271,47 @@ public class TestClass
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(8, 18),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the codefix will preserve trivia surrounding <c>new CancellationToken()</c>
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyCancellationTokenTriviaPreservationAsync()
+        {
+            var testCode = @"
+using System.Threading;
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var ct1 = /* c1 */ new CancellationToken(); // c2
+    }
+}
+";
+
+            var fixedTestCode = @"
+using System.Threading;
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var ct1 = /* c1 */ CancellationToken.None; // c2
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(8, 28),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
