@@ -289,7 +289,7 @@ namespace TestHelper
 
                 FixAllContext.DiagnosticProvider fixAllDiagnosticProvider = TestDiagnosticProvider.Create(analyzerDiagnostics);
 
-                FixAllContext fixAllContext = new FixAllContext(document, codeFixProvider, scope, equivalenceKey, codeFixProvider.FixableDiagnosticIds, fixAllDiagnosticProvider, cancellationToken);
+                FixAllContext fixAllContext = new FixAllContext(document, codeFixProvider, scope, equivalenceKey, analyzers.SelectMany(x => x.SupportedDiagnostics).Select(x => x.Id), fixAllDiagnosticProvider, cancellationToken);
 
                 CodeAction action = await fixAllProvider.GetFixAsync(fixAllContext).ConfigureAwait(false);
                 if (action == null)

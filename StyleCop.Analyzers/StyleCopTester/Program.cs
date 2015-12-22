@@ -328,7 +328,7 @@ namespace StyleCopTester
 
             var diagnosticAnalyzerType = typeof(DiagnosticAnalyzer);
 
-            List<DiagnosticAnalyzer> analyzers = new List<DiagnosticAnalyzer>();
+            var analyzers = ImmutableArray.CreateBuilder<DiagnosticAnalyzer>();
 
             foreach (var type in assembly.GetTypes())
             {
@@ -338,7 +338,7 @@ namespace StyleCopTester
                 }
             }
 
-            return analyzers.ToImmutableArray();
+            return analyzers.ToImmutable();
         }
 
         private static ImmutableDictionary<string, ImmutableList<CodeFixProvider>> GetAllCodeFixers()

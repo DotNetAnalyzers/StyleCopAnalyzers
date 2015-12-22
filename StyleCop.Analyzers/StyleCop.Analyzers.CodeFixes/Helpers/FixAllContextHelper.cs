@@ -3,16 +3,21 @@
 
 namespace StyleCop.Analyzers.Helpers
 {
+    using System;
     using System.Collections.Concurrent;
     using System.Collections.Immutable;
     using System.Linq;
+    using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
 
     internal static class FixAllContextHelper
     {
+        private static readonly ImmutableDictionary<string, ImmutableArray<Type>> DiagnosticAnalyzers = GetAllAnalyzers();
+
         public static async Task<ImmutableDictionary<Document, ImmutableArray<Diagnostic>>> GetDocumentDiagnosticsToFixAsync(FixAllContext fixAllContext)
         {
             var allDiagnostics = ImmutableArray<Diagnostic>.Empty;
@@ -20,6 +25,7 @@ namespace StyleCop.Analyzers.Helpers
 
             var document = fixAllContext.Document;
             var project = fixAllContext.Project;
+            var analyzers = GetDiagnosticAnalyzersForContext(fixAllContext);
 
             switch (fixAllContext.Scope)
             {
@@ -34,7 +40,10 @@ namespace StyleCop.Analyzers.Helpers
 
             case FixAllScope.Project:
                 projectsToFix = ImmutableArray.Create(project);
-                allDiagnostics = await fixAllContext.GetAllDiagnosticsAsync(project).ConfigureAwait(false);
+                var compilation = await project.GetCompilationAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, project.AnalyzerOptions, fixAllContext.CancellationToken);
+                allDiagnostics = await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
+                allDiagnostics = allDiagnostics.Where(x => fixAllContext.DiagnosticIds.Contains(x.Id)).ToImmutableArray();
                 break;
 
             case FixAllScope.Solution:
@@ -51,13 +60,15 @@ namespace StyleCop.Analyzers.Helpers
                     tasks[i] = Task.Run(
                         async () =>
                         {
-                            var projectDiagnostics = await fixAllContext.GetAllDiagnosticsAsync(projectToFix).ConfigureAwait(false);
+                            var projectCompilation = await projectToFix.GetCompilationAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                            var projectCompilationWithAnalyzers = projectCompilation.WithAnalyzers(analyzers, projectToFix.AnalyzerOptions, fixAllContext.CancellationToken);
+                            var projectDiagnostics = await projectCompilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
                             diagnostics.TryAdd(projectToFix.Id, projectDiagnostics);
                         }, fixAllContext.CancellationToken);
                 }
 
                 await Task.WhenAll(tasks).ConfigureAwait(false);
-                allDiagnostics = allDiagnostics.AddRange(diagnostics.SelectMany(i => i.Value));
+                allDiagnostics = allDiagnostics.AddRange(diagnostics.SelectMany(i => i.Value.Where(x => fixAllContext.DiagnosticIds.Contains(x.Id))));
                 break;
             }
 
@@ -100,6 +111,50 @@ namespace StyleCop.Analyzers.Helpers
             }
 
             return ImmutableDictionary<Project, ImmutableArray<Diagnostic>>.Empty;
+        }
+
+        private static ImmutableDictionary<string, ImmutableArray<Type>> GetAllAnalyzers()
+        {
+            Assembly assembly = typeof(NoCodeFixAttribute).GetTypeInfo().Assembly;
+
+            var diagnosticAnalyzerType = typeof(DiagnosticAnalyzer);
+
+            var analyzers = ImmutableDictionary.CreateBuilder<string, ImmutableArray<Type>>();
+
+            foreach (var type in assembly.DefinedTypes)
+            {
+                if (type.IsSubclassOf(diagnosticAnalyzerType) && !type.IsAbstract)
+                {
+                    Type analyzerType = type.AsType();
+                    DiagnosticAnalyzer analyzer = (DiagnosticAnalyzer)Activator.CreateInstance(analyzerType);
+                    foreach (var descriptor in analyzer.SupportedDiagnostics)
+                    {
+                        ImmutableArray<Type> types;
+                        if (analyzers.TryGetValue(descriptor.Id, out types))
+                        {
+                            types = types.Add(analyzerType);
+                        }
+                        else
+                        {
+                            types = ImmutableArray.Create(analyzerType);
+                        }
+
+                        analyzers[descriptor.Id] = types;
+                    }
+                }
+            }
+
+            return analyzers.ToImmutable();
+        }
+
+        private static ImmutableArray<DiagnosticAnalyzer> GetDiagnosticAnalyzersForContext(FixAllContext fixAllContext)
+        {
+            return DiagnosticAnalyzers
+                .Where(x => fixAllContext.DiagnosticIds.Contains(x.Key))
+                .SelectMany(x => x.Value)
+                .Distinct()
+                .Select(type => (DiagnosticAnalyzer)Activator.CreateInstance(type))
+                .ToImmutableArray();
         }
 
         private static async Task<ImmutableDictionary<Document, ImmutableArray<Diagnostic>>> GetDocumentDiagnosticsToFixAsync(
