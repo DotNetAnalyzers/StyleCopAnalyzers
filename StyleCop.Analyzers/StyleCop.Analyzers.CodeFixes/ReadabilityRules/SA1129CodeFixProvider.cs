@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
+    using System;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
@@ -49,22 +50,22 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
             var newExpression = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
-            var newSyntaxRoot = syntaxRoot.ReplaceNode(newExpression, GetReplacementNode(newExpression));
+            var newSyntaxRoot = syntaxRoot.ReplaceNode(newExpression, GetReplacementNode(newExpression, semanticModel, cancellationToken));
+
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
 
-        private static SyntaxNode GetReplacementNode(SyntaxNode node)
+        private static SyntaxNode GetReplacementNode(SyntaxNode node, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
             var newExpression = (ObjectCreationExpressionSyntax)node;
-            var nameSyntax = newExpression.Type as NameSyntax;
-            var identifierName = NameSyntaxHelpers.ToNormalizedString(nameSyntax);
 
             SyntaxNode replacement = null;
-            if (identifierName.EndsWith(nameof(CancellationToken), System.StringComparison.OrdinalIgnoreCase))
+            if (IsType<CancellationToken>(newExpression.Type, semanticModel, cancellationToken))
             {
-                replacement = GetCancellationTokenNoneSyntax(nameSyntax);
+                replacement = GetCancellationTokenNoneSyntax(newExpression.Type);
             }
             else
             {
@@ -76,11 +77,40 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 .WithTrailingTrivia(newExpression.GetTrailingTrivia());
         }
 
-        private static SyntaxNode GetCancellationTokenNoneSyntax(NameSyntax nameSyntax)
+        private static bool IsType<T>(TypeSyntax typeSyntax, SemanticModel semanticModel, CancellationToken cancellationToken)
+        {
+            var expectedType = typeof(T);
+            var symbolInfo = semanticModel.GetSymbolInfo(typeSyntax, cancellationToken);
+            var namedTypeSymbol = symbolInfo.Symbol as INamedTypeSymbol;
+
+            if (namedTypeSymbol == null)
+            {
+                return false;
+            }
+
+            if (!string.Equals(expectedType.Name, namedTypeSymbol.Name, StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            if (!string.Equals(expectedType.Namespace, namedTypeSymbol.ContainingNamespace?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat.WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted)), StringComparison.Ordinal))
+            {
+                return false;
+            }
+            
+            return true;
+        }
+
+        /// <summary>
+        /// Gets a qualified member access expression for <c>CancellationToken.None</c>.
+        /// </summary>
+        /// <param name="typeSyntax">The type syntax from the original constructor.</param>
+        /// <returns>A new member access expression.</returns>
+        private static SyntaxNode GetCancellationTokenNoneSyntax(TypeSyntax typeSyntax)
         {
             return SyntaxFactory.MemberAccessExpression(
                 SyntaxKind.SimpleMemberAccessExpression,
-                nameSyntax,
+                typeSyntax,
                 SyntaxFactory.IdentifierName(nameof(CancellationToken.None)));
         }
 
@@ -101,10 +131,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
 
                 var syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var semanticModel = await document.GetSemanticModelAsync().ConfigureAwait(false);
 
                 var nodes = diagnostics.Select(diagnostic => syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true));
 
-                return syntaxRoot.ReplaceNodes(nodes, (originalNode, rewrittenNode) => GetReplacementNode(rewrittenNode));
+                return syntaxRoot.ReplaceNodes(nodes, (originalNode, rewrittenNode) => GetReplacementNode(rewrittenNode, semanticModel, CancellationToken.None));
             }
         }
     }

@@ -357,6 +357,52 @@ public class TestClass
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that <c>new CancellationToken()</c> is <b>not</b> replaced by <c>CancellationToken.None</c>
+        /// if the qualified name is not exactly <c>System.Threading.CancellationToken</c>.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyCustomCancellationTokenClassIsNotReplacedAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    public void TestMethod()
+    {
+        var ct = new CancellationToken();
+    }
+
+    private struct CancellationToken
+    {
+        public int TestProperty { get; set; }
+    }
+}
+";
+
+            var fixedTestCode = @"public class TestClass
+{
+    public void TestMethod()
+    {
+        var ct = default(CancellationToken);
+    }
+
+    private struct CancellationToken
+    {
+        public int TestProperty { get; set; }
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(5, 18),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
