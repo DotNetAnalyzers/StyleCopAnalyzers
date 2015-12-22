@@ -745,6 +745,28 @@ class Class1
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestIncompleteMemberAsync()
+        {
+            var testCode = @"
+class Class1
+{
+    /// <include file='ClassWithSummary.xml' path='/Class1/MethodName/*'/>
+    public string MethodName
+}
+";
+
+            var expected = new DiagnosticResult
+            {
+                Id = "CS1002",
+                Severity = DiagnosticSeverity.Error,
+                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 5, 29) },
+                Message = "; expected"
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override Project CreateProject(string[] sources, string language = "C#", string[] filenames = null)
         {
