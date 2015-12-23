@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.Helpers
 {
     using System;
     using System.Collections.Concurrent;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
     using System.Reflection;
@@ -13,10 +14,28 @@ namespace StyleCop.Analyzers.Helpers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Text;
 
     internal static class FixAllContextHelper
     {
         private static readonly ImmutableDictionary<string, ImmutableArray<Type>> DiagnosticAnalyzers = GetAllAnalyzers();
+
+        private static readonly Func<CompilationWithAnalyzers, SyntaxTree, CancellationToken, Task<ImmutableArray<Diagnostic>>> GetAnalyzerSyntaxDiagnosticsAsync;
+        private static readonly Func<CompilationWithAnalyzers, SemanticModel, TextSpan?, CancellationToken, Task<ImmutableArray<Diagnostic>>> GetAnalyzerSemanticDiagnosticsAsync;
+
+        static FixAllContextHelper()
+        {
+            Version roslynVersion = typeof(AdditionalText).GetTypeInfo().Assembly.GetName().Version;
+            bool avoidGetAnalyzerDiagnosticsAsync = roslynVersion >= new Version(1, 1, 0, 0) && roslynVersion < new Version(1, 2, 0, 0);
+            if (avoidGetAnalyzerDiagnosticsAsync)
+            {
+                var methodInfo = typeof(CompilationWithAnalyzers).GetRuntimeMethod(nameof(GetAnalyzerSyntaxDiagnosticsAsync), new[] { typeof(SyntaxTree), typeof(CancellationToken) });
+                GetAnalyzerSyntaxDiagnosticsAsync = (Func<CompilationWithAnalyzers, SyntaxTree, CancellationToken, Task<ImmutableArray<Diagnostic>>>)methodInfo?.CreateDelegate(typeof(Func<CompilationWithAnalyzers, SyntaxTree, CancellationToken, Task<ImmutableArray<Diagnostic>>>));
+
+                methodInfo = typeof(CompilationWithAnalyzers).GetRuntimeMethod(nameof(GetAnalyzerSemanticDiagnosticsAsync), new[] { typeof(SemanticModel), typeof(TextSpan?), typeof(CancellationToken) });
+                GetAnalyzerSemanticDiagnosticsAsync = (Func<CompilationWithAnalyzers, SemanticModel, TextSpan?, CancellationToken, Task<ImmutableArray<Diagnostic>>>)methodInfo?.CreateDelegate(typeof(Func<CompilationWithAnalyzers, SemanticModel, TextSpan?, CancellationToken, Task<ImmutableArray<Diagnostic>>>));
+            }
+        }
 
         public static async Task<ImmutableDictionary<Document, ImmutableArray<Diagnostic>>> GetDocumentDiagnosticsToFixAsync(FixAllContext fixAllContext)
         {
@@ -161,7 +180,26 @@ namespace StyleCop.Analyzers.Helpers
             if (analyzers.Any())
             {
                 var compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, project.AnalyzerOptions, fixAllContext.CancellationToken);
-                diagnostics = await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
+                if (GetAnalyzerSyntaxDiagnosticsAsync != null && GetAnalyzerSemanticDiagnosticsAsync != null)
+                {
+                    // This whole block is workaround code for issues with Roslyn 1.1...
+                    compilationWithAnalyzers.Compilation.GetDeclarationDiagnostics(fixAllContext.CancellationToken);
+
+                    foreach (var document in project.Documents)
+                    {
+                        var syntaxTree = await document.GetSyntaxTreeAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                        var syntaxDiagnostics = await GetAnalyzerSyntaxDiagnosticsAsync(compilationWithAnalyzers, syntaxTree, fixAllContext.CancellationToken).ConfigureAwait(false);
+                        diagnostics = diagnostics.AddRange(syntaxDiagnostics);
+
+                        var semanticModel = await document.GetSemanticModelAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                        var semanticDiagnostics = await GetAnalyzerSemanticDiagnosticsAsync(compilationWithAnalyzers, semanticModel, default(TextSpan?), fixAllContext.CancellationToken).ConfigureAwait(false);
+                        diagnostics = diagnostics.AddRange(semanticDiagnostics);
+                    }
+                }
+                else
+                {
+                    diagnostics = await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
+                }
             }
 
             if (includeCompilerDiagnostics)
