@@ -40,10 +40,7 @@ namespace StyleCop.Analyzers.Helpers
 
             case FixAllScope.Project:
                 projectsToFix = ImmutableArray.Create(project);
-                var compilation = await project.GetCompilationAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
-                var compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, project.AnalyzerOptions, fixAllContext.CancellationToken);
-                allDiagnostics = await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
-                allDiagnostics = allDiagnostics.Where(x => fixAllContext.DiagnosticIds.Contains(x.Id)).ToImmutableArray();
+                allDiagnostics = await GetAllDiagnosticsAsync(fixAllContext, project, analyzers).ConfigureAwait(false);
                 break;
 
             case FixAllScope.Solution:
@@ -60,9 +57,7 @@ namespace StyleCop.Analyzers.Helpers
                     tasks[i] = Task.Run(
                         async () =>
                         {
-                            var projectCompilation = await projectToFix.GetCompilationAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
-                            var projectCompilationWithAnalyzers = projectCompilation.WithAnalyzers(analyzers, projectToFix.AnalyzerOptions, fixAllContext.CancellationToken);
-                            var projectDiagnostics = await projectCompilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
+                            var projectDiagnostics = await GetAllDiagnosticsAsync(fixAllContext, projectToFix, analyzers).ConfigureAwait(false);
                             diagnostics.TryAdd(projectToFix.Id, projectDiagnostics);
                         }, fixAllContext.CancellationToken);
                 }
@@ -155,6 +150,28 @@ namespace StyleCop.Analyzers.Helpers
                 .Distinct()
                 .Select(type => (DiagnosticAnalyzer)Activator.CreateInstance(type))
                 .ToImmutableArray();
+        }
+
+        private static async Task<ImmutableArray<Diagnostic>> GetAllDiagnosticsAsync(FixAllContext fixAllContext, Project project, ImmutableArray<DiagnosticAnalyzer> analyzers)
+        {
+            bool includeCompilerDiagnostics = fixAllContext.DiagnosticIds.Any(x => x.StartsWith("CS", StringComparison.Ordinal));
+            var compilation = await project.GetCompilationAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+
+            var diagnostics = ImmutableArray<Diagnostic>.Empty;
+            if (analyzers.Any())
+            {
+                var compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, project.AnalyzerOptions, fixAllContext.CancellationToken);
+                diagnostics = await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
+            }
+
+            if (includeCompilerDiagnostics)
+            {
+                var compilerDiagnostics = compilation.GetDiagnostics(fixAllContext.CancellationToken);
+                diagnostics = diagnostics.AddRange(compilerDiagnostics);
+            }
+
+            diagnostics = diagnostics.Where(x => fixAllContext.DiagnosticIds.Contains(x.Id)).ToImmutableArray();
+            return diagnostics;
         }
 
         private static async Task<ImmutableDictionary<Document, ImmutableArray<Diagnostic>>> GetDocumentDiagnosticsToFixAsync(

@@ -157,17 +157,17 @@ namespace TestHelper
             var supportedDiagnostics = analyzers.SelectMany(analyzer => analyzer.SupportedDiagnostics);
             if (diagnosticId == null)
             {
-                return new DiagnosticResult(supportedDiagnostics.Single());
+                return this.CSharpDiagnostic(supportedDiagnostics.Single());
             }
             else
             {
-                return new DiagnosticResult(supportedDiagnostics.Single(i => i.Id == diagnosticId));
+                return this.CSharpDiagnostic(supportedDiagnostics.Single(i => i.Id == diagnosticId));
             }
         }
 
         protected DiagnosticResult CSharpDiagnostic(DiagnosticDescriptor descriptor)
         {
-            return this.CSharpDiagnostic(descriptor.Id).WithMessageFormat(descriptor.MessageFormat);
+            return new DiagnosticResult(descriptor);
         }
 
         /// <summary>
