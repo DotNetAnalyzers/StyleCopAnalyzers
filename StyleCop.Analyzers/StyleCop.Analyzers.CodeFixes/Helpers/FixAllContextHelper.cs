@@ -44,7 +44,6 @@ namespace StyleCop.Analyzers.Helpers
 
             var document = fixAllContext.Document;
             var project = fixAllContext.Project;
-            var analyzers = GetDiagnosticAnalyzersForContext(fixAllContext);
 
             switch (fixAllContext.Scope)
             {
@@ -59,7 +58,7 @@ namespace StyleCop.Analyzers.Helpers
 
             case FixAllScope.Project:
                 projectsToFix = ImmutableArray.Create(project);
-                allDiagnostics = await GetAllDiagnosticsAsync(fixAllContext, project, analyzers).ConfigureAwait(false);
+                allDiagnostics = await GetAllDiagnosticsAsync(fixAllContext, project).ConfigureAwait(false);
                 break;
 
             case FixAllScope.Solution:
@@ -76,7 +75,7 @@ namespace StyleCop.Analyzers.Helpers
                     tasks[i] = Task.Run(
                         async () =>
                         {
-                            var projectDiagnostics = await GetAllDiagnosticsAsync(fixAllContext, projectToFix, analyzers).ConfigureAwait(false);
+                            var projectDiagnostics = await GetAllDiagnosticsAsync(fixAllContext, projectToFix).ConfigureAwait(false);
                             diagnostics.TryAdd(projectToFix.Id, projectDiagnostics);
                         }, fixAllContext.CancellationToken);
                 }
@@ -171,44 +170,65 @@ namespace StyleCop.Analyzers.Helpers
                 .ToImmutableArray();
         }
 
-        private static async Task<ImmutableArray<Diagnostic>> GetAllDiagnosticsAsync(FixAllContext fixAllContext, Project project, ImmutableArray<DiagnosticAnalyzer> analyzers)
+        /// <summary>
+        /// Gets all <see cref="Diagnostic"/> instances within a specific <see cref="Project"/> which are relevant to a
+        /// <see cref="FixAllContext"/>.
+        /// </summary>
+        /// <param name="fixAllContext">The context for the Fix All operation.</param>
+        /// <param name="project">The project.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the asynchronous operation. When the task completes
+        /// successfully, the <see cref="Task{TResult}.Result"/> will contain the requested diagnostics.</returns>
+        private static async Task<ImmutableArray<Diagnostic>> GetAllDiagnosticsAsync(FixAllContext fixAllContext, Project project)
         {
-            bool includeCompilerDiagnostics = fixAllContext.DiagnosticIds.Any(x => x.StartsWith("CS", StringComparison.Ordinal));
-            var compilation = await project.GetCompilationAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
-
-            var diagnostics = ImmutableArray<Diagnostic>.Empty;
-            if (analyzers.Any())
+            if (GetAnalyzerSyntaxDiagnosticsAsync == null || GetAnalyzerSemanticDiagnosticsAsync == null)
             {
-                var compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, project.AnalyzerOptions, fixAllContext.CancellationToken);
-                if (GetAnalyzerSyntaxDiagnosticsAsync != null && GetAnalyzerSemanticDiagnosticsAsync != null)
-                {
-                    // This whole block is workaround code for issues with Roslyn 1.1...
-                    compilationWithAnalyzers.Compilation.GetDeclarationDiagnostics(fixAllContext.CancellationToken);
+                return await fixAllContext.GetAllDiagnosticsAsync(project).ConfigureAwait(false);
+            }
 
-                    foreach (var document in project.Documents)
-                    {
-                        var syntaxTree = await document.GetSyntaxTreeAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
-                        var syntaxDiagnostics = await GetAnalyzerSyntaxDiagnosticsAsync(compilationWithAnalyzers, syntaxTree, fixAllContext.CancellationToken).ConfigureAwait(false);
-                        diagnostics = diagnostics.AddRange(syntaxDiagnostics);
+            /*
+             * The rest of this method is workaround code for issues with Roslyn 1.1...
+             */
 
-                        var semanticModel = await document.GetSemanticModelAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
-                        var semanticDiagnostics = await GetAnalyzerSemanticDiagnosticsAsync(compilationWithAnalyzers, semanticModel, default(TextSpan?), fixAllContext.CancellationToken).ConfigureAwait(false);
-                        diagnostics = diagnostics.AddRange(semanticDiagnostics);
-                    }
-                }
-                else
-                {
-                    diagnostics = await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
-                }
+            var analyzers = GetDiagnosticAnalyzersForContext(fixAllContext);
+
+            // Most code fixes in this project operate on diagnostics reported by analyzers in this project. However, a
+            // few code fixes also operate on standard warnings produced by the C# compiler. Special handling is
+            // required for the latter case since these warnings are not considered "analyzer diagnostics".
+            bool includeCompilerDiagnostics = fixAllContext.DiagnosticIds.Any(x => x.StartsWith("CS", StringComparison.Ordinal));
+
+            // Use a single CompilationWithAnalyzers for the entire operation. This allows us to use the
+            // GetDeclarationDiagnostics workaround for dotnet/roslyn#7446 a single time, rather than once per document.
+            var compilation = await project.GetCompilationAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+            var compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, project.AnalyzerOptions, fixAllContext.CancellationToken);
+            compilationWithAnalyzers.Compilation.GetDeclarationDiagnostics(fixAllContext.CancellationToken);
+
+            // Note that the following loop to obtain syntax and semantic diagnostics for each document cannot operate
+            // on parallel due to our use of a single CompilationWithAnalyzers instance. Also note that the following
+            // code is not sufficient for cases where analyzers register compilation end actions. However, this project
+            // does not currently contain any such analyzers.
+            var diagnostics = ImmutableArray<Diagnostic>.Empty;
+            foreach (var document in project.Documents)
+            {
+                var syntaxTree = await document.GetSyntaxTreeAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var syntaxDiagnostics = await GetAnalyzerSyntaxDiagnosticsAsync(compilationWithAnalyzers, syntaxTree, fixAllContext.CancellationToken).ConfigureAwait(false);
+                diagnostics = diagnostics.AddRange(syntaxDiagnostics);
+
+                var semanticModel = await document.GetSemanticModelAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var semanticDiagnostics = await GetAnalyzerSemanticDiagnosticsAsync(compilationWithAnalyzers, semanticModel, default(TextSpan?), fixAllContext.CancellationToken).ConfigureAwait(false);
+                diagnostics = diagnostics.AddRange(semanticDiagnostics);
             }
 
             if (includeCompilerDiagnostics)
             {
+                // This is the special handling for cases where code fixes operate on warnings produced by the C#
+                // compiler, as opposed to being created by specific analyzers.
                 var compilerDiagnostics = compilation.GetDiagnostics(fixAllContext.CancellationToken);
                 diagnostics = diagnostics.AddRange(compilerDiagnostics);
             }
 
-            diagnostics = diagnostics.Where(x => fixAllContext.DiagnosticIds.Contains(x.Id)).ToImmutableArray();
+            // Make sure to filter the results to the set requested for the Fix All operation, since analyzers can
+            // report diagnostics with different IDs.
+            diagnostics = diagnostics.RemoveAll(x => !fixAllContext.DiagnosticIds.Contains(x.Id));
             return diagnostics;
         }
 
