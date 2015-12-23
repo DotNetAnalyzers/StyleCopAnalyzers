@@ -4,6 +4,7 @@
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Collections.Generic;
+    using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -17,9 +18,9 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     public class InheritdocCodeFixProviderUnitTests : CodeFixVerifier
     {
         [Theory]
-        [InlineData("string TestMember { get; set; }")]
-        [InlineData("string TestMember() { return null; }")]
-        [InlineData("string this[int a] { get { return \"a\"; } set { } }")]
+        [InlineData("string             TestMember { get; set; }")]
+        [InlineData("string             TestMember() { return null; }")]
+        [InlineData("string             this[int a] { get { return \"a\"; } set { } }")]
         [InlineData("event EventHandler TestMember { add { } remove { } }")]
         public async Task TestClassVirtualInheritedMembersAsync(string memberData)
         {
@@ -54,13 +55,28 @@ public class ChildClass : ParentClass
 }}
 ";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(2, 14),
+                this.CSharpDiagnostic().WithLocation(10, 14),
+                this.CSharpDiagnostic().WithLocation(12, 40),
+            };
+
+            DiagnosticResult[] expectedFixed =
+            {
+                this.CSharpDiagnostic().WithLocation(2, 14),
+                this.CSharpDiagnostic().WithLocation(10, 14),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, expectedFixed, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
-        [InlineData("string TestMember { get; set; }", "string TestMember { get; set; }")]
-        [InlineData("string TestMember();", "string TestMember() { return null; }")]
-        [InlineData("string this[int a] { get; set; }", "string this[int a] { get { return \"a\"; } set { } }")]
+        [InlineData("string             TestMember { get; set; }", "string             TestMember { get; set; }")]
+        [InlineData("string             TestMember();", "string             TestMember() { return null; }")]
+        [InlineData("string             this[int a] { get; set; }", "string             this[int a] { get { return \"a\"; } set { } }")]
         [InlineData("event EventHandler TestMember;", "event EventHandler TestMember { add { } remove { } }")]
         public async Task TestInterfaceInheritedMembersAsync(string parentData, string childData)
         {
@@ -95,13 +111,28 @@ public class ChildClass : IParent
 }}
 ";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(2, 18),
+                this.CSharpDiagnostic().WithLocation(10, 14),
+                this.CSharpDiagnostic().WithLocation(12, 31),
+            };
+
+            DiagnosticResult[] expectedFixed =
+            {
+                this.CSharpDiagnostic().WithLocation(2, 18),
+                this.CSharpDiagnostic().WithLocation(10, 14),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, expectedFixed, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
-        [InlineData("string TestMember { get; set; }")]
-        [InlineData("string TestMember() { return null; }")]
-        [InlineData("string this[int a] { get { return \"a\"; } set { } }")]
+        [InlineData("string             TestMember { get; set; }")]
+        [InlineData("string             TestMember() { return null; }")]
+        [InlineData("string             this[int a] { get { return \"a\"; } set { } }")]
         [InlineData("event EventHandler TestMember { add { } remove { } }")]
         public async Task TestNonvirtualHiddenInheritedMembersAsync(string memberData)
         {
@@ -120,28 +151,21 @@ public class ChildClass : ParentClass
 }}
 ";
 
-            var fixedCode = $@"using System;
-public class ParentClass
-{{
-    /// <summary>
-    /// Some documentation.
-    /// </summary>
-    public {memberData}
-}}
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(2, 14),
+                this.CSharpDiagnostic().WithLocation(10, 14),
+                this.CSharpDiagnostic().WithLocation(12, 35),
+            };
 
-public class ChildClass : ParentClass
-{{
-    public new {memberData}
-}}
-";
-
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, testCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
-        [InlineData("string TestMember { get; set; }")]
-        [InlineData("string TestMember() { return null; }")]
-        [InlineData("string this[int a] { get { return \"a\"; } set { } }")]
+        [InlineData("string             TestMember { get; set; }")]
+        [InlineData("string             TestMember() { return null; }")]
+        [InlineData("string             this[int a] { get { return \"a\"; } set { } }")]
         [InlineData("event EventHandler TestMember { add { } remove { } }")]
         public async Task TestVirtualHiddenInheritedMembersAsync(string memberData)
         {
@@ -160,22 +184,17 @@ public class ChildClass : ParentClass
 }}
 ";
 
-            var fixedCode = $@"using System;
-public class ParentClass
-{{
-    /// <summary>
-    /// Some documentation.
-    /// </summary>
-    public virtual {memberData}
-}}
+            var fixedCode = testCode;
 
-public class ChildClass : ParentClass
-{{
-    public new {memberData}
-}}
-";
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(2, 14),
+                this.CSharpDiagnostic().WithLocation(10, 14),
+                this.CSharpDiagnostic().WithLocation(12, 35),
+            };
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
