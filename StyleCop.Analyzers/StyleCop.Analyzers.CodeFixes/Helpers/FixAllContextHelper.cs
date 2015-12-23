@@ -22,6 +22,7 @@ namespace StyleCop.Analyzers.Helpers
 
         private static readonly Func<CompilationWithAnalyzers, SyntaxTree, CancellationToken, Task<ImmutableArray<Diagnostic>>> GetAnalyzerSyntaxDiagnosticsAsync;
         private static readonly Func<CompilationWithAnalyzers, SemanticModel, TextSpan?, CancellationToken, Task<ImmutableArray<Diagnostic>>> GetAnalyzerSemanticDiagnosticsAsync;
+        private static readonly Func<CompilationWithAnalyzers, ImmutableArray<DiagnosticAnalyzer>, CancellationToken, Task<ImmutableArray<Diagnostic>>> GetAnalyzerCompilationDiagnosticsAsync;
 
         static FixAllContextHelper()
         {
@@ -34,6 +35,9 @@ namespace StyleCop.Analyzers.Helpers
 
                 methodInfo = typeof(CompilationWithAnalyzers).GetRuntimeMethod(nameof(GetAnalyzerSemanticDiagnosticsAsync), new[] { typeof(SemanticModel), typeof(TextSpan?), typeof(CancellationToken) });
                 GetAnalyzerSemanticDiagnosticsAsync = (Func<CompilationWithAnalyzers, SemanticModel, TextSpan?, CancellationToken, Task<ImmutableArray<Diagnostic>>>)methodInfo?.CreateDelegate(typeof(Func<CompilationWithAnalyzers, SemanticModel, TextSpan?, CancellationToken, Task<ImmutableArray<Diagnostic>>>));
+
+                methodInfo = typeof(CompilationWithAnalyzers).GetRuntimeMethod(nameof(GetAnalyzerCompilationDiagnosticsAsync), new[] { typeof(ImmutableArray<DiagnosticAnalyzer>), typeof(CancellationToken) });
+                GetAnalyzerCompilationDiagnosticsAsync = (Func<CompilationWithAnalyzers, ImmutableArray<DiagnosticAnalyzer>, CancellationToken, Task<ImmutableArray<Diagnostic>>>)methodInfo?.CreateDelegate(typeof(Func<CompilationWithAnalyzers, ImmutableArray<DiagnosticAnalyzer>, CancellationToken, Task<ImmutableArray<Diagnostic>>>));
             }
         }
 
@@ -126,7 +130,7 @@ namespace StyleCop.Analyzers.Helpers
             return ImmutableDictionary<Project, ImmutableArray<Diagnostic>>.Empty;
         }
 
-        public static async Task<ImmutableArray<Diagnostic>> GetAllDiagnosticsAsync(Compilation compilation, CompilationWithAnalyzers compilationWithAnalyzers, IEnumerable<Document> documents, bool includeCompilerDiagnostics, CancellationToken cancellationToken)
+        public static async Task<ImmutableArray<Diagnostic>> GetAllDiagnosticsAsync(Compilation compilation, CompilationWithAnalyzers compilationWithAnalyzers, ImmutableArray<DiagnosticAnalyzer> analyzers, IEnumerable<Document> documents, bool includeCompilerDiagnostics, CancellationToken cancellationToken)
         {
             if (GetAnalyzerSyntaxDiagnosticsAsync == null || GetAnalyzerSemanticDiagnosticsAsync == null)
             {
@@ -138,9 +142,7 @@ namespace StyleCop.Analyzers.Helpers
             compilationWithAnalyzers.Compilation.GetDeclarationDiagnostics(cancellationToken);
 
             // Note that the following loop to obtain syntax and semantic diagnostics for each document cannot operate
-            // on parallel due to our use of a single CompilationWithAnalyzers instance. Also note that the following
-            // code is not sufficient for cases where analyzers register compilation end actions. However, this project
-            // does not currently contain any such analyzers.
+            // on parallel due to our use of a single CompilationWithAnalyzers instance.
             var diagnostics = ImmutableArray<Diagnostic>.Empty;
             foreach (var document in documents)
             {
@@ -151,6 +153,11 @@ namespace StyleCop.Analyzers.Helpers
                 var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
                 var semanticDiagnostics = await GetAnalyzerSemanticDiagnosticsAsync(compilationWithAnalyzers, semanticModel, default(TextSpan?), cancellationToken).ConfigureAwait(false);
                 diagnostics = diagnostics.AddRange(semanticDiagnostics);
+            }
+
+            foreach (var analyzer in analyzers)
+            {
+                diagnostics = diagnostics.AddRange(await GetAnalyzerCompilationDiagnosticsAsync(compilationWithAnalyzers, ImmutableArray.Create(analyzer), cancellationToken).ConfigureAwait(false));
             }
 
             if (includeCompilerDiagnostics)
@@ -238,7 +245,7 @@ namespace StyleCop.Analyzers.Helpers
             // GetDeclarationDiagnostics workaround for dotnet/roslyn#7446 a single time, rather than once per document.
             var compilation = await project.GetCompilationAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
             var compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, project.AnalyzerOptions, fixAllContext.CancellationToken);
-            ImmutableArray<Diagnostic> diagnostics = await GetAllDiagnosticsAsync(compilation, compilationWithAnalyzers, project.Documents, includeCompilerDiagnostics, fixAllContext.CancellationToken).ConfigureAwait(false);
+            ImmutableArray<Diagnostic> diagnostics = await GetAllDiagnosticsAsync(compilation, compilationWithAnalyzers, analyzers, project.Documents, includeCompilerDiagnostics, fixAllContext.CancellationToken).ConfigureAwait(false);
 
             // Make sure to filter the results to the set requested for the Fix All operation, since analyzers can
             // report diagnostics with different IDs.
