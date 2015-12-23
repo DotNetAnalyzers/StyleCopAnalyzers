@@ -90,7 +90,7 @@ public class Foo
 
             expected = this.CSharpDiagnostic().WithLocation(3, 66);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -122,7 +122,7 @@ public class Foo
 
             expected = this.CSharpDiagnostic().WithLocation(4, 34);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -154,7 +154,7 @@ public class Foo
 
             expected = this.CSharpDiagnostic().WithLocation(4, 32);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -184,7 +184,7 @@ public class Foo
 
             expected = this.CSharpDiagnostic().WithLocation(3, 66);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -214,7 +214,7 @@ public class Foo
 
             expected = this.CSharpDiagnostic().WithLocation(3, 66);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -244,7 +244,7 @@ public class Foo
 
             expected = this.CSharpDiagnostic().WithLocation(3, 66);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -274,7 +274,7 @@ public class Foo
 
             expected = this.CSharpDiagnostic().WithLocation(3, 66);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -322,7 +322,7 @@ public class Foo
 
             expected = this.CSharpDiagnostic().WithLocation(4, 66);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]

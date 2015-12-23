@@ -418,7 +418,7 @@ public enum ImplicitUseKindFlags { Assign }
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
-            await this.VerifyCSharpFixAllFixAsync(testCode, fixedTestCode, maxNumberOfIterations: 1).ConfigureAwait(false);
+            await this.VerifyCSharpFixAllFixAsync(testCode, fixedTestCode, numberOfIterations: 1, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
