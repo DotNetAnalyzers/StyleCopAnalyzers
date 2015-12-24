@@ -33,7 +33,7 @@ namespace StyleCop.Analyzers.Test.HelperTests
             new object[] { "   ", 1, 4, 4 },
 
             // 3 spaces, indentation size = 2
-            new object[] { "   ", 1, 4, 4 },
+            new object[] { "   ", 2, 2, 4 },
 
             // 4 spaces
             new object[] { "    ", 1, 4, 4 },
