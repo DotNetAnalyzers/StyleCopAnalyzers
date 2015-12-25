@@ -343,7 +343,7 @@ namespace TestNamespace2
             };
 
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>

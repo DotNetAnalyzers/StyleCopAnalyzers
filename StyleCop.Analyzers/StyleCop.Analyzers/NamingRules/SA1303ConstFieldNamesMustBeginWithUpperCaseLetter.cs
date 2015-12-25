@@ -71,7 +71,7 @@ namespace StyleCop.Analyzers.NamingRules
             {
                 var symbol = context.Symbol as IFieldSymbol;
 
-                if (symbol == null || !symbol.IsConst)
+                if (symbol == null || !symbol.IsConst || symbol.ContainingType?.TypeKind == TypeKind.Enum)
                 {
                     return;
                 }

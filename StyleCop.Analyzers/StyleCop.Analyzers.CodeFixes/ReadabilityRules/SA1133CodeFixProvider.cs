@@ -77,7 +77,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             for (var i = 0; i < attributeList.Attributes.Count; i++)
             {
-                var newAttributes = SyntaxFactory.SingletonSeparatedList(attributeList.Attributes[i]);
+                var newAttributes = SyntaxFactory.SingletonSeparatedList(
+                    attributeList.Attributes[i].WithLeadingTrivia(
+                        attributeList.Attributes[i].GetLeadingTrivia().WithoutLeadingWhitespace()));
                 var newAttributeList = SyntaxFactory.AttributeList(attributeList.Target, newAttributes);
 
                 newAttributeList = (i == 0)
