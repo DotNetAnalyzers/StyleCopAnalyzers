@@ -62,10 +62,19 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var newExpression = (ObjectCreationExpressionSyntax)node;
 
+            var symbolInfo = semanticModel.GetSymbolInfo(newExpression.Type, cancellationToken);
+            var namedTypeSymbol = symbolInfo.Symbol as INamedTypeSymbol;
+
             SyntaxNode replacement = null;
-            if (IsType<CancellationToken>(newExpression.Type, semanticModel, cancellationToken))
+            string memberName = null;
+
+            if (IsType<CancellationToken>(namedTypeSymbol))
             {
-                replacement = GetCancellationTokenNoneSyntax(newExpression.Type);
+                replacement = ConstructMemberAccessSyntax(newExpression.Type, nameof(CancellationToken.None));
+            }
+            else if (IsEnumWithDefaultMember(namedTypeSymbol, out memberName))
+            {
+                replacement = ConstructMemberAccessSyntax(newExpression.Type, memberName);
             }
             else
             {
@@ -77,42 +86,79 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 .WithTrailingTrivia(newExpression.GetTrailingTrivia());
         }
 
-        private static bool IsType<T>(TypeSyntax typeSyntax, SemanticModel semanticModel, CancellationToken cancellationToken)
+        /// <summary>
+        /// Determines whether a symbol is an instance of a given <see cref="Type"/>.
+        /// </summary>
+        /// <typeparam name="T">The type to match.</typeparam>
+        /// <param name="namedTypeSymbol">The symbol.</param>
+        /// <returns><see langword="true"/> if the syntax matches the type; <see langword="false"/> otherwise.</returns>
+        private static bool IsType<T>(INamedTypeSymbol namedTypeSymbol)
         {
-            var expectedType = typeof(T);
-            var symbolInfo = semanticModel.GetSymbolInfo(typeSyntax, cancellationToken);
-            var namedTypeSymbol = symbolInfo.Symbol as INamedTypeSymbol;
-
             if (namedTypeSymbol == null)
             {
                 return false;
             }
+
+            var expectedType = typeof(T);
 
             if (!string.Equals(expectedType.Name, namedTypeSymbol.Name, StringComparison.Ordinal))
             {
                 return false;
             }
 
-            if (!string.Equals(expectedType.Namespace, namedTypeSymbol.ContainingNamespace?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat.WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted)), StringComparison.Ordinal))
+            if (!string.Equals(
+                expectedType.Namespace,
+                namedTypeSymbol.ContainingNamespace?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat.WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted)),
+                StringComparison.Ordinal))
             {
                 return false;
             }
-            
+
             return true;
         }
 
         /// <summary>
-        /// Gets a qualified member access expression for <c>CancellationToken.None</c>.
+        /// Determines whether a given enumeration symbol contains a member with value <c>0</c>.
+        /// </summary>
+        /// <param name="namedTypeSymbol">The symbol.</param>
+        /// <param name="foundMemberName">Will be set to the string name of the member, if one is found.</param>
+        /// <returns><see langword="true"/> if the syntax is an enumeration with a value of <c>0</c>; <see langword="false"/> otherwise.</returns>
+        private static bool IsEnumWithDefaultMember(INamedTypeSymbol namedTypeSymbol, out string foundMemberName)
+        {
+            foundMemberName = null;
+
+            if (namedTypeSymbol == null || namedTypeSymbol.TypeKind != TypeKind.Enum)
+            {
+                return false;
+            }
+
+            var foundMembers = namedTypeSymbol
+                .GetMembers()
+                .Where(m => m.Kind == SymbolKind.Field)
+                .OfType<IFieldSymbol>()
+                .Where(fs => fs.ConstantValue.Equals(0))
+                .ToList();
+
+            if (foundMembers.Count != 1)
+            {
+                return false;
+            }
+
+            foundMemberName = foundMembers.Single().Name;
+            return true;
+        }
+
+        /// <summary>
+        /// Gets a qualified member access expression for the given <paramref name="typeSyntax"/>.
         /// </summary>
         /// <param name="typeSyntax">The type syntax from the original constructor.</param>
+        /// <param name="memberName">The member name.</param>
         /// <returns>A new member access expression.</returns>
-        private static SyntaxNode GetCancellationTokenNoneSyntax(TypeSyntax typeSyntax)
-        {
-            return SyntaxFactory.MemberAccessExpression(
+        private static SyntaxNode ConstructMemberAccessSyntax(TypeSyntax typeSyntax, string memberName)
+            => SyntaxFactory.MemberAccessExpression(
                 SyntaxKind.SimpleMemberAccessExpression,
                 typeSyntax,
-                SyntaxFactory.IdentifierName(nameof(CancellationToken.None)));
-        }
+                SyntaxFactory.IdentifierName(memberName));
 
         private class FixAll : DocumentBasedFixAllProvider
         {
