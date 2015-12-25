@@ -97,7 +97,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 return false;
             }
-            
+
             return true;
         }
 
@@ -131,11 +131,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
 
                 var syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
-                var semanticModel = await document.GetSemanticModelAsync().ConfigureAwait(false);
+                var semanticModel = await document.GetSemanticModelAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
 
                 var nodes = diagnostics.Select(diagnostic => syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true));
 
-                return syntaxRoot.ReplaceNodes(nodes, (originalNode, rewrittenNode) => GetReplacementNode(rewrittenNode, semanticModel, CancellationToken.None));
+                return syntaxRoot.ReplaceNodes(nodes, (originalNode, rewrittenNode) => GetReplacementNode(rewrittenNode, semanticModel, fixAllContext.CancellationToken));
             }
         }
     }
