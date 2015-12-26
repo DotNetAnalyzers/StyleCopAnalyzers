@@ -710,20 +710,7 @@ namespace StyleCop.Analyzers.OrderingRules
                         processedUsing = processedUsing.WithAdditionalAnnotations(FileHeaderStrippedAnnotation);
                     }
 
-                    // filter duplicate using declarations, preferring to keep the one with an alias
-                    var existingUsing = result.Find(u => string.Equals(u.Name.ToNormalizedString(), processedUsing.Name.ToNormalizedString(), StringComparison.Ordinal));
-                    if (existingUsing != null)
-                    {
-                        if (!existingUsing.HasNamespaceAliasQualifier() && processedUsing.HasNamespaceAliasQualifier())
-                        {
-                            result.Remove(existingUsing);
-                            result.Add(processedUsing);
-                        }
-                    }
-                    else
-                    {
-                        result.Add(processedUsing);
-                    }
+                    result.Add(processedUsing);
                 }
 
                 result.Sort(this.CompareUsings);
