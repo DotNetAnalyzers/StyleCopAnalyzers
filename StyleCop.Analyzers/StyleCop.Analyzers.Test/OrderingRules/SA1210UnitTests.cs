@@ -198,6 +198,7 @@ namespace Foo
     using corlib::System;
     using Foo;
     using global::Foo;
+    using global::Foo;
     using global::System;
     using global::System.IO;
     using global::System.Linq;
