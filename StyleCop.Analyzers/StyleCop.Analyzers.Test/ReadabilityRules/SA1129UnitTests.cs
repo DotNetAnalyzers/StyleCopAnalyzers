@@ -279,7 +279,7 @@ public class TestClass
         }
 
         /// <summary>
-        /// Verifies that the codefix will preserve trivia surrounding <c>new CancellationToken()</c>
+        /// Verifies that the codefix will preserve trivia surrounding <c>new CancellationToken()</c>.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -396,6 +396,42 @@ public class TestClass
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(5, 18),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that <c>new CancellationToken()</c> is replaced by <c>CancellationToken.None</c>,
+        /// even when aliased by a <c>using</c> statement.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyAliasedCancellationTokenUsesNoneSyntaxAsync()
+        {
+            var testCode = @"
+using SystemToken = System.Threading.CancellationToken;
+
+public class TestClass
+{
+    private SystemToken ct = new SystemToken();
+}
+";
+
+            var fixedTestCode = @"
+using SystemToken = System.Threading.CancellationToken;
+
+public class TestClass
+{
+    private SystemToken ct = SystemToken.None;
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(6, 30),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
