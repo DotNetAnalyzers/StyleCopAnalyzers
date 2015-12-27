@@ -439,6 +439,90 @@ public class TestClass
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that <c>new MyEnum()</c> is replaced by <c>MyEnum.Member</c>
+        /// iff there is one member in <c>MyEnum</c> with a value of <c>0</c>.
+        /// </summary>
+        /// <param name="declarationBody">The injected <c>enum</c> declaration body.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("Member")]
+        [InlineData("Member = 0")]
+        [InlineData("Member = 0, Another = 1")]
+        [InlineData("Another = 1, Member = 0")]
+        public async Task VerifyEnumMemberReplacementBehaviorAsync(string declarationBody)
+        {
+            var testCode = $@"public class TestClass
+{{
+    public void TestMethod()
+    {{
+        var v1 = new MyEnum();
+    }}
+
+    private enum MyEnum {{ {declarationBody} }}
+}}";
+
+            var fixedTestCode = $@"public class TestClass
+{{
+    public void TestMethod()
+    {{
+        var v1 = MyEnum.Member;
+    }}
+
+    private enum MyEnum {{ {declarationBody} }}
+}}";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(5, 18),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that <c>new MyEnum()</c> is <b>not</b> replaced by <c>MyEnum.Member</c>
+        /// if there is no member with a value of <c>0</c>, but instead uses the default replacement behavior.
+        /// </summary>
+        /// <param name="declarationBody">The injected <c>enum</c> declaration body.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("Member = 1")]
+        [InlineData("Member = 1, Another = 2")]
+        public async Task VerifyEnumMemberDefaultBehaviorAsync(string declarationBody)
+        {
+            var testCode = $@"public class TestClass
+{{
+    public void TestMethod()
+    {{
+        var v1 = new MyEnum();
+    }}
+
+    private enum MyEnum {{ {declarationBody} }}
+}}";
+
+            var fixedTestCode = $@"public class TestClass
+{{
+    public void TestMethod()
+    {{
+        var v1 = default(MyEnum);
+    }}
+
+    private enum MyEnum {{ {declarationBody} }}
+}}";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(5, 18),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
