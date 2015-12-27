@@ -39,6 +39,10 @@ namespace StyleCopTester
                     cts.Cancel();
                 };
 
+            // The following allows continuations to be processed by a single thread.
+            // Since Console apps do not have a SyncronizationContext, we're leveraging the built-in support
+            // in WPF to pump the messages via the Dispatcher.
+            // See http://blogs.msdn.com/b/pfxteam/archive/2012/01/21/10259307.aspx for additional details.
             SynchronizationContext previousContext = SynchronizationContext.Current;
             try
             {
