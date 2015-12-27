@@ -19,6 +19,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     {
         public const string ExpectedTextKey = "ExpectedText";
         public const string TextToRemoveKey = "TextToRemove";
+        public const string NoCodeFixKey = "NoCodeFix";
 
         private const string SA1623DiagnosticId = "SA1623";
         private const string SA1624DiagnosticId = "SA1624";
@@ -106,6 +107,13 @@ namespace StyleCop.Analyzers.DocumentationRules
             {
                 // This is reported by SA1604.
                 return;
+            }
+
+            // Add a no code fix tag when the summary element is empty.
+            // This will only impact SA1623, because SA1624 cannot trigger with an empty summary.
+            if (summaryElement.Content.Count == 0)
+            {
+                diagnosticProperties.Add(NoCodeFixKey, string.Empty);
             }
 
             var textElement = summaryElement.Content.FirstOrDefault() as XmlTextSyntax;
