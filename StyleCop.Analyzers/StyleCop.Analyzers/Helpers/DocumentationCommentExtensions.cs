@@ -152,6 +152,11 @@ namespace StyleCop.Analyzers.Helpers
 
             for (int i = 0; i < removeFromEnd; i++)
             {
+                if (!lastSyntaxTokens.Any())
+                {
+                    break;
+                }
+
                 lastSyntaxTokens = lastSyntaxTokens.RemoveAt(lastSyntaxTokens.Count - 1);
             }
 
