@@ -450,6 +450,7 @@ public class TestClass
         [InlineData("Member = 0")]
         [InlineData("Member = 0, Another = 1")]
         [InlineData("Another = 1, Member = 0")]
+        [InlineData("Member, Another")]
         public async Task VerifyEnumMemberReplacementBehaviorAsync(string declarationBody)
         {
             var testCode = $@"public class TestClass
@@ -491,6 +492,8 @@ public class TestClass
         [Theory]
         [InlineData("Member = 1")]
         [InlineData("Member = 1, Another = 2")]
+        [InlineData("FooMember = 0, BarMember = 0")]
+        [InlineData("FooMember, BarMember = 0")]
         public async Task VerifyEnumMemberDefaultBehaviorAsync(string declarationBody)
         {
             var testCode = $@"public class TestClass

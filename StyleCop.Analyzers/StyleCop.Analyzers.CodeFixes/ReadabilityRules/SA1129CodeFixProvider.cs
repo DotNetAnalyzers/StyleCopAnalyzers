@@ -144,7 +144,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return false;
             }
 
-            foundMemberName = foundMembers.Single().Name;
+            foundMemberName = foundMembers[0].Name;
             return true;
         }
 
@@ -155,10 +155,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <param name="memberName">The member name.</param>
         /// <returns>A new member access expression.</returns>
         private static SyntaxNode ConstructMemberAccessSyntax(TypeSyntax typeSyntax, string memberName)
-            => SyntaxFactory.MemberAccessExpression(
+        {
+            return SyntaxFactory.MemberAccessExpression(
                 SyntaxKind.SimpleMemberAccessExpression,
                 typeSyntax,
                 SyntaxFactory.IdentifierName(memberName));
+        }
 
         private class FixAll : DocumentBasedFixAllProvider
         {
