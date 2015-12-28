@@ -76,7 +76,7 @@ If (-not $?) {
 	exit $LASTEXITCODE
 }
 
-if (-not $Incremental) {
+if ($Incremental) {
 	# Skip NuGet validation and copying packages to the output directory
 	exit 0
 }
