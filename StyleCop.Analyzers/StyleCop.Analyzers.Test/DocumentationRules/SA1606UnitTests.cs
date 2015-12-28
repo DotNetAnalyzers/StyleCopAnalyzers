@@ -768,7 +768,7 @@ class Class1
         }
 
         /// <inheritdoc/>
-        protected override Project CreateProject(string[] sources, string language = "C#", string[] filenames = null)
+        protected override Project ApplyCompilationOptions(Project project)
         {
             var resolver = new TestXmlReferenceResolver();
             string contentWithSummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
@@ -807,7 +807,7 @@ class Class1
 ";
             resolver.XmlReferences.Add("ClassWithEmptySummary.xml", contentWithEmptySummary);
 
-            Project project = base.CreateProject(sources, language, filenames);
+            project = base.ApplyCompilationOptions(project);
             project = project.WithCompilationOptions(project.CompilationOptions.WithXmlReferenceResolver(resolver));
             return project;
         }

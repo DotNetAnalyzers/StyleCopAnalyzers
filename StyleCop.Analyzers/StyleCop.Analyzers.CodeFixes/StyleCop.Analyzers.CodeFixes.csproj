@@ -61,6 +61,7 @@
     <Compile Include="Helpers\CustomBatchFixAllProvider.cs" />
     <Compile Include="Helpers\CustomFixAllProviders.cs" />
     <Compile Include="Helpers\DocumentBasedFixAllProvider.cs" />
+    <Compile Include="Helpers\FixAllContextHelper.cs" />
     <Compile Include="Helpers\FormattingHelper.cs" />
     <Compile Include="Helpers\IndentationHelper.cs" />
     <Compile Include="Helpers\IndentationOptions.cs" />
