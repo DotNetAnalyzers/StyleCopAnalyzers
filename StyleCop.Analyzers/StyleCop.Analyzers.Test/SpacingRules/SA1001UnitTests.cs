@@ -268,7 +268,11 @@ class ClassName
             string fixedCode = string.Format(template, fixedStatement);
 
             await this.VerifyCSharpDiagnosticAsync(originalCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(originalCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            if (expected.Length > 0)
+            {
+                await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpFixAsync(originalCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            }
         }
     }
 }

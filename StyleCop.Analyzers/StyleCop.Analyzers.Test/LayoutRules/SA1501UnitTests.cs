@@ -512,7 +512,7 @@ class TypeName
         while (false);
 ";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -717,7 +717,7 @@ else if (i == 13)
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 3, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -733,50 +733,6 @@ else if (i == 13)
             this.suppressSA1503 = true;
 
             await this.VerifyCSharpDiagnosticAsync(this.GenerateFixedTestStatement(statementText), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Verifies that an if / else statement followed by a block without braces will produce a warning.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestNoSA1503IfElseStatementWithoutBracesAsync()
-        {
-            this.suppressSA1503 = true;
-
-            var testCode = @"using System.Diagnostics;
-public class TypeName
-{
-    public void Bar(int i)
-    {
-        if (i == 0) Debug.Assert(true); else Debug.Assert(false);
-    }
-}";
-
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 21);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Verifies that nested if statements followed by a block without braces will produce warnings.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestNoSA1503MultipleIfStatementsWithoutBracesAsync()
-        {
-            this.suppressSA1503 = true;
-
-            var testCode = @"using System.Diagnostics;
-public class TypeName
-{
-    public void Bar(int i)
-    {
-        if (i == 0) if (i == 0) Debug.Assert(true);
-    }
-}";
-
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 21);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -809,7 +765,11 @@ public class TypeName
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 21);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -864,18 +824,11 @@ public class TypeName
     }
 }";
 
-            var fixedTestCode = @"using System.Diagnostics;
-public class TypeName
-{
-    public void Bar(int i)
-    {
-#pragma warning restore
-        if (i == 0)
-            Debug.Assert(true);
-    }
-}";
+            // The code fix will not make any changes.
+            var fixedTestCode = testCode;
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, numberOfFixAllIterations: 0, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -907,7 +860,10 @@ public class TypeName
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 21);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>

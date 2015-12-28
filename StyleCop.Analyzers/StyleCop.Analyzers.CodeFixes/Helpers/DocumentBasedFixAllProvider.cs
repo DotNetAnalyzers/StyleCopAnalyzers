@@ -58,16 +58,24 @@ namespace StyleCop.Analyzers.Helpers
         /// </summary>
         /// <param name="fixAllContext">The context for the Fix All operation.</param>
         /// <param name="document">The document to fix.</param>
+        /// <param name="diagnostics">The diagnostics to fix in the document.</param>
         /// <returns>
         /// <para>The new <see cref="SyntaxNode"/> representing the root of the fixed document.</para>
         /// <para>-or-</para>
         /// <para><see langword="null"/>, if no changes were made to the document.</para>
         /// </returns>
-        protected abstract Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document);
+        protected abstract Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics);
 
         private async Task<Document> GetDocumentFixesAsync(FixAllContext fixAllContext)
         {
-            var newRoot = await this.FixAllInDocumentAsync(fixAllContext, fixAllContext.Document).ConfigureAwait(false);
+            var documentDiagnosticsToFix = await FixAllContextHelper.GetDocumentDiagnosticsToFixAsync(fixAllContext).ConfigureAwait(false);
+            ImmutableArray<Diagnostic> diagnostics;
+            if (!documentDiagnosticsToFix.TryGetValue(fixAllContext.Document, out diagnostics))
+            {
+                return fixAllContext.Document;
+            }
+
+            var newRoot = await this.FixAllInDocumentAsync(fixAllContext, fixAllContext.Document, diagnostics).ConfigureAwait(false);
             if (newRoot == null)
             {
                 return fixAllContext.Document;
@@ -78,11 +86,20 @@ namespace StyleCop.Analyzers.Helpers
 
         private async Task<Solution> GetSolutionFixesAsync(FixAllContext fixAllContext, ImmutableArray<Document> documents)
         {
+            var documentDiagnosticsToFix = await FixAllContextHelper.GetDocumentDiagnosticsToFixAsync(fixAllContext).ConfigureAwait(false);
+
             Solution solution = fixAllContext.Solution;
             List<Task<SyntaxNode>> newDocuments = new List<Task<SyntaxNode>>(documents.Length);
             foreach (var document in documents)
             {
-                newDocuments.Add(this.FixAllInDocumentAsync(fixAllContext, document));
+                ImmutableArray<Diagnostic> diagnostics;
+                if (!documentDiagnosticsToFix.TryGetValue(document, out diagnostics))
+                {
+                    newDocuments.Add(document.GetSyntaxRootAsync(fixAllContext.CancellationToken));
+                    continue;
+                }
+
+                newDocuments.Add(this.FixAllInDocumentAsync(fixAllContext, document, diagnostics));
             }
 
             for (int i = 0; i < documents.Length; i++)

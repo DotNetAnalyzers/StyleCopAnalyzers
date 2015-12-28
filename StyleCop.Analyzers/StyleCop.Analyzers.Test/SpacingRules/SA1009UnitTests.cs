@@ -751,8 +751,15 @@ int a)
                 this.CSharpDiagnostic().WithLocation(32, 16).WithArguments(" not", "preceded"),
             };
 
+            DiagnosticResult[] fixedExpected =
+            {
+                this.CSharpDiagnostic().WithLocation(10, 9).WithArguments(" not", "preceded"),
+                this.CSharpDiagnostic().WithLocation(25, 17).WithArguments(" not", "preceded"),
+            };
+
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, fixedExpected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>

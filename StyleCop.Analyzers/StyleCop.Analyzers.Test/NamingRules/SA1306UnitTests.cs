@@ -183,7 +183,7 @@ string ___jar;
 }}";
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(fixedCode, modifiers), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers)).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers), numberOfFixAllIterations: 4, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
