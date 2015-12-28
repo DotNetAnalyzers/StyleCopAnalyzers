@@ -152,6 +152,30 @@ public class TestClass
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that empty summary tag does not throw an exception.
+        /// Regression test for #1943
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task EmptySummaryTagShouldNotThrowAnExceptionAsync()
+        {
+            var testCode = @"public class ClassName
+{
+    /// <summary></summary>
+    public int Property
+    {
+        get;
+    }
+}";
+
+            var expected = this.CSharpDiagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(4, 16).WithArguments("Gets");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            var offeredFixes = await this.GetOfferedCSharpFixesAsync(testCode).ConfigureAwait(false);
+            Assert.Empty(offeredFixes);
+        }
+
         /// <inheritdoc/>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
