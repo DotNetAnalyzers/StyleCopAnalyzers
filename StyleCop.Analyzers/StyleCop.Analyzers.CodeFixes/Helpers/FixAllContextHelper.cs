@@ -143,21 +143,21 @@ namespace StyleCop.Analyzers.Helpers
 
             // Note that the following loop to obtain syntax and semantic diagnostics for each document cannot operate
             // on parallel due to our use of a single CompilationWithAnalyzers instance.
-            var diagnostics = ImmutableArray<Diagnostic>.Empty;
+            var diagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
             foreach (var document in documents)
             {
                 var syntaxTree = await document.GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
                 var syntaxDiagnostics = await GetAnalyzerSyntaxDiagnosticsAsync(compilationWithAnalyzers, syntaxTree, cancellationToken).ConfigureAwait(false);
-                diagnostics = diagnostics.AddRange(syntaxDiagnostics);
+                diagnostics.AddRange(syntaxDiagnostics);
 
                 var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
                 var semanticDiagnostics = await GetAnalyzerSemanticDiagnosticsAsync(compilationWithAnalyzers, semanticModel, default(TextSpan?), cancellationToken).ConfigureAwait(false);
-                diagnostics = diagnostics.AddRange(semanticDiagnostics);
+                diagnostics.AddRange(semanticDiagnostics);
             }
 
             foreach (var analyzer in analyzers)
             {
-                diagnostics = diagnostics.AddRange(await GetAnalyzerCompilationDiagnosticsAsync(compilationWithAnalyzers, ImmutableArray.Create(analyzer), cancellationToken).ConfigureAwait(false));
+                diagnostics.AddRange(await GetAnalyzerCompilationDiagnosticsAsync(compilationWithAnalyzers, ImmutableArray.Create(analyzer), cancellationToken).ConfigureAwait(false));
             }
 
             if (includeCompilerDiagnostics)
@@ -165,10 +165,10 @@ namespace StyleCop.Analyzers.Helpers
                 // This is the special handling for cases where code fixes operate on warnings produced by the C#
                 // compiler, as opposed to being created by specific analyzers.
                 var compilerDiagnostics = compilation.GetDiagnostics(cancellationToken);
-                diagnostics = diagnostics.AddRange(compilerDiagnostics);
+                diagnostics.AddRange(compilerDiagnostics);
             }
 
-            return diagnostics;
+            return diagnostics.ToImmutable();
         }
 
         private static ImmutableDictionary<string, ImmutableArray<Type>> GetAllAnalyzers()

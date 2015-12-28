@@ -24,21 +24,21 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             case FixAllScope.Document:
                 fixAction = CodeAction.Create(
                     title,
-                    cancellationToken => this.GetDocumentFixesAsync(fixAllContext.WithCancellationToken(cancellationToken)),
+                    cancellationToken => GetDocumentFixesAsync(fixAllContext.WithCancellationToken(cancellationToken)),
                     nameof(SA1412FixAllProvider));
                 break;
 
             case FixAllScope.Project:
                 fixAction = CodeAction.Create(
                     title,
-                    cancellationToken => this.GetProjectFixesAsync(fixAllContext.WithCancellationToken(cancellationToken), fixAllContext.Project),
+                    cancellationToken => GetProjectFixesAsync(fixAllContext.WithCancellationToken(cancellationToken)),
                     nameof(SA1412FixAllProvider));
                 break;
 
             case FixAllScope.Solution:
                 fixAction = CodeAction.Create(
                     title,
-                    cancellationToken => this.GetSolutionFixesAsync(fixAllContext.WithCancellationToken(cancellationToken)),
+                    cancellationToken => GetSolutionFixesAsync(fixAllContext.WithCancellationToken(cancellationToken)),
                     nameof(SA1412FixAllProvider));
                 break;
 
@@ -68,7 +68,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             return await SA1412CodeFixProvider.GetTransformedSolutionAsync(document, cancellationToken).ConfigureAwait(false);
         }
 
-        private async Task<Solution> GetDocumentFixesAsync(FixAllContext fixAllContext)
+        private static async Task<Solution> GetDocumentFixesAsync(FixAllContext fixAllContext)
         {
             var documentDiagnosticsToFix = await FixAllContextHelper.GetDocumentDiagnosticsToFixAsync(fixAllContext).ConfigureAwait(false);
             ImmutableArray<Diagnostic> diagnostics;
@@ -80,7 +80,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             return await FixDocumentAsync(fixAllContext.Document.Project.Solution, fixAllContext.Document.Id, diagnostics, fixAllContext.CodeActionEquivalenceKey, fixAllContext.CancellationToken).ConfigureAwait(false);
         }
 
-        private async Task<Solution> GetSolutionFixesAsync(FixAllContext fixAllContext, ImmutableArray<Document> documents)
+        private static async Task<Solution> GetSolutionFixesAsync(FixAllContext fixAllContext, ImmutableArray<Document> documents)
         {
             var documentDiagnosticsToFix = await FixAllContextHelper.GetDocumentDiagnosticsToFixAsync(fixAllContext).ConfigureAwait(false);
 
@@ -99,15 +99,15 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             return solution;
         }
 
-        private Task<Solution> GetProjectFixesAsync(FixAllContext fixAllContext, Project project)
+        private static Task<Solution> GetProjectFixesAsync(FixAllContext fixAllContext)
         {
-            return this.GetSolutionFixesAsync(fixAllContext, project.Documents.ToImmutableArray());
+            return GetSolutionFixesAsync(fixAllContext, fixAllContext.Project.Documents.ToImmutableArray());
         }
 
-        private Task<Solution> GetSolutionFixesAsync(FixAllContext fixAllContext)
+        private static Task<Solution> GetSolutionFixesAsync(FixAllContext fixAllContext)
         {
             ImmutableArray<Document> documents = fixAllContext.Solution.Projects.SelectMany(i => i.Documents).ToImmutableArray();
-            return this.GetSolutionFixesAsync(fixAllContext, documents);
+            return GetSolutionFixesAsync(fixAllContext, documents);
         }
     }
 }
