@@ -4,6 +4,7 @@
 namespace StyleCop.Analyzers.Helpers
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -150,6 +151,26 @@ namespace StyleCop.Analyzers.Helpers
                 .SelectMany(m => m.GetMembers(memberSymbol.Name))
                 .Select(typeSymbol.FindImplementationForInterfaceMember)
                 .Any(x => memberSymbol.Equals(x));
+        }
+
+        internal static void GetOriginalDefinitions(List<IMethodSymbol> originalDefinitions, IMethodSymbol memberSymbol)
+        {
+            if (memberSymbol.IsOverride && memberSymbol.OverriddenMethod != null)
+            {
+                originalDefinitions.Add(memberSymbol.OverriddenMethod);
+            }
+
+            if (memberSymbol.ExplicitInterfaceImplementations.Length > 0)
+            {
+                originalDefinitions.AddRange(memberSymbol.ExplicitInterfaceImplementations);
+            }
+
+            var typeSymbol = memberSymbol.ContainingType;
+
+            originalDefinitions.AddRange(typeSymbol.AllInterfaces
+                .SelectMany(m => m.GetMembers(memberSymbol.Name))
+                .Where(m => typeSymbol.FindImplementationForInterfaceMember(m) != null)
+                .Cast<IMethodSymbol>());
         }
     }
 }

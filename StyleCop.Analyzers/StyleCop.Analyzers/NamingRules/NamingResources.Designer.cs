@@ -132,5 +132,32 @@ namespace StyleCop.Analyzers.NamingRules {
                 return ResourceManager.GetString("SA1313Title", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to When a method overrides a method from a base class, or implements an interface method, the parameter names of the overriding method should match the names in the base definition..
+        /// </summary>
+        internal static string SA1315Description {
+            get {
+                return ResourceManager.GetString("SA1315Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Parameters should match inherited names.
+        /// </summary>
+        internal static string SA1315MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1315MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Parameters should match inherited names.
+        /// </summary>
+        internal static string SA1315Title {
+            get {
+                return ResourceManager.GetString("SA1315Title", resourceCulture);
+            }
+        }
     }
 }
