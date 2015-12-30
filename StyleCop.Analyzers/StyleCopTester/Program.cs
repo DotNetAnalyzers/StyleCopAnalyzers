@@ -86,7 +86,7 @@ namespace StyleCopTester
 
                 Console.WriteLine($"Loaded solution in {stopwatch.ElapsedMilliseconds}ms");
 
-                if (!args.Contains("/nostats"))
+                if (args.Contains("/stats"))
                 {
                     List<Project> csharpProjects = solution.Projects.Where(i => i.Language == LanguageNames.CSharp).ToList();
 
@@ -447,7 +447,7 @@ namespace StyleCopTester
             Console.WriteLine("Usage: StyleCopTester [options] <Solution>");
             Console.WriteLine("Options:");
             Console.WriteLine("/all       Run all StyleCopAnalyzers analyzers, including ones that are disabled by default");
-            Console.WriteLine("/nostats   Disable the display of statistics");
+            Console.WriteLine("/stats     Display statistics of the solution");
             Console.WriteLine("/codefixes Test single code fixes");
             Console.WriteLine("/fixall    Test fix all providers");
             Console.WriteLine("/id:<id>   Enable analyzer with diagnostic ID < id > (when this is specified, only this analyzer is enabled)");
