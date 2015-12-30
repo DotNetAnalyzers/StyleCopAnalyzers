@@ -102,7 +102,9 @@ namespace StyleCopTester
 
                 stopwatch.Restart();
 
-                var diagnostics = await GetAnalyzerDiagnosticsAsync(solution, solutionPath, analyzers, cancellationToken).ConfigureAwait(true);
+                bool force = args.Contains("/force");
+
+                var diagnostics = await GetAnalyzerDiagnosticsAsync(solution, solutionPath, analyzers, force, cancellationToken).ConfigureAwait(true);
                 var allDiagnostics = diagnostics.SelectMany(i => i.Value).ToImmutableArray();
 
                 Console.WriteLine($"Found {allDiagnostics.Length} diagnostics in {stopwatch.ElapsedMilliseconds}ms");
@@ -384,7 +386,7 @@ namespace StyleCopTester
             return fixAllProviders.ToImmutableDictionary();
         }
 
-        private static async Task<ImmutableDictionary<ProjectId, ImmutableArray<Diagnostic>>> GetAnalyzerDiagnosticsAsync(Solution solution, string solutionPath, ImmutableArray<DiagnosticAnalyzer> analyzers, CancellationToken cancellationToken)
+        private static async Task<ImmutableDictionary<ProjectId, ImmutableArray<Diagnostic>>> GetAnalyzerDiagnosticsAsync(Solution solution, string solutionPath, ImmutableArray<DiagnosticAnalyzer> analyzers, bool force, CancellationToken cancellationToken)
         {
             List<KeyValuePair<ProjectId, Task<ImmutableArray<Diagnostic>>>> projectDiagnosticTasks = new List<KeyValuePair<ProjectId, Task<ImmutableArray<Diagnostic>>>>();
 
@@ -396,7 +398,7 @@ namespace StyleCopTester
                     continue;
                 }
 
-                projectDiagnosticTasks.Add(new KeyValuePair<ProjectId, Task<ImmutableArray<Diagnostic>>>(project.Id, GetProjectAnalyzerDiagnosticsAsync(analyzers, project, cancellationToken)));
+                projectDiagnosticTasks.Add(new KeyValuePair<ProjectId, Task<ImmutableArray<Diagnostic>>>(project.Id, GetProjectAnalyzerDiagnosticsAsync(analyzers, project, force, cancellationToken)));
             }
 
             ImmutableDictionary<ProjectId, ImmutableArray<Diagnostic>>.Builder projectDiagnosticBuilder = ImmutableDictionary.CreateBuilder<ProjectId, ImmutableArray<Diagnostic>>();
@@ -413,17 +415,22 @@ namespace StyleCopTester
         /// </summary>
         /// <param name="analyzers">The list of analyzers that should be used</param>
         /// <param name="project">The project that should be analyzed</param>
+        /// <param name="force"><see langword="true"/> to force the analyzers to be enabled; otherwise,
+        /// <see langword="false"/> to use the behavior configured for the specified <paramref name="project"/>.</param>
         /// <param name="cancellationToken">The cancellation token that the task will observe.</param>
         /// <returns>A list of diagnostics inside the project</returns>
-        private static async Task<ImmutableArray<Diagnostic>> GetProjectAnalyzerDiagnosticsAsync(ImmutableArray<DiagnosticAnalyzer> analyzers, Project project, CancellationToken cancellationToken)
+        private static async Task<ImmutableArray<Diagnostic>> GetProjectAnalyzerDiagnosticsAsync(ImmutableArray<DiagnosticAnalyzer> analyzers, Project project, bool force, CancellationToken cancellationToken)
         {
             var supportedDiagnosticsSpecificOptions = new Dictionary<string, ReportDiagnostic>();
-            foreach (var analyzer in analyzers)
+            if (force)
             {
-                foreach (var diagnostic in analyzer.SupportedDiagnostics)
+                foreach (var analyzer in analyzers)
                 {
-                    // make sure the analyzers we are testing are enabled
-                    supportedDiagnosticsSpecificOptions[diagnostic.Id] = ReportDiagnostic.Default;
+                    foreach (var diagnostic in analyzer.SupportedDiagnostics)
+                    {
+                        // make sure the analyzers we are testing are enabled
+                        supportedDiagnosticsSpecificOptions[diagnostic.Id] = ReportDiagnostic.Default;
+                    }
                 }
             }
 
@@ -451,6 +458,7 @@ namespace StyleCopTester
             Console.WriteLine("/codefixes Test single code fixes");
             Console.WriteLine("/fixall    Test fix all providers");
             Console.WriteLine("/id:<id>   Enable analyzer with diagnostic ID < id > (when this is specified, only this analyzer is enabled)");
+            Console.WriteLine("/force     Force an analyzer to be enabled, regardless of the configured rule set(s) for the solution");
         }
     }
 }
