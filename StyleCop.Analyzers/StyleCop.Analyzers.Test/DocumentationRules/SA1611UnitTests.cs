@@ -7,6 +7,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Threading;
     using System.Threading.Tasks;
     using Analyzers.DocumentationRules;
+    using Helpers;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using TestHelper;
     using Xunit;
@@ -226,6 +228,120 @@ public class TestClass
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that included documentation with valid documentation does not produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyIncludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <include file='WithElementDocumentation.xml' path='/TestClass/TestMethod/*' />
+    public void TestMethod(string param1, string param2, string param3)
+    {
+    }
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that included documentation with missing elements produces the expected diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyIncludedDocumentationMissingElementsAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <include file='MissingElementDocumentation.xml' path='/TestClass/TestMethod/*' />
+    public void TestMethod(string param1, string param2, string param3)
+    {
+    }
+}";
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(8, 35).WithArguments("param1"),
+                this.CSharpDiagnostic().WithLocation(8, 50).WithArguments("param2"),
+                this.CSharpDiagnostic().WithLocation(8, 65).WithArguments("param3"),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that included documentation with an <c>&lt;inheritdoc&gt;</c> tag is ignored.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyIncludedInheritedDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <include file='InheritedDocumentation.xml' path='/TestClass/TestMethod/*' />
+    public void TestMethod(string param1, string param2, string param3)
+    {
+    }
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
+        protected override Project CreateProject(string[] sources, string language = "C#", string[] filenames = null)
+        {
+            var resolver = new TestXmlReferenceResolver();
+
+            string contentWithoutElementDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+    <TestMethod>
+        <summary>
+            Foo
+        </summary>
+    </TestMethod>
+</TestClass>
+";
+            resolver.XmlReferences.Add("MissingElementDocumentation.xml", contentWithoutElementDocumentation);
+
+            string contentWithElementDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+    <TestMethod>
+        <summary>
+            Foo
+        </summary>
+        <param name=""param1"">Param 1</param>
+        <param name=""param2"">Param 2</param>
+        <param name=""param3"">Param 3</param>
+    </TestMethod>
+</TestClass>
+";
+            resolver.XmlReferences.Add("WithElementDocumentation.xml", contentWithElementDocumentation);
+
+            string contentWithInheritedDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+ <TestClass>
+    <TestMethod>
+        <inheritdoc />
+    </TestMethod>
+ </TestClass>
+ ";
+            resolver.XmlReferences.Add("InheritedDocumentation.xml", contentWithInheritedDocumentation);
+
+            Project project = base.CreateProject(sources, language, filenames);
+            project = project.WithCompilationOptions(project.CompilationOptions.WithXmlReferenceResolver(resolver));
+            return project;
         }
 
         /// <inheritdoc/>

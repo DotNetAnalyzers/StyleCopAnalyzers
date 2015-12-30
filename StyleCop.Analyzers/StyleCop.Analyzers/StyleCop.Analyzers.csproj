@@ -59,6 +59,7 @@
     <Compile Include="DocumentationRules\ElementDocumentationSummaryBase.cs" />
     <Compile Include="DocumentationRules\FileHeaderAnalyzers.cs" />
     <Compile Include="DocumentationRules\PartialElementDocumentationSummaryBase.cs" />
+    <Compile Include="DocumentationRules\ElementDocumentationParameterBase.cs" />
     <Compile Include="DocumentationRules\PropertyDocumentationBase.cs" />
     <Compile Include="DocumentationRules\PropertySummaryDocumentationAnalyzer.cs" />
     <Compile Include="DocumentationRules\SA1600ElementsMustBeDocumented.cs" />

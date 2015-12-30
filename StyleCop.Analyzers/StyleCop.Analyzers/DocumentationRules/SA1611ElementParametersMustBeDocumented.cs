@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
+    using System.Xml.Linq;
     using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -28,7 +29,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// more of its parameters.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class SA1611ElementParametersMustBeDocumented : DiagnosticAnalyzer
+    internal class SA1611ElementParametersMustBeDocumented : ElementDocumentationParameterBase
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1611ElementParametersMustBeDocumented"/> analyzer.
@@ -42,66 +43,41 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly ImmutableArray<SyntaxKind> HandledSyntaxKinds =
-            ImmutableArray.Create(
-                SyntaxKind.MethodDeclaration,
-                SyntaxKind.ConstructorDeclaration,
-                SyntaxKind.DelegateDeclaration,
-                SyntaxKind.IndexerDeclaration,
-                SyntaxKind.OperatorDeclaration,
-                SyntaxKind.ConversionOperatorDeclaration);
-
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
-        private static readonly Action<SyntaxNodeAnalysisContext> SyntaxNodeAction = HandleSyntaxNode;
-
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        public override void Initialize(AnalysisContext context)
-        {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
-
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(SyntaxNodeAction, HandledSyntaxKinds);
-        }
-
-        private static void HandleSyntaxNode(SyntaxNodeAnalysisContext context)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, IEnumerable<XmlNodeSyntax> syntaxList, XElement completeDocumentation, params Location[] diagnosticLocations)
         {
             var node = context.Node;
-
-            var documentation = node.GetDocumentationCommentTriviaSyntax();
-
-            if (documentation != null)
+            var parameterList = GetParameters(node);
+            if (parameterList == null)
             {
-                IEnumerable<ParameterSyntax> parameterList = GetParameters(node);
+                return;
+            }
 
-                if (parameterList == null)
-                {
-                    return;
-                }
+            if (completeDocumentation != null)
+            {
+                // We are working with an <include> element
+                var paramElements = completeDocumentation.Nodes()
+                    .OfType<XElement>()
+                    .Where(e => e.Name == XmlCommentHelper.ParamXmlTag);
 
-                if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag) != null)
-                {
-                    // Ignore nodes with an <inheritdoc/> tag.
-                    return;
-                }
+                var xmlParameterNames = paramElements
+                    .SelectMany(p => p.Attributes().Where(a => a.Name == "name"))
+                    .Select(a => a.Value);
 
-                var xmlParameterNames = documentation.Content.GetXmlElements(XmlCommentHelper.ParamXmlTag)
+                ReportMissingParameters(context, parameterList, xmlParameterNames);
+            }
+            else if (syntaxList != null)
+            {
+                var xmlParameterNames = syntaxList
                     .Select(XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>)
                     .Where(x => x != null)
-                    .ToImmutableArray();
+                    .Select(x => x.Identifier.Identifier.ValueText);
 
-                foreach (var parameter in parameterList)
-                {
-                    if (!xmlParameterNames.Any(x => x.Identifier.Identifier.ValueText == parameter.Identifier.ValueText))
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, parameter.Identifier.GetLocation(), parameter.Identifier.ValueText));
-                    }
-                }
+                ReportMissingParameters(context, parameterList, xmlParameterNames);
             }
         }
 
@@ -110,6 +86,17 @@ namespace StyleCop.Analyzers.DocumentationRules
             return (node as BaseMethodDeclarationSyntax)?.ParameterList?.Parameters
                 ?? (node as IndexerDeclarationSyntax)?.ParameterList?.Parameters
                 ?? (node as DelegateDeclarationSyntax)?.ParameterList?.Parameters;
+        }
+
+        private static void ReportMissingParameters(SyntaxNodeAnalysisContext context, IEnumerable<ParameterSyntax> parameterList, IEnumerable<string> documentationParameterNames)
+        {
+            foreach (var parameter in parameterList)
+            {
+                if (!documentationParameterNames.Any(x => x == parameter.Identifier.ValueText))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, parameter.Identifier.GetLocation(), parameter.Identifier.ValueText));
+                }
+            }
         }
     }
 }
