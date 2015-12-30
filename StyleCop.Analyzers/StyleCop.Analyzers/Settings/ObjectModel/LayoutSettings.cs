@@ -12,7 +12,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// This is the backing field for the <see cref="NewlineAtEndOfFile"/> property.
         /// </summary>
         [JsonProperty("newlineAtEndOfFile", DefaultValueHandling = DefaultValueHandling.Include)]
-        private EndOfFileHandling newlineAtEndOfFile;
+        private OptionSetting newlineAtEndOfFile;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LayoutSettings"/> class during JSON deserialization.
@@ -20,10 +20,10 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         [JsonConstructor]
         protected internal LayoutSettings()
         {
-            this.newlineAtEndOfFile = EndOfFileHandling.Allow;
+            this.newlineAtEndOfFile = OptionSetting.Allow;
         }
 
-        public EndOfFileHandling NewlineAtEndOfFile =>
+        public OptionSetting NewlineAtEndOfFile =>
             this.newlineAtEndOfFile;
     }
 }

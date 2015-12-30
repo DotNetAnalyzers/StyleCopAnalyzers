@@ -90,6 +90,16 @@
                 "preserve"
               ],
               "default": "insideNamespace"
+            },
+            "useBlankLinesBetweenUsingGroups": {
+              "type": "string",
+              "description": "Specifies if using groups should be separated by a blank line.\r\nallow: A blank line is allowed, but not required\r\nrequire: A blank line is required\r\nomit: A blank line is not allowed",
+              "enum": [
+                "allow",
+                "require",
+                "omit"
+              ],
+              "default": "allow"
             }
           }
         },
