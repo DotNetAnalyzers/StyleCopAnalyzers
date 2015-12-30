@@ -69,6 +69,16 @@ namespace StyleCopTester
             }
             else
             {
+                bool applyChanges = args.Contains("/apply");
+                if (applyChanges)
+                {
+                    if (!args.Contains("/fixall"))
+                    {
+                        Console.Error.WriteLine("Error: /apply can only be used with /fixall");
+                        return;
+                    }
+                }
+
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 var analyzers = GetAllAnalyzers();
 
@@ -137,7 +147,7 @@ namespace StyleCopTester
 
                 if (args.Contains("/fixall"))
                 {
-                    await TestFixAllAsync(stopwatch, solution, diagnostics, cancellationToken).ConfigureAwait(true);
+                    await TestFixAllAsync(stopwatch, solution, diagnostics, applyChanges, cancellationToken).ConfigureAwait(true);
                 }
             }
         }
@@ -174,7 +184,7 @@ namespace StyleCopTester
             File.WriteAllText(uniqueFileName, uniqueOutput.ToString(), Encoding.UTF8);
         }
 
-        private static async Task TestFixAllAsync(Stopwatch stopwatch, Solution solution, ImmutableDictionary<ProjectId, ImmutableArray<Diagnostic>> diagnostics, CancellationToken cancellationToken)
+        private static async Task TestFixAllAsync(Stopwatch stopwatch, Solution solution, ImmutableDictionary<ProjectId, ImmutableArray<Diagnostic>> diagnostics, bool applyChanges, CancellationToken cancellationToken)
         {
             Console.WriteLine("Calculating fixes");
 
@@ -188,6 +198,11 @@ namespace StyleCopTester
             }
 
             Console.WriteLine($"Found {equivalenceGroups.Count} equivalence groups.");
+            if (applyChanges && equivalenceGroups.Count > 1)
+            {
+                Console.Error.WriteLine("/apply can only be used with a single equivalence group.");
+                return;
+            }
 
             Console.WriteLine("Calculating changes");
 
@@ -197,7 +212,24 @@ namespace StyleCopTester
                 {
                     stopwatch.Restart();
                     Console.WriteLine($"Calculating fix for {fix.CodeFixEquivalenceKey} using {fix.FixAllProvider} for {fix.NumberOfDiagnostics} instances.");
-                    await fix.GetOperationsAsync(cancellationToken).ConfigureAwait(true);
+                    var operations = await fix.GetOperationsAsync(cancellationToken).ConfigureAwait(true);
+                    if (applyChanges)
+                    {
+                        var applyOperations = operations.OfType<ApplyChangesOperation>().ToList();
+                        if (applyOperations.Count > 1)
+                        {
+                            Console.Error.WriteLine("/apply can only apply a single code action operation.");
+                        }
+                        else if (applyOperations.Count == 0)
+                        {
+                            Console.WriteLine("No changes were found to apply.");
+                        }
+                        else
+                        {
+                            applyOperations[0].Apply(solution.Workspace, cancellationToken);
+                        }
+                    }
+
                     WriteLine($"Calculating changes completed in {stopwatch.ElapsedMilliseconds}ms. This is {fix.NumberOfDiagnostics / stopwatch.Elapsed.TotalSeconds:0.000} instances/second.", ConsoleColor.Yellow);
                 }
                 catch (Exception ex)
@@ -458,6 +490,7 @@ namespace StyleCopTester
             Console.WriteLine("/codefixes Test single code fixes");
             Console.WriteLine("/fixall    Test fix all providers");
             Console.WriteLine("/id:<id>   Enable analyzer with diagnostic ID < id > (when this is specified, only this analyzer is enabled)");
+            Console.WriteLine("/apply     Write code fix changes back to disk");
             Console.WriteLine("/force     Force an analyzer to be enabled, regardless of the configured rule set(s) for the solution");
         }
     }
