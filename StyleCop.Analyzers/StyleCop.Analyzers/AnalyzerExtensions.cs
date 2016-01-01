@@ -45,10 +45,10 @@ namespace StyleCop.Analyzers
             context.RegisterSyntaxTreeAction(
                 c =>
                 {
-                    if (c.IsGeneratedDocument(cache))
-                    {
-                        return;
-                    }
+                    //if (c.IsGeneratedDocument(cache))
+                    //{
+                    //    return;
+                    //}
 
                     // Honor the containing document item's ExcludeFromStylecop=True
                     // MSBuild metadata, if analyzers have access to it.
@@ -74,10 +74,10 @@ namespace StyleCop.Analyzers
             context.RegisterSyntaxTreeAction(
                 c =>
                 {
-                    if (c.IsGeneratedDocument(cache))
-                    {
-                        return;
-                    }
+                    //if (c.IsGeneratedDocument(cache))
+                    //{
+                    //    return;
+                    //}
 
                     // Honor the containing document item's ExcludeFromStylecop=True
                     // MSBuild metadata, if analyzers have access to it.
@@ -223,10 +223,10 @@ namespace StyleCop.Analyzers
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (c.IsGenerated(cache))
-                    {
-                        return;
-                    }
+                    //if (c.IsGenerated(cache))
+                    //{
+                    //    return;
+                    //}
 
                     // Honor the containing document item's ExcludeFromStylecop=True
                     // MSBuild metadata, if analyzers have access to it.
@@ -260,10 +260,10 @@ namespace StyleCop.Analyzers
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (c.IsGenerated(cache))
-                    {
-                        return;
-                    }
+                    //if (c.IsGenerated(cache))
+                    //{
+                    //    return;
+                    //}
 
                     // Honor the containing document item's ExcludeFromStylecop=True
                     // MSBuild metadata, if analyzers have access to it.

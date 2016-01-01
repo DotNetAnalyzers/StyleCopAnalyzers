@@ -73,6 +73,20 @@ interface ITest : IBase { }";
             await this.VerifyCSharpDiagnosticAsync(testCode + declaration, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Theory(DisplayName = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1948")]
+        [InlineData("interface Test { }")]
+        [InlineData("class Test { }")]
+        [InlineData("struct Test { }")]
+        [InlineData("enum Test { }")]
+        [InlineData("delegate void Test ();")]
+        public async Task TestTypeWithEmptyBaseListAndCrefAttributeAsync(string declaration)
+        {
+            var testCode = @"/// <inheritdoc cref=""object""/>
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode + declaration, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Theory]
         [InlineData("Test() { }")]
         [InlineData("void Foo() { }")]
@@ -94,6 +108,28 @@ interface ITest : IBase { }";
             var expected = this.CSharpDiagnostic().WithLocation(3, 9);
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, declaration), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory(DisplayName = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1948")]
+        [InlineData("Test() { }")]
+        [InlineData("void Foo() { }")]
+        [InlineData("string foo;")]
+        [InlineData("string Foo { get; set; }")]
+        [InlineData("string this [string f] { get { return f; } }")]
+        [InlineData("event System.Action foo;")]
+        [InlineData("event System.Action Foo { add { } remove { } }")]
+        [InlineData("~Test() { }")]
+        [InlineData("public static Test operator +(Test value) { return value; }")]
+        [InlineData("public static explicit operator Test(int value) { return new Test(); }")]
+        public async Task TestMemberThatShouldNotHaveInheritDocButHasCrefAttributeAsync(string declaration)
+        {
+            var testCode = @"class Test
+{{
+    /// <inheritdoc cref=""object""></inheritdoc>
+    {0}
+}}";
+
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, declaration), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]

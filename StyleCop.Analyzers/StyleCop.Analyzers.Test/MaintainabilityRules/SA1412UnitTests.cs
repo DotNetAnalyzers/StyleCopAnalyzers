@@ -131,7 +131,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             return new SA1412CodeFixProvider();
         }
 
-        protected override Project CreateProject(string[] sources, string language = "C#", string[] filenames = null)
+        protected override Project CreateProjectImpl(string[] sources, string language, string[] filenames)
         {
             string fileNamePrefix = "Test";
             string fileExt = "cs";

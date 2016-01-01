@@ -938,7 +938,11 @@ namespace Namespace
             string fixedTest = string.Format(testCodeFormat, asyncModifier, fixedStatement, unsafeModifier, awaitMethod, returnType);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            if (expected.Length > 0)
+            {
+                await this.VerifyCSharpDiagnosticAsync(fixedTest, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            }
         }
 
         private Task TestKeywordDeclarationAsync(string statement, DiagnosticResult expected, string fixedStatement)
@@ -965,7 +969,11 @@ namespace Namespace
             string fixedTest = string.Format(testCodeFormat, fixedStatement);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            if (expected.Length > 0)
+            {
+                await this.VerifyCSharpDiagnosticAsync(fixedTest, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            }
         }
     }
 }

@@ -68,6 +68,13 @@ namespace StyleCop.Analyzers.NamingRules
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> VariableDeclarationAction = Analyzer.HandleVariableDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CatchDeclarationAction = Analyzer.HandleCatchDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> QueryContinuationAction = Analyzer.HandleQueryContinuation;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> FromClauseAction = Analyzer.HandleFromClause;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> LetClauseAction = Analyzer.HandleLetClause;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> JoinClauseAction = Analyzer.HandleJoinClause;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> JoinIntoClauseAction = Analyzer.HandleJoinIntoClause;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> ForEachStatementAction = Analyzer.HandleForEachStatement;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -82,6 +89,13 @@ namespace StyleCop.Analyzers.NamingRules
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
             context.RegisterSyntaxNodeActionHonorExclusions(VariableDeclarationAction, SyntaxKind.VariableDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(CatchDeclarationAction, SyntaxKind.CatchDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(QueryContinuationAction, SyntaxKind.QueryContinuation);
+            context.RegisterSyntaxNodeActionHonorExclusions(FromClauseAction, SyntaxKind.FromClause);
+            context.RegisterSyntaxNodeActionHonorExclusions(LetClauseAction, SyntaxKind.LetClause);
+            context.RegisterSyntaxNodeActionHonorExclusions(JoinClauseAction, SyntaxKind.JoinClause);
+            context.RegisterSyntaxNodeActionHonorExclusions(JoinIntoClauseAction, SyntaxKind.JoinIntoClause);
+            context.RegisterSyntaxNodeActionHonorExclusions(ForEachStatementAction, SyntaxKind.ForEachStatement);
         }
 
         private static class Analyzer
@@ -109,37 +123,77 @@ namespace StyleCop.Analyzers.NamingRules
                     }
 
                     var identifier = variableDeclarator.Identifier;
-                    if (identifier.IsMissing)
-                    {
-                        continue;
-                    }
-
-                    string name = identifier.ValueText;
-                    if (string.IsNullOrEmpty(name))
-                    {
-                        continue;
-                    }
-
-                    var match = HungarianRegex.Match(name);
-                    if (!match.Success)
-                    {
-                        continue;
-                    }
-
-                    var notationValue = match.Groups["notation"].Value;
-                    if (settings.NamingRules.AllowCommonHungarianPrefixes && CommonPrefixes.Contains(notationValue))
-                    {
-                        continue;
-                    }
-
-                    if (settings.NamingRules.AllowedHungarianPrefixes.Contains(notationValue))
-                    {
-                        continue;
-                    }
-
-                    // Variable names must begin with lower-case letter
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), fieldDeclaration ? "field" : "variable", name));
+                    CheckIdentifier(context, identifier, settings, fieldDeclaration);
                 }
+            }
+
+            public static void HandleCatchDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+            {
+                CheckIdentifier(context, ((CatchDeclarationSyntax)context.Node).Identifier, settings);
+            }
+
+            public static void HandleQueryContinuation(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+            {
+                CheckIdentifier(context, ((QueryContinuationSyntax)context.Node).Identifier, settings);
+            }
+
+            public static void HandleFromClause(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+            {
+                CheckIdentifier(context, ((FromClauseSyntax)context.Node).Identifier, settings);
+            }
+
+            public static void HandleLetClause(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+            {
+                CheckIdentifier(context, ((LetClauseSyntax)context.Node).Identifier, settings);
+            }
+
+            public static void HandleJoinClause(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+            {
+                CheckIdentifier(context, ((JoinClauseSyntax)context.Node).Identifier, settings);
+            }
+
+            public static void HandleJoinIntoClause(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+            {
+                CheckIdentifier(context, ((JoinIntoClauseSyntax)context.Node).Identifier, settings);
+            }
+
+            public static void HandleForEachStatement(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+            {
+                CheckIdentifier(context, ((ForEachStatementSyntax)context.Node).Identifier, settings);
+            }
+
+            private static void CheckIdentifier(SyntaxNodeAnalysisContext context, SyntaxToken identifier, StyleCopSettings settings, bool fieldDeclaration = false)
+            {
+                if (identifier.IsMissing)
+                {
+                    return;
+                }
+
+                string name = identifier.ValueText;
+                if (string.IsNullOrEmpty(name))
+                {
+                    return;
+                }
+
+                var match = HungarianRegex.Match(name);
+                if (!match.Success)
+                {
+                    return;
+                }
+
+                var notationValue = match.Groups["notation"].Value;
+                if (settings.NamingRules.AllowCommonHungarianPrefixes && CommonPrefixes.Contains(notationValue))
+                {
+                    return;
+                }
+
+                if (settings.NamingRules.AllowedHungarianPrefixes.Contains(notationValue))
+                {
+                    return;
+                }
+
+                // Variable names must begin with lower-case letter
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), fieldDeclaration ? "field" : "variable", name));
             }
         }
     }

@@ -196,6 +196,38 @@ using AThing = System.Threading;
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that the analyzer will not combine using directives that refer to the same type. This is a
+        /// regression test for DotNetAnalyzers/StyleCopAnalyzers#2000.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestSameUsingWithDifferentAliasAsync()
+        {
+            string testCode = @"namespace NamespaceName
+{
+    using Func2 = System.Func<int>;
+    using Func1 = System.Func<int>;
+
+    internal delegate void DelegateName(Func1 arg1, Func2 arg2);
+}
+";
+            string fixedCode = @"namespace NamespaceName
+{
+    using Func1 = System.Func<int>;
+    using Func2 = System.Func<int>;
+
+    internal delegate void DelegateName(Func1 arg1, Func2 arg2);
+}
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(4, 5).WithArguments("Func1", "Func2");
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {

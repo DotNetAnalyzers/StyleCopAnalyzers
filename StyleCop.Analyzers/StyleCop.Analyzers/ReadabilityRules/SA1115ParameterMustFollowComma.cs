@@ -270,18 +270,32 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
-            var previousLine = argumentListSyntax.Arguments[0].GetLineSpan().EndLinePosition.Line;
+            var previousArgumentLine = argumentListSyntax.Arguments[0].GetLineSpan().EndLinePosition.Line;
             for (int i = 1; i < argumentListSyntax.Arguments.Count; i++)
             {
                 var currentArgument = argumentListSyntax.Arguments[i];
-                var lineSpan = currentArgument.GetLineSpan();
-                var currentLine = lineSpan.StartLinePosition.Line;
-                if (currentLine - previousLine > 1)
+                int currentArgumentStartLine;
+                int currentArgumentEndLine;
+
+                if (currentArgument.HasLeadingTrivia && IsValidTrivia(currentArgument.GetLeadingTrivia()))
+                {
+                    var lineSpan = currentArgument.SyntaxTree.GetLineSpan(currentArgument.FullSpan);
+                    currentArgumentStartLine = lineSpan.StartLinePosition.Line;
+                    currentArgumentEndLine = lineSpan.EndLinePosition.Line;
+                }
+                else
+                {
+                    var lineSpan = currentArgument.GetLineSpan();
+                    currentArgumentStartLine = lineSpan.StartLinePosition.Line;
+                    currentArgumentEndLine = lineSpan.EndLinePosition.Line;
+                }
+
+                if (currentArgumentStartLine - previousArgumentLine > 1)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentArgument.GetLocation()));
                 }
 
-                previousLine = lineSpan.EndLinePosition.Line;
+                previousArgumentLine = currentArgumentEndLine;
             }
         }
 
@@ -299,7 +313,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 var currentParameter = parameterListSyntax.Parameters[i];
                 int currentParameterLine;
 
-                if (currentParameter.HasLeadingTrivia && currentParameter.GetLeadingTrivia().All(trivia => IsValidTrivia(trivia)))
+                if (currentParameter.HasLeadingTrivia && IsValidTrivia(currentParameter.GetLeadingTrivia()))
                 {
                     currentParameterLine = currentParameter.SyntaxTree.GetLineSpan(currentParameter.FullSpan).StartLinePosition.Line;
                 }
@@ -317,21 +331,46 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
-        private static bool IsValidTrivia(SyntaxTrivia trivia)
+        private static bool IsValidTrivia(SyntaxTriviaList triviaList)
         {
-            switch (trivia.Kind())
-            {
-            case SyntaxKind.IfDirectiveTrivia:
-            case SyntaxKind.ElseDirectiveTrivia:
-            case SyntaxKind.ElifDirectiveTrivia:
-            case SyntaxKind.EndIfDirectiveTrivia:
-            case SyntaxKind.DisabledTextTrivia:
-            case SyntaxKind.WhitespaceTrivia:
-                return true;
+            var inBlankLine = true;
 
-            default:
-                return false;
+            for (var i = 0; i < triviaList.Count; i++)
+            {
+                var trivia = triviaList[i];
+
+                if (trivia.IsDirective)
+                {
+                    inBlankLine = false;
+                    continue;
+                }
+
+                switch (trivia.Kind())
+                {
+                case SyntaxKind.WhitespaceTrivia:
+                    break;
+
+                case SyntaxKind.EndOfLineTrivia:
+                    if (inBlankLine)
+                    {
+                        return false;
+                    }
+
+                    inBlankLine = true;
+                    break;
+
+                case SyntaxKind.DisabledTextTrivia:
+                case SyntaxKind.SingleLineCommentTrivia:
+                case SyntaxKind.MultiLineCommentTrivia:
+                    inBlankLine = false;
+                    break;
+
+                default:
+                    return false;
+                }
             }
+
+            return true;
         }
     }
 }

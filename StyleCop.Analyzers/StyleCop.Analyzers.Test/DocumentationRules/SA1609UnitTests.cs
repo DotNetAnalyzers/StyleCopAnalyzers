@@ -244,6 +244,43 @@ public class ClassName
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Regression test for DotNetAnalyzers/StyleCopAnalyzers#1942.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestPropertyWithEmptySummaryAsync()
+        {
+            var testCode = @"
+public class ClassName
+{
+    /// <summary>
+    /// </summary>
+    public int Property
+    {
+        get;
+    }
+}";
+
+            var fixedCode = @"
+public class ClassName
+{
+    /// <summary>
+    /// </summary>
+    /// <value>
+    /// 
+    /// </value>
+    public int Property
+    {
+        get;
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 16);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1609PropertyDocumentationMustHaveValue();

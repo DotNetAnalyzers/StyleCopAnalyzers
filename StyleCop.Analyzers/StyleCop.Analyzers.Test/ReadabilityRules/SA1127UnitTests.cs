@@ -128,6 +128,66 @@ class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1652:
+        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1652
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestViolationWithMethodDeclarationAndXmlCommentsAsync()
+        {
+            var testCode = $@"
+class Foo
+{{
+    /// <summary>Foo</summary>
+    /// <typeparam name=""T"">The type.</typeparam>
+    private void Method<T>() where T : class {{ }}
+}}";
+            var fixedCode = $@"
+class Foo
+{{
+    /// <summary>Foo</summary>
+    /// <typeparam name=""T"">The type.</typeparam>
+    private void Method<T>()
+        where T : class
+    {{ }}
+}}";
+            var expected = this.CSharpDiagnostic().WithLocation(6, 30);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1652:
+        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1652
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestViolationWithMethodDeclarationRegionDirectiveAsync()
+        {
+            var testCode = $@"
+class Foo
+{{
+    #region Test
+    private void Method<T>() where T : class {{ }}
+    #endregion
+}}";
+            var fixedCode = $@"
+class Foo
+{{
+    #region Test
+    private void Method<T>()
+        where T : class
+    {{ }}
+    #endregion
+}}";
+            var expected = this.CSharpDiagnostic().WithLocation(5, 30);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestViolationWithExpressionBodiedMethodDeclarationAsync()
         {

@@ -24,6 +24,9 @@ namespace StyleCop.Analyzers.Test.OrderingRules
   ""settings"": {
     ""orderingRules"": {
       ""usingDirectivesPlacement"": ""outsideNamespace""
+    },
+    ""documentationRules"": {
+      ""xmlHeader"": false
     }
   }
 }
@@ -225,6 +228,42 @@ namespace TestNamespace
 ";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the file header of a file is properly preserved when moving using statements out of a namespace.
+        /// This is a regression test for #1941.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestFileHeaderIsProperlyPreservedWhenMovingUsingStatementsAsync()
+        {
+            var testCode = @"// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace TestNamespace
+{
+    using System;
+}
+";
+            var fixedTestCode = @"// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+using System;
+
+namespace TestNamespace
+{
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(6, 5),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

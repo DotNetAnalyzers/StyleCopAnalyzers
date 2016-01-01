@@ -77,7 +77,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             for (var i = 0; i < attributeList.Attributes.Count; i++)
             {
-                var newAttributes = SyntaxFactory.SingletonSeparatedList(attributeList.Attributes[i]);
+                var newAttributes = SyntaxFactory.SingletonSeparatedList(
+                    attributeList.Attributes[i].WithLeadingTrivia(
+                        attributeList.Attributes[i].GetLeadingTrivia().WithoutLeadingWhitespace()));
                 var newAttributeList = SyntaxFactory.AttributeList(attributeList.Target, newAttributes);
 
                 newAttributeList = (i == 0)
@@ -102,9 +104,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             protected override string CodeActionTitle =>
                 ReadabilityResources.SA1133CodeFix;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
-                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
                 if (diagnostics.IsEmpty)
                 {
                     return null;
