@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -56,12 +57,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             SemanticModel semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-            var replacementNode = GenerateReplacementNode(semanticModel, node, cancellationToken);
+            var replacementNode = GetReplacementNode(semanticModel, node, cancellationToken);
             var newSyntaxRoot = syntaxRoot.ReplaceNode(node, replacementNode);
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
 
-        private static SyntaxNode GenerateReplacementNode(SemanticModel semanticModel, UsingDirectiveSyntax node, CancellationToken cancellationToken)
+        private static SyntaxNode GetReplacementNode(SemanticModel semanticModel, UsingDirectiveSyntax node, CancellationToken cancellationToken)
         {
             SymbolInfo symbolInfo = semanticModel.GetSymbolInfo(node.Name, cancellationToken);
             return node.WithName(SyntaxFactory.ParseName(symbolInfo.Symbol.ToString()));
@@ -75,9 +76,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             protected override string CodeActionTitle =>
                 ReadabilityResources.SA1135CodeFix;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
-                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
                 if (diagnostics.IsEmpty)
                 {
                     return null;
@@ -86,20 +86,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 SyntaxNode syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
                 SemanticModel semanticModel = await document.GetSemanticModelAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
 
-                var replaceMap = new Dictionary<SyntaxNode, SyntaxNode>();
+                var nodes = diagnostics.Select(diagnostic => syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true).FirstAncestorOrSelf<UsingDirectiveSyntax>());
 
-                foreach (Diagnostic diagnostic in diagnostics)
-                {
-                    var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, false, true) as UsingDirectiveSyntax;
-                    if (node == null || node.IsMissing)
-                    {
-                        continue;
-                    }
-
-                    replaceMap[node] = GenerateReplacementNode(semanticModel, node, fixAllContext.CancellationToken);
-                }
-
-                return syntaxRoot.ReplaceNodes(replaceMap.Keys, (originalNode, rewrittenNode) => replaceMap[originalNode]);
+                return syntaxRoot.ReplaceNodes(nodes, (originalNode, rewrittenNode) => GetReplacementNode(semanticModel, rewrittenNode, fixAllContext.CancellationToken));
             }
         }
     }

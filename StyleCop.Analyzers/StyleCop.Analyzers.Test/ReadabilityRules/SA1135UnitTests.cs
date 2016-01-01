@@ -126,6 +126,36 @@ namespace System.Threading
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestFixAllAsync()
+        {
+            const string testCode = @"
+namespace System.Threading
+{
+    using NA = IO;
+    using NB = Tasks;
+}";
+            const string fixedCode = @"
+namespace System.Threading
+{
+    using NA = System.IO;
+    using NB = System.Threading.Tasks;
+}";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorNamespace).WithLocation(4, 5).WithArguments("System.IO"),
+                this.CSharpDiagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorNamespace).WithLocation(4, 5).WithArguments("System.IO"),
+                this.CSharpDiagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorNamespace).WithLocation(5, 5).WithArguments("System.Threading.Tasks"),
+                this.CSharpDiagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorNamespace).WithLocation(5, 5).WithArguments("System.Threading.Tasks")
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await this.VerifyCSharpFixAllFixAsync(testCode, fixedCode, numberOfIterations: 1, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new SA1135CodeFixProvider();
