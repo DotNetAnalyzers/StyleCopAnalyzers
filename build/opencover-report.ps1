@@ -45,3 +45,5 @@ mkdir $report_folder | Out-Null
 	-targetargs:"$target_dll -noshadow"
 
 &$report_generator -targetdir:$report_folder -reports:$report_folder\OpenCover.*.xml
+
+$host.UI.WriteLine("Open $report_folder\index.htm to see code coverage results.")
