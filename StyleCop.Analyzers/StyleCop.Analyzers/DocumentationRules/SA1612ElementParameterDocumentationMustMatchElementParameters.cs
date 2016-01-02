@@ -7,8 +7,8 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
+    using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
@@ -28,7 +28,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// parameters on the element, or if the parameter documentation is not listed in the same order as the element's parameters.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class SA1612ElementParameterDocumentationMustMatchElementParameters : DiagnosticAnalyzer
+    internal class SA1612ElementParameterDocumentationMustMatchElementParameters : ElementDocumentationParameterBase
     {
         /// <summary>
         /// The ID for diagnostics produced by the
@@ -48,108 +48,90 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly DiagnosticDescriptor OrderDescriptor =
                    new DiagnosticDescriptor(DiagnosticId, Title, ParamWrongOrderMessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
-        private static readonly Action<SyntaxNodeAnalysisContext> DocumentationTriviaAction = HandleDocumentationTrivia;
-
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(MissingParameterDescriptor);
 
         /// <inheritdoc/>
-        public override void Initialize(AnalysisContext context)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, IEnumerable<XmlNodeSyntax> syntaxList, XElement completeDocumentation, params Location[] diagnosticLocations)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            var node = context.Node;
+            var identifierLocation = GetIdentifier(node).GetLocation();
+            var parameterList = GetParameters(node)?.ToImmutableArray();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(DocumentationTriviaAction, SyntaxKind.SingleLineDocumentationCommentTrivia);
-        }
-
-        private static void HandleDocumentationTrivia(SyntaxNodeAnalysisContext context)
-        {
-            DocumentationCommentTriviaSyntax syntax = context.Node as DocumentationCommentTriviaSyntax;
-
-            // Find the type parameters of the parent node
-            IEnumerable<string> parentParametersEnumerable = GetParentParameters(syntax);
-
-            if (parentParametersEnumerable == null)
+            bool hasNoParameters = !parameterList?.Any() ?? false;
+            if (hasNoParameters)
             {
                 return;
             }
 
-            ImmutableArray<string> parentParameters = parentParametersEnumerable.ToImmutableArray();
-
-            ImmutableArray<XmlNodeSyntax> nodes = syntax.Content
-                .Where(node => string.Equals(GetName(node)?.ToString(), XmlCommentHelper.ParamXmlTag))
-                .ToImmutableArray();
-
-            for (int i = 0; i < nodes.Length; i++)
+            bool includeElementPresent = completeDocumentation != null;
+            if (includeElementPresent)
             {
-                HandleElement(context, nodes[i], parentParameters, i, GetName(nodes[i])?.GetLocation());
+                var xmlParameterNames = completeDocumentation.Nodes()
+                    .OfType<XElement>()
+                    .Where(e => e.Name == XmlCommentHelper.ParamXmlTag)
+                    .SelectMany(p => p.Attributes().Where(a => a.Name == "name"))
+                    .Select(a => new Tuple<string, Location>(a.Value, null))
+                    .ToImmutableArray();
+
+                VerifyParameters(context, parameterList.Value, xmlParameterNames, identifierLocation);
+            }
+            else if (syntaxList != null)
+            {
+                var xmlParameterNames = syntaxList
+                    .Select(XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>)
+                    .Select(x => new Tuple<string, Location>(x?.Identifier?.Identifier.ValueText, x?.Identifier.GetLocation()))
+                    .ToImmutableArray();
+
+                VerifyParameters(context, parameterList.Value, xmlParameterNames, identifierLocation);
             }
         }
 
-        private static XmlNameSyntax GetName(XmlNodeSyntax element)
+        private static void VerifyParameters(SyntaxNodeAnalysisContext context, ImmutableArray<ParameterSyntax> parentParameters, ImmutableArray<Tuple<string, Location>> documentationParameters, Location identifierLocation)
         {
-            return (element as XmlElementSyntax)?.StartTag?.Name
-                ?? (element as XmlEmptyElementSyntax)?.Name;
+            var index = 0;
+
+            foreach (var documentedParameter in documentationParameters)
+            {
+                // Make sure we ignore violations that should be reported by SA1613 instead.
+                if (string.IsNullOrWhiteSpace(documentedParameter.Item1))
+                {
+                    return;
+                }
+
+                var parentParameter = parentParameters.FirstOrDefault(s => s.Identifier.Text == documentedParameter.Item1);
+
+                if (parentParameter == null)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(MissingParameterDescriptor, documentedParameter.Item2 ?? identifierLocation, documentedParameter.Item1));
+                }
+                else if (parentParameters.Length <= index || parentParameters[index] != parentParameter)
+                {
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            OrderDescriptor,
+                            documentedParameter.Item2 ?? identifierLocation,
+                            documentedParameter.Item1,
+                            parentParameters.IndexOf(parentParameter) + 1));
+                }
+
+                index++;
+            }
         }
 
-        private static void HandleElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax element, ImmutableArray<string> parentParameters, int index, Location alternativeDiagnosticLocation)
+        private static IEnumerable<ParameterSyntax> GetParameters(SyntaxNode node)
         {
-            var nameAttribute = XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>(element);
-
-            // Make sure we ignore violations that should be reported by SA1613 instead.
-            if (string.IsNullOrWhiteSpace(nameAttribute?.Identifier?.Identifier.ValueText))
-            {
-                return;
-            }
-
-            if (!parentParameters.Contains(nameAttribute.Identifier.Identifier.ValueText))
-            {
-                context.ReportDiagnostic(Diagnostic.Create(MissingParameterDescriptor, nameAttribute?.Identifier?.GetLocation() ?? alternativeDiagnosticLocation, nameAttribute.Identifier.Identifier.ValueText));
-            }
-            else if (parentParameters.Length <= index || parentParameters[index] != nameAttribute.Identifier.Identifier.ValueText)
-            {
-                context.ReportDiagnostic(
-                    Diagnostic.Create(
-                        OrderDescriptor,
-                        nameAttribute?.Identifier?.GetLocation() ?? alternativeDiagnosticLocation,
-                        nameAttribute.Identifier.Identifier.ValueText,
-                        parentParameters.IndexOf(nameAttribute.Identifier.Identifier.ValueText) + 1));
-            }
+            return (node as BaseMethodDeclarationSyntax)?.ParameterList?.Parameters
+                ?? (node as IndexerDeclarationSyntax)?.ParameterList?.Parameters
+                ?? (node as DelegateDeclarationSyntax)?.ParameterList?.Parameters;
         }
 
-        /// <summary>
-        /// Checks if the given <see cref="SyntaxNode"/> has a <see cref="BaseMethodDeclarationSyntax"/>, <see cref="IndexerDeclarationSyntax"/> or a <see cref="DelegateDeclarationSyntax"/>
-        /// as one of its parent. If it finds one of those three with a valid type parameter list it returns a <see cref="IEnumerable{T}"/> containing the names of all parameters.
-        /// </summary>
-        /// <param name="node">The node the analysis should start at.</param>
-        /// <returns>
-        /// A <see cref="IEnumerable{T}"/> containing all parameters or null, of no valid parent could be found.
-        /// </returns>
-        private static IEnumerable<string> GetParentParameters(SyntaxNode node)
+        private static SyntaxToken GetIdentifier(SyntaxNode node)
         {
-            var methodParent = node.FirstAncestorOrSelf<MethodDeclarationSyntax>();
-            if (methodParent != null)
-            {
-                return methodParent.ParameterList?.Parameters.Select(x => x.Identifier.ValueText) ?? Enumerable.Empty<string>();
-            }
-
-            var delegateParent = node.FirstAncestorOrSelf<DelegateDeclarationSyntax>();
-            if (delegateParent != null)
-            {
-                return delegateParent.ParameterList?.Parameters.Select(x => x.Identifier.ValueText) ?? Enumerable.Empty<string>();
-            }
-
-            var indexerParent = node.FirstAncestorOrSelf<IndexerDeclarationSyntax>();
-            if (indexerParent != null)
-            {
-                return indexerParent.ParameterList?.Parameters.Select(x => x.Identifier.ValueText) ?? Enumerable.Empty<string>();
-            }
-
-            return null;
+            return (node as MethodDeclarationSyntax)?.Identifier
+                ?? (node as IndexerDeclarationSyntax)?.ThisKeyword
+                ?? (node as DelegateDeclarationSyntax).Identifier;
         }
     }
 }
