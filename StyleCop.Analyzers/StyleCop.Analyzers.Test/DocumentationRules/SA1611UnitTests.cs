@@ -301,7 +301,7 @@ public class ClassName
         }
 
         /// <inheritdoc/>
-        protected override Project CreateProject(string[] sources, string language = "C#", string[] filenames = null)
+        protected override Project ApplyCompilationOptions(Project project)
         {
             var resolver = new TestXmlReferenceResolver();
 
@@ -339,7 +339,7 @@ public class ClassName
  ";
             resolver.XmlReferences.Add("InheritedDocumentation.xml", contentWithInheritedDocumentation);
 
-            Project project = base.CreateProject(sources, language, filenames);
+            project = base.ApplyCompilationOptions(project);
             project = project.WithCompilationOptions(project.CompilationOptions.WithXmlReferenceResolver(resolver));
             return project;
         }
