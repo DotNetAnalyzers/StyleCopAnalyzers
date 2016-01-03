@@ -287,6 +287,22 @@ public class Foo
 }
 ";
 
+            var batchFixedTestCode = @"public class Foo
+{
+    public const string Before2 = ""test"";
+
+    public const string After2 = ""test"";
+
+    public int between;
+
+    private const string Before1 = ""test"";
+
+    private const string After1 = ""test"";
+
+    private int field1;
+}
+";
+
             var diagnosticResults = new[]
             {
                 this.CSharpDiagnostic().WithLocation(9, 26),
@@ -294,7 +310,7 @@ public class Foo
             };
             await this.VerifyCSharpDiagnosticAsync(testCode, diagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, batchFixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -338,6 +354,23 @@ public class Foo
 }
 ";
 
+            var batchFixedTestCode = @"public class Foo
+{
+    public const string Before2 = ""test"";
+
+    public const string After2 = ""test"";
+
+    public int between;
+
+    private const string Before1 = ""test"";
+
+    //Comment on this field
+    private const string After1 = ""test"";
+
+    private int field1;
+}
+";
+
             var diagnosticResults = new[]
             {
                 this.CSharpDiagnostic().WithLocation(10, 26),
@@ -345,7 +378,8 @@ public class Foo
             };
             await this.VerifyCSharpDiagnosticAsync(testCode, diagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(batchFixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, batchFixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>

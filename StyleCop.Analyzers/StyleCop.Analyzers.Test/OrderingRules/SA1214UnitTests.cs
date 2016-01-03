@@ -229,7 +229,7 @@ public class Foo
 
     public static readonly int  u = 5;
 
-    public class FooInner 
+    public class FooInner
     {
         private int aa = 0;
         public static readonly int t = 2;
@@ -273,8 +273,31 @@ public class Foo
     public static readonly int j = 0;
 }";
 
+            var batchFixTestCode = @"
+public class Foo
+{
+    public static readonly int  u = 5;
+
+    public static readonly int j = 0;
+
+    public static string s2 = ""qwe"";
+
+    public string s = ""qwe"";
+    private static readonly int i = 0;
+
+    public void Ff() {}
+
+    public class FooInner
+    {
+        public static readonly int t = 2;
+        private static readonly int e = 1;
+        private static int z = 999;
+        private int aa = 0;
+    }
+}";
+
             await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixTestCode, batchFixTestCode).ConfigureAwait(false);
         }
 
         [Fact]
