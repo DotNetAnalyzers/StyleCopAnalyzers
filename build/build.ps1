@@ -47,6 +47,10 @@ If (-not (Test-Path $nuget)) {
 
 # build the main project
 $msbuild = "${env:ProgramFiles(x86)}\MSBuild\$VisualStudioVersion\Bin\MSBuild.exe"
+If (-not (Test-Path $msbuild)) {
+	$host.UI.WriteErrorLine("Couldn't find MSBuild.exe")
+	exit 1
+}
 
 # Attempt to restore packages up to 3 times, to improve resiliency to connection timeouts and access denied errors.
 $maxAttempts = 3
