@@ -18,6 +18,8 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     internal abstract class ElementDocumentationParameterBase : DiagnosticAnalyzer
     {
+        private readonly bool inheritDocSuppressesWarnings;
+
         private readonly Action<CompilationStartAnalysisContext> compilationStartAction;
         private readonly Action<SyntaxNodeAnalysisContext> methodDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext> constructorDeclarationAction;
@@ -26,8 +28,10 @@ namespace StyleCop.Analyzers.DocumentationRules
         private readonly Action<SyntaxNodeAnalysisContext> operatorDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext> conversionOperatorDeclarationAction;
 
-        protected ElementDocumentationParameterBase()
+        protected ElementDocumentationParameterBase(bool inheritDocSuppressesWarnings)
         {
+            this.inheritDocSuppressesWarnings = inheritDocSuppressesWarnings;
+
             this.compilationStartAction = this.HandleCompilationStart;
             this.methodDeclarationAction = this.HandleMethodDeclaration;
             this.constructorDeclarationAction = this.HandleConstructorDeclaration;
@@ -137,7 +141,8 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag) != null)
+            if (this.inheritDocSuppressesWarnings
+                && documentation.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag) != null)
             {
                 // Ignore nodes with an <inheritdoc/> tag.
                 return;
@@ -153,7 +158,9 @@ namespace StyleCop.Analyzers.DocumentationRules
                     var declaration = context.SemanticModel.GetDeclaredSymbol(node, context.CancellationToken);
                     var rawDocumentation = declaration?.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
                     completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
-                    if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.InheritdocXmlTag))
+
+                    if (this.inheritDocSuppressesWarnings &&
+                        completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.InheritdocXmlTag))
                     {
                         // Ignore nodes with an <inheritdoc/> tag in the included XML.
                         return;

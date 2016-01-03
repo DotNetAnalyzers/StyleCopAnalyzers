@@ -4,10 +4,12 @@
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Linq;
+    using System.Xml.Linq;
     using Helpers;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -26,7 +28,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// which is missing a <c>name</c> attribute, or which contains an empty <c>name</c> attribute.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class SA1613ElementParameterDocumentationMustDeclareParameterName : DiagnosticAnalyzer
+    internal class SA1613ElementParameterDocumentationMustDeclareParameterName : ElementDocumentationParameterBase
     {
         /// <summary>
         /// The ID for diagnostics produced by the
@@ -41,55 +43,86 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
-        private static readonly Action<SyntaxNodeAnalysisContext> XmlElementAction = HandleXmlElement;
-        private static readonly Action<SyntaxNodeAnalysisContext> XmlEmptyElementAction = HandleXmlEmptyElement;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SA1613ElementParameterDocumentationMustDeclareParameterName"/> class.
+        /// </summary>
+        /// <remarks>The presence of a &lt;inheritdoc/&gt; tag should NOT suppress warnings from this diagnostic. See DotNetAnalyzers/StyleCopAnalyzers#631</remarks>
+        public SA1613ElementParameterDocumentationMustDeclareParameterName()
+            : base(inheritDocSuppressesWarnings: false)
+        {
+        }
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        public override void Initialize(AnalysisContext context)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, IEnumerable<XmlNodeSyntax> syntaxList, XElement completeDocumentation, params Location[] diagnosticLocations)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
-
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(XmlElementAction, SyntaxKind.XmlElement);
-            context.RegisterSyntaxNodeActionHonorExclusions(XmlEmptyElementAction, SyntaxKind.XmlEmptyElement);
-        }
-
-        private static void HandleXmlElement(SyntaxNodeAnalysisContext context)
-        {
-            XmlElementSyntax emptyElement = context.Node as XmlElementSyntax;
-
-            var name = emptyElement?.StartTag?.Name;
-
-            HandleElement(context, emptyElement, name, emptyElement?.StartTag?.GetLocation());
-        }
-
-        private static void HandleXmlEmptyElement(SyntaxNodeAnalysisContext context)
-        {
-            XmlEmptyElementSyntax emptyElement = context.Node as XmlEmptyElementSyntax;
-
-            var name = emptyElement?.Name;
-
-            HandleElement(context, emptyElement, name, emptyElement?.GetLocation());
-        }
-
-        private static void HandleElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax element, XmlNameSyntax name, Location alternativeDiagnosticLocation)
-        {
-            if (string.Equals(name.ToString(), XmlCommentHelper.ParamXmlTag))
+            bool includeElementPresent = completeDocumentation != null;
+            if (includeElementPresent)
             {
-                var nameAttribute = XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>(element);
+                var xmlParameterNames = completeDocumentation.Nodes()
+                    .OfType<XElement>()
+                    .Where(e => e.Name == XmlCommentHelper.ParamXmlTag)
+                    .Select(x =>
+                    {
+                        var name = x.Attributes().FirstOrDefault(a => a.Name == "name")?.Value;
 
-                if (string.IsNullOrWhiteSpace(nameAttribute?.Identifier?.Identifier.ValueText))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, nameAttribute?.GetLocation() ?? alternativeDiagnosticLocation));
-                }
+                        return new Tuple<string, Location>(name, null);
+                    })
+                    .ToImmutableArray();
+
+                VerifyParameters(context, xmlParameterNames, diagnosticLocations.First());
             }
+            else if (syntaxList != null)
+            {
+                var xmlParameterNames = syntaxList
+                    .Where(x => string.Equals(GetName(x)?.ToString(), XmlCommentHelper.ParamXmlTag))
+                    .Select(x =>
+                    {
+                        var nameAttribute = XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>(x);
+                        var location = x.GetLocation();
+
+                        if (nameAttribute != null)
+                        {
+                            location = nameAttribute.GetLocation();
+                        }
+
+                        return new Tuple<string, Location>(nameAttribute?.Identifier?.Identifier.ValueText, location);
+                    })
+                    .ToImmutableArray();
+
+                VerifyParameters(context, xmlParameterNames, diagnosticLocations.First());
+            }
+        }
+
+        private static void VerifyParameters(SyntaxNodeAnalysisContext context, ImmutableArray<Tuple<string, Location>> documentationParameters, Location identifierLocation)
+        {
+            var index = 0;
+
+            foreach (var documentedParameter in documentationParameters)
+            {
+                if (string.IsNullOrWhiteSpace(documentedParameter.Item1))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, documentedParameter.Item2 ?? identifierLocation));
+                }
+
+                index++;
+            }
+        }
+
+        private static XmlNameSyntax GetName(XmlNodeSyntax element)
+        {
+            return (element as XmlElementSyntax)?.StartTag?.Name
+                ?? (element as XmlEmptyElementSyntax)?.Name;
+        }
+
+        private static SyntaxToken GetIdentifier(SyntaxNode node)
+        {
+            return (node as MethodDeclarationSyntax)?.Identifier
+                ?? (node as IndexerDeclarationSyntax)?.ThisKeyword
+                ?? (node as DelegateDeclarationSyntax).Identifier;
         }
     }
 }

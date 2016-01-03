@@ -48,6 +48,11 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly DiagnosticDescriptor OrderDescriptor =
                    new DiagnosticDescriptor(DiagnosticId, Title, ParamWrongOrderMessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
+        public SA1612ElementParameterDocumentationMustMatchElementParameters()
+            : base(inheritDocSuppressesWarnings: true)
+        {
+        }
+
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(MissingParameterDescriptor);
