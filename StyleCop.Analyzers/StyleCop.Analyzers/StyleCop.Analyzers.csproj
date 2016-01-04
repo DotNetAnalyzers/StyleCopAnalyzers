@@ -134,6 +134,7 @@
     <Compile Include="Helpers\TokenHelper.cs" />
     <Compile Include="Helpers\TriviaHelper.cs" />
     <Compile Include="Helpers\UsingDirectiveSyntaxHelpers.cs" />
+    <Compile Include="Helpers\UsingGroupType.cs" />
     <Compile Include="Helpers\XmlCommentHelper.cs" />
     <Compile Include="Helpers\XmlFileHeader.cs" />
     <Compile Include="Helpers\XmlSyntaxFactory.cs" />

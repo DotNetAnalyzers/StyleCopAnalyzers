@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.Helpers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// Class containing the extension methods for the <see cref="UsingDirectiveSyntax"/> class.
@@ -55,6 +56,33 @@ namespace StyleCop.Analyzers.Helpers
         /// otherwise, <see langword="false"/>.
         /// </returns>
         internal static bool HasNamespaceAliasQualifier(this UsingDirectiveSyntax usingDirective) => usingDirective.DescendantNodes().Any(node => node.IsKind(SyntaxKind.AliasQualifiedName));
+
+        /// <summary>
+        /// Get the <see cref="UsingGroupType"/> for the give using directive.
+        /// </summary>
+        /// <param name="usingDirective">The <see cref="UsingDirectiveSyntax"/> that will be used.</param>
+        /// <param name="settings">The <see cref="StyleCopSettings"/> that will be used.</param>
+        /// <returns>The <see cref="UsingGroupType"/> for the given <paramref name="usingDirective"/>.</returns>
+        internal static UsingGroupType GetUsingGroupType(this UsingDirectiveSyntax usingDirective, StyleCopSettings settings)
+        {
+            if (usingDirective.StaticKeyword.IsKind(SyntaxKind.StaticKeyword))
+            {
+                return UsingGroupType.Static;
+            }
+
+            if (usingDirective.Alias != null)
+            {
+                return UsingGroupType.Alias;
+            }
+
+            if (settings.OrderingRules.SystemUsingDirectivesFirst
+                && usingDirective.IsSystemUsingDirective())
+            {
+                return UsingGroupType.System;
+            }
+
+            return UsingGroupType.Regular;
+        }
 
         private static bool ExcludeGlobalKeyword(IdentifierNameSyntax token) => !token.Identifier.IsKind(SyntaxKind.GlobalKeyword);
 

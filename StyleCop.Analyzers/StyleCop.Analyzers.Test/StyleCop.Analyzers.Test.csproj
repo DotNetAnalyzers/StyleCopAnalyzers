@@ -233,6 +233,7 @@
     <Compile Include="LayoutRules\SA1514UnitTests.cs" />
     <Compile Include="LayoutRules\SA1515UnitTests.cs" />
     <Compile Include="LayoutRules\SA1516UnitTests.cs" />
+    <Compile Include="LayoutRules\SA1516UsingGroupsUnitTests.cs" />
     <Compile Include="LayoutRules\SA1517UnitTests.cs" />
     <Compile Include="LayoutRules\SA1518UnitTests.cs" />
     <Compile Include="LayoutRules\SA1519UnitTests.cs" />

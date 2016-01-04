@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.LayoutRules
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
@@ -39,16 +40,44 @@ namespace StyleCop.Analyzers.LayoutRules
 
             foreach (Diagnostic diagnostic in context.Diagnostics)
             {
+                var insertBlankLine = DetermineCodeFixAction(diagnostic);
+                if (insertBlankLine == null)
+                {
+                    continue;
+                }
+
                 context.RegisterCodeFix(
                     CodeAction.Create(
-                        LayoutResources.SA1516CodeFix,
-                        cancellationToken => GetTransformedDocumentAsync(context.Document, syntaxRoot, diagnostic, context.CancellationToken),
+                        insertBlankLine.Value ? LayoutResources.SA1516CodeFixInsert : LayoutResources.SA1516CodeFixRemove,
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, syntaxRoot, diagnostic, insertBlankLine.Value, context.CancellationToken),
                         nameof(SA1516CodeFixProvider)),
                     diagnostic);
             }
         }
 
-        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode syntaxRoot, Diagnostic diagnostic, CancellationToken cancellationToken)
+        private static bool? DetermineCodeFixAction(Diagnostic diagnostic)
+        {
+            string codeFixAction;
+
+            if (!diagnostic.Properties.TryGetValue(SA1516ElementsMustBeSeparatedByBlankLine.CodeFixActionKey, out codeFixAction))
+            {
+                return null;
+            }
+
+            switch (codeFixAction)
+            {
+                case SA1516ElementsMustBeSeparatedByBlankLine.InsertBlankLineValue:
+                    return true;
+
+                case SA1516ElementsMustBeSeparatedByBlankLine.RemoveBlankLinesValue:
+                    return false;
+
+                default:
+                    return null;
+            }
+        }
+
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode syntaxRoot, Diagnostic diagnostic, bool insertBlankLine, CancellationToken cancellationToken)
         {
             var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
             node = GetRelevantNode(node);
@@ -58,16 +87,28 @@ namespace StyleCop.Analyzers.LayoutRules
                 return Task.FromResult(document);
             }
 
-            var leadingTrivia = node.GetLeadingTrivia();
-
-            var newTriviaList = leadingTrivia;
-            newTriviaList = newTriviaList.Insert(0, SyntaxFactory.CarriageReturnLineFeed);
-
-            var newNode = node.WithLeadingTrivia(newTriviaList);
+            SyntaxNode newNode = ProcessNode(node, insertBlankLine);
             var newSyntaxRoot = syntaxRoot.ReplaceNode(node, newNode);
             var newDocument = document.WithSyntaxRoot(newSyntaxRoot);
 
             return Task.FromResult(newDocument);
+        }
+
+        private static SyntaxNode ProcessNode(SyntaxNode node, bool insertBlankLine)
+        {
+            var leadingTrivia = node.GetLeadingTrivia();
+            SyntaxTriviaList newLeadingTrivia;
+
+            if (insertBlankLine)
+            {
+                newLeadingTrivia = leadingTrivia.Insert(0, SyntaxFactory.CarriageReturnLineFeed);
+            }
+            else
+            {
+                newLeadingTrivia = leadingTrivia.WithoutBlankLines();
+            }
+
+            return node.WithLeadingTrivia(newLeadingTrivia);
         }
 
         private static SyntaxNode GetRelevantNode(SyntaxNode innerNode)
@@ -112,7 +153,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 new FixAll();
 
             protected override string CodeActionTitle =>
-                LayoutResources.SA1516CodeFix;
+                LayoutResources.SA1516CodeFixAll;
 
             protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
@@ -123,26 +164,26 @@ namespace StyleCop.Analyzers.LayoutRules
 
                 var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
 
-                List<SyntaxNode> nodes = new List<SyntaxNode>();
+                Dictionary<SyntaxNode, SyntaxNode> replaceMap = new Dictionary<SyntaxNode, SyntaxNode>();
 
                 foreach (var diagnostic in diagnostics)
                 {
+                    var insertBlankLine = DetermineCodeFixAction(diagnostic);
+                    if (insertBlankLine == null)
+                    {
+                        continue;
+                    }
+
                     var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
                     node = GetRelevantNode(node);
 
                     if (node != null)
                     {
-                        nodes.Add(node);
+                        replaceMap[node] = ProcessNode(node, insertBlankLine.Value);
                     }
                 }
 
-                return syntaxRoot.ReplaceNodes(nodes, (oldNode, newNode) =>
-                {
-                    var newTriviaList = newNode.GetLeadingTrivia();
-                    newTriviaList = newTriviaList.Insert(0, SyntaxFactory.CarriageReturnLineFeed);
-
-                    return newNode.WithLeadingTrivia(newTriviaList);
-                });
+                return syntaxRoot.ReplaceNodes(replaceMap.Keys, (original, rewritten) => replaceMap[original]);
             }
         }
     }
