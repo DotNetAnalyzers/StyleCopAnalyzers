@@ -373,6 +373,140 @@ class Container
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestValidVariableDeclarationAsync()
+        {
+            string testCode = @"
+using System;
+class Container
+{
+    private int T1;
+    private int
+        T2;
+    private int
+        T3, T4;
+
+    private event EventHandler T5;
+    private event EventHandler
+        T6;
+    private event EventHandler
+        T7, T8;
+
+    void MethodName()
+    {
+        int t1;
+        int
+            t2;
+        int
+            t3, t4;
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestVariableDeclarationAsync()
+        {
+            string testCode = @"
+using System;
+class Container
+{
+    private int
+        X1,
+      Y1,
+Z1;
+
+    private int
+X2,
+      Y2,
+        Z2;
+
+    private event EventHandler
+        X3,
+      Y3,
+Z3;
+
+    private event EventHandler
+X4,
+      Y4,
+        Z4;
+
+    void MethodName()
+    {
+        int
+            X1,
+          Y1,
+Z1;
+
+        int
+X2,
+          Y2,
+            Z2;
+    }
+}
+";
+            string fixedCode = @"
+using System;
+class Container
+{
+    private int
+        X1,
+        Y1,
+        Z1;
+
+    private int
+X2,
+Y2,
+Z2;
+
+    private event EventHandler
+        X3,
+        Y3,
+        Z3;
+
+    private event EventHandler
+X4,
+Y4,
+Z4;
+
+    void MethodName()
+    {
+        int
+            X1,
+            Y1,
+            Z1;
+
+        int
+X2,
+Y2,
+Z2;
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(7, 1),
+                this.CSharpDiagnostic().WithLocation(8, 1),
+                this.CSharpDiagnostic().WithLocation(12, 1),
+                this.CSharpDiagnostic().WithLocation(13, 1),
+                this.CSharpDiagnostic().WithLocation(17, 1),
+                this.CSharpDiagnostic().WithLocation(18, 1),
+                this.CSharpDiagnostic().WithLocation(22, 1),
+                this.CSharpDiagnostic().WithLocation(23, 1),
+                this.CSharpDiagnostic().WithLocation(29, 1),
+                this.CSharpDiagnostic().WithLocation(30, 1),
+                this.CSharpDiagnostic().WithLocation(34, 1),
+                this.CSharpDiagnostic().WithLocation(35, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Theory]
         [InlineData("class", " { }")]
         [InlineData("void", "() { }")]
