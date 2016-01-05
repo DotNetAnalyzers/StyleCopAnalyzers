@@ -223,6 +223,74 @@ where T3 : new()
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Theory]
+        [InlineData("class", " { }")]
+        [InlineData("void", "() { }")]
+        public async Task TestValidTypeParameterListAsync(string prefix, string suffix)
+        {
+            string testCode = $@"
+class Container
+{{
+    {prefix} ClassName1<T>{suffix}
+
+    {prefix} ClassName2<
+        T>{suffix}
+
+    {prefix} ClassName3<
+        T1, T2>{suffix}
+}}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("class", " { }")]
+        [InlineData("void", "() { }")]
+        public async Task TestTypeParameterListAsync(string prefix, string suffix)
+        {
+            string testCode = $@"
+class Container
+{{
+    {prefix} NonZeroAlignment<
+        X,
+      Y,
+Z>{suffix}
+
+    {prefix} ZeroAlignment<
+X,
+      Y,
+        Z>{suffix}
+}}
+";
+            string fixedCode = $@"
+class Container
+{{
+    {prefix} NonZeroAlignment<
+        X,
+        Y,
+        Z>{suffix}
+
+    {prefix} ZeroAlignment<
+X,
+Y,
+Z>{suffix}
+}}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(6, 1),
+                this.CSharpDiagnostic().WithLocation(7, 1),
+                this.CSharpDiagnostic().WithLocation(11, 1),
+                this.CSharpDiagnostic().WithLocation(12, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestBlockAsync()
         {
