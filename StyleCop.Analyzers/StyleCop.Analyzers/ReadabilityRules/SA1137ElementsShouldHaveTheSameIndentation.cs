@@ -346,7 +346,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
-            elements.RemoveAll(
+            elements = elements.RemoveAll(
                 element =>
                 {
                     SyntaxToken firstToken = element.GetFirstToken();

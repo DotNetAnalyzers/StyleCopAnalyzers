@@ -183,6 +183,113 @@ class ClassName
         }
 
         [Fact]
+        public async Task TestValidInitializerExpressionAsync()
+        {
+            string testCode = @"
+using System.Collections.Generic;
+class ClassName
+{
+    void EmptyInitializersMethod()
+    {
+        // array initializer
+        int[] array = { };
+
+        // collection initializer
+        List<int> list = new List<int> { };
+
+        // complex element initializer
+        Dictionary<int, int> dictionary = new Dictionary<int, int> { };
+
+        // object initializer
+        var obj = new StructName { };
+    }
+
+    void SingleLineInitializersMethod()
+    {
+        // array initializer
+        int[] array = { 0 };
+
+        // collection initializer
+        List<int> list = new List<int> { 0 };
+
+        // complex element initializer
+        Dictionary<int, int> dictionary = new Dictionary<int, int> { { 0, 0 } };
+
+        // object initializer
+        var obj = new StructName { X = 0 };
+    }
+
+    void SingleElementInitializersMethod()
+    {
+        // array initializer
+        int[] array =
+        {
+            0,
+        };
+
+        // collection initializer
+        List<int> list =
+            new List<int>
+            {
+                0,
+            };
+
+        // complex element initializer
+        Dictionary<int, int> dictionary =
+            new Dictionary<int, int>
+            {
+                { 0, 0 },
+            };
+
+        // object initializer
+        var obj =
+            new StructName
+            {
+                X = 0,
+            };
+    }
+
+    void SharedLineInitializersMethod()
+    {
+        // array initializer
+        int[] array =
+        {
+            0, 0,
+        };
+
+        // collection initializer
+        List<int> list =
+            new List<int>
+            {
+                0, 0,
+            };
+
+        // complex element initializer
+        Dictionary<int, int> dictionary =
+            new Dictionary<int, int>
+            {
+                { 0, 0 }, { 0, 0 },
+            };
+
+        // object initializer
+        var obj =
+            new StructName
+            {
+                X = 0, Y = 0,
+            };
+    }
+}
+
+struct StructName
+{
+    public int X, Y, Z;
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestInitializerExpressionAsync()
         {
             string testCode = @"
