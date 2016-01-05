@@ -483,6 +483,15 @@
   <data name="SA1134Title" xml:space="preserve">
     <value>Attributes must not share line</value>
   </data>
+  <data name="SA1137Description" xml:space="preserve">
+    <value>Elements at the same level in the syntax tree should have the same indentation.</value>
+  </data>
+  <data name="SA1137MessageFormat" xml:space="preserve">
+    <value>Elements should have the same indentation</value>
+  </data>
+  <data name="SA1137Title" xml:space="preserve">
+    <value>Elements should have the same indentation</value>
+  </data>
   <data name="SX1101CodeFix" xml:space="preserve">
     <value>Remove 'this.' prefix</value>
   </data>

@@ -1160,6 +1160,33 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Elements at the same level in the syntax tree should have the same indentation..
+        /// </summary>
+        internal static string SA1137Description {
+            get {
+                return ResourceManager.GetString("SA1137Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Elements should have the same indentation.
+        /// </summary>
+        internal static string SA1137MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1137MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Elements should have the same indentation.
+        /// </summary>
+        internal static string SA1137Title {
+            get {
+                return ResourceManager.GetString("SA1137Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove &apos;this.&apos; prefix.
         /// </summary>
         internal static string SX1101CodeFix {
