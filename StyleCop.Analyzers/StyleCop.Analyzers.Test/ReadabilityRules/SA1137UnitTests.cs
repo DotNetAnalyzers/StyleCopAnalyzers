@@ -647,6 +647,91 @@ class MyAttribute : Attribute { }
         }
 
         [Fact]
+        public async Task TestAttributeArgumentListAsync()
+        {
+            string testCode = @"
+using System;
+
+[My(0)]
+[My(
+    0)]
+[My(
+    0, Y = 2)]
+class TypeName1
+{
+}
+
+[My(
+        0,
+      Y = 2,
+Z = 3)]
+[My(
+0,
+      Y = 2,
+        Z = 3)]
+class TypeName2
+{
+}
+
+[AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
+class MyAttribute : Attribute
+{
+    public MyAttribute() { }
+    public MyAttribute(int value) { }
+
+    public int Y { get; set; }
+    public int Z { get; set; }
+}
+";
+            string fixedCode = @"
+using System;
+
+[My(0)]
+[My(
+    0)]
+[My(
+    0, Y = 2)]
+class TypeName1
+{
+}
+
+[My(
+        0,
+        Y = 2,
+        Z = 3)]
+[My(
+0,
+Y = 2,
+Z = 3)]
+class TypeName2
+{
+}
+
+[AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
+class MyAttribute : Attribute
+{
+    public MyAttribute() { }
+    public MyAttribute(int value) { }
+
+    public int Y { get; set; }
+    public int Z { get; set; }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(15, 1),
+                this.CSharpDiagnostic().WithLocation(16, 1),
+                this.CSharpDiagnostic().WithLocation(19, 1),
+                this.CSharpDiagnostic().WithLocation(20, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestBlockAsync()
         {
             string testCode = @"
