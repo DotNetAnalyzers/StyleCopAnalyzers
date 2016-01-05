@@ -223,6 +223,80 @@ where T3 : new()
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestEnumDeclarationAsync()
+        {
+            string testCode = @"
+using System;
+enum Enum1
+{
+  [My]
+    Element1,
+
+  Element2,
+}
+
+enum Enum2
+{
+  [My]
+Element1,
+
+  Element2,
+}
+
+enum Enum3
+{
+  [My] Element1,
+
+   Element2,
+}
+
+[AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
+class MyAttribute : Attribute { }
+";
+            string fixedCode = @"
+using System;
+enum Enum1
+{
+    [My]
+    Element1,
+
+    Element2,
+}
+
+enum Enum2
+{
+[My]
+Element1,
+
+Element2,
+}
+
+enum Enum3
+{
+   [My] Element1,
+
+   Element2,
+}
+
+[AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
+class MyAttribute : Attribute { }
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(5, 1),
+                this.CSharpDiagnostic().WithLocation(8, 1),
+                this.CSharpDiagnostic().WithLocation(13, 1),
+                this.CSharpDiagnostic().WithLocation(16, 1),
+                this.CSharpDiagnostic().WithLocation(21, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Theory]
         [InlineData("class", " { }")]
         [InlineData("void", "() { }")]
