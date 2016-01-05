@@ -576,6 +576,77 @@ Z>{suffix}
         }
 
         [Fact]
+        public async Task TestAttributeListAsync()
+        {
+            string testCode = @"
+using System;
+
+[My]
+[
+    My]
+[
+    My, My]
+class TypeName1
+{
+}
+
+[
+        My,
+      My,
+My]
+[
+My,
+      My,
+        My]
+class TypeName2
+{
+}
+
+[AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
+class MyAttribute : Attribute { }
+";
+            string fixedCode = @"
+using System;
+
+[My]
+[
+    My]
+[
+    My, My]
+class TypeName1
+{
+}
+
+[
+        My,
+        My,
+        My]
+[
+My,
+My,
+My]
+class TypeName2
+{
+}
+
+[AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
+class MyAttribute : Attribute { }
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(15, 1),
+                this.CSharpDiagnostic().WithLocation(16, 1),
+                this.CSharpDiagnostic().WithLocation(19, 1),
+                this.CSharpDiagnostic().WithLocation(20, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestBlockAsync()
         {
             string testCode = @"
