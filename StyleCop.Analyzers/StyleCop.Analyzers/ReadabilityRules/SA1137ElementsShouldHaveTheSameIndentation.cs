@@ -362,7 +362,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             // Try to reorder the list so the first item is not an attribute list. This element will establish the
             // expected indentation for the entire collection.
             int desiredFirst = elements.FindIndex(x => !x.IsKind(SyntaxKind.AttributeList));
-            if (desiredFirst >= 0)
+            if (desiredFirst > 0)
             {
                 T newFirstElement = elements[desiredFirst];
                 elements = elements.RemoveAt(desiredFirst).Insert(0, newFirstElement);
