@@ -70,11 +70,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
             TextSpan originalSpan;
             if (trivia == default(SyntaxTrivia))
             {
-                originalSpan = trivia.Span;
+                // The warning was reported on a token because the line is not indented
+                originalSpan = new TextSpan(diagnostic.Location.SourceSpan.Start, 0);
             }
             else
             {
-                originalSpan = new TextSpan(diagnostic.Location.SourceSpan.Start, 0);
+                originalSpan = trivia.Span;
             }
 
             textChange = new TextChange(originalSpan, replacement);

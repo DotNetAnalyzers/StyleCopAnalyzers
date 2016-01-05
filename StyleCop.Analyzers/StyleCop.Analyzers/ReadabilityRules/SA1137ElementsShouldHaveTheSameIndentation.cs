@@ -250,15 +250,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             foreach (var statement in block.Statements)
             {
-                if (statement.IsKind(SyntaxKind.LabeledStatement))
+                StatementSyntax statementToAlign = statement;
+                while (statementToAlign.IsKind(SyntaxKind.LabeledStatement))
                 {
-                    labeledStatements.Add(statement);
-                    statements.Add(((LabeledStatementSyntax)statement).Statement);
+                    labeledStatements.Add(statementToAlign);
+                    statementToAlign = ((LabeledStatementSyntax)statementToAlign).Statement;
                 }
-                else
-                {
-                    statements.Add(statement);
-                }
+
+                statements.Add(statementToAlign);
             }
 
             CheckElements(context, statements.ToImmutable());
@@ -277,15 +276,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 labels.AddRange(switchSection.Labels);
                 foreach (var statement in switchSection.Statements)
                 {
-                    if (statement.IsKind(SyntaxKind.LabeledStatement))
+                    StatementSyntax statementToAlign = statement;
+                    while (statementToAlign.IsKind(SyntaxKind.LabeledStatement))
                     {
-                        labeledStatements.Add(statement);
-                        statements.Add(((LabeledStatementSyntax)statement).Statement);
+                        labeledStatements.Add(statementToAlign);
+                        statementToAlign = ((LabeledStatementSyntax)statementToAlign).Statement;
                     }
-                    else
-                    {
-                        statements.Add(statement);
-                    }
+
+                    statements.Add(statementToAlign);
                 }
             }
 
@@ -365,7 +363,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             foreach (T element in elements)
             {
                 SyntaxTrivia indentationTrivia = element.GetFirstToken().LeadingTrivia.LastOrDefault();
-                string indentation = indentationTrivia == default(SyntaxTrivia) ? string.Empty : indentationTrivia.ToString();
+                string indentation = indentationTrivia.IsKind(SyntaxKind.WhitespaceTrivia) ? indentationTrivia.ToString() : string.Empty;
 
                 if (first)
                 {
