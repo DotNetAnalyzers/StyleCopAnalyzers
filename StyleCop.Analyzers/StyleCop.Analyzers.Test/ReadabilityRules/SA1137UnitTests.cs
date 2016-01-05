@@ -374,6 +374,264 @@ class Container
         }
 
         [Fact]
+        public async Task TestPropertyAccessorListAsync()
+        {
+            string testCode = @"
+using System;
+
+class Container
+{
+    int Property1
+    {
+      [My]
+        get;
+
+      set;
+    }
+
+    int Property2
+    {
+      [My]
+get;
+
+      set;
+    }
+
+    int Property3
+    {
+      [My] get;
+
+       set;
+    }
+}
+
+[AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
+class MyAttribute : Attribute { }
+";
+            string fixedCode = @"
+using System;
+
+class Container
+{
+    int Property1
+    {
+        [My]
+        get;
+
+        set;
+    }
+
+    int Property2
+    {
+[My]
+get;
+
+set;
+    }
+
+    int Property3
+    {
+       [My] get;
+
+       set;
+    }
+}
+
+[AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
+class MyAttribute : Attribute { }
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(8, 1),
+                this.CSharpDiagnostic().WithLocation(11, 1),
+                this.CSharpDiagnostic().WithLocation(16, 1),
+                this.CSharpDiagnostic().WithLocation(19, 1),
+                this.CSharpDiagnostic().WithLocation(24, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestIndexerAccessorListAsync()
+        {
+            string testCode = @"
+using System;
+
+interface IContainer1
+{
+    int this[int arg]
+    {
+      [My]
+        get;
+
+      set;
+    }
+}
+
+interface IContainer2
+{
+    int this[int arg]
+    {
+      [My]
+get;
+
+      set;
+    }
+}
+
+interface IContainer3
+{
+    int this[int arg]
+    {
+      [My] get;
+
+       set;
+    }
+}
+
+[AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
+class MyAttribute : Attribute { }
+";
+            string fixedCode = @"
+using System;
+
+interface IContainer1
+{
+    int this[int arg]
+    {
+        [My]
+        get;
+
+        set;
+    }
+}
+
+interface IContainer2
+{
+    int this[int arg]
+    {
+[My]
+get;
+
+set;
+    }
+}
+
+interface IContainer3
+{
+    int this[int arg]
+    {
+       [My] get;
+
+       set;
+    }
+}
+
+[AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
+class MyAttribute : Attribute { }
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(8, 1),
+                this.CSharpDiagnostic().WithLocation(11, 1),
+                this.CSharpDiagnostic().WithLocation(19, 1),
+                this.CSharpDiagnostic().WithLocation(22, 1),
+                this.CSharpDiagnostic().WithLocation(30, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestEventAccessorListAsync()
+        {
+            string testCode = @"
+using System;
+
+class Container
+{
+    event EventHandler Event1
+    {
+      [My]
+        add { }
+
+      remove { }
+    }
+
+    event EventHandler Event2
+    {
+      [My]
+add { }
+
+      remove { }
+    }
+
+    event EventHandler Event3
+    {
+      [My] add { }
+
+       remove { }
+    }
+}
+
+[AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
+class MyAttribute : Attribute { }
+";
+            string fixedCode = @"
+using System;
+
+class Container
+{
+    event EventHandler Event1
+    {
+        [My]
+        add { }
+
+        remove { }
+    }
+
+    event EventHandler Event2
+    {
+[My]
+add { }
+
+remove { }
+    }
+
+    event EventHandler Event3
+    {
+       [My] add { }
+
+       remove { }
+    }
+}
+
+[AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
+class MyAttribute : Attribute { }
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(8, 1),
+                this.CSharpDiagnostic().WithLocation(11, 1),
+                this.CSharpDiagnostic().WithLocation(16, 1),
+                this.CSharpDiagnostic().WithLocation(19, 1),
+                this.CSharpDiagnostic().WithLocation(24, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestValidVariableDeclarationAsync()
         {
             string testCode = @"
