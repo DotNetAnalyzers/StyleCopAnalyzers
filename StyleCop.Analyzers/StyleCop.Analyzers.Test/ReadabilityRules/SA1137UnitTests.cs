@@ -834,6 +834,102 @@ Z>{suffix}
         }
 
         [Fact]
+        public async Task TestParameterListAsync()
+        {
+            string testCode = @"
+class Container
+{
+    void NonZeroAlignment(
+        int X,
+      int Y,
+int Z) { }
+
+    void ZeroAlignment(
+int X,
+      int Y,
+        int Z) { }
+}
+";
+            string fixedCode = @"
+class Container
+{
+    void NonZeroAlignment(
+        int X,
+        int Y,
+        int Z) { }
+
+    void ZeroAlignment(
+int X,
+int Y,
+int Z) { }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(6, 1),
+                this.CSharpDiagnostic().WithLocation(7, 1),
+                this.CSharpDiagnostic().WithLocation(11, 1),
+                this.CSharpDiagnostic().WithLocation(12, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestBracketedParameterListAsync()
+        {
+            string testCode = @"
+class Container1
+{
+    int this[
+        int X,
+      int Y,
+int Z] => 0;
+}
+
+class Container2
+{
+    int this[
+int X,
+      int Y,
+        int Z] => 0;
+}
+";
+            string fixedCode = @"
+class Container1
+{
+    int this[
+        int X,
+        int Y,
+        int Z] => 0;
+}
+
+class Container2
+{
+    int this[
+int X,
+int Y,
+int Z] => 0;
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(6, 1),
+                this.CSharpDiagnostic().WithLocation(7, 1),
+                this.CSharpDiagnostic().WithLocation(14, 1),
+                this.CSharpDiagnostic().WithLocation(15, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestAttributeListAsync()
         {
             string testCode = @"
