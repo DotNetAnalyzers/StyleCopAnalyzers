@@ -182,6 +182,207 @@ class ClassName
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestInitializerExpressionAsync()
+        {
+            string testCode = @"
+using System.Collections.Generic;
+class ClassName
+{
+    void NonZeroAlignmentMethod()
+    {
+        // array initializer
+        int[] array =
+        {
+            0,
+          0,
+0,
+        };
+
+        // collection initializer
+        List<int> list =
+            new List<int>
+            {
+                0,
+              0,
+0,
+            };
+
+        // complex element initializer
+        Dictionary<int, int> dictionary =
+            new Dictionary<int, int>
+            {
+                { 0, 0 },
+              { 0, 0 },
+{ 0, 0 },
+            };
+
+        // object initializer
+        var obj =
+            new StructName
+            {
+                X = 0,
+              Y = 0,
+Z = 0,
+            };
+    }
+
+    void ZeroAlignmentMethod()
+    {
+        // array initializer
+        int[] array =
+        {
+0,
+          0,
+            0,
+        };
+
+        // collection initializer
+        List<int> list =
+            new List<int>
+            {
+0,
+              0,
+                0,
+            };
+
+        // complex element initializer
+        Dictionary<int, int> dictionary =
+            new Dictionary<int, int>
+            {
+{ 0, 0 },
+              { 0, 0 },
+                { 0, 0 },
+            };
+
+        // object initializer
+        var obj =
+            new StructName
+            {
+X = 0,
+              Y = 0,
+                Z = 0,
+            };
+    }
+}
+
+struct StructName
+{
+    public int X, Y, Z;
+}
+";
+            string fixedCode = @"
+using System.Collections.Generic;
+class ClassName
+{
+    void NonZeroAlignmentMethod()
+    {
+        // array initializer
+        int[] array =
+        {
+            0,
+            0,
+            0,
+        };
+
+        // collection initializer
+        List<int> list =
+            new List<int>
+            {
+                0,
+                0,
+                0,
+            };
+
+        // complex element initializer
+        Dictionary<int, int> dictionary =
+            new Dictionary<int, int>
+            {
+                { 0, 0 },
+                { 0, 0 },
+                { 0, 0 },
+            };
+
+        // object initializer
+        var obj =
+            new StructName
+            {
+                X = 0,
+                Y = 0,
+                Z = 0,
+            };
+    }
+
+    void ZeroAlignmentMethod()
+    {
+        // array initializer
+        int[] array =
+        {
+0,
+0,
+0,
+        };
+
+        // collection initializer
+        List<int> list =
+            new List<int>
+            {
+0,
+0,
+0,
+            };
+
+        // complex element initializer
+        Dictionary<int, int> dictionary =
+            new Dictionary<int, int>
+            {
+{ 0, 0 },
+{ 0, 0 },
+{ 0, 0 },
+            };
+
+        // object initializer
+        var obj =
+            new StructName
+            {
+X = 0,
+Y = 0,
+Z = 0,
+            };
+    }
+}
+
+struct StructName
+{
+    public int X, Y, Z;
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(11, 1),
+                this.CSharpDiagnostic().WithLocation(12, 1),
+                this.CSharpDiagnostic().WithLocation(20, 1),
+                this.CSharpDiagnostic().WithLocation(21, 1),
+                this.CSharpDiagnostic().WithLocation(29, 1),
+                this.CSharpDiagnostic().WithLocation(30, 1),
+                this.CSharpDiagnostic().WithLocation(38, 1),
+                this.CSharpDiagnostic().WithLocation(39, 1),
+                this.CSharpDiagnostic().WithLocation(49, 1),
+                this.CSharpDiagnostic().WithLocation(50, 1),
+                this.CSharpDiagnostic().WithLocation(58, 1),
+                this.CSharpDiagnostic().WithLocation(59, 1),
+                this.CSharpDiagnostic().WithLocation(67, 1),
+                this.CSharpDiagnostic().WithLocation(68, 1),
+                this.CSharpDiagnostic().WithLocation(76, 1),
+                this.CSharpDiagnostic().WithLocation(77, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
