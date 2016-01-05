@@ -95,6 +95,93 @@ int y;
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestSwitchStatementAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    void MethodName()
+    {
+        switch (0)
+        {
+        case 0:
+      label1:
+            if (true)
+            {
+            }
+
+                break;
+
+       case 1:
+case 2:
+     label2:
+           while (true)
+            {
+            }
+
+           break;
+
+default:
+label3a:
+ label3b:
+break;
+        }
+    }
+}
+";
+            string fixedCode = @"
+class ClassName
+{
+    void MethodName()
+    {
+        switch (0)
+        {
+        case 0:
+      label1:
+            if (true)
+            {
+            }
+
+            break;
+
+        case 1:
+        case 2:
+      label2:
+            while (true)
+            {
+            }
+
+            break;
+
+        default:
+      label3a:
+      label3b:
+            break;
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(14, 1),
+                this.CSharpDiagnostic().WithLocation(16, 1),
+                this.CSharpDiagnostic().WithLocation(17, 1),
+                this.CSharpDiagnostic().WithLocation(18, 1),
+                this.CSharpDiagnostic().WithLocation(19, 1),
+                this.CSharpDiagnostic().WithLocation(23, 1),
+                this.CSharpDiagnostic().WithLocation(25, 1),
+                this.CSharpDiagnostic().WithLocation(26, 1),
+                this.CSharpDiagnostic().WithLocation(27, 1),
+                this.CSharpDiagnostic().WithLocation(28, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
