@@ -36,6 +36,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly Action<SyntaxNodeAnalysisContext> TypeDeclarationAction = HandleTypeDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> EnumDeclarationAction = HandleEnumDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> EnumMemberDeclarationAction = HandleEnumMemberDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> FieldDeclarationAction = HandleFieldDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> BaseMethodDeclarationAction = HandleBaseMethodDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> MethodDeclarationAction = HandleMethodDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> BasePropertyDeclarationAction = HandleBasePropertyDeclaration;
@@ -51,6 +52,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly Action<SyntaxNodeAnalysisContext> AttributeArgumentListAction = HandleAttributeArgumentList;
         private static readonly Action<SyntaxNodeAnalysisContext> BlockAction = HandleBlock;
         private static readonly Action<SyntaxNodeAnalysisContext> SwitchStatementAction = HandleSwitchStatement;
+        private static readonly Action<SyntaxNodeAnalysisContext> InitializerExpressionAction = HandleInitializerExpression;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -70,6 +72,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeActionHonorExclusions(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(EnumDeclarationAction, SyntaxKind.EnumDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(EnumMemberDeclarationAction, SyntaxKind.EnumMemberDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(FieldDeclarationAction, SyntaxKind.FieldDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(BaseMethodDeclarationAction, SyntaxKinds.BaseMethodDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(BasePropertyDeclarationAction, SyntaxKinds.BasePropertyDeclaration);
@@ -85,6 +88,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeActionHonorExclusions(AttributeArgumentListAction, SyntaxKind.AttributeArgumentList);
             context.RegisterSyntaxNodeActionHonorExclusions(BlockAction, SyntaxKind.Block);
             context.RegisterSyntaxNodeActionHonorExclusions(SwitchStatementAction, SyntaxKind.SwitchStatement);
+            context.RegisterSyntaxNodeActionHonorExclusions(InitializerExpressionAction, SyntaxKinds.InitializerExpression);
         }
 
         private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context)
@@ -139,6 +143,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var enumMemberDeclaration = (EnumMemberDeclarationSyntax)context.Node;
 
             CheckAttributeLists(context, enumMemberDeclaration.AttributeLists, enumMemberDeclaration);
+        }
+
+        private static void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var fieldDeclaration = (FieldDeclarationSyntax)context.Node;
+
+            CheckAttributeLists(context, fieldDeclaration.AttributeLists, fieldDeclaration);
         }
 
         private static void HandleBaseMethodDeclaration(SyntaxNodeAnalysisContext context)
@@ -281,6 +292,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
             CheckElements(context, labels.ToImmutable());
             CheckElements(context, statements.ToImmutable());
             CheckElements(context, labeledStatements.ToImmutable());
+        }
+
+        private static void HandleInitializerExpression(SyntaxNodeAnalysisContext context)
+        {
+            var initializerExpression = (InitializerExpressionSyntax)context.Node;
+
+            CheckElements(context, initializerExpression.Expressions);
         }
 
         private static void CheckAttributeLists(SyntaxNodeAnalysisContext context, SyntaxList<AttributeListSyntax> attributeLists, SyntaxNode parent)
