@@ -118,9 +118,6 @@ namespace StyleCop.Analyzers.SpacingRules
                 SyntaxKind.ModuloAssignmentExpression,
                 SyntaxKind.SimpleAssignmentExpression);
 
-        private static readonly ImmutableArray<SyntaxKind> LambdaExpressionKinds =
-            ImmutableArray.Create(SyntaxKind.ParenthesizedLambdaExpression, SyntaxKind.SimpleLambdaExpression);
-
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> ConstructorDeclarationAction = HandleConstructorDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> ConditionalExpressionAction = HandleConditionalExpression;
@@ -213,7 +210,7 @@ namespace StyleCop.Analyzers.SpacingRules
             context.RegisterSyntaxNodeActionHonorExclusions(AssignmentExpressionAction, AssignmentExpressionKinds);
             context.RegisterSyntaxNodeActionHonorExclusions(CastExpressionAction, SyntaxKind.CastExpression);
             context.RegisterSyntaxNodeActionHonorExclusions(EqualsValueClauseAction, SyntaxKind.EqualsValueClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(LambdaExpressionAction, LambdaExpressionKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(LambdaExpressionAction, SyntaxKinds.LambdaExpression);
             context.RegisterSyntaxNodeActionHonorExclusions(PropertyDeclarationAction, SyntaxKind.PropertyDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(IndexerDeclarationAction, SyntaxKind.IndexerDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(MethodDeclarationAction, SyntaxKind.MethodDeclaration);

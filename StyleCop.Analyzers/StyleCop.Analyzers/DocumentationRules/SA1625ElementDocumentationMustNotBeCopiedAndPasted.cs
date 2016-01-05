@@ -77,7 +77,6 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> DocumentationTriviaAction = HandleDocumentationTrivia;
-        private static readonly ImmutableArray<SyntaxKind> DocumentationSyntaxKinds = ImmutableArray.Create(SyntaxKind.SingleLineDocumentationCommentTrivia, SyntaxKind.MultiLineDocumentationCommentTrivia);
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -91,7 +90,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(DocumentationTriviaAction, DocumentationSyntaxKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(DocumentationTriviaAction, SyntaxKinds.DocumentationComment);
         }
 
         private static void HandleDocumentationTrivia(SyntaxNodeAnalysisContext context)
