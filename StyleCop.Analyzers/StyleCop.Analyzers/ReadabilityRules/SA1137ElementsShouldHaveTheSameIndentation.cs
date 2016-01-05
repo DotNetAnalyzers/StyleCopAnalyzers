@@ -36,7 +36,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly Action<SyntaxNodeAnalysisContext> TypeDeclarationAction = HandleTypeDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> EnumDeclarationAction = HandleEnumDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> EnumMemberDeclarationAction = HandleEnumMemberDeclaration;
-        private static readonly Action<SyntaxNodeAnalysisContext> FieldDeclarationAction = HandleFieldDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> BaseFieldDeclarationAction = HandleBaseFieldDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> BaseMethodDeclarationAction = HandleBaseMethodDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> MethodDeclarationAction = HandleMethodDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> BasePropertyDeclarationAction = HandleBasePropertyDeclaration;
@@ -45,9 +45,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly Action<SyntaxNodeAnalysisContext> VariableDeclarationAction = HandleVariableDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> TypeParameterListAction = HandleTypeParameterList;
         private static readonly Action<SyntaxNodeAnalysisContext> TypeParameterAction = HandleTypeParameter;
-        private static readonly Action<SyntaxNodeAnalysisContext> ParameterListAction = HandleParameterList;
+        private static readonly Action<SyntaxNodeAnalysisContext> BaseParameterListAction = HandleBaseParameterList;
         private static readonly Action<SyntaxNodeAnalysisContext> ParameterAction = HandleParameter;
-        private static readonly Action<SyntaxNodeAnalysisContext> ArgumentListAction = HandleArgumentList;
+        private static readonly Action<SyntaxNodeAnalysisContext> BaseArgumentListAction = HandleBaseArgumentList;
         private static readonly Action<SyntaxNodeAnalysisContext> AttributeListAction = HandleAttributeList;
         private static readonly Action<SyntaxNodeAnalysisContext> AttributeArgumentListAction = HandleAttributeArgumentList;
         private static readonly Action<SyntaxNodeAnalysisContext> BlockAction = HandleBlock;
@@ -72,7 +72,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeActionHonorExclusions(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(EnumDeclarationAction, SyntaxKind.EnumDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(EnumMemberDeclarationAction, SyntaxKind.EnumMemberDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(FieldDeclarationAction, SyntaxKind.FieldDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(BaseFieldDeclarationAction, SyntaxKinds.BaseFieldDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(BaseMethodDeclarationAction, SyntaxKinds.BaseMethodDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(BasePropertyDeclarationAction, SyntaxKinds.BasePropertyDeclaration);
@@ -81,9 +81,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeActionHonorExclusions(VariableDeclarationAction, SyntaxKind.VariableDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(TypeParameterListAction, SyntaxKind.TypeParameterList);
             context.RegisterSyntaxNodeActionHonorExclusions(TypeParameterAction, SyntaxKind.TypeParameter);
-            context.RegisterSyntaxNodeActionHonorExclusions(ParameterListAction, SyntaxKind.ParameterList);
+            context.RegisterSyntaxNodeActionHonorExclusions(BaseParameterListAction, SyntaxKinds.BaseParameterList);
             context.RegisterSyntaxNodeActionHonorExclusions(ParameterAction, SyntaxKind.Parameter);
-            context.RegisterSyntaxNodeActionHonorExclusions(ArgumentListAction, SyntaxKind.ArgumentList);
+            context.RegisterSyntaxNodeActionHonorExclusions(BaseArgumentListAction, SyntaxKinds.BaseArgumentList);
             context.RegisterSyntaxNodeActionHonorExclusions(AttributeListAction, SyntaxKind.AttributeList);
             context.RegisterSyntaxNodeActionHonorExclusions(AttributeArgumentListAction, SyntaxKind.AttributeArgumentList);
             context.RegisterSyntaxNodeActionHonorExclusions(BlockAction, SyntaxKind.Block);
@@ -145,11 +145,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
             CheckAttributeLists(context, enumMemberDeclaration.AttributeLists, enumMemberDeclaration);
         }
 
-        private static void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleBaseFieldDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var fieldDeclaration = (FieldDeclarationSyntax)context.Node;
+            var baseFieldDeclaration = (BaseFieldDeclarationSyntax)context.Node;
 
-            CheckAttributeLists(context, fieldDeclaration.AttributeLists, fieldDeclaration);
+            CheckAttributeLists(context, baseFieldDeclaration.AttributeLists, baseFieldDeclaration);
         }
 
         private static void HandleBaseMethodDeclaration(SyntaxNodeAnalysisContext context)
@@ -207,11 +207,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
             CheckAttributeLists(context, typeParameter.AttributeLists, typeParameter);
         }
 
-        private static void HandleParameterList(SyntaxNodeAnalysisContext context)
+        private static void HandleBaseParameterList(SyntaxNodeAnalysisContext context)
         {
-            var parameterList = (ParameterListSyntax)context.Node;
+            var baseParameterList = (BaseParameterListSyntax)context.Node;
 
-            CheckElements(context, parameterList.Parameters);
+            CheckElements(context, baseParameterList.Parameters);
         }
 
         private static void HandleParameter(SyntaxNodeAnalysisContext context)
@@ -220,11 +220,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
             CheckAttributeLists(context, parameter.AttributeLists, parameter);
         }
 
-        private static void HandleArgumentList(SyntaxNodeAnalysisContext context)
+        private static void HandleBaseArgumentList(SyntaxNodeAnalysisContext context)
         {
-            var argumentList = (ArgumentListSyntax)context.Node;
+            var baseArgumentList = (BaseArgumentListSyntax)context.Node;
 
-            CheckElements(context, argumentList.Arguments);
+            CheckElements(context, baseArgumentList.Arguments);
         }
 
         private static void HandleAttributeList(SyntaxNodeAnalysisContext context)
