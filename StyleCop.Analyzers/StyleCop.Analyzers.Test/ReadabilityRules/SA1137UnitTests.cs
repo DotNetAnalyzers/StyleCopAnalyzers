@@ -696,6 +696,109 @@ struct StructName
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestValidAnonymousObjectCreationExpressionAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    void SingleLineInitializersMethod()
+    {
+        var obj = new { X = 0 };
+    }
+
+    void SingleElementInitializersMethod()
+    {
+        var obj =
+            new
+            {
+                X = 0,
+            };
+    }
+
+    void SharedLineInitializersMethod()
+    {
+        var obj =
+            new
+            {
+                X = 0, Y = 0,
+            };
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestAnonymousObjectCreationExpressionAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    void NonZeroAlignmentMethod()
+    {
+        var obj =
+            new
+            {
+                X = 0,
+              Y = 0,
+Z = 0,
+            };
+    }
+
+    void ZeroAlignmentMethod()
+    {
+        var obj =
+            new
+            {
+X = 0,
+              Y = 0,
+                Z = 0,
+            };
+    }
+}
+";
+            string fixedCode = @"
+class ClassName
+{
+    void NonZeroAlignmentMethod()
+    {
+        var obj =
+            new
+            {
+                X = 0,
+                Y = 0,
+                Z = 0,
+            };
+    }
+
+    void ZeroAlignmentMethod()
+    {
+        var obj =
+            new
+            {
+X = 0,
+Y = 0,
+Z = 0,
+            };
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(10, 1),
+                this.CSharpDiagnostic().WithLocation(11, 1),
+                this.CSharpDiagnostic().WithLocation(21, 1),
+                this.CSharpDiagnostic().WithLocation(22, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {

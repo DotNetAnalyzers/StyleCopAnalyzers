@@ -45,6 +45,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly Action<SyntaxNodeAnalysisContext> BlockAction = HandleBlock;
         private static readonly Action<SyntaxNodeAnalysisContext> SwitchStatementAction = HandleSwitchStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> InitializerExpressionAction = HandleInitializerExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> AnonymousObjectCreationExpressionAction = HandleAnonymousObjectCreationExpression;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -73,6 +74,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeActionHonorExclusions(BlockAction, SyntaxKind.Block);
             context.RegisterSyntaxNodeActionHonorExclusions(SwitchStatementAction, SyntaxKind.SwitchStatement);
             context.RegisterSyntaxNodeActionHonorExclusions(InitializerExpressionAction, SyntaxKinds.InitializerExpression);
+            context.RegisterSyntaxNodeActionHonorExclusions(AnonymousObjectCreationExpressionAction, SyntaxKind.AnonymousObjectCreationExpression);
         }
 
         private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context)
@@ -244,6 +246,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var initializerExpression = (InitializerExpressionSyntax)context.Node;
 
             CheckElements(context, initializerExpression.Expressions);
+        }
+
+        private static void HandleAnonymousObjectCreationExpression(SyntaxNodeAnalysisContext context)
+        {
+            var anonymousObjectCreationExpression = (AnonymousObjectCreationExpressionSyntax)context.Node;
+
+            CheckElements(context, anonymousObjectCreationExpression.Initializers);
         }
 
         private static void AddMembersAndAttributes<T>(ImmutableList<SyntaxNode>.Builder elements, SeparatedSyntaxList<T> members)
