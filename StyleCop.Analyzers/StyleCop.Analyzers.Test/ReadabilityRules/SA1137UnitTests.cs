@@ -101,6 +101,79 @@ class MyAttribute : Attribute {{ }}
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
+        public async Task TestTypeDeclarationConstraintClausesAsync(string typeKind)
+        {
+            string testCode = $@"
+{typeKind} NonGenericType
+{{
+}}
+
+{typeKind} TypeWithoutConstraints<T>
+{{
+}}
+
+{typeKind} TypeWithOneConstraint<T>
+    where T : new()
+{{
+}}
+
+{typeKind} TypeWithMultipleConstraints1<T1, T2, T3> where T1 : new()
+    where T2 : new()
+     where T3 : new()
+{{
+}}
+
+{typeKind} TypeWithMultipleConstraints2<T1, T2, T3>
+where T1 : new()
+    where T2 : new()
+     where T3 : new()
+{{
+}}
+";
+            string fixedCode = $@"
+{typeKind} NonGenericType
+{{
+}}
+
+{typeKind} TypeWithoutConstraints<T>
+{{
+}}
+
+{typeKind} TypeWithOneConstraint<T>
+    where T : new()
+{{
+}}
+
+{typeKind} TypeWithMultipleConstraints1<T1, T2, T3> where T1 : new()
+    where T2 : new()
+    where T3 : new()
+{{
+}}
+
+{typeKind} TypeWithMultipleConstraints2<T1, T2, T3>
+where T1 : new()
+where T2 : new()
+where T3 : new()
+{{
+}}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(17, 1),
+                this.CSharpDiagnostic().WithLocation(23, 1),
+                this.CSharpDiagnostic().WithLocation(24, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestBlockAsync()
         {

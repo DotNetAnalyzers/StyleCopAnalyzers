@@ -128,6 +128,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
+            CheckElements(context, typeDeclaration.ConstraintClauses);
             CheckElements(context, typeDeclaration.Members);
         }
 
