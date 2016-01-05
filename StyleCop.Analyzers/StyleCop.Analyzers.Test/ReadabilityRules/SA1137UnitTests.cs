@@ -17,6 +17,90 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     /// </summary>
     public class SA1137UnitTests : CodeFixVerifier
     {
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
+        [InlineData("enum")]
+        public async Task TestBaseTypeDeclarationAsync(string baseTypeKind)
+        {
+            // Need to test attribute lists here
+            string testCode = $@"
+using System;
+
+namespace Namespace0
+{{
+    [My] [My] {baseTypeKind} TypeName {{ }}
+}}
+
+namespace Namespace1
+{{
+    [My]
+  [My] {baseTypeKind} TypeName {{ }}
+}}
+
+namespace Namespace2
+{{
+  [My]
+    [My]
+  {baseTypeKind} TypeName {{ }}
+}}
+
+namespace Namespace3
+{{
+    [My]
+    [My]
+  {baseTypeKind} TypeName {{ }}
+}}
+
+[AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
+class MyAttribute : Attribute {{ }}
+";
+            string fixedCode = $@"
+using System;
+
+namespace Namespace0
+{{
+    [My] [My] {baseTypeKind} TypeName {{ }}
+}}
+
+namespace Namespace1
+{{
+    [My]
+    [My] {baseTypeKind} TypeName {{ }}
+}}
+
+namespace Namespace2
+{{
+  [My]
+  [My]
+  {baseTypeKind} TypeName {{ }}
+}}
+
+namespace Namespace3
+{{
+  [My]
+  [My]
+  {baseTypeKind} TypeName {{ }}
+}}
+
+[AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
+class MyAttribute : Attribute {{ }}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(12, 1),
+                this.CSharpDiagnostic().WithLocation(18, 1),
+                this.CSharpDiagnostic().WithLocation(24, 1),
+                this.CSharpDiagnostic().WithLocation(25, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestBlockAsync()
         {

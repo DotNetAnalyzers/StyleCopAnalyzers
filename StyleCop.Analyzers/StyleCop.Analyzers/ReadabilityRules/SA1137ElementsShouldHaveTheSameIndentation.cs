@@ -349,7 +349,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             elements = elements.RemoveAll(
                 element =>
                 {
-                    SyntaxToken firstToken = element.GetFirstToken();
+                    SyntaxToken firstToken = GetFirstTokenForAnalysis(element);
                     return firstToken.IsMissingOrDefault() || !firstToken.IsFirstInLine();
                 });
 
@@ -362,7 +362,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             string expectedIndentation = null;
             foreach (T element in elements)
             {
-                SyntaxTrivia indentationTrivia = element.GetFirstToken().LeadingTrivia.LastOrDefault();
+                SyntaxToken firstToken = GetFirstTokenForAnalysis(element);
+                SyntaxTrivia indentationTrivia = firstToken.LeadingTrivia.LastOrDefault();
                 string indentation = indentationTrivia.IsKind(SyntaxKind.WhitespaceTrivia) ? indentationTrivia.ToString() : string.Empty;
 
                 if (first)
@@ -381,7 +382,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 Location location;
                 if (indentation.Length == 0)
                 {
-                    location = element.GetFirstToken().GetLocation();
+                    location = firstToken.GetLocation();
                 }
                 else
                 {
@@ -391,6 +392,22 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 ImmutableDictionary<string, string> properties = ImmutableDictionary.Create<string, string>().SetItem(ExpectedIndentationKey, expectedIndentation);
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, location, properties));
             }
+        }
+
+        private static SyntaxToken GetFirstTokenForAnalysis(SyntaxNode node)
+        {
+            SyntaxToken firstToken = node.GetFirstToken();
+            if (!node.IsKind(SyntaxKind.AttributeList))
+            {
+                while (firstToken.IsKind(SyntaxKind.OpenBracketToken)
+                    && firstToken.Parent.IsKind(SyntaxKind.AttributeList))
+                {
+                    // Skip over the attribute list since it's not the focus of this check
+                    firstToken = firstToken.Parent.GetLastToken().GetNextToken();
+                }
+            }
+
+            return firstToken;
         }
     }
 }
