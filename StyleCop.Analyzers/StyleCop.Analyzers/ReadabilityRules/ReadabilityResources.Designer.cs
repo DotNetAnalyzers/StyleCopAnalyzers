@@ -62,6 +62,15 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fix indentation.
+        /// </summary>
+        internal static string IndentationCodeFix {
+            get {
+                return ResourceManager.GetString("IndentationCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove region.
         /// </summary>
         internal static string RemoveRegionCodeFix {
