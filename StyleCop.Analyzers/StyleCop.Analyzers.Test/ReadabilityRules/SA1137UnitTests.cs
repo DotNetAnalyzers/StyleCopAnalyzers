@@ -930,6 +930,102 @@ int Z] => 0;
         }
 
         [Fact]
+        public async Task TestArgumentListAsync()
+        {
+            string testCode = @"
+class Container
+{
+    int NonZeroAlignment(int x, int y, int z) => NonZeroAlignment(
+        0,
+      0,
+0);
+
+    int ZeroAlignment(int x, int y, int z) => ZeroAlignment(
+0,
+      0,
+        0);
+}
+";
+            string fixedCode = @"
+class Container
+{
+    int NonZeroAlignment(int x, int y, int z) => NonZeroAlignment(
+        0,
+        0,
+        0);
+
+    int ZeroAlignment(int x, int y, int z) => ZeroAlignment(
+0,
+0,
+0);
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(6, 1),
+                this.CSharpDiagnostic().WithLocation(7, 1),
+                this.CSharpDiagnostic().WithLocation(11, 1),
+                this.CSharpDiagnostic().WithLocation(12, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestBracketedArgumentListAsync()
+        {
+            string testCode = @"
+class Container1
+{
+    int this[int x, int y, int z] => this[
+        0,
+      0,
+0];
+}
+
+class Container2
+{
+    int this[int x, int y, int z] => this[
+0,
+      0,
+        0];
+}
+";
+            string fixedCode = @"
+class Container1
+{
+    int this[int x, int y, int z] => this[
+        0,
+        0,
+        0];
+}
+
+class Container2
+{
+    int this[int x, int y, int z] => this[
+0,
+0,
+0];
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(6, 1),
+                this.CSharpDiagnostic().WithLocation(7, 1),
+                this.CSharpDiagnostic().WithLocation(14, 1),
+                this.CSharpDiagnostic().WithLocation(15, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestAttributeListAsync()
         {
             string testCode = @"
