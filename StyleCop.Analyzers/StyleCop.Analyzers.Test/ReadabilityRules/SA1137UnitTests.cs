@@ -53,6 +53,29 @@ namespace Namespace3
   {baseTypeKind} TypeName {{ }}
 }}
 
+namespace Namespace4
+{{
+    {baseTypeKind} TypeName1 {{ }}
+
+  [My] {baseTypeKind} TypeName2 {{ }}
+}}
+
+namespace Namespace5
+{{
+    {baseTypeKind} TypeName1 {{ }}
+
+    [My]
+  [My] {baseTypeKind} TypeName2 {{ }}
+}}
+
+namespace Namespace6
+{{
+    {baseTypeKind} TypeName1 {{ }}
+
+  [My]
+    [My] {baseTypeKind} TypeName2 {{ }}
+}}
+
 [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
 class MyAttribute : Attribute {{ }}
 ";
@@ -84,6 +107,29 @@ namespace Namespace3
   {baseTypeKind} TypeName {{ }}
 }}
 
+namespace Namespace4
+{{
+    {baseTypeKind} TypeName1 {{ }}
+
+    [My] {baseTypeKind} TypeName2 {{ }}
+}}
+
+namespace Namespace5
+{{
+    {baseTypeKind} TypeName1 {{ }}
+
+    [My]
+    [My] {baseTypeKind} TypeName2 {{ }}
+}}
+
+namespace Namespace6
+{{
+    {baseTypeKind} TypeName1 {{ }}
+
+    [My]
+    [My] {baseTypeKind} TypeName2 {{ }}
+}}
+
 [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
 class MyAttribute : Attribute {{ }}
 ";
@@ -94,6 +140,9 @@ class MyAttribute : Attribute {{ }}
                 this.CSharpDiagnostic().WithLocation(18, 1),
                 this.CSharpDiagnostic().WithLocation(24, 1),
                 this.CSharpDiagnostic().WithLocation(25, 1),
+                this.CSharpDiagnostic().WithLocation(33, 1),
+                this.CSharpDiagnostic().WithLocation(41, 1),
+                this.CSharpDiagnostic().WithLocation(48, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

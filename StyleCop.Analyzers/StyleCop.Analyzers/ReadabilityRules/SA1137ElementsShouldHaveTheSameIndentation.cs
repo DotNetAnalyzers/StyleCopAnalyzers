@@ -32,21 +32,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> CompilationUnitAction = HandleCompilationUnit;
         private static readonly Action<SyntaxNodeAnalysisContext> NamespaceDeclarationAction = HandleNamespaceDeclaration;
-        private static readonly Action<SyntaxNodeAnalysisContext> BaseTypeDeclarationAction = HandleBaseTypeDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> TypeDeclarationAction = HandleTypeDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> EnumDeclarationAction = HandleEnumDeclaration;
-        private static readonly Action<SyntaxNodeAnalysisContext> EnumMemberDeclarationAction = HandleEnumMemberDeclaration;
-        private static readonly Action<SyntaxNodeAnalysisContext> BaseFieldDeclarationAction = HandleBaseFieldDeclaration;
-        private static readonly Action<SyntaxNodeAnalysisContext> BaseMethodDeclarationAction = HandleBaseMethodDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> MethodDeclarationAction = HandleMethodDeclaration;
-        private static readonly Action<SyntaxNodeAnalysisContext> BasePropertyDeclarationAction = HandleBasePropertyDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> AccessorListAction = HandleAccessorList;
-        private static readonly Action<SyntaxNodeAnalysisContext> AccessorDeclarationAction = HandleAccessorDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> VariableDeclarationAction = HandleVariableDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> TypeParameterListAction = HandleTypeParameterList;
-        private static readonly Action<SyntaxNodeAnalysisContext> TypeParameterAction = HandleTypeParameter;
         private static readonly Action<SyntaxNodeAnalysisContext> BaseParameterListAction = HandleBaseParameterList;
-        private static readonly Action<SyntaxNodeAnalysisContext> ParameterAction = HandleParameter;
         private static readonly Action<SyntaxNodeAnalysisContext> BaseArgumentListAction = HandleBaseArgumentList;
         private static readonly Action<SyntaxNodeAnalysisContext> AttributeListAction = HandleAttributeList;
         private static readonly Action<SyntaxNodeAnalysisContext> AttributeArgumentListAction = HandleAttributeArgumentList;
@@ -68,21 +60,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             context.RegisterSyntaxNodeActionHonorExclusions(CompilationUnitAction, SyntaxKind.CompilationUnit);
             context.RegisterSyntaxNodeActionHonorExclusions(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(BaseTypeDeclarationAction, SyntaxKinds.BaseTypeDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(EnumDeclarationAction, SyntaxKind.EnumDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(EnumMemberDeclarationAction, SyntaxKind.EnumMemberDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(BaseFieldDeclarationAction, SyntaxKinds.BaseFieldDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(BaseMethodDeclarationAction, SyntaxKinds.BaseMethodDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(BasePropertyDeclarationAction, SyntaxKinds.BasePropertyDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(AccessorListAction, SyntaxKind.AccessorList);
-            context.RegisterSyntaxNodeActionHonorExclusions(AccessorDeclarationAction, SyntaxKinds.AccessorDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(VariableDeclarationAction, SyntaxKind.VariableDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(TypeParameterListAction, SyntaxKind.TypeParameterList);
-            context.RegisterSyntaxNodeActionHonorExclusions(TypeParameterAction, SyntaxKind.TypeParameter);
             context.RegisterSyntaxNodeActionHonorExclusions(BaseParameterListAction, SyntaxKinds.BaseParameterList);
-            context.RegisterSyntaxNodeActionHonorExclusions(ParameterAction, SyntaxKind.Parameter);
             context.RegisterSyntaxNodeActionHonorExclusions(BaseArgumentListAction, SyntaxKinds.BaseArgumentList);
             context.RegisterSyntaxNodeActionHonorExclusions(AttributeListAction, SyntaxKind.AttributeList);
             context.RegisterSyntaxNodeActionHonorExclusions(AttributeArgumentListAction, SyntaxKind.AttributeArgumentList);
@@ -100,7 +84,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             elements.AddRange(compilationUnit.Externs);
             elements.AddRange(compilationUnit.Usings);
             elements.AddRange(compilationUnit.AttributeLists);
-            elements.AddRange(compilationUnit.Members);
+            AddMembersAndAttributes(elements, compilationUnit.Members);
 
             CheckElements(context, elements.ToImmutable());
         }
@@ -113,15 +97,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             elements.AddRange(namespaceDeclaration.Externs);
             elements.AddRange(namespaceDeclaration.Usings);
-            elements.AddRange(namespaceDeclaration.Members);
+            AddMembersAndAttributes(elements, namespaceDeclaration.Members);
 
             CheckElements(context, elements.ToImmutable());
-        }
-
-        private static void HandleBaseTypeDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            var baseTypeDeclaration = (BaseTypeDeclarationSyntax)context.Node;
-            CheckAttributeLists(context, baseTypeDeclaration.AttributeLists, baseTypeDeclaration);
         }
 
         private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
@@ -129,35 +107,24 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
             CheckElements(context, typeDeclaration.ConstraintClauses);
-            CheckElements(context, typeDeclaration.Members);
+
+            var elements = ImmutableList.CreateBuilder<SyntaxNode>();
+            AddMembersAndAttributes(elements, typeDeclaration.Members);
+            CheckElements(context, elements.ToImmutable());
         }
 
         private static void HandleEnumDeclaration(SyntaxNodeAnalysisContext context)
         {
             var enumDeclaration = (EnumDeclarationSyntax)context.Node;
 
-            CheckElements(context, enumDeclaration.Members);
-        }
+            var elements = ImmutableList.CreateBuilder<SyntaxNode>();
+            foreach (EnumMemberDeclarationSyntax enumMemberDeclaration in enumDeclaration.Members)
+            {
+                elements.AddRange(enumMemberDeclaration.AttributeLists);
+                elements.Add(enumMemberDeclaration);
+            }
 
-        private static void HandleEnumMemberDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            var enumMemberDeclaration = (EnumMemberDeclarationSyntax)context.Node;
-
-            CheckAttributeLists(context, enumMemberDeclaration.AttributeLists, enumMemberDeclaration);
-        }
-
-        private static void HandleBaseFieldDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            var baseFieldDeclaration = (BaseFieldDeclarationSyntax)context.Node;
-
-            CheckAttributeLists(context, baseFieldDeclaration.AttributeLists, baseFieldDeclaration);
-        }
-
-        private static void HandleBaseMethodDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            var baseMethodDeclaration = (BaseMethodDeclarationSyntax)context.Node;
-
-            CheckAttributeLists(context, baseMethodDeclaration.AttributeLists, baseMethodDeclaration);
+            CheckElements(context, elements.ToImmutable());
         }
 
         private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
@@ -167,25 +134,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
             CheckElements(context, methodDeclaration.ConstraintClauses);
         }
 
-        private static void HandleBasePropertyDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            var basePropertyDeclaration = (BasePropertyDeclarationSyntax)context.Node;
-
-            CheckAttributeLists(context, basePropertyDeclaration.AttributeLists, basePropertyDeclaration);
-        }
-
         private static void HandleAccessorList(SyntaxNodeAnalysisContext context)
         {
             var accessorList = (AccessorListSyntax)context.Node;
 
-            CheckElements(context, accessorList.Accessors);
-        }
-
-        private static void HandleAccessorDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            var accessorDeclaration = (AccessorDeclarationSyntax)context.Node;
-
-            CheckAttributeLists(context, accessorDeclaration.AttributeLists, accessorDeclaration);
+            var elements = ImmutableList.CreateBuilder<SyntaxNode>();
+            AddMembersAndAttributes(elements, accessorList.Accessors);
+            CheckElements(context, elements.ToImmutable());
         }
 
         private static void HandleVariableDeclaration(SyntaxNodeAnalysisContext context)
@@ -198,27 +153,18 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var typeParameterList = (TypeParameterListSyntax)context.Node;
 
-            CheckElements(context, typeParameterList.Parameters);
-        }
-
-        private static void HandleTypeParameter(SyntaxNodeAnalysisContext context)
-        {
-            var typeParameter = (TypeParameterSyntax)context.Node;
-
-            CheckAttributeLists(context, typeParameter.AttributeLists, typeParameter);
+            var elements = ImmutableList.CreateBuilder<SyntaxNode>();
+            AddMembersAndAttributes(elements, typeParameterList.Parameters);
+            CheckElements(context, elements.ToImmutable());
         }
 
         private static void HandleBaseParameterList(SyntaxNodeAnalysisContext context)
         {
             var baseParameterList = (BaseParameterListSyntax)context.Node;
 
-            CheckElements(context, baseParameterList.Parameters);
-        }
-
-        private static void HandleParameter(SyntaxNodeAnalysisContext context)
-        {
-            var parameter = (ParameterSyntax)context.Node;
-            CheckAttributeLists(context, parameter.AttributeLists, parameter);
+            var elements = ImmutableList.CreateBuilder<SyntaxNode>();
+            AddMembersAndAttributes(elements, baseParameterList.Parameters);
+            CheckElements(context, elements.ToImmutable());
         }
 
         private static void HandleBaseArgumentList(SyntaxNodeAnalysisContext context)
@@ -300,21 +246,75 @@ namespace StyleCop.Analyzers.ReadabilityRules
             CheckElements(context, initializerExpression.Expressions);
         }
 
-        private static void CheckAttributeLists(SyntaxNodeAnalysisContext context, SyntaxList<AttributeListSyntax> attributeLists, SyntaxNode parent)
+        private static void AddMembersAndAttributes<T>(ImmutableList<SyntaxNode>.Builder elements, SeparatedSyntaxList<T> members)
+            where T : SyntaxNode
         {
-            if (attributeLists.Count == 0)
+            foreach (SyntaxNode member in members)
             {
-                return;
+                AddMemberAndAttributes(elements, member);
+            }
+        }
+
+        private static void AddMembersAndAttributes<T>(ImmutableList<SyntaxNode>.Builder elements, SyntaxList<T> members)
+            where T : SyntaxNode
+        {
+            foreach (SyntaxNode member in members)
+            {
+                AddMemberAndAttributes(elements, member);
+            }
+        }
+
+        private static void AddMemberAndAttributes(ImmutableList<SyntaxNode>.Builder elements, SyntaxNode member)
+        {
+            switch (member.Kind())
+            {
+            case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.StructDeclaration:
+            case SyntaxKind.InterfaceDeclaration:
+            case SyntaxKind.EnumDeclaration:
+                elements.AddRange(((BaseTypeDeclarationSyntax)member).AttributeLists);
+                break;
+
+            case SyntaxKind.FieldDeclaration:
+            case SyntaxKind.EventFieldDeclaration:
+                elements.AddRange(((BaseFieldDeclarationSyntax)member).AttributeLists);
+                break;
+
+            case SyntaxKind.PropertyDeclaration:
+            case SyntaxKind.EventDeclaration:
+            case SyntaxKind.IndexerDeclaration:
+                elements.AddRange(((BasePropertyDeclarationSyntax)member).AttributeLists);
+                break;
+
+            case SyntaxKind.MethodDeclaration:
+            case SyntaxKind.ConstructorDeclaration:
+            case SyntaxKind.DestructorDeclaration:
+            case SyntaxKind.OperatorDeclaration:
+            case SyntaxKind.ConversionOperatorDeclaration:
+                elements.AddRange(((BaseMethodDeclarationSyntax)member).AttributeLists);
+                break;
+
+            case SyntaxKind.GetAccessorDeclaration:
+            case SyntaxKind.SetAccessorDeclaration:
+            case SyntaxKind.AddAccessorDeclaration:
+            case SyntaxKind.RemoveAccessorDeclaration:
+            case SyntaxKind.UnknownAccessorDeclaration:
+                elements.AddRange(((AccessorDeclarationSyntax)member).AttributeLists);
+                break;
+
+            case SyntaxKind.TypeParameter:
+                elements.AddRange(((TypeParameterSyntax)member).AttributeLists);
+                break;
+
+            case SyntaxKind.Parameter:
+                elements.AddRange(((ParameterSyntax)member).AttributeLists);
+                break;
+
+            default:
+                break;
             }
 
-            var nodes = ImmutableList.CreateBuilder<SyntaxNode>();
-
-            // Placing the parent first in this list causes the analysis to prefer to align attribute lists with their
-            // parent syntax, assuming the parent also appears on its own line.
-            nodes.Add(parent);
-            nodes.AddRange(attributeLists);
-
-            CheckElements(context, nodes.ToImmutable());
+            elements.Add(member);
         }
 
         private static void CheckElements<T>(SyntaxNodeAnalysisContext context, SyntaxList<T> elements)
@@ -357,6 +357,15 @@ namespace StyleCop.Analyzers.ReadabilityRules
             if (elements.Count < 2)
             {
                 return;
+            }
+
+            // Try to reorder the list so the first item is not an attribute list. This element will establish the
+            // expected indentation for the entire collection.
+            int desiredFirst = elements.FindIndex(x => !x.IsKind(SyntaxKind.AttributeList));
+            if (desiredFirst >= 0)
+            {
+                T newFirstElement = elements[desiredFirst];
+                elements = elements.RemoveAt(desiredFirst).Insert(0, newFirstElement);
             }
 
             bool first = true;
