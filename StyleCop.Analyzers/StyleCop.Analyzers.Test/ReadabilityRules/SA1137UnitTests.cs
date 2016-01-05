@@ -297,6 +297,82 @@ class MyAttribute : Attribute { }
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestMethodDeclarationAsync()
+        {
+            string testCode = @"
+class Container
+{
+    void NonGenericType()
+    {
+    }
+
+    void TypeWithoutConstraints<T>()
+    {
+    }
+
+    void TypeWithOneConstraint<T>()
+        where T : new()
+    {
+    }
+
+    void TypeWithMultipleConstraints1<T1, T2, T3>() where T1 : new()
+        where T2 : new()
+         where T3 : new()
+    {
+    }
+
+    void TypeWithMultipleConstraints2<T1, T2, T3>()
+    where T1 : new()
+        where T2 : new()
+         where T3 : new()
+    {
+    }
+}
+";
+            string fixedCode = @"
+class Container
+{
+    void NonGenericType()
+    {
+    }
+
+    void TypeWithoutConstraints<T>()
+    {
+    }
+
+    void TypeWithOneConstraint<T>()
+        where T : new()
+    {
+    }
+
+    void TypeWithMultipleConstraints1<T1, T2, T3>() where T1 : new()
+        where T2 : new()
+        where T3 : new()
+    {
+    }
+
+    void TypeWithMultipleConstraints2<T1, T2, T3>()
+    where T1 : new()
+    where T2 : new()
+    where T3 : new()
+    {
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(19, 1),
+                this.CSharpDiagnostic().WithLocation(25, 1),
+                this.CSharpDiagnostic().WithLocation(26, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Theory]
         [InlineData("class", " { }")]
         [InlineData("void", "() { }")]
