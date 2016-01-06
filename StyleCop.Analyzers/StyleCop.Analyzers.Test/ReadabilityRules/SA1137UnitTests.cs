@@ -22,9 +22,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         [InlineData("struct")]
         [InlineData("interface")]
         [InlineData("enum")]
-        public async Task TestBaseTypeDeclarationAsync(string baseTypeKind)
+        public async Task TestNamespaceDeclarationAsync(string baseTypeKind)
         {
-            // Need to test attribute lists here
             string testCode = $@"
 using System;
 
