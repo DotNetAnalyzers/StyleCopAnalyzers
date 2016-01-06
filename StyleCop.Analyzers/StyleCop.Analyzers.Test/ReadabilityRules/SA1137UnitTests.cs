@@ -223,6 +223,122 @@ where T3 : new()
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// This test demonstrates the behavior of SA1137 and its code fix with respect to documentation comments.
+        /// Currently both operations ignore documentation comments, but in the future the implementation may be updated
+        /// to examine and correct them similarly to attribute lists.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestDocumentationCommentBehaviorAsync()
+        {
+            string testCode = @"
+using System;
+enum Enum1
+{
+  /// <summary>
+  /// Summary.
+  /// </summary>
+  [My]
+    Element1,
+
+  /// <summary>
+  /// Summary.
+  /// </summary>
+  Element2,
+}
+
+enum Enum2
+{
+  /// <summary>
+  /// Summary.
+  /// </summary>
+  [My]
+Element1,
+
+  /// <summary>
+  /// Summary.
+  /// </summary>
+  Element2,
+}
+
+enum Enum3
+{
+  /// <summary>
+  /// Summary.
+  /// </summary>
+  [My] Element1,
+
+   /// <summary>
+   /// Summary.
+   /// </summary>
+   Element2,
+}
+
+[AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
+class MyAttribute : Attribute { }
+";
+            string fixedCode = @"
+using System;
+enum Enum1
+{
+  /// <summary>
+  /// Summary.
+  /// </summary>
+    [My]
+    Element1,
+
+  /// <summary>
+  /// Summary.
+  /// </summary>
+    Element2,
+}
+
+enum Enum2
+{
+  /// <summary>
+  /// Summary.
+  /// </summary>
+[My]
+Element1,
+
+  /// <summary>
+  /// Summary.
+  /// </summary>
+Element2,
+}
+
+enum Enum3
+{
+  /// <summary>
+  /// Summary.
+  /// </summary>
+   [My] Element1,
+
+   /// <summary>
+   /// Summary.
+   /// </summary>
+   Element2,
+}
+
+[AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
+class MyAttribute : Attribute { }
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(8, 1),
+                this.CSharpDiagnostic().WithLocation(14, 1),
+                this.CSharpDiagnostic().WithLocation(22, 1),
+                this.CSharpDiagnostic().WithLocation(28, 1),
+                this.CSharpDiagnostic().WithLocation(36, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestEnumDeclarationAsync()
         {
