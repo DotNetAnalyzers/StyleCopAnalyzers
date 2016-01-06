@@ -87,16 +87,18 @@ namespace StyleCop.Analyzers.LayoutRules
                 return Task.FromResult(document);
             }
 
-            SyntaxNode newNode = ProcessNode(node, insertBlankLine);
-            var newSyntaxRoot = syntaxRoot.ReplaceNode(node, newNode);
+            // Using the token replacement here to use the same strategy as the FixAll.
+            var firstToken = node.GetFirstToken();
+            var newToken = ProcessToken(firstToken, insertBlankLine);
+            var newSyntaxRoot = syntaxRoot.ReplaceToken(firstToken, newToken);
             var newDocument = document.WithSyntaxRoot(newSyntaxRoot);
 
             return Task.FromResult(newDocument);
         }
 
-        private static SyntaxNode ProcessNode(SyntaxNode node, bool insertBlankLine)
+        private static SyntaxToken ProcessToken(SyntaxToken token, bool insertBlankLine)
         {
-            var leadingTrivia = node.GetLeadingTrivia();
+            var leadingTrivia = token.LeadingTrivia;
             SyntaxTriviaList newLeadingTrivia;
 
             if (insertBlankLine)
@@ -108,7 +110,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 newLeadingTrivia = leadingTrivia.WithoutBlankLines();
             }
 
-            return node.WithLeadingTrivia(newLeadingTrivia);
+            return token.WithLeadingTrivia(newLeadingTrivia);
         }
 
         private static SyntaxNode GetRelevantNode(SyntaxNode innerNode)
@@ -164,7 +166,8 @@ namespace StyleCop.Analyzers.LayoutRules
 
                 var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
 
-                Dictionary<SyntaxNode, SyntaxNode> replaceMap = new Dictionary<SyntaxNode, SyntaxNode>();
+                // Using token replacement, because node replacement will do nothing when replacing child nodes from a replaced parent node.
+                Dictionary<SyntaxToken, SyntaxToken> replaceMap = new Dictionary<SyntaxToken, SyntaxToken>();
 
                 foreach (var diagnostic in diagnostics)
                 {
@@ -179,11 +182,13 @@ namespace StyleCop.Analyzers.LayoutRules
 
                     if (node != null)
                     {
-                        replaceMap[node] = ProcessNode(node, insertBlankLine.Value);
+                        var firstToken = node.GetFirstToken();
+
+                        replaceMap[firstToken] = ProcessToken(firstToken, insertBlankLine.Value);
                     }
                 }
 
-                return syntaxRoot.ReplaceNodes(replaceMap.Keys, (original, rewritten) => replaceMap[original]);
+                return syntaxRoot.ReplaceTokens(replaceMap.Keys, (original, rewritten) => replaceMap[original]);
             }
         }
     }
