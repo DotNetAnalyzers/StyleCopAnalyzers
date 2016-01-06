@@ -223,6 +223,56 @@ where T3 : new()
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Theory]
+        [InlineData("class", "int", " { }")]
+        [InlineData("struct", "int", " { }")]
+        [InlineData("interface", "event System.EventHandler", ";")]
+        public async Task TestTypeDeclarationMembersAsync(string typeKind, string fieldType, string methodBody)
+        {
+            string testCode = $@"
+{typeKind} Container1
+{{
+        {fieldType} X1;
+      int Y1 {{ get; }}
+void Z1(){methodBody}
+}}
+
+{typeKind} Container2
+{{
+{fieldType} X2;
+      int Y2 {{ get; }}
+        void Z2(){methodBody}
+}}
+";
+            string fixedCode = $@"
+{typeKind} Container1
+{{
+        {fieldType} X1;
+        int Y1 {{ get; }}
+        void Z1(){methodBody}
+}}
+
+{typeKind} Container2
+{{
+{fieldType} X2;
+int Y2 {{ get; }}
+void Z2(){methodBody}
+}}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(5, 1),
+                this.CSharpDiagnostic().WithLocation(6, 1),
+                this.CSharpDiagnostic().WithLocation(12, 1),
+                this.CSharpDiagnostic().WithLocation(13, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// This test demonstrates the behavior of SA1137 and its code fix with respect to documentation comments.
         /// Currently both operations ignore documentation comments, but in the future the implementation may be updated
