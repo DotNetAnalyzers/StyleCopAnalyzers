@@ -61,7 +61,7 @@ namespace StyleCop.Analyzers.SpecialRules
 
             public void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
             {
-                if (context.Tree.Options.DocumentationMode != DocumentationMode.Diagnose)
+                if (context.Tree.Options.DocumentationMode == DocumentationMode.None)
                 {
                     Volatile.Write(ref this.documentationAnalysisDisabled, true);
                 }

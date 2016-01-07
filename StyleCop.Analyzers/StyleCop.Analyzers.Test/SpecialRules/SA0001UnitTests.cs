@@ -20,6 +20,7 @@ namespace StyleCop.Analyzers.Test.SpecialRules
         private DocumentationMode documentationMode;
 
         [Theory]
+        [InlineData(DocumentationMode.Parse)]
         [InlineData(DocumentationMode.Diagnose)]
         public async Task TestEnabledDocumentationModesAsync(DocumentationMode documentationMode)
         {
@@ -34,7 +35,6 @@ namespace StyleCop.Analyzers.Test.SpecialRules
 
         [Theory]
         [InlineData(DocumentationMode.None)]
-        [InlineData(DocumentationMode.Parse)]
         public async Task TestDisabledDocumentationModesAsync(DocumentationMode documentationMode)
         {
             var testCode = @"public class Foo
