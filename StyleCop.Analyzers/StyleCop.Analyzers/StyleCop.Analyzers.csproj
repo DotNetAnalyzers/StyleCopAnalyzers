@@ -274,6 +274,7 @@
     <Compile Include="Settings\ObjectModel\EndOfFileHandling.cs" />
     <Compile Include="Settings\ObjectModel\FileNamingConvention.cs" />
     <Compile Include="Settings\ObjectModel\IndentationSettings.cs" />
+    <Compile Include="Settings\ObjectModel\LabelPositioning.cs" />
     <Compile Include="Settings\ObjectModel\LayoutSettings.cs" />
     <Compile Include="Settings\ObjectModel\MaintainabilitySettings.cs" />
     <Compile Include="Settings\ObjectModel\NamingSettings.cs" />

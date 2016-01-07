@@ -1196,6 +1196,33 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Code elements should be properly indented to avoid misinterpretation by readers..
+        /// </summary>
+        internal static string SA1138Description {
+            get {
+                return ResourceManager.GetString("SA1138Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Indent elements correctly.
+        /// </summary>
+        internal static string SA1138MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1138MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Indent elements correctly.
+        /// </summary>
+        internal static string SA1138Title {
+            get {
+                return ResourceManager.GetString("SA1138Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove &apos;this.&apos; prefix.
         /// </summary>
         internal static string SX1101CodeFix {

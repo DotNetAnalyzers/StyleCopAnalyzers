@@ -495,6 +495,15 @@
   <data name="SA1137Title" xml:space="preserve">
     <value>Elements should have the same indentation</value>
   </data>
+  <data name="SA1138Description" xml:space="preserve">
+    <value>Code elements should be properly indented to avoid misinterpretation by readers.</value>
+  </data>
+  <data name="SA1138MessageFormat" xml:space="preserve">
+    <value>Indent elements correctly</value>
+  </data>
+  <data name="SA1138Title" xml:space="preserve">
+    <value>Indent elements correctly</value>
+  </data>
   <data name="SX1101CodeFix" xml:space="preserve">
     <value>Remove 'this.' prefix</value>
   </data>

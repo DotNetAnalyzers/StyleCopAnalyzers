@@ -20,7 +20,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(SA1137ElementsShouldHaveTheSameIndentation.DiagnosticId);
+            ImmutableArray.Create(
+                SA1137ElementsShouldHaveTheSameIndentation.SA1137DiagnosticId,
+                SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId);
 
         /// <inheritdoc/>
         public sealed override FixAllProvider GetFixAllProvider() =>
