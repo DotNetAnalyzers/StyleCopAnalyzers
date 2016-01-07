@@ -102,7 +102,6 @@
     <Compile Include="DocumentationRules\SA1649FileNameMustMatchTypeName.cs" />
     <Compile Include="DocumentationRules\SA1650ElementDocumentationMustBeSpelledCorrectly.cs" />
     <Compile Include="DocumentationRules\SA1651DoNotUsePlaceholderElements.cs" />
-    <Compile Include="DocumentationRules\SA1652EnableXmlDocumentationOutput.cs" />
     <Compile Include="DocumentationRules\StandardTextDiagnosticBase.cs" />
     <Compile Include="ExcludeFromCodeCoverageAttribute.cs" />
     <Compile Include="GeneratedCodeAnalysisExtensions.cs" />
@@ -323,6 +322,7 @@
     </Compile>
     <Compile Include="SpacingRules\TokenSpacingProperties.cs" />
     <Compile Include="SpecialRules\SA0000Roslyn7446Workaround.cs" />
+    <Compile Include="SpecialRules\SA0001XmlCommentAnalysisDisabled.cs" />
     <Compile Include="SpecialRules\SpecialResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

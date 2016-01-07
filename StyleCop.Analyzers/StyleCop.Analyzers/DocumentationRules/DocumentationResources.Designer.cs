@@ -566,33 +566,6 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The project is currently configured to not parse XML documentation comments; all diagnostics for documentation comments are disabled. Enable XML documentation output to enable these diagnostics..
-        /// </summary>
-        internal static string SA1652Description {
-            get {
-                return ResourceManager.GetString("SA1652Description", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Enable XML documentation output.
-        /// </summary>
-        internal static string SA1652MessageFormat {
-            get {
-                return ResourceManager.GetString("SA1652MessageFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Enable XML documentation output.
-        /// </summary>
-        internal static string SA1652Title {
-            get {
-                return ResourceManager.GetString("SA1652Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Gets.
         /// </summary>
         internal static string StartingTextGets {

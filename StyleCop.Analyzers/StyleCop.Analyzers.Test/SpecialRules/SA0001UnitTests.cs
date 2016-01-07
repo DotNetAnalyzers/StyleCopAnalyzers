@@ -1,25 +1,26 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
-namespace StyleCop.Analyzers.Test.DocumentationRules
+namespace StyleCop.Analyzers.Test.SpecialRules
 {
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Analyzers.DocumentationRules;
+    using Analyzers.SpecialRules;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using TestHelper;
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1652EnableXmlDocumentationOutput"/>.
+    /// Unit tests for <see cref="SA0001XmlCommentAnalysisDisabled"/>.
     /// </summary>
-    public class SA1652UnitTests : DiagnosticVerifier
+    public class SA0001UnitTests : DiagnosticVerifier
     {
         private DocumentationMode documentationMode;
 
         [Theory]
+        [InlineData(DocumentationMode.Parse)]
         [InlineData(DocumentationMode.Diagnose)]
         public async Task TestEnabledDocumentationModesAsync(DocumentationMode documentationMode)
         {
@@ -34,7 +35,6 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 
         [Theory]
         [InlineData(DocumentationMode.None)]
-        [InlineData(DocumentationMode.Parse)]
         public async Task TestDisabledDocumentationModesAsync(DocumentationMode documentationMode)
         {
             var testCode = @"public class Foo
@@ -42,10 +42,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                this.CSharpDiagnostic().WithLocation(0, 0)
-            };
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(null, 0, 0);
 
             this.documentationMode = documentationMode;
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -54,7 +51,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1652EnableXmlDocumentationOutput();
+            yield return new SA0001XmlCommentAnalysisDisabled();
         }
 
         protected override Solution CreateSolution(ProjectId projectId, string language)

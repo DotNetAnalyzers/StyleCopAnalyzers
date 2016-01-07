@@ -84,7 +84,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             public static void HandleBaseTypeDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
             {
-                if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+                if (context.GetDocumentationMode() == DocumentationMode.None)
                 {
                     return;
                 }
@@ -109,7 +109,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             public static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
             {
-                if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+                if (context.GetDocumentationMode() == DocumentationMode.None)
                 {
                     return;
                 }
@@ -129,7 +129,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             public static void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
             {
-                if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+                if (context.GetDocumentationMode() == DocumentationMode.None)
                 {
                     return;
                 }
@@ -149,7 +149,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             public static void HandleDestructorDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
             {
-                if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+                if (context.GetDocumentationMode() == DocumentationMode.None)
                 {
                     return;
                 }
@@ -169,7 +169,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             public static void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
             {
-                if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+                if (context.GetDocumentationMode() == DocumentationMode.None)
                 {
                     return;
                 }
@@ -189,7 +189,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             public static void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
             {
-                if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+                if (context.GetDocumentationMode() == DocumentationMode.None)
                 {
                     return;
                 }
@@ -209,7 +209,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             public static void HandleFieldDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
             {
-                if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+                if (context.GetDocumentationMode() == DocumentationMode.None)
                 {
                     return;
                 }
@@ -234,7 +234,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             public static void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
             {
-                if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+                if (context.GetDocumentationMode() == DocumentationMode.None)
                 {
                     return;
                 }
@@ -254,7 +254,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             public static void HandleEventDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
             {
-                if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+                if (context.GetDocumentationMode() == DocumentationMode.None)
                 {
                     return;
                 }
@@ -274,7 +274,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             public static void HandleEventFieldDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
             {
-                if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+                if (context.GetDocumentationMode() == DocumentationMode.None)
                 {
                     return;
                 }

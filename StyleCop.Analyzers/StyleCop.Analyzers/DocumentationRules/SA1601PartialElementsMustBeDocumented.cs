@@ -109,7 +109,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             public static void HandleBaseTypeDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
             {
-                if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+                if (context.GetDocumentationMode() == DocumentationMode.None)
                 {
                     return;
                 }
@@ -133,7 +133,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             public static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
             {
-                if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+                if (context.GetDocumentationMode() == DocumentationMode.None)
                 {
                     return;
                 }

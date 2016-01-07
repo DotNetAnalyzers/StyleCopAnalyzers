@@ -167,7 +167,6 @@
     <Compile Include="DocumentationRules\SA1649UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1650UnitTests.cs" />
     <Compile Include="DocumentationRules\SA1651UnitTests.cs" />
-    <Compile Include="DocumentationRules\SA1652UnitTests.cs" />
     <Compile Include="ExclusionTests.cs" />
     <Compile Include="ExportCodeFixProviderAttributeNameTest.cs" />
     <Compile Include="Helpers\CodeFixVerifier.Helper.cs" />
@@ -360,6 +359,7 @@
     <Compile Include="SpacingRules\SA1026UnitTests.cs" />
     <Compile Include="SpacingRules\SA1027UnitTests.cs" />
     <Compile Include="SpacingRules\SA1028UnitTests.cs" />
+    <Compile Include="SpecialRules\SA0001UnitTests.cs" />
     <Compile Include="Verifiers\CodeFixVerifier.cs" />
     <Compile Include="Verifiers\DiagnosticVerifier.cs" />
   </ItemGroup>

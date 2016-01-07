@@ -74,7 +74,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             public static void HandleEnumMemberDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
             {
-                if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+                if (context.GetDocumentationMode() == DocumentationMode.None)
                 {
                     return;
                 }
