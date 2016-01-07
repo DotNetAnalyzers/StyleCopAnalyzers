@@ -89,5 +89,32 @@ namespace StyleCop.Analyzers.SpecialRules {
                 return ResourceManager.GetString("SA0000Title", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to XML comment analysis can only be performed when the project is configured to parse documentation comments. To enable this functionality, update the project to produce an XML documentation file as part of the build..
+        /// </summary>
+        internal static string SA0001Description {
+            get {
+                return ResourceManager.GetString("SA0001Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to XML comment analysis is disabled due to project configuration.
+        /// </summary>
+        internal static string SA0001MessageFormat {
+            get {
+                return ResourceManager.GetString("SA0001MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to XML comment analysis disabled.
+        /// </summary>
+        internal static string SA0001Title {
+            get {
+                return ResourceManager.GetString("SA0001Title", resourceCulture);
+            }
+        }
     }
 }
