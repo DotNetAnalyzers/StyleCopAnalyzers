@@ -52,7 +52,8 @@ namespace NamespaceName { }
 }
 ";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(null, 0, 0);
+            // This diagnostic is reported without a location
+            DiagnosticResult expected = this.CSharpDiagnostic();
 
             await this.VerifyCSharpDiagnosticAsync(TestCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
