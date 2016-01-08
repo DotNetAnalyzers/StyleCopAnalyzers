@@ -41,6 +41,10 @@ namespace StyleCop.Analyzers
         /// <summary>
         /// Gets the StyleCop settings.
         /// </summary>
+        /// <remarks>
+        /// <para>If a <see cref="JsonException"/> occurs while deserializing the settings file, a default settings
+        /// instance is returned.</para>
+        /// </remarks>
         /// <param name="context">The context that will be used to determine the StyleCop settings.</param>
         /// <param name="cancellationToken">The cancellation token that the operation will observe.</param>
         /// <returns>A <see cref="StyleCopSettings"/> instance that represents the StyleCop settings for the given context.</returns>
@@ -52,15 +56,32 @@ namespace StyleCop.Analyzers
         /// <summary>
         /// Gets the StyleCop settings.
         /// </summary>
+        /// <remarks>
+        /// <para>If a <see cref="JsonException"/> occurs while deserializing the settings file, a default settings
+        /// instance is returned.</para>
+        /// </remarks>
         /// <param name="options">The analyzer options that will be used to determine the StyleCop settings.</param>
         /// <param name="cancellationToken">The cancellation token that the operation will observe.</param>
         /// <returns>A <see cref="StyleCopSettings"/> instance that represents the StyleCop settings for the given context.</returns>
         internal static StyleCopSettings GetStyleCopSettings(this AnalyzerOptions options, CancellationToken cancellationToken)
         {
-            return GetStyleCopSettings(options != null ? options.AdditionalFiles : ImmutableArray.Create<AdditionalText>(), cancellationToken);
+            return GetStyleCopSettings(options, DeserializationFailureBehavior.ReturnDefaultSettings, cancellationToken);
         }
 
-        private static StyleCopSettings GetStyleCopSettings(ImmutableArray<AdditionalText> additionalFiles, CancellationToken cancellationToken)
+        /// <summary>
+        /// Gets the StyleCop settings.
+        /// </summary>
+        /// <param name="options">The analyzer options that will be used to determine the StyleCop settings.</param>
+        /// <param name="failureBehavior">The behavior of the method when a <see cref="JsonException"/> occurs while
+        /// deserializing the settings file.</param>
+        /// <param name="cancellationToken">The cancellation token that the operation will observe.</param>
+        /// <returns>A <see cref="StyleCopSettings"/> instance that represents the StyleCop settings for the given context.</returns>
+        internal static StyleCopSettings GetStyleCopSettings(this AnalyzerOptions options, DeserializationFailureBehavior failureBehavior, CancellationToken cancellationToken)
+        {
+            return GetStyleCopSettings(options != null ? options.AdditionalFiles : ImmutableArray.Create<AdditionalText>(), failureBehavior, cancellationToken);
+        }
+
+        private static StyleCopSettings GetStyleCopSettings(ImmutableArray<AdditionalText> additionalFiles, DeserializationFailureBehavior failureBehavior, CancellationToken cancellationToken)
         {
             try
             {
@@ -74,7 +95,7 @@ namespace StyleCop.Analyzers
                     }
                 }
             }
-            catch (JsonException)
+            catch (JsonException) when (failureBehavior == DeserializationFailureBehavior.ReturnDefaultSettings)
             {
                 // The settings file is invalid -> return the default settings.
             }

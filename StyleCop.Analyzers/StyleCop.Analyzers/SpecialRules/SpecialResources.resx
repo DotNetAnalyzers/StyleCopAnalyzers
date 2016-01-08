@@ -142,4 +142,15 @@ Note that some situations are not affected by the bug:
   <data name="SA0001Title" xml:space="preserve">
     <value>XML comment analysis disabled</value>
   </data>
+  <data name="SA0002Description" xml:space="preserve">
+    <value>Various errors in the stylecop.json file can prevent the file from being loaded by the analyzers. In this case, the default settings are used instead.
+
+{0}</value>
+  </data>
+  <data name="SA0002MessageFormat" xml:space="preserve">
+    <value>The stylecop.json settings file could not be loaded</value>
+  </data>
+  <data name="SA0002Title" xml:space="preserve">
+    <value>Invalid settings file</value>
+  </data>
 </root>

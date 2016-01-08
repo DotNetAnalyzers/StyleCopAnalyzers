@@ -116,5 +116,34 @@ namespace StyleCop.Analyzers.SpecialRules {
                 return ResourceManager.GetString("SA0001Title", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Various errors in the stylecop.json file can prevent the file from being loaded by the analyzers. In this case, the default settings are used instead.
+        ///
+        ///{0}.
+        /// </summary>
+        internal static string SA0002Description {
+            get {
+                return ResourceManager.GetString("SA0002Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The stylecop.json settings file could not be loaded.
+        /// </summary>
+        internal static string SA0002MessageFormat {
+            get {
+                return ResourceManager.GetString("SA0002MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid settings file.
+        /// </summary>
+        internal static string SA0002Title {
+            get {
+                return ResourceManager.GetString("SA0002Title", resourceCulture);
+            }
+        }
     }
 }
