@@ -360,6 +360,7 @@
     <Compile Include="SpacingRules\SA1027UnitTests.cs" />
     <Compile Include="SpacingRules\SA1028UnitTests.cs" />
     <Compile Include="SpecialRules\SA0001UnitTests.cs" />
+    <Compile Include="SpecialRules\SA0002UnitTests.cs" />
     <Compile Include="Verifiers\CodeFixVerifier.cs" />
     <Compile Include="Verifiers\DiagnosticVerifier.cs" />
   </ItemGroup>
