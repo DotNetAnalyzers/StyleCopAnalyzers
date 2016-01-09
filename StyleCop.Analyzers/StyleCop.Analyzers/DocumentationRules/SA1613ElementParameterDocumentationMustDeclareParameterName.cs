@@ -28,7 +28,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// which is missing a <c>name</c> attribute, or which contains an empty <c>name</c> attribute.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class SA1613ElementParameterDocumentationMustDeclareParameterName : ElementDocumentationParameterBase
+    internal class SA1613ElementParameterDocumentationMustDeclareParameterName : ElementDocumentationBase
     {
         /// <summary>
         /// The ID for diagnostics produced by the
@@ -48,7 +48,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// </summary>
         /// <remarks>The presence of a &lt;inheritdoc/&gt; tag should NOT suppress warnings from this diagnostic. See DotNetAnalyzers/StyleCopAnalyzers#631</remarks>
         public SA1613ElementParameterDocumentationMustDeclareParameterName()
-            : base(inheritDocSuppressesWarnings: false)
+            : base(matchElementName: XmlCommentHelper.ParamXmlTag, inheritDocSuppressesWarnings: false)
         {
         }
 
@@ -57,44 +57,42 @@ namespace StyleCop.Analyzers.DocumentationRules
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, IEnumerable<XmlNodeSyntax> syntaxList, XElement completeDocumentation, params Location[] diagnosticLocations)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, IEnumerable<XmlNodeSyntax> syntaxList, params Location[] diagnosticLocations)
         {
-            bool includeElementPresent = completeDocumentation != null;
-            if (includeElementPresent)
-            {
-                var xmlParameterNames = completeDocumentation.Nodes()
-                    .OfType<XElement>()
-                    .Where(e => e.Name == XmlCommentHelper.ParamXmlTag)
-                    .Select(x =>
+            var xmlParameterNames = syntaxList
+                .Where(x => string.Equals(GetName(x)?.ToString(), XmlCommentHelper.ParamXmlTag))
+                .Select(x =>
+                {
+                    var nameAttribute = XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>(x);
+                    var location = x.GetLocation();
+
+                    if (nameAttribute != null)
                     {
-                        var name = x.Attributes().FirstOrDefault(a => a.Name == "name")?.Value;
+                        location = nameAttribute.GetLocation();
+                    }
 
-                        return new Tuple<string, Location>(name, null);
-                    })
-                    .ToImmutableArray();
+                    return new Tuple<string, Location>(nameAttribute?.Identifier?.Identifier.ValueText, location);
+                })
+                .ToImmutableArray();
 
-                VerifyParameters(context, xmlParameterNames, diagnosticLocations.First());
-            }
-            else if (syntaxList != null)
-            {
-                var xmlParameterNames = syntaxList
-                    .Where(x => string.Equals(GetName(x)?.ToString(), XmlCommentHelper.ParamXmlTag))
-                    .Select(x =>
-                    {
-                        var nameAttribute = XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>(x);
-                        var location = x.GetLocation();
+            VerifyParameters(context, xmlParameterNames, diagnosticLocations.First());
+        }
 
-                        if (nameAttribute != null)
-                        {
-                            location = nameAttribute.GetLocation();
-                        }
+        /// <inheritdoc/>
+        protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, XElement completeDocumentation, params Location[] diagnosticLocations)
+        {
+            var xmlParameterNames = completeDocumentation.Nodes()
+                .OfType<XElement>()
+                .Where(e => e.Name == XmlCommentHelper.ParamXmlTag)
+                .Select(x =>
+                {
+                    var name = x.Attributes().FirstOrDefault(a => a.Name == "name")?.Value;
 
-                        return new Tuple<string, Location>(nameAttribute?.Identifier?.Identifier.ValueText, location);
-                    })
-                    .ToImmutableArray();
+                    return new Tuple<string, Location>(name, null);
+                })
+                .ToImmutableArray();
 
-                VerifyParameters(context, xmlParameterNames, diagnosticLocations.First());
-            }
+            VerifyParameters(context, xmlParameterNames, diagnosticLocations.First());
         }
 
         private static void VerifyParameters(SyntaxNodeAnalysisContext context, ImmutableArray<Tuple<string, Location>> documentationParameters, Location identifierLocation)

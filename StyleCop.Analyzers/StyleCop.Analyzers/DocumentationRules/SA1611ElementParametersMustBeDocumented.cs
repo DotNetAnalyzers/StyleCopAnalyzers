@@ -29,7 +29,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// more of its parameters.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class SA1611ElementParametersMustBeDocumented : ElementDocumentationParameterBase
+    internal class SA1611ElementParametersMustBeDocumented : ElementDocumentationBase
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1611ElementParametersMustBeDocumented"/> analyzer.
@@ -44,7 +44,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         public SA1611ElementParametersMustBeDocumented()
-            : base(inheritDocSuppressesWarnings: true)
+            : base(matchElementName: XmlCommentHelper.ParamXmlTag, inheritDocSuppressesWarnings: true)
         {
         }
 
@@ -53,7 +53,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, IEnumerable<XmlNodeSyntax> syntaxList, XElement completeDocumentation, params Location[] diagnosticLocations)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, IEnumerable<XmlNodeSyntax> syntaxList, params Location[] diagnosticLocations)
         {
             var node = context.Node;
             var parameterList = GetParameters(node);
@@ -62,28 +62,34 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            if (completeDocumentation != null)
+            var xmlParameterNames = syntaxList
+                .Select(XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>)
+                .Where(x => x != null)
+                .Select(x => x.Identifier.Identifier.ValueText);
+
+            ReportMissingParameters(context, parameterList, xmlParameterNames);
+        }
+
+        /// <inheritdoc/>
+        protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, XElement completeDocumentation, params Location[] diagnosticLocations)
+        {
+            var node = context.Node;
+            var parameterList = GetParameters(node);
+            if (parameterList == null)
             {
-                // We are working with an <include> element
-                var paramElements = completeDocumentation.Nodes()
-                    .OfType<XElement>()
-                    .Where(e => e.Name == XmlCommentHelper.ParamXmlTag);
-
-                var xmlParameterNames = paramElements
-                    .SelectMany(p => p.Attributes().Where(a => a.Name == "name"))
-                    .Select(a => a.Value);
-
-                ReportMissingParameters(context, parameterList, xmlParameterNames);
+                return;
             }
-            else if (syntaxList != null)
-            {
-                var xmlParameterNames = syntaxList
-                    .Select(XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>)
-                    .Where(x => x != null)
-                    .Select(x => x.Identifier.Identifier.ValueText);
 
-                ReportMissingParameters(context, parameterList, xmlParameterNames);
-            }
+            // We are working with an <include> element
+            var paramElements = completeDocumentation.Nodes()
+                .OfType<XElement>()
+                .Where(e => e.Name == XmlCommentHelper.ParamXmlTag);
+
+            var xmlParameterNames = paramElements
+                .SelectMany(p => p.Attributes().Where(a => a.Name == "name"))
+                .Select(a => a.Value);
+
+            ReportMissingParameters(context, parameterList, xmlParameterNames);
         }
 
         private static IEnumerable<ParameterSyntax> GetParameters(SyntaxNode node)

@@ -16,8 +16,9 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// <summary>
     /// This is the base class for analyzers which examine the <c>&lt;param&gt;</c> text of a documentation comment on an element declaration.
     /// </summary>
-    internal abstract class ElementDocumentationParameterBase : DiagnosticAnalyzer
+    internal abstract class ElementDocumentationBase : DiagnosticAnalyzer
     {
+        private readonly string matchElementName;
         private readonly bool inheritDocSuppressesWarnings;
 
         private readonly Action<CompilationStartAnalysisContext> compilationStartAction;
@@ -28,8 +29,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         private readonly Action<SyntaxNodeAnalysisContext> operatorDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext> conversionOperatorDeclarationAction;
 
-        protected ElementDocumentationParameterBase(bool inheritDocSuppressesWarnings)
+        protected ElementDocumentationBase(string matchElementName, bool inheritDocSuppressesWarnings)
         {
+            this.matchElementName = matchElementName;
             this.inheritDocSuppressesWarnings = inheritDocSuppressesWarnings;
 
             this.compilationStartAction = this.HandleCompilationStart;
@@ -53,12 +55,19 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <param name="context">The current analysis context.</param>
         /// <param name="syntaxList">The <see cref="XmlElementSyntax"/> or <see cref="XmlEmptyElementSyntax"/> of the node
         /// to examine.</param>
+        /// <param name="diagnosticLocations">The location(s) where diagnostics, if any, should be reported.</param>
+        protected abstract void HandleXmlElement(SyntaxNodeAnalysisContext context, IEnumerable<XmlNodeSyntax> syntaxList, params Location[] diagnosticLocations);
+
+        /// <summary>
+        /// Analyzes the top-level <c>&lt;param&gt;</c> elements of a documentation comment.
+        /// </summary>
+        /// <param name="context">The current analysis context.</param>
         /// <param name="completeDocumentation">The complete documentation for the declared symbol, with any
         /// <c>&lt;include&gt;</c> elements expanded. If the XML documentation comment included a <c>&lt;param&gt;</c>
         /// element, this value will be <see langword="null"/>, even if the XML documentation comment also included an
         /// <c>&lt;include&gt;</c> element.</param>
         /// <param name="diagnosticLocations">The location(s) where diagnostics, if any, should be reported.</param>
-        protected abstract void HandleXmlElement(SyntaxNodeAnalysisContext context, IEnumerable<XmlNodeSyntax> syntaxList, XElement completeDocumentation, params Location[] diagnosticLocations);
+        protected abstract void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, XElement completeDocumentation, params Location[] diagnosticLocations);
 
         private void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
@@ -148,16 +157,15 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            XElement completeDocumentation = null;
-            var paramXmlElements = documentation.Content.GetXmlElements(XmlCommentHelper.ParamXmlTag);
-            if (!paramXmlElements.Any())
+            var matchingXmlElements = documentation.Content.GetXmlElements(this.matchElementName);
+            if (!matchingXmlElements.Any())
             {
                 var includedDocumentation = documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag);
                 if (includedDocumentation != null)
                 {
                     var declaration = context.SemanticModel.GetDeclaredSymbol(node, context.CancellationToken);
                     var rawDocumentation = declaration?.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
-                    completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
+                    var completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
 
                     if (this.inheritDocSuppressesWarnings &&
                         completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.InheritdocXmlTag))
@@ -165,10 +173,13 @@ namespace StyleCop.Analyzers.DocumentationRules
                         // Ignore nodes with an <inheritdoc/> tag in the included XML.
                         return;
                     }
+
+                    this.HandleCompleteDocumentation(context, completeDocumentation, locations);
+                    return; // done
                 }
             }
 
-            this.HandleXmlElement(context, paramXmlElements, completeDocumentation, locations);
+            this.HandleXmlElement(context, matchingXmlElements, locations);
         }
     }
 }
