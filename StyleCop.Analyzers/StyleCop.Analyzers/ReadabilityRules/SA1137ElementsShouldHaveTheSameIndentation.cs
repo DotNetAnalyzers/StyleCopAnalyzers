@@ -263,9 +263,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
-        private static void CheckTokens(SyntaxTreeAnalysisContext context, Compilation compilation, StyleCopSettings settings, int? indentationLevel, ImmutableArray<SyntaxToken> tokens)
+        private static void CheckTokens(SyntaxTreeAnalysisContext context, Compilation compilation, StyleCopSettings settings, int? indentationLevel, ImmutableArray<SyntaxToken> tokens, bool reportFirstToken = false)
         {
             DiagnosticDescriptor descriptor = SA1137Descriptor;
+            SyntaxToken originalFirstToken = tokens.FirstOrDefault();
 
             bool enableAbsoluteIndentationAnalysis = !compilation.IsAnalyzerSuppressed(SA1138DiagnosticId);
 
@@ -333,6 +334,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 else
                 {
                     location = indentationTrivia.GetLocation();
+                }
+
+                if (!reportFirstToken && token == originalFirstToken)
+                {
+                    continue;
                 }
 
                 ImmutableDictionary<string, string> properties = ImmutableDictionary.Create<string, string>().SetItem(ExpectedIndentationKey, expectedIndentation);
