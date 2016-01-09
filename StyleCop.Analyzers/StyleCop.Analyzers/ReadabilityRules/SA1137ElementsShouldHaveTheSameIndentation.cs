@@ -552,6 +552,62 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 base.VisitAnonymousObjectCreationExpression(node);
             }
 
+            public override void VisitConstructorDeclaration(ConstructorDeclarationSyntax node)
+            {
+                using (this.AdjustIndentation(1))
+                {
+                    base.VisitConstructorDeclaration(node);
+                }
+            }
+
+            public override void VisitDestructorDeclaration(DestructorDeclarationSyntax node)
+            {
+                using (this.AdjustIndentation(1))
+                {
+                    base.VisitDestructorDeclaration(node);
+                }
+            }
+
+            public override void VisitOperatorDeclaration(OperatorDeclarationSyntax node)
+            {
+                using (this.AdjustIndentation(1))
+                {
+                    base.VisitOperatorDeclaration(node);
+                }
+            }
+
+            public override void VisitConversionOperatorDeclaration(ConversionOperatorDeclarationSyntax node)
+            {
+                using (this.AdjustIndentation(1))
+                {
+                    base.VisitConversionOperatorDeclaration(node);
+                }
+            }
+
+            public override void VisitPropertyDeclaration(PropertyDeclarationSyntax node)
+            {
+                using (this.AdjustIndentation(1))
+                {
+                    base.VisitPropertyDeclaration(node);
+                }
+            }
+
+            public override void VisitEventDeclaration(EventDeclarationSyntax node)
+            {
+                using (this.AdjustIndentation(1))
+                {
+                    base.VisitEventDeclaration(node);
+                }
+            }
+
+            public override void VisitIndexerDeclaration(IndexerDeclarationSyntax node)
+            {
+                using (this.AdjustIndentation(1))
+                {
+                    base.VisitIndexerDeclaration(node);
+                }
+            }
+
             public override void VisitAccessorDeclaration(AccessorDeclarationSyntax node)
             {
                 using (this.AdjustIndentation(0))
