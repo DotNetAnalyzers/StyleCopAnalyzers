@@ -4,9 +4,11 @@
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Linq;
+    using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
@@ -26,7 +28,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     [NoCodeFix("Cannot generate documentation")]
-    internal class SA1614ElementParameterDocumentationMustHaveText : DiagnosticAnalyzer
+    internal class SA1614ElementParameterDocumentationMustHaveText : ElementDocumentationParameterBase
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1614ElementParameterDocumentationMustHaveText"/>
@@ -41,47 +43,68 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
-        private static readonly Action<SyntaxNodeAnalysisContext> XmlElementAction = HandleXmlElement;
-        private static readonly Action<SyntaxNodeAnalysisContext> XmlEmptyElementAction = HandleXmlEmptyElement;
+        public SA1614ElementParameterDocumentationMustHaveText()
+            : base(inheritDocSuppressesWarnings: true)
+        {
+        }
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        public override void Initialize(AnalysisContext context)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, IEnumerable<XmlNodeSyntax> syntaxList, XElement completeDocumentation, params Location[] diagnosticLocations)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
-
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(XmlElementAction, SyntaxKind.XmlElement);
-            context.RegisterSyntaxNodeActionHonorExclusions(XmlEmptyElementAction, SyntaxKind.XmlEmptyElement);
-        }
-
-        private static void HandleXmlElement(SyntaxNodeAnalysisContext context)
-        {
-            XmlElementSyntax emptyElement = context.Node as XmlElementSyntax;
-
-            var name = emptyElement?.StartTag?.Name;
-
-            if (string.Equals(name.ToString(), XmlCommentHelper.ParamXmlTag) && XmlCommentHelper.IsConsideredEmpty(emptyElement))
+            bool includeElementPresent = completeDocumentation != null;
+            if (includeElementPresent)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, emptyElement.GetLocation()));
+                var xmlParameterNames = completeDocumentation.Nodes()
+                    .OfType<XElement>()
+                    .Where(e => e.Name == XmlCommentHelper.ParamXmlTag)
+                    .Select(x =>
+                    {
+                        return new Tuple<bool, Location>(XmlCommentHelper.IsConsideredEmpty(x), null);
+                    })
+                    .ToImmutableArray();
+
+                VerifyParameters(context, xmlParameterNames, diagnosticLocations.First());
+            }
+            else if (syntaxList != null)
+            {
+                var xmlParameterNames = syntaxList
+                    .Where(x => string.Equals(GetName(x)?.ToString(), XmlCommentHelper.ParamXmlTag))
+                    .Select(x =>
+                    {
+                        bool isEmpty = x is XmlEmptyElementSyntax || XmlCommentHelper.IsConsideredEmpty(x);
+                        var location = x.GetLocation();
+
+                        return new Tuple<bool, Location>(isEmpty, location);
+                    })
+                    .ToImmutableArray();
+
+                VerifyParameters(context, xmlParameterNames, diagnosticLocations.First());
             }
         }
 
-        private static void HandleXmlEmptyElement(SyntaxNodeAnalysisContext context)
+        private static void VerifyParameters(SyntaxNodeAnalysisContext context, ImmutableArray<Tuple<bool, Location>> documentationParameters, Location identifierLocation)
         {
-            XmlEmptyElementSyntax emptyElement = context.Node as XmlEmptyElementSyntax;
+            var index = 0;
 
-            if (string.Equals(emptyElement?.Name.ToString(), XmlCommentHelper.ParamXmlTag))
+            foreach (var documentedParameter in documentationParameters)
             {
-                // <param .../> is empty.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, emptyElement.GetLocation()));
+                if (documentedParameter.Item1)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, documentedParameter.Item2 ?? identifierLocation));
+                }
+
+                index++;
             }
+        }
+
+        private static XmlNameSyntax GetName(XmlNodeSyntax element)
+        {
+            return (element as XmlElementSyntax)?.StartTag?.Name
+                ?? (element as XmlEmptyElementSyntax)?.Name;
         }
     }
 }
