@@ -672,6 +672,15 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
             }
 
+            public override void VisitElseClause(ElseClauseSyntax node)
+            {
+                // This clause inherits the indentation from the if statement
+                using (this.AdjustIndentation(0))
+                {
+                    base.VisitElseClause(node);
+                }
+            }
+
             public override void VisitLockStatement(LockStatementSyntax node)
             {
                 using (this.AdjustIndentation(1))
