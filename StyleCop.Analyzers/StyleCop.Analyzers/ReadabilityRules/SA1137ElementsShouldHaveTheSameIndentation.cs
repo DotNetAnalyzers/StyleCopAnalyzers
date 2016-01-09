@@ -263,6 +263,83 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
+        private static void CheckTokens(SyntaxTreeAnalysisContext context, Compilation compilation, StyleCopSettings settings, int? indentationLevel, ImmutableArray<SyntaxToken> tokens)
+        {
+            DiagnosticDescriptor descriptor = SA1137Descriptor;
+
+            bool enableAbsoluteIndentationAnalysis = !compilation.IsAnalyzerSuppressed(SA1138DiagnosticId);
+
+            if (tokens.IsEmpty || (tokens.Length == 1 && !enableAbsoluteIndentationAnalysis))
+            {
+                return;
+            }
+
+            tokens = tokens.RemoveAll(
+                token =>
+                {
+                    return token.IsMissingOrDefault() || !token.IsFirstInLine();
+                });
+
+            if (tokens.IsEmpty || (tokens.Length == 1 && !enableAbsoluteIndentationAnalysis))
+            {
+                return;
+            }
+
+            bool first = true;
+            string expectedIndentation = null;
+            foreach (SyntaxToken token in tokens)
+            {
+                SyntaxTrivia indentationTrivia = token.LeadingTrivia.LastOrDefault();
+                string indentation = indentationTrivia.IsKind(SyntaxKind.WhitespaceTrivia) ? indentationTrivia.ToString() : string.Empty;
+
+                if (first)
+                {
+                    if (enableAbsoluteIndentationAnalysis && indentationLevel != null)
+                    {
+                        descriptor = SA1138Descriptor;
+                        if (settings.Indentation.UseTabs)
+                        {
+                            expectedIndentation = new string('\t', indentationLevel.Value);
+                        }
+                        else
+                        {
+                            expectedIndentation = new string(' ', settings.Indentation.IndentationSize * indentationLevel.Value);
+                        }
+                    }
+                    else
+                    {
+                        expectedIndentation = indentation;
+                    }
+
+                    first = false;
+
+                    if (!enableAbsoluteIndentationAnalysis)
+                    {
+                        continue;
+                    }
+                }
+
+                if (string.Equals(expectedIndentation, indentation, StringComparison.Ordinal))
+                {
+                    // This handles the case where elements are indented properly
+                    continue;
+                }
+
+                Location location;
+                if (indentation.Length == 0)
+                {
+                    location = token.GetLocation();
+                }
+                else
+                {
+                    location = indentationTrivia.GetLocation();
+                }
+
+                ImmutableDictionary<string, string> properties = ImmutableDictionary.Create<string, string>().SetItem(ExpectedIndentationKey, expectedIndentation);
+                context.ReportDiagnostic(Diagnostic.Create(descriptor, location, properties));
+            }
+        }
+
         private static SyntaxToken GetFirstTokenForAnalysis(SyntaxNode node)
         {
             SyntaxToken firstToken = node.GetFirstToken();
@@ -313,6 +390,24 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 get
                 {
                     switch (this.settings.Indentation.IndentBlock)
+                    {
+                    case true:
+                        return 1;
+
+                    case false:
+                        return 0;
+
+                    default:
+                        return null;
+                    }
+                }
+            }
+
+            private int? SwitchSectionIndentation
+            {
+                get
+                {
+                    switch (this.settings.Indentation.IndentSwitchSection)
                     {
                     case true:
                         return 1;
@@ -444,7 +539,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             public override void VisitAccessorList(AccessorListSyntax node)
             {
-                using (this.AdjustIndentation(1))
+                using (this.AdjustIndentation(0))
                 {
                     this.AnalyzeAccessorList(node);
                     base.VisitAccessorList(node);
@@ -528,12 +623,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             public override void VisitSwitchStatement(SwitchStatementSyntax node)
             {
-                int? indentationAmount =
-                    this.settings.Indentation.IndentSwitchSection == null
-                    ? default(int?)
-                    : this.settings.Indentation.IndentSwitchSection == true ? 1 : 0;
-
-                using (this.AdjustIndentation(indentationAmount))
+                using (this.AdjustIndentation(this.SwitchSectionIndentation))
                 {
                     this.AnalyzeSwitchStatement(node);
                     base.VisitSwitchStatement(node);
@@ -556,6 +646,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 using (this.AdjustIndentation(1))
                 {
+                    this.AnalyzeBaseMethodDeclaration(node);
                     base.VisitConstructorDeclaration(node);
                 }
             }
@@ -564,6 +655,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 using (this.AdjustIndentation(1))
                 {
+                    this.AnalyzeBaseMethodDeclaration(node);
                     base.VisitDestructorDeclaration(node);
                 }
             }
@@ -572,6 +664,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 using (this.AdjustIndentation(1))
                 {
+                    this.AnalyzeBaseMethodDeclaration(node);
                     base.VisitOperatorDeclaration(node);
                 }
             }
@@ -580,6 +673,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 using (this.AdjustIndentation(1))
                 {
+                    this.AnalyzeBaseMethodDeclaration(node);
                     base.VisitConversionOperatorDeclaration(node);
                 }
             }
@@ -588,6 +682,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 using (this.AdjustIndentation(1))
                 {
+                    this.AnalyzeBasePropertyDeclaration(node);
                     base.VisitPropertyDeclaration(node);
                 }
             }
@@ -596,6 +691,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 using (this.AdjustIndentation(1))
                 {
+                    this.AnalyzeBasePropertyDeclaration(node);
                     base.VisitEventDeclaration(node);
                 }
             }
@@ -604,14 +700,16 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 using (this.AdjustIndentation(1))
                 {
+                    this.AnalyzeBasePropertyDeclaration(node);
                     base.VisitIndexerDeclaration(node);
                 }
             }
 
             public override void VisitAccessorDeclaration(AccessorDeclarationSyntax node)
             {
-                using (this.AdjustIndentation(0))
+                using (this.AdjustIndentation(1))
                 {
+                    this.AnalyzeAccessorDeclaration(node);
                     base.VisitAccessorDeclaration(node);
                 }
             }
@@ -628,6 +726,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 using (this.AdjustIndentation(1))
                 {
+                    this.AnalyzeCheckedStatement(node);
                     base.VisitCheckedStatement(node);
                 }
             }
@@ -636,6 +735,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 using (this.AdjustIndentation(1))
                 {
+                    this.AnalyzeDoStatement(node);
                     base.VisitDoStatement(node);
                 }
             }
@@ -644,6 +744,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 using (this.AdjustIndentation(1))
                 {
+                    this.AnalyzeFixedStatement(node);
                     base.VisitFixedStatement(node);
                 }
             }
@@ -652,6 +753,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 using (this.AdjustIndentation(1))
                 {
+                    this.AnalyzeForEachStatement(node);
                     base.VisitForEachStatement(node);
                 }
             }
@@ -660,6 +762,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 using (this.AdjustIndentation(1))
                 {
+                    this.AnalyzeForStatement(node);
                     base.VisitForStatement(node);
                 }
             }
@@ -668,6 +771,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 using (this.AdjustIndentation(1))
                 {
+                    this.AnalyzeIfStatement(node);
                     base.VisitIfStatement(node);
                 }
             }
@@ -685,6 +789,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 using (this.AdjustIndentation(1))
                 {
+                    this.AnalyzeLockStatement(node);
                     base.VisitLockStatement(node);
                 }
             }
@@ -694,6 +799,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 // Allow consecutive using statements without nesting indentation.
                 using (this.AdjustIndentation(node.Statement.IsKind(SyntaxKind.UsingStatement) ? 0 : 1))
                 {
+                    this.AnalyzeUsingStatement(node);
                     base.VisitUsingStatement(node);
                 }
             }
@@ -702,6 +808,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 using (this.AdjustIndentation(1))
                 {
+                    this.AnalyzeWhileStatement(node);
                     base.VisitWhileStatement(node);
                 }
             }
@@ -720,6 +827,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             private void AnalyzeNamespaceDeclaration(NamespaceDeclarationSyntax node)
             {
+                var tokens = ImmutableArray.Create(GetFirstTokenForAnalysis(node), node.OpenBraceToken, node.CloseBraceToken);
+                CheckTokens(this.context, this.compilation, this.settings, this.IndentationLevel - 1, tokens);
+
                 var elements = ImmutableList.CreateBuilder<SyntaxNode>();
 
                 elements.AddRange(node.Externs);
@@ -731,6 +841,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             private void AnalyzeTypeDeclaration(TypeDeclarationSyntax node)
             {
+                var tokens = ImmutableArray.Create(GetFirstTokenForAnalysis(node), node.OpenBraceToken, node.CloseBraceToken);
+                CheckTokens(this.context, this.compilation, this.settings, this.IndentationLevel - 1, tokens);
+
                 CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel, node.ConstraintClauses);
 
                 var elements = ImmutableList.CreateBuilder<SyntaxNode>();
@@ -740,6 +853,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             private void AnalyzeEnumDeclaration(EnumDeclarationSyntax node)
             {
+                var tokens = ImmutableArray.Create(GetFirstTokenForAnalysis(node), node.OpenBraceToken, node.CloseBraceToken);
+                CheckTokens(this.context, this.compilation, this.settings, this.IndentationLevel - 1, tokens);
+
                 var elements = ImmutableList.CreateBuilder<SyntaxNode>();
                 foreach (EnumMemberDeclarationSyntax enumMemberDeclaration in node.Members)
                 {
@@ -750,9 +866,28 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel, elements.ToImmutable());
             }
 
+            private void AnalyzeBaseMethodDeclaration(BaseMethodDeclarationSyntax node)
+            {
+                if (node.Body != null)
+                {
+                    var tokens = ImmutableArray.Create(GetFirstTokenForAnalysis(node), node.Body.OpenBraceToken, node.Body.CloseBraceToken);
+                    CheckTokens(this.context, this.compilation, this.settings, this.IndentationLevel - 1, tokens);
+                }
+            }
+
             private void AnalyzeMethodDeclaration(MethodDeclarationSyntax node)
             {
+                this.AnalyzeBaseMethodDeclaration(node);
                 CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel, node.ConstraintClauses);
+            }
+
+            private void AnalyzeBasePropertyDeclaration(BasePropertyDeclarationSyntax node)
+            {
+                if (node.AccessorList != null)
+                {
+                    var tokens = ImmutableArray.Create(GetFirstTokenForAnalysis(node), node.AccessorList.OpenBraceToken, node.AccessorList.CloseBraceToken);
+                    CheckTokens(this.context, this.compilation, this.settings, this.IndentationLevel - 1, tokens);
+                }
             }
 
             private void AnalyzeAccessorList(AccessorListSyntax node)
@@ -760,6 +895,15 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 var elements = ImmutableList.CreateBuilder<SyntaxNode>();
                 AddMembersAndAttributes(elements, node.Accessors);
                 CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel, elements.ToImmutable());
+            }
+
+            private void AnalyzeAccessorDeclaration(AccessorDeclarationSyntax node)
+            {
+                if (node.Body != null)
+                {
+                    var tokens = ImmutableArray.Create(GetFirstTokenForAnalysis(node), node.Body.OpenBraceToken, node.Body.CloseBraceToken);
+                    CheckTokens(this.context, this.compilation, this.settings, this.IndentationLevel - 1, tokens);
+                }
             }
 
             private void AnalyzeVariableDeclaration(VariableDeclarationSyntax node)
@@ -813,12 +957,20 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     statements.Add(statementToAlign);
                 }
 
+                if (node.Parent.IsKind(SyntaxKind.Block))
+                {
+                    CheckTokens(this.context, this.compilation, this.settings, this.IndentationLevel - this.BlockIndentation, ImmutableArray.Create(node.OpenBraceToken, node.CloseBraceToken));
+                }
+
                 CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel, statements.ToImmutable());
                 CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel + this.LabelAdjustment, labeledStatements.ToImmutable());
             }
 
             private void AnalyzeSwitchStatement(SwitchStatementSyntax node)
             {
+                var tokens = ImmutableArray.Create(GetFirstTokenForAnalysis(node), node.OpenBraceToken, node.CloseBraceToken);
+                CheckTokens(this.context, this.compilation, this.settings, this.IndentationLevel - this.SwitchSectionIndentation, tokens);
+
                 var labels = ImmutableList.CreateBuilder<SwitchLabelSyntax>();
                 var statements = ImmutableList.CreateBuilder<StatementSyntax>();
                 var labeledStatements = ImmutableList.CreateBuilder<StatementSyntax>();
@@ -841,6 +993,197 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel, labels.ToImmutable());
                 CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel + this.SwitchStatementAdjustment, statements.ToImmutable());
                 CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel + this.SwitchStatementAdjustment + this.LabelAdjustment, labeledStatements.ToImmutable());
+            }
+
+            private void AnalyzeCheckedStatement(CheckedStatementSyntax node)
+            {
+                if (node.Block != null)
+                {
+                    var tokens = ImmutableArray.Create(GetFirstTokenForAnalysis(node), node.Block.OpenBraceToken, node.Block.CloseBraceToken);
+                    CheckTokens(this.context, this.compilation, this.settings, this.IndentationLevel - 1, tokens);
+                }
+            }
+
+            private void AnalyzeDoStatement(DoStatementSyntax node)
+            {
+                if (node.Statement.IsKind(SyntaxKind.Block))
+                {
+                    BlockSyntax block = (BlockSyntax)node.Statement;
+                    var tokens = ImmutableArray.Create(GetFirstTokenForAnalysis(node), block.OpenBraceToken, block.CloseBraceToken, node.WhileKeyword);
+                    CheckTokens(this.context, this.compilation, this.settings, this.IndentationLevel - 1, tokens);
+                }
+                else if (node.Statement != null)
+                {
+                    CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel, ImmutableList.Create(node.Statement));
+                }
+            }
+
+            private void AnalyzeFixedStatement(FixedStatementSyntax node)
+            {
+                if (node.Statement.IsKind(SyntaxKind.Block))
+                {
+                    BlockSyntax block = (BlockSyntax)node.Statement;
+                    var tokens = ImmutableArray.Create(GetFirstTokenForAnalysis(node), block.OpenBraceToken, block.CloseBraceToken);
+                    CheckTokens(this.context, this.compilation, this.settings, this.IndentationLevel - 1, tokens);
+                }
+                else if (node.Statement != null)
+                {
+                    CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel, ImmutableList.Create(node.Statement));
+                }
+            }
+
+            private void AnalyzeForEachStatement(ForEachStatementSyntax node)
+            {
+                if (node.Statement.IsKind(SyntaxKind.Block))
+                {
+                    BlockSyntax block = (BlockSyntax)node.Statement;
+                    var tokens = ImmutableArray.Create(GetFirstTokenForAnalysis(node), block.OpenBraceToken, block.CloseBraceToken);
+                    CheckTokens(this.context, this.compilation, this.settings, this.IndentationLevel - 1, tokens);
+                }
+                else if (node.Statement != null)
+                {
+                    CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel, ImmutableList.Create(node.Statement));
+                }
+            }
+
+            private void AnalyzeForStatement(ForStatementSyntax node)
+            {
+                if (node.Statement.IsKind(SyntaxKind.Block))
+                {
+                    BlockSyntax block = (BlockSyntax)node.Statement;
+                    var tokens = ImmutableArray.Create(GetFirstTokenForAnalysis(node), block.OpenBraceToken, block.CloseBraceToken);
+                    CheckTokens(this.context, this.compilation, this.settings, this.IndentationLevel - 1, tokens);
+                }
+                else if (node.Statement != null)
+                {
+                    CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel, ImmutableList.Create(node.Statement));
+                }
+            }
+
+            private void AnalyzeIfStatement(IfStatementSyntax node)
+            {
+                if (node.Parent.IsKind(SyntaxKind.ElseClause))
+                {
+                    // Already checked.
+                    return;
+                }
+
+                ImmutableArray<SyntaxToken>.Builder builder = ImmutableArray.CreateBuilder<SyntaxToken>(6);
+                IfStatementSyntax current = node;
+                while (current != null)
+                {
+                    builder.Add(current.IfKeyword);
+                    if (current.Statement.IsKind(SyntaxKind.Block))
+                    {
+                        BlockSyntax block = (BlockSyntax)current.Statement;
+                        builder.Add(block.OpenBraceToken);
+                        builder.Add(block.CloseBraceToken);
+                    }
+                    else if (current.Statement != null)
+                    {
+                        CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel, ImmutableList.Create(current.Statement));
+                    }
+
+                    if (current.Else != null)
+                    {
+                        builder.Add(current.Else.ElseKeyword);
+                        if (current.Else.Statement.IsKind(SyntaxKind.Block))
+                        {
+                            BlockSyntax block = (BlockSyntax)current.Else.Statement;
+                            builder.Add(block.OpenBraceToken);
+                            builder.Add(block.CloseBraceToken);
+
+                            current = null;
+                        }
+                        else if (current.Else.Statement.IsKind(SyntaxKind.IfStatement))
+                        {
+                            current = (IfStatementSyntax)current.Else.Statement;
+                        }
+                        else
+                        {
+                            if (current.Else.Statement != null)
+                            {
+                                CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel, ImmutableList.Create(current.Else.Statement));
+                            }
+
+                            current = null;
+                        }
+                    }
+                    else
+                    {
+                        current = null;
+                    }
+                }
+
+                CheckTokens(this.context, this.compilation, this.settings, this.IndentationLevel - 1, builder.ToImmutable());
+            }
+
+            private void AnalyzeLockStatement(LockStatementSyntax node)
+            {
+                if (node.Statement.IsKind(SyntaxKind.Block))
+                {
+                    BlockSyntax block = (BlockSyntax)node.Statement;
+                    var tokens = ImmutableArray.Create(GetFirstTokenForAnalysis(node), block.OpenBraceToken, block.CloseBraceToken);
+                    CheckTokens(this.context, this.compilation, this.settings, this.IndentationLevel - 1, tokens);
+                }
+                else if (node.Statement != null)
+                {
+                    CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel, ImmutableList.Create(node.Statement));
+                }
+            }
+
+            private void AnalyzeUsingStatement(UsingStatementSyntax node)
+            {
+                if (node.Parent.IsKind(SyntaxKind.UsingStatement))
+                {
+                    // Already checked.
+                    return;
+                }
+
+                ImmutableArray<SyntaxToken>.Builder builder = ImmutableArray.CreateBuilder<SyntaxToken>(3);
+
+                UsingStatementSyntax current = node;
+                while (current != null)
+                {
+                    builder.Add(current.UsingKeyword);
+                    if (current.Statement.IsKind(SyntaxKind.UsingStatement))
+                    {
+                        current = (UsingStatementSyntax)current.Statement;
+                        continue;
+                    }
+                    else if (current.Statement.IsKind(SyntaxKind.Block))
+                    {
+                        BlockSyntax block = (BlockSyntax)current.Statement;
+                        builder.Add(block.OpenBraceToken);
+                        builder.Add(block.CloseBraceToken);
+                        current = null;
+                    }
+                    else
+                    {
+                        if (current.Statement != null)
+                        {
+                            CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel, ImmutableList.Create(current.Statement));
+                        }
+
+                        current = null;
+                    }
+                }
+
+                CheckTokens(this.context, this.compilation, this.settings, this.IndentationLevel - 1, builder.ToImmutable());
+            }
+
+            private void AnalyzeWhileStatement(WhileStatementSyntax node)
+            {
+                if (node.Statement.IsKind(SyntaxKind.Block))
+                {
+                    BlockSyntax block = (BlockSyntax)node.Statement;
+                    var tokens = ImmutableArray.Create(GetFirstTokenForAnalysis(node), block.OpenBraceToken, block.CloseBraceToken);
+                    CheckTokens(this.context, this.compilation, this.settings, this.IndentationLevel - 1, tokens);
+                }
+                else if (node.Statement != null)
+                {
+                    CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel, ImmutableList.Create(node.Statement));
+                }
             }
 
             private void AnalyzeInitializerExpression(InitializerExpressionSyntax node)

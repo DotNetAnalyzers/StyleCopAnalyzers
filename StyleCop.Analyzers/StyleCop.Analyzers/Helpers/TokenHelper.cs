@@ -26,7 +26,7 @@ namespace StyleCop.Analyzers.Helpers
             var fullLineSpan = token.SyntaxTree.GetLineSpan(token.FullSpan);
 
             bool firstInLine;
-            if (token.SyntaxTree == null || fullLineSpan.StartLinePosition.Character == 0)
+            if (fullLineSpan.StartLinePosition.Character == 0)
             {
                 firstInLine = true;
             }
