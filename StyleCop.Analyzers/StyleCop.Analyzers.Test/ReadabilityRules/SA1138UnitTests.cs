@@ -1949,6 +1949,667 @@ Z = 0,
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestDestructorDeclarationAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+~ClassName()
+{
+return;
+}
+}
+";
+            string fixedCode = @"
+class ClassName
+{
+    ~ClassName()
+    {
+        return;
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(4, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(5, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(6, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(7, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestOperatorDeclarationAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+public static bool operator !(ClassName obj)
+{
+return false;
+}
+}
+";
+            string fixedCode = @"
+class ClassName
+{
+    public static bool operator !(ClassName obj)
+    {
+        return false;
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(4, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(5, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(6, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(7, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestConversionOperatorDeclarationAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+public static explicit operator bool(ClassName obj)
+{
+return false;
+}
+}
+";
+            string fixedCode = @"
+class ClassName
+{
+    public static explicit operator bool(ClassName obj)
+    {
+        return false;
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(4, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(5, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(6, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(7, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestCheckedStatementAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    void MethodName()
+    {
+checked
+{
+int y = 3 + 2;
+}
+
+unchecked
+{
+int y = 3 + 2;
+}
+    }
+}
+";
+            string fixedCode = @"
+class ClassName
+{
+    void MethodName()
+    {
+        checked
+        {
+            int y = 3 + 2;
+        }
+
+        unchecked
+        {
+            int y = 3 + 2;
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(6, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(7, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(8, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(9, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(11, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(12, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(13, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(14, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestDoStatementAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    void MethodName()
+    {
+do
+{
+int y = 3 + 2;
+}
+while (true);
+    }
+}
+";
+            string fixedCode = @"
+class ClassName
+{
+    void MethodName()
+    {
+        do
+        {
+            int y = 3 + 2;
+        }
+        while (true);
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(6, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(7, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(8, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(9, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(10, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestFixedStatementAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    unsafe void MethodName()
+    {
+        int[] x = new int[1];
+fixed (int* p = &x[0])
+{
+int y = 3 + 2;
+}
+    }
+}
+";
+            string fixedCode = @"
+class ClassName
+{
+    unsafe void MethodName()
+    {
+        int[] x = new int[1];
+        fixed (int* p = &x[0])
+        {
+            int y = 3 + 2;
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(7, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(8, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(9, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(10, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestForEachStatementAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    void MethodName()
+    {
+foreach (int x in new int[3])
+{
+int y = 3 + 2;
+}
+    }
+}
+";
+            string fixedCode = @"
+class ClassName
+{
+    void MethodName()
+    {
+        foreach (int x in new int[3])
+        {
+            int y = 3 + 2;
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(6, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(7, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(8, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(9, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestForStatementAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    void MethodName()
+    {
+for (int i = 0; i < 3; i++)
+{
+int y = 3 + 2;
+}
+    }
+}
+";
+            string fixedCode = @"
+class ClassName
+{
+    void MethodName()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            int y = 3 + 2;
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(6, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(7, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(8, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(9, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestIfStatementAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    void MethodName()
+    {
+if (1 == 2)
+{
+int y = 3 + 2;
+}
+else if (2 == 3)
+{
+int y = 3 + 2;
+}
+else
+{
+int y = 3 + 2;
+}
+
+if (1 == 2)
+return;
+else if (2 == 3)
+{
+int y = 3 + 2;
+}
+else
+{
+int y = 3 + 2;
+}
+
+if (1 == 2)
+{
+int y = 3 + 2;
+}
+else if (2 == 3)
+return;
+else
+{
+int y = 3 + 2;
+}
+
+if (1 == 2)
+{
+int y = 3 + 2;
+}
+else if (2 == 3)
+{
+int y = 3 + 2;
+}
+else
+return;
+
+if (1 == 2)
+{
+int y = 3 + 2;
+}
+else
+{
+if (2 == 3)
+{
+int y = 3 + 2;
+}
+else
+{
+return;
+}
+}
+    }
+}
+";
+            string fixedCode = @"
+class ClassName
+{
+    void MethodName()
+    {
+        if (1 == 2)
+        {
+            int y = 3 + 2;
+        }
+        else if (2 == 3)
+        {
+                int y = 3 + 2;
+        }
+        else
+        {
+                int y = 3 + 2;
+        }
+
+        if (1 == 2)
+            return;
+        else if (2 == 3)
+        {
+                int y = 3 + 2;
+        }
+        else
+        {
+                int y = 3 + 2;
+        }
+
+        if (1 == 2)
+        {
+            int y = 3 + 2;
+        }
+        else if (2 == 3)
+            return;
+        else
+        {
+                int y = 3 + 2;
+        }
+
+        if (1 == 2)
+        {
+            int y = 3 + 2;
+        }
+        else if (2 == 3)
+        {
+                int y = 3 + 2;
+        }
+        else
+            return;
+
+        if (1 == 2)
+        {
+            int y = 3 + 2;
+        }
+        else
+        {
+            if (2 == 3)
+            {
+                int y = 3 + 2;
+            }
+            else
+            {
+                return;
+            }
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(6, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(7, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(8, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(9, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(10, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(11, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(12, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(13, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(14, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(15, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(16, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(17, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(19, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(20, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(21, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(22, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(23, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(24, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(25, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(26, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(27, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(28, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(30, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(31, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(32, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(33, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(34, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(35, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(36, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(37, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(38, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(39, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(41, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(42, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(43, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(44, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(45, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(46, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(47, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(48, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(49, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(50, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(52, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(53, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(54, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(55, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(56, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(57, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(58, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(59, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(60, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(61, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(62, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(63, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(64, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(65, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(66, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestLockStatementAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    void MethodName()
+    {
+lock (new object())
+{
+int y = 3 + 2;
+}
+    }
+}
+";
+            string fixedCode = @"
+class ClassName
+{
+    void MethodName()
+    {
+        lock (new object())
+        {
+            int y = 3 + 2;
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(6, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(7, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(8, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(9, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestUsingStatementAsync()
+        {
+            string testCode = @"
+using System;
+class ClassName
+{
+    void MethodName()
+    {
+using (default(IDisposable))
+{
+int y = 3 + 2;
+}
+
+using (default(IDisposable))
+using (default(IDisposable))
+{
+int y = 3 + 2;
+}
+
+using (default(IDisposable))
+{
+using (default(IDisposable))
+{
+int y = 3 + 2;
+}
+}
+    }
+}
+";
+            string fixedCode = @"
+using System;
+class ClassName
+{
+    void MethodName()
+    {
+        using (default(IDisposable))
+        {
+            int y = 3 + 2;
+        }
+
+        using (default(IDisposable))
+    using (default(IDisposable))
+    {
+            int y = 3 + 2;
+    }
+
+        using (default(IDisposable))
+        {
+            using (default(IDisposable))
+            {
+                int y = 3 + 2;
+            }
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(7, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(8, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(9, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(10, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(12, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(13, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(14, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(15, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(16, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(18, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(19, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(20, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(21, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(22, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(23, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(24, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
