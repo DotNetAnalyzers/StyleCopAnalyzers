@@ -75,7 +75,13 @@ namespace StyleCop.Analyzers.DocumentationRules
             DocumentationCommentTriviaSyntax documentationComment =
                 methodDeclarationSyntax?.GetDocumentationCommentTriviaSyntax()
                 ?? delegateDeclarationSyntax?.GetDocumentationCommentTriviaSyntax();
-            if (documentationComment == null)
+            bool canIgnoreDocumentation =
+                documentationComment == null
+                || documentationComment.Content
+                    .Where(x => x is XmlElementSyntax || x is XmlEmptyElementSyntax)
+                    .All(x => string.Equals(GetName(x)?.ToString(), XmlCommentHelper.IncludeXmlTag));
+
+            if (canIgnoreDocumentation)
             {
                 return document;
             }
@@ -222,6 +228,12 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             return false;
+        }
+
+        private static XmlNameSyntax GetName(XmlNodeSyntax element)
+        {
+            return (element as XmlElementSyntax)?.StartTag?.Name
+                ?? (element as XmlEmptyElementSyntax)?.Name;
         }
 
         private static SyntaxTrivia GetLastDocumentationCommentExteriorTrivia(SyntaxNode node)
