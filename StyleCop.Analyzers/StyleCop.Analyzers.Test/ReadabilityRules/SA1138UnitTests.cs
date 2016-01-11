@@ -1302,21 +1302,21 @@ using System;
 
 [My]
 [
-        My]
+    My]
 [
-        My, My]
+    My, My]
 class TypeName1
 {
 }
 
 [
-        My,
-        My,
-        My]
+    My,
+    My,
+    My]
 [
-        My,
-        My,
-        My]
+    My,
+    My,
+    My]
 class TypeName2
 {
 }
@@ -1327,12 +1327,12 @@ class MyAttribute : Attribute { }
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(6, 1),
-                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(8, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(14, 1),
                 this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(15, 1),
                 this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(16, 1),
                 this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(18, 1),
                 this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(19, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(20, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

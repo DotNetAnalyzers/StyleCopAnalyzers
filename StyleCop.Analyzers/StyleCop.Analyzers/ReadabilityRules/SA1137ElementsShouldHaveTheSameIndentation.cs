@@ -593,7 +593,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             public override void VisitAttributeList(AttributeListSyntax node)
             {
-                using (this.AdjustIndentation(1))
+                // Indentation is provided by the owner of the attribute list unless the owner is the compilation unit
+                // itself (assembly and module attributes).
+                int adjustment = node.Parent.IsKind(SyntaxKind.CompilationUnit) ? 1 : 0;
+                using (this.AdjustIndentation(adjustment))
                 {
                     this.AnalyzeAttributeList(node);
                     base.VisitAttributeList(node);
