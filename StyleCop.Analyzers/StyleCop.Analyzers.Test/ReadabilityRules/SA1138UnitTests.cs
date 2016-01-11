@@ -1110,10 +1110,10 @@ class ClassName
         }
 
         using (default(IDisposable))
-    using (default(IDisposable))
-    {
+        using (default(IDisposable))
+        {
             int y = 3 + 2;
-    }
+        }
 
         using (default(IDisposable))
         {
@@ -1127,8 +1127,8 @@ class ClassName
             return;
 
         using (default(IDisposable))
-    using (default(IDisposable))
-        return;
+        using (default(IDisposable))
+            return;
     }
 }
 ";

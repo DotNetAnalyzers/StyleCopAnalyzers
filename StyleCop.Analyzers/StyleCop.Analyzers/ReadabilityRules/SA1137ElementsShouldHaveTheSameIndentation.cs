@@ -807,7 +807,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             public override void VisitUsingStatement(UsingStatementSyntax node)
             {
                 // Allow consecutive using statements without nesting indentation.
-                using (this.AdjustIndentation(node.Statement.IsKind(SyntaxKind.UsingStatement) ? 0 : 1))
+                int adjustment = node.Parent.IsKind(SyntaxKind.UsingStatement) ? 0 : 1;
+                using (this.AdjustIndentation(adjustment))
                 {
                     this.AnalyzeUsingStatement(node);
                     base.VisitUsingStatement(node);
