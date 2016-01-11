@@ -778,7 +778,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             public override void VisitIfStatement(IfStatementSyntax node)
             {
-                using (this.AdjustIndentation(1))
+                int adjustment = node.Parent.IsKind(SyntaxKind.ElseClause) ? 0 : 1;
+                using (this.AdjustIndentation(adjustment))
                 {
                     this.AnalyzeIfStatement(node);
                     base.VisitIfStatement(node);

@@ -888,22 +888,22 @@ class ClassName
         }
         else if (2 == 3)
         {
-                int y = 3 + 2;
+            int y = 3 + 2;
         }
         else
         {
-                int y = 3 + 2;
+            int y = 3 + 2;
         }
 
         if (1 == 2)
             return;
         else if (2 == 3)
         {
-                int y = 3 + 2;
+            int y = 3 + 2;
         }
         else
         {
-                int y = 3 + 2;
+            int y = 3 + 2;
         }
 
         if (1 == 2)
@@ -914,7 +914,7 @@ class ClassName
             return;
         else
         {
-                int y = 3 + 2;
+            int y = 3 + 2;
         }
 
         if (1 == 2)
@@ -923,7 +923,7 @@ class ClassName
         }
         else if (2 == 3)
         {
-                int y = 3 + 2;
+            int y = 3 + 2;
         }
         else
             return;
