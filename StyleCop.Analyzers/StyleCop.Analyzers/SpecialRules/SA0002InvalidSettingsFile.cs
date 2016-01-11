@@ -49,7 +49,7 @@ namespace StyleCop.Analyzers.SpecialRules
             }
             catch (JsonException ex)
             {
-                string details = ex.ToString();
+                string details = ex.Message;
                 string completeDescription = string.Format(Description.ToString(CultureInfo.CurrentCulture), details);
 
                 var completeDescriptor = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpecialRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, completeDescription, HelpLink);
