@@ -2187,6 +2187,12 @@ while (true);
 do
 return;
 while (true);
+
+do
+do
+return;
+while (true);
+while (true);
     }
 }
 ";
@@ -2204,6 +2210,12 @@ class ClassName
         do
             return;
 while (true);
+
+        do
+            do
+                return;
+while (true);
+while (true);
     }
 }
 ";
@@ -2217,6 +2229,9 @@ while (true);
                 this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(10, 1),
                 this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(12, 1),
                 this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(13, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(16, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(17, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(18, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -2240,6 +2255,10 @@ int y = 3 + 2;
 
 fixed (int* p = &x[0])
 return;
+
+fixed (int* p = &x[0])
+fixed (int* q = &x[0])
+return;
     }
 }
 ";
@@ -2256,6 +2275,10 @@ class ClassName
 
         fixed (int* p = &x[0])
             return;
+
+        fixed (int* p = &x[0])
+            fixed (int* q = &x[0])
+                return;
     }
 }
 ";
@@ -2268,6 +2291,9 @@ class ClassName
                 this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(10, 1),
                 this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(12, 1),
                 this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(13, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(15, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(16, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(17, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -2290,6 +2316,10 @@ int y = 3 + 2;
 
 foreach (int x in new int[3])
 return;
+
+foreach (int x in new int[3])
+foreach (int y in new int[3])
+return;
     }
 }
 ";
@@ -2305,6 +2335,10 @@ class ClassName
 
         foreach (int x in new int[3])
             return;
+
+        foreach (int x in new int[3])
+            foreach (int y in new int[3])
+                return;
     }
 }
 ";
@@ -2317,6 +2351,9 @@ class ClassName
                 this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(9, 1),
                 this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(11, 1),
                 this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(12, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(14, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(15, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(16, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -2339,6 +2376,10 @@ int y = 3 + 2;
 
 for (int i = 0; i < 3; i++)
 return;
+
+for (int i = 0; i < 3; i++)
+for (int j = 0; j < 3; j++)
+return;
     }
 }
 ";
@@ -2354,6 +2395,10 @@ class ClassName
 
         for (int i = 0; i < 3; i++)
             return;
+
+        for (int i = 0; i < 3; i++)
+            for (int j = 0; j < 3; j++)
+                return;
     }
 }
 ";
@@ -2366,6 +2411,9 @@ class ClassName
                 this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(9, 1),
                 this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(11, 1),
                 this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(12, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(14, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(15, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(16, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -2596,6 +2644,10 @@ int y = 3 + 2;
 
 lock (new object())
 return;
+
+lock (new object())
+lock (new object())
+return;
     }
 }
 ";
@@ -2611,6 +2663,10 @@ class ClassName
 
         lock (new object())
             return;
+
+        lock (new object())
+            lock (new object())
+                return;
     }
 }
 ";
@@ -2623,6 +2679,9 @@ class ClassName
                 this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(9, 1),
                 this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(11, 1),
                 this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(12, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(14, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(15, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(16, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -2747,6 +2806,10 @@ int y = 3 + 2;
 
 while (true)
 return;
+
+while (true)
+while (true)
+return;
     }
 }
 ";
@@ -2762,6 +2825,10 @@ class ClassName
 
         while (true)
             return;
+
+        while (true)
+            while (true)
+                return;
     }
 }
 ";
@@ -2774,6 +2841,9 @@ class ClassName
                 this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(9, 1),
                 this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(11, 1),
                 this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(12, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(14, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(15, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(16, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
