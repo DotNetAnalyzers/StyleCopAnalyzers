@@ -1006,11 +1006,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             private void AnalyzeCheckedStatement(CheckedStatementSyntax node)
             {
-                if (node.Block != null)
-                {
-                    var tokens = ImmutableArray.Create(GetFirstTokenForAnalysis(node), node.Block.OpenBraceToken, node.Block.CloseBraceToken);
-                    CheckTokens(this.context, this.compilation, this.settings, this.IndentationLevel - 1, tokens);
-                }
+                var tokens = ImmutableArray.Create(GetFirstTokenForAnalysis(node), node.Block.OpenBraceToken, node.Block.CloseBraceToken);
+                CheckTokens(this.context, this.compilation, this.settings, this.IndentationLevel - 1, tokens);
             }
 
             private void AnalyzeDoStatement(DoStatementSyntax node)
@@ -1021,7 +1018,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     var tokens = ImmutableArray.Create(GetFirstTokenForAnalysis(node), block.OpenBraceToken, block.CloseBraceToken, node.WhileKeyword);
                     CheckTokens(this.context, this.compilation, this.settings, this.IndentationLevel - 1, tokens);
                 }
-                else if (node.Statement != null)
+                else
                 {
                     CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel, ImmutableList.Create(node.Statement));
                 }
@@ -1035,7 +1032,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     var tokens = ImmutableArray.Create(GetFirstTokenForAnalysis(node), block.OpenBraceToken, block.CloseBraceToken);
                     CheckTokens(this.context, this.compilation, this.settings, this.IndentationLevel - 1, tokens);
                 }
-                else if (node.Statement != null)
+                else
                 {
                     CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel, ImmutableList.Create(node.Statement));
                 }
@@ -1049,7 +1046,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     var tokens = ImmutableArray.Create(GetFirstTokenForAnalysis(node), block.OpenBraceToken, block.CloseBraceToken);
                     CheckTokens(this.context, this.compilation, this.settings, this.IndentationLevel - 1, tokens);
                 }
-                else if (node.Statement != null)
+                else
                 {
                     CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel, ImmutableList.Create(node.Statement));
                 }
@@ -1063,7 +1060,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     var tokens = ImmutableArray.Create(GetFirstTokenForAnalysis(node), block.OpenBraceToken, block.CloseBraceToken);
                     CheckTokens(this.context, this.compilation, this.settings, this.IndentationLevel - 1, tokens);
                 }
-                else if (node.Statement != null)
+                else
                 {
                     CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel, ImmutableList.Create(node.Statement));
                 }
@@ -1088,7 +1085,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                         builder.Add(block.OpenBraceToken);
                         builder.Add(block.CloseBraceToken);
                     }
-                    else if (current.Statement != null)
+                    else
                     {
                         CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel, ImmutableList.Create(current.Statement));
                     }
@@ -1110,10 +1107,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                         }
                         else
                         {
-                            if (current.Else.Statement != null)
-                            {
-                                CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel, ImmutableList.Create(current.Else.Statement));
-                            }
+                            CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel, ImmutableList.Create(current.Else.Statement));
 
                             current = null;
                         }
@@ -1135,7 +1129,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     var tokens = ImmutableArray.Create(GetFirstTokenForAnalysis(node), block.OpenBraceToken, block.CloseBraceToken);
                     CheckTokens(this.context, this.compilation, this.settings, this.IndentationLevel - 1, tokens);
                 }
-                else if (node.Statement != null)
+                else
                 {
                     CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel, ImmutableList.Create(node.Statement));
                 }
@@ -1169,10 +1163,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     }
                     else
                     {
-                        if (current.Statement != null)
-                        {
-                            CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel, ImmutableList.Create(current.Statement));
-                        }
+                        CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel, ImmutableList.Create(current.Statement));
 
                         current = null;
                     }
@@ -1189,7 +1180,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     var tokens = ImmutableArray.Create(GetFirstTokenForAnalysis(node), block.OpenBraceToken, block.CloseBraceToken);
                     CheckTokens(this.context, this.compilation, this.settings, this.IndentationLevel - 1, tokens);
                 }
-                else if (node.Statement != null)
+                else
                 {
                     CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel, ImmutableList.Create(node.Statement));
                 }
