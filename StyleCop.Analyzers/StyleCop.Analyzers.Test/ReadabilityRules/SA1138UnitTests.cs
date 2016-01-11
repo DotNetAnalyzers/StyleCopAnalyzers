@@ -1207,6 +1207,67 @@ class Container2
         }
 
         [Fact]
+        public async Task TestAssemblyAttributeListAsync()
+        {
+            string testCode = @"
+using System;
+
+[assembly: My]
+[assembly:
+    My]
+[assembly:
+    My, My]
+
+[assembly:
+        My,
+      My,
+My]
+[assembly:
+My,
+      My,
+        My]
+
+[AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
+class MyAttribute : Attribute { }
+";
+            string fixedCode = @"
+using System;
+
+[assembly: My]
+[assembly:
+    My]
+[assembly:
+    My, My]
+
+[assembly:
+    My,
+    My,
+    My]
+[assembly:
+    My,
+    My,
+    My]
+
+[AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
+class MyAttribute : Attribute { }
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(11, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(12, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(13, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(15, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(16, 1),
+                this.CSharpDiagnostic(SA1137ElementsShouldHaveTheSameIndentation.SA1138DiagnosticId).WithLocation(17, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestAttributeListAsync()
         {
             string testCode = @"
