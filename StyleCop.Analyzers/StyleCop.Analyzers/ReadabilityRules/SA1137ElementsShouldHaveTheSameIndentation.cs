@@ -1012,16 +1012,21 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             private void AnalyzeDoStatement(DoStatementSyntax node)
             {
+                ImmutableArray<SyntaxToken> tokens;
+
                 if (node.Statement.IsKind(SyntaxKind.Block))
                 {
                     BlockSyntax block = (BlockSyntax)node.Statement;
-                    var tokens = ImmutableArray.Create(GetFirstTokenForAnalysis(node), block.OpenBraceToken, block.CloseBraceToken, node.WhileKeyword);
-                    CheckTokens(this.context, this.compilation, this.settings, this.IndentationLevel - 1, tokens);
+                    tokens = ImmutableArray.Create(GetFirstTokenForAnalysis(node), block.OpenBraceToken, block.CloseBraceToken, node.WhileKeyword);
                 }
                 else
                 {
+                    tokens = ImmutableArray.Create(GetFirstTokenForAnalysis(node), node.WhileKeyword);
+
                     CheckElements(this.context, this.compilation, this.settings, this.IndentationLevel, ImmutableList.Create(node.Statement));
                 }
+
+                CheckTokens(this.context, this.compilation, this.settings, this.IndentationLevel - 1, tokens);
             }
 
             private void AnalyzeFixedStatement(FixedStatementSyntax node)
