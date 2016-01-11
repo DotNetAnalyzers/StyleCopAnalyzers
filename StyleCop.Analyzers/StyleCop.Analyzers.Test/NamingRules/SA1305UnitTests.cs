@@ -13,7 +13,6 @@ namespace StyleCop.Analyzers.Test.NamingRules
 
     public class SA1305UnitTests : DiagnosticVerifier
     {
-        private const string SettingsFileName = "stylecop.json";
         private const string DefaultTestSettings = @"
 {
   ""settings"": {

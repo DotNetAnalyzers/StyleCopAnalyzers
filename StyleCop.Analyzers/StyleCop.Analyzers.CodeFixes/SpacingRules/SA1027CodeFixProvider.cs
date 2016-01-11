@@ -15,6 +15,7 @@ namespace StyleCop.Analyzers.SpacingRules
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Text;
+    using Settings.ObjectModel;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1027TabsMustNotBeUsed"/>.
@@ -51,12 +52,12 @@ namespace StyleCop.Analyzers.SpacingRules
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
-            var indentationOptions = IndentationOptions.FromDocument(document);
+            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
             SourceText sourceText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
-            return document.WithText(sourceText.WithChanges(FixDiagnostic(indentationOptions, sourceText, diagnostic)));
+            return document.WithText(sourceText.WithChanges(FixDiagnostic(settings.Indentation, sourceText, diagnostic)));
         }
 
-        private static TextChange FixDiagnostic(IndentationOptions indentationOptions, SourceText sourceText, Diagnostic diagnostic)
+        private static TextChange FixDiagnostic(IndentationSettings indentationSettings, SourceText sourceText, Diagnostic diagnostic)
         {
             TextSpan span = diagnostic.Location.SourceSpan;
 
@@ -69,8 +70,8 @@ namespace StyleCop.Analyzers.SpacingRules
                 char c = text[i];
                 if (c == '\t')
                 {
-                    var offsetWithinTabColumn = column % indentationOptions.TabSize;
-                    var spaceCount = indentationOptions.TabSize - offsetWithinTabColumn;
+                    var offsetWithinTabColumn = column % indentationSettings.TabSize;
+                    var spaceCount = indentationSettings.TabSize - offsetWithinTabColumn;
 
                     if (i >= span.Start - startLine.Start)
                     {
@@ -115,13 +116,13 @@ namespace StyleCop.Analyzers.SpacingRules
                     return null;
                 }
 
-                var indentationOptions = IndentationOptions.FromDocument(document);
+                var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, fixAllContext.CancellationToken);
                 SourceText sourceText = await document.GetTextAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
 
                 List<TextChange> changes = new List<TextChange>();
                 foreach (var diagnostic in diagnostics)
                 {
-                    changes.Add(FixDiagnostic(indentationOptions, sourceText, diagnostic));
+                    changes.Add(FixDiagnostic(settings.Indentation, sourceText, diagnostic));
                 }
 
                 changes.Sort((left, right) => left.Span.Start.CompareTo(right.Span.Start));

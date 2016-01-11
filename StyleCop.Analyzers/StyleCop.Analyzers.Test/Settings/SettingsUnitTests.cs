@@ -165,7 +165,7 @@ namespace StyleCop.Analyzers.Test.Settings
             var document = solution.GetDocument(documentId);
             var syntaxTree = await document.GetSyntaxTreeAsync().ConfigureAwait(false);
 
-            var stylecopJSONFile = new AdditionalTextHelper("stylecop.json", stylecopJSON);
+            var stylecopJSONFile = new AdditionalTextHelper(SettingsHelper.SettingsFileName, stylecopJSON);
             var additionalFiles = ImmutableArray.Create<AdditionalText>(stylecopJSONFile);
             var analyzerOptions = new AnalyzerOptions(additionalFiles);
 

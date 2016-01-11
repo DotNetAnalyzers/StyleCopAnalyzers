@@ -12,6 +12,7 @@ namespace TestHelper
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Formatting;
     using Xunit;
 
     /// <summary>
@@ -19,6 +20,55 @@ namespace TestHelper
     /// </summary>
     public abstract partial class DiagnosticVerifier
     {
+        private const int DefaultIndentationSize = 4;
+        private const int DefaultTabSize = 4;
+        private const bool DefaultUseTabs = false;
+
+        public DiagnosticVerifier()
+        {
+            this.IndentationSize = DefaultIndentationSize;
+            this.TabSize = DefaultTabSize;
+            this.UseTabs = DefaultUseTabs;
+        }
+
+        /// <summary>
+        /// Gets or sets the value of the <see cref="FormattingOptions.IndentationSize"/> to apply to the test
+        /// workspace.
+        /// </summary>
+        /// <value>
+        /// The value of the <see cref="FormattingOptions.IndentationSize"/> to apply to the test workspace.
+        /// </value>
+        public int IndentationSize
+        {
+            get;
+            protected set;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the <see cref="FormattingOptions.UseTabs"/> option is applied to the
+        /// test workspace.
+        /// </summary>
+        /// <value>
+        /// The value of the <see cref="FormattingOptions.UseTabs"/> to apply to the test workspace.
+        /// </value>
+        public bool UseTabs
+        {
+            get;
+            protected set;
+        }
+
+        /// <summary>
+        /// Gets or sets the value of the <see cref="FormattingOptions.TabSize"/> to apply to the test workspace.
+        /// </summary>
+        /// <value>
+        /// The value of the <see cref="FormattingOptions.TabSize"/> to apply to the test workspace.
+        /// </value>
+        public int TabSize
+        {
+            get;
+            protected set;
+        }
+
         protected static DiagnosticResult[] EmptyDiagnosticResults { get; } = { };
 
         /// <summary>

@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.Helpers
 {
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Settings.ObjectModel;
     using StyleCop.Analyzers.Helpers.ObjectPools;
 
     /// <summary>
@@ -39,39 +40,39 @@ namespace StyleCop.Analyzers.Helpers
         /// <summary>
         /// Gets the number of steps that the given node is indented.
         /// </summary>
-        /// <param name="indentationOptions">The indentation options to use.</param>
+        /// <param name="indentationSettings">The indentation settings to use.</param>
         /// <param name="node">The node to inspect.</param>
         /// <returns>The number of steps that the node is indented.</returns>
-        public static int GetIndentationSteps(IndentationOptions indentationOptions, SyntaxNode node)
+        public static int GetIndentationSteps(IndentationSettings indentationSettings, SyntaxNode node)
         {
-            return GetIndentationSteps(indentationOptions, node.SyntaxTree, node.GetLeadingTrivia());
+            return GetIndentationSteps(indentationSettings, node.SyntaxTree, node.GetLeadingTrivia());
         }
 
         /// <summary>
         /// Gets the number of steps that the given token is indented.
         /// </summary>
-        /// <param name="indentationOptions">The indentation options to use.</param>
+        /// <param name="indentationSettings">The indentation settings to use.</param>
         /// <param name="token">The token to inspect.</param>
         /// <returns>The number of steps that the token is indented.</returns>
-        public static int GetIndentationSteps(IndentationOptions indentationOptions, SyntaxToken token)
+        public static int GetIndentationSteps(IndentationSettings indentationSettings, SyntaxToken token)
         {
-            return GetIndentationSteps(indentationOptions, token.SyntaxTree, token.LeadingTrivia);
+            return GetIndentationSteps(indentationSettings, token.SyntaxTree, token.LeadingTrivia);
         }
 
         /// <summary>
         /// Generate a new indentation string.
         /// </summary>
-        /// <param name="indentationOptions">The indentation options to use.</param>
+        /// <param name="indentationSettings">The indentation settings to use.</param>
         /// <param name="indentationSteps">The number of indentation steps.</param>
         /// <returns>A string containing the amount of whitespace needed for the given indentation steps.</returns>
-        public static string GenerateIndentationString(IndentationOptions indentationOptions, int indentationSteps)
+        public static string GenerateIndentationString(IndentationSettings indentationSettings, int indentationSteps)
         {
             string result;
-            var indentationCount = indentationSteps * indentationOptions.IndentationSize;
-            if (indentationOptions.UseTabs)
+            var indentationCount = indentationSteps * indentationSettings.IndentationSize;
+            if (indentationSettings.UseTabs)
             {
-                var tabCount = indentationCount / indentationOptions.TabSize;
-                var spaceCount = indentationCount % indentationOptions.TabSize;
+                var tabCount = indentationCount / indentationSettings.TabSize;
+                var spaceCount = indentationCount % indentationSettings.TabSize;
                 result = new string('\t', tabCount) + new string(' ', spaceCount);
             }
             else
@@ -85,15 +86,15 @@ namespace StyleCop.Analyzers.Helpers
         /// <summary>
         /// Generates a whitespace trivia with the requested indentation.
         /// </summary>
-        /// <param name="indentationOptions">The indentation options to use.</param>
+        /// <param name="indentationSettings">The indentation settings to use.</param>
         /// <param name="indentationSteps">The amount of indentation steps.</param>
         /// <returns>A <see cref="SyntaxTrivia"/> containing the indentation whitespace.</returns>
-        public static SyntaxTrivia GenerateWhitespaceTrivia(IndentationOptions indentationOptions, int indentationSteps)
+        public static SyntaxTrivia GenerateWhitespaceTrivia(IndentationSettings indentationSettings, int indentationSteps)
         {
-            return SyntaxFactory.Whitespace(GenerateIndentationString(indentationOptions, indentationSteps));
+            return SyntaxFactory.Whitespace(GenerateIndentationString(indentationSettings, indentationSteps));
         }
 
-        private static int GetIndentationSteps(IndentationOptions indentationOptions, SyntaxTree syntaxTree, SyntaxTriviaList leadingTrivia)
+        private static int GetIndentationSteps(IndentationSettings indentationSettings, SyntaxTree syntaxTree, SyntaxTriviaList leadingTrivia)
         {
             var triviaSpan = syntaxTree.GetLineSpan(leadingTrivia.FullSpan);
 
@@ -115,7 +116,7 @@ namespace StyleCop.Analyzers.Helpers
                 builder.Insert(0, trivia.ToFullString());
             }
 
-            var tabSize = indentationOptions.TabSize;
+            var tabSize = indentationSettings.TabSize;
             var indentationCount = 0;
             for (var i = 0; i < builder.Length; i++)
             {
@@ -124,7 +125,7 @@ namespace StyleCop.Analyzers.Helpers
 
             StringBuilderPool.ReturnAndFree(builder);
 
-            return (indentationCount + (indentationOptions.IndentationSize / 2)) / indentationOptions.IndentationSize;
+            return (indentationCount + (indentationSettings.IndentationSize / 2)) / indentationSettings.IndentationSize;
         }
     }
 }

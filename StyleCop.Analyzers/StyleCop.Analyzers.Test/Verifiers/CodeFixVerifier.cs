@@ -24,41 +24,6 @@ namespace TestHelper
     /// </summary>
     public abstract partial class CodeFixVerifier : DiagnosticVerifier
     {
-        private const int DefaultIndentationSize = 4;
-        private const bool DefaultUseTabs = false;
-
-        public CodeFixVerifier()
-        {
-            this.IndentationSize = DefaultIndentationSize;
-            this.UseTabs = DefaultUseTabs;
-        }
-
-        /// <summary>
-        /// Gets or sets the value of the <see cref="FormattingOptions.IndentationSize"/> to apply to the test
-        /// workspace.
-        /// </summary>
-        /// <value>
-        /// The value of the <see cref="FormattingOptions.IndentationSize"/> to apply to the test workspace.
-        /// </value>
-        public int IndentationSize
-        {
-            get;
-            protected set;
-        }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether the <see cref="FormattingOptions.UseTabs"/> option is applied to the
-        /// test workspace.
-        /// </summary>
-        /// <value>
-        /// The value of the <see cref="FormattingOptions.UseTabs"/> to apply to the test workspace.
-        /// </value>
-        public bool UseTabs
-        {
-            get;
-            protected set;
-        }
-
         /// <summary>
         /// Returns the code fix being tested (C#) - to be implemented in non-abstract class.
         /// </summary>
@@ -153,17 +118,6 @@ namespace TestHelper
         protected async Task<ImmutableArray<CodeAction>> GetOfferedCSharpFixesAsync(string source, int? diagnosticIndex = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             return await this.GetOfferedFixesInternalAsync(LanguageNames.CSharp, source, diagnosticIndex, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), this.GetCSharpCodeFixProvider(), cancellationToken).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override Solution CreateSolution(ProjectId projectId, string language)
-        {
-            Solution solution = base.CreateSolution(projectId, language);
-            solution.Workspace.Options =
-                solution.Workspace.Options
-                .WithChangedOption(FormattingOptions.IndentationSize, language, this.IndentationSize)
-                .WithChangedOption(FormattingOptions.UseTabs, language, this.UseTabs);
-            return solution;
         }
 
         private static async Task<Document> GetSingleAnalyzerDocumentAsync(ImmutableArray<DiagnosticAnalyzer> analyzers, CodeFixProvider codeFixProvider, int? codeFixIndex, Document document, int numberOfIterations, CancellationToken cancellationToken)

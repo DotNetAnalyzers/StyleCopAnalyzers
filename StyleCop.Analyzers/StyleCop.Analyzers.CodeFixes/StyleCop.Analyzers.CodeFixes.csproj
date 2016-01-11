@@ -64,7 +64,6 @@
     <Compile Include="Helpers\FixAllContextHelper.cs" />
     <Compile Include="Helpers\FormattingHelper.cs" />
     <Compile Include="Helpers\IndentationHelper.cs" />
-    <Compile Include="Helpers\IndentationOptions.cs" />
     <Compile Include="Helpers\QueryIndentationHelpers.cs" />
     <Compile Include="Helpers\RenameHelper.cs" />
     <Compile Include="Helpers\SpecialTypeHelper.cs" />

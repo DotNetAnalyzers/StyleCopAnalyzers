@@ -10,6 +10,30 @@
       "description": "The top-level object containing configuration properties for built-in rules.",
       "additionalProperties": false,
       "properties": {
+        "indentation": {
+          "type": "object",
+          "description": "Indentation configuration",
+          "additionalProperties": false,
+          "properties": {
+            "indentationSize": {
+              "description": "Specifies the indentation size.",
+              "type": "integer",
+              "minimum": 0,
+              "default": 4
+            },
+            "tabSize": {
+              "description": "Specifies the tab width.",
+              "type": "integer",
+              "minimum": 0,
+              "default": 4
+            },
+            "useTabs": {
+              "description": "Specifies whether indentation should use hard tabs instead of spaces.",
+              "type": "boolean",
+              "default": false
+            }
+          }
+        },
         "spacingRules": {
           "type": "object",
           "description": "Configuration for spacing rules (SA1000-)",

@@ -39,8 +39,6 @@ namespace StyleCop.Analyzers.Settings
 }
 ";
 
-        private const string StyleCopSettingsFileName = "stylecop.json";
-
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(
@@ -98,7 +96,7 @@ namespace StyleCop.Analyzers.Settings
 
         private static bool IsStyleCopSettingsDocument(TextDocument document)
         {
-            return string.Equals(document.Name, StyleCopSettingsFileName, StringComparison.OrdinalIgnoreCase);
+            return string.Equals(document.Name, SettingsHelper.SettingsFileName, StringComparison.OrdinalIgnoreCase);
         }
 
         private static Task<Solution> GetTransformedSolutionAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
@@ -108,7 +106,7 @@ namespace StyleCop.Analyzers.Settings
 
             var newDocumentId = DocumentId.CreateNewId(project.Id);
 
-            var newSolution = solution.AddAdditionalDocument(newDocumentId, StyleCopSettingsFileName, DefaultSettingsFileContent);
+            var newSolution = solution.AddAdditionalDocument(newDocumentId, SettingsHelper.SettingsFileName, DefaultSettingsFileContent);
 
             return Task.FromResult(newSolution);
         }
