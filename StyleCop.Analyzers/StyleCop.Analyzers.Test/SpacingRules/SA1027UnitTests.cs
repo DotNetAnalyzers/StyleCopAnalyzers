@@ -17,6 +17,8 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     /// </summary>
     public class SA1027UnitTests : CodeFixVerifier
     {
+        private string settings;
+
         /// <summary>
         /// Verifies that tabs used inside string and char literals are not producing diagnostics.
         /// </summary>
@@ -229,6 +231,38 @@ public  class   Foo
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestUseTabsSettingAsync()
+        {
+            this.settings = @"
+{
+    ""settings"": {
+        ""indentation"": {
+            ""useTabs"": true
+        }
+    }
+}
+";
+
+            var testCode =
+                "using\tSystem.Diagnostics;\r\n" +
+                "\r\n" +
+                "public\tclass\tFoo\r\n" +
+                "{\r\n" +
+                "\tpublic void Bar()\r\n" +
+                "\t{\r\n" +
+                "\t  \t// Comment\r\n" +
+                "\t \tDebug.Indent();\r\n" +
+                "   \t}\r\n" +
+                "}\r\n";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
+        protected override string GetSettings() =>
+            this.settings;
 
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
