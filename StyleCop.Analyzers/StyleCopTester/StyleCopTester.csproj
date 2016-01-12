@@ -37,7 +37,7 @@
     <CodeAnalysisRuleSet>..\StyleCop.Analyzers.Internal.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
-    <StartArguments>..\..\StyleCopAnalyzers.sln</StartArguments>
+    <StartArguments>..\..\StyleCopAnalyzers.sln /stats</StartArguments>
     <StartWorkingDirectory>$(MSBuildProjectDirectory)</StartWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup>
