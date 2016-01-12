@@ -41,6 +41,30 @@ For best results, **stylecop.json** should be included in source control. This w
 > [Ss]tyle[Cc]op.*
 > ```
 
+## Indentation
+
+This section describes the indentation rules which can be configured in **stylecop.json**. Each of the described
+properties are configured in the `indentation` object, which is shown in the following sample file.
+
+```json
+{
+  "settings": {
+    "indentation": {
+    }
+  }
+}
+```
+
+### Basic Indentation
+
+The following properties are used to configure basic indentation in StyleCop Analyzers.
+
+| Property | Default Value | Summary |
+| --- | --- | --- |
+| `indentationSize` | **4** | The number of spaces to use for a single indentation when `useTabs` is **false**. |
+| `tabSize` | **4** | The width of a hard tab character in source code. This value is used when converting between tabs and spaces. |
+| `useTabs` | **false** | **true** to indent using hard tabs; otherwise, **false** to indent using spaces |
+
 ## Spacing Rules
 
 This section describes the features of spacing rules which can be configured in **stylecop.json**. Each of the described properties are configured in the `spacingRules` object, which is shown in the following sample file.
