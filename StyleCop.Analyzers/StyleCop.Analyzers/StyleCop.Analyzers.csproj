@@ -130,6 +130,7 @@
     <Compile Include="Helpers\Requires.cs" />
     <Compile Include="Helpers\SpacingExtensions.cs" />
     <Compile Include="Helpers\SpecializedTasks.cs" />
+    <Compile Include="Helpers\SyntaxKinds.cs" />
     <Compile Include="Helpers\SyntaxTreeHelpers.cs" />
     <Compile Include="Helpers\TokenHelper.cs" />
     <Compile Include="Helpers\TriviaHelper.cs" />

@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
     using System.Collections.Immutable;
+    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -28,9 +29,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly ImmutableArray<SyntaxKind> BaseFieldDeclarationKinds =
-            ImmutableArray.Create(SyntaxKind.FieldDeclaration, SyntaxKind.EventFieldDeclaration);
-
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> BaseFieldDeclarationAction = HandleBaseFieldDeclaration;
 
@@ -46,7 +44,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(BaseFieldDeclarationAction, BaseFieldDeclarationKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(BaseFieldDeclarationAction, SyntaxKinds.BaseFieldDeclaration);
         }
 
         private static void HandleBaseFieldDeclaration(SyntaxNodeAnalysisContext context)

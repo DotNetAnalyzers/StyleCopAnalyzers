@@ -18,12 +18,6 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     internal abstract class ElementDocumentationSummaryBase : DiagnosticAnalyzer
     {
-        private static readonly ImmutableArray<SyntaxKind> BaseTypeDeclarationKinds =
-            ImmutableArray.Create(SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.EnumDeclaration);
-
-        private static readonly ImmutableArray<SyntaxKind> BaseFieldDeclarationKinds =
-            ImmutableArray.Create(SyntaxKind.FieldDeclaration, SyntaxKind.EventFieldDeclaration);
-
         private readonly Action<CompilationStartAnalysisContext> compilationStartAction;
         private readonly Action<SyntaxNodeAnalysisContext> typeDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext> methodDeclarationAction;
@@ -71,13 +65,13 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.typeDeclarationAction, BaseTypeDeclarationKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.typeDeclarationAction, SyntaxKinds.BaseTypeDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(this.methodDeclarationAction, SyntaxKind.MethodDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(this.constructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(this.destructorDeclarationAction, SyntaxKind.DestructorDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(this.propertyDeclarationAction, SyntaxKind.PropertyDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(this.indexerDeclarationAction, SyntaxKind.IndexerDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.fieldDeclarationAction, BaseFieldDeclarationKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.fieldDeclarationAction, SyntaxKinds.BaseFieldDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(this.delegateDeclarationAction, SyntaxKind.DelegateDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(this.eventDeclarationAction, SyntaxKind.EventDeclaration);
         }

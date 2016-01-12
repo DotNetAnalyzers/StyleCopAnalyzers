@@ -18,17 +18,14 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     internal abstract class PartialElementDocumentationSummaryBase : DiagnosticAnalyzer
     {
-        private static readonly ImmutableArray<SyntaxKind> BaseTypeDeclarationKinds =
-            ImmutableArray.Create(SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.InterfaceDeclaration);
-
         private readonly Action<CompilationStartAnalysisContext> compilationStartAction;
-        private readonly Action<SyntaxNodeAnalysisContext> baseTypeDeclarationAction;
+        private readonly Action<SyntaxNodeAnalysisContext> typeDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext> methodDeclarationAction;
 
         protected PartialElementDocumentationSummaryBase()
         {
             this.compilationStartAction = this.HandleCompilationStart;
-            this.baseTypeDeclarationAction = this.HandleBaseTypeDeclaration;
+            this.typeDeclarationAction = this.HandleTypeDeclaration;
             this.methodDeclarationAction = this.HandleMethodDeclaration;
         }
 
@@ -49,13 +46,15 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.baseTypeDeclarationAction, BaseTypeDeclarationKinds);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.typeDeclarationAction, SyntaxKinds.TypeDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(this.methodDeclarationAction, SyntaxKind.MethodDeclaration);
         }
 
-        private void HandleBaseTypeDeclaration(SyntaxNodeAnalysisContext context)
+        private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var node = (BaseTypeDeclarationSyntax)context.Node;
+            // We handle TypeDeclarationSyntax instead of BaseTypeDeclarationSyntax because enums are not allowed to be
+            // partial.
+            var node = (TypeDeclarationSyntax)context.Node;
             if (node.Identifier.IsMissing)
             {
                 return;
