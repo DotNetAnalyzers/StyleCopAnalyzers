@@ -326,6 +326,26 @@ namespace TestHelper
             return builder.ToString();
         }
 
+        private static bool IsSubjectToExclusion(DiagnosticResult result)
+        {
+            if (result.Id.StartsWith("CS", StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            if (result.Id.StartsWith("AD", StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            if (result.Locations.Length == 0)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// General method that gets a collection of actual <see cref="Diagnostic"/>s found in the source after the
         /// analyzer is run, then verifies each of them.
@@ -346,12 +366,13 @@ namespace TestHelper
             if (filenames == null)
             {
                 // Also check if the analyzer honors exclusions
-                if (expected.Any(x => x.Id.StartsWith("SA", StringComparison.Ordinal) || x.Id.StartsWith("SX", StringComparison.Ordinal)))
+                if (expected.Any(IsSubjectToExclusion))
                 {
-                    // We want to look at non-stylecop diagnostics only. We also insert a new line at the beginning
-                    // so we have to move all diagnostic location down by one line
+                    // Diagnostics reported by the compiler and analyzer diagnostics which don't have a location will
+                    // still be reported. We also insert a new line at the beginning so we have to move all diagnostic
+                    // locations which have a specific position down by one line.
                     var expectedResults = expected
-                        .Where(x => !x.Id.StartsWith("SA", StringComparison.Ordinal) && !x.Id.StartsWith("SX", StringComparison.Ordinal))
+                        .Where(x => !IsSubjectToExclusion(x))
                         .Select(x => x.WithLineOffset(1))
                         .ToArray();
 

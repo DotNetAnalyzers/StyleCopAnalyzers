@@ -42,7 +42,8 @@ namespace StyleCop.Analyzers.Test.SpecialRules
 }
 ";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(null, 0, 0);
+            // This diagnostic is reported without a location
+            DiagnosticResult expected = this.CSharpDiagnostic();
 
             this.documentationMode = documentationMode;
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

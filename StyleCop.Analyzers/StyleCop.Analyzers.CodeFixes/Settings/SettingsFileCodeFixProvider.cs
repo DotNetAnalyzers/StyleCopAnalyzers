@@ -23,8 +23,7 @@ namespace StyleCop.Analyzers.Settings
     [Shared]
     internal class SettingsFileCodeFixProvider : CodeFixProvider
     {
-        private const string StyleCopSettingsFileName = "stylecop.json";
-        private const string DefaultSettingsFileContent = @"{
+        internal const string DefaultSettingsFileContent = @"{
   // ACTION REQUIRED: This file was automatically added to your project, but it
   // will not take effect until additional steps are taken to enable it. See the
   // following page for additional information:
@@ -39,6 +38,8 @@ namespace StyleCop.Analyzers.Settings
   }
 }
 ";
+
+        private const string StyleCopSettingsFileName = "stylecop.json";
 
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =

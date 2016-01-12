@@ -268,6 +268,7 @@
     <Compile Include="ReadabilityRules\SA1133DoNotCombineAttributes.cs" />
     <Compile Include="ReadabilityRules\SA1134AttributesMustNotShareLine.cs" />
     <Compile Include="ReadabilityRules\SX1101DoNotPrefixLocalMembersWithThis.cs" />
+    <Compile Include="Settings\DeserializationFailureBehavior.cs" />
     <Compile Include="Settings\ObjectModel\DocumentationSettings.cs" />
     <Compile Include="Settings\ObjectModel\EndOfFileHandling.cs" />
     <Compile Include="Settings\ObjectModel\FileNamingConvention.cs" />
@@ -324,6 +325,7 @@
     <Compile Include="SpacingRules\TokenSpacingProperties.cs" />
     <Compile Include="SpecialRules\SA0000Roslyn7446Workaround.cs" />
     <Compile Include="SpecialRules\SA0001XmlCommentAnalysisDisabled.cs" />
+    <Compile Include="SpecialRules\SA0002InvalidSettingsFile.cs" />
     <Compile Include="SpecialRules\SpecialResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
