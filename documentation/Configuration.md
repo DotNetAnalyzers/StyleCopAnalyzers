@@ -61,7 +61,7 @@ The following properties are used to configure basic indentation in StyleCop Ana
 
 | Property | Default Value | Summary |
 | --- | --- | --- |
-| `indentationSize` | **4** | The number of spaces to use for a single indentation when `useTabs` is **false**. |
+| `indentationSize` | **4** | The number of columns to use for each indentation of code. Depending on the `useTabs` and `tabSize` settings, this will be filled with tabs and/or spaces. |
 | `tabSize` | **4** | The width of a hard tab character in source code. This value is used when converting between tabs and spaces. |
 | `useTabs` | **false** | **true** to indent using hard tabs; otherwise, **false** to indent using spaces |
 
