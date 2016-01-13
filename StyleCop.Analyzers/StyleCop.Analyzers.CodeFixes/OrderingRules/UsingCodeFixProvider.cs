@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.OrderingRules
 {
-    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
@@ -77,7 +76,6 @@ namespace StyleCop.Analyzers.OrderingRules
 
             var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-            var indentationOptions = IndentationOptions.FromDocument(document);
 
             var usingsHelper = new UsingsHelper(settings, semanticModel, compilationUnit, fileHeader);
             var namespaceCount = CountNamespaces(compilationUnit.Members);
@@ -124,8 +122,8 @@ namespace StyleCop.Analyzers.OrderingRules
             if (usingDirectivesPlacement == UsingDirectivesPlacement.InsideNamespace)
             {
                 var rootNamespace = compilationUnit.Members.OfType<NamespaceDeclarationSyntax>().First();
-                var indentationLevel = IndentationHelper.GetIndentationSteps(indentationOptions, rootNamespace);
-                usingsIndentation = IndentationHelper.GenerateIndentationString(indentationOptions, indentationLevel + 1);
+                var indentationLevel = IndentationHelper.GetIndentationSteps(settings.Indentation, rootNamespace);
+                usingsIndentation = IndentationHelper.GenerateIndentationString(settings.Indentation, indentationLevel + 1);
             }
             else
             {
@@ -142,7 +140,7 @@ namespace StyleCop.Analyzers.OrderingRules
             // When there are multiple namespaces, do not move using statements outside of them, only sort.
             if (usingDirectivesPlacement == UsingDirectivesPlacement.Preserve)
             {
-                BuildReplaceMapForNamespaces(usingsHelper, replaceMap, indentationOptions, false);
+                BuildReplaceMapForNamespaces(usingsHelper, replaceMap, settings.Indentation, false);
                 stripList = new List<UsingDirectiveSyntax>();
             }
             else
@@ -150,7 +148,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 stripList = usingsHelper.GetContainedUsings(usingsHelper.RootSpan);
             }
 
-            BuildReplaceMapForConditionalDirectives(usingsHelper, replaceMap, indentationOptions, usingsHelper.RootSpan);
+            BuildReplaceMapForConditionalDirectives(usingsHelper, replaceMap, settings.Indentation, usingsHelper.RootSpan);
 
             var usingSyntaxRewriter = new UsingSyntaxRewriter(stripList, replaceMap, fileHeader);
             var newSyntaxRoot = usingSyntaxRewriter.Visit(syntaxRoot);
@@ -185,7 +183,7 @@ namespace StyleCop.Analyzers.OrderingRules
             return result;
         }
 
-        private static void BuildReplaceMapForNamespaces(UsingsHelper usingsHelper, Dictionary<UsingDirectiveSyntax, UsingDirectiveSyntax> replaceMap, IndentationOptions indentationOptions, bool qualifyNames)
+        private static void BuildReplaceMapForNamespaces(UsingsHelper usingsHelper, Dictionary<UsingDirectiveSyntax, UsingDirectiveSyntax> replaceMap, IndentationSettings indentationSettings, bool qualifyNames)
         {
             var usingsPerNamespace = usingsHelper
                 .GetContainedUsings(usingsHelper.RootSpan)
@@ -199,13 +197,13 @@ namespace StyleCop.Analyzers.OrderingRules
                     // sort the original using declarations on Span.Start, in order to have the correct replace mapping.
                     usingList.Sort(CompareSpanStart);
 
-                    var indentationSteps = IndentationHelper.GetIndentationSteps(indentationOptions, usingList[0].Parent);
+                    var indentationSteps = IndentationHelper.GetIndentationSteps(indentationSettings, usingList[0].Parent);
                     if (usingList[0].Parent is NamespaceDeclarationSyntax)
                     {
                         indentationSteps++;
                     }
 
-                    var indentation = IndentationHelper.GenerateIndentationString(indentationOptions, indentationSteps);
+                    var indentation = IndentationHelper.GenerateIndentationString(indentationSettings, indentationSteps);
 
                     var modifiedUsings = usingsHelper.GenerateGroupedUsings(usingList, indentation, false, qualifyNames);
 
@@ -217,7 +215,7 @@ namespace StyleCop.Analyzers.OrderingRules
             }
         }
 
-        private static void BuildReplaceMapForConditionalDirectives(UsingsHelper usingsHelper, Dictionary<UsingDirectiveSyntax, UsingDirectiveSyntax> replaceMap, IndentationOptions indentationOptions, DirectiveSpan rootSpan)
+        private static void BuildReplaceMapForConditionalDirectives(UsingsHelper usingsHelper, Dictionary<UsingDirectiveSyntax, UsingDirectiveSyntax> replaceMap, IndentationSettings indentationSettings, DirectiveSpan rootSpan)
         {
             foreach (var childSpan in rootSpan.Children)
             {
@@ -227,13 +225,13 @@ namespace StyleCop.Analyzers.OrderingRules
                     // sort the original using declarations on Span.Start, in order to have the correct replace mapping.
                     originalUsings.Sort(CompareSpanStart);
 
-                    var indentationSteps = IndentationHelper.GetIndentationSteps(indentationOptions, originalUsings[0].Parent);
+                    var indentationSteps = IndentationHelper.GetIndentationSteps(indentationSettings, originalUsings[0].Parent);
                     if (originalUsings[0].Parent is NamespaceDeclarationSyntax)
                     {
                         indentationSteps++;
                     }
 
-                    var indentation = IndentationHelper.GenerateIndentationString(indentationOptions, indentationSteps);
+                    var indentation = IndentationHelper.GenerateIndentationString(indentationSettings, indentationSteps);
 
                     var modifiedUsings = usingsHelper.GenerateGroupedUsings(childSpan, indentation, false, qualifyNames: false);
 
@@ -243,7 +241,7 @@ namespace StyleCop.Analyzers.OrderingRules
                     }
                 }
 
-                BuildReplaceMapForConditionalDirectives(usingsHelper, replaceMap, indentationOptions, childSpan);
+                BuildReplaceMapForConditionalDirectives(usingsHelper, replaceMap, indentationSettings, childSpan);
             }
         }
 

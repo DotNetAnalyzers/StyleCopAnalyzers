@@ -22,7 +22,7 @@ namespace StyleCop.Analyzers
     /// </summary>
     internal static class SettingsHelper
     {
-        private const string SettingsFileName = "stylecop.json";
+        internal const string SettingsFileName = "stylecop.json";
 
         private static readonly bool AvoidAdditionalTextGetText;
 

@@ -12,7 +12,12 @@ namespace TestHelper
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Formatting;
     using Microsoft.CodeAnalysis.Text;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
+    using StyleCop.Analyzers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.Test.Helpers;
 
     /// <summary>
@@ -21,8 +26,6 @@ namespace TestHelper
     /// </summary>
     public abstract partial class DiagnosticVerifier
     {
-        private const string SettingsFileName = "stylecop.json";
-
         private static readonly string DefaultFilePathPrefix = "Test";
         private static readonly string CSharpDefaultFileExt = "cs";
         private static readonly string VisualBasicDefaultExt = "vb";
@@ -122,11 +125,47 @@ namespace TestHelper
                 .AddMetadataReference(projectId, MetadataReferences.CSharpSymbolsReference)
                 .AddMetadataReference(projectId, MetadataReferences.CodeAnalysisReference);
 
+            solution.Workspace.Options =
+                solution.Workspace.Options
+                .WithChangedOption(FormattingOptions.IndentationSize, language, this.IndentationSize)
+                .WithChangedOption(FormattingOptions.TabSize, language, this.TabSize)
+                .WithChangedOption(FormattingOptions.UseTabs, language, this.UseTabs);
+
             var settings = this.GetSettings();
+
+            StyleCopSettings defaultSettings = new StyleCopSettings();
+            if (this.IndentationSize != defaultSettings.Indentation.IndentationSize
+                || this.UseTabs != defaultSettings.Indentation.UseTabs
+                || this.TabSize != defaultSettings.Indentation.TabSize)
+            {
+                var indentationSettings = $@"
+{{
+  ""settings"": {{
+    ""indentation"": {{
+      ""indentationSize"": {this.IndentationSize},
+      ""useTabs"": {this.UseTabs.ToString().ToLowerInvariant()},
+      ""tabSize"": {this.TabSize}
+    }}
+  }}
+}}
+";
+
+                if (string.IsNullOrEmpty(settings))
+                {
+                    settings = indentationSettings;
+                }
+                else
+                {
+                    JObject mergedSettings = JsonConvert.DeserializeObject<JObject>(settings);
+                    mergedSettings.Merge(JsonConvert.DeserializeObject<JObject>(indentationSettings));
+                    settings = JsonConvert.SerializeObject(mergedSettings);
+                }
+            }
+
             if (!string.IsNullOrEmpty(settings))
             {
                 var documentId = DocumentId.CreateNewId(projectId);
-                solution = solution.AddAdditionalDocument(documentId, SettingsFileName, settings);
+                solution = solution.AddAdditionalDocument(documentId, SettingsHelper.SettingsFileName, settings);
             }
 
             ParseOptions parseOptions = solution.GetProject(projectId).ParseOptions;

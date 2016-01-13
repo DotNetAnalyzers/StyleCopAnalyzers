@@ -16,7 +16,6 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     /// </summary>
     public abstract class FileHeaderTestBase : CodeFixVerifier
     {
-        private const string SettingsFileName = "stylecop.json";
         private const string TestSettings = @"
 {
   ""settings"": {
