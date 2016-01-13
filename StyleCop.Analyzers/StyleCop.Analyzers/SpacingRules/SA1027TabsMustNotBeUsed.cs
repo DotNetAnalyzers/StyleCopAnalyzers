@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.SpacingRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -58,11 +59,6 @@ namespace StyleCop.Analyzers.SpacingRules
 
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context, StyleCopSettings settings)
         {
-            if (settings.Indentation.UseTabs)
-            {
-                return;
-            }
-
             SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             foreach (var trivia in root.DescendantTrivia(descendIntoTrivia: true))
             {
@@ -72,7 +68,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 case SyntaxKind.DocumentationCommentExteriorTrivia:
                 case SyntaxKind.SingleLineCommentTrivia:
                 case SyntaxKind.MultiLineCommentTrivia:
-                    HandleWhitespaceTrivia(context, trivia);
+                    HandleWhitespaceTrivia(context, settings.Indentation, trivia, context.CancellationToken);
                     break;
 
                 case SyntaxKind.SingleLineDocumentationCommentTrivia:
@@ -86,8 +82,10 @@ namespace StyleCop.Analyzers.SpacingRules
             }
         }
 
-        private static void HandleWhitespaceTrivia(SyntaxTreeAnalysisContext context, SyntaxTrivia trivia)
+        private static void HandleWhitespaceTrivia(SyntaxTreeAnalysisContext context, IndentationSettings indentationSettings, SyntaxTrivia trivia, CancellationToken cancellationToken)
         {
+            bool potentiallyMultiLineToken = trivia.IsKind(SyntaxKind.MultiLineCommentTrivia);
+
             string fullString = trivia.ToFullString();
             if (fullString.StartsWith("////"))
             {
@@ -95,7 +93,46 @@ namespace StyleCop.Analyzers.SpacingRules
                 return;
             }
 
-            if (fullString.IndexOf('\t') < 0)
+            bool missingRequiredTabs = false;
+            int preventTabsAtOrAfterIndex = 0;
+            if (indentationSettings.UseTabs && StartsAtStartOfLine(trivia, cancellationToken))
+            {
+                int tabSize = indentationSettings.TabSize;
+                int spaceCount = 0;
+
+                int i;
+                for (i = 0; i < fullString.Length; i++)
+                {
+                    char c = fullString[i];
+                    if (c == '\t')
+                    {
+                        // This is a sneaky check for tabs after spaces
+                        if (spaceCount > 0)
+                        {
+                            missingRequiredTabs = true;
+                            break;
+                        }
+                    }
+                    else if (c == ' ')
+                    {
+                        spaceCount++;
+                        if (spaceCount >= tabSize)
+                        {
+                            missingRequiredTabs = true;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        // Found a non-whitespace character
+                        break;
+                    }
+                }
+
+                preventTabsAtOrAfterIndex = i;
+            }
+
+            if (!missingRequiredTabs && fullString.IndexOf('\t', preventTabsAtOrAfterIndex) < 0)
             {
                 // No hard tabs were found.
                 return;
@@ -105,10 +142,20 @@ namespace StyleCop.Analyzers.SpacingRules
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, trivia.GetLocation()));
         }
 
+        private static bool StartsAtStartOfLine(SyntaxTrivia trivia, CancellationToken cancellationToken)
+        {
+            var fullSpan = trivia.FullSpan;
+            var lineSpan = trivia.SyntaxTree.GetLineSpan(fullSpan, cancellationToken);
+            return lineSpan.StartLinePosition.Character == 0;
+        }
+
         private static void HandleWhitespaceToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
-            string fullString = token.ToFullString();
-            if (fullString.IndexOf('\t') < 0)
+            // Whitespace tokens only appear in XML documentation comments, and never appear at the start of a line
+            // (even for /** */ documentation comments). All tabs in these tokens should be reported, regardless of the
+            // UseTabs setting.
+            string text = token.Text;
+            if (text.IndexOf('\t') < 0)
             {
                 // No hard tabs were found.
                 return;

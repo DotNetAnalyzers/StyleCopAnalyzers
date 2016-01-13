@@ -62,8 +62,11 @@ namespace StyleCop.Analyzers.SpacingRules
             TextSpan span = diagnostic.Location.SourceSpan;
 
             TextLine startLine = sourceText.Lines.GetLineFromPosition(span.Start);
+            bool useTabs = indentationSettings.UseTabs && span.Start == startLine.Start;
             string text = sourceText.ToString(TextSpan.FromBounds(startLine.Start, span.End));
             StringBuilder replacement = StringBuilderPool.Allocate();
+            int spaceCount = 0;
+            bool encounteredNonWhitespace = false;
             int column = 0;
             for (int i = 0; i < text.Length; i++)
             {
@@ -71,25 +74,49 @@ namespace StyleCop.Analyzers.SpacingRules
                 if (c == '\t')
                 {
                     var offsetWithinTabColumn = column % indentationSettings.TabSize;
-                    var spaceCount = indentationSettings.TabSize - offsetWithinTabColumn;
+                    var tabWidth = indentationSettings.TabSize - offsetWithinTabColumn;
 
-                    if (i >= span.Start - startLine.Start)
+                    if (useTabs && !encounteredNonWhitespace)
                     {
-                        replacement.Append(' ', spaceCount);
+                        // We already know indentation started at the beginning of the line
+                        replacement.Length = replacement.Length - spaceCount;
+                        replacement.Append('\t');
+                        spaceCount = 0;
+                    }
+                    else if (i >= span.Start - startLine.Start)
+                    {
+                        replacement.Append(' ', tabWidth);
                     }
 
-                    column += spaceCount;
+                    column += tabWidth;
                 }
                 else
                 {
                     if (i >= span.Start - startLine.Start)
                     {
                         replacement.Append(c);
+                        if (c == ' ')
+                        {
+                            spaceCount++;
+                            if (useTabs && !encounteredNonWhitespace && spaceCount == indentationSettings.TabSize)
+                            {
+                                replacement.Length = replacement.Length - spaceCount;
+                                replacement.Append('\t');
+                                spaceCount = 0;
+                            }
+                        }
+                        else
+                        {
+                            spaceCount = 0;
+                            encounteredNonWhitespace = true;
+                        }
                     }
 
                     if (c == '\n')
                     {
                         column = 0;
+                        spaceCount = 0;
+                        encounteredNonWhitespace = false;
                     }
                     else
                     {

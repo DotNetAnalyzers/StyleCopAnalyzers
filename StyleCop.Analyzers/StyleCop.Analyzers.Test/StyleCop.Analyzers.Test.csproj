@@ -358,6 +358,7 @@
     <Compile Include="SpacingRules\SA1025UnitTests.cs" />
     <Compile Include="SpacingRules\SA1026UnitTests.cs" />
     <Compile Include="SpacingRules\SA1027UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1027UseTabsUnitTests.cs" />
     <Compile Include="SpacingRules\SA1028UnitTests.cs" />
     <Compile Include="SpecialRules\SA0001UnitTests.cs" />
     <Compile Include="SpecialRules\SA0002UnitTests.cs" />
