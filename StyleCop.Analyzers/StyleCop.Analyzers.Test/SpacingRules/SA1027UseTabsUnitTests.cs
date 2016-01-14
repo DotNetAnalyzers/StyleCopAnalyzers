@@ -127,7 +127,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 this.CSharpDiagnostic().WithLocation(1, 1),
                 this.CSharpDiagnostic().WithLocation(1, 8),
                 this.CSharpDiagnostic().WithLocation(2, 1),
-                this.CSharpDiagnostic().WithLocation(2, 8),
+                this.CSharpDiagnostic().WithLocation(2, 12),
                 this.CSharpDiagnostic().WithLocation(3, 1),
                 this.CSharpDiagnostic().WithLocation(3, 8),
                 this.CSharpDiagnostic().WithLocation(4, 1),
@@ -177,7 +177,8 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 this.CSharpDiagnostic().WithLocation(3, 1),
                 this.CSharpDiagnostic().WithLocation(4, 1),
                 this.CSharpDiagnostic().WithLocation(5, 1),
-                this.CSharpDiagnostic().WithLocation(5, 11),
+                this.CSharpDiagnostic().WithLocation(5, 13),
+                this.CSharpDiagnostic().WithLocation(5, 21),
                 this.CSharpDiagnostic().WithLocation(7, 1),
                 this.CSharpDiagnostic().WithLocation(8, 1),
                 this.CSharpDiagnostic().WithLocation(9, 1),
@@ -209,9 +210,9 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 "\t\tpublic void Bar()\r\n" +
                 "\t\t{\r\n" +
                 "\t\t\t/*\r\n" +
-                "            Comment     1\r\n" +
-                "            Comment 2\r\n" +
-                "            */\r\n" +
+                "\t\t\tComment     1\r\n" +
+                "\t\t\tComment 2\r\n" +
+                "\t\t\t*/\r\n" +
                 "\t\t}\r\n" +
                 "\t}\r\n";
 
@@ -222,7 +223,10 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 this.CSharpDiagnostic().WithLocation(3, 1),
                 this.CSharpDiagnostic().WithLocation(4, 1),
                 this.CSharpDiagnostic().WithLocation(5, 1),
-                this.CSharpDiagnostic().WithLocation(5, 11),
+                this.CSharpDiagnostic().WithLocation(6, 1),
+                this.CSharpDiagnostic().WithLocation(6, 17),
+                this.CSharpDiagnostic().WithLocation(7, 1),
+                this.CSharpDiagnostic().WithLocation(8, 1),
                 this.CSharpDiagnostic().WithLocation(9, 1),
                 this.CSharpDiagnostic().WithLocation(10, 1),
             };
