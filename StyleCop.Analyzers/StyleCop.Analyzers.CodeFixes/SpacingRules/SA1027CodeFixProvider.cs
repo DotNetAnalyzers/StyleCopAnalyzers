@@ -62,11 +62,17 @@ namespace StyleCop.Analyzers.SpacingRules
             TextSpan span = diagnostic.Location.SourceSpan;
 
             TextLine startLine = sourceText.Lines.GetLineFromPosition(span.Start);
-            bool useTabs = indentationSettings.UseTabs && span.Start == startLine.Start;
+
+            bool useTabs = false;
+            string behavior;
+            if (diagnostic.Properties.TryGetValue(SA1027TabsMustNotBeUsed.BehaviorKey, out behavior))
+            {
+                useTabs = behavior == SA1027TabsMustNotBeUsed.ConvertToTabsBehavior;
+            }
+
             string text = sourceText.ToString(TextSpan.FromBounds(startLine.Start, span.End));
             StringBuilder replacement = StringBuilderPool.Allocate();
             int spaceCount = 0;
-            bool encounteredNonWhitespace = false;
             int column = 0;
             for (int i = 0; i < text.Length; i++)
             {
@@ -76,16 +82,18 @@ namespace StyleCop.Analyzers.SpacingRules
                     var offsetWithinTabColumn = column % indentationSettings.TabSize;
                     var tabWidth = indentationSettings.TabSize - offsetWithinTabColumn;
 
-                    if (useTabs && !encounteredNonWhitespace)
+                    if (i >= span.Start - startLine.Start)
                     {
-                        // We already know indentation started at the beginning of the line
-                        replacement.Length = replacement.Length - spaceCount;
-                        replacement.Append('\t');
-                        spaceCount = 0;
-                    }
-                    else if (i >= span.Start - startLine.Start)
-                    {
-                        replacement.Append(' ', tabWidth);
+                        if (useTabs)
+                        {
+                            replacement.Length = replacement.Length - spaceCount;
+                            replacement.Append('\t');
+                            spaceCount = 0;
+                        }
+                        else
+                        {
+                            replacement.Append(' ', tabWidth);
+                        }
                     }
 
                     column += tabWidth;
@@ -98,25 +106,31 @@ namespace StyleCop.Analyzers.SpacingRules
                         if (c == ' ')
                         {
                             spaceCount++;
-                            if (useTabs && !encounteredNonWhitespace && spaceCount == indentationSettings.TabSize)
+                            if (useTabs)
                             {
-                                replacement.Length = replacement.Length - spaceCount;
-                                replacement.Append('\t');
-                                spaceCount = 0;
+                                // Note that we account for column not yet being incremented
+                                var offsetWithinTabColumn = (column + 1) % indentationSettings.TabSize;
+                                if (offsetWithinTabColumn == 0)
+                                {
+                                    // We reached a tab stop.
+                                    replacement.Length = replacement.Length - spaceCount;
+                                    replacement.Append('\t');
+                                    spaceCount = 0;
+                                }
                             }
                         }
                         else
                         {
                             spaceCount = 0;
-                            encounteredNonWhitespace = true;
                         }
                     }
 
-                    if (c == '\n')
+                    if (c == '\r' || c == '\n')
                     {
+                        // Handle newlines. We can ignore CR/LF/CRLF issues because we are only tracking column position
+                        // in a line, and not the line numbers themselves.
                         column = 0;
                         spaceCount = 0;
-                        encounteredNonWhitespace = false;
                     }
                     else
                     {

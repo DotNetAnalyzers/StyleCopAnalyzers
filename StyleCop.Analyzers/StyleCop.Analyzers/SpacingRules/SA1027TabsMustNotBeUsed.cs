@@ -32,6 +32,10 @@ namespace StyleCop.Analyzers.SpacingRules
         /// </summary>
         public const string DiagnosticId = "SA1027";
 
+        internal static readonly string BehaviorKey = "Behavior";
+        internal static readonly string ConvertToTabsBehavior = "ConvertToTabs";
+        internal static readonly string ConvertToSpacesBehavior = "ConvertToSpaces";
+
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1027Title), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(SpacingResources.SA1027MessageFormat), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1027Description), SpacingResources.ResourceManager, typeof(SpacingResources));
@@ -42,6 +46,12 @@ namespace StyleCop.Analyzers.SpacingRules
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxTreeAnalysisContext, StyleCopSettings> SyntaxTreeAction = HandleSyntaxTree;
+
+        private static readonly ImmutableDictionary<string, string> ConvertToTabsProperties =
+            ImmutableDictionary.Create<string, string>().SetItem(BehaviorKey, ConvertToTabsBehavior);
+
+        private static readonly ImmutableDictionary<string, string> ConvertToSpacesProperties =
+            ImmutableDictionary.Create<string, string>().SetItem(BehaviorKey, ConvertToSpacesBehavior);
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -101,7 +111,8 @@ namespace StyleCop.Analyzers.SpacingRules
                         context.ReportDiagnostic(
                             Diagnostic.Create(
                                 Descriptor,
-                                Location.Create(syntaxTree, TextSpan.FromBounds(violationStart, violationEnd))));
+                                Location.Create(syntaxTree, TextSpan.FromBounds(violationStart, violationEnd)),
+                                ConvertToTabsProperties));
                     }
 
                     if (included.End > excluded.End)
@@ -130,7 +141,8 @@ namespace StyleCop.Analyzers.SpacingRules
                         context.ReportDiagnostic(
                             Diagnostic.Create(
                                 Descriptor,
-                                Location.Create(syntaxTree, TextSpan.FromBounds(violationStart, violationEnd))));
+                                Location.Create(syntaxTree, TextSpan.FromBounds(violationStart, violationEnd)),
+                                ConvertToSpacesProperties));
                     }
 
                     if (included.End > excluded.End)
@@ -148,7 +160,8 @@ namespace StyleCop.Analyzers.SpacingRules
                 context.ReportDiagnostic(
                     Diagnostic.Create(
                         Descriptor,
-                        Location.Create(syntaxTree, convertToTabsSpans[toTabsIndex])));
+                        Location.Create(syntaxTree, convertToTabsSpans[toTabsIndex]),
+                        ConvertToTabsProperties));
             }
 
             for (; toSpacesIndex < convertToSpacesSpans.Length; toSpacesIndex++)
@@ -156,7 +169,8 @@ namespace StyleCop.Analyzers.SpacingRules
                 context.ReportDiagnostic(
                     Diagnostic.Create(
                         Descriptor,
-                        Location.Create(syntaxTree, convertToSpacesSpans[toSpacesIndex])));
+                        Location.Create(syntaxTree, convertToSpacesSpans[toSpacesIndex]),
+                        ConvertToSpacesProperties));
             }
         }
 
