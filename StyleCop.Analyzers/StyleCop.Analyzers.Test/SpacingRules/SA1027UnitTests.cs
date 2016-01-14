@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1027TabsMustNotBeUsed"/>
+    /// Unit tests for <see cref="SA1027UseTabsCorrectly"/>
     /// </summary>
     public class SA1027UnitTests : CodeFixVerifier
     {
@@ -237,7 +237,7 @@ public  class   Foo
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1027TabsMustNotBeUsed();
+            yield return new SA1027UseTabsCorrectly();
         }
 
         /// <inheritdoc/>

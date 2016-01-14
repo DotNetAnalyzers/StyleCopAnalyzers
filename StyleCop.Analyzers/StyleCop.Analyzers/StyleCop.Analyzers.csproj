@@ -316,7 +316,7 @@
     <Compile Include="SpacingRules\SA1024ColonsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1025CodeMustNotContainMultipleWhitespaceInARow.cs" />
     <Compile Include="SpacingRules\SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation.cs" />
-    <Compile Include="SpacingRules\SA1027TabsMustNotBeUsed.cs" />
+    <Compile Include="SpacingRules\SA1027UseTabsCorrectly.cs" />
     <Compile Include="SpacingRules\SA1028CodeMustNotContainTrailingWhitespace.cs" />
     <Compile Include="SpacingRules\SpacingResources.Designer.cs">
       <AutoGen>True</AutoGen>

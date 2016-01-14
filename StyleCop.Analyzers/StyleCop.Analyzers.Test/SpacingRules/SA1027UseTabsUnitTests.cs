@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1027TabsMustNotBeUsed"/> when <see cref="IndentationSettings.UseTabs"/> is
+    /// Unit tests for <see cref="SA1027UseTabsCorrectly"/> when <see cref="IndentationSettings.UseTabs"/> is
     /// <see langword="true"/>.
     /// </summary>
     public class SA1027UseTabsUnitTests : CodeFixVerifier
@@ -251,7 +251,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1027TabsMustNotBeUsed();
+            yield return new SA1027UseTabsCorrectly();
         }
 
         /// <inheritdoc/>

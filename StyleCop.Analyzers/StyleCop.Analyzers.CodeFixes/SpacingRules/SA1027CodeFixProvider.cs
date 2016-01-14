@@ -18,7 +18,7 @@ namespace StyleCop.Analyzers.SpacingRules
     using Settings.ObjectModel;
 
     /// <summary>
-    /// Implements a code fix for <see cref="SA1027TabsMustNotBeUsed"/>.
+    /// Implements a code fix for <see cref="SA1027UseTabsCorrectly"/>.
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1027CodeFixProvider))]
     [Shared]
@@ -26,7 +26,7 @@ namespace StyleCop.Analyzers.SpacingRules
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(SA1027TabsMustNotBeUsed.DiagnosticId);
+            ImmutableArray.Create(SA1027UseTabsCorrectly.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -65,9 +65,9 @@ namespace StyleCop.Analyzers.SpacingRules
 
             bool useTabs = false;
             string behavior;
-            if (diagnostic.Properties.TryGetValue(SA1027TabsMustNotBeUsed.BehaviorKey, out behavior))
+            if (diagnostic.Properties.TryGetValue(SA1027UseTabsCorrectly.BehaviorKey, out behavior))
             {
-                useTabs = behavior == SA1027TabsMustNotBeUsed.ConvertToTabsBehavior;
+                useTabs = behavior == SA1027UseTabsCorrectly.ConvertToTabsBehavior;
             }
 
             string text = sourceText.ToString(TextSpan.FromBounds(startLine.Start, span.End));

@@ -12,23 +12,13 @@ namespace StyleCop.Analyzers.SpacingRules
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
-    /// The C# code contains a tab character.
+    /// The code contains a tab or space character which is not consistent with the current project settings.
     /// </summary>
-    /// <remarks>
-    /// <para>A violation of this rule occurs whenever the code contains a tab character.</para>
-    ///
-    /// <para>Tabs should not be used within C# code, because the length of the tab character can vary depending upon
-    /// the editor being used to view the code. This can cause the spacing and indexing of the code to vary from the
-    /// developer's original intention, and can in some cases make the code difficult to read.</para>
-    ///
-    /// <para>For these reasons, tabs should not be used, and each level of indentation should consist of four spaces.
-    /// This will ensure that the code looks the same no matter which editor is being used to view the code.</para>
-    /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class SA1027TabsMustNotBeUsed : DiagnosticAnalyzer
+    internal class SA1027UseTabsCorrectly : DiagnosticAnalyzer
     {
         /// <summary>
-        /// The ID for diagnostics produced by the <see cref="SA1027TabsMustNotBeUsed"/> analyzer.
+        /// The ID for diagnostics produced by the <see cref="SA1027UseTabsCorrectly"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1027";
 
