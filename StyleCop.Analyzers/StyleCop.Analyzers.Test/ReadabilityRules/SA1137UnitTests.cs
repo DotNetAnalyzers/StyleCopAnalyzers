@@ -1425,6 +1425,24 @@ int y;
         }
 
         [Fact]
+        public async Task TestLeadingCommentAsync()
+        {
+            string testCode = @"
+using System.Collections.Generic;
+class ClassName
+{
+    void MethodName()
+    {
+        /* var x = */ new List<string>();
+        var y = new List<string>();
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestSwitchStatementAsync()
         {
             string testCode = @"

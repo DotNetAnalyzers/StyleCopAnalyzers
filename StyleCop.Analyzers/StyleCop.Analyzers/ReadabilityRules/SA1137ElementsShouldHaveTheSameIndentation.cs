@@ -360,7 +360,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 element =>
                 {
                     SyntaxToken firstToken = GetFirstTokenForAnalysis(element);
-                    return firstToken.IsMissingOrDefault() || !firstToken.IsFirstInLine();
+                    return firstToken.IsMissingOrDefault() || !firstToken.IsFirstInLine(allowNonWhitespaceTrivia: false);
                 });
 
             if (elements.Count < 2)
