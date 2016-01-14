@@ -60,114 +60,20 @@ namespace StyleCop.Analyzers.SpacingRules
 
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context, StyleCopSettings settings)
         {
-            SyntaxTree syntaxTree = context.Tree;
-            SourceText sourceText = syntaxTree.GetText(context.CancellationToken);
-
-            ImmutableArray<TextSpan> convertToTabsSpans;
-            ImmutableArray<TextSpan> convertToSpacesSpans;
-            if (!LocateIncorrectTabUsage(sourceText, settings.Indentation, out convertToTabsSpans, out convertToSpacesSpans))
-            {
-                return;
-            }
-
-            SyntaxNode root = syntaxTree.GetCompilationUnitRoot(context.CancellationToken);
+            SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
             ImmutableArray<TextSpan> excludedSpans;
             if (!LocateExcludedSpans(root, out excludedSpans))
             {
                 return;
             }
 
-            int toTabsIndex = 0;
-            int toSpacesIndex = 0;
-
-            for (int excludedIndex = 0; excludedIndex < excludedSpans.Length; excludedIndex++)
-            {
-                TextSpan excluded = excludedSpans[excludedIndex];
-
-                while (toTabsIndex < convertToTabsSpans.Length)
-                {
-                    TextSpan included = convertToTabsSpans[toTabsIndex];
-                    if (included.Start >= excluded.End)
-                    {
-                        // Doesn't overlap the current excluded span, but might overlap the next
-                        break;
-                    }
-
-                    if (included.Start < excluded.Start)
-                    {
-                        int violationStart = included.Start;
-                        int violationEnd = Math.Min(included.End, excluded.Start);
-
-                        context.ReportDiagnostic(
-                            Diagnostic.Create(
-                                Descriptor,
-                                Location.Create(syntaxTree, TextSpan.FromBounds(violationStart, violationEnd)),
-                                ConvertToTabsProperties));
-                    }
-
-                    if (included.End > excluded.End)
-                    {
-                        // It overlapped the current excluded span, and might also overlap the next
-                        break;
-                    }
-
-                    toTabsIndex++;
-                }
-
-                while (toSpacesIndex < convertToSpacesSpans.Length)
-                {
-                    TextSpan included = convertToSpacesSpans[toSpacesIndex];
-                    if (included.Start >= excluded.End)
-                    {
-                        // Doesn't overlap the current excluded span, but might overlap the next
-                        break;
-                    }
-
-                    if (included.Start < excluded.Start)
-                    {
-                        int violationStart = included.Start;
-                        int violationEnd = Math.Min(included.End, excluded.Start);
-
-                        context.ReportDiagnostic(
-                            Diagnostic.Create(
-                                Descriptor,
-                                Location.Create(syntaxTree, TextSpan.FromBounds(violationStart, violationEnd)),
-                                ConvertToSpacesProperties));
-                    }
-
-                    if (included.End > excluded.End)
-                    {
-                        // It overlapped the current excluded span, and might also overlap the next
-                        break;
-                    }
-
-                    toSpacesIndex++;
-                }
-            }
-
-            for (; toTabsIndex < convertToTabsSpans.Length; toTabsIndex++)
-            {
-                context.ReportDiagnostic(
-                    Diagnostic.Create(
-                        Descriptor,
-                        Location.Create(syntaxTree, convertToTabsSpans[toTabsIndex]),
-                        ConvertToTabsProperties));
-            }
-
-            for (; toSpacesIndex < convertToSpacesSpans.Length; toSpacesIndex++)
-            {
-                context.ReportDiagnostic(
-                    Diagnostic.Create(
-                        Descriptor,
-                        Location.Create(syntaxTree, convertToSpacesSpans[toSpacesIndex]),
-                        ConvertToSpacesProperties));
-            }
+            ReportIncorrectTabUsage(context, settings.Indentation, excludedSpans);
         }
 
-        private static bool LocateIncorrectTabUsage(SourceText sourceText, IndentationSettings indentationSettings, out ImmutableArray<TextSpan> convertToTabsSpans, out ImmutableArray<TextSpan> convertToSpacesSpans)
+        private static void ReportIncorrectTabUsage(SyntaxTreeAnalysisContext context, IndentationSettings indentationSettings, ImmutableArray<TextSpan> excludedSpans)
         {
-            ImmutableArray<TextSpan>.Builder toTabsBuilder = ImmutableArray.CreateBuilder<TextSpan>();
-            ImmutableArray<TextSpan>.Builder toSpacesBuilder = ImmutableArray.CreateBuilder<TextSpan>();
+            SyntaxTree syntaxTree = context.Tree;
+            SourceText sourceText = syntaxTree.GetText(context.CancellationToken);
 
             string completeText = sourceText.ToString();
             int length = completeText.Length;
@@ -175,9 +81,21 @@ namespace StyleCop.Analyzers.SpacingRules
             bool useTabs = indentationSettings.UseTabs;
             int tabSize = indentationSettings.TabSize;
 
+            int excludedSpanIndex = 0;
+            var lastExcludedSpan = new TextSpan(completeText.Length, 0);
+            TextSpan nextExcludedSpan = !excludedSpans.IsEmpty ? excludedSpans[0] : lastExcludedSpan;
+
             int lastLineStart = 0;
             for (int startIndex = 0; startIndex < length; startIndex++)
             {
+                if (startIndex == nextExcludedSpan.Start)
+                {
+                    startIndex = nextExcludedSpan.End - 1;
+                    excludedSpanIndex++;
+                    nextExcludedSpan = excludedSpanIndex < excludedSpans.Length ? excludedSpans[excludedSpanIndex] : lastExcludedSpan;
+                    continue;
+                }
+
                 int tabCount = 0;
                 bool containsSpaces = false;
                 bool tabAfterSpace = false;
@@ -205,6 +123,11 @@ namespace StyleCop.Analyzers.SpacingRules
                 int endIndex;
                 for (endIndex = startIndex + 1; endIndex < length; endIndex++)
                 {
+                    if (endIndex == nextExcludedSpan.Start)
+                    {
+                        break;
+                    }
+
                     if (completeText[endIndex] == ' ')
                     {
                         containsSpaces = true;
@@ -227,24 +150,28 @@ namespace StyleCop.Analyzers.SpacingRules
                     int spaceCount = (endIndex - startIndex) - tabCount;
                     if (tabAfterSpace || spaceCount >= tabSize)
                     {
-                        toTabsBuilder.Add(TextSpan.FromBounds(startIndex, endIndex));
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                Descriptor,
+                                Location.Create(syntaxTree, TextSpan.FromBounds(startIndex, endIndex)),
+                                ConvertToTabsProperties));
                     }
                 }
                 else
                 {
                     if (tabCount > 0)
                     {
-                        toSpacesBuilder.Add(TextSpan.FromBounds(startIndex, endIndex));
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                Descriptor,
+                                Location.Create(syntaxTree, TextSpan.FromBounds(startIndex, endIndex)),
+                                ConvertToSpacesProperties));
                     }
                 }
 
                 // Make sure to not analyze overlapping spans
                 startIndex = endIndex - 1;
             }
-
-            convertToTabsSpans = toTabsBuilder.ToImmutable();
-            convertToSpacesSpans = toSpacesBuilder.ToImmutable();
-            return true;
         }
 
         private static bool LocateExcludedSpans(SyntaxNode root, out ImmutableArray<TextSpan> excludedSpans)
