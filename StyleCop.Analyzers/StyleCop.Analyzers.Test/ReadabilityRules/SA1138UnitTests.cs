@@ -2626,6 +2626,28 @@ class MyAttribute : Attribute
         }
 
         [Fact]
+        public async Task TestLeadingCommentAsync()
+        {
+            string testCode = @"
+using System.Collections.Generic;
+class ClassName
+{
+    void MethodName()
+    {
+        /* var x = */ new List<string>();
+        var y = new List<string>();
+
+        if (true)
+        /* things */ {
+        }
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestSwitchStatementAsync()
         {
             await this.VerifyCSharpDiagnosticAsync(this.SwitchStatementTestCode, this.SwitchStatementExpectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

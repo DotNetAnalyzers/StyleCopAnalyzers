@@ -278,7 +278,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             tokens = tokens.RemoveAll(
                 token =>
                 {
-                    return token.IsMissingOrDefault() || !token.IsFirstInLine();
+                    return token.IsMissingOrDefault() || !token.IsFirstInLine(allowNonWhitespaceTrivia: false);
                 });
 
             if (tokens.IsEmpty || (tokens.Length == 1 && !enableAbsoluteIndentationAnalysis))
