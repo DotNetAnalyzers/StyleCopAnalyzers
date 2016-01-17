@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Helpers
 {
+    using System.Text;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Settings.ObjectModel;
@@ -81,6 +82,42 @@ namespace StyleCop.Analyzers.Helpers
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Generate a new indentation string for the given indentation width.
+        /// </summary>
+        /// <param name="indentationSettings">The indentation settings to use.</param>
+        /// <param name="indentationWidth">The width of the indentation string.</param>
+        /// <returns>A string containing the whitespace needed to indent code to the specified width.</returns>
+        public static string GenerateIndentationString(IndentationSettings indentationSettings, int indentationWidth) =>
+            GenerateIndentationString(indentationSettings, indentationWidth, 0);
+
+        /// <summary>
+        /// Generate a new indentation string for the given indentation width.
+        /// </summary>
+        /// <param name="indentationSettings">The indentation settings to use.</param>
+        /// <param name="indentationWidth">The width of the indentation string.</param>
+        /// <param name="startColumn">The starting column for the indentation.</param>
+        /// <returns>A string containing the whitespace needed to indent code to the specified width.</returns>
+        public static string GenerateIndentationString(IndentationSettings indentationSettings, int indentationWidth, int startColumn)
+        {
+            if (!indentationSettings.UseTabs)
+            {
+                return new string(' ', indentationWidth);
+            }
+
+            // Adjust the indentation width so a narrower first tab doesn't affect the outcome
+            indentationWidth += startColumn % indentationSettings.TabSize;
+
+            int tabCount = indentationWidth / indentationSettings.TabSize;
+            int spaceCount = indentationWidth - (tabCount * indentationSettings.TabSize);
+
+            StringBuilder builder = StringBuilderPool.Allocate();
+            builder.EnsureCapacity(tabCount + spaceCount);
+            builder.Append('\t', tabCount);
+            builder.Append(' ', spaceCount);
+            return StringBuilderPool.ReturnAndFree(builder);
         }
 
         /// <summary>

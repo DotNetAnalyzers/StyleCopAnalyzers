@@ -1529,42 +1529,42 @@ class MyAttribute : Attribute { }
 using System;
 enum Enum1
 {
-  /// <summary>
-  /// Summary.
-  /// </summary>
+    /// <summary>
+    /// Summary.
+    /// </summary>
     [My]
     Element1,
 
-  /// <summary>
-  /// Summary.
-  /// </summary>
+    /// <summary>
+    /// Summary.
+    /// </summary>
     Element2,
 }
 
 enum Enum2
 {
-  /// <summary>
-  /// Summary.
-  /// </summary>
+    /// <summary>
+    /// Summary.
+    /// </summary>
     [My]
     Element1,
 
-  /// <summary>
-  /// Summary.
-  /// </summary>
+    /// <summary>
+    /// Summary.
+    /// </summary>
     Element2,
 }
 
 enum Enum3
 {
-  /// <summary>
-  /// Summary.
-  /// </summary>
+    /// <summary>
+    /// Summary.
+    /// </summary>
     [My] Element1,
 
-   /// <summary>
-   /// Summary.
-   /// </summary>
+    /// <summary>
+    /// Summary.
+    /// </summary>
     Element2,
 }
 
