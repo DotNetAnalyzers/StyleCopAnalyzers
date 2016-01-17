@@ -123,7 +123,7 @@ namespace StyleCop.Analyzers.OrderingRules
             {
                 var rootNamespace = compilationUnit.Members.OfType<NamespaceDeclarationSyntax>().First();
                 var indentationLevel = IndentationHelper.GetIndentationSteps(settings.Indentation, rootNamespace);
-                usingsIndentation = IndentationHelper.GenerateIndentationString(settings.Indentation, indentationLevel + 1);
+                usingsIndentation = IndentationHelper.GenerateIndentationStringForSteps(settings.Indentation, indentationLevel + 1);
             }
             else
             {
@@ -203,7 +203,7 @@ namespace StyleCop.Analyzers.OrderingRules
                         indentationSteps++;
                     }
 
-                    var indentation = IndentationHelper.GenerateIndentationString(indentationSettings, indentationSteps);
+                    var indentation = IndentationHelper.GenerateIndentationStringForSteps(indentationSettings, indentationSteps);
 
                     var modifiedUsings = usingsHelper.GenerateGroupedUsings(usingList, indentation, false, qualifyNames);
 
@@ -231,7 +231,7 @@ namespace StyleCop.Analyzers.OrderingRules
                         indentationSteps++;
                     }
 
-                    var indentation = IndentationHelper.GenerateIndentationString(indentationSettings, indentationSteps);
+                    var indentation = IndentationHelper.GenerateIndentationStringForSteps(indentationSettings, indentationSteps);
 
                     var modifiedUsings = usingsHelper.GenerateGroupedUsings(childSpan, indentation, false, qualifyNames: false);
 

@@ -74,7 +74,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             SyntaxTriviaList newTrivia =
                 SyntaxFactory.TriviaList(
                     SyntaxFactory.CarriageReturnLineFeed,
-                    SyntaxFactory.Whitespace(lineText.Substring(0, indentLength) + IndentationHelper.GenerateIndentationString(settings.Indentation, 1)));
+                    SyntaxFactory.Whitespace(lineText.Substring(0, indentLength) + IndentationHelper.GenerateIndentationStringForSteps(settings.Indentation, 1)));
 
             SyntaxToken updatedToken = originalToken.WithLeadingTrivia(originalToken.LeadingTrivia.AddRange(newTrivia));
             SyntaxNode updatedRoot = root.ReplaceToken(originalToken, updatedToken);

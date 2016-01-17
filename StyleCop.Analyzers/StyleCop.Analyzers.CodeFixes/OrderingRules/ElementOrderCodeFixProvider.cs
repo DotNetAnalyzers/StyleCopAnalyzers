@@ -141,7 +141,7 @@ namespace StyleCop.Analyzers.OrderingRules
             if (!memberToMove.HasLeadingTrivia)
             {
                 var targetIndentationLevel = IndentationHelper.GetIndentationSteps(indentationSettings, targetMember);
-                var indentationString = IndentationHelper.GenerateIndentationString(indentationSettings, targetIndentationLevel);
+                var indentationString = IndentationHelper.GenerateIndentationStringForSteps(indentationSettings, targetIndentationLevel);
                 memberToMove = memberToMove.WithLeadingTrivia(SyntaxFactory.Whitespace(indentationString));
             }
 

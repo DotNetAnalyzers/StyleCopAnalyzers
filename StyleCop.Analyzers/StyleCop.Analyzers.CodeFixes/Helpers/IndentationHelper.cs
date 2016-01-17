@@ -65,7 +65,7 @@ namespace StyleCop.Analyzers.Helpers
         /// <param name="indentationSettings">The indentation settings to use.</param>
         /// <param name="indentationSteps">The number of indentation steps.</param>
         /// <returns>A string containing the amount of whitespace needed for the given indentation steps.</returns>
-        public static string GenerateIndentationString(IndentationSettings indentationSettings, int indentationSteps)
+        public static string GenerateIndentationStringForSteps(IndentationSettings indentationSettings, int indentationSteps)
         {
             string result;
             var indentationCount = indentationSteps * indentationSettings.IndentationSize;
@@ -91,7 +91,7 @@ namespace StyleCop.Analyzers.Helpers
         /// <returns>A <see cref="SyntaxTrivia"/> containing the indentation whitespace.</returns>
         public static SyntaxTrivia GenerateWhitespaceTrivia(IndentationSettings indentationSettings, int indentationSteps)
         {
-            return SyntaxFactory.Whitespace(GenerateIndentationString(indentationSettings, indentationSteps));
+            return SyntaxFactory.Whitespace(GenerateIndentationStringForSteps(indentationSettings, indentationSteps));
         }
 
         private static int GetIndentationSteps(IndentationSettings indentationSettings, SyntaxTree syntaxTree, SyntaxTriviaList leadingTrivia)
