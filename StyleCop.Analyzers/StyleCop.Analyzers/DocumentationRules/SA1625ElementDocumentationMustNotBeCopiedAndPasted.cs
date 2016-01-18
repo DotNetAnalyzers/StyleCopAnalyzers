@@ -6,6 +6,8 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Linq;
+    using System.Xml.Linq;
     using Helpers;
     using Helpers.ObjectPools;
     using Microsoft.CodeAnalysis;
@@ -59,7 +61,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class SA1625ElementDocumentationMustNotBeCopiedAndPasted : DiagnosticAnalyzer
+    internal class SA1625ElementDocumentationMustNotBeCopiedAndPasted : ElementDocumentationBase
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1625ElementDocumentationMustNotBeCopiedAndPasted"/>
@@ -75,48 +77,67 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
-        private static readonly Action<SyntaxNodeAnalysisContext> DocumentationTriviaAction = HandleDocumentationTrivia;
+        public SA1625ElementDocumentationMustNotBeCopiedAndPasted()
+            : base(inheritDocSuppressesWarnings: false)
+        {
+        }
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        public override void Initialize(AnalysisContext context)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, IEnumerable<XmlNodeSyntax> syntaxList, params Location[] diagnosticLocations)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
+            var comments = syntaxList.Select(
+                x => new Tuple<string, Location>(XmlCommentHelper.GetText(x, true)?.Trim(), x.GetLocation()));
+
+            ReportDuplicates(context, comments);
         }
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        /// <inheritdoc/>
+        protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, XElement completeDocumentation, params Location[] diagnosticLocations)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(DocumentationTriviaAction, SyntaxKinds.DocumentationComment);
+            var includedComments = completeDocumentation.Nodes()
+                .OfType<XElement>()
+                .Select(x =>
+                {
+                    var builder = StringBuilderPool.Allocate();
+
+                    foreach (var node in x.Nodes())
+        {
+                        builder.Append(node.ToString().Trim());
+                    }
+
+                    var elementValue = builder.ToString();
+                    StringBuilderPool.ReturnAndFree(builder);
+
+                    return new Tuple<string, Location>(elementValue, diagnosticLocations.First());
+                });
+
+            ReportDuplicates(context, includedComments);
         }
 
-        private static void HandleDocumentationTrivia(SyntaxNodeAnalysisContext context)
+        private static void ReportDuplicates(SyntaxNodeAnalysisContext context, IEnumerable<Tuple<string, Location>> comments)
         {
-            DocumentationCommentTriviaSyntax syntax = context.Node as DocumentationCommentTriviaSyntax;
-
             var objectPool = SharedPools.Default<HashSet<string>>();
             HashSet<string> documentationTexts = objectPool.Allocate();
 
-            foreach (var content in syntax.Content)
+            foreach (var comment in comments)
             {
-                string text = XmlCommentHelper.GetText(content, true)?.Trim();
-
-                if (string.IsNullOrWhiteSpace(text) || string.Equals(text, ParameterNotUsed, StringComparison.Ordinal))
+                if (string.IsNullOrWhiteSpace(comment.Item1) || string.Equals(comment.Item1, ParameterNotUsed, StringComparison.Ordinal))
                 {
                     continue;
                 }
 
-                if (documentationTexts.Contains(text))
+                if (documentationTexts.Contains(comment.Item1))
                 {
                     // Add violation
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, content.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, comment.Item2));
                 }
                 else
                 {
-                    documentationTexts.Add(text);
+                    documentationTexts.Add(comment.Item1);
                 }
             }
 

@@ -28,8 +28,13 @@ namespace StyleCop.Analyzers.DocumentationRules
         private readonly Action<SyntaxNodeAnalysisContext> indexerDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext> operatorDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext> conversionOperatorDeclarationAction;
+        private readonly Action<SyntaxNodeAnalysisContext> classDeclarationAction;
+        private readonly Action<SyntaxNodeAnalysisContext> structDeclarationAction;
+        private readonly Action<SyntaxNodeAnalysisContext> enumDeclarationAction;
+        private readonly Action<SyntaxNodeAnalysisContext> fieldDeclarationAction;
+        private readonly Action<SyntaxNodeAnalysisContext> propertyDeclarationAction;
 
-        protected ElementDocumentationBase(string matchElementName, bool inheritDocSuppressesWarnings)
+        protected ElementDocumentationBase(bool inheritDocSuppressesWarnings, string matchElementName = null)
         {
             this.matchElementName = matchElementName;
             this.inheritDocSuppressesWarnings = inheritDocSuppressesWarnings;
@@ -41,6 +46,11 @@ namespace StyleCop.Analyzers.DocumentationRules
             this.indexerDeclarationAction = this.HandleIndexerDeclaration;
             this.operatorDeclarationAction = this.HandleOperatorDeclaration;
             this.conversionOperatorDeclarationAction = this.HandleConversionOperatorDeclaration;
+            this.classDeclarationAction = this.HandleClassDeclaration;
+            this.structDeclarationAction = this.HandleStructDeclaration;
+            this.enumDeclarationAction = this.HandleEnumDeclaration;
+            this.fieldDeclarationAction = this.HandleFieldDeclaration;
+            this.propertyDeclarationAction = this.HandlePropertyDeclaration;
         }
 
         /// <inheritdoc/>
@@ -77,6 +87,11 @@ namespace StyleCop.Analyzers.DocumentationRules
             context.RegisterSyntaxNodeActionHonorExclusions(this.indexerDeclarationAction, SyntaxKind.IndexerDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(this.operatorDeclarationAction, SyntaxKind.OperatorDeclaration);
             context.RegisterSyntaxNodeActionHonorExclusions(this.conversionOperatorDeclarationAction, SyntaxKind.ConversionOperatorDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.classDeclarationAction, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.structDeclarationAction, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.enumDeclarationAction, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.fieldDeclarationAction, SyntaxKind.FieldDeclaration);
+            context.RegisterSyntaxNodeActionHonorExclusions(this.propertyDeclarationAction, SyntaxKind.PropertyDeclaration);
         }
 
         private void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
@@ -141,6 +156,41 @@ namespace StyleCop.Analyzers.DocumentationRules
             this.HandleDeclaration(context, node, node.GetLocation());
         }
 
+        private void HandleClassDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var node = (ClassDeclarationSyntax)context.Node;
+
+            this.HandleDeclaration(context, node, node.GetLocation());
+        }
+
+        private void HandleStructDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var node = (StructDeclarationSyntax)context.Node;
+
+            this.HandleDeclaration(context, node, node.GetLocation());
+        }
+
+        private void HandleEnumDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var node = (EnumDeclarationSyntax)context.Node;
+
+            this.HandleDeclaration(context, node, node.GetLocation());
+        }
+
+        private void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var node = (FieldDeclarationSyntax)context.Node;
+
+            this.HandleDeclaration(context, node, node.GetLocation());
+        }
+
+        private void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            var node = (PropertyDeclarationSyntax)context.Node;
+
+            this.HandleDeclaration(context, node, node.GetLocation());
+        }
+
         private void HandleDeclaration(SyntaxNodeAnalysisContext context, SyntaxNode node, params Location[] locations)
         {
             var documentation = node.GetDocumentationCommentTriviaSyntax();
@@ -157,7 +207,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            var matchingXmlElements = documentation.Content.GetXmlElements(this.matchElementName);
+            IEnumerable<XmlNodeSyntax> matchingXmlElements = string.IsNullOrEmpty(this.matchElementName)
+                ? documentation.Content
+                    .Where(x => x is XmlElementSyntax || x is XmlEmptyElementSyntax)
+                    .Where(x => !string.Equals(GetName(x)?.ToString(), XmlCommentHelper.IncludeXmlTag))
+                : documentation.Content.GetXmlElements(this.matchElementName);
+
             if (!matchingXmlElements.Any())
             {
                 var includedDocumentation = documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag);
@@ -180,6 +235,12 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             this.HandleXmlElement(context, matchingXmlElements, locations);
+        }
+
+        private static XmlNameSyntax GetName(XmlNodeSyntax element)
+        {
+            return (element as XmlElementSyntax)?.StartTag?.Name
+                ?? (element as XmlEmptyElementSyntax)?.Name;
         }
     }
 }
