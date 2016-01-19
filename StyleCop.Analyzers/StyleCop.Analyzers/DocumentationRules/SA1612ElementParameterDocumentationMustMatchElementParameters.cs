@@ -78,12 +78,38 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            var xmlParameterNames = syntaxList
-                .Select(XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>)
-                .Select(x => new Tuple<string, Location>(x?.Identifier?.Identifier.ValueText, x?.Identifier.GetLocation()))
-                .ToImmutableArray();
+            var parentParameters = parameterList.Value;
 
-            VerifyParameters(context, parameterList.Value, xmlParameterNames, identifierLocation);
+            var index = 0;
+            foreach (var syntax in syntaxList)
+            {
+                var nameAttributeSyntax = XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>(syntax);
+                var nameAttributeText = nameAttributeSyntax?.Identifier?.Identifier.ValueText;
+                var location = nameAttributeSyntax?.Identifier?.Identifier.GetLocation();
+
+                // Make sure we ignore violations that should be reported by SA1613 instead.
+                if (string.IsNullOrWhiteSpace(nameAttributeText))
+                {
+                    return;
+                }
+
+                var parentParameter = parentParameters.FirstOrDefault(s => s.Identifier.Text == nameAttributeText);
+                if (parentParameter == null)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(MissingParameterDescriptor, location ?? identifierLocation, nameAttributeText));
+                }
+                else if (parentParameters.Length <= index || parentParameters[index] != parentParameter)
+                {
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            OrderDescriptor,
+                            location ?? identifierLocation,
+                            nameAttributeText,
+                            parentParameters.IndexOf(parentParameter) + 1));
+                }
+
+                index++;
+            }
         }
 
         /// <inheritdoc/>
@@ -108,41 +134,35 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             // We are working with an <include> element
-            var xmlParameterNames = completeDocumentation.Nodes()
+            var xmlParamTags = completeDocumentation.Nodes()
                 .OfType<XElement>()
-                .Where(e => e.Name == XmlCommentHelper.ParamXmlTag)
-                .SelectMany(p => p.Attributes().Where(a => a.Name == "name"))
-                .Select(a => new Tuple<string, Location>(a.Value, null))
-                .ToImmutableArray();
+                .Where(e => e.Name == XmlCommentHelper.ParamXmlTag);
 
-            VerifyParameters(context, parameterList.Value, xmlParameterNames, identifierLocation);
-        }
+            var parentParameters = parameterList.Value;
 
-        private static void VerifyParameters(SyntaxNodeAnalysisContext context, ImmutableArray<ParameterSyntax> parentParameters, ImmutableArray<Tuple<string, Location>> documentationParameters, Location identifierLocation)
-        {
             var index = 0;
-
-            foreach (var documentedParameter in documentationParameters)
+            foreach (var paramTag in xmlParamTags)
             {
+                var nameAttributeText = paramTag.Attributes().FirstOrDefault(a => a.Name == "name")?.Value;
+
                 // Make sure we ignore violations that should be reported by SA1613 instead.
-                if (string.IsNullOrWhiteSpace(documentedParameter.Item1))
+                if (string.IsNullOrWhiteSpace(nameAttributeText))
                 {
                     return;
                 }
 
-                var parentParameter = parentParameters.FirstOrDefault(s => s.Identifier.Text == documentedParameter.Item1);
-
+                var parentParameter = parentParameters.FirstOrDefault(s => s.Identifier.Text == nameAttributeText);
                 if (parentParameter == null)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(MissingParameterDescriptor, documentedParameter.Item2 ?? identifierLocation, documentedParameter.Item1));
+                    context.ReportDiagnostic(Diagnostic.Create(MissingParameterDescriptor, identifierLocation, nameAttributeText));
                 }
                 else if (parentParameters.Length <= index || parentParameters[index] != parentParameter)
                 {
                     context.ReportDiagnostic(
                         Diagnostic.Create(
                             OrderDescriptor,
-                            documentedParameter.Item2 ?? identifierLocation,
-                            documentedParameter.Item1,
+                            identifierLocation,
+                            nameAttributeText,
                             parentParameters.IndexOf(parentParameter) + 1));
                 }
 
