@@ -59,54 +59,33 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, IEnumerable<XmlNodeSyntax> syntaxList, params Location[] diagnosticLocations)
         {
-            var xmlParameterNames = syntaxList
-                .Where(x => string.Equals(x.GetName()?.ToString(), XmlCommentHelper.ParamXmlTag))
-                .Select(x =>
+            foreach (var syntax in syntaxList)
+            {
+                var nameParameter = XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>(syntax);
+                var parameterValue = nameParameter?.Identifier?.Identifier.ValueText;
+
+                if (string.IsNullOrWhiteSpace(parameterValue))
                 {
-                    var nameAttribute = XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>(x);
-                    var location = x.GetLocation();
-
-                    if (nameAttribute != null)
-                    {
-                        location = nameAttribute.GetLocation();
-                    }
-
-                    return new Tuple<string, Location>(nameAttribute?.Identifier?.Identifier.ValueText, location);
-                })
-                .ToImmutableArray();
-
-            VerifyParameters(context, xmlParameterNames, diagnosticLocations.First());
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, nameParameter?.GetLocation() ?? syntax.GetLocation()));
+                }
+            }
         }
 
         /// <inheritdoc/>
         protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, XElement completeDocumentation, params Location[] diagnosticLocations)
         {
-            var xmlParameterNames = completeDocumentation.Nodes()
+            var xmlParamTags = completeDocumentation.Nodes()
                 .OfType<XElement>()
-                .Where(e => e.Name == XmlCommentHelper.ParamXmlTag)
-                .Select(x =>
-                {
-                    var name = x.Attributes().FirstOrDefault(a => a.Name == "name")?.Value;
+                .Where(e => e.Name == XmlCommentHelper.ParamXmlTag);
 
-                    return new Tuple<string, Location>(name, null);
-                })
-                .ToImmutableArray();
-
-            VerifyParameters(context, xmlParameterNames, diagnosticLocations.First());
-        }
-
-        private static void VerifyParameters(SyntaxNodeAnalysisContext context, ImmutableArray<Tuple<string, Location>> documentationParameters, Location identifierLocation)
-        {
-            var index = 0;
-
-            foreach (var documentedParameter in documentationParameters)
+            foreach (var paramTag in xmlParamTags)
             {
-                if (string.IsNullOrWhiteSpace(documentedParameter.Item1))
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, documentedParameter.Item2 ?? identifierLocation));
-                }
+                var name = paramTag.Attributes().FirstOrDefault(a => a.Name == "name")?.Value;
 
-                index++;
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, diagnosticLocations.First()));
+                }
             }
         }
     }
