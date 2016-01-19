@@ -61,7 +61,15 @@ namespace StyleCop.Analyzers.DocumentationRules
         protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, IEnumerable<XmlNodeSyntax> syntaxList, params Location[] diagnosticLocations)
         {
             var node = context.Node;
-            var identifierLocation = GetIdentifier(node).GetLocation();
+            var identifier = GetIdentifier(node);
+
+            bool supportedIdentifier = identifier != null;
+            if (!supportedIdentifier)
+            {
+                return;
+            }
+
+            var identifierLocation = identifier.Value.GetLocation();
             var parameterList = GetParameters(node)?.ToImmutableArray();
 
             bool hasNoParameters = !parameterList?.Any() ?? false;
@@ -82,7 +90,15 @@ namespace StyleCop.Analyzers.DocumentationRules
         protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, XElement completeDocumentation, params Location[] diagnosticLocations)
         {
             var node = context.Node;
-            var identifierLocation = GetIdentifier(node).GetLocation();
+            var identifier = GetIdentifier(node);
+
+            bool supportedIdentifier = identifier != null;
+            if (!supportedIdentifier)
+            {
+                return;
+            }
+
+            var identifierLocation = identifier.Value.GetLocation();
             var parameterList = GetParameters(node)?.ToImmutableArray();
 
             bool hasNoParameters = !parameterList?.Any() ?? false;
@@ -141,11 +157,11 @@ namespace StyleCop.Analyzers.DocumentationRules
                 ?? (node as DelegateDeclarationSyntax)?.ParameterList?.Parameters;
         }
 
-        private static SyntaxToken GetIdentifier(SyntaxNode node)
+        private static SyntaxToken? GetIdentifier(SyntaxNode node)
         {
             return (node as MethodDeclarationSyntax)?.Identifier
                 ?? (node as IndexerDeclarationSyntax)?.ThisKeyword
-                ?? (node as DelegateDeclarationSyntax).Identifier;
+                ?? (node as DelegateDeclarationSyntax)?.Identifier;
         }
     }
 }
