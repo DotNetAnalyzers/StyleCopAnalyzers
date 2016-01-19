@@ -55,47 +55,32 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, IEnumerable<XmlNodeSyntax> syntaxList, params Location[] diagnosticLocations)
         {
-            var xmlParameterNames = syntaxList
-                .Where(x => string.Equals(x.GetName()?.ToString(), XmlCommentHelper.ParamXmlTag))
-                .Select(x =>
+            foreach (var syntax in syntaxList)
+            {
+                bool isEmpty = syntax is XmlEmptyElementSyntax || XmlCommentHelper.IsConsideredEmpty(syntax);
+
+                if (isEmpty)
                 {
-                    bool isEmpty = x is XmlEmptyElementSyntax || XmlCommentHelper.IsConsideredEmpty(x);
-                    var location = x.GetLocation();
-
-                    return new Tuple<bool, Location>(isEmpty, location);
-                })
-                .ToImmutableArray();
-
-            VerifyParameters(context, xmlParameterNames, diagnosticLocations.First());
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.GetLocation()));
+                }
+            }
         }
 
         /// <inheritdoc/>
         protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, XElement completeDocumentation, params Location[] diagnosticLocations)
         {
-            var xmlParameterNames = completeDocumentation.Nodes()
+            var xmlParamTags = completeDocumentation.Nodes()
                 .OfType<XElement>()
-                .Where(e => e.Name == XmlCommentHelper.ParamXmlTag)
-                .Select(x =>
-                {
-                    return new Tuple<bool, Location>(XmlCommentHelper.IsConsideredEmpty(x), null);
-                })
-                .ToImmutableArray();
+                .Where(e => e.Name == XmlCommentHelper.ParamXmlTag);
 
-            VerifyParameters(context, xmlParameterNames, diagnosticLocations.First());
-        }
-
-        private static void VerifyParameters(SyntaxNodeAnalysisContext context, ImmutableArray<Tuple<bool, Location>> documentationParameters, Location identifierLocation)
-        {
-            var index = 0;
-
-            foreach (var documentedParameter in documentationParameters)
+            foreach (var paramTag in xmlParamTags)
             {
-                if (documentedParameter.Item1)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, documentedParameter.Item2 ?? identifierLocation));
-                }
+                bool isEmpty = XmlCommentHelper.IsConsideredEmpty(paramTag);
 
-                index++;
+                if (isEmpty)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, diagnosticLocations.First()));
+                }
             }
         }
     }
