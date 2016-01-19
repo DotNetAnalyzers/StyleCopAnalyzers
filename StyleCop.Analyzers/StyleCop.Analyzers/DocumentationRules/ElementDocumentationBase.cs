@@ -160,35 +160,35 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var node = (ClassDeclarationSyntax)context.Node;
 
-            this.HandleDeclaration(context, node, node.GetLocation());
+            this.HandleDeclaration(context, node, node.Identifier.GetLocation());
         }
 
         private void HandleStructDeclaration(SyntaxNodeAnalysisContext context)
         {
             var node = (StructDeclarationSyntax)context.Node;
 
-            this.HandleDeclaration(context, node, node.GetLocation());
+            this.HandleDeclaration(context, node, node.Identifier.GetLocation());
         }
 
         private void HandleEnumDeclaration(SyntaxNodeAnalysisContext context)
         {
             var node = (EnumDeclarationSyntax)context.Node;
 
-            this.HandleDeclaration(context, node, node.GetLocation());
+            this.HandleDeclaration(context, node, node.Identifier.GetLocation());
         }
 
         private void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
         {
             var node = (FieldDeclarationSyntax)context.Node;
 
-            this.HandleDeclaration(context, node, node.GetLocation());
+            this.HandleDeclaration(context, node, node.Declaration.GetLocation());
         }
 
         private void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
         {
             var node = (PropertyDeclarationSyntax)context.Node;
 
-            this.HandleDeclaration(context, node, node.GetLocation());
+            this.HandleDeclaration(context, node, node.Identifier.GetLocation());
         }
 
         private void HandleDeclaration(SyntaxNodeAnalysisContext context, SyntaxNode node, params Location[] locations)
