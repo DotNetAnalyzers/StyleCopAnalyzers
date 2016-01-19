@@ -210,7 +210,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             IEnumerable<XmlNodeSyntax> matchingXmlElements = string.IsNullOrEmpty(this.matchElementName)
                 ? documentation.Content
                     .Where(x => x is XmlElementSyntax || x is XmlEmptyElementSyntax)
-                    .Where(x => !string.Equals(GetName(x)?.ToString(), XmlCommentHelper.IncludeXmlTag))
+                    .Where(x => !string.Equals(x.GetName()?.ToString(), XmlCommentHelper.IncludeXmlTag))
                 : documentation.Content.GetXmlElements(this.matchElementName);
 
             if (!matchingXmlElements.Any())
@@ -235,12 +235,6 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             this.HandleXmlElement(context, matchingXmlElements, locations);
-        }
-
-        private static XmlNameSyntax GetName(XmlNodeSyntax element)
-        {
-            return (element as XmlElementSyntax)?.StartTag?.Name
-                ?? (element as XmlEmptyElementSyntax)?.Name;
         }
     }
 }

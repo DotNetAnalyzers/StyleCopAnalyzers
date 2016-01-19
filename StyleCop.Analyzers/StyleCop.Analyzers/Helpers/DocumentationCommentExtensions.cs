@@ -245,6 +245,12 @@ namespace StyleCop.Analyzers.Helpers
             return node.ReplaceTokens(replacements.Keys, (originalToken, rewrittenToken) => replacements[originalToken]);
         }
 
+        public static XmlNameSyntax GetName(this XmlNodeSyntax element)
+        {
+            return (element as XmlElementSyntax)?.StartTag?.Name
+                ?? (element as XmlEmptyElementSyntax)?.Name;
+        }
+
         private static SyntaxTrivia SelectExteriorTrivia(SyntaxTrivia rewrittenTrivia, SyntaxTrivia trivia, SyntaxTrivia triviaWithSpace)
         {
             // if the trivia had a trailing space, make sure to preserve it

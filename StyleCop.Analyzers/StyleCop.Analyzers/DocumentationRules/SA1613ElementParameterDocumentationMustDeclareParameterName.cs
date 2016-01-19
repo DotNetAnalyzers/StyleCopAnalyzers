@@ -60,7 +60,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, IEnumerable<XmlNodeSyntax> syntaxList, params Location[] diagnosticLocations)
         {
             var xmlParameterNames = syntaxList
-                .Where(x => string.Equals(GetName(x)?.ToString(), XmlCommentHelper.ParamXmlTag))
+                .Where(x => string.Equals(x.GetName()?.ToString(), XmlCommentHelper.ParamXmlTag))
                 .Select(x =>
                 {
                     var nameAttribute = XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>(x);
@@ -108,19 +108,6 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 index++;
             }
-        }
-
-        private static XmlNameSyntax GetName(XmlNodeSyntax element)
-        {
-            return (element as XmlElementSyntax)?.StartTag?.Name
-                ?? (element as XmlEmptyElementSyntax)?.Name;
-        }
-
-        private static SyntaxToken GetIdentifier(SyntaxNode node)
-        {
-            return (node as MethodDeclarationSyntax)?.Identifier
-                ?? (node as IndexerDeclarationSyntax)?.ThisKeyword
-                ?? (node as DelegateDeclarationSyntax).Identifier;
         }
     }
 }
