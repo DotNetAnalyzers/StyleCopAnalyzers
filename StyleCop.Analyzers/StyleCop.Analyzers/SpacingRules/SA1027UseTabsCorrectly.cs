@@ -246,15 +246,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 {
                     // Increment currentIndex this iteration
                     currentIndex++;
-
-                    // Only increment nextIndex this iteration if necessary to ensure nextIndex > currentIndex on the
-                    // next iteration. At this point we already incremented currentIndex, but haven't incremented
-                    // nextIndex.
-                    if (currentIndex > nextIndex)
-                    {
-                        nextIndex--;
-                    }
-
+                    sortedTextSpans[currentIndex] = next;
                     continue;
                 }
 
