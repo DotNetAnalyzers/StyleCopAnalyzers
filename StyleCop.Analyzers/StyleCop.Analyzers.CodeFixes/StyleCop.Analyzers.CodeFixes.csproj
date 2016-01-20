@@ -60,6 +60,8 @@
     <Compile Include="DocumentationRules\SA1651CodeFixProvider.cs" />
     <Compile Include="Helpers\CustomBatchFixAllProvider.cs" />
     <Compile Include="Helpers\CustomFixAllProviders.cs" />
+    <Compile Include="OrderingRules\UsingCodeFixProvider.SourceMap.cs" />
+    <Compile Include="OrderingRules\UsingCodeFixProvider.TreeTextSpan.cs" />
     <Compile Include="Helpers\DocumentBasedFixAllProvider.cs" />
     <Compile Include="Helpers\FixAllContextHelper.cs" />
     <Compile Include="Helpers\FormattingHelper.cs" />
@@ -150,6 +152,7 @@
     <None Include="..\StyleCop.Analyzers.ruleset">
       <Link>StyleCop.Analyzers.ruleset</Link>
     </None>
+    <Compile Include="OrderingRules\UsingCodeFixProvider.UsingsSorter.cs" />
     <None Include="packages.config" />
     <NuGetManifest Include="StyleCop.Analyzers.nuspec">
       <SubType>Designer</SubType>

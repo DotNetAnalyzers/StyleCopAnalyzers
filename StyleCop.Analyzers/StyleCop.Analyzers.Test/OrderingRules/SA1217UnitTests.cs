@@ -207,7 +207,8 @@ using static System.String;
 using static System.Math;
 #endif";
 
-            var fixedTestCode = @"using System;
+            var fixedTestCode = @"
+using System;
 using Microsoft.VisualStudio;
 using static System.Tuple;
 using MyList = System.Collections.Generic.List<int>;

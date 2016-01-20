@@ -153,15 +153,16 @@ namespace Foo
     using System;
 }";
 
-            var fixedTestCode = @"namespace Foo
+            var fixedTestCode = @"using System.Threading;
+using global::System;
+using global::System.IO;
+using global::System.Linq;
+using XYZ = System.IO;
+
+namespace Foo
 {
     using System;
-    using System.Threading;
     using global::Foo;
-    using global::System;
-    using global::System.IO;
-    using global::System.Linq;
-    using XYZ = System.IO;
 }";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 1);
@@ -191,18 +192,19 @@ namespace Foo
 }";
 
             var fixedTestCode = @"extern alias corlib;
+using System.Threading;
+using corlib::System;
+using Foo;
+using global::Foo;
+using global::System;
+using global::System.IO;
+using global::System.Linq;
+using Microsoft;
+
 namespace Foo
 {
     using System;
-    using System.Threading;
-    using corlib::System;
-    using Foo;
     using global::Foo;
-    using global::Foo;
-    using global::System;
-    using global::System.IO;
-    using global::System.Linq;
-    using Microsoft;
 }";
 
             DiagnosticResult[] expected =
@@ -298,7 +300,8 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 #endif";
 
-            var fixedTestCode = @"using System;
+            var fixedTestCode = @"
+using System;
 using Microsoft.VisualStudio;
 using MyList = System.Collections.Generic.List<int>;
 
