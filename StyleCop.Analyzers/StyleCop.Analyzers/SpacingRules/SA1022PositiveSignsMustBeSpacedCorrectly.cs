@@ -93,7 +93,7 @@ namespace StyleCop.Analyzers.SpacingRules
 
             if (!firstInLine)
             {
-                precededBySpace = token.IsPrecededByWhitespace();
+                precededBySpace = token.IsPrecededByWhitespace(context.CancellationToken);
                 SyntaxToken precedingToken = token.GetPreviousToken();
 
                 followsSpecialCharacter =

@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Helpers
 {
+    using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
 
@@ -61,17 +62,19 @@ namespace StyleCop.Analyzers.Helpers
         /// Gets a value indicating whether the <paramref name="token"/> is preceded by a whitespace.
         /// </summary>
         /// <param name="token">The token to process.</param>
+        /// <param name="cancellationToken">A <see cref="CancellationToken"/>.</param>
         /// <returns>true if token is preceded by a whitespace, otherwise false.</returns>
-        internal static bool IsPrecededByWhitespace(this SyntaxToken token)
+        internal static bool IsPrecededByWhitespace(this SyntaxToken token, CancellationToken cancellationToken)
         {
-            SyntaxTriviaList triviaList = token.LeadingTrivia;
-            if (triviaList.Count > 0)
+            // Perf directly access the text instead of trivia
+            int pos = token.Span.Start - 1;
+
+            if (pos < 0 || token.SyntaxTree == null)
             {
-                return triviaList.Last().IsKind(SyntaxKind.WhitespaceTrivia);
+                return false;
             }
 
-            triviaList = token.GetPreviousToken().TrailingTrivia;
-            return triviaList.Count > 0 && triviaList.Last().IsKind(SyntaxKind.WhitespaceTrivia);
+            return char.IsWhiteSpace(token.SyntaxTree.GetText(cancellationToken)[pos]);
         }
 
         /// <summary>

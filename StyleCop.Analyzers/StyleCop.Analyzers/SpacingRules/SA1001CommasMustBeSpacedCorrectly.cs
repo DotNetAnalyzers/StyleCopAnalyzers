@@ -99,7 +99,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 }
             }
 
-            if (token.IsFirstInLine() || token.IsPrecededByWhitespace())
+            if (token.IsFirstInLine() || token.IsPrecededByWhitespace(context.CancellationToken))
             {
                 // comma must{ not} be {preceded} by whitespace
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemovePrecedingPreserveLayout, " not", "preceded"));
