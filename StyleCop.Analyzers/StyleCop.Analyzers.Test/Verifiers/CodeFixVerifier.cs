@@ -235,10 +235,13 @@ namespace TestHelper
                     break;
                 }
 
-                if (--numberOfIterations < 0)
+                if (numberOfIterations <= 0)
                 {
-                    Assert.True(false, "The upper limit for the number of fix all iterations was exceeded");
+                    // If we reached 0 we either have not fixed everything we want to fix or the code fix is not supposed to fix all violations.
+                    break;
                 }
+
+                numberOfIterations--;
 
                 string equivalenceKey = null;
                 foreach (var diagnostic in analyzerDiagnostics)
