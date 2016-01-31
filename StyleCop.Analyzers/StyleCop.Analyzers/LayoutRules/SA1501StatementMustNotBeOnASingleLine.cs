@@ -69,158 +69,193 @@ namespace StyleCop.Analyzers.LayoutRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxNodeAction(HandleBlock, SyntaxKind.Block);
             context.RegisterCompilationStartAction(CompilationStartAction);
         }
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
+            var analyzerContext = new AnalyzerContext();
+
+            context.RegisterSyntaxNodeAction(analyzerContext.HandleBlock, SyntaxKind.Block);
+
             // If SA1503 is suppressed, we need to handle compound blocks as well.
             if (context.IsAnalyzerSuppressed(SA1503BracesMustNotBeOmitted.DiagnosticId))
             {
-                context.RegisterSyntaxNodeAction(HandleIfStatement, SyntaxKind.IfStatement);
-                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ctx.Node, ((DoStatementSyntax)ctx.Node).Statement), SyntaxKind.DoStatement);
-                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ctx.Node, ((WhileStatementSyntax)ctx.Node).Statement), SyntaxKind.WhileStatement);
-                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ctx.Node, ((ForStatementSyntax)ctx.Node).Statement), SyntaxKind.ForStatement);
-                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ctx.Node, ((ForEachStatementSyntax)ctx.Node).Statement), SyntaxKind.ForEachStatement);
-                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ctx.Node, ((LockStatementSyntax)ctx.Node).Statement), SyntaxKind.LockStatement);
-                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ctx.Node, ((UsingStatementSyntax)ctx.Node).Statement), SyntaxKind.UsingStatement);
-                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ctx.Node, ((FixedStatementSyntax)ctx.Node).Statement), SyntaxKind.FixedStatement);
+                context.RegisterSyntaxNodeAction(analyzerContext.HandleIfStatement, SyntaxKind.IfStatement);
+                context.RegisterSyntaxNodeAction(ctx => analyzerContext.CheckChildStatement(ctx, ctx.Node, ((DoStatementSyntax)ctx.Node).Statement), SyntaxKind.DoStatement);
+                context.RegisterSyntaxNodeAction(ctx => analyzerContext.CheckChildStatement(ctx, ctx.Node, ((WhileStatementSyntax)ctx.Node).Statement), SyntaxKind.WhileStatement);
+                context.RegisterSyntaxNodeAction(ctx => analyzerContext.CheckChildStatement(ctx, ctx.Node, ((ForStatementSyntax)ctx.Node).Statement), SyntaxKind.ForStatement);
+                context.RegisterSyntaxNodeAction(ctx => analyzerContext.CheckChildStatement(ctx, ctx.Node, ((ForEachStatementSyntax)ctx.Node).Statement), SyntaxKind.ForEachStatement);
+                context.RegisterSyntaxNodeAction(ctx => analyzerContext.CheckChildStatement(ctx, ctx.Node, ((LockStatementSyntax)ctx.Node).Statement), SyntaxKind.LockStatement);
+                context.RegisterSyntaxNodeAction(ctx => analyzerContext.CheckChildStatement(ctx, ctx.Node, ((UsingStatementSyntax)ctx.Node).Statement), SyntaxKind.UsingStatement);
+                context.RegisterSyntaxNodeAction(ctx => analyzerContext.CheckChildStatement(ctx, ctx.Node, ((FixedStatementSyntax)ctx.Node).Statement), SyntaxKind.FixedStatement);
             }
         }
 
-        private static void HandleBlock(SyntaxNodeAnalysisContext context)
+        private class AnalyzerContext
         {
-            var block = context.Node as BlockSyntax;
-            if ((block != null) &&
-                !block.OpenBraceToken.IsMissing &&
-                !block.CloseBraceToken.IsMissing &&
-                IsPartOfStatement(block))
-            {
-                var openBraceLineNumber = block.SyntaxTree.GetLineSpan(block.OpenBraceToken.Span).StartLinePosition.Line;
-                var closeBraceLineNumber = block.SyntaxTree.GetLineSpan(block.CloseBraceToken.Span).StartLinePosition.Line;
+            private List<Diagnostic> reportedDiagnostics = new List<Diagnostic>();
 
-                if (openBraceLineNumber == closeBraceLineNumber)
+            public void HandleBlock(SyntaxNodeAnalysisContext context)
+            {
+                var block = context.Node as BlockSyntax;
+                if ((block != null) &&
+                    !block.OpenBraceToken.IsMissing &&
+                    !block.CloseBraceToken.IsMissing &&
+                    IsPartOfStatement(block))
                 {
-                    switch (block.Parent.Kind())
+                    var openBraceLineNumber = block.SyntaxTree.GetLineSpan(block.OpenBraceToken.Span).StartLinePosition.Line;
+                    var closeBraceLineNumber = block.SyntaxTree.GetLineSpan(block.CloseBraceToken.Span).StartLinePosition.Line;
+
+                    if (openBraceLineNumber == closeBraceLineNumber)
                     {
-                    case SyntaxKind.AnonymousMethodExpression:
-                    case SyntaxKind.SimpleLambdaExpression:
-                    case SyntaxKind.ParenthesizedLambdaExpression:
-                        var containingExpression = GetContainingExpression(block.Parent);
-                        if (IsSingleLineExpression(containingExpression))
+                        switch (block.Parent.Kind())
                         {
-                            // Single line lambda expressions and anonymous method declarations are allowed for single line expressions.
-                            return;
+                        case SyntaxKind.AnonymousMethodExpression:
+                        case SyntaxKind.SimpleLambdaExpression:
+                        case SyntaxKind.ParenthesizedLambdaExpression:
+                            var containingExpression = GetContainingExpression(block.Parent);
+                            if (IsSingleLineExpression(containingExpression))
+                            {
+                                // Single line lambda expressions and anonymous method declarations are allowed for single line expressions.
+                                return;
+                            }
+
+                            break;
                         }
 
-                        break;
+                        this.ReportDiagnostic(context, block.OpenBraceToken.GetLocation());
+                    }
+                }
+            }
+
+            public void HandleIfStatement(SyntaxNodeAnalysisContext context)
+            {
+                var ifStatement = (IfStatementSyntax)context.Node;
+                if (ifStatement.Parent.IsKind(SyntaxKind.ElseClause))
+                {
+                    // this will be analyzed as a clause of the outer if statement
+                    return;
+                }
+
+                List<StatementSyntax> clauses = new List<StatementSyntax>();
+                for (IfStatementSyntax current = ifStatement; current != null; current = current.Else?.Statement as IfStatementSyntax)
+                {
+                    clauses.Add(current.Statement);
+                    if (current.Else != null && !(current.Else.Statement is IfStatementSyntax))
+                    {
+                        clauses.Add(current.Else.Statement);
+                    }
+                }
+
+                if (!context.IsAnalyzerSuppressed(SA1520UseBracesConsistently.DiagnosticId))
+                {
+                    // inconsistencies will be reported as SA1520, as long as it's not suppressed
+                    if (clauses.OfType<BlockSyntax>().Any())
+                    {
+                        return;
+                    }
+                }
+
+                foreach (StatementSyntax clause in clauses)
+                {
+                    SyntaxNode node = clause.Parent;
+                    if (node.IsKind(SyntaxKind.IfStatement) && node.Parent.IsKind(SyntaxKind.ElseClause))
+                    {
+                        node = node.Parent;
                     }
 
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, block.OpenBraceToken.GetLocation()));
-                }
-            }
-        }
-
-        private static void HandleIfStatement(SyntaxNodeAnalysisContext context)
-        {
-            var ifStatement = (IfStatementSyntax)context.Node;
-            if (ifStatement.Parent.IsKind(SyntaxKind.ElseClause))
-            {
-                // this will be analyzed as a clause of the outer if statement
-                return;
-            }
-
-            List<StatementSyntax> clauses = new List<StatementSyntax>();
-            for (IfStatementSyntax current = ifStatement; current != null; current = current.Else?.Statement as IfStatementSyntax)
-            {
-                clauses.Add(current.Statement);
-                if (current.Else != null && !(current.Else.Statement is IfStatementSyntax))
-                {
-                    clauses.Add(current.Else.Statement);
+                    this.CheckChildStatement(context, node, clause);
                 }
             }
 
-            if (!context.IsAnalyzerSuppressed(SA1520UseBracesConsistently.DiagnosticId))
+            public void CheckChildStatement(SyntaxNodeAnalysisContext context, SyntaxNode node, StatementSyntax childStatement)
             {
-                // inconsistencies will be reported as SA1520, as long as it's not suppressed
-                if (clauses.OfType<BlockSyntax>().Any())
+                bool reportAsHidden = false;
+
+                if (childStatement == null || childStatement.IsMissing)
                 {
                     return;
                 }
-            }
 
-            foreach (StatementSyntax clause in clauses)
-            {
-                SyntaxNode node = clause.Parent;
-                if (node.IsKind(SyntaxKind.IfStatement) && node.Parent.IsKind(SyntaxKind.ElseClause))
+                if (childStatement is BlockSyntax)
                 {
-                    node = node.Parent;
+                    // BlockSyntax child statements are handled by HandleBlock
+                    return;
                 }
 
-                CheckChildStatement(context, node, clause);
-            }
-        }
-
-        private static void CheckChildStatement(SyntaxNodeAnalysisContext context, SyntaxNode node, StatementSyntax childStatement)
-        {
-            if (childStatement == null || childStatement.IsMissing)
-            {
-                return;
-            }
-
-            if (childStatement is BlockSyntax)
-            {
-                // BlockSyntax child statements are handled by HandleBlock
-                return;
-            }
-
-            // We are only interested in the first instance of this violation on a line.
-            if (!node.GetFirstToken().IsFirstInLine())
-            {
-                return;
-            }
-
-            // We are only interested in the case where statement and childStatement start on the same line. Use
-            // IsFirstInLine to detect this condition easily.
-            SyntaxToken firstChildToken = childStatement.GetFirstToken();
-            if (firstChildToken.IsMissingOrDefault() || firstChildToken.IsFirstInLine())
-            {
-                return;
-            }
-
-            if (!context.IsAnalyzerSuppressed(SA1519BracesMustNotBeOmittedFromMultiLineChildStatement.DiagnosticId))
-            {
-                // diagnostics for multi-line statements is handled by SA1519, as long as it's not suppressed
-                FileLinePositionSpan lineSpan = childStatement.GetLineSpan();
-                if (lineSpan.StartLinePosition.Line != lineSpan.EndLinePosition.Line)
+                // We are only interested in the case where statement and childStatement start on the same line. Use
+                // IsFirstInLine to detect this condition easily.
+                SyntaxToken firstChildToken = childStatement.GetFirstToken();
+                if (firstChildToken.IsMissingOrDefault() || firstChildToken.IsFirstInLine())
                 {
                     return;
                 }
+
+                if (!context.IsAnalyzerSuppressed(SA1519BracesMustNotBeOmittedFromMultiLineChildStatement.DiagnosticId))
+                {
+                    // diagnostics for multi-line statements is handled by SA1519, as long as it's not suppressed
+                    FileLinePositionSpan lineSpan = childStatement.GetLineSpan();
+                    if (lineSpan.StartLinePosition.Line != lineSpan.EndLinePosition.Line)
+                    {
+                        reportAsHidden = true;
+                    }
+                }
+
+                this.ReportDiagnostic(context, childStatement.GetLocation(), reportAsHidden);
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, childStatement.GetLocation()));
-        }
-
-        private static bool IsSingleLineExpression(ExpressionSyntax containingExpression)
-        {
-            if (containingExpression == null)
+            private static bool IsSingleLineExpression(ExpressionSyntax containingExpression)
             {
-                return false;
+                if (containingExpression == null)
+                {
+                    return false;
+                }
+
+                var lineSpan = containingExpression.SyntaxTree.GetLineSpan(containingExpression.Span);
+                return lineSpan.StartLinePosition.Line == lineSpan.EndLinePosition.Line;
             }
 
-            var lineSpan = containingExpression.SyntaxTree.GetLineSpan(containingExpression.Span);
-            return lineSpan.StartLinePosition.Line == lineSpan.EndLinePosition.Line;
-        }
+            private static bool IsPartOfStatement(BlockSyntax block)
+            {
+                return block.Parent.FirstAncestorOrSelf<StatementSyntax>() != null;
+            }
 
-        private static bool IsPartOfStatement(BlockSyntax block)
-        {
-            return block.Parent.FirstAncestorOrSelf<StatementSyntax>() != null;
-        }
+            private static ExpressionSyntax GetContainingExpression(SyntaxNode node)
+            {
+                return node.FirstAncestorOrSelf<ExpressionSyntax>();
+            }
 
-        private static ExpressionSyntax GetContainingExpression(SyntaxNode node)
-        {
-            return node.FirstAncestorOrSelf<ExpressionSyntax>();
+            private void ReportDiagnostic(SyntaxNodeAnalysisContext context, Location location, bool alwaysReportAsHidden = false)
+            {
+                Diagnostic newDiagnostic;
+
+                var locationLine = location.GetLineSpan().StartLinePosition.Line;
+                var notFirstDiagnosticOnLine = this.reportedDiagnostics.Any(rd => (rd.Severity != DiagnosticSeverity.Hidden) && (rd.Location.GetLineSpan().StartLinePosition.Line == locationLine));
+
+                if (alwaysReportAsHidden || notFirstDiagnosticOnLine)
+                {
+                    newDiagnostic = Diagnostic.Create(
+                        Descriptor.Id,
+                        Descriptor.Category,
+                        Descriptor.MessageFormat,
+                        DiagnosticSeverity.Hidden,
+                        Descriptor.DefaultSeverity,
+                        Descriptor.IsEnabledByDefault,
+                        1,
+                        Descriptor.Title,
+                        Descriptor.Description,
+                        Descriptor.HelpLinkUri,
+                        location);
+                }
+                else
+                {
+                    newDiagnostic = Diagnostic.Create(Descriptor, location);
+                }
+
+                this.reportedDiagnostics.Add(newDiagnostic);
+                context.ReportDiagnostic(newDiagnostic);
+            }
         }
     }
 }
