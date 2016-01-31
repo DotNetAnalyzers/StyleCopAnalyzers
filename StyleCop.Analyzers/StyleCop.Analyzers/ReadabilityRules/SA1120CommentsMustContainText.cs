@@ -74,7 +74,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var nodeText = multiLineComment.ToString();
 
             // We remove the /* and the */ and determine if the comment has any content.
-            var commentText = nodeText.Substring(2, nodeText.Length - 4);
+            var commentText = nodeText.Substring(2, Math.Max(0, nodeText.Length - 4));
 
             if (string.IsNullOrWhiteSpace(commentText))
             {
