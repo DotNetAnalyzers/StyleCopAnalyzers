@@ -36,10 +36,10 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         private UsingDirectivesPlacement usingDirectivesPlacement;
 
         /// <summary>
-        /// This is the backing field for the <see cref="UseBlankLinesBetweenUsingGroups"/> property.
+        /// This is the backing field for the <see cref="BlankLinesBetweenUsingGroups"/> property.
         /// </summary>
-        [JsonProperty("useBlankLinesBetweenUsingGroups", DefaultValueHandling = DefaultValueHandling.Include)]
-        private OptionSetting useBlankLinesBetweenUsingGroups;
+        [JsonProperty("blankLinesBetweenUsingGroups", DefaultValueHandling = DefaultValueHandling.Include)]
+        private OptionSetting blankLinesBetweenUsingGroups;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OrderingSettings"/> class during JSON deserialization.
@@ -50,7 +50,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.elementOrder = ImmutableArray.CreateBuilder<OrderingTrait>();
             this.systemUsingDirectivesFirst = true;
             this.usingDirectivesPlacement = UsingDirectivesPlacement.InsideNamespace;
-            this.useBlankLinesBetweenUsingGroups = OptionSetting.Allow;
+            this.blankLinesBetweenUsingGroups = OptionSetting.Allow;
         }
 
         public ImmutableArray<OrderingTrait> ElementOrder
@@ -67,7 +67,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         public UsingDirectivesPlacement UsingDirectivesPlacement =>
             this.usingDirectivesPlacement;
 
-        public OptionSetting UseBlankLinesBetweenUsingGroups =>
-            this.useBlankLinesBetweenUsingGroups;
+        public OptionSetting BlankLinesBetweenUsingGroups =>
+            this.blankLinesBetweenUsingGroups;
     }
 }

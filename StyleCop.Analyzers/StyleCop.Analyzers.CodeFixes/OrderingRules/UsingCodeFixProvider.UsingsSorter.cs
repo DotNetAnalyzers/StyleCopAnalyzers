@@ -40,7 +40,7 @@ namespace StyleCop.Analyzers.OrderingRules
             public UsingsSorter(StyleCopSettings settings, SemanticModel semanticModel, CompilationUnitSyntax compilationUnit, ImmutableArray<SyntaxTrivia> fileHeader)
             {
                 this.separateSystemDirectives = settings.OrderingRules.SystemUsingDirectivesFirst;
-                this.insertBlankLinesBetweenGroups = settings.OrderingRules.UseBlankLinesBetweenUsingGroups == OptionSetting.Require;
+                this.insertBlankLinesBetweenGroups = settings.OrderingRules.BlankLinesBetweenUsingGroups == OptionSetting.Require;
 
                 this.semanticModel = semanticModel;
                 this.fileHeader = fileHeader;

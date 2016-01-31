@@ -223,7 +223,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 return;
             }
 
-            var useBlankLinesBetweenUsingGroups = settings.OrderingRules.UseBlankLinesBetweenUsingGroups;
+            var blankLinesBetweenUsingGroups = settings.OrderingRules.BlankLinesBetweenUsingGroups;
 
             var previousGroupType = usings[0].GetUsingGroupType(settings);
             var previousLineSpan = usings[0].GetLineSpan();
@@ -245,7 +245,7 @@ namespace StyleCop.Analyzers.LayoutRules
                     continue;
                 }
 
-                if (useBlankLinesBetweenUsingGroups == OptionSetting.Require)
+                if (blankLinesBetweenUsingGroups == OptionSetting.Require)
                 {
                     if (lineDistance > 1)
                     {
@@ -258,7 +258,7 @@ namespace StyleCop.Analyzers.LayoutRules
 
                     context.ReportDiagnostic(Diagnostic.Create(DescriptorRequire, usings[i].UsingKeyword.GetLocation(), DiagnosticPropertiesRequire));
                 }
-                else if (useBlankLinesBetweenUsingGroups == OptionSetting.Omit)
+                else if (blankLinesBetweenUsingGroups == OptionSetting.Omit)
                 {
                     if (lineDistance < 2)
                     {

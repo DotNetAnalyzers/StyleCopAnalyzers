@@ -31,7 +31,7 @@ namespace StyleCop.Analyzers.Test.Settings
 
             Assert.NotNull(styleCopSettings.OrderingRules);
             Assert.Equal(UsingDirectivesPlacement.InsideNamespace, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
-            Assert.Equal(OptionSetting.Allow, styleCopSettings.OrderingRules.UseBlankLinesBetweenUsingGroups);
+            Assert.Equal(OptionSetting.Allow, styleCopSettings.OrderingRules.BlankLinesBetweenUsingGroups);
 
             Assert.NotNull(styleCopSettings.LayoutRules);
             Assert.Equal(OptionSetting.Allow, styleCopSettings.LayoutRules.NewlineAtEndOfFile);
@@ -64,7 +64,7 @@ namespace StyleCop.Analyzers.Test.Settings
     },
     ""orderingRules"": {
         ""usingDirectivesPlacement"": ""outsideNamespace"",
-        ""useBlankLinesBetweenUsingGroups"": ""omit"",
+        ""blankLinesBetweenUsingGroups"": ""omit"",
     }
   }
 }
@@ -83,7 +83,7 @@ namespace StyleCop.Analyzers.Test.Settings
 
             Assert.NotNull(styleCopSettings.OrderingRules);
             Assert.Equal(UsingDirectivesPlacement.OutsideNamespace, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
-            Assert.Equal(OptionSetting.Omit, styleCopSettings.OrderingRules.UseBlankLinesBetweenUsingGroups);
+            Assert.Equal(OptionSetting.Omit, styleCopSettings.OrderingRules.BlankLinesBetweenUsingGroups);
         }
 
         /// <summary>

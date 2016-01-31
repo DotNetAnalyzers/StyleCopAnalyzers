@@ -22,7 +22,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     public class SA1516UsingGroupsUnitTests : CodeFixVerifier
     {
         private bool? systemUsingDirectivesFirst;
-        private OptionSetting? useBlankLinesBetweenUsingGroups;
+        private OptionSetting? blankLinesBetweenUsingGroups;
 
         /// <summary>
         /// Verifies the allow scenario is handled properly.
@@ -34,7 +34,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         [InlineData("Test")]
         public async Task TestAllowForCompilationUnitAsync(string namespaceName)
         {
-            this.useBlankLinesBetweenUsingGroups = OptionSetting.Allow;
+            this.blankLinesBetweenUsingGroups = OptionSetting.Allow;
 
             var testCode = @"
 using System;
@@ -63,7 +63,7 @@ using Factory = System.Activator;
         public async Task TestOmitWithSystemFirstAsync(string namespaceName)
         {
             this.systemUsingDirectivesFirst = true;
-            this.useBlankLinesBetweenUsingGroups = OptionSetting.Omit;
+            this.blankLinesBetweenUsingGroups = OptionSetting.Omit;
 
             var testCode = @"
 using System;
@@ -117,7 +117,7 @@ namespace TestNamespace
         public async Task TestOmitWithoutSystemFirstAsync(string namespaceName)
         {
             this.systemUsingDirectivesFirst = false;
-            this.useBlankLinesBetweenUsingGroups = OptionSetting.Omit;
+            this.blankLinesBetweenUsingGroups = OptionSetting.Omit;
 
             var testCode = @"
 using System;
@@ -169,7 +169,7 @@ namespace TestNamespace
         public async Task TestOmitWithSeparingCommentsAsync(string namespaceName)
         {
             this.systemUsingDirectivesFirst = true;
-            this.useBlankLinesBetweenUsingGroups = OptionSetting.Omit;
+            this.blankLinesBetweenUsingGroups = OptionSetting.Omit;
 
             var testCode = @"
 using System;
@@ -201,7 +201,7 @@ namespace TestNamespace
         public async Task TestRequireWithSystemFirstAsync(string namespaceName)
         {
             this.systemUsingDirectivesFirst = true;
-            this.useBlankLinesBetweenUsingGroups = OptionSetting.Require;
+            this.blankLinesBetweenUsingGroups = OptionSetting.Require;
 
             var testCode = @"
 using System;
@@ -255,7 +255,7 @@ namespace TestNamespace
         public async Task TestRequireWithoutSystemFirstAsync(string namespaceName)
         {
             this.systemUsingDirectivesFirst = false;
-            this.useBlankLinesBetweenUsingGroups = OptionSetting.Require;
+            this.blankLinesBetweenUsingGroups = OptionSetting.Require;
 
             var testCode = @"
 using System;
@@ -299,7 +299,7 @@ namespace TestNamespace
         /// <inheritdoc/>
         protected override string GetSettings()
         {
-            var useBlankLinesBetweenUsingGroups = this.useBlankLinesBetweenUsingGroups ?? OptionSetting.Allow;
+            var useBlankLinesBetweenUsingGroups = this.blankLinesBetweenUsingGroups ?? OptionSetting.Allow;
             var systemUsingDirectivesFirst = this.systemUsingDirectivesFirst ?? true;
 
             return $@"
@@ -307,7 +307,7 @@ namespace TestNamespace
     ""settings"": {{
         ""orderingRules"": {{
             ""systemUsingDirectivesFirst"" : {systemUsingDirectivesFirst.ToString().ToLowerInvariant()},
-            ""useBlankLinesBetweenUsingGroups"": ""{this.useBlankLinesBetweenUsingGroups.ToString().ToLowerInvariant()}""
+            ""blankLinesBetweenUsingGroups"": ""{this.blankLinesBetweenUsingGroups.ToString().ToLowerInvariant()}""
         }}
     }}
 }}

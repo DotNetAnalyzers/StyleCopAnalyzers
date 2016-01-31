@@ -184,7 +184,7 @@ The following properties are used to configure using directives in StyleCop Anal
 | --- | --- | --- |
 | `systemUsingDirectivesFirst` | true | Specifies whether `System` using directives are placed before other using directives |
 | `usingDirectivesPlacement` | `"insideNamespace"` | Specifies the desired placement of using directives |
-| `useBlankLinesBetweenUsingGroups` | `"allow"` | Specifies is blank lines are required to separate groups of using statements |
+| `blankLinesBetweenUsingGroups` | `"allow"` | Specifies is blank lines are required to separate groups of using statements |
 
 #### Using Directives Placement
 
@@ -223,7 +223,7 @@ In this mode, using directives may be placed inside or outside of namespaces.
 * Using directives code fix may reorder using directives, but does not relocate them
 
 #### Blank Lines Between Groups
-The `useBlankLinesBetweenUsingGroups` property affects the behavior of the following rules which report the presence / absence
+The `blankLinesBetweenUsingGroups` property affects the behavior of the following rules which report the presence / absence
 of blanks lines between groups of using directives.
 
 * [SA1516 Elements must be separated by blank line](SA1516.md)

@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
 
     /// <summary>
     /// Unit tests for the <see cref="UsingCodeFixProvider"/> for the special case where
-    /// <see cref="OrderingSettings.UseBlankLinesBetweenUsingGroups"/> is <see cref="OptionSetting.Require"/>.
+    /// <see cref="OrderingSettings.BlankLinesBetweenUsingGroups"/> is <see cref="OptionSetting.Require"/>.
     /// </summary>
     public class UsingCodeFixProviderGroupSeparationUnitTests : CodeFixVerifier
     {
@@ -81,7 +81,7 @@ namespace Foo
     ""settings"": {{
         ""orderingRules"": {{
             ""systemUsingDirectivesFirst"" : {systemUsingDirectivesFirst.ToString().ToLowerInvariant()},
-            ""useBlankLinesBetweenUsingGroups"": ""require""
+            ""blankLinesBetweenUsingGroups"": ""require""
         }}
     }}
 }}
