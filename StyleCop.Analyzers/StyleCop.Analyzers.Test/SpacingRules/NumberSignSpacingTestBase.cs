@@ -194,7 +194,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 };
 
             await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(test, fixedTest, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
