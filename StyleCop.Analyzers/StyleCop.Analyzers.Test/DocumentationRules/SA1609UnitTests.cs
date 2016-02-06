@@ -41,13 +41,20 @@ public class ClassName
         public async Task TestPropertyWithInheritedDocumentationAsync()
         {
             var testCode = @"
+public class BaseClassName
+{
+    /// <summary>Test property.</summary>
+    /// <value>Test value.</value>
+    public virtual int Property { get; set; }
+}
+
 /// <summary>
 /// 
 /// </summary>
-public class ClassName
+public class ClassName : BaseClassName
 {
     /// <inheritdoc/>
-    public ClassName Property { get; set; }
+    public override int Property { get; set; }
 }";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }

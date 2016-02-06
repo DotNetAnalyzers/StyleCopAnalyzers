@@ -280,6 +280,55 @@ public class ClassName
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that an inheritdoc
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestImproperUseOfInheritDocAsync()
+        {
+            var testCode = @"
+public class BaseClass
+{
+  /// <summary>Base test property.</summary>
+  /// <value>A test value.</summary>
+  public virtual int BaseTestProperty { get; }
+}
+
+public interface ITestInterface
+{
+  /// <summary>Test property.</summary>
+  /// <value>A test value.</summary>
+  int InterfaceTestProperty { get; }
+}
+
+public class ClassName : BaseClass, ITestInterface
+{
+    /// <value>
+    /// </value>
+    /// <inheritdoc/>
+    public ClassName Property { get; set; }
+
+    /// <value>
+    /// </value>
+    /// <inheritdoc/>
+    public int InterfaceTestProperty { get { return 1; } }
+
+    /// <value>
+    /// </value>
+    /// <inheritdoc/>
+    public override int BaseTestProperty { get { return 1; } }
+}
+";
+
+            // No changes will be made because of the missing summary.
+            var fixedCode = testCode;
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(21, 22);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1610PropertyDocumentationMustHaveValueText();

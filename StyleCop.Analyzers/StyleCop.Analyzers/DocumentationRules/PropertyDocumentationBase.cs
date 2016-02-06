@@ -45,6 +45,12 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <param name="diagnosticLocation">The location where diagnostics, if any, should be reported.</param>
         protected abstract void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location diagnosticLocation);
 
+        private static bool CanUseInheritDoc(SyntaxNodeAnalysisContext context, PropertyDeclarationSyntax propertyDeclaration)
+        {
+            var symbolInfo = context.SemanticModel.GetDeclaredSymbol(propertyDeclaration, context.CancellationToken);
+            return symbolInfo.IsOverride || NamedTypeHelpers.IsImplementingAnInterfaceMember(symbolInfo);
+        }
+
         private void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
             context.RegisterSyntaxNodeActionHonorExclusions(this.propertyDeclarationAction, SyntaxKind.PropertyDeclaration);
@@ -61,7 +67,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             this.HandleDeclaration(context, node, node.Identifier.GetLocation());
         }
 
-        private void HandleDeclaration(SyntaxNodeAnalysisContext context, SyntaxNode node, Location location)
+        private void HandleDeclaration(SyntaxNodeAnalysisContext context, PropertyDeclarationSyntax node, Location location)
         {
             var documentation = node.GetDocumentationCommentTriviaSyntax();
             if (documentation == null)
@@ -70,7 +76,8 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag) != null)
+            if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag) != null
+                && CanUseInheritDoc(context, node))
             {
                 // Ignore nodes with an <inheritdoc/> tag.
                 return;
