@@ -65,14 +65,18 @@ partial {0} TypeName
         [InlineData("class")]
         [InlineData("struct")]
         [InlineData("interface")]
-        public async Task TestTypeWithInheritedDocumentationAsync(string typeName)
+        public async Task TestTypeWithEmptySummaryAndInheritedDocumentationAsync(string typeName)
         {
             var testCode = @"
+/// <summary>
+/// </summary>
 /// <inheritdoc/>
 partial {0} TypeName
 {{
 }}";
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+
+            var expected = this.CSharpDiagnostic().WithLocation(5, 10 + typeName.Length);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
