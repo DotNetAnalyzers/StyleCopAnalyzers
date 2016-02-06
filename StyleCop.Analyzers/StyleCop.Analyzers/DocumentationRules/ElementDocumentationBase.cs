@@ -60,7 +60,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         }
 
         /// <summary>
-        /// Analyzes the top-level <c>&lt;param&gt;</c> elements of a documentation comment.
+        /// Analyzes the top-level elements of a documentation comment.
         /// </summary>
         /// <param name="context">The current analysis context.</param>
         /// <param name="syntaxList">The <see cref="XmlElementSyntax"/> or <see cref="XmlEmptyElementSyntax"/> of the node
@@ -69,7 +69,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         protected abstract void HandleXmlElement(SyntaxNodeAnalysisContext context, IEnumerable<XmlNodeSyntax> syntaxList, params Location[] diagnosticLocations);
 
         /// <summary>
-        /// Analyzes the top-level <c>&lt;param&gt;</c> elements of a documentation comment.
+        /// Analyzes the XML elements of a documentation comment.
         /// </summary>
         /// <param name="context">The current analysis context.</param>
         /// <param name="completeDocumentation">The complete documentation for the declared symbol, with any
