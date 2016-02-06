@@ -89,16 +89,40 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, IEnumerable<XmlNodeSyntax> syntaxList, params Location[] diagnosticLocations)
         {
-            var comments = syntaxList.Select(
-                x => new Tuple<string, Location>(XmlCommentHelper.GetText(x, true)?.Trim(), x.GetLocation()));
+            var objectPool = SharedPools.Default<HashSet<string>>();
+            HashSet<string> documentationTexts = objectPool.Allocate();
 
-            ReportDuplicates(context, comments);
+            foreach (var documentationSyntax in syntaxList)
+            {
+                var documentation = XmlCommentHelper.GetText(documentationSyntax, true)?.Trim();
+
+                if (ShouldSkipElement(documentation))
+                {
+                    continue;
+                }
+
+                if (documentationTexts.Contains(documentation))
+                {
+                    // Add violation
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, documentationSyntax.GetLocation()));
+                }
+                else
+                {
+                    documentationTexts.Add(documentation);
+                }
+            }
+
+            objectPool.ClearAndFree(documentationTexts);
         }
 
         /// <inheritdoc/>
         protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, XElement completeDocumentation, params Location[] diagnosticLocations)
         {
-            var includedComments = completeDocumentation.Nodes()
+            var objectPool = SharedPools.Default<HashSet<string>>();
+            HashSet<string> documentationTexts = objectPool.Allocate();
+
+            // Concatenate all XML node values
+            var documentationElements = completeDocumentation.Nodes()
                 .OfType<XElement>()
                 .Select(x =>
                 {
@@ -112,36 +136,33 @@ namespace StyleCop.Analyzers.DocumentationRules
                     var elementValue = builder.ToString();
                     StringBuilderPool.ReturnAndFree(builder);
 
-                    return new Tuple<string, Location>(elementValue, diagnosticLocations.First());
+                    return elementValue;
                 });
 
-            ReportDuplicates(context, includedComments);
-        }
-
-        private static void ReportDuplicates(SyntaxNodeAnalysisContext context, IEnumerable<Tuple<string, Location>> comments)
-        {
-            var objectPool = SharedPools.Default<HashSet<string>>();
-            HashSet<string> documentationTexts = objectPool.Allocate();
-
-            foreach (var comment in comments)
+            foreach (var documentation in documentationElements)
             {
-                if (string.IsNullOrWhiteSpace(comment.Item1) || string.Equals(comment.Item1, ParameterNotUsed, StringComparison.Ordinal))
+                if (ShouldSkipElement(documentation))
                 {
                     continue;
                 }
 
-                if (documentationTexts.Contains(comment.Item1))
+                if (documentationTexts.Contains(documentation))
                 {
                     // Add violation
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, comment.Item2));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, diagnosticLocations.First()));
                 }
                 else
                 {
-                    documentationTexts.Add(comment.Item1);
+                    documentationTexts.Add(documentation);
                 }
             }
 
             objectPool.ClearAndFree(documentationTexts);
+        }
+
+        private static bool ShouldSkipElement(string element)
+        {
+            return string.IsNullOrWhiteSpace(element) || string.Equals(element, ParameterNotUsed, StringComparison.Ordinal);
         }
     }
 }
