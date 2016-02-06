@@ -210,7 +210,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             IEnumerable<XmlNodeSyntax> matchingXmlElements = string.IsNullOrEmpty(this.matchElementName)
                 ? documentation.Content
                     .Where(x => x is XmlElementSyntax || x is XmlEmptyElementSyntax)
-                    .Where(x => !string.Equals(x.GetName()?.ToString(), XmlCommentHelper.IncludeXmlTag))
+                    .Where(x => !string.Equals(x.GetName()?.ToString(), XmlCommentHelper.IncludeXmlTag, StringComparison.Ordinal))
                 : documentation.Content.GetXmlElements(this.matchElementName);
 
             if (!matchingXmlElements.Any())
