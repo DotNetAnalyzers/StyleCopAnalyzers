@@ -369,113 +369,18 @@ public class TestClass
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-//        [Fact]
-//        public async Task VerifyThatAnalysisIgnoresEmptyElementsInIncludedDocumentationAsync()
-//        {
-//            var testCode = $@"
-//public class TestClass
-//{{
-//    /// <summary></summary>
-//    /// <remark>Documentation</remark>
-//    /// <remark></remark>
-//    /// <remark>Documentation</remark>
-//    /// <include file='With.xml' path='/TestClass/Test/*' />
-//    public void Test() {{ }}
-//}}
-//";
-//            var expected = this.CSharpDiagnostic().WithLocation(7, 9);
-//            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-//        }
-
-//        [Fact]
-//        public async Task VerifyThatCorrectIncludedDocumentationDoesNotReportADiagnosticMultiLineAsync()
-//        {
-//            var testCode = $@"
-//public class TestClass
-//{{
-//    /** <summary>
-//    * Some documentation.
-//    * </summary>
-//    * <remark>Some remark.</remark>
-//    **/
-//    public void Test() {{ }}
-//}}
-//";
-//            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-//        }
-
-//        [Fact]
-//        public async Task VerifyThatIncludedDuplicatedDocumentationDoesReportADiagnosticMultiLineAsync()
-//        {
-//            var testCode = $@"
-//public class TestClass
-//{{
-//    /** <summary>Some documentation.</summary>
-//    * <remark>Some documentation.</remark>
-//    **/
-//    public void Test() {{ }}
-//}}
-//";
-//            var expected = this.CSharpDiagnostic().WithLocation(5, 7);
-
-//            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-//        }
-
-//        [Fact]
-//        public async Task VerifyThatAnalyzerIgnoresIncludedLeadingAndTrailingWhitespaceMultiLineAsync()
-//        {
-//            var testCode = $@"
-//public class TestClass
-//{{
-//    /** <summary>
-//    *                                             Some documentation.
-//    *
-//    *
-//    * </summary>
-//    * <remark>    Some documentation.      </remark>
-//    **/
-//    public void Test() {{ }}
-//}}
-//";
-//            var expected = this.CSharpDiagnostic().WithLocation(9, 7);
-//            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-//        }
-
-//        [Fact]
-//        public async Task VerifyThatAnalysisIgnoresIncludedUnusedParametersMultiLineAsync()
-//        {
-//            var testCode = $@"
-//public class TestClass
-//{{
-//    /** <summary>The parameter is not used.</summary>
-//    * <remark>Documentation</remark>
-//    * <remark>The parameter is not used.</remark>
-//    * <remark>Documentation</remark>
-//    **/
-//    public void Test() {{ }}
-//}}
-//";
-//            var expected = this.CSharpDiagnostic().WithLocation(7, 7);
-//            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-//        }
-
-//        [Fact]
-//        public async Task VerifyThatAnalysisIgnoresIncludedEmptyElementsMultiLineAsync()
-//        {
-//            var testCode = $@"
-//public class TestClass
-//{{
-//    /** <summary></summary>
-//    * <remark>Documentation</remark>
-//    * <remark></remark>
-//    * <remark>Documentation</remark>
-//    **/
-//    public void Test() {{ }}
-//}}
-//";
-//            var expected = this.CSharpDiagnostic().WithLocation(7, 7);
-//            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-//        }
+        [Fact]
+        public async Task VerifyThatAnalysisIgnoresEmptyElementsInIncludedDocumentationAsync()
+        {
+            var testCode = $@"
+public class TestClass
+{{
+    /// <include file='CorrectEmpty.xml' path='/TestClass/Test/*' />
+    public void Test() {{ }}
+}}
+";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
 
         /// <inheritdoc/>
         protected override Project ApplyCompilationOptions(Project project)
@@ -494,7 +399,7 @@ public class TestClass
 ";
             resolver.XmlReferences.Add("Correct.xml", correctDocumentation);
 
-            string correctWithEmptyElements = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+            string correctWithEmptyReferenceElements = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <TestClass>
     <Test>
         <summary>
@@ -507,7 +412,17 @@ public class TestClass
     </Test>
 </TestClass>
 ";
-            resolver.XmlReferences.Add("CorrectWithEmptyElements.xml", correctWithEmptyElements);
+            resolver.XmlReferences.Add("CorrectWithEmptyElements.xml", correctWithEmptyReferenceElements);
+
+            string correctWithEmptyElements = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+    <Test>
+        <summary></summary>
+        <remark></remark>
+    </Test>
+</TestClass>
+";
+            resolver.XmlReferences.Add("CorrectEmpty.xml", correctWithEmptyElements);
 
             string inherited = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <TestClass>
