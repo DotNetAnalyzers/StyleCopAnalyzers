@@ -157,6 +157,25 @@ StyleCop Analyzers only considers using directives to be "System" using directiv
 while StyleCop Classic ignored the alias. For example, `using global::System;` would be not be considered a System using
 directive by StyleCop Analyzers, but it would be considered a System using directive by StyleCop Classic.
 
+### SA1210
+
+StyleCop Analyzers considers alias-qualifiers when sorting using directives, in order to match the default behavior of
+Visual Studio 2015. StyleCop Classic ignores alias-qualifiers when sorting using directives.
+
+Example showing sorting order for StyleCop Analyzers:
+```csharp
+using Beer;
+using global::Wine;
+using Tea;
+```
+
+Example showing sorting order for StyleCop Classic:
+```csharp
+using Beer;
+using Tea;
+using global::Wine;
+```
+
 ### SA1214
 
 StyleCop Classic only reports SA1214 for violations involving static fields. In StyleCop Analyzers, SA1214 and SA1215
