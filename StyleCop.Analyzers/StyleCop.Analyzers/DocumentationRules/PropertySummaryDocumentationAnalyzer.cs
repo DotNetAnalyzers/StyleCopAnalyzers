@@ -63,9 +63,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         protected override string XmlTagToHandle => XmlCommentHelper.SummaryXmlTag;
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location diagnosticLocation)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, PropertyDeclarationSyntax propertyDeclaration, DocumentationCommentTriviaSyntax documentation, XmlNodeSyntax syntax, Location diagnosticLocation)
         {
-            var propertyDeclaration = (PropertyDeclarationSyntax)context.Node;
             var propertyType = context.SemanticModel.GetTypeInfo(propertyDeclaration.Type);
 
             if (propertyType.Type.SpecialType == SpecialType.System_Boolean)

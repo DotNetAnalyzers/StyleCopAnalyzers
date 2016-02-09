@@ -47,9 +47,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         protected override string XmlTagToHandle => XmlCommentHelper.ValueXmlTag;
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location diagnosticLocation)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, PropertyDeclarationSyntax propertyDeclaration, DocumentationCommentTriviaSyntax documentation, XmlNodeSyntax syntax, Location diagnosticLocation)
         {
-            if (syntax == null)
+            if ((syntax == null) && !HasValidInheritDoc(context, propertyDeclaration, documentation))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, diagnosticLocation));
             }

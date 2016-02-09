@@ -281,11 +281,11 @@ public class ClassName
         }
 
         /// <summary>
-        /// Verifies that an inheritdoc
+        /// Verifies that an empty value tag will override the &lt;inheritdoc/&gt; tag.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestImproperUseOfInheritDocAsync()
+        public async Task TestOverrideOfInheritDocAsync()
         {
             var testCode = @"
 public class BaseClass
@@ -324,7 +324,13 @@ public class ClassName : BaseClass, ITestInterface
             // No changes will be made because of the missing summary.
             var fixedCode = testCode;
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(21, 22);
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(21, 22),
+                this.CSharpDiagnostic().WithLocation(26, 16),
+                this.CSharpDiagnostic().WithLocation(31, 25),
+            };
+
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }

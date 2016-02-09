@@ -37,13 +37,28 @@ namespace StyleCop.Analyzers.DocumentationRules
         }
 
         /// <summary>
-        /// Analyzes the top-level <c>&lt;summary&gt;</c> element of a documentation comment.
+        /// Checks if the given property declaration has a valid (allowed) &lt;inheritdoc/&gt; declaration.
         /// </summary>
         /// <param name="context">The current analysis context.</param>
+        /// <param name="propertyDeclaration">The property declaration to check.</param>
+        /// <param name="documentation">The documentation for the property.</param>
+        /// <returns>True if a valid &lt;inheritdoc/&gt; declaration is present.</returns>
+        protected static bool HasValidInheritDoc(SyntaxNodeAnalysisContext context, PropertyDeclarationSyntax propertyDeclaration, DocumentationCommentTriviaSyntax documentation)
+        {
+            return documentation.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag) != null
+                && CanUseInheritDoc(context, propertyDeclaration);
+        }
+
+        /// <summary>
+        /// Analyzes the top-level element (of type <see cref="XmlTagToHandle"/>) of a documentation comment.
+        /// </summary>
+        /// <param name="context">The current analysis context.</param>
+        /// <param name="propertyDeclaration">The property declaration to check.</param>
+        /// <param name="documentation">The documentation for the property.</param>
         /// <param name="syntax">The <see cref="XmlElementSyntax"/> or <see cref="XmlEmptyElementSyntax"/> of the node
         /// to examine.</param>
         /// <param name="diagnosticLocation">The location where diagnostics, if any, should be reported.</param>
-        protected abstract void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location diagnosticLocation);
+        protected abstract void HandleXmlElement(SyntaxNodeAnalysisContext context, PropertyDeclarationSyntax propertyDeclaration, DocumentationCommentTriviaSyntax documentation, XmlNodeSyntax syntax, Location diagnosticLocation);
 
         private static bool CanUseInheritDoc(SyntaxNodeAnalysisContext context, PropertyDeclarationSyntax propertyDeclaration)
         {
@@ -67,24 +82,17 @@ namespace StyleCop.Analyzers.DocumentationRules
             this.HandleDeclaration(context, node, node.Identifier.GetLocation());
         }
 
-        private void HandleDeclaration(SyntaxNodeAnalysisContext context, PropertyDeclarationSyntax node, Location location)
+        private void HandleDeclaration(SyntaxNodeAnalysisContext context, PropertyDeclarationSyntax propertyDeclaration, Location location)
         {
-            var documentation = node.GetDocumentationCommentTriviaSyntax();
+            var documentation = propertyDeclaration.GetDocumentationCommentTriviaSyntax();
             if (documentation == null)
             {
                 // missing documentation is reported by SA1600, SA1601, and SA1602
                 return;
             }
 
-            if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag) != null
-                && CanUseInheritDoc(context, node))
-            {
-                // Ignore nodes with an <inheritdoc/> tag.
-                return;
-            }
-
             var valueXmlElement = documentation.Content.GetFirstXmlElement(this.XmlTagToHandle);
-            this.HandleXmlElement(context, valueXmlElement, location);
+            this.HandleXmlElement(context, propertyDeclaration, documentation, valueXmlElement, location);
         }
     }
 }
