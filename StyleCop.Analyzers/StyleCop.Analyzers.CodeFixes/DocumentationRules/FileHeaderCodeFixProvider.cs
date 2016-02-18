@@ -365,10 +365,20 @@ namespace StyleCop.Analyzers.DocumentationRules
             string encodedCompanyName = new XAttribute("t", settings.DocumentationRules.CompanyName).ToString().Substring(2).Trim('"');
             string encodedCopyrightText = new XText(copyrightText).ToString();
 
-            return
+            string copyrightString =
                 $"{prefixWithLeadingSpaces} <copyright file=\"{encodedFilename}\" company=\"{encodedCompanyName}\">" + newLineText
                 + encodedCopyrightText + newLineText
                 + prefixWithLeadingSpaces + " </copyright>";
+
+            if (!string.IsNullOrEmpty(settings.DocumentationRules.HeaderDecoration))
+            {
+                return
+                    $"{prefixWithLeadingSpaces} {settings.DocumentationRules.HeaderDecoration}" + newLineText
+                    + copyrightString + newLineText
+                    + $"{prefixWithLeadingSpaces} {settings.DocumentationRules.HeaderDecoration}";
+            }
+
+            return copyrightString;
         }
 
         private static string GetCopyrightText(string prefixWithLeadingSpaces, string copyrightText, string newLineText)

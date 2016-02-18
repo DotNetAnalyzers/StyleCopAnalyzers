@@ -33,6 +33,12 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         private string copyrightText;
 
         /// <summary>
+        /// This is the backing field for the <see cref="CompanyName"/> property.
+        /// </summary>
+        [JsonProperty("headerDecoration", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        private string headerDecoration;
+
+        /// <summary>
         /// This is the cache for the <see cref="CopyrightText"/> property.
         /// </summary>
         private string copyrightTextCache;
@@ -94,6 +100,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.companyName = DefaultCompanyName;
             this.copyrightText = DefaultCopyrightText;
             this.variables = ImmutableDictionary<string, string>.Empty.ToBuilder();
+            this.headerDecoration = null;
             this.xmlHeader = true;
 
             this.documentExposedElements = true;
@@ -123,6 +130,14 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                 }
 
                 return this.copyrightTextCache;
+            }
+        }
+
+        public string HeaderDecoration
+        {
+            get
+            {
+                return this.headerDecoration;
             }
         }
 
