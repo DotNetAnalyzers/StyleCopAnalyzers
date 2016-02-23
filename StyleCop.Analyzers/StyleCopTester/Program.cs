@@ -41,7 +41,7 @@ namespace StyleCopTester
                     cts.Cancel();
                 };
 
-            // Since Console apps do not have a SyncronizationContext, we're leveraging the built-in support
+            // Since Console apps do not have a SynchronizationContext, we're leveraging the built-in support
             // in WPF to pump the messages via the Dispatcher.
             // See the following for additional details:
             //   http://blogs.msdn.com/b/pfxteam/archive/2012/01/21/10259307.aspx
