@@ -203,16 +203,10 @@ namespace StyleCop.Analyzers.DocumentationRules
                     getterVisible = true;
                     setterVisible = false;
                 }
-                else if (setter != null)
-                {
-                    getterVisible = false;
-                    setterVisible = true;
-                }
                 else
                 {
-                    // TODO Raise a NotImplementedException?
                     getterVisible = false;
-                    setterVisible = false;
+                    setterVisible = setter != null;
                 }
             }
 
