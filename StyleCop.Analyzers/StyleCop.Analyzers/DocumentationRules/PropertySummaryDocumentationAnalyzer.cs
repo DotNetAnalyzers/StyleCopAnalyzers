@@ -119,53 +119,47 @@ namespace StyleCop.Analyzers.DocumentationRules
             var textElement = summaryElement.Content.FirstOrDefault() as XmlTextSyntax;
             var text = textElement == null ? string.Empty : XmlCommentHelper.GetText(textElement, true).TrimStart();
 
-            if (getter != null || expressionBody != null)
+            bool startsWithGetOrSet = text.StartsWith(startingTextGetsOrSets, StringComparison.Ordinal);
+            bool getterVisible, setterVisible;
+            if (getter != null && setter != null)
             {
-                bool startsWithGetOrSet = text.StartsWith(startingTextGetsOrSets, StringComparison.Ordinal);
-
-                if (setter != null)
+                if (!getter.Modifiers.Any() && !setter.Modifiers.Any())
                 {
-                    // There is no way getter is null (can't have expression body and accessor list)
-                    bool getterVisible;
-                    bool setterVisible;
-
-                    if (!getter.Modifiers.Any() && !setter.Modifiers.Any())
+                    // Case 1: The getter and setter have the same declared accessibility
+                    getterVisible = true;
+                    setterVisible = true;
+                }
+                else if (getter.Modifiers.Any(SyntaxKind.PrivateKeyword))
+                {
+                    // Case 3
+                    getterVisible = false;
+                    setterVisible = true;
+                }
+                else if (setter.Modifiers.Any(SyntaxKind.PrivateKeyword))
+                {
+                    // Case 3
+                    getterVisible = true;
+                    setterVisible = false;
+                }
+                else
+                {
+                    var propertyAccessibility = propertyDeclaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+                    bool propertyOnlyInternal = propertyAccessibility == Accessibility.Internal
+                                                || propertyAccessibility == Accessibility.ProtectedAndInternal
+                                                || propertyAccessibility == Accessibility.Private;
+                    if (propertyOnlyInternal)
                     {
-                        // Case 1: The getter and setter have the same declared accessibility
+                        // Case 2: Property only internal and no accessor is explicitly private
                         getterVisible = true;
                         setterVisible = true;
-                    }
-                    else if (getter.Modifiers.Any(SyntaxKind.PrivateKeyword))
-                    {
-                        // Case 3
-                        getterVisible = false;
-                        setterVisible = true;
-                    }
-                    else if (setter.Modifiers.Any(SyntaxKind.PrivateKeyword))
-                    {
-                        // Case 3
-                        getterVisible = true;
-                        setterVisible = false;
                     }
                     else
                     {
-                        var propertyAccessibility = propertyDeclaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
-                        bool propertyOnlyInternal = propertyAccessibility == Accessibility.Internal
-                            || propertyAccessibility == Accessibility.ProtectedAndInternal
-                            || propertyAccessibility == Accessibility.Private;
-                        if (propertyOnlyInternal)
-                        {
-                            // Case 2: Property only internal and no accessor is explicitly private
-                            getterVisible = true;
-                            setterVisible = true;
-                        }
-                        else
-                        {
-                            var getterAccessibility = getter.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
-                            var setterAccessibility = setter.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+                        var getterAccessibility = getter.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+                        var setterAccessibility = setter.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
 
-                            switch (getterAccessibility)
-                            {
+                        switch (getterAccessibility)
+                        {
                             case Accessibility.Public:
                             case Accessibility.ProtectedOrInternal:
                             case Accessibility.Protected:
@@ -180,10 +174,10 @@ namespace StyleCop.Analyzers.DocumentationRules
                                 // The property is externally accessible, so the setter must be more accessible.
                                 getterVisible = false;
                                 break;
-                            }
+                        }
 
-                            switch (setterAccessibility)
-                            {
+                        switch (setterAccessibility)
+                        {
                             case Accessibility.Public:
                             case Accessibility.ProtectedOrInternal:
                             case Accessibility.Protected:
@@ -198,68 +192,64 @@ namespace StyleCop.Analyzers.DocumentationRules
                                 // The property is externally accessible, so the getter must be more accessible.
                                 setterVisible = false;
                                 break;
-                            }
                         }
-                    }
-
-                    if (getterVisible && !setterVisible)
-                    {
-                        if (startsWithGetOrSet)
-                        {
-                            diagnosticProperties.Add(ExpectedTextKey, startingTextGets);
-                            diagnosticProperties.Add(TextToRemoveKey, startingTextGetsOrSets);
-                            context.ReportDiagnostic(Diagnostic.Create(SA1624Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), "get", startingTextGets));
-                        }
-                        else if (!text.StartsWith(startingTextGets, StringComparison.Ordinal))
-                        {
-                            diagnosticProperties.Add(ExpectedTextKey, startingTextGets);
-                            context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextGets));
-                        }
-                    }
-                    else if (!getterVisible && setterVisible)
-                    {
-                        if (startsWithGetOrSet)
-                        {
-                            diagnosticProperties.Add(ExpectedTextKey, startingTextSets);
-                            diagnosticProperties.Add(TextToRemoveKey, startingTextGetsOrSets);
-                            context.ReportDiagnostic(Diagnostic.Create(SA1624Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), "set", startingTextSets));
-                        }
-                        else if (!text.StartsWith(startingTextSets, StringComparison.Ordinal))
-                        {
-                            diagnosticProperties.Add(ExpectedTextKey, startingTextSets);
-                            context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextSets));
-                        }
-                    }
-                    else
-                    {
-                        if (!startsWithGetOrSet)
-                        {
-                            diagnosticProperties.Add(ExpectedTextKey, startingTextGetsOrSets);
-                            context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextGetsOrSets));
-                        }
-                    }
-                }
-                else
-                {
-                    if (startsWithGetOrSet)
-                    {
-                        diagnosticProperties.Add(ExpectedTextKey, startingTextGets);
-                        diagnosticProperties.Add(TextToRemoveKey, startingTextGetsOrSets);
-                        context.ReportDiagnostic(Diagnostic.Create(SA1624Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), "get", startingTextGets));
-                    }
-                    else if (!text.StartsWith(startingTextGets, StringComparison.Ordinal))
-                    {
-                        diagnosticProperties.Add(ExpectedTextKey, startingTextGets);
-                        context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextGets));
                     }
                 }
             }
-            else if (setter != null)
+            else
             {
-                if (!text.StartsWith(startingTextSets, StringComparison.Ordinal))
+                if (getter != null || expressionBody != null)
+                {
+                    getterVisible = true;
+                    setterVisible = false;
+                }
+                else if (setter != null)
+                {
+                    getterVisible = false;
+                    setterVisible = true;
+                }
+                else
+                {
+                    // TODO Raise a NotImplementedException?
+                    getterVisible = false;
+                    setterVisible = false;
+                }
+            }
+
+            if (getterVisible && !setterVisible)
+            {
+                if (startsWithGetOrSet)
+                {
+                    diagnosticProperties.Add(ExpectedTextKey, startingTextGets);
+                    diagnosticProperties.Add(TextToRemoveKey, startingTextGetsOrSets);
+                    context.ReportDiagnostic(Diagnostic.Create(SA1624Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), "get", startingTextGets));
+                }
+                else if (!text.StartsWith(startingTextGets, StringComparison.Ordinal))
+                {
+                    diagnosticProperties.Add(ExpectedTextKey, startingTextGets);
+                    context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextGets));
+                }
+            }
+            else if (!getterVisible && setterVisible)
+            {
+                if (startsWithGetOrSet)
+                {
+                    diagnosticProperties.Add(ExpectedTextKey, startingTextSets);
+                    diagnosticProperties.Add(TextToRemoveKey, startingTextGetsOrSets);
+                    context.ReportDiagnostic(Diagnostic.Create(SA1624Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), "set", startingTextSets));
+                }
+                else if (!text.StartsWith(startingTextSets, StringComparison.Ordinal))
                 {
                     diagnosticProperties.Add(ExpectedTextKey, startingTextSets);
                     context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextSets));
+                }
+            }
+            else
+            {
+                if (!startsWithGetOrSet)
+                {
+                    diagnosticProperties.Add(ExpectedTextKey, startingTextGetsOrSets);
+                    context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextGetsOrSets));
                 }
             }
         }
