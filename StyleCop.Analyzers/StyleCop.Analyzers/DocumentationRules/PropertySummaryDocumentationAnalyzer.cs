@@ -216,21 +216,32 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
             }
 
-            if (getterVisible && !setterVisible)
+            if (getterVisible)
             {
-                if (startsWithGetOrSet)
+                if (setterVisible)
                 {
-                    diagnosticProperties.Add(ExpectedTextKey, startingTextGets);
-                    diagnosticProperties.Add(TextToRemoveKey, startingTextGetsOrSets);
-                    context.ReportDiagnostic(Diagnostic.Create(SA1624Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), "get", startingTextGets));
+                    if (!startsWithGetOrSet)
+                    {
+                        diagnosticProperties.Add(ExpectedTextKey, startingTextGetsOrSets);
+                        context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextGetsOrSets));
+                    }
                 }
-                else if (!text.StartsWith(startingTextGets, StringComparison.Ordinal))
+                else
                 {
-                    diagnosticProperties.Add(ExpectedTextKey, startingTextGets);
-                    context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextGets));
+                    if (startsWithGetOrSet)
+                    {
+                        diagnosticProperties.Add(ExpectedTextKey, startingTextGets);
+                        diagnosticProperties.Add(TextToRemoveKey, startingTextGetsOrSets);
+                        context.ReportDiagnostic(Diagnostic.Create(SA1624Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), "get", startingTextGets));
+                    }
+                    else if (!text.StartsWith(startingTextGets, StringComparison.Ordinal))
+                    {
+                        diagnosticProperties.Add(ExpectedTextKey, startingTextGets);
+                        context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextGets));
+                    }
                 }
             }
-            else if (!getterVisible && setterVisible)
+            else if (setterVisible)
             {
                 if (startsWithGetOrSet)
                 {
@@ -242,14 +253,6 @@ namespace StyleCop.Analyzers.DocumentationRules
                 {
                     diagnosticProperties.Add(ExpectedTextKey, startingTextSets);
                     context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextSets));
-                }
-            }
-            else
-            {
-                if (!startsWithGetOrSet)
-                {
-                    diagnosticProperties.Add(ExpectedTextKey, startingTextGetsOrSets);
-                    context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextGetsOrSets));
                 }
             }
         }
