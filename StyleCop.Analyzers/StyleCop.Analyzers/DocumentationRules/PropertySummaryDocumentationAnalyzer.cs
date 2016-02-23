@@ -241,7 +241,13 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
                 else
                 {
-                    if (startsWithGetOrSet || !text.StartsWith(startingTextGets, StringComparison.Ordinal))
+                    if (startsWithGetOrSet)
+                    {
+                        diagnosticProperties.Add(ExpectedTextKey, startingTextGets);
+                        diagnosticProperties.Add(TextToRemoveKey, startingTextGetsOrSets);
+                        context.ReportDiagnostic(Diagnostic.Create(SA1624Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), "get", startingTextGets));
+                    }
+                    else if (!text.StartsWith(startingTextGets, StringComparison.Ordinal))
                     {
                         diagnosticProperties.Add(ExpectedTextKey, startingTextGets);
                         context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextGets));
