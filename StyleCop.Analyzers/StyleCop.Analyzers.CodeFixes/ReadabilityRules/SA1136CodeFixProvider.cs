@@ -51,27 +51,28 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var indentationOptions = IndentationOptions.FromDocument(document);
+            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
 
             var enumMemberDeclaration = (EnumMemberDeclarationSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
-            var enumMemberDeclarationFirstToken = enumMemberDeclaration.GetFirstToken();
-
             var enumDeclaration = (EnumDeclarationSyntax)enumMemberDeclaration.Parent;
 
             var memberIndex = enumDeclaration.Members.IndexOf(enumMemberDeclaration);
             var precedingSeparatorToken = enumDeclaration.Members.GetSeparator(memberIndex - 1);
 
-            var parentIndentationSteps = IndentationHelper.GetIndentationSteps(indentationOptions, enumDeclaration);
-            var indentation = IndentationHelper.GenerateWhitespaceTrivia(indentationOptions, parentIndentationSteps + 1);
+            // determine the indentation for enum members (which is parent + 1 step)
+            var parentIndentationSteps = IndentationHelper.GetIndentationSteps(settings.Indentation, enumDeclaration);
+            var indentation = IndentationHelper.GenerateWhitespaceTrivia(settings.Indentation, parentIndentationSteps + 1);
 
-            var replacements = new Dictionary<SyntaxToken, SyntaxToken>();
-
+            // combine all trivia between the separator and the enum member and place them after the separator, followed by a new line.
+            var enumMemberDeclarationFirstToken = enumMemberDeclaration.GetFirstToken();
             var sharedTrivia = TriviaHelper.MergeTriviaLists(precedingSeparatorToken.TrailingTrivia, enumMemberDeclarationFirstToken.LeadingTrivia);
 
             var newTrailingTrivia = SyntaxFactory.TriviaList(sharedTrivia)
                 .WithoutTrailingWhitespace()
                 .Add(SyntaxFactory.CarriageReturnLineFeed);
 
+            // replace the trivia for the tokens
+            var replacements = new Dictionary<SyntaxToken, SyntaxToken>();
             replacements[precedingSeparatorToken] = precedingSeparatorToken.WithTrailingTrivia(newTrailingTrivia);
             replacements[enumMemberDeclarationFirstToken] = enumMemberDeclarationFirstToken.WithLeadingTrivia(indentation);
 
