@@ -53,7 +53,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
 
-            var enumMemberDeclaration = (EnumMemberDeclarationSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
+            var enumMemberDeclaration = (EnumMemberDeclarationSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
             var enumDeclaration = (EnumDeclarationSyntax)enumMemberDeclaration.Parent;
 
             var memberIndex = enumDeclaration.Members.IndexOf(enumMemberDeclaration);
@@ -72,9 +72,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 .Add(SyntaxFactory.CarriageReturnLineFeed);
 
             // replace the trivia for the tokens
-            var replacements = new Dictionary<SyntaxToken, SyntaxToken>();
-            replacements[precedingSeparatorToken] = precedingSeparatorToken.WithTrailingTrivia(newTrailingTrivia);
-            replacements[enumMemberDeclarationFirstToken] = enumMemberDeclarationFirstToken.WithLeadingTrivia(indentation);
+            var replacements = new Dictionary<SyntaxToken, SyntaxToken>
+            {
+                [precedingSeparatorToken] = precedingSeparatorToken.WithTrailingTrivia(newTrailingTrivia),
+                [enumMemberDeclarationFirstToken] = enumMemberDeclarationFirstToken.WithLeadingTrivia(indentation),
+            };
 
             var newSyntaxRoot = syntaxRoot.ReplaceTokens(replacements.Keys, (original, rewritten) => replacements[original]);
             var newDocument = document.WithSyntaxRoot(newSyntaxRoot.WithoutFormatting());

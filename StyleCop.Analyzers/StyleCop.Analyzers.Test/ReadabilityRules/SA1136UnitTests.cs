@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.ReadabilityRules;
@@ -140,6 +141,39 @@ public enum TestEnum
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that an enum declaration without a block is handled correctly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestEnumWithoutBlockAsync()
+        {
+            var testCode = @"
+public enum TestEnum
+";
+
+            DiagnosticResult[] expected =
+            {
+                new DiagnosticResult
+                {
+                    Id = "CS1513",
+                    Severity = DiagnosticSeverity.Error,
+                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 2, 21) },
+                    Message = "} expected",
+                },
+
+                new DiagnosticResult
+                {
+                    Id = "CS1514",
+                    Severity = DiagnosticSeverity.Error,
+                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 2, 21) },
+                    Message = "{ expected",
+                },
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
