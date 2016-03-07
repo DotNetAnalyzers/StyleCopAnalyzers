@@ -306,6 +306,45 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             await this.VerifyCSharpFixAsync(ReferenceCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that a collision between a member and a static member is handled properly.
+        /// This is a regression test for #2093
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestNameCollisionForStaticMethodAsync()
+        {
+            var testCode = @"
+using System;
+
+public class TestClass
+{
+    public DateTime DateTime => DateTime.FromFileTime(0);
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a collision between a member and a static property is handled properly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestNameCollisionForStaticPropertyAsync()
+        {
+            var testCode = @"
+using System;
+
+public class TestClass
+{
+    public DateTime DateTime => DateTime.UtcNow;
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1101PrefixLocalCallsWithThis();
