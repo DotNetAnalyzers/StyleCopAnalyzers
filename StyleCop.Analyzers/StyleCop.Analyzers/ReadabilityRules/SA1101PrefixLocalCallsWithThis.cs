@@ -188,17 +188,25 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     return;
                 }
 
-                // This is a workaround for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1501 and can
-                // be removed when the underlying bug in roslyn is resolved
+                // This is a workaround for:
+                // - https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1501
+                // - https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2093
+                // and can be removed when the underlying bug in roslyn is resolved
                 if (nameExpression.Parent is MemberAccessExpressionSyntax)
                 {
-                    var parentSymbol = context.SemanticModel.GetSymbolInfo(nameExpression.Parent, context.CancellationToken).Symbol as IFieldSymbol;
+                    var memberAccessSymbol = context.SemanticModel.GetSymbolInfo(nameExpression.Parent, context.CancellationToken).Symbol;
 
-                    if (parentSymbol != null
-                        && parentSymbol.IsStatic
-                        && parentSymbol.ContainingType.Name == symbol.Name)
+                    switch (memberAccessSymbol.Kind)
                     {
-                        return;
+                        case SymbolKind.Field:
+                        case SymbolKind.Method:
+                        case SymbolKind.Property:
+                            if (memberAccessSymbol.IsStatic && (memberAccessSymbol.ContainingType.Name == symbol.Name))
+                            {
+                                return;
+                            }
+
+                            break;
                     }
                 }
 
