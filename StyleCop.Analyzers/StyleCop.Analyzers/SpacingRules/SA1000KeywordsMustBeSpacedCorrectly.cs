@@ -55,6 +55,11 @@ namespace StyleCop.Analyzers.SpacingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
+            // handle nameof (which appears as an invocation expression??)
+            context.RegisterSyntaxNodeAction(InvocationExpressionAction, SyntaxKind.InvocationExpression);
+
             context.RegisterCompilationStartAction(CompilationStartAction);
         }
 
@@ -62,9 +67,6 @@ namespace StyleCop.Analyzers.SpacingRules
         {
             // handle everything except nameof
             context.RegisterSyntaxTreeActionHonorExclusions(SyntaxTreeAction);
-
-            // handle nameof (which appears as an invocation expression??)
-            context.RegisterSyntaxNodeActionHonorExclusions(InvocationExpressionAction, SyntaxKind.InvocationExpression);
         }
 
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)

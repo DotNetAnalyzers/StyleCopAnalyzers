@@ -26,7 +26,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledAlternative, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> ThisExpressionAction = HandleThisExpression;
 
         /// <inheritdoc/>
@@ -36,12 +35,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(ThisExpressionAction, SyntaxKind.ThisExpression);
+            context.RegisterSyntaxNodeAction(ThisExpressionAction, SyntaxKind.ThisExpression);
         }
 
         private static void HandleThisExpression(SyntaxNodeAnalysisContext context)

@@ -66,13 +66,14 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
+            context.RegisterSyntaxNodeAction(HandleBlock, SyntaxKind.Block);
             context.RegisterCompilationStartAction(CompilationStartAction);
         }
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleBlock, SyntaxKind.Block);
-
             // If SA1503 is suppressed, we need to handle compound blocks as well.
             if (context.IsAnalyzerSuppressed(SA1503BracesMustNotBeOmitted.DiagnosticId))
             {

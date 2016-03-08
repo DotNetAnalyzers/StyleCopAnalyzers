@@ -93,7 +93,6 @@ namespace StyleCop.Analyzers.LayoutRules
                 SyntaxKind.OperatorDeclaration,
                 SyntaxKind.ConversionOperatorDeclaration);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> DeclarationAction = HandleDeclaration;
 
         /// <inheritdoc/>
@@ -103,12 +102,9 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(DeclarationAction, HandledSyntaxKinds);
+            context.RegisterSyntaxNodeAction(DeclarationAction, HandledSyntaxKinds);
         }
 
         private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
