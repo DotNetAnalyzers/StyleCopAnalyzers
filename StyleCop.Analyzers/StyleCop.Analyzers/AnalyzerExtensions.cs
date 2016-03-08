@@ -37,34 +37,6 @@ namespace StyleCop.Analyzers
         /// <remarks>This method honors exclusions.</remarks>
         /// <param name="context">The analysis context.</param>
         /// <param name="action">Action to be executed at completion of parsing of a document.</param>
-        public static void RegisterSyntaxTreeActionHonorExclusions(this CompilationStartAnalysisContext context, Action<SyntaxTreeAnalysisContext> action)
-        {
-            Compilation compilation = context.Compilation;
-            ConcurrentDictionary<SyntaxTree, bool> cache = GetOrCreateGeneratedDocumentCache(compilation);
-
-            context.RegisterSyntaxTreeAction(
-                c =>
-                {
-                    if (c.IsGeneratedDocument(cache))
-                    {
-                        return;
-                    }
-
-                    // Honor the containing document item's ExcludeFromStylecop=True
-                    // MSBuild metadata, if analyzers have access to it.
-                    //// TODO: code here
-
-                    action(c);
-                });
-        }
-
-        /// <summary>
-        /// Register an action to be executed at completion of parsing of a code document. A syntax tree action reports
-        /// diagnostics about the <see cref="SyntaxTree"/> of a document.
-        /// </summary>
-        /// <remarks>This method honors exclusions.</remarks>
-        /// <param name="context">The analysis context.</param>
-        /// <param name="action">Action to be executed at completion of parsing of a document.</param>
         public static void RegisterSyntaxTreeActionHonorExclusions(this CompilationStartAnalysisContext context, Action<SyntaxTreeAnalysisContext, StyleCopSettings> action)
         {
             Compilation compilation = context.Compilation;
