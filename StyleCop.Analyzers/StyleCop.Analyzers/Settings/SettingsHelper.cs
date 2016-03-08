@@ -24,6 +24,10 @@ namespace StyleCop.Analyzers
     {
         internal const string SettingsFileName = "stylecop.json";
 
+        private static readonly SourceTextValueProvider<StyleCopSettings> SettingsValueProvider =
+            new SourceTextValueProvider<StyleCopSettings>(
+                text => GetStyleCopSettings(text, DeserializationFailureBehavior.ReturnDefaultSettings));
+
         private static readonly bool AvoidAdditionalTextGetText;
 
         private static readonly ConcurrentDictionary<Type, ConcurrentDictionary<string, FieldInfo>> FieldInfos =
@@ -79,6 +83,90 @@ namespace StyleCop.Analyzers
         internal static StyleCopSettings GetStyleCopSettings(this AnalyzerOptions options, DeserializationFailureBehavior failureBehavior, CancellationToken cancellationToken)
         {
             return GetStyleCopSettings(options != null ? options.AdditionalFiles : ImmutableArray.Create<AdditionalText>(), failureBehavior, cancellationToken);
+        }
+
+        internal static StyleCopSettings GetStyleCopSettings(this AnalysisContext context, AnalyzerOptions options, CancellationToken cancellationToken)
+        {
+            return GetStyleCopSettings(context, options, DeserializationFailureBehavior.ReturnDefaultSettings, cancellationToken);
+        }
+
+        internal static StyleCopSettings GetStyleCopSettings(this AnalysisContext context, AnalyzerOptions options, DeserializationFailureBehavior failureBehavior, CancellationToken cancellationToken)
+        {
+            SourceText text = TryGetStyleCopSettingsText(options, cancellationToken);
+            if (text == null)
+            {
+                return new StyleCopSettings();
+            }
+
+            if (failureBehavior == DeserializationFailureBehavior.ReturnDefaultSettings)
+            {
+                StyleCopSettings settings;
+                if (!context.TryGetValue(text, SettingsValueProvider, out settings))
+                {
+                    return new StyleCopSettings();
+                }
+
+                return settings;
+            }
+
+            return JsonConvert.DeserializeObject<SettingsFile>(text.ToString()).Settings;
+        }
+
+        internal static StyleCopSettings GetStyleCopSettings(this CompilationStartAnalysisContext context, AnalyzerOptions options, CancellationToken cancellationToken)
+        {
+            return GetStyleCopSettings(context, options, DeserializationFailureBehavior.ReturnDefaultSettings, cancellationToken);
+        }
+
+#pragma warning disable RS1012 // Start action has no registered actions.
+        internal static StyleCopSettings GetStyleCopSettings(this CompilationStartAnalysisContext context, AnalyzerOptions options, DeserializationFailureBehavior failureBehavior, CancellationToken cancellationToken)
+#pragma warning restore RS1012 // Start action has no registered actions.
+        {
+            SourceText text = TryGetStyleCopSettingsText(options, cancellationToken);
+            if (text == null)
+            {
+                return new StyleCopSettings();
+            }
+
+            if (failureBehavior == DeserializationFailureBehavior.ReturnDefaultSettings)
+            {
+                StyleCopSettings settings;
+                if (!context.TryGetValue(text, SettingsValueProvider, out settings))
+                {
+                    return new StyleCopSettings();
+                }
+
+                return settings;
+            }
+
+            return JsonConvert.DeserializeObject<SettingsFile>(text.ToString()).Settings;
+        }
+
+        private static StyleCopSettings GetStyleCopSettings(SourceText text, DeserializationFailureBehavior failureBehavior)
+        {
+            try
+            {
+                var root = JsonConvert.DeserializeObject<SettingsFile>(text.ToString());
+                return root.Settings;
+            }
+            catch (JsonException) when (failureBehavior == DeserializationFailureBehavior.ReturnDefaultSettings)
+            {
+                // The settings file is invalid -> return the default settings.
+            }
+
+            return new StyleCopSettings();
+        }
+
+        private static SourceText TryGetStyleCopSettingsText(this AnalyzerOptions options, CancellationToken cancellationToken)
+        {
+            foreach (var additionalFile in options.AdditionalFiles)
+            {
+                if (Path.GetFileName(additionalFile.Path).ToLowerInvariant() == SettingsFileName)
+                {
+                    return GetText(additionalFile, cancellationToken);
+                }
+            }
+
+            return null;
         }
 
         private static StyleCopSettings GetStyleCopSettings(ImmutableArray<AdditionalText> additionalFiles, DeserializationFailureBehavior failureBehavior, CancellationToken cancellationToken)
