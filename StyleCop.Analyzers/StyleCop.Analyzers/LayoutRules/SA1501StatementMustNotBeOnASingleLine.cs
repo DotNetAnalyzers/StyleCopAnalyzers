@@ -67,6 +67,7 @@ namespace StyleCop.Analyzers.LayoutRules
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
             context.RegisterSyntaxNodeAction(HandleBlock, SyntaxKind.Block);
             context.RegisterCompilationStartAction(CompilationStartAction);

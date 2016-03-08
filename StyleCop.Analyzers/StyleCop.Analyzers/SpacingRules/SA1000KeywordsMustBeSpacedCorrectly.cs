@@ -55,6 +55,7 @@ namespace StyleCop.Analyzers.SpacingRules
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
             // handle everything except nameof
             context.RegisterSyntaxTreeAction(SyntaxTreeAction);
