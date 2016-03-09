@@ -26,7 +26,21 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 }
 ";
 
+        private const string DecoratedXmlMultiLineHeaderTestSettings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""companyName"": ""FooCorp"",
+      ""copyrightText"": ""  Copyright (c) {companyName}. All rights reserved."",
+      ""headerDecoration"": ""-----------------------------------------------------------------------"",
+    }
+  }
+}
+";
+
         private bool useNoXmlSettings;
+
+        private bool useDecoratedXmlMultiLineHeaderTestSettings;
 
         /// <summary>
         /// Verifies that the analyzer will report <see cref="FileHeaderAnalyzers.SA1633DescriptorMissing"/> for
@@ -160,6 +174,36 @@ namespace Foo
 {
 }
 ";
+
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a file without a header, but with leading trivia will produce the correct diagnostic message.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestMissingFileHeaderWithDecorationAsync()
+        {
+            var testCode = @"namespace Foo
+{
+}
+";
+            var fixedCode = @"// -----------------------------------------------------------------------
+// <copyright file=""Test0.cs"" company=""FooCorp"">
+//   Copyright (c) FooCorp. All rights reserved.
+// </copyright>
+// -----------------------------------------------------------------------
+
+namespace Foo
+{
+}
+";
+
+            this.useDecoratedXmlMultiLineHeaderTestSettings = true;
 
             var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
@@ -306,6 +350,11 @@ namespace Foo
             if (this.useNoXmlSettings)
             {
                 return NoXmlMultiLineHeaderTestSettings;
+            }
+
+            if (this.useDecoratedXmlMultiLineHeaderTestSettings)
+            {
+                return DecoratedXmlMultiLineHeaderTestSettings;
             }
 
             return base.GetSettings();
