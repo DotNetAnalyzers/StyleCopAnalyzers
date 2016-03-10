@@ -62,35 +62,6 @@ namespace StyleCop.Analyzers.SpecialRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Visual Studio 2015 Update 1 contains a bug which can cause diagnostics to occasionally not display in the Errors window. When this occurs, it is impossible to use the code fixes to address style violations reported during a build. This analyzer works around the bug (dotnet/roslyn#7446).
-        ///
-        ///When this analyzer is enabled, all diagnostics will eventually be reported in the Error window, but the performance of the analyzers is reduced. The rule is disabled for maximum performance, but can be enabled if users no [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string SA0000Description {
-            get {
-                return ResourceManager.GetString("SA0000Description", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to n/a.
-        /// </summary>
-        internal static string SA0000MessageFormat {
-            get {
-                return ResourceManager.GetString("SA0000MessageFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Workaround incomplete diagnostics in Visual Studio 2015 Update 1.
-        /// </summary>
-        internal static string SA0000Title {
-            get {
-                return ResourceManager.GetString("SA0000Title", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to XML comment analysis can only be performed when the project is configured to parse documentation comments. To enable this functionality, update the project to produce an XML documentation file as part of the build..
         /// </summary>
         internal static string SA0001Description {

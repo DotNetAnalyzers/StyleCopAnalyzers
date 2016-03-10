@@ -324,7 +324,6 @@
       <DependentUpon>SpacingResources.resx</DependentUpon>
     </Compile>
     <Compile Include="SpacingRules\TokenSpacingProperties.cs" />
-    <Compile Include="SpecialRules\SA0000Roslyn7446Workaround.cs" />
     <Compile Include="SpecialRules\SA0001XmlCommentAnalysisDisabled.cs" />
     <Compile Include="SpecialRules\SA0002InvalidSettingsFile.cs" />
     <Compile Include="SpecialRules\SpecialResources.Designer.cs">
