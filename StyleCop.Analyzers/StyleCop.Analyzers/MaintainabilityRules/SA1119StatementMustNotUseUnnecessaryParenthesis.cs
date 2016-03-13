@@ -76,6 +76,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             context.RegisterCompilationStartAction(CompilationStartAction);
         }
 
@@ -86,7 +88,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             // is disabled
             if (context.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(Descriptor.Id) != Microsoft.CodeAnalysis.ReportDiagnostic.Suppress)
             {
-                context.RegisterSyntaxNodeActionHonorExclusions(ParenthesizedExpressionAction, SyntaxKind.ParenthesizedExpression);
+                context.RegisterSyntaxNodeAction(ParenthesizedExpressionAction, SyntaxKind.ParenthesizedExpression);
             }
         }
 
