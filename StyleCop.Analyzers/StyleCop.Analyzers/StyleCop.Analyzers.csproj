@@ -104,7 +104,6 @@
     <Compile Include="DocumentationRules\SA1651DoNotUsePlaceholderElements.cs" />
     <Compile Include="DocumentationRules\StandardTextDiagnosticBase.cs" />
     <Compile Include="ExcludeFromCodeCoverageAttribute.cs" />
-    <Compile Include="GeneratedCodeAnalysisExtensions.cs" />
     <Compile Include="Helpers\AccessLevel.cs" />
     <Compile Include="Helpers\AccessLevelHelper.cs" />
     <Compile Include="Helpers\DeclarationModifiersHelper.cs" />
