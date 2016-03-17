@@ -75,7 +75,6 @@ namespace StyleCop.Analyzers.LayoutRules
                 var indentationSteps = DetermineIndentationSteps(indentationSettings, braceToken);
 
                 var previousToken = braceToken.GetPreviousToken();
-                var nextToken = braceToken.GetNextToken();
 
                 if (IsAccessorWithSingleLineBlock(previousToken, braceToken))
                 {
@@ -106,9 +105,13 @@ namespace StyleCop.Analyzers.LayoutRules
                         braceReplacementToken = braceReplacementToken.WithLeadingTrivia(IndentationHelper.GenerateWhitespaceTrivia(indentationSettings, indentationSteps));
                     }
 
-                    // Check if we need to apply a fix after the brace
-                    // if a closing brace is followed by a semi-colon or closing paren, no fix is needed.
-                    if ((LocationHelpers.GetLineSpan(nextToken).StartLinePosition.Line == braceLine) &&
+                    // Check if we need to apply a fix after the brace. No fix is needed when:
+                    // - The closing brace is followed by a semi-colon or closing paren
+                    // - The closing brace is the last token in the file
+                    var nextToken = braceToken.GetNextToken();
+                    var nextTokenLine = nextToken.IsKind(SyntaxKind.None) ? -1 : LocationHelpers.GetLineSpan(nextToken).StartLinePosition.Line;
+
+                    if ((nextTokenLine == braceLine) &&
                         (!braceToken.IsKind(SyntaxKind.CloseBraceToken) || !IsValidFollowingToken(nextToken)))
                     {
                         var sharedTrivia = nextToken.LeadingTrivia.WithoutTrailingWhitespace();
