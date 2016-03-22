@@ -33,6 +33,10 @@ Rules which enforce code layout and line spacing.
 
 Rules which verify the content and formatting of code documentation.
 
+**[Alternative Rules (SX0000-)](documentation/AlternativeRules.md)**
+
+Rules which offer a non-standard extension to the default StyleCop behavior.
+
 ### Additional documentation
 **[Configuration](documentation/Configuration.md)**
 
