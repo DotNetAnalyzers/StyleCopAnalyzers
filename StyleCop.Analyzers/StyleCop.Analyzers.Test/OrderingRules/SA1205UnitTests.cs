@@ -199,6 +199,40 @@ internal static partial class TestPartial
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that a nested type without access modifiers will produce a diagnostic and can be fixed correctly.
+        /// </summary>
+        /// <param name="typeKeyword">The type keyword to use.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
+        public async Task TestNestedTypeWithoutAccessModifierAsync(string typeKeyword)
+        {
+            var testCode = $@"
+public class Foo
+{{
+    partial {typeKeyword} Bar
+    {{
+    }}
+}}
+";
+
+            var fixedTestCode = $@"
+public class Foo
+{{
+    private partial {typeKeyword} Bar
+    {{
+    }}
+}}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.CSharpDiagnostic().WithLocation(4, 14 + typeKeyword.Length), CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {

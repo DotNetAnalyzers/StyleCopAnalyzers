@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.OrderingRules
 {
+    using System;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading;
@@ -59,7 +60,7 @@ namespace StyleCop.Analyzers.OrderingRules
             }
 
             var symbol = semanticModel.GetDeclaredSymbol(typeDeclarationNode);
-            var accessModifierKind = (symbol.DeclaredAccessibility == Accessibility.Public) ? SyntaxKind.PublicKeyword : SyntaxKind.InternalKeyword;
+            var accessModifierKind = GetMissingAccessModifier(typeDeclarationNode, symbol);
 
             var keywordToken = typeDeclarationNode.Keyword;
 
@@ -68,6 +69,44 @@ namespace StyleCop.Analyzers.OrderingRules
             replacementNode = ReplaceKeyword(replacementNode, keywordToken);
             var newSyntaxRoot = syntaxRoot.ReplaceNode(typeDeclarationNode, replacementNode);
             return document.WithSyntaxRoot(newSyntaxRoot);
+        }
+
+        private static SyntaxKind GetMissingAccessModifier(TypeDeclarationSyntax typeDeclarationNode, INamedTypeSymbol symbol)
+        {
+            if (symbol.DeclaredAccessibility == Accessibility.NotApplicable)
+            {
+                return GetDefaultAccessModifier(typeDeclarationNode);
+            }
+            else
+            {
+                return GetAccessModifierFromAccessibility(symbol.DeclaredAccessibility);
+            }
+        }
+
+        private static SyntaxKind GetDefaultAccessModifier(TypeDeclarationSyntax node)
+        {
+            var result = IsNestedType(node) ? SyntaxKind.PrivateKeyword : SyntaxKind.InternalKeyword;
+            return result;
+        }
+
+        private static bool IsNestedType(TypeDeclarationSyntax node)
+        {
+            return node?.Parent is BaseTypeDeclarationSyntax;
+        }
+
+        private static SyntaxKind GetAccessModifierFromAccessibility(Accessibility accessibility)
+        {
+            switch (accessibility)
+            {
+                case Accessibility.Public:
+                    return SyntaxKind.PublicKeyword;
+                case Accessibility.Internal:
+                    return SyntaxKind.InternalKeyword;
+                case Accessibility.Private:
+                    return SyntaxKind.PrivateKeyword;
+                default:
+                    throw new InvalidOperationException("Unexpected accessibility " + accessibility);
+            }
         }
 
         // This code was copied from the Roslyn code base (and slightly modified). It can be removed if
