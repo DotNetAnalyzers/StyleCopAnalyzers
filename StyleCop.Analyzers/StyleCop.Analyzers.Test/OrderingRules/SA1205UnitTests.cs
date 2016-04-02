@@ -233,6 +233,56 @@ public class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that the code fix will properly copy over the access modifier defined in another fragment of the nested partial element.
+        /// </summary>
+        /// <param name="accessModifier">The access modifier to use for the nested type.</param>
+        /// <param name="typeKeyword">The type keyword to use.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("public", "class")]
+        [InlineData("protected", "class")]
+        [InlineData("internal", "class")]
+        [InlineData("protected internal", "class")]
+        [InlineData("private", "class")]
+        [InlineData("public", "struct")]
+        [InlineData("protected", "struct")]
+        [InlineData("internal", "struct")]
+        [InlineData("protected internal", "struct")]
+        [InlineData("private", "struct")]
+        public async Task TestProperNestedAccessModifierPropagationAsync(string accessModifier, string typeKeyword)
+        {
+            var testCode = $@"
+public class Foo
+{{
+    {accessModifier} partial {typeKeyword} Bar
+    {{
+    }}
+
+    partial {typeKeyword} Bar
+    {{
+    }}
+}}
+";
+
+            var fixedTestCode = $@"
+public class Foo
+{{
+    {accessModifier} partial {typeKeyword} Bar
+    {{
+    }}
+
+    {accessModifier} partial {typeKeyword} Bar
+    {{
+    }}
+}}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.CSharpDiagnostic().WithLocation(8, 14 + typeKeyword.Length), CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {

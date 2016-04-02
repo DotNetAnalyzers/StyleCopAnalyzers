@@ -3,6 +3,9 @@
 
 namespace StyleCop.Analyzers.Helpers
 {
+    using System.Collections.Generic;
+    using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -66,6 +69,28 @@ namespace StyleCop.Analyzers.Helpers
             {
                 modifiers = SyntaxTokenList.Create(modifier.WithLeadingTrivia(leadingTriviaToken.LeadingTrivia));
                 leadingTriviaToken = leadingTriviaToken.WithLeadingTrivia(SyntaxFactory.ElasticSpace);
+            }
+
+            return modifiers;
+        }
+
+        /// <summary>
+        /// Adds a number of modifier tokens for <paramref name="modifierKeywords"/> to the beginning of
+        /// <paramref name="modifiers"/>. The trivia for the new modifier and the trivia for the token that follows it
+        /// are updated to ensure that the new modifier is placed immediately before the syntax token that follows it,
+        /// separated by exactly one space.
+        /// </summary>
+        /// <param name="modifiers">The existing modifiers. This may be empty if no modifiers are present.</param>
+        /// <param name="leadingTriviaToken">The syntax token which follows the modifiers. The trivia for this token is
+        /// updated if (and only if) the existing <paramref name="modifiers"/> list is empty.</param>
+        /// <param name="modifierKeywords">The modifier keywords to add.</param>
+        /// <returns>A <see cref="SyntaxTokenList"/> representing the original modifiers (if any) with the addition of a
+        /// modifier of the specified <paramref name="modifierKeywords"/> at the beginning of the list.</returns>
+        internal static SyntaxTokenList AddModifiers(SyntaxTokenList modifiers, ref SyntaxToken leadingTriviaToken, IEnumerable<SyntaxKind> modifierKeywords)
+        {
+            foreach (var modifierKeyword in modifierKeywords.Reverse())
+            {
+                modifiers = AddModifier(modifiers, ref leadingTriviaToken, modifierKeyword);
             }
 
             return modifiers;
