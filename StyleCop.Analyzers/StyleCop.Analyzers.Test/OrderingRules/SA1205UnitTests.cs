@@ -59,6 +59,30 @@ namespace StyleCop.Analyzers.Test.OrderingRules
             }
         }
 
+        public static IEnumerable<object[]> ValidNestedDeclarations
+        {
+            get
+            {
+                yield return new object[] { "public", "class" };
+                yield return new object[] { "protected", "class" };
+                yield return new object[] { "internal", "class" };
+                yield return new object[] { "protected internal", "class" };
+                yield return new object[] { "private", "class" };
+
+                yield return new object[] { "public", "struct" };
+                yield return new object[] { "protected", "struct" };
+                yield return new object[] { "internal", "struct" };
+                yield return new object[] { "protected internal", "struct" };
+                yield return new object[] { "private", "struct" };
+
+                yield return new object[] { "public", "interface" };
+                yield return new object[] { "protected", "interface" };
+                yield return new object[] { "internal", "interface" };
+                yield return new object[] { "protected internal", "interface" };
+                yield return new object[] { "private", "interface" };
+            }
+        }
+
         /// <summary>
         /// Verifies that a valid declaration (with an access modifier or not a partial type) will not produce a diagnostic.
         /// </summary>
@@ -171,16 +195,7 @@ public partial class Foo
         /// <param name="typeKeyword">The type keyword to use.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("public", "class")]
-        [InlineData("protected", "class")]
-        [InlineData("internal", "class")]
-        [InlineData("protected internal", "class")]
-        [InlineData("private", "class")]
-        [InlineData("public", "struct")]
-        [InlineData("protected", "struct")]
-        [InlineData("internal", "struct")]
-        [InlineData("protected internal", "struct")]
-        [InlineData("private", "struct")]
+        [MemberData(nameof(ValidNestedDeclarations))]
         public async Task TestNestedTypeAccessModifiersAsync(string accessModifier, string typeKeyword)
         {
             var testCode = $@"
@@ -188,10 +203,6 @@ internal static partial class TestPartial
 {{
     {accessModifier} partial {typeKeyword} PartialInner
     {{
-        public int Do()
-        {{
-            return 2;
-        }}
     }}
 }}
 ";
@@ -240,16 +251,7 @@ public class Foo
         /// <param name="typeKeyword">The type keyword to use.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("public", "class")]
-        [InlineData("protected", "class")]
-        [InlineData("internal", "class")]
-        [InlineData("protected internal", "class")]
-        [InlineData("private", "class")]
-        [InlineData("public", "struct")]
-        [InlineData("protected", "struct")]
-        [InlineData("internal", "struct")]
-        [InlineData("protected internal", "struct")]
-        [InlineData("private", "struct")]
+        [MemberData(nameof(ValidNestedDeclarations))]
         public async Task TestProperNestedAccessModifierPropagationAsync(string accessModifier, string typeKeyword)
         {
             var testCode = $@"
