@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.OrderingRules
 {
+    using System;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading;
@@ -21,6 +22,12 @@ namespace StyleCop.Analyzers.OrderingRules
     [Shared]
     internal class SA1205CodeFixProvider : CodeFixProvider
     {
+        private static readonly ImmutableArray<SyntaxKind> PublicAccessibilityKeywords = ImmutableArray.Create(SyntaxKind.PublicKeyword);
+        private static readonly ImmutableArray<SyntaxKind> InternalAccessibilityKeywords = ImmutableArray.Create(SyntaxKind.InternalKeyword);
+        private static readonly ImmutableArray<SyntaxKind> ProtectedAccessibilityKeywords = ImmutableArray.Create(SyntaxKind.ProtectedKeyword);
+        private static readonly ImmutableArray<SyntaxKind> ProtectedOrInternalAccessibilityKeywords = ImmutableArray.Create(SyntaxKind.ProtectedKeyword, SyntaxKind.InternalKeyword);
+        private static readonly ImmutableArray<SyntaxKind> PrivateAccessibilityKeywords = ImmutableArray.Create(SyntaxKind.PrivateKeyword);
+
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(SA1205PartialElementsMustDeclareAccess.DiagnosticId);
@@ -59,15 +66,63 @@ namespace StyleCop.Analyzers.OrderingRules
             }
 
             var symbol = semanticModel.GetDeclaredSymbol(typeDeclarationNode);
-            var accessModifierKind = (symbol.DeclaredAccessibility == Accessibility.Public) ? SyntaxKind.PublicKeyword : SyntaxKind.InternalKeyword;
+            var accessModifierKinds = GetMissingAccessModifiers(typeDeclarationNode, symbol);
 
             var keywordToken = typeDeclarationNode.Keyword;
 
-            var replacementModifiers = DeclarationModifiersHelper.AddModifier(typeDeclarationNode.Modifiers, ref keywordToken, accessModifierKind);
+            var replacementModifiers = DeclarationModifiersHelper.AddModifiers(typeDeclarationNode.Modifiers, ref keywordToken, accessModifierKinds);
             var replacementNode = ReplaceModifiers(typeDeclarationNode, replacementModifiers);
             replacementNode = ReplaceKeyword(replacementNode, keywordToken);
             var newSyntaxRoot = syntaxRoot.ReplaceNode(typeDeclarationNode, replacementNode);
             return document.WithSyntaxRoot(newSyntaxRoot);
+        }
+
+        private static ImmutableArray<SyntaxKind> GetMissingAccessModifiers(TypeDeclarationSyntax typeDeclarationNode, INamedTypeSymbol symbol)
+        {
+            if (symbol.DeclaredAccessibility == Accessibility.NotApplicable)
+            {
+                return GetDefaultAccessModifiers(typeDeclarationNode);
+            }
+            else
+            {
+                return GetAccessModifiersFromAccessibility(symbol.DeclaredAccessibility);
+            }
+        }
+
+        private static ImmutableArray<SyntaxKind> GetDefaultAccessModifiers(TypeDeclarationSyntax node)
+        {
+            if (IsNestedType(node))
+            {
+                return PrivateAccessibilityKeywords;
+            }
+            else
+            {
+                return InternalAccessibilityKeywords;
+            }
+        }
+
+        private static bool IsNestedType(TypeDeclarationSyntax node)
+        {
+            return node?.Parent is BaseTypeDeclarationSyntax;
+        }
+
+        private static ImmutableArray<SyntaxKind> GetAccessModifiersFromAccessibility(Accessibility accessibility)
+        {
+            switch (accessibility)
+            {
+                case Accessibility.Public:
+                    return PublicAccessibilityKeywords;
+                case Accessibility.Internal:
+                    return InternalAccessibilityKeywords;
+                case Accessibility.Protected:
+                    return ProtectedAccessibilityKeywords;
+                case Accessibility.ProtectedOrInternal:
+                    return ProtectedOrInternalAccessibilityKeywords;
+                case Accessibility.Private:
+                    return PrivateAccessibilityKeywords;
+                default:
+                    throw new InvalidOperationException("Unexpected accessibility " + accessibility);
+            }
         }
 
         // This code was copied from the Roslyn code base (and slightly modified). It can be removed if
