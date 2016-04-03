@@ -59,6 +59,30 @@ namespace StyleCop.Analyzers.Test.OrderingRules
             }
         }
 
+        public static IEnumerable<object[]> ValidNestedDeclarations
+        {
+            get
+            {
+                yield return new object[] { "public", "class" };
+                yield return new object[] { "protected", "class" };
+                yield return new object[] { "internal", "class" };
+                yield return new object[] { "protected internal", "class" };
+                yield return new object[] { "private", "class" };
+
+                yield return new object[] { "public", "struct" };
+                yield return new object[] { "protected", "struct" };
+                yield return new object[] { "internal", "struct" };
+                yield return new object[] { "protected internal", "struct" };
+                yield return new object[] { "private", "struct" };
+
+                yield return new object[] { "public", "interface" };
+                yield return new object[] { "protected", "interface" };
+                yield return new object[] { "internal", "interface" };
+                yield return new object[] { "protected internal", "interface" };
+                yield return new object[] { "private", "interface" };
+            }
+        }
+
         /// <summary>
         /// Verifies that a valid declaration (with an access modifier or not a partial type) will not produce a diagnostic.
         /// </summary>
@@ -171,21 +195,7 @@ public partial class Foo
         /// <param name="typeKeyword">The type keyword to use.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("public", "class")]
-        [InlineData("protected", "class")]
-        [InlineData("internal", "class")]
-        [InlineData("protected internal", "class")]
-        [InlineData("private", "class")]
-        [InlineData("public", "struct")]
-        [InlineData("protected", "struct")]
-        [InlineData("internal", "struct")]
-        [InlineData("protected internal", "struct")]
-        [InlineData("private", "struct")]
-        [InlineData("public", "interface")]
-        [InlineData("protected", "interface")]
-        [InlineData("internal", "interface")]
-        [InlineData("protected internal", "interface")]
-        [InlineData("private", "interface")]
+        [MemberData(nameof(ValidNestedDeclarations))]
         public async Task TestNestedTypeAccessModifiersAsync(string accessModifier, string typeKeyword)
         {
             var testCode = $@"
@@ -228,6 +238,47 @@ public class Foo
 ";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, this.CSharpDiagnostic().WithLocation(4, 6 + declaration.Length), CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the code fix will properly copy over the access modifier defined in another fragment of the nested partial element.
+        /// </summary>
+        /// <param name="accessModifier">The access modifier to use for the nested type.</param>
+        /// <param name="typeKeyword">The type keyword to use.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [MemberData(nameof(ValidNestedDeclarations))]
+        public async Task TestProperNestedAccessModifierPropagationAsync(string accessModifier, string typeKeyword)
+        {
+            var testCode = $@"
+public class Foo
+{{
+    {accessModifier} partial {typeKeyword} Bar
+    {{
+    }}
+
+    partial {typeKeyword} Bar
+    {{
+    }}
+}}
+";
+
+            var fixedTestCode = $@"
+public class Foo
+{{
+    {accessModifier} partial {typeKeyword} Bar
+    {{
+    }}
+
+    {accessModifier} partial {typeKeyword} Bar
+    {{
+    }}
+}}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.CSharpDiagnostic().WithLocation(8, 14 + typeKeyword.Length), CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
