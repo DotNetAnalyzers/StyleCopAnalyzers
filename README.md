@@ -24,6 +24,10 @@ for information about known differences which you may notice when switching to S
 
 StyleCopAnalyzers can be installed using the NuGet Package Manager in Visual Studio 2015.
 
+```bash
+Install-Package StyleCop.Analyzers
+```
+
 ![Install via nuget](https://cloud.githubusercontent.com/assets/1408396/8233513/491f301a-159c-11e5-8b7a-1e16a0695da6.png)
 
 ## Team Considerations
