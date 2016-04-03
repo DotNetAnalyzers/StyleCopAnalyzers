@@ -86,6 +86,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
 
             await this.VerifyCSharpDiagnosticAsync(testCode, this.CSharpDiagnostic().WithLocation(1, 2 + declaration.Length), CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -180,6 +181,11 @@ public partial class Foo
         [InlineData("internal", "struct")]
         [InlineData("protected internal", "struct")]
         [InlineData("private", "struct")]
+        [InlineData("public", "interface")]
+        [InlineData("protected", "interface")]
+        [InlineData("internal", "interface")]
+        [InlineData("protected internal", "interface")]
+        [InlineData("private", "interface")]
         public async Task TestNestedTypeAccessModifiersAsync(string accessModifier, string typeKeyword)
         {
             var testCode = $@"
@@ -187,10 +193,6 @@ internal static partial class TestPartial
 {{
     {accessModifier} partial {typeKeyword} PartialInner
     {{
-        public int Do()
-        {{
-            return 2;
-        }}
     }}
 }}
 ";
