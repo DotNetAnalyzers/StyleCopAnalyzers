@@ -4,6 +4,7 @@
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Text;
@@ -212,6 +213,9 @@ namespace StyleCop.Analyzers.DocumentationRules
             var leadingSpaces = string.Empty;
             string possibleLeadingSpaces = string.Empty;
 
+            // remove header decoration lines, they will be re-generated
+            trivia = RemoveHeaderDecorationLines(trivia, settings);
+
             // Need to do this with index so we get the line endings correct.
             for (int i = 0; i < trivia.Count; i++)
             {
@@ -385,6 +389,36 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             copyrightText = copyrightText.Replace("\r\n", "\n");
             return string.Join(newLineText + prefixWithLeadingSpaces + " ", copyrightText.Split('\n')).Replace(prefixWithLeadingSpaces + " " + newLineText, prefixWithLeadingSpaces + newLineText);
+        }
+
+        private static SyntaxTriviaList RemoveHeaderDecorationLines(SyntaxTriviaList trivia, StyleCopSettings settings)
+        {
+            if (!string.IsNullOrEmpty(settings.DocumentationRules.HeaderDecoration))
+            {
+                var decorationRemovalList = new List<int>();
+                for (int i = 0; i < trivia.Count; i++)
+                {
+                    var triviaLine = trivia[i];
+                    if (triviaLine.Kind() == SyntaxKind.SingleLineCommentTrivia && triviaLine.ToFullString().Contains(settings.DocumentationRules.HeaderDecoration))
+                    {
+                        decorationRemovalList.Add(i);
+
+                        // also remove the line break
+                        if (i + 1 < trivia.Count && trivia[i + 1].Kind() == SyntaxKind.EndOfLineTrivia)
+                        {
+                            decorationRemovalList.Add(i + 1);
+                        }
+                    }
+                }
+
+                // Remove decoration lines in reverse order.
+                for (int i = decorationRemovalList.Count - 1; i >= 0; i--)
+                {
+                    trivia = trivia.RemoveAt(decorationRemovalList[i]);
+                }
+            }
+
+            return trivia;
         }
     }
 }
