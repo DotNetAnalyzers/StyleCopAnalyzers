@@ -86,9 +86,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     .Concat(parameterList.CloseParenToken.LeadingTrivia)
                     .Concat(parameterList.CloseParenToken.TrailingTrivia.WithoutTrailingWhitespace())
                     .Concat(new[] { SyntaxFactory.ElasticSpace });
-                var leadingTrivia = parameterList.OpenParenToken.LeadingTrivia.Concat(parameterList.OpenParenToken.TrailingTrivia);
+                var leadingTrivia = parameterList.OpenParenToken.LeadingTrivia
+                    .Concat(parameterList.OpenParenToken.TrailingTrivia)
+                    .Concat(parameterSyntax.GetLeadingTrivia());
 
-                parameterSyntax = parameterSyntax.WithLeadingTrivia(leadingTrivia).WithTrailingTrivia(trailingTrivia);
+                parameterSyntax = parameterSyntax
+                    .WithLeadingTrivia(leadingTrivia)
+                    .WithTrailingTrivia(trailingTrivia);
 
                 lambdaExpression = SyntaxFactory.SimpleLambdaExpression(anonymousMethod.AsyncKeyword, parameterSyntax, arrowToken, anonymousMethod.Body);
             }
@@ -111,8 +115,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static ParameterSyntax RemoveType(ParameterSyntax parameterSyntax)
         {
             var syntax = parameterSyntax.WithType(null)
-                .WithTrailingTrivia(parameterSyntax.Type.GetLeadingTrivia().Concat(parameterSyntax.DescendantTrivia()));
-            return syntax.WithTrailingTrivia(syntax.GetTrailingTrivia().WithoutTrailingWhitespace());
+                .WithLeadingTrivia(parameterSyntax.Type.GetLeadingTrivia().Concat(parameterSyntax.Type.GetTrailingTrivia()));
+            return syntax.WithTrailingTrivia(syntax.GetTrailingTrivia().WithoutTrailingWhitespace())
+                .WithLeadingTrivia(syntax.GetLeadingTrivia().WithoutWhitespace());
         }
 
         private static bool IsValid(ParameterSyntax parameterSyntax)

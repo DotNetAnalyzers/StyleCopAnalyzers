@@ -252,14 +252,14 @@ internal class TypeName
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, expectedAfterFix, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, allowNewCompilerDiagnostics: true, numberOfFixAllIterations: 2).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestSimpleDelegateUseWithTriviaAsync()
         {
             var testCode = @"
-using System;
+using System; using System.Collections.Generic;
 public class TypeName
 {
     public void Test()
@@ -267,18 +267,20 @@ public class TypeName
         Action action1 = /*a*/delegate/*b*/{ };
         Action action2 = /*a*/delegate/*b*/(/*c*/)/*d*/ { };
         Action<int> action3 = /*a*/delegate/*b*/(/*c*/int/*d*/i/*e*/)/*f*/{ };
+        Action<List<int>> action4 = delegate(List</* c1 */ int> i) { };
     }
 }";
 
             string fixedCode = @"
-using System;
+using System; using System.Collections.Generic;
 public class TypeName
 {
     public void Test()
     {
         Action action1 = /*a*/()/*b*/ => { };
         Action action2 = /*a*//*b*/(/*c*/)/*d*/ => { };
-        Action<int> action3 = /*a*//*b*//*c*/i/*d*//*e*//*f*/ => { };
+        Action<int> action3 = /*a*//*b*//*c*//*d*/i/*e*//*f*/ => { };
+        Action<List<int>> action4 = i => { };
     }
 }";
 
@@ -286,7 +288,8 @@ public class TypeName
             {
                 this.CSharpDiagnostic().WithLocation(7, 31),
                 this.CSharpDiagnostic().WithLocation(8, 31),
-                this.CSharpDiagnostic().WithLocation(9, 36)
+                this.CSharpDiagnostic().WithLocation(9, 36),
+                this.CSharpDiagnostic().WithLocation(10, 37)
             };
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
