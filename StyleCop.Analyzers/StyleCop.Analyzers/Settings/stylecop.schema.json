@@ -195,7 +195,7 @@
               "default": true
             },
 			"headerDecoration": {
-              "type": "boolean",
+              "type": "string",
               "description": "The text used as decoration for the copyright header comment.",
               "default": null
 			}
