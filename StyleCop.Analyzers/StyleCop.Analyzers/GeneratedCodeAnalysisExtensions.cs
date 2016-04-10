@@ -157,7 +157,7 @@ namespace StyleCop.Analyzers
         {
             return Regex.IsMatch(
                 Path.GetFileName(filePath),
-                @"\.designer\.cs$",
+                @"\.(designer|g)\.cs$",
                 RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
         }
 
