@@ -201,6 +201,11 @@
               "enum": [ "stylecop", "metadata" ]
             }
           }
+        },
+        "generatedFileFilters": {
+          "type": "array",
+          "description": "Specifies the patterns that will be used to determine generated files.",
+          "default": [ "\\.g\\.cs$", "\\.generated\\.cs$", "\\.g\\.i\\.cs$", "\\.designer\\.cs$" ]
         }
       }
     }

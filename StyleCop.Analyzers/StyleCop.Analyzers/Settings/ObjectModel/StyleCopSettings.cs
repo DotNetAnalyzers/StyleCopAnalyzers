@@ -3,11 +3,15 @@
 
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
+    using System.Collections.Immutable;
     using Newtonsoft.Json;
 
     [JsonObject(MemberSerialization.OptIn)]
     internal class StyleCopSettings
     {
+        private static readonly ImmutableArray<string> DefaultGeneratedFileFilters =
+            ImmutableArray.Create(@"\.g\.cs$", @"\.generated\.cs$", @"\.g\.i\.cs$", @"\.designer\.cs$");
+
         /// <summary>
         /// This is the backing field for the <see cref="Indentation"/> property.
         /// </summary>
@@ -57,6 +61,12 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         private DocumentationSettings documentationRules;
 
         /// <summary>
+        /// This is the backing field for the <see cref="GeneratedFileFilters"/> property.
+        /// </summary>
+        [JsonProperty("generatedFileFilters", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        private ImmutableArray<string> generatedFileFilters;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="StyleCopSettings"/> class during JSON deserialization.
         /// </summary>
         [JsonConstructor]
@@ -71,6 +81,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.maintainabilityRules = new MaintainabilitySettings();
             this.layoutRules = new LayoutSettings();
             this.documentationRules = new DocumentationSettings();
+            this.generatedFileFilters = DefaultGeneratedFileFilters;
         }
 
         public IndentationSettings Indentation =>
@@ -96,5 +107,8 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
         public DocumentationSettings DocumentationRules =>
             this.documentationRules;
+
+        public ImmutableArray<string> GeneratedFileFilters =>
+            this.generatedFileFilters;
     }
 }

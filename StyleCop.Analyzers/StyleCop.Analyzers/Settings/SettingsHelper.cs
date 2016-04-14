@@ -46,11 +46,30 @@ namespace StyleCop.Analyzers
         /// instance is returned.</para>
         /// </remarks>
         /// <param name="context">The context that will be used to determine the StyleCop settings.</param>
-        /// <param name="cancellationToken">The cancellation token that the operation will observe.</param>
         /// <returns>A <see cref="StyleCopSettings"/> instance that represents the StyleCop settings for the given context.</returns>
-        internal static StyleCopSettings GetStyleCopSettings(this SyntaxTreeAnalysisContext context, CancellationToken cancellationToken)
+        internal static StyleCopSettings GetStyleCopSettings(this SyntaxTreeAnalysisContext context)
         {
-            return context.Options.GetStyleCopSettings(cancellationToken);
+            return context.Options.GetStyleCopSettings(context.CancellationToken);
+        }
+
+        /// <summary>
+        /// Gets the StyleCop settings.
+        /// </summary>
+        /// <param name="context">The context that will be used to determine the StyleCop settings.</param>
+        /// <returns>A <see cref="StyleCopSettings"/> instance that represents the StyleCop settings for the given context.</returns>
+        internal static StyleCopSettings GetStyleCopSettings(this SyntaxNodeAnalysisContext context)
+        {
+            return context.Options.GetStyleCopSettings(context.CancellationToken);
+        }
+
+        /// <summary>
+        /// Gets the StyleCop settings.
+        /// </summary>
+        /// <param name="context">The context that will be used to determine the StyleCop settings.</param>
+        /// <returns>A <see cref="StyleCopSettings"/> instance that represents the StyleCop settings for the given context.</returns>
+        internal static StyleCopSettings GetStyleCopSettings(this SymbolAnalysisContext context)
+        {
+            return context.Options.GetStyleCopSettings(context.CancellationToken);
         }
 
         /// <summary>

@@ -101,7 +101,7 @@ namespace StyleCop.Analyzers.NamingRules
                             return;
                         }
 
-                        if (location.SourceTree.IsGeneratedDocument(this.generatedHeaderCache, context.CancellationToken))
+                        if (location.SourceTree.IsGeneratedDocument(context.GetStyleCopSettings(), this.generatedHeaderCache, context.CancellationToken))
                         {
                             return;
                         }
