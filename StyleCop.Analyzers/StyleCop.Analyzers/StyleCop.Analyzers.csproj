@@ -203,6 +203,7 @@
     <Compile Include="NamingRules\SA1310FieldNamesMustNotContainUnderscore.cs" />
     <Compile Include="NamingRules\SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter.cs" />
     <Compile Include="NamingRules\SA1312VariableNamesMustBeginWithLowerCaseLetter.cs" />
+    <Compile Include="NamingRules\SA1315ParametersShouldMatchInheritedNames.cs" />
     <Compile Include="NamingRules\SA1313ParameterNamesMustBeginWithLowerCaseLetter.cs" />
     <Compile Include="NamingRules\SX1309FieldNamesMustBeginWithUnderscore.cs" />
     <Compile Include="NamingRules\SX1309SStaticFieldNamesMustBeginWithUnderscore.cs" />
@@ -416,6 +417,7 @@
     <EmbeddedResource Include="NamingRules\NamingResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>NamingResources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="OrderingRules\OrderingResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
