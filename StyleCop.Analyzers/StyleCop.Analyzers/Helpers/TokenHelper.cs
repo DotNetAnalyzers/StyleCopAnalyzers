@@ -62,11 +62,11 @@ namespace StyleCop.Analyzers.Helpers
         /// Gets a value indicating whether the <paramref name="token"/> is preceded by a whitespace.
         /// </summary>
         /// <param name="token">The token to process.</param>
-        /// <param name="cancellationToken">A <see cref="CancellationToken"/>.</param>
+        /// <param name="cancellationToken">The cancellation token that the operation will observe.</param>
         /// <returns>true if token is preceded by a whitespace, otherwise false.</returns>
         internal static bool IsPrecededByWhitespace(this SyntaxToken token, CancellationToken cancellationToken)
         {
-            // Perf directly access the text instead of trivia
+            // Perf: Directly access the text instead of the trivia.
             int pos = token.Span.Start - 1;
 
             if (pos < 0 || token.SyntaxTree == null)
