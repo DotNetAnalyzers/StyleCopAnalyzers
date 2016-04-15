@@ -96,6 +96,43 @@ namespace StyleCop.Analyzers
         }
 
         /// <summary>
+        /// Register an action to be executed at completion of parsing of a code document. A syntax tree action reports
+        /// diagnostics about the <see cref="SyntaxTree"/> of a document.
+        /// </summary>
+        /// <remarks>This method honors exclusions.</remarks>
+        /// <param name="context">The analysis context.</param>
+        /// <param name="action">Action to be executed at completion of parsing of a document.</param>
+        public static void RegisterSyntaxTreeActionHonorExclusions(this CompilationStartAnalysisContext context, Action<SyntaxTreeAnalysisContext, Compilation, StyleCopSettings> action)
+        {
+            Compilation compilation = context.Compilation;
+            ConcurrentDictionary<SyntaxTree, bool> cache = GetOrCreateGeneratedDocumentCache(compilation);
+            StrongBox<StyleCopSettings> settingsCache = GetOrCreateStyleCopSettingsCache(compilation);
+
+            context.RegisterSyntaxTreeAction(
+                c =>
+                {
+                    if (c.IsGeneratedDocument(cache))
+                    {
+                        return;
+                    }
+
+                    // Honor the containing document item's ExcludeFromStylecop=True
+                    // MSBuild metadata, if analyzers have access to it.
+                    //// TODO: code here
+
+                    StyleCopSettings settings = settingsCache.Value;
+                    if (settings == null)
+                    {
+                        StyleCopSettings updatedSettings = SettingsHelper.GetStyleCopSettings(c.Options, c.CancellationToken);
+                        StyleCopSettings previous = Interlocked.CompareExchange(ref settingsCache.Value, updatedSettings, null);
+                        settings = previous ?? updatedSettings;
+                    }
+
+                    action(c, compilation, settings);
+                });
+        }
+
+        /// <summary>
         /// Gets or creates a cache which can be used with <see cref="GeneratedCodeAnalysisExtensions"/> methods to
         /// efficiently determine whether or not a source file is considered generated.
         /// </summary>

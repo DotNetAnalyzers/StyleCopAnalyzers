@@ -132,8 +132,8 @@ namespace StyleCop.Analyzers.LayoutRules
             }
 
             var parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationSettings, element);
-            var indentationString = IndentationHelper.GenerateIndentationString(indentationSettings, parentIndentationLevel);
-            var contentIndentationString = IndentationHelper.GenerateIndentationString(indentationSettings, parentIndentationLevel + 1);
+            var indentationString = IndentationHelper.GenerateIndentationStringForSteps(indentationSettings, parentIndentationLevel);
+            var contentIndentationString = IndentationHelper.GenerateIndentationStringForSteps(indentationSettings, parentIndentationLevel + 1);
 
             // reformat opening brace
             tokenSubstitutions.Add(openBraceToken, this.FormatBraceToken(openBraceToken, indentationString));

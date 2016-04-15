@@ -15,18 +15,44 @@ namespace StyleCop.Analyzers.Helpers
         /// Gets a value indicating whether the <paramref name="token"/> is first in line.
         /// </summary>
         /// <param name="token">The token to process.</param>
-        /// <returns>true if token is first in line, otherwise false.</returns>
-        internal static bool IsFirstInLine(this SyntaxToken token)
+        /// <param name="allowNonWhitespaceTrivia"><see langword="true"/> to consider the token first-in-line even when
+        /// non-whitespace trivia precedes the token; otherwise, <see langword="false"/> to only consider tokens first
+        /// in line if they are preceded solely by whitespace.</param>
+        /// <returns>
+        /// <see langword="true"/> if <paramref name="token"/> is first in line; otherwise, <see langword="false"/>.
+        /// </returns>
+        internal static bool IsFirstInLine(this SyntaxToken token, bool allowNonWhitespaceTrivia = true)
         {
             var fullLineSpan = token.SyntaxTree.GetLineSpan(token.FullSpan);
 
-            if (token.SyntaxTree == null || fullLineSpan.StartLinePosition.Character == 0)
+            bool firstInLine;
+            if (fullLineSpan.StartLinePosition.Character == 0)
             {
-                return true;
+                firstInLine = true;
+            }
+            else
+            {
+                var tokenLineSpan = token.SyntaxTree.GetLineSpan(token.Span);
+                firstInLine = tokenLineSpan.StartLinePosition.Line != fullLineSpan.StartLinePosition.Line;
             }
 
-            var tokenLineSpan = token.SyntaxTree.GetLineSpan(token.Span);
-            return tokenLineSpan.StartLinePosition.Line != fullLineSpan.StartLinePosition.Line;
+            if (firstInLine && !allowNonWhitespaceTrivia)
+            {
+                foreach (var trivia in token.LeadingTrivia.Reverse())
+                {
+                    if (!trivia.IsKind(SyntaxKind.WhitespaceTrivia))
+                    {
+                        if (!trivia.HasBuiltinEndLine())
+                        {
+                            firstInLine = false;
+                        }
+
+                        break;
+                    }
+                }
+            }
+
+            return firstInLine;
         }
 
         /// <summary>

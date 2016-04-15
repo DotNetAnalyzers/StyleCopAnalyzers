@@ -31,6 +31,59 @@
               "description": "Specifies whether indentation should use hard tabs instead of spaces.",
               "type": "boolean",
               "default": false
+            },
+            "indentBlock": {
+              "description": "Specifies the indentation behavior for the contents of blocks.\r\ntrue: Indent the contents of blocks.\r\nfalse: Do not indent the contents of blocks.\r\nnull: Do not check the absolute indentation of blocks.",
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": true
+            },
+            "indentSwitchSection": {
+              "description": "Specifies the indentation behavior for case contents.\r\ntrue: Indent case labels within a switch statement.\r\nfalse: Do not indent case labels within a switch statement.\r\nnull: Do not check the absolute indentation of switch section labels.",
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": true
+            },
+            "indentSwitchCaseSection": {
+              "description": "Specifies the indentation behavior for case labels.\r\ntrue: Indent the contents of a switch section.\r\nfalse: Do not indent the contents of a switch section.\r\nnull: Do not check the absolute indentation of switch section contents.",
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": true
+            },
+            "labelPositioning": {
+              "description": "Specifies the indentation behavior for labels.\r\nleftMost: Labels are placed in the left-most column.\r\noneLess: Labels are indented one less than other statements.\r\nnoIndent: Labels are indented in the same manner as other statements.\r\nnull: Do not check the absolute indentation of labels.",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "leftMost",
+                    "oneLess",
+                    "noIndent"
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "oneLess"
             }
           }
         },

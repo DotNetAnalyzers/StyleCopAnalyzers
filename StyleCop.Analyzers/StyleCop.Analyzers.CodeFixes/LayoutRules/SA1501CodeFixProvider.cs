@@ -135,7 +135,7 @@ namespace StyleCop.Analyzers.LayoutRules
             if (nextTokenLine == statementCloseLine)
             {
                 var parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationSettings, GetStatementParent(statement.Parent));
-                var indentationString = IndentationHelper.GenerateIndentationString(indentationSettings, parentIndentationLevel);
+                var indentationString = IndentationHelper.GenerateIndentationStringForSteps(indentationSettings, parentIndentationLevel);
                 newParentNextToken = newParentNextToken.WithLeadingTrivia(SyntaxFactory.Whitespace(indentationString));
             }
 
@@ -179,8 +179,8 @@ namespace StyleCop.Analyzers.LayoutRules
                 break;
             }
 
-            var indentationString = IndentationHelper.GenerateIndentationString(indentationSettings, parentIndentationLevel);
-            var statementIndentationString = IndentationHelper.GenerateIndentationString(indentationSettings, parentIndentationLevel + 1);
+            var indentationString = IndentationHelper.GenerateIndentationStringForSteps(indentationSettings, parentIndentationLevel);
+            var statementIndentationString = IndentationHelper.GenerateIndentationStringForSteps(indentationSettings, parentIndentationLevel + 1);
 
             var newOpenBraceLeadingTrivia = block.OpenBraceToken.LeadingTrivia
                 .WithoutTrailingWhitespace()
@@ -258,7 +258,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 break;
             }
 
-            var statementIndentationString = IndentationHelper.GenerateIndentationString(indentationSettings, parentIndentationLevel + 1);
+            var statementIndentationString = IndentationHelper.GenerateIndentationStringForSteps(indentationSettings, parentIndentationLevel + 1);
 
             var newFirstTokenLeadingTrivia = statement.GetFirstToken().LeadingTrivia
                 .WithoutTrailingWhitespace()

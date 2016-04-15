@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Helpers
 {
+    using System.Text;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Settings.ObjectModel;
@@ -65,7 +66,7 @@ namespace StyleCop.Analyzers.Helpers
         /// <param name="indentationSettings">The indentation settings to use.</param>
         /// <param name="indentationSteps">The number of indentation steps.</param>
         /// <returns>A string containing the amount of whitespace needed for the given indentation steps.</returns>
-        public static string GenerateIndentationString(IndentationSettings indentationSettings, int indentationSteps)
+        public static string GenerateIndentationStringForSteps(IndentationSettings indentationSettings, int indentationSteps)
         {
             string result;
             var indentationCount = indentationSteps * indentationSettings.IndentationSize;
@@ -84,6 +85,42 @@ namespace StyleCop.Analyzers.Helpers
         }
 
         /// <summary>
+        /// Generate a new indentation string for the given indentation width.
+        /// </summary>
+        /// <param name="indentationSettings">The indentation settings to use.</param>
+        /// <param name="indentationWidth">The width of the indentation string.</param>
+        /// <returns>A string containing the whitespace needed to indent code to the specified width.</returns>
+        public static string GenerateIndentationString(IndentationSettings indentationSettings, int indentationWidth) =>
+            GenerateIndentationString(indentationSettings, indentationWidth, 0);
+
+        /// <summary>
+        /// Generate a new indentation string for the given indentation width.
+        /// </summary>
+        /// <param name="indentationSettings">The indentation settings to use.</param>
+        /// <param name="indentationWidth">The width of the indentation string.</param>
+        /// <param name="startColumn">The starting column for the indentation.</param>
+        /// <returns>A string containing the whitespace needed to indent code to the specified width.</returns>
+        public static string GenerateIndentationString(IndentationSettings indentationSettings, int indentationWidth, int startColumn)
+        {
+            if (!indentationSettings.UseTabs)
+            {
+                return new string(' ', indentationWidth);
+            }
+
+            // Adjust the indentation width so a narrower first tab doesn't affect the outcome
+            indentationWidth += startColumn % indentationSettings.TabSize;
+
+            int tabCount = indentationWidth / indentationSettings.TabSize;
+            int spaceCount = indentationWidth - (tabCount * indentationSettings.TabSize);
+
+            StringBuilder builder = StringBuilderPool.Allocate();
+            builder.EnsureCapacity(tabCount + spaceCount);
+            builder.Append('\t', tabCount);
+            builder.Append(' ', spaceCount);
+            return StringBuilderPool.ReturnAndFree(builder);
+        }
+
+        /// <summary>
         /// Generates a whitespace trivia with the requested indentation.
         /// </summary>
         /// <param name="indentationSettings">The indentation settings to use.</param>
@@ -91,7 +128,7 @@ namespace StyleCop.Analyzers.Helpers
         /// <returns>A <see cref="SyntaxTrivia"/> containing the indentation whitespace.</returns>
         public static SyntaxTrivia GenerateWhitespaceTrivia(IndentationSettings indentationSettings, int indentationSteps)
         {
-            return SyntaxFactory.Whitespace(GenerateIndentationString(indentationSettings, indentationSteps));
+            return SyntaxFactory.Whitespace(GenerateIndentationStringForSteps(indentationSettings, indentationSteps));
         }
 
         private static int GetIndentationSteps(IndentationSettings indentationSettings, SyntaxTree syntaxTree, SyntaxTriviaList leadingTrivia)

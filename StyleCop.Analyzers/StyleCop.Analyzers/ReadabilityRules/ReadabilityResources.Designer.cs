@@ -62,6 +62,15 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fix indentation.
+        /// </summary>
+        internal static string IndentationCodeFix {
+            get {
+                return ResourceManager.GetString("IndentationCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove region.
         /// </summary>
         internal static string RemoveRegionCodeFix {
@@ -1156,6 +1165,60 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         internal static string SA1134Title {
             get {
                 return ResourceManager.GetString("SA1134Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Elements at the same level in the syntax tree should have the same indentation..
+        /// </summary>
+        internal static string SA1137Description {
+            get {
+                return ResourceManager.GetString("SA1137Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Elements should have the same indentation.
+        /// </summary>
+        internal static string SA1137MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1137MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Elements should have the same indentation.
+        /// </summary>
+        internal static string SA1137Title {
+            get {
+                return ResourceManager.GetString("SA1137Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Code elements should be properly indented to avoid misinterpretation by readers..
+        /// </summary>
+        internal static string SA1138Description {
+            get {
+                return ResourceManager.GetString("SA1138Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Indent elements correctly.
+        /// </summary>
+        internal static string SA1138MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1138MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Indent elements correctly.
+        /// </summary>
+        internal static string SA1138Title {
+            get {
+                return ResourceManager.GetString("SA1138Title", resourceCulture);
             }
         }
         

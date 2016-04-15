@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="IndentationCodeFix" xml:space="preserve">
+    <value>Fix indentation</value>
+  </data>
   <data name="RemoveRegionCodeFix" xml:space="preserve">
     <value>Remove region</value>
   </data>
@@ -482,6 +485,24 @@
   </data>
   <data name="SA1134Title" xml:space="preserve">
     <value>Attributes must not share line</value>
+  </data>
+  <data name="SA1137Description" xml:space="preserve">
+    <value>Elements at the same level in the syntax tree should have the same indentation.</value>
+  </data>
+  <data name="SA1137MessageFormat" xml:space="preserve">
+    <value>Elements should have the same indentation</value>
+  </data>
+  <data name="SA1137Title" xml:space="preserve">
+    <value>Elements should have the same indentation</value>
+  </data>
+  <data name="SA1138Description" xml:space="preserve">
+    <value>Code elements should be properly indented to avoid misinterpretation by readers.</value>
+  </data>
+  <data name="SA1138MessageFormat" xml:space="preserve">
+    <value>Indent elements correctly</value>
+  </data>
+  <data name="SA1138Title" xml:space="preserve">
+    <value>Indent elements correctly</value>
   </data>
   <data name="SX1101CodeFix" xml:space="preserve">
     <value>Remove 'this.' prefix</value>
