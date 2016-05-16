@@ -18,7 +18,7 @@ If the project is restored and built right now this will already run the analyze
 
 ## Rulesets and stylecop.json
 
-To supply a ruleset file and a stylecop.json configuration file to the compiler they have to be manually added as arguments to the compiler. For this add the follwing under the `compilationOptions` node in the project.json file:
+To supply a ruleset file and a stylecop.json configuration file to the compiler they have to be manually added as arguments to the compiler. For this add the following under the `compilationOptions` node in the project.json file:
 ```json
     "additionalArguments": [ "/ruleset:path/to/ruleset.ruleset", "/additionalfile:path/to/stylecop.json" ]
 ```
