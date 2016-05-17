@@ -31,7 +31,6 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         protected ElementDocumentationSummaryBase()
         {
-            this.compilationStartAction = this.HandleCompilationStart;
             this.typeDeclarationAction = this.HandleTypeDeclaration;
             this.methodDeclarationAction = this.HandleMethodDeclaration;
             this.constructorDeclarationAction = this.HandleConstructorDeclaration;
@@ -46,7 +45,18 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(this.compilationStartAction);
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+
+            context.RegisterSyntaxNodeAction(this.typeDeclarationAction, SyntaxKinds.BaseTypeDeclaration);
+            context.RegisterSyntaxNodeAction(this.methodDeclarationAction, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(this.constructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeAction(this.destructorDeclarationAction, SyntaxKind.DestructorDeclaration);
+            context.RegisterSyntaxNodeAction(this.propertyDeclarationAction, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeAction(this.indexerDeclarationAction, SyntaxKind.IndexerDeclaration);
+            context.RegisterSyntaxNodeAction(this.fieldDeclarationAction, SyntaxKinds.BaseFieldDeclaration);
+            context.RegisterSyntaxNodeAction(this.delegateDeclarationAction, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeAction(this.eventDeclarationAction, SyntaxKind.EventDeclaration);
         }
 
         /// <summary>
@@ -62,19 +72,6 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <c>&lt;include&gt;</c> element.</param>
         /// <param name="diagnosticLocations">The location(s) where diagnostics, if any, should be reported.</param>
         protected abstract void HandleXmlElement(SyntaxNodeAnalysisContext context, DocumentationCommentTriviaSyntax documentation, XmlNodeSyntax syntax, XElement completeDocumentation, params Location[] diagnosticLocations);
-
-        private void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.typeDeclarationAction, SyntaxKinds.BaseTypeDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.methodDeclarationAction, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.constructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.destructorDeclarationAction, SyntaxKind.DestructorDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.propertyDeclarationAction, SyntaxKind.PropertyDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.indexerDeclarationAction, SyntaxKind.IndexerDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.fieldDeclarationAction, SyntaxKinds.BaseFieldDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.delegateDeclarationAction, SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.eventDeclarationAction, SyntaxKind.EventDeclaration);
-        }
 
         private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
         {

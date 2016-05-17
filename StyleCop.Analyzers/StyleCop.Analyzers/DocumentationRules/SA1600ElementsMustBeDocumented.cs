@@ -44,7 +44,6 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly ImmutableArray<SyntaxKind> BaseTypeDeclarationKinds =
             ImmutableArray.Create(SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.EnumDeclaration);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> BaseTypeDeclarationAction = Analyzer.HandleBaseTypeDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> MethodDeclarationAction = Analyzer.HandleMethodDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> ConstructorDeclarationAction = Analyzer.HandleConstructorDeclaration;
@@ -63,21 +62,19 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(BaseTypeDeclarationAction, BaseTypeDeclarationKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(ConstructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(DestructorDeclarationAction, SyntaxKind.DestructorDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(PropertyDeclarationAction, SyntaxKind.PropertyDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(IndexerDeclarationAction, SyntaxKind.IndexerDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(FieldDeclarationAction, SyntaxKind.FieldDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(DelegateDeclarationAction, SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(EventDeclarationAction, SyntaxKind.EventDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(EventFieldDeclarationAction, SyntaxKind.EventFieldDeclaration);
+            context.RegisterSyntaxNodeAction(BaseTypeDeclarationAction, BaseTypeDeclarationKinds);
+            context.RegisterSyntaxNodeAction(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(ConstructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeAction(DestructorDeclarationAction, SyntaxKind.DestructorDeclaration);
+            context.RegisterSyntaxNodeAction(PropertyDeclarationAction, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeAction(IndexerDeclarationAction, SyntaxKind.IndexerDeclaration);
+            context.RegisterSyntaxNodeAction(FieldDeclarationAction, SyntaxKind.FieldDeclaration);
+            context.RegisterSyntaxNodeAction(DelegateDeclarationAction, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeAction(EventDeclarationAction, SyntaxKind.EventDeclaration);
+            context.RegisterSyntaxNodeAction(EventFieldDeclarationAction, SyntaxKind.EventFieldDeclaration);
         }
 
         private static class Analyzer

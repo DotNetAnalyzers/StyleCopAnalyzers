@@ -171,6 +171,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+
             context.RegisterCompilationStartAction(CompilationStartAction);
         }
 
@@ -181,7 +184,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             // Disabling SA1633 will disable all other header related diagnostics.
             if (!compilation.IsAnalyzerSuppressed(SA1633Identifier))
             {
-                context.RegisterSyntaxTreeActionHonorExclusions((ctx, settings) => Analyzer.HandleSyntaxTree(ctx, settings, compilation));
+                context.RegisterSyntaxTreeAction((ctx, settings) => Analyzer.HandleSyntaxTree(ctx, settings, compilation));
             }
         }
 

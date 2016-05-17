@@ -361,8 +361,6 @@ namespace Newtonsoft.Json
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(8, 5),
-                this.CSharpDiagnostic().WithLocation(8, 5),
-                this.CSharpDiagnostic().WithLocation(8, 5),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

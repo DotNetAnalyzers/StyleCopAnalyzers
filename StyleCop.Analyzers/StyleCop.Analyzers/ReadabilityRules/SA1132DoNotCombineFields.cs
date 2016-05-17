@@ -29,7 +29,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> BaseFieldDeclarationAction = HandleBaseFieldDeclaration;
 
         /// <inheritdoc/>
@@ -39,12 +38,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(BaseFieldDeclarationAction, SyntaxKinds.BaseFieldDeclaration);
+            context.RegisterSyntaxNodeAction(BaseFieldDeclarationAction, SyntaxKinds.BaseFieldDeclaration);
         }
 
         private static void HandleBaseFieldDeclaration(SyntaxNodeAnalysisContext context)

@@ -61,7 +61,6 @@ namespace StyleCop.Analyzers.OrderingRules
                 SyntaxKind.ConversionOperatorDeclaration,
                 SyntaxKind.ConstructorDeclaration);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> DeclarationAction = HandleDeclaration;
 
         /// <summary>
@@ -97,12 +96,10 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(DeclarationAction, HandledSyntaxKinds);
+            context.RegisterSyntaxNodeAction(DeclarationAction, HandledSyntaxKinds);
         }
 
         private static void HandleDeclaration(SyntaxNodeAnalysisContext context)

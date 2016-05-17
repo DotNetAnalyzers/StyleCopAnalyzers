@@ -47,7 +47,6 @@ namespace StyleCop.Analyzers.DocumentationRules
                 SyntaxKind.OperatorDeclaration,
                 SyntaxKind.ConversionOperatorDeclaration);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> BaseTypeLikeDeclarationAction = HandleBaseTypeLikeDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> MemberDeclarationAction = HandleMemberDeclaration;
 
@@ -58,13 +57,11 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(BaseTypeLikeDeclarationAction, HandledTypeLikeDeclarationKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(MemberDeclarationAction, MemberDeclarationKinds);
+            context.RegisterSyntaxNodeAction(BaseTypeLikeDeclarationAction, HandledTypeLikeDeclarationKinds);
+            context.RegisterSyntaxNodeAction(MemberDeclarationAction, MemberDeclarationKinds);
         }
 
         private static void HandleBaseTypeLikeDeclaration(SyntaxNodeAnalysisContext context)

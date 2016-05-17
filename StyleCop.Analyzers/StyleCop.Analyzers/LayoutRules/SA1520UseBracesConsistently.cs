@@ -50,7 +50,6 @@ namespace StyleCop.Analyzers.LayoutRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> IfStatementAction = HandleIfStatement;
 
         /// <inheritdoc/>
@@ -60,12 +59,10 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(IfStatementAction, SyntaxKind.IfStatement);
+            context.RegisterSyntaxNodeAction(IfStatementAction, SyntaxKind.IfStatement);
         }
 
         private static void HandleIfStatement(SyntaxNodeAnalysisContext context)

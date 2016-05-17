@@ -480,7 +480,7 @@ namespace StyleCopTester
             var processedProject = project.WithCompilationOptions(modifiedCompilationOptions);
 
             Compilation compilation = await processedProject.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
-            CompilationWithAnalyzers compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, cancellationToken: cancellationToken);
+            CompilationWithAnalyzers compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, new CompilationWithAnalyzersOptions(new AnalyzerOptions(ImmutableArray.Create<AdditionalText>()), null, true, false));
 
             var diagnostics = await FixAllContextHelper.GetAllDiagnosticsAsync(compilation, compilationWithAnalyzers, analyzers, project.Documents, true, cancellationToken).ConfigureAwait(false);
             return diagnostics;

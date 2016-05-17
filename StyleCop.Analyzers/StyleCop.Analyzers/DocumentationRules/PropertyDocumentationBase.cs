@@ -15,12 +15,10 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     internal abstract class PropertyDocumentationBase : DiagnosticAnalyzer
     {
-        private readonly Action<CompilationStartAnalysisContext> compilationStartAction;
         private readonly Action<SyntaxNodeAnalysisContext> propertyDeclarationAction;
 
         protected PropertyDocumentationBase()
         {
-            this.compilationStartAction = this.HandleCompilationStart;
             this.propertyDeclarationAction = this.HandlePropertyDeclaration;
         }
 
@@ -33,7 +31,10 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(this.compilationStartAction);
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+
+            context.RegisterSyntaxNodeAction(this.propertyDeclarationAction, SyntaxKind.PropertyDeclaration);
         }
 
         /// <summary>
@@ -44,11 +45,6 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// to examine.</param>
         /// <param name="diagnosticLocation">The location where diagnostics, if any, should be reported.</param>
         protected abstract void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location diagnosticLocation);
-
-        private void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.propertyDeclarationAction, SyntaxKind.PropertyDeclaration);
-        }
 
         private void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
         {

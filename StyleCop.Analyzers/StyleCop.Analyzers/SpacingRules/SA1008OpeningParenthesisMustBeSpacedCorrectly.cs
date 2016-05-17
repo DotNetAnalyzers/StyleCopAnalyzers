@@ -39,7 +39,6 @@ namespace StyleCop.Analyzers.SpacingRules
         private const string MessagePreceded = "Opening parenthesis must be preceded by a space.";
         private const string MessageNotFollowed = "Opening parenthesis must not be followed by a space.";
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
 
         /// <summary>
@@ -70,12 +69,10 @@ namespace StyleCop.Analyzers.SpacingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxTreeActionHonorExclusions(SyntaxTreeAction);
+            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
         }
 
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)

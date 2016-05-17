@@ -24,7 +24,6 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         protected PartialElementDocumentationSummaryBase()
         {
-            this.compilationStartAction = this.HandleCompilationStart;
             this.typeDeclarationAction = this.HandleTypeDeclaration;
             this.methodDeclarationAction = this.HandleMethodDeclaration;
         }
@@ -32,7 +31,11 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(this.compilationStartAction);
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+
+            context.RegisterSyntaxNodeAction(this.typeDeclarationAction, SyntaxKinds.TypeDeclaration);
+            context.RegisterSyntaxNodeAction(this.methodDeclarationAction, SyntaxKind.MethodDeclaration);
         }
 
         /// <summary>
@@ -43,12 +46,6 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// to examine.</param>
         /// <param name="diagnosticLocations">The location(s) where diagnostics, if any, should be reported.</param>
         protected abstract void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, params Location[] diagnosticLocations);
-
-        private void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(this.typeDeclarationAction, SyntaxKinds.TypeDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(this.methodDeclarationAction, SyntaxKind.MethodDeclaration);
-        }
 
         private void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
         {

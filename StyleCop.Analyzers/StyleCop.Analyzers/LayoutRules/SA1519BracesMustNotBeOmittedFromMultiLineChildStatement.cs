@@ -43,7 +43,6 @@ namespace StyleCop.Analyzers.LayoutRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> IfStatementAction = HandleIfStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> DoStatementAction = HandleDoStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> WhileStatementAction = HandleWhileStatement;
@@ -57,16 +56,14 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(IfStatementAction, SyntaxKind.IfStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(DoStatementAction, SyntaxKind.DoStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(WhileStatementAction, SyntaxKind.WhileStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(ForStatementAction, SyntaxKind.ForStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(ForEachStatementAction, SyntaxKind.ForEachStatement);
+            context.RegisterSyntaxNodeAction(IfStatementAction, SyntaxKind.IfStatement);
+            context.RegisterSyntaxNodeAction(DoStatementAction, SyntaxKind.DoStatement);
+            context.RegisterSyntaxNodeAction(WhileStatementAction, SyntaxKind.WhileStatement);
+            context.RegisterSyntaxNodeAction(ForStatementAction, SyntaxKind.ForStatement);
+            context.RegisterSyntaxNodeAction(ForEachStatementAction, SyntaxKind.ForEachStatement);
         }
 
         private static void HandleIfStatement(SyntaxNodeAnalysisContext context)

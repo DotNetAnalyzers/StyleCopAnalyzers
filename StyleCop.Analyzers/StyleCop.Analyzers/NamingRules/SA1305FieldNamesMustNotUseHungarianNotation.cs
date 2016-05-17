@@ -66,7 +66,6 @@ namespace StyleCop.Analyzers.NamingRules
 
         private static readonly Regex HungarianRegex = new Regex(@"^(?<notation>[a-z]{1,2})[A-Z]");
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> VariableDeclarationAction = Analyzer.HandleVariableDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CatchDeclarationAction = Analyzer.HandleCatchDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> QueryContinuationAction = Analyzer.HandleQueryContinuation;
@@ -83,19 +82,17 @@ namespace StyleCop.Analyzers.NamingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(VariableDeclarationAction, SyntaxKind.VariableDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(CatchDeclarationAction, SyntaxKind.CatchDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(QueryContinuationAction, SyntaxKind.QueryContinuation);
-            context.RegisterSyntaxNodeActionHonorExclusions(FromClauseAction, SyntaxKind.FromClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(LetClauseAction, SyntaxKind.LetClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(JoinClauseAction, SyntaxKind.JoinClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(JoinIntoClauseAction, SyntaxKind.JoinIntoClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(ForEachStatementAction, SyntaxKind.ForEachStatement);
+            context.RegisterSyntaxNodeAction(VariableDeclarationAction, SyntaxKind.VariableDeclaration);
+            context.RegisterSyntaxNodeAction(CatchDeclarationAction, SyntaxKind.CatchDeclaration);
+            context.RegisterSyntaxNodeAction(QueryContinuationAction, SyntaxKind.QueryContinuation);
+            context.RegisterSyntaxNodeAction(FromClauseAction, SyntaxKind.FromClause);
+            context.RegisterSyntaxNodeAction(LetClauseAction, SyntaxKind.LetClause);
+            context.RegisterSyntaxNodeAction(JoinClauseAction, SyntaxKind.JoinClause);
+            context.RegisterSyntaxNodeAction(JoinIntoClauseAction, SyntaxKind.JoinIntoClause);
+            context.RegisterSyntaxNodeAction(ForEachStatementAction, SyntaxKind.ForEachStatement);
         }
 
         private static class Analyzer
