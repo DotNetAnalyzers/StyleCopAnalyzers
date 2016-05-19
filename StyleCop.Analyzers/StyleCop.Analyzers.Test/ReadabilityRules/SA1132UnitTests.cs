@@ -126,7 +126,7 @@ class Foo
 
             DiagnosticResult[] expected =
             {
-                this.CSharpCompilerError(id, message).WithLocation(4, column),
+                this.CSharpCompilerError(id).WithMessage(message).WithLocation(4, column),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

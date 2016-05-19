@@ -578,8 +578,8 @@ public class TestClass : TestInterface
             // We don't care about the syntax errors.
             DiagnosticResult[] expected =
             {
-                this.CSharpCompilerError("CS1585", "Member modifier 'public' must precede the member type and name").WithLocation(5, 5),
-                this.CSharpCompilerError("CS1519", "Invalid token '}' in class, struct, or interface member declaration").WithLocation(6, 1),
+                this.CSharpCompilerError("CS1585").WithMessage("Member modifier 'public' must precede the member type and name").WithLocation(5, 5),
+                this.CSharpCompilerError("CS1519").WithMessage("Invalid token '}' in class, struct, or interface member declaration").WithLocation(6, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

@@ -134,7 +134,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             DiagnosticResult[] expected =
             {
-                this.CSharpCompilerError("CS1031", "Type expected").WithLocation(10, 2),
+                this.CSharpCompilerError("CS1031").WithMessage("Type expected").WithLocation(10, 2),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

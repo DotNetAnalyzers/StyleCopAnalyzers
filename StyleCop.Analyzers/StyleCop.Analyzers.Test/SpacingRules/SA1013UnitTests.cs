@@ -395,7 +395,7 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                this.CSharpCompilerError("CS1513", "} expected").WithLocation(3, 2),
+                this.CSharpCompilerError("CS1513").WithMessage("} expected").WithLocation(3, 2),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

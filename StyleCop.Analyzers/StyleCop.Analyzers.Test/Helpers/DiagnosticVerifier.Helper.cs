@@ -209,13 +209,12 @@ namespace TestHelper
             return new DiagnosticResult(descriptor);
         }
 
-        protected DiagnosticResult CSharpCompilerError(string errorIdentifier, string message)
+        protected DiagnosticResult CSharpCompilerError(string errorIdentifier)
         {
             return new DiagnosticResult
             {
                 Id = errorIdentifier,
                 Severity = DiagnosticSeverity.Error,
-                Message = message,
             };
         }
 
