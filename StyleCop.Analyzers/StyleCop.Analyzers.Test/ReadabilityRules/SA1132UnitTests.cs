@@ -124,12 +124,9 @@ class Foo
     {declaration}
 }}";
 
-            DiagnosticResult expected = new DiagnosticResult
+            DiagnosticResult[] expected =
             {
-                Id = id,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 4, column) },
-                Message = message
+                this.CSharpCompilerError(id, message).WithLocation(4, column),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
