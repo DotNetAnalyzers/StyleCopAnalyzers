@@ -1160,6 +1160,51 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Qualify using directive.
+        /// </summary>
+        internal static string SA1135CodeFix {
+            get {
+                return ResourceManager.GetString("SA1135CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All using directives must be qualified..
+        /// </summary>
+        internal static string SA1135Description {
+            get {
+                return ResourceManager.GetString("SA1135Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Using directive for namespace &apos;{0}&apos; must be qualified.
+        /// </summary>
+        internal static string SA1135MessageFormatNamespace {
+            get {
+                return ResourceManager.GetString("SA1135MessageFormatNamespace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Using directive for type &apos;{0}&apos; must be qualified.
+        /// </summary>
+        internal static string SA1135MessageFormatType {
+            get {
+                return ResourceManager.GetString("SA1135MessageFormatType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Using directives must be qualified.
+        /// </summary>
+        internal static string SA1135Title {
+            get {
+                return ResourceManager.GetString("SA1135Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove &apos;this.&apos; prefix.
         /// </summary>
         internal static string SX1101CodeFix {

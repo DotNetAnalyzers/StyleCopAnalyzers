@@ -129,6 +129,7 @@
     <Compile Include="ReadabilityRules\SA1132CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1133CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SA1134CodeFixProvider.cs" />
+    <Compile Include="ReadabilityRules\SA1135CodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\SX1101CodeFixProvider.cs" />
     <Compile Include="Settings\SettingsFileCodeFixProvider.cs" />
     <Compile Include="SpacingRules\SA1003CodeFixProvider.cs" />
