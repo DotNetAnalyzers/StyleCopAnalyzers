@@ -1401,6 +1401,51 @@ public class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that a preprocessor statement with unnecessary parenthesis is handled correctly.
+        /// Regression test for #2069
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyThatPreprocessorStatementIsHandledCorrectlyAsync()
+        {
+            string testCode = @"
+public class Program
+{
+    public static void Main(string[] args)
+    {
+#if(DEBUG)
+
+#endif
+
+    }
+}
+";
+
+            string fixedCode = @"
+public class Program
+{
+    public static void Main(string[] args)
+    {
+#if DEBUG
+
+#endif
+
+    }
+}
+";
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 4),
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 4),
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 10),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
