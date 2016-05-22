@@ -18,10 +18,12 @@ If the project is restored and built right now this will already run the analyze
 
 ## Rulesets and stylecop.json
 
-To supply a ruleset file and a stylecop.json configuration file to the compiler they have to be manually added as arguments to the compiler. For this add the following under the `compilationOptions` node in the project.json file:
+To supply a ruleset file and a stylecop.json configuration file to the compiler they have to be manually added as arguments to the compiler. For this add the following under the `buildOptions` node in the project.json file:
 ```json
     "additionalArguments": [ "/ruleset:path/to/ruleset.ruleset", "/additionalfile:path/to/stylecop.json" ]
 ```
+
+**Note: ** `additionalArguments` is not currently defined in the schema but does exist and is passed during the build
 
 ## Enabling xml documentation processing
 
@@ -30,5 +32,5 @@ All analyzers regarding xml documentation can only run if the xml processing is 
 "xmlDoc": "true"
 ```
 
-to the `compilationOptions` node of the project.json file. Note that this might cause additional CS1591 diagnostics to appear by the compiler.
+to the `buildOptions` node of the project.json file. Note that this might cause additional CS1591 diagnostics to appear by the compiler.
 They can be suppressed in the ruleset file if necessary.
