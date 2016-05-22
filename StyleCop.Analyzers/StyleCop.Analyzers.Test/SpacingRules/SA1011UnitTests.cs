@@ -304,9 +304,9 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                this.CSharpCompilerError("CS0443", "Syntax error; value expected").WithLocation(6, 28),
-                this.CSharpCompilerError("CS1003", "Syntax error, ',' expected").WithLocation(6, 28),
-                this.CSharpCompilerError("CS1003", "Syntax error, ']' expected").WithLocation(6, 28),
+                this.CSharpCompilerError("CS0443").WithMessage("Syntax error; value expected").WithLocation(6, 28),
+                this.CSharpCompilerError("CS1003").WithMessage("Syntax error, ',' expected").WithLocation(6, 28),
+                this.CSharpCompilerError("CS1003").WithMessage("Syntax error, ']' expected").WithLocation(6, 28),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

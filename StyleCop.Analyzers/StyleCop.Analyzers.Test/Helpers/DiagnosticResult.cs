@@ -100,6 +100,13 @@ namespace TestHelper
             return result;
         }
 
+        public DiagnosticResult WithMessage(string message)
+        {
+            DiagnosticResult result = this;
+            result.Message = message;
+            return result;
+        }
+
         public DiagnosticResult WithMessageFormat(LocalizableString messageFormat)
         {
             DiagnosticResult result = this;

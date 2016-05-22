@@ -33,7 +33,7 @@ using System;
 
             DiagnosticResult[] expected =
             {
-                this.CSharpCompilerError("CS0116", "A namespace cannot directly contain members such as fields or methods").WithLocation(4, column),
+                this.CSharpCompilerError("CS0116").WithMessage("A namespace cannot directly contain members such as fields or methods").WithLocation(4, column),
                 this.CSharpDiagnostic().WithLocation(4, column),
             };
 

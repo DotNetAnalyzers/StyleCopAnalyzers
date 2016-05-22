@@ -779,7 +779,7 @@ class Class1
 
             DiagnosticResult[] expected =
             {
-                this.CSharpCompilerError("CS1002", "; expected").WithLocation(5, 29),
+                this.CSharpCompilerError("CS1002").WithMessage("; expected").WithLocation(5, 29),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
