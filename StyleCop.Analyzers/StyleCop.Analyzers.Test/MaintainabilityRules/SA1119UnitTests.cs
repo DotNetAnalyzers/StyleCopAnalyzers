@@ -1418,6 +1418,9 @@ public class Program
 
 #endif
 
+#if (DEBUG)
+
+#endif
     }
 }
 ";
@@ -1431,6 +1434,9 @@ public class Program
 
 #endif
 
+#if DEBUG
+
+#endif
     }
 }
 ";
@@ -1439,6 +1445,9 @@ public class Program
                 this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 4),
                 this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 4),
                 this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 10),
+                this.CSharpDiagnostic(DiagnosticId).WithLocation(10, 5),
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(10, 5),
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(10, 11),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
