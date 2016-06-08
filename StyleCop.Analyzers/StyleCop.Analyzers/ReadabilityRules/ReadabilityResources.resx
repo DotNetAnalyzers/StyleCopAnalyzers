@@ -483,6 +483,18 @@
   <data name="SA1134Title" xml:space="preserve">
     <value>Attributes must not share line</value>
   </data>
+  <data name="SA1139Description" xml:space="preserve">
+    <value>Use literal suffix notation instead of casting, in order to improve readability, avoid bugs related to illegal casts and ensure that optimal IL is produced.</value>
+  </data>
+  <data name="SA1139MessageFormat" xml:space="preserve">
+    <value>Use literal suffix notation instead of casting</value>
+  </data>
+  <data name="SA1139Title" xml:space="preserve">
+    <value>Use literal suffix notation instead of casting</value>
+  </data>
+  <data name="SA1139CodeFix" xml:space="preserve">
+    <value>Use literal suffix notation instead of casting</value>
+  </data>
   <data name="SX1101CodeFix" xml:space="preserve">
     <value>Remove 'this.' prefix</value>
   </data>

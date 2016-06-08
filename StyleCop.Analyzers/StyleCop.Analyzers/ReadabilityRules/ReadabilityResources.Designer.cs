@@ -1160,6 +1160,42 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Use literal suffix notation instead of casting.
+        /// </summary>
+        internal static string SA1139CodeFix {
+            get {
+                return ResourceManager.GetString("SA1139CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use literal suffix notation instead of casting, in order to improve readability, avoid bugs related to illegal casts and ensure that optimal IL is produced..
+        /// </summary>
+        internal static string SA1139Description {
+            get {
+                return ResourceManager.GetString("SA1139Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use literal suffix notation instead of casting.
+        /// </summary>
+        internal static string SA1139MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1139MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use literal suffix notation instead of casting.
+        /// </summary>
+        internal static string SA1139Title {
+            get {
+                return ResourceManager.GetString("SA1139Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove &apos;this.&apos; prefix.
         /// </summary>
         internal static string SX1101CodeFix {
