@@ -29,6 +29,7 @@ A JSON schema is available for **stylecop.json**. By including a reference in **
 ```
 
 > :bulb: The code fix described previously automatically configures **stylecop.json** to reference the schema.
+> If the schema appears to be out-of-date in Visual Studio, right click anywhere in the **stylecop.json** document and then select **Reload Schemas**.
 
 ### Source Control
 
@@ -39,6 +40,35 @@ For best results, **stylecop.json** should be included in source control. This w
 > ```
 > [Ss]tyle[Cc]op.*
 > ```
+
+## Indentation
+
+This section describes the indentation rules which can be configured in **stylecop.json**. Each of the described
+properties are configured in the `indentation` object, which is shown in the following sample file.
+
+```json
+{
+  "settings": {
+    "indentation": {
+    }
+  }
+}
+```
+
+### Basic Indentation
+
+The following properties are used to configure basic indentation in StyleCop Analyzers.
+
+| Property | Default Value | Summary |
+| --- | --- | --- |
+| `indentationSize` | **4** | The number of columns to use for each indentation of code. Depending on the `useTabs` and `tabSize` settings, this will be filled with tabs and/or spaces. |
+| `tabSize` | **4** | The width of a hard tab character in source code. This value is used when converting between tabs and spaces. |
+| `useTabs` | **false** | **true** to indent using hard tabs; otherwise, **false** to indent using spaces |
+
+> :bulb: When working in Visual Studio, the IDE will not automatically adjust editor settings according to the values in
+> **stylecop.json**. To provide this functionality as well, we recommend duplicating the basic indentation settings in a
+> [**.editorconfig**](http://editorconfig.org/) file. Users of the [EditorConfig](https://visualstudiogallery.msdn.microsoft.com/c8bccfe2-650c-4b42-bc5c-845e21f96328)
+> extension for Visual Studio will no need to update their C# indentation settings in order to match your project style.
 
 ## Spacing Rules
 
@@ -83,7 +113,113 @@ This section describes the features of ordering rules which can be configured in
 }
 ```
 
-> Currently there are no configurable settings for ordering rules.
+### Element Order
+
+The following properties are used to configure element ordering in StyleCop Analyzers.
+
+| Property | Default Value | Summary |
+| --- | --- | --- |
+| `elementOrder` | `[ "kind", "accessibility", "constant", "static", "readonly" ]` | Specifies the traits used for ordering elements within a document, along with their precedence |
+
+The `elementOrder` property is an array of element traits. The ordering rules (SA1201, SA1202, SA1203, SA1204, SA1214,
+and SA1215) evaluate these traits in the order they are defined to identify ordering problems, and the code fix uses
+this property when reordering code elements. Any traits which are omitted from the array are ignored. The following
+traits are supported:
+
+* `kind`: Elements are ordered according to their kind (see [SA1201](SA1201.md) for this predefined order)
+* `accessibility`: Elements are ordered according to their declared accessibility (see [SA1202](SA1202.md) for this
+  predefined order)
+* `constant`: Constant elements are ordered before non-constant elements
+* `static`: Static elements are ordered before non-static elements
+* `readonly`: Readonly elements are ordered before non-readonly elements
+
+This configuration property allows for a wide variety of ordering configurations, as shown in the following examples.
+
+#### Example: All Constants First
+
+The following example shows a customized element order where *all* constant fields are placed before non-constant
+fields, regardless of accessibility.
+
+```json
+{
+  "settings": {
+    "orderingRules": {
+      "elementOrder": [
+        "kind",
+        "constant",
+        "accessibility",
+        "static",
+        "readonly"
+      ]
+    }
+  }
+}
+```
+
+#### Example: Ignore Accessibility
+
+The following example shows a customized element order where element accessibility is simply ignored, but other ordering
+rules remain enforced.
+
+```json
+{
+  "settings": {
+    "orderingRules": {
+      "elementOrder": [
+        "kind",
+        "constant",
+        "static",
+        "readonly"
+      ]
+    }
+  }
+}
+```
+
+### Using Directives
+
+The following properties are used to configure using directives in StyleCop Analyzers.
+
+| Property | Default Value | Summary |
+| --- | --- | --- |
+| `systemUsingDirectivesFirst` | true | Specifies whether `System` using directives are placed before other using directives |
+| `usingDirectivesPlacement` | `"insideNamespace"` | Specifies the desired placement of using directives |
+
+#### Using Directives Placement
+
+The `usingDirectivesPlacement` property affects the behavior of the following rules which report incorrectly placed
+using directives.
+
+* [SA1200 Using directives must be placed correctly](SA1200.md)
+
+> :warning: Use of certain features, including but not limited to preprocessor directives, may cause the using
+> directives code fix to not relocate using directives automatically. If SA1200 is still reported after applying the Fix
+> All operation for using directives, the remaining cases will need to be resolved manually.
+
+This property has three allowed values, which are described as follows.
+
+##### `"insideNamespace"`
+
+In this mode, using directives should be placed *inside* of namespace declarations. This is the default mode, and
+adheres to the original SA1200 behavior from StyleCop Classic.
+
+* SA1200 reports using directives which are located outside of a namespace declaration (a few exceptions exist for cases
+  where this is required)
+* Using directives code fix moves using directives inside of namespace declarations where possible
+
+##### `"outsideNamespace"`
+
+In this mode, using directives should be placed *outside* of namespace declarations.
+
+* SA1200 reports using directives which are located inside of a namespace declaration
+* Using directives code fix moves using directives outside of namespace declarations where possible
+
+##### `"preserve"`
+
+In this mode, using directives may be placed inside or outside of namespaces.
+
+* SA1200 does not report any violations
+* Using directives code fix may reorder using directives, but does not relocate them
 
 ## Naming Rules
 
@@ -136,6 +272,34 @@ This section describes the features of maintainability rules which can be config
 ```
 
 > Currently there are no configurable settings for maintainability rules.
+
+## Layout Rules
+
+This section describes the features of layout rules which can be configured in **stylecop.json**. Each of the described properties are configured in the `layoutRules` object, which is shown in the following sample file.
+
+```json
+{
+  "settings": {
+    "layoutRules": {
+    }
+  }
+}
+```
+
+The following properties are used to configure layout rules in StyleCop Analyzers.
+
+| Property | Default Value | Summary |
+| --- | --- | --- |
+| `newlineAtEndOfFile` | `"allow"` | Specifies the handling for newline characters which appear at the end of a file |
+
+### Lines at End of File
+
+The behavior of [SA1518](SA1518.md) can be customized regarding the manner in which newline characters at the end of a
+file are handled. The `newlineAtEndOfFile` property supports the following values:
+
+* `"allow"`: Files are allowed to end with a single newline character, but it is not required
+* `"require"`: Files are required to end with a single newline character
+* `"omit"`: Files may not end with a newline character
 
 ## Documentation Rules
 

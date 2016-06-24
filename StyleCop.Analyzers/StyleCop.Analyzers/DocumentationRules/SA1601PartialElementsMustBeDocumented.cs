@@ -6,7 +6,6 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System;
     using System.Collections.Immutable;
     using System.Linq;
-    using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -86,7 +85,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly ImmutableArray<SyntaxKind> BaseTypeDeclarationKinds =
             ImmutableArray.Create(SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.InterfaceDeclaration);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> BaseTypeDeclarationAction = Analyzer.HandleBaseTypeDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> MethodDeclarationAction = Analyzer.HandleMethodDeclaration;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -95,29 +95,18 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+
+            context.RegisterSyntaxNodeAction(BaseTypeDeclarationAction, BaseTypeDeclarationKinds);
+            context.RegisterSyntaxNodeAction(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
         }
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private static class Analyzer
         {
-            Analyzer analyzer = new Analyzer(context.Options, context.CancellationToken);
-            context.RegisterSyntaxNodeActionHonorExclusions(analyzer.HandleBaseTypeDeclaration, BaseTypeDeclarationKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(analyzer.HandleMethodDeclaration, SyntaxKind.MethodDeclaration);
-        }
-
-        private class Analyzer
-        {
-            private readonly DocumentationSettings documentationSettings;
-
-            public Analyzer(AnalyzerOptions options, CancellationToken cancellationToken)
+            public static void HandleBaseTypeDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
             {
-                StyleCopSettings settings = options.GetStyleCopSettings(cancellationToken);
-                this.documentationSettings = settings.DocumentationRules;
-            }
-
-            public void HandleBaseTypeDeclaration(SyntaxNodeAnalysisContext context)
-            {
-                if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+                if (context.GetDocumentationMode() == DocumentationMode.None)
                 {
                     return;
                 }
@@ -130,7 +119,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
                 Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
-                if (this.NeedsComment(declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
+                if (NeedsComment(settings.DocumentationRules, declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
                 {
                     if (!XmlCommentHelper.HasDocumentation(declaration))
                     {
@@ -139,9 +128,9 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
             }
 
-            public void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
+            public static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
             {
-                if (context.GetDocumentationMode() != DocumentationMode.Diagnose)
+                if (context.GetDocumentationMode() == DocumentationMode.None)
                 {
                     return;
                 }
@@ -154,7 +143,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
                 Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
-                if (this.NeedsComment(declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
+                if (NeedsComment(settings.DocumentationRules, declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
                 {
                     if (!XmlCommentHelper.HasDocumentation(declaration))
                     {
@@ -163,16 +152,16 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
             }
 
-            private bool NeedsComment(SyntaxKind syntaxKind, SyntaxKind parentSyntaxKind, Accessibility declaredAccessibility, Accessibility effectiveAccessibility)
+            private static bool NeedsComment(DocumentationSettings documentationSettings, SyntaxKind syntaxKind, SyntaxKind parentSyntaxKind, Accessibility declaredAccessibility, Accessibility effectiveAccessibility)
             {
-                if (this.documentationSettings.DocumentInterfaces
+                if (documentationSettings.DocumentInterfaces
                     && (syntaxKind == SyntaxKind.InterfaceDeclaration || parentSyntaxKind == SyntaxKind.InterfaceDeclaration))
                 {
                     // DocumentInterfaces => all interfaces must be documented
                     return true;
                 }
 
-                if (this.documentationSettings.DocumentPrivateElements)
+                if (documentationSettings.DocumentPrivateElements)
                 {
                     // DocumentPrivateMembers => everything except declared private fields must be documented
                     return true;
@@ -184,12 +173,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                 case Accessibility.Protected:
                 case Accessibility.ProtectedOrInternal:
                     // These items are part of the exposed API surface => document if configured
-                    return this.documentationSettings.DocumentExposedElements;
+                    return documentationSettings.DocumentExposedElements;
 
                 case Accessibility.ProtectedAndInternal:
                 case Accessibility.Internal:
                     // These items are part of the internal API surface => document if configured
-                    return this.documentationSettings.DocumentInternalElements;
+                    return documentationSettings.DocumentInternalElements;
 
                 case Accessibility.NotApplicable:
                 case Accessibility.Private:

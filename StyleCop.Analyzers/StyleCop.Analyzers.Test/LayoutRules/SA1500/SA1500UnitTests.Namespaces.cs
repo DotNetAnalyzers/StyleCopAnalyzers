@@ -10,7 +10,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/>.
+    /// Unit tests for <see cref="SA1500BracesForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
     public partial class SA1500UnitTests
     {
@@ -123,6 +123,34 @@ namespace InvalidNamespace6
 
                 // InvalidNamespace6
                 this.CSharpDiagnostic().WithLocation(19, 1)
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that an invalid namespace at the end of the source file will be handled correctly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestNamespaceInvalidAtEndOfFileAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+  using System; }";
+
+            var fixedTestCode = @"
+namespace TestNamespace
+{
+  using System;
+}";
+
+            DiagnosticResult[] expectedDiagnostics =
+            {
+                this.CSharpDiagnostic().WithLocation(4, 17),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

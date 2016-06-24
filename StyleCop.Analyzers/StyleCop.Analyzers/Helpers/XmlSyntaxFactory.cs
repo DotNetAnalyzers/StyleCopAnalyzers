@@ -106,7 +106,7 @@ namespace StyleCop.Analyzers.Helpers
 
         public static XmlCrefAttributeSyntax CrefAttribute(CrefSyntax cref, SyntaxKind quoteKind)
         {
-            cref = cref.ReplaceTokens(cref.DescendantTokens(), ReplaceBracketTokens);
+            cref = cref.ReplaceTokens(cref.DescendantTokens(), ReplaceBraceTokens);
             return SyntaxFactory.XmlCrefAttribute(
                 SyntaxFactory.XmlName(XmlCommentHelper.CrefArgumentName),
                 SyntaxFactory.Token(quoteKind),
@@ -297,7 +297,7 @@ namespace StyleCop.Analyzers.Helpers
                 TextAttribute("langword", keyword));
         }
 
-        private static SyntaxToken ReplaceBracketTokens(SyntaxToken originalToken, SyntaxToken rewrittenToken)
+        private static SyntaxToken ReplaceBraceTokens(SyntaxToken originalToken, SyntaxToken rewrittenToken)
         {
             if (rewrittenToken.IsKind(SyntaxKind.LessThanToken) && string.Equals("<", rewrittenToken.Text, StringComparison.Ordinal))
             {

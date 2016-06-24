@@ -14,16 +14,16 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1012OpeningCurlyBracketsMustBeSpacedCorrectly"/>
+    /// Unit tests for <see cref="SA1012OpeningBracesMustBeSpacedCorrectly"/>
     /// </summary>
     public class SA1012UnitTests : CodeFixVerifier
     {
         /// <summary>
-        /// Verifies that the analyzer will properly handle valid opening curly brackets.
+        /// Verifies that the analyzer will properly handle valid opening braces.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestValidCurlyBracketSpacingAsync()
+        public async Task TestValidBraceSpacingAsync()
         {
             var testCode = @"namespace TestNamespace
 {
@@ -64,7 +64,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         }
 
         /// <summary>
-        /// Verifies that the analyzer will properly handle opening curly brackets in string interpolation.
+        /// Verifies that the analyzer will properly handle opening braces in string interpolation.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -118,7 +118,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         }
 
         /// <summary>
-        /// Verifies that the analyzer will properly handle opening curly brackets in property declaration.
+        /// Verifies that the analyzer will properly handle opening braces in property declaration.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -158,15 +158,15 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// Verifies that the analyzer will properly handle opening curly brackets in nested curly brackets.
+        /// Verifies that the analyzer will properly handle opening braces in nested braces.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestNestedCurlyBracketsAsync()
+        public async Task TestNestedBracesAsync()
         {
             var testCode = @"namespace TestNamespace
 {
@@ -218,7 +218,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -236,13 +236,7 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                new DiagnosticResult
-                {
-                    Id = "CS1514",
-                    Severity = DiagnosticSeverity.Error,
-                    Message = "{ expected",
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 25) }
-                }
+                this.CSharpCompilerError("CS1514").WithMessage("{ expected").WithLocation(6, 25),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -251,7 +245,7 @@ class ClassName
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1012OpeningCurlyBracketsMustBeSpacedCorrectly();
+            yield return new SA1012OpeningBracesMustBeSpacedCorrectly();
         }
 
         /// <inheritdoc/>

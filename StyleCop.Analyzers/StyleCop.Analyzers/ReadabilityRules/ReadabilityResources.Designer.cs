@@ -359,7 +359,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A C# statement contains a comment between the declaration of the statement and the opening curly bracket of the statement..
+        ///   Looks up a localized string similar to A C# statement contains a comment between the declaration of the statement and the opening brace of the statement..
         /// </summary>
         internal static string SA1108Description {
             get {
@@ -386,7 +386,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A C# statement contains a region tag between the declaration of the statement and the opening curly bracket of the statement..
+        ///   Looks up a localized string similar to A C# statement contains a region tag between the declaration of the statement and the opening brace of the statement..
         /// </summary>
         internal static string SA1109Description {
             get {
@@ -1088,6 +1088,15 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Give each attribute its own square brackets.
+        /// </summary>
+        internal static string SA1133CodeFix {
+            get {
+                return ResourceManager.GetString("SA1133CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Each attribute usage should be placed in its own set of square brackets for maximum readability..
         /// </summary>
         internal static string SA1133Description {
@@ -1097,7 +1106,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Each attribute should be placed in its own set of square brackets..
         /// </summary>
         internal static string SA1133MessageFormat {
             get {
@@ -1115,6 +1124,15 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Place attribute on own line..
+        /// </summary>
+        internal static string SA1134CodeFix {
+            get {
+                return ResourceManager.GetString("SA1134CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Each attribute should be placed on its own line of code..
         /// </summary>
         internal static string SA1134Description {
@@ -1124,7 +1142,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to Each attribute should be placed on its own line of code..
         /// </summary>
         internal static string SA1134MessageFormat {
             get {

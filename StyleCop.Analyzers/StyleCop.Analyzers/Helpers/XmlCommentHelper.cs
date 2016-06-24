@@ -3,11 +3,10 @@
 
 namespace StyleCop.Analyzers.Helpers
 {
-    using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Text.RegularExpressions;
+    using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using ObjectPools;
@@ -29,6 +28,7 @@ namespace StyleCop.Analyzers.Helpers
         internal const string ExampleXmlTag = "example";
         internal const string PermissionXmlTag = "permission";
         internal const string ExceptionXmlTag = "exception";
+        internal const string IncludeXmlTag = "include";
         internal const string CrefArgumentName = "cref";
         internal const string NameArgumentName = "name";
 
@@ -131,6 +131,43 @@ namespace StyleCop.Analyzers.Helpers
         }
 
         /// <summary>
+        /// This helper is used by documentation diagnostics to check if an XML comment should be considered empty.
+        /// A comment is empty if it does not have any text in any XML element and it does not have an empty XML element in it.
+        /// </summary>
+        /// <param name="node">The XML node that should be checked</param>
+        /// <returns>true, if the comment should be considered empty, false otherwise.</returns>
+        internal static bool IsConsideredEmpty(XNode node)
+        {
+            var text = node as XText;
+            if (text != null)
+            {
+                return string.IsNullOrWhiteSpace(text.Value);
+            }
+
+            var element = node as XElement;
+            if (element != null)
+            {
+                foreach (XNode syntax in element.Nodes())
+                {
+                    if (!IsConsideredEmpty(syntax))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            var processingElement = node as XProcessingInstruction;
+            if (processingElement != null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// Checks if a SyntaxTrivia contains a DocumentationCommentTriviaSyntax and returns true if it is considered empty
         /// </summary>
         /// <param name="commentTrivia">A SyntaxTrivia containing possible documentation</param>
@@ -161,6 +198,39 @@ namespace StyleCop.Analyzers.Helpers
             var commentTrivia = node.GetDocumentationCommentTriviaSyntax();
 
             return commentTrivia != null && !IsMissingOrEmpty(commentTrivia.ParentTrivia);
+        }
+
+        internal static string GetText(XmlNodeSyntax nodeSyntax, bool normalizeWhitespace = false)
+        {
+            var xmlTextSyntax = nodeSyntax as XmlTextSyntax;
+
+            if (xmlTextSyntax != null)
+            {
+                return GetText(xmlTextSyntax, normalizeWhitespace);
+            }
+
+            var xmlElementSyntax = nodeSyntax as XmlElementSyntax;
+
+            if (xmlElementSyntax != null)
+            {
+                var stringBuilder = StringBuilderPool.Allocate();
+
+                foreach (var node in xmlElementSyntax.Content)
+                {
+                    stringBuilder.Append(GetText(node, normalizeWhitespace));
+                }
+
+                return StringBuilderPool.ReturnAndFree(stringBuilder);
+            }
+
+            var emptyXmlElement = nodeSyntax as XmlEmptyElementSyntax;
+
+            if (emptyXmlElement != null)
+            {
+                return emptyXmlElement.NormalizeWhitespace(string.Empty).ToString();
+            }
+
+            return null;
         }
 
         internal static string GetText(XmlTextSyntax textElement)

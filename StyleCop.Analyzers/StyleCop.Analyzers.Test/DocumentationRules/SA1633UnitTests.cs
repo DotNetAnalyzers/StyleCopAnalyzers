@@ -14,6 +14,20 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     /// </summary>
     public class SA1633UnitTests : FileHeaderTestBase
     {
+        private const string NoXmlMultiLineHeaderTestSettings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""companyName"": ""FooCorp"",
+      ""copyrightText"": ""copyright (c) {companyName}. All rights reserved."",
+      ""xmlHeader"": false
+    }
+  }
+}
+";
+
+        private bool useNoXmlSettings;
+
         /// <summary>
         /// Verifies that the analyzer will report <see cref="FileHeaderAnalyzers.SA1633DescriptorMissing"/> for
         /// projects using XML headers (the default) when the file is completely missing a header.
@@ -239,6 +253,62 @@ namespace Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that blank lines before a valid XML header will not produce a diagnostic message.
+        /// This is a regression test for #1781.
+        /// </summary>
+        /// <param name="prefix">The string to add before the header.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("  ")]
+        [InlineData("\t\t")]
+        [InlineData(" \t")]
+        [InlineData("  \r\n\t\r\n")]
+        [InlineData("\r\n")]
+        [InlineData("\r\n\r\n")]
+        public async Task TestValidXmlFileHeaderWithLeadingBlankLinesAsync(string prefix)
+        {
+            var testCode = $@"{prefix}// <copyright file=""Test0.cs"" company=""FooCorp"">
+//   Copyright (c) FooCorp. All rights reserved.
+// </copyright>
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that blank lines before a valid header will not produce a diagnostic message.
+        /// This is a regression test for #1781.
+        /// </summary>
+        /// <param name="prefix">The string to add before the header.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("  ")]
+        [InlineData("\t\t")]
+        [InlineData(" \t")]
+        [InlineData("  \r\n\t\r\n")]
+        [InlineData("\r\n")]
+        [InlineData("\r\n\r\n")]
+        public async Task TestValidFileHeaderWithLeadingBlankLinesAsync(string prefix)
+        {
+            this.useNoXmlSettings = true;
+            var testCode = $@"{prefix}// copyright (c) FooCorp. All rights reserved.
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
+        protected override string GetSettings()
+        {
+            if (this.useNoXmlSettings)
+            {
+                return NoXmlMultiLineHeaderTestSettings;
+            }
+
+            return base.GetSettings();
         }
 
         /// <inheritdoc/>

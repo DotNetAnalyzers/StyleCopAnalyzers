@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Helpers;
@@ -59,8 +60,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var afterEndToken = endToken.GetNextToken();
 
             var parentIndentation = GetParentIndentation(whereToken);
-            var indentationOptions = IndentationOptions.FromDocument(document);
-            var indentationTrivia = SyntaxFactory.Whitespace(parentIndentation + IndentationHelper.GenerateIndentationString(indentationOptions, 1));
+            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
+            var indentationTrivia = SyntaxFactory.Whitespace(parentIndentation + IndentationHelper.GenerateIndentationString(settings.Indentation, 1));
 
             var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>()
             {
@@ -88,18 +89,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static string GetParentIndentation(SyntaxToken token)
         {
-            var parentLine = token.Parent.Parent;
-            var parentIndentation = string.Empty;
-            var parentTrivia = parentLine.GetLeadingTrivia();
-            foreach (var trivia in parentTrivia)
-            {
-                if (trivia.IsKind(SyntaxKind.WhitespaceTrivia))
-                {
-                    parentIndentation += trivia.ToString();
-                }
-            }
+            var parentTrivia = token.Parent.Parent.GetLeadingTrivia();
 
-            return parentIndentation;
+            return parentTrivia
+                .LastOrDefault(SyntaxKind.WhitespaceTrivia)
+                .ToString();
         }
 
         // This function will remove any unnecessary whitespace or end-of-line trivia from a token.

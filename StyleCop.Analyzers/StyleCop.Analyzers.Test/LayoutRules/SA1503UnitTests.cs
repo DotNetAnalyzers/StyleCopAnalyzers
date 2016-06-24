@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1503CurlyBracketsMustNotBeOmitted"/>.
+    /// Unit tests for <see cref="SA1503BracesMustNotBeOmitted"/>.
     /// </summary>
     public class SA1503UnitTests : CodeFixVerifier
     {
@@ -38,21 +38,21 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         }
 
         /// <summary>
-        /// Verifies that a statement followed by a block without curly braces will produce a warning.
+        /// Verifies that a statement followed by a block without braces will produce a warning.
         /// </summary>
         /// <param name="statementText">The source code for the first part of a compound statement whose child can be
         /// either a statement block or a single statement.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TestStatements))]
-        public async Task TestStatementWithoutCurlyBracketsAsync(string statementText)
+        public async Task TestStatementWithoutBracesAsync(string statementText)
         {
             var expected = this.CSharpDiagnostic().WithLocation(7, 13);
             await this.VerifyCSharpDiagnosticAsync(this.GenerateTestStatement(statementText), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// Verifies that a <c>do</c> statement followed by a block without curly braces will produce a warning, and the
+        /// Verifies that a <c>do</c> statement followed by a block without braces will produce a warning, and the
         /// code fix for this warning results in valid code.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
@@ -89,24 +89,24 @@ public class Foo
         }
 
         /// <summary>
-        /// Verifies that a statement followed by a block with curly braces will produce no diagnostics results.
+        /// Verifies that a statement followed by a block with braces will produce no diagnostics results.
         /// </summary>
         /// <param name="statementText">The source code for the first part of a compound statement whose child can be
         /// either a statement block or a single statement.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TestStatements))]
-        public async Task TestStatementWithCurlyBracketsAsync(string statementText)
+        public async Task TestStatementWithBracesAsync(string statementText)
         {
             await this.VerifyCSharpDiagnosticAsync(this.GenerateFixedTestStatement(statementText), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// Verifies that an if / else statement followed by a block without curly braces will produce a warning.
+        /// Verifies that an if / else statement followed by a block without braces will produce a warning.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestIfElseStatementWithoutCurlyBracketsAsync()
+        public async Task TestIfElseStatementWithoutBracesAsync()
         {
             var testCode = @"using System.Diagnostics;
 public class Foo
@@ -130,11 +130,11 @@ public class Foo
         }
 
         /// <summary>
-        /// Verifies that an if statement followed by a block with curly braces will produce no diagnostics results.
+        /// Verifies that an if statement followed by a block with braces will produce no diagnostics results.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestIfElseStatementWithCurlyBracketsAsync()
+        public async Task TestIfElseStatementWithBracesAsync()
         {
             var testCode = @"using System.Diagnostics;
 public class Foo
@@ -156,11 +156,12 @@ public class Foo
         }
 
         /// <summary>
-        /// Verifies that an if statement followed by a else if, followed by an else statement, all blocks with curly braces will produce no diagnostics results.
+        /// Verifies that an if statement followed by a else if, followed by an else statement, all blocks with braces
+        /// will produce no diagnostics results.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestIfElseIfElseStatementWithCurlyBracketsAsync()
+        public async Task TestIfElseIfElseStatementWithBracesAsync()
         {
             var testCode = @"using System.Diagnostics;
 public class Foo
@@ -186,11 +187,11 @@ public class Foo
         }
 
         /// <summary>
-        /// Verifies that nested if statements followed by a block without curly braces will produce warnings.
+        /// Verifies that nested if statements followed by a block without braces will produce warnings.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestMultipleIfStatementsWithoutCurlyBracketsAsync()
+        public async Task TestMultipleIfStatementsWithoutBracesAsync()
         {
             var testCode = @"using System.Diagnostics;
 public class Foo
@@ -335,7 +336,7 @@ public class Foo
         }
 
         /// <summary>
-        /// Verifies that the codefix provider will work properly handle multiple cases of missing brackets.
+        /// Verifies that the codefix provider will work properly handle multiple cases of missing braces.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -394,7 +395,7 @@ public class Foo
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1503CurlyBracketsMustNotBeOmitted();
+            yield return new SA1503BracesMustNotBeOmitted();
         }
 
         /// <inheritdoc/>
@@ -409,7 +410,8 @@ public class Foo
         /// <param name="statementText">The source code for the first part of a compound statement whose child can be
         /// either a statement block or a single statement.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Theory, MemberData(nameof(TestStatements))]
+        [Theory]
+        [MemberData(nameof(TestStatements))]
         private async Task TestCodeFixForStatementAsync(string statementText)
         {
             await this.VerifyCSharpFixAsync(this.GenerateTestStatement(statementText), this.GenerateFixedTestStatement(statementText)).ConfigureAwait(false);

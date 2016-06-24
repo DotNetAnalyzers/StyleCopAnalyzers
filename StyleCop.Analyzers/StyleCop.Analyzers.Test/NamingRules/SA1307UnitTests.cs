@@ -106,6 +106,48 @@ string Bar, Car, Dar;
             await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers)).ConfigureAwait(false);
         }
 
+        [Theory]
+        [InlineData("public")]
+        [InlineData("internal")]
+        [InlineData("protected internal")]
+        public async Task TestThatDiagnosticIsReported_MultipleFieldsWithConflictAsync(string modifiers)
+        {
+            var testCode = @"public class Foo
+{{
+{0}
+string bar, Bar, barValue;
+{0}
+string carValue, Car, car;
+}}";
+            var fixedCode = @"public class Foo
+{{
+{0}
+string BarValue, Bar, BarValueValue;
+{0}
+string CarValue, Car, Car1;
+}}";
+            var batchFixedCode = @"public class Foo
+{{
+{0}
+string BarValue, Bar, BarValueValue;
+{0}
+string CarValueValue, Car, CarValue;
+}}";
+
+            DiagnosticResult[] expected =
+                {
+                    this.CSharpDiagnostic().WithArguments("bar").WithLocation(4, 8),
+                    this.CSharpDiagnostic().WithArguments("barValue").WithLocation(4, 18),
+                    this.CSharpDiagnostic().WithArguments("carValue").WithLocation(6, 8),
+                    this.CSharpDiagnostic().WithArguments("car").WithLocation(6, 23),
+                };
+
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(fixedCode, modifiers), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(batchFixedCode, modifiers), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers), string.Format(batchFixedCode, modifiers), numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestFieldStartingWithAnUnderscoreAsync()
         {

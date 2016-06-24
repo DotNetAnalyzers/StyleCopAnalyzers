@@ -11,7 +11,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/>.
+    /// Unit tests for <see cref="SA1500BracesForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
     public partial class SA1500UnitTests
     {

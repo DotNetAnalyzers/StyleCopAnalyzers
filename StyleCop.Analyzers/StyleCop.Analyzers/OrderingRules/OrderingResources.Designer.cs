@@ -71,6 +71,114 @@ namespace StyleCop.Analyzers.OrderingRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An element within a C# code file is out of order in relation to the other elements in the code..
+        /// </summary>
+        internal static string SA1201Description {
+            get {
+                return ResourceManager.GetString("SA1201Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A {0} should not follow a {1}.
+        /// </summary>
+        internal static string SA1201MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1201MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Elements must appear in the correct order.
+        /// </summary>
+        internal static string SA1201Title {
+            get {
+                return ResourceManager.GetString("SA1201Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An element within a C# code file is out of order in relation to other elements in the code..
+        /// </summary>
+        internal static string SA1202Description {
+            get {
+                return ResourceManager.GetString("SA1202Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; members must come before &apos;{1}&apos; members.
+        /// </summary>
+        internal static string SA1202MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1202MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Elements must be ordered by access.
+        /// </summary>
+        internal static string SA1202Title {
+            get {
+                return ResourceManager.GetString("SA1202Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A constant field is placed beneath a non-constant field..
+        /// </summary>
+        internal static string SA1203Description {
+            get {
+                return ResourceManager.GetString("SA1203Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Constant fields must appear before non-constant fields.
+        /// </summary>
+        internal static string SA1203MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1203MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Constants must appear before fields.
+        /// </summary>
+        internal static string SA1203Title {
+            get {
+                return ResourceManager.GetString("SA1203Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A static element is positioned beneath an instance element..
+        /// </summary>
+        internal static string SA1204Description {
+            get {
+                return ResourceManager.GetString("SA1204Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Static members must appear before non-static members.
+        /// </summary>
+        internal static string SA1204MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1204MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Static elements must appear before instance elements.
+        /// </summary>
+        internal static string SA1204Title {
+            get {
+                return ResourceManager.GetString("SA1204Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Fix modifier order.
         /// </summary>
         internal static string ModifierOrderCodeFix {
@@ -103,6 +211,33 @@ namespace StyleCop.Analyzers.OrderingRules {
         internal static string SA1213CodeFix {
             get {
                 return ResourceManager.GetString("SA1213CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A readonly field is positioned beneath a non-readonly field..
+        /// </summary>
+        internal static string SA1214Description {
+            get {
+                return ResourceManager.GetString("SA1214Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Readonly fields must appear before non-readonly fields.
+        /// </summary>
+        internal static string SA1214MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1214MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Readonly fields must appear before non-readonly fields.
+        /// </summary>
+        internal static string SA1214Title {
+            get {
+                return ResourceManager.GetString("SA1214Title", resourceCulture);
             }
         }
         

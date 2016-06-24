@@ -23,8 +23,13 @@ namespace StyleCop.Analyzers.Settings
     [Shared]
     internal class SettingsFileCodeFixProvider : CodeFixProvider
     {
-        private const string StyleCopSettingsFileName = "stylecop.json";
-        private const string DefaultSettingsFileContent = @"{
+        internal const string DefaultSettingsFileContent = @"{
+  // ACTION REQUIRED: This file was automatically added to your project, but it
+  // will not take effect until additional steps are taken to enable it. See the
+  // following page for additional information:
+  //
+  // https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/EnableConfiguration.md
+
   ""$schema"": ""https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json"",
   ""settings"": {
     ""documentationRules"": {
@@ -91,7 +96,7 @@ namespace StyleCop.Analyzers.Settings
 
         private static bool IsStyleCopSettingsDocument(TextDocument document)
         {
-            return string.Equals(document.Name, StyleCopSettingsFileName, StringComparison.OrdinalIgnoreCase);
+            return string.Equals(document.Name, SettingsHelper.SettingsFileName, StringComparison.OrdinalIgnoreCase);
         }
 
         private static Task<Solution> GetTransformedSolutionAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
@@ -101,7 +106,7 @@ namespace StyleCop.Analyzers.Settings
 
             var newDocumentId = DocumentId.CreateNewId(project.Id);
 
-            var newSolution = solution.AddAdditionalDocument(newDocumentId, StyleCopSettingsFileName, DefaultSettingsFileContent);
+            var newSolution = solution.AddAdditionalDocument(newDocumentId, SettingsHelper.SettingsFileName, DefaultSettingsFileContent);
 
             return Task.FromResult(newSolution);
         }

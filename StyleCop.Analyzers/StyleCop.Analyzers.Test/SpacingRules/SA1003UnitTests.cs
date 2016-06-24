@@ -191,7 +191,7 @@ v1;
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, fixedExpected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -600,7 +600,7 @@ public class Foo : Exception
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, fixedExpected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -798,6 +798,139 @@ public class Foo : Exception
 ";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that unary plus expression will not trigger any diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestExpressionBodiedMembersAsync()
+        {
+            var testCode = @"namespace N1
+{
+    public class C1
+    {
+        public int Answer=>42; // Property
+        public void DoStuff(int a)=>System.Console.WriteLine(a); // method
+        public static C1 operator +(C1 a, C1 b)=>a; // operator
+        public static explicit operator C1(int i)=>null; // conversion operator
+        public int this[int index]=>23; // indexer
+    }
+}
+";
+            var fixedTestCode = @"namespace N1
+{
+    public class C1
+    {
+        public int Answer => 42; // Property
+        public void DoStuff(int a) => System.Console.WriteLine(a); // method
+        public static C1 operator +(C1 a, C1 b) => a; // operator
+        public static explicit operator C1(int i) => null; // conversion operator
+        public int this[int index] => 23; // indexer
+    }
+}
+";
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(5, 26).WithArguments("=>"),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(5, 26).WithArguments("=>"),
+
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(6, 35).WithArguments("=>"),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(6, 35).WithArguments("=>"),
+
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(7, 48).WithArguments("=>"),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(7, 48).WithArguments("=>"),
+
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(8, 50).WithArguments("=>"),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(8, 50).WithArguments("=>"),
+
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(9, 35).WithArguments("=>"),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(9, 35).WithArguments("=>"),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that pointer dereference will not trigger SA1003, as it is covered by SA1023.
+        /// This is a regression test for #1776
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestPointerDereferenceNotReportedAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    public void TestMethod()
+    {
+        unsafe
+        {
+            int * value = null;
+            int blah = * value;
+        }
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that spacing errors in conditional directives are fixed correctly. This is a regression test for
+        /// DotNetAnalyzers/StyleCopAnalyzers#1831.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestConditionalDirectivesCorrectlyFixedAsync()
+        {
+            var testCode = @"class Program
+{
+    static int Main(string[] args)
+    {
+#if! NOT
+        return 1;
+#endif
+
+#if! NOT&&! Y
+        return 1;
+#endif
+    }
+}
+";
+            var fixedCode = @"class Program
+{
+    static int Main(string[] args)
+    {
+#if !NOT
+        return 1;
+#endif
+
+#if !NOT && !Y
+        return 1;
+#endif
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(5, 4).WithArguments("!"),
+                this.CSharpDiagnostic(DescriptorNotFollowedByWhitespace).WithLocation(5, 4).WithArguments("!"),
+
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(9, 4).WithArguments("!"),
+                this.CSharpDiagnostic(DescriptorNotFollowedByWhitespace).WithLocation(9, 4).WithArguments("!"),
+
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(9, 9).WithArguments("&&"),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(9, 9).WithArguments("&&"),
+
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(9, 11).WithArguments("!"),
+                this.CSharpDiagnostic(DescriptorNotFollowedByWhitespace).WithLocation(9, 11).WithArguments("!"),
+            };
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

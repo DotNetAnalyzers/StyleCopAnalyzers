@@ -17,10 +17,19 @@ The severity of individual rules may be configured using [rule set files](https:
 in Visual Studio 2015. **Settings.StyleCop** is not supported, but a **stylecop.json** file may be used to customize the
 behavior of certain rules. See [Configuration.md](documentation/Configuration.md) for more information.
 
+For users upgrading from StyleCop Classic, see [KnownChanges.md](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/tree/master/documentation/KnownChanges.md)
+for information about known differences which you may notice when switching to StyleCop Analyzers.
+
 ## Installation
 
-StyleCopAnalyzers can be installed using the NuGet Package Manager in Visual Studio 2015.
+StyleCopAnalyzers can be installed using the NuGet command line or the NuGet Package Manager in Visual Studio 2015.
 
+**Install using the command line:**
+```bash
+Install-Package StyleCop.Analyzers
+```
+
+**Install using the package manager:**
 ![Install via nuget](https://cloud.githubusercontent.com/assets/1408396/8233513/491f301a-159c-11e5-8b7a-1e16a0695da6.png)
 
 ## Team Considerations
@@ -33,8 +42,8 @@ See [Contributing](CONTRIBUTING.md)
 
 ## Current status
 
-An up-to-date list of which StyleCop rules are implemented and which have code fixes can be found [here](http://stylecop.pdelvo.com/).
+An up-to-date list of which StyleCop rules are implemented and which have code fixes can be found [here](https://stylecop.pdelvo.com/).
 
 ## Source browser
 
-The up-to-date source code can be browsed [here](http://source.pdelvo.com/).
+The up-to-date source code can be browsed [here](https://source.pdelvo.com/).

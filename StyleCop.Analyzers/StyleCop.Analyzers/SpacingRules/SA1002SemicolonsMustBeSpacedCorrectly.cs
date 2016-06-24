@@ -34,7 +34,6 @@ namespace StyleCop.Analyzers.SpacingRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
 
         /// <inheritdoc/>
@@ -44,12 +43,10 @@ namespace StyleCop.Analyzers.SpacingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxTreeActionHonorExclusions(SyntaxTreeAction);
+            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
         }
 
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -92,11 +89,26 @@ namespace StyleCop.Analyzers.SpacingRules
             else
             {
                 SyntaxToken nextToken = token.GetNextToken();
-                if (nextToken.IsKind(SyntaxKind.CloseParenToken))
+                switch (nextToken.Kind())
                 {
+                case SyntaxKind.CloseParenToken:
                     // Special handling for the following case:
                     // for (; ;)
                     missingFollowingSpace = false;
+                    break;
+
+                case SyntaxKind.SemicolonToken:
+                    // Special handling for the following case:
+                    // Statement();;
+                    if (nextToken.Parent.IsKind(SyntaxKind.EmptyStatement))
+                    {
+                        missingFollowingSpace = false;
+                    }
+
+                    break;
+
+                default:
+                    break;
                 }
             }
 

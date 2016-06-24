@@ -35,8 +35,8 @@ namespace StyleCop.Analyzers.SpacingRules
                 SA1009ClosingParenthesisMustBeSpacedCorrectly.DiagnosticId,
                 SA1010OpeningSquareBracketsMustBeSpacedCorrectly.DiagnosticId,
                 SA1011ClosingSquareBracketsMustBeSpacedCorrectly.DiagnosticId,
-                SA1012OpeningCurlyBracketsMustBeSpacedCorrectly.DiagnosticId,
-                SA1013ClosingCurlyBracketsMustBeSpacedCorrectly.DiagnosticId,
+                SA1012OpeningBracesMustBeSpacedCorrectly.DiagnosticId,
+                SA1013ClosingBracesMustBeSpacedCorrectly.DiagnosticId,
                 SA1014OpeningGenericBracketsMustBeSpacedCorrectly.DiagnosticId,
                 SA1015ClosingGenericBracketsMustBeSpacedCorrectly.DiagnosticId,
                 SA1016OpeningAttributeBracketsMustBeSpacedCorrectly.DiagnosticId,
@@ -248,9 +248,8 @@ namespace StyleCop.Analyzers.SpacingRules
 
             protected override string CodeActionTitle => SpacingResources.TokenSpacingCodeFix;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
-                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
                 if (diagnostics.IsEmpty)
                 {
                     return null;

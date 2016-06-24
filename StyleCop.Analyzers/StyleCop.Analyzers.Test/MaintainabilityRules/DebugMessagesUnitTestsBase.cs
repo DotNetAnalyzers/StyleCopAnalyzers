@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.Text;
     using TestHelper;
     using Xunit;
 
@@ -41,6 +42,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         [Fact]
         public async Task TestConstantMessage_Field_PassWrongTypeAsync()
         {
+            LinePosition linePosition = new LinePosition(4, 28);
             DiagnosticResult[] expected =
             {
                 new DiagnosticResult
@@ -48,7 +50,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                     Id = "CS0029",
                     Message = "Cannot implicitly convert type 'int' to 'string'",
                     Severity = DiagnosticSeverity.Error,
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 4, 28) }
+                    Spans = new[] { new FileLinePositionSpan("Test0.cs", linePosition, linePosition) }
                 }
             };
 
@@ -70,6 +72,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         [Fact]
         public async Task TestConstantMessage_Local_PassWrongTypeAsync()
         {
+            LinePosition linePosition = new LinePosition(6, 32);
             DiagnosticResult[] expected =
             {
                 new DiagnosticResult
@@ -77,7 +80,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                     Id = "CS0029",
                     Message = "Cannot implicitly convert type 'int' to 'string'",
                     Severity = DiagnosticSeverity.Error,
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 32) }
+                    Spans = new[] { new FileLinePositionSpan("Test0.cs", linePosition, linePosition) }
                 }
             };
 
@@ -99,6 +102,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         [Fact]
         public async Task TestConstantMessage_Inline_PassWrongTypeAsync()
         {
+            LinePosition linePosition = new LinePosition(6, 16 + this.MethodName.Length + this.InitialArguments.Sum(i => i.Length + ", ".Length));
             DiagnosticResult[] expected =
             {
                 new DiagnosticResult
@@ -106,7 +110,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                     Id = "CS1503",
                     Message = $"Argument {1 + this.InitialArguments.Count()}: cannot convert from 'int' to 'string'",
                     Severity = DiagnosticSeverity.Error,
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 16 + this.MethodName.Length + this.InitialArguments.Sum(i => i.Length + ", ".Length)) }
+                    Spans = new[] { new FileLinePositionSpan("Test0.cs", linePosition, linePosition) }
                 }
             };
 

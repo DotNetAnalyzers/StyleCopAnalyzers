@@ -13,12 +13,12 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1513ClosingCurlyBracketMustBeFollowedByBlankLine"/>
+    /// Unit tests for <see cref="SA1513ClosingBraceMustBeFollowedByBlankLine"/>
     /// </summary>
     public class SA1513UnitTests : CodeFixVerifier
     {
         /// <summary>
-        /// Verifies that all valid usages of a closing curly brace without a following blank line will report no diagnostic.
+        /// Verifies that all valid usages of a closing brace without a following blank line will report no diagnostic.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -411,7 +411,7 @@ public class Foo
         }
 
         /// <summary>
-        /// Verifies that all invalid usages of a closing curly brace without a following blank line will report a diagnostic.
+        /// Verifies that all invalid usages of a closing brace without a following blank line will report a diagnostic.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -796,10 +796,40 @@ public class Program
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that code commented out with four slashes is accepted.
+        /// This is a regression test for #2041
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestFourSlashCommentsAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public int Do(int i)
+    {
+        if (i > 2)
+        {
+            return 1;
+        }
+        //// else if (i == 2)
+        //// {
+        ////     return 2;
+        //// }
+
+        return 0;
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1513ClosingCurlyBracketMustBeFollowedByBlankLine();
+            yield return new SA1513ClosingBraceMustBeFollowedByBlankLine();
         }
 
         /// <inheritdoc/>

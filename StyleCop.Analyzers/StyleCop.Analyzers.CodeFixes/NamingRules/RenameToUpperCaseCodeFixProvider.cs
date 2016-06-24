@@ -26,6 +26,9 @@ namespace StyleCop.Analyzers.NamingRules
     [Shared]
     internal class RenameToUpperCaseCodeFixProvider : CodeFixProvider
     {
+        /// <summary>
+        /// During conflict resolution for fields, this suffix is tried before falling back to 1, 2, 3, etc...
+        /// </summary>
         private const string Suffix = "Value";
 
         /// <inheritdoc/>
@@ -52,8 +55,9 @@ namespace StyleCop.Analyzers.NamingRules
             foreach (var diagnostic in context.Diagnostics)
             {
                 var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
-                var newName = char.ToUpper(token.ValueText[0]) + token.ValueText.Substring(1);
-                var memberSyntax = this.GetParentTypeDeclaration(token);
+                var baseName = char.ToUpper(token.ValueText[0]) + token.ValueText.Substring(1);
+                var newName = baseName;
+                var memberSyntax = RenameHelper.GetParentDeclaration(token);
 
                 if (memberSyntax is NamespaceDeclarationSyntax)
                 {
@@ -62,9 +66,9 @@ namespace StyleCop.Analyzers.NamingRules
                     {
                         IdentifierNameSyntax identifierSyntax = (IdentifierNameSyntax)token.Parent;
 
-                        var newIdentifierSyntac = identifierSyntax.WithIdentifier(SyntaxFactory.Identifier(newName));
+                        var newIdentifierSyntax = identifierSyntax.WithIdentifier(SyntaxFactory.Identifier(newName));
 
-                        var newRoot = root.ReplaceNode(identifierSyntax, newIdentifierSyntac);
+                        var newRoot = root.ReplaceNode(identifierSyntax, newIdentifierSyntax);
                         return Task.FromResult(context.Document.WithSyntaxRoot(newRoot));
                     };
 
@@ -79,81 +83,37 @@ namespace StyleCop.Analyzers.NamingRules
                 {
                     SemanticModel semanticModel = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
 
-                    var typeDeclarationSymbol = semanticModel.GetDeclaredSymbol(memberSyntax);
-                    if (typeDeclarationSymbol == null)
+                    var declaredSymbol = semanticModel.GetDeclaredSymbol(memberSyntax);
+                    if (declaredSymbol == null)
                     {
                         continue;
                     }
 
-                    if (!this.IsValidNewMemberName(typeDeclarationSymbol, newName))
+                    bool usedSuffix = false;
+                    if (declaredSymbol.Kind == SymbolKind.Field
+                        && declaredSymbol.ContainingType?.TypeKind != TypeKind.Enum
+                        && !await RenameHelper.IsValidNewMemberNameAsync(semanticModel, declaredSymbol, newName, context.CancellationToken).ConfigureAwait(false))
                     {
+                        usedSuffix = true;
                         newName = newName + Suffix;
+                    }
+
+                    int index = 0;
+                    while (!await RenameHelper.IsValidNewMemberNameAsync(semanticModel, declaredSymbol, newName, context.CancellationToken).ConfigureAwait(false))
+                    {
+                        usedSuffix = false;
+                        index++;
+                        newName = baseName + index;
                     }
 
                     context.RegisterCodeFix(
                         CodeAction.Create(
                             string.Format(NamingResources.RenameToCodeFix, newName),
                             cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken),
-                            nameof(RenameToUpperCaseCodeFixProvider) + "_" + diagnostic.Id),
+                            nameof(RenameToUpperCaseCodeFixProvider) + "_" + diagnostic.Id + "_" + usedSuffix + "_" + index),
                         diagnostic);
                 }
             }
-        }
-
-        private bool IsValidNewMemberName(ISymbol typeSymbol, string name)
-        {
-            if (typeSymbol == null)
-            {
-                throw new ArgumentNullException(nameof(typeSymbol));
-            }
-            else if (typeSymbol.Name == name)
-            {
-                return false;
-            }
-
-            var members = (typeSymbol as INamedTypeSymbol)?.GetMembers(name);
-            if (members.HasValue && !members.Value.IsDefaultOrEmpty)
-            {
-                return false;
-            }
-
-            var containingType = typeSymbol.ContainingSymbol as INamedTypeSymbol;
-            if (containingType != null)
-            {
-                // The name can't be the same as the name of the containing type
-                if (containingType.Name == name)
-                {
-                    return false;
-                }
-
-                // The name can't be the same as the name of an other member of the same type
-                members = containingType.GetMembers(name);
-                if (!members.Value.IsDefaultOrEmpty)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        private SyntaxNode GetParentTypeDeclaration(SyntaxToken token)
-        {
-            SyntaxNode parent = token.Parent;
-
-            while (parent != null)
-            {
-                var declarationParent = parent as MemberDeclarationSyntax
-                    ?? (SyntaxNode)(parent as VariableDeclaratorSyntax);
-                if (declarationParent != null)
-                {
-                    return declarationParent;
-                }
-
-                parent = parent.Parent;
-            }
-
-            return null;
         }
     }
 }

@@ -25,7 +25,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// <para>A violation of this rule occurs when the <c>&lt;value&gt;</c> tag for a property is empty.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class SA1610PropertyDocumentationMustHaveValueText : PropertyDocumentationSummaryBase
+    internal class SA1610PropertyDocumentationMustHaveValueText : PropertyDocumentationBase
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1610PropertyDocumentationMustHaveValueText"/> analyzer.
@@ -44,14 +44,14 @@ namespace StyleCop.Analyzers.DocumentationRules
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, params Location[] diagnosticLocations)
+        protected override string XmlTagToHandle => XmlCommentHelper.ValueXmlTag;
+
+        /// <inheritdoc/>
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location diagnosticLocation)
         {
             if (syntax != null && XmlCommentHelper.IsConsideredEmpty(syntax))
             {
-                foreach (var location in diagnosticLocations)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
-                }
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, diagnosticLocation));
             }
         }
     }

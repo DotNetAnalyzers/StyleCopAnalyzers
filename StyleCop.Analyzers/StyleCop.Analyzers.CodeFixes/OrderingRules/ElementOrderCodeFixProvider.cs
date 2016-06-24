@@ -15,11 +15,12 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Settings.ObjectModel;
 
     /// <summary>
     /// Implements code fixes for element ordering rules.
     /// </summary>
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ElementOrderCodeFixProvider))]
+    [NoCodeFix("Disabled until stable")]
     [Shared]
     internal class ElementOrderCodeFixProvider : CodeFixProvider
     {
@@ -30,8 +31,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 SA1202ElementsMustBeOrderedByAccess.DiagnosticId,
                 SA1203ConstantsMustAppearBeforeFields.DiagnosticId,
                 SA1204StaticElementsMustAppearBeforeInstanceElements.DiagnosticId,
-                SA1214StaticReadonlyElementsMustAppearBeforeStaticNonReadonlyElements.DiagnosticId,
-                SA1215InstanceReadonlyElementsMustAppearBeforeInstanceNonReadonlyElements.DiagnosticId);
+                SA1214ReadonlyElementsMustAppearBeforeNonReadonlyElements.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -57,9 +57,9 @@ namespace StyleCop.Analyzers.OrderingRules
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
-            var orderingChecks = await GetEnabledRulesForDocumentAsync(document, cancellationToken).ConfigureAwait(false);
+            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
+            var elementOrder = settings.OrderingRules.ElementOrder;
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var indentationOptions = IndentationOptions.FromDocument(document);
 
             var memberDeclaration = syntaxRoot.FindNode(diagnostic.Location.SourceSpan).FirstAncestorOrSelf<MemberDeclarationSyntax>();
             if (memberDeclaration == null)
@@ -67,68 +67,57 @@ namespace StyleCop.Analyzers.OrderingRules
                 return document;
             }
 
-            syntaxRoot = UpdateSyntaxRoot(memberDeclaration, orderingChecks, syntaxRoot, indentationOptions);
+            syntaxRoot = UpdateSyntaxRoot(memberDeclaration, elementOrder, syntaxRoot, settings.Indentation);
 
             return document.WithSyntaxRoot(syntaxRoot);
         }
 
-        private static async Task<ElementOrderingChecks> GetEnabledRulesForDocumentAsync(Document document, CancellationToken cancellationToken)
-        {
-            SemanticModel semanticModel;
-            if (!document.TryGetSemanticModel(out semanticModel))
-            {
-                semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-            }
-
-            return ElementOrderingChecks.GetElementOrderingChecksForSemanticModel(semanticModel);
-        }
-
-        private static SyntaxNode UpdateSyntaxRoot(MemberDeclarationSyntax memberDeclaration, ElementOrderingChecks checks, SyntaxNode syntaxRoot, IndentationOptions indentationOptions)
+        private static SyntaxNode UpdateSyntaxRoot(MemberDeclarationSyntax memberDeclaration, ImmutableArray<OrderingTrait> elementOrder, SyntaxNode syntaxRoot, IndentationSettings indentationSettings)
         {
             var parentDeclaration = memberDeclaration.Parent;
-            var memberToMove = new MemberOrderHelper(memberDeclaration, checks);
+            var memberToMove = new MemberOrderHelper(memberDeclaration, elementOrder);
 
             if (parentDeclaration is TypeDeclarationSyntax)
             {
-                return HandleTypeDeclaration(memberToMove, (TypeDeclarationSyntax)parentDeclaration, checks, syntaxRoot, indentationOptions);
+                return HandleTypeDeclaration(memberToMove, (TypeDeclarationSyntax)parentDeclaration, elementOrder, syntaxRoot, indentationSettings);
             }
 
             if (parentDeclaration is NamespaceDeclarationSyntax)
             {
-                return HandleNamespaceDeclaration(memberToMove, (NamespaceDeclarationSyntax)parentDeclaration, checks, syntaxRoot, indentationOptions);
+                return HandleNamespaceDeclaration(memberToMove, (NamespaceDeclarationSyntax)parentDeclaration, elementOrder, syntaxRoot, indentationSettings);
             }
 
             if (parentDeclaration is CompilationUnitSyntax)
             {
-                return HandleCompilationUnitDeclaration(memberToMove, (CompilationUnitSyntax)parentDeclaration, checks, syntaxRoot, indentationOptions);
+                return HandleCompilationUnitDeclaration(memberToMove, (CompilationUnitSyntax)parentDeclaration, elementOrder, syntaxRoot, indentationSettings);
             }
 
             return syntaxRoot;
         }
 
-        private static SyntaxNode HandleTypeDeclaration(MemberOrderHelper memberOrder, TypeDeclarationSyntax typeDeclarationNode, ElementOrderingChecks checks, SyntaxNode syntaxRoot, IndentationOptions indentationOptions)
+        private static SyntaxNode HandleTypeDeclaration(MemberOrderHelper memberOrder, TypeDeclarationSyntax typeDeclarationNode, ImmutableArray<OrderingTrait> elementOrder, SyntaxNode syntaxRoot, IndentationSettings indentationSettings)
         {
-            return OrderMember(memberOrder, typeDeclarationNode.Members, checks, syntaxRoot, indentationOptions);
+            return OrderMember(memberOrder, typeDeclarationNode.Members, elementOrder, syntaxRoot, indentationSettings);
         }
 
-        private static SyntaxNode HandleCompilationUnitDeclaration(MemberOrderHelper memberOrder, CompilationUnitSyntax compilationUnitDeclaration, ElementOrderingChecks checks, SyntaxNode syntaxRoot, IndentationOptions indentationOptions)
+        private static SyntaxNode HandleCompilationUnitDeclaration(MemberOrderHelper memberOrder, CompilationUnitSyntax compilationUnitDeclaration, ImmutableArray<OrderingTrait> elementOrder, SyntaxNode syntaxRoot, IndentationSettings indentationSettings)
         {
-            return OrderMember(memberOrder, compilationUnitDeclaration.Members, checks, syntaxRoot, indentationOptions);
+            return OrderMember(memberOrder, compilationUnitDeclaration.Members, elementOrder, syntaxRoot, indentationSettings);
         }
 
-        private static SyntaxNode HandleNamespaceDeclaration(MemberOrderHelper memberOrder, NamespaceDeclarationSyntax namespaceDeclaration, ElementOrderingChecks checks, SyntaxNode syntaxRoot, IndentationOptions indentationOptions)
+        private static SyntaxNode HandleNamespaceDeclaration(MemberOrderHelper memberOrder, NamespaceDeclarationSyntax namespaceDeclaration, ImmutableArray<OrderingTrait> elementOrder, SyntaxNode syntaxRoot, IndentationSettings indentationSettings)
         {
-            return OrderMember(memberOrder, namespaceDeclaration.Members, checks, syntaxRoot, indentationOptions);
+            return OrderMember(memberOrder, namespaceDeclaration.Members, elementOrder, syntaxRoot, indentationSettings);
         }
 
-        private static SyntaxNode OrderMember(MemberOrderHelper memberOrder, SyntaxList<MemberDeclarationSyntax> members, ElementOrderingChecks checks, SyntaxNode syntaxRoot, IndentationOptions indentationOptions)
+        private static SyntaxNode OrderMember(MemberOrderHelper memberOrder, SyntaxList<MemberDeclarationSyntax> members, ImmutableArray<OrderingTrait> elementOrder, SyntaxNode syntaxRoot, IndentationSettings indentationSettings)
         {
             var memberIndex = members.IndexOf(memberOrder.Member);
             MemberOrderHelper target = default(MemberOrderHelper);
 
             for (var i = memberIndex - 1; i >= 0; --i)
             {
-                var orderHelper = new MemberOrderHelper(members[i], checks);
+                var orderHelper = new MemberOrderHelper(members[i], elementOrder);
                 if (orderHelper.Priority < memberOrder.Priority)
                 {
                     target = orderHelper;
@@ -139,10 +128,10 @@ namespace StyleCop.Analyzers.OrderingRules
                 }
             }
 
-            return target.Member != null ? MoveMember(syntaxRoot, memberOrder.Member, target.Member, indentationOptions) : syntaxRoot;
+            return target.Member != null ? MoveMember(syntaxRoot, memberOrder.Member, target.Member, indentationSettings) : syntaxRoot;
         }
 
-        private static SyntaxNode MoveMember(SyntaxNode syntaxRoot, MemberDeclarationSyntax member, MemberDeclarationSyntax targetMember, IndentationOptions indentationOptions)
+        private static SyntaxNode MoveMember(SyntaxNode syntaxRoot, MemberDeclarationSyntax member, MemberDeclarationSyntax targetMember, IndentationSettings indentationSettings)
         {
             var firstToken = syntaxRoot.GetFirstToken();
             var fileHeader = GetFileHeader(firstToken.LeadingTrivia);
@@ -151,8 +140,8 @@ namespace StyleCop.Analyzers.OrderingRules
             var targetMemberTracked = syntaxRoot.GetCurrentNode(targetMember);
             if (!memberToMove.HasLeadingTrivia)
             {
-                var targetIndentationLevel = IndentationHelper.GetIndentationSteps(indentationOptions, targetMember);
-                var indentationString = IndentationHelper.GenerateIndentationString(indentationOptions, targetIndentationLevel);
+                var targetIndentationLevel = IndentationHelper.GetIndentationSteps(indentationSettings, targetMember);
+                var indentationString = IndentationHelper.GenerateIndentationString(indentationSettings, targetIndentationLevel);
                 memberToMove = memberToMove.WithLeadingTrivia(SyntaxFactory.Whitespace(indentationString));
             }
 
@@ -267,16 +256,15 @@ namespace StyleCop.Analyzers.OrderingRules
 
             protected override string CodeActionTitle => OrderingResources.ElementOrderCodeFix;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
-                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
                 if (diagnostics.IsEmpty)
                 {
                     return null;
                 }
 
-                var indentationOptions = IndentationOptions.FromDocument(document);
-                var orderingChecks = await GetEnabledRulesForDocumentAsync(document, fixAllContext.CancellationToken).ConfigureAwait(false);
+                var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, fixAllContext.CancellationToken);
+                var elementOrder = settings.OrderingRules.ElementOrder;
                 var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
 
                 var trackedDiagnosticMembers = new List<MemberDeclarationSyntax>();
@@ -296,7 +284,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 foreach (var member in trackedDiagnosticMembers)
                 {
                     var memberDeclaration = syntaxRoot.GetCurrentNode(member);
-                    syntaxRoot = UpdateSyntaxRoot(memberDeclaration, orderingChecks, syntaxRoot, indentationOptions);
+                    syntaxRoot = UpdateSyntaxRoot(memberDeclaration, elementOrder, syntaxRoot, settings.Indentation);
                 }
 
                 return syntaxRoot;

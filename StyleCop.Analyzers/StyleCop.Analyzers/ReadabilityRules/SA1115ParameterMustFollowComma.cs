@@ -58,10 +58,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly ImmutableArray<SyntaxKind> BaseMethodDeclarationKinds =
             ImmutableArray.Create(SyntaxKind.ConstructorDeclaration, SyntaxKind.MethodDeclaration, SyntaxKind.OperatorDeclaration);
 
-        private static readonly ImmutableArray<SyntaxKind> ConstructorInitializerKinds =
-            ImmutableArray.Create(SyntaxKind.BaseConstructorInitializer, SyntaxKind.ThisConstructorInitializer);
-
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> BaseMethodDeclarationAction = HandleBaseMethodDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> InvocationExpressionAction = HandleInvocationExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> ObjectCreationExpressionAction = HandleObjectCreationExpression;
@@ -84,25 +80,23 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(BaseMethodDeclarationAction, BaseMethodDeclarationKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(InvocationExpressionAction, SyntaxKind.InvocationExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(ObjectCreationExpressionAction, SyntaxKind.ObjectCreationExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(IndexerDeclarationAction, SyntaxKind.IndexerDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(ElementAccessExpressionAction, SyntaxKind.ElementAccessExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(ArrayCreationExpressionAction, SyntaxKind.ArrayCreationExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(AttributeAction, SyntaxKind.Attribute);
-            context.RegisterSyntaxNodeActionHonorExclusions(AttributeListAction, SyntaxKind.AttributeList);
-            context.RegisterSyntaxNodeActionHonorExclusions(AnonymousMethodExpressionAction, SyntaxKind.AnonymousMethodExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(ParenthesizedLambdaExpressionAction, SyntaxKind.ParenthesizedLambdaExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(DelegateDeclarationAction, SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(ConstructorInitializerAction, ConstructorInitializerKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(ElementBindingExpressionAction, SyntaxKind.ElementBindingExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(ImplicitElementAccessAction, SyntaxKind.ImplicitElementAccess);
+            context.RegisterSyntaxNodeAction(BaseMethodDeclarationAction, BaseMethodDeclarationKinds);
+            context.RegisterSyntaxNodeAction(InvocationExpressionAction, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeAction(ObjectCreationExpressionAction, SyntaxKind.ObjectCreationExpression);
+            context.RegisterSyntaxNodeAction(IndexerDeclarationAction, SyntaxKind.IndexerDeclaration);
+            context.RegisterSyntaxNodeAction(ElementAccessExpressionAction, SyntaxKind.ElementAccessExpression);
+            context.RegisterSyntaxNodeAction(ArrayCreationExpressionAction, SyntaxKind.ArrayCreationExpression);
+            context.RegisterSyntaxNodeAction(AttributeAction, SyntaxKind.Attribute);
+            context.RegisterSyntaxNodeAction(AttributeListAction, SyntaxKind.AttributeList);
+            context.RegisterSyntaxNodeAction(AnonymousMethodExpressionAction, SyntaxKind.AnonymousMethodExpression);
+            context.RegisterSyntaxNodeAction(ParenthesizedLambdaExpressionAction, SyntaxKind.ParenthesizedLambdaExpression);
+            context.RegisterSyntaxNodeAction(DelegateDeclarationAction, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeAction(ConstructorInitializerAction, SyntaxKinds.ConstructorInitializer);
+            context.RegisterSyntaxNodeAction(ElementBindingExpressionAction, SyntaxKind.ElementBindingExpression);
+            context.RegisterSyntaxNodeAction(ImplicitElementAccessAction, SyntaxKind.ImplicitElementAccess);
         }
 
         private static void HandleImplicitElementAccess(SyntaxNodeAnalysisContext context)
@@ -270,18 +264,32 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
-            var previousLine = argumentListSyntax.Arguments[0].GetLineSpan().EndLinePosition.Line;
+            var previousArgumentLine = argumentListSyntax.Arguments[0].GetLineSpan().EndLinePosition.Line;
             for (int i = 1; i < argumentListSyntax.Arguments.Count; i++)
             {
                 var currentArgument = argumentListSyntax.Arguments[i];
-                var lineSpan = currentArgument.GetLineSpan();
-                var currentLine = lineSpan.StartLinePosition.Line;
-                if (currentLine - previousLine > 1)
+                int currentArgumentStartLine;
+                int currentArgumentEndLine;
+
+                if (currentArgument.HasLeadingTrivia && IsValidTrivia(currentArgument.GetLeadingTrivia()))
+                {
+                    var lineSpan = currentArgument.SyntaxTree.GetLineSpan(currentArgument.FullSpan);
+                    currentArgumentStartLine = lineSpan.StartLinePosition.Line;
+                    currentArgumentEndLine = lineSpan.EndLinePosition.Line;
+                }
+                else
+                {
+                    var lineSpan = currentArgument.GetLineSpan();
+                    currentArgumentStartLine = lineSpan.StartLinePosition.Line;
+                    currentArgumentEndLine = lineSpan.EndLinePosition.Line;
+                }
+
+                if (currentArgumentStartLine - previousArgumentLine > 1)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentArgument.GetLocation()));
                 }
 
-                previousLine = lineSpan.EndLinePosition.Line;
+                previousArgumentLine = currentArgumentEndLine;
             }
         }
 
@@ -299,7 +307,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 var currentParameter = parameterListSyntax.Parameters[i];
                 int currentParameterLine;
 
-                if (currentParameter.HasLeadingTrivia && currentParameter.GetLeadingTrivia().All(trivia => IsValidTrivia(trivia)))
+                if (currentParameter.HasLeadingTrivia && IsValidTrivia(currentParameter.GetLeadingTrivia()))
                 {
                     currentParameterLine = currentParameter.SyntaxTree.GetLineSpan(currentParameter.FullSpan).StartLinePosition.Line;
                 }
@@ -317,21 +325,46 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
-        private static bool IsValidTrivia(SyntaxTrivia trivia)
+        private static bool IsValidTrivia(SyntaxTriviaList triviaList)
         {
-            switch (trivia.Kind())
-            {
-            case SyntaxKind.IfDirectiveTrivia:
-            case SyntaxKind.ElseDirectiveTrivia:
-            case SyntaxKind.ElifDirectiveTrivia:
-            case SyntaxKind.EndIfDirectiveTrivia:
-            case SyntaxKind.DisabledTextTrivia:
-            case SyntaxKind.WhitespaceTrivia:
-                return true;
+            var inBlankLine = true;
 
-            default:
-                return false;
+            for (var i = 0; i < triviaList.Count; i++)
+            {
+                var trivia = triviaList[i];
+
+                if (trivia.IsDirective)
+                {
+                    inBlankLine = false;
+                    continue;
+                }
+
+                switch (trivia.Kind())
+                {
+                case SyntaxKind.WhitespaceTrivia:
+                    break;
+
+                case SyntaxKind.EndOfLineTrivia:
+                    if (inBlankLine)
+                    {
+                        return false;
+                    }
+
+                    inBlankLine = true;
+                    break;
+
+                case SyntaxKind.DisabledTextTrivia:
+                case SyntaxKind.SingleLineCommentTrivia:
+                case SyntaxKind.MultiLineCommentTrivia:
+                    inBlankLine = false;
+                    break;
+
+                default:
+                    return false;
+                }
             }
+
+            return true;
         }
     }
 }

@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// A using directive which declares a member of the <see cref="System"/> namespace appears after a using directive
@@ -37,9 +38,8 @@ namespace StyleCop.Analyzers.OrderingRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
-        private static readonly Action<SyntaxNodeAnalysisContext> CompilationUnitAction = HandleCompilationUnit;
-        private static readonly Action<SyntaxNodeAnalysisContext> NamespaceDeclarationAction = HandleNamespaceDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CompilationUnitAction = HandleCompilationUnit;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> NamespaceDeclarationAction = HandleNamespaceDeclaration;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -48,17 +48,20 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+
+            context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
+            context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
         }
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(CompilationUnitAction, SyntaxKind.CompilationUnit);
-            context.RegisterSyntaxNodeActionHonorExclusions(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
-        }
+            if (!settings.OrderingRules.SystemUsingDirectivesFirst)
+            {
+                return;
+            }
 
-        private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context)
-        {
             var compilationUnit = context.Node as CompilationUnitSyntax;
 
             var usings = compilationUnit.Usings;
@@ -66,8 +69,13 @@ namespace StyleCop.Analyzers.OrderingRules
             ProcessUsingsAndReportDiagnostic(usings, context);
         }
 
-        private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
+            if (!settings.OrderingRules.SystemUsingDirectivesFirst)
+            {
+                return;
+            }
+
             var namespaceDeclaration = context.Node as NamespaceDeclarationSyntax;
 
             var usings = namespaceDeclaration.Usings;
@@ -87,7 +95,7 @@ namespace StyleCop.Analyzers.OrderingRules
                     continue;
                 }
 
-                if (usingDirective.IsSystemUsingDirective())
+                if (usingDirective.IsSystemUsingDirective() && !usingDirective.HasNamespaceAliasQualifier())
                 {
                     if (systemUsingDirectivesShouldBeBeforeThisName != null)
                     {
@@ -97,7 +105,9 @@ namespace StyleCop.Analyzers.OrderingRules
 
                     var previousUsing = usings[i - 1];
 
-                    if (!previousUsing.IsSystemUsingDirective() || previousUsing.StaticKeyword.Kind() != SyntaxKind.None)
+                    if (!previousUsing.IsSystemUsingDirective()
+                        || previousUsing.HasNamespaceAliasQualifier()
+                        || previousUsing.StaticKeyword.Kind() != SyntaxKind.None)
                     {
                         systemUsingDirectivesShouldBeBeforeThisName = previousUsing.Name.ToNormalizedString();
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, usingDirective.GetLocation(), usingDirective.Name.ToNormalizedString(), systemUsingDirectivesShouldBeBeforeThisName));

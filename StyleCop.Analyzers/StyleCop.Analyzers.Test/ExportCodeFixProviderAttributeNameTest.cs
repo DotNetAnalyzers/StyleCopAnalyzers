@@ -32,6 +32,14 @@ namespace StyleCop.Analyzers.Test
         public void TestExportCodeFixProviderAttribute(Type codeFixProvider)
         {
             var exportCodeFixProviderAttribute = codeFixProvider.GetCustomAttributes<ExportCodeFixProviderAttribute>(false).FirstOrDefault();
+            var noCodeFixAttribute = codeFixProvider.GetCustomAttributes<NoCodeFixAttribute>(false).FirstOrDefault();
+
+            if (noCodeFixAttribute != null)
+            {
+                Assert.Null(exportCodeFixProviderAttribute);
+
+                return;
+            }
 
             Assert.NotNull(exportCodeFixProviderAttribute);
             Assert.Equal(codeFixProvider.Name, exportCodeFixProviderAttribute.Name);

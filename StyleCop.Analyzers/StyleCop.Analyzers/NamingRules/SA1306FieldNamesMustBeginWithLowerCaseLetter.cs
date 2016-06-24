@@ -41,7 +41,6 @@ namespace StyleCop.Analyzers.NamingRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> FieldDeclarationAction = HandleFieldDeclaration;
 
         /// <inheritdoc/>
@@ -51,12 +50,10 @@ namespace StyleCop.Analyzers.NamingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(FieldDeclarationAction, SyntaxKind.FieldDeclaration);
+            context.RegisterSyntaxNodeAction(FieldDeclarationAction, SyntaxKind.FieldDeclaration);
         }
 
         private static void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
@@ -114,14 +111,25 @@ namespace StyleCop.Analyzers.NamingRules
                 }
 
                 string name = identifier.ValueText;
-                if (string.IsNullOrEmpty(name) || char.IsLower(name[0]))
+                if (string.IsNullOrEmpty(name))
                 {
                     continue;
                 }
 
-                if (name[0] == '_')
+                var index = 0;
+                while ((index < name.Length) && name[index] == '_')
                 {
-                    // `_foo` is handled by SA1309
+                    index++;
+                }
+
+                if (index == name.Length)
+                {
+                    // ignore fields with all underscores
+                    continue;
+                }
+
+                if (char.IsLower(name, index))
+                {
                     continue;
                 }
 

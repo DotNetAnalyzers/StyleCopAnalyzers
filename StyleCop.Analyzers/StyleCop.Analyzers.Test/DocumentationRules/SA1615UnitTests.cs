@@ -7,6 +7,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Threading;
     using System.Threading.Tasks;
     using Analyzers.DocumentationRules;
+    using Helpers;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using TestHelper;
@@ -275,11 +277,109 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestIncludedDocumentationAsync()
+        {
+            var testCode = @"
+class Class1
+{
+    /// <include file='MethodWithoutReturns.xml' path='/Class1/MethodName/*'/>
+    public int MethodName()
+    {
+        return 0;
+    }
+}
+";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 12);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestIncludedInheritedDocumentationAsync()
+        {
+            var testCode = @"
+class Class1
+{
+    /// <include file='MethodWithInheritedReturns.xml' path='/Class1/MethodName/*'/>
+    public int MethodName()
+    {
+        return 0;
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestIncludedIncompleteDocumentationAsync()
+        {
+            var testCode = @"
+class Class1
+{
+    /// <include file='MethodWithReturns.xml' path='/Class1/MethodName/*'/>
+    public int MethodName()
+    {
+        return 0;
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
+        protected override Project ApplyCompilationOptions(Project project)
+        {
+            var resolver = new TestXmlReferenceResolver();
+            string contentWithReturns = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<Class1>
+  <MethodName>
+    <summary>
+      Sample method.
+    </summary>
+    <returns>
+      A <see cref=""Task""/> representing the asynchronous operation.
+    </returns>
+  </MethodName>
+</Class1>
+";
+            resolver.XmlReferences.Add("MethodWithReturns.xml", contentWithReturns);
+
+            string contentWithInheritedReturns = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<Class1>
+  <MethodName>
+    <inheritdoc/>
+  </MethodName>
+</Class1>
+";
+            resolver.XmlReferences.Add("MethodWithInheritedReturns.xml", contentWithInheritedReturns);
+
+            string contentWithoutReturns = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<Class1>
+  <MethodName>
+    <summary>
+      Sample method.
+    </summary>
+  </MethodName>
+</Class1>
+";
+            resolver.XmlReferences.Add("MethodWithoutReturns.xml", contentWithoutReturns);
+
+            project = base.ApplyCompilationOptions(project);
+            project = project.WithCompilationOptions(project.CompilationOptions.WithXmlReferenceResolver(resolver));
+            return project;
+        }
+
+        /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1615ElementReturnValueMustBeDocumented();
         }
 
+        /// <inheritdoc/>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new SA1615SA1616CodeFixProvider();

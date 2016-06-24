@@ -3,8 +3,14 @@
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
+    using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
+    using Helpers;
+    using Helpers.ObjectPools;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
@@ -60,13 +66,16 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1625";
+        private const string ParameterNotUsed = "The parameter is not used.";
         private const string Title = "Element documentation must not be copied and pasted";
-        private const string MessageFormat = "TODO: Message format";
+        private const string MessageFormat = "Element documentation must not be copied and pasted";
         private const string Description = "The Xml documentation for a C# element contains two or more identical entries, indicating that the documentation has been copied and pasted. This can sometimes indicate invalid or poorly written documentation.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1625.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+
+        private static readonly Action<SyntaxNodeAnalysisContext> DocumentationTriviaAction = HandleDocumentationTrivia;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -75,7 +84,40 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            // TODO: Implement analysis
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+
+            context.RegisterSyntaxNodeAction(DocumentationTriviaAction, SyntaxKinds.DocumentationComment);
+        }
+
+        private static void HandleDocumentationTrivia(SyntaxNodeAnalysisContext context)
+        {
+            DocumentationCommentTriviaSyntax syntax = context.Node as DocumentationCommentTriviaSyntax;
+
+            var objectPool = SharedPools.Default<HashSet<string>>();
+            HashSet<string> documentationTexts = objectPool.Allocate();
+
+            foreach (var content in syntax.Content)
+            {
+                string text = XmlCommentHelper.GetText(content, true)?.Trim();
+
+                if (string.IsNullOrWhiteSpace(text) || string.Equals(text, ParameterNotUsed, StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                if (documentationTexts.Contains(text))
+                {
+                    // Add violation
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, content.GetLocation()));
+                }
+                else
+                {
+                    documentationTexts.Add(text);
+                }
+            }
+
+            objectPool.ClearAndFree(documentationTexts);
         }
     }
 }

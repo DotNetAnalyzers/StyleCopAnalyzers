@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.NamingRules
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp;
 
     /// <summary>
     /// Implements a code fix for diagnostics which are fixed by renaming a symbol to start with a lower case letter.
@@ -44,22 +45,50 @@ namespace StyleCop.Analyzers.NamingRules
             foreach (var diagnostic in context.Diagnostics)
             {
                 var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
-                if (!string.IsNullOrEmpty(token.ValueText))
+                if (string.IsNullOrEmpty(token.ValueText))
                 {
-                    var newName = token.ValueText.TrimStart('_');
-
-                    // only offer a codefix if the name does not consist of only underscores.
-                    if (!string.IsNullOrEmpty(newName))
-                    {
-                        newName = char.ToLower(newName[0]) + newName.Substring(1);
-                        context.RegisterCodeFix(
-                            CodeAction.Create(
-                                string.Format(NamingResources.RenameToCodeFix, newName),
-                                cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken),
-                                nameof(RenameToLowerCaseCodeFixProvider)),
-                            diagnostic);
-                    }
+                    continue;
                 }
+
+                var originalName = token.ValueText;
+
+                var baseName = originalName.TrimStart('_');
+                if (baseName.Length == 0)
+                {
+                    // only offer a code fix if the name does not consist of only underscores.
+                    continue;
+                }
+
+                baseName = char.ToLower(baseName[0]) + baseName.Substring(1);
+                int underscoreCount = originalName.Length - baseName.Length;
+
+                var memberSyntax = RenameHelper.GetParentDeclaration(token);
+
+                SemanticModel semanticModel = await document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+
+                var declaredSymbol = semanticModel.GetDeclaredSymbol(memberSyntax);
+                if (declaredSymbol == null)
+                {
+                    continue;
+                }
+
+                // preserve the underscores, but only for fields.
+                var prefix = declaredSymbol.Kind == SymbolKind.Field ? originalName.Substring(0, underscoreCount) : string.Empty;
+                var newName = prefix + baseName;
+
+                int index = 0;
+                while (!await RenameHelper.IsValidNewMemberNameAsync(semanticModel, declaredSymbol, newName, context.CancellationToken).ConfigureAwait(false))
+                {
+                    index++;
+                    newName = prefix + baseName + index;
+                }
+
+                context.RegisterCodeFix(
+                    CodeAction.Create(
+                        string.Format(NamingResources.RenameToCodeFix, newName),
+                        cancellationToken => RenameHelper.RenameSymbolAsync(document, root, token, newName, cancellationToken),
+                        nameof(RenameToLowerCaseCodeFixProvider) + "_" + underscoreCount + "_" + index),
+                    diagnostic);
             }
         }
     }

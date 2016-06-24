@@ -62,7 +62,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Align curly brackets.
+        ///   Looks up a localized string similar to Align braces.
         /// </summary>
         internal static string SA1500CodeFix {
             get {
@@ -89,7 +89,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A C# element containing opening and closing curly brackets is written completely on a single line..
+        ///   Looks up a localized string similar to A C# element containing opening and closing braces is written completely on a single line..
         /// </summary>
         internal static string SA1502Description {
             get {
@@ -116,7 +116,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Wrap with curly brackets.
+        ///   Looks up a localized string similar to Wrap with braces.
         /// </summary>
         internal static string SA1503CodeFix {
             get {
@@ -143,7 +143,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Remove blank lines following this curly bracket.
+        ///   Looks up a localized string similar to Remove blank lines following this brace.
         /// </summary>
         internal static string SA1505CodeFix {
             get {
@@ -170,7 +170,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Remove blank lines preceding this curly bracket.
+        ///   Looks up a localized string similar to Remove blank lines preceding this brace.
         /// </summary>
         internal static string SA1508CodeFix {
             get {
@@ -179,7 +179,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Remove blank lines preceding this curly bracket.
+        ///   Looks up a localized string similar to Remove blank lines preceding this brace.
         /// </summary>
         internal static string SA1509CodeFix {
             get {
@@ -215,7 +215,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Insert blank line after curly brace.
+        ///   Looks up a localized string similar to Insert blank line after brace.
         /// </summary>
         internal static string SA1513CodeFix {
             get {
@@ -260,11 +260,74 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Remove blank lines at the end of the file.
+        ///   Looks up a localized string similar to Fix whitespace at the end of the file.
         /// </summary>
         internal static string SA1518CodeFix {
             get {
                 return ResourceManager.GetString("SA1518CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Code must not contain blank lines at the end of the file.
+        /// </summary>
+        internal static string SA1518DescriptionAllow {
+            get {
+                return ResourceManager.GetString("SA1518DescriptionAllow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File may not end with a newline character.
+        /// </summary>
+        internal static string SA1518DescriptionOmit {
+            get {
+                return ResourceManager.GetString("SA1518DescriptionOmit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File is required to end with a single newline character.
+        /// </summary>
+        internal static string SA1518DescriptionRequire {
+            get {
+                return ResourceManager.GetString("SA1518DescriptionRequire", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Code must not contain blank lines at the end of the file.
+        /// </summary>
+        internal static string SA1518MessageFormatAllow {
+            get {
+                return ResourceManager.GetString("SA1518MessageFormatAllow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File may not end with a newline character.
+        /// </summary>
+        internal static string SA1518MessageFormatOmit {
+            get {
+                return ResourceManager.GetString("SA1518MessageFormatOmit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File is required to end with a single newline character.
+        /// </summary>
+        internal static string SA1518MessageFormatRequire {
+            get {
+                return ResourceManager.GetString("SA1518MessageFormatRequire", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use line endings correctly at end of file.
+        /// </summary>
+        internal static string SA1518Title {
+            get {
+                return ResourceManager.GetString("SA1518Title", resourceCulture);
             }
         }
     }

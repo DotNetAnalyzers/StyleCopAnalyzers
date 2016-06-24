@@ -48,7 +48,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly LocalizableString SA1105Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1105Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly string SA1105HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1105.md";
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> QueryExpressionAction = HandleQueryExpression;
 
         /// <summary>
@@ -90,12 +89,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(QueryExpressionAction, SyntaxKind.QueryExpression);
+            context.RegisterSyntaxNodeAction(QueryExpressionAction, SyntaxKind.QueryExpression);
         }
 
         private static void HandleQueryExpression(SyntaxNodeAnalysisContext context)

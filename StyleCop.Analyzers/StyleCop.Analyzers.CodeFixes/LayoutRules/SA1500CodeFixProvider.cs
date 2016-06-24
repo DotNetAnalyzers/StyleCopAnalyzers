@@ -16,9 +16,10 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Text;
+    using Settings.ObjectModel;
 
     /// <summary>
-    /// Implements a code fix for <see cref="SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine"/>.
+    /// Implements a code fix for <see cref="SA1500BracesForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1500CodeFixProvider))]
     [Shared]
@@ -26,7 +27,7 @@ namespace StyleCop.Analyzers.LayoutRules
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(SA1500CurlyBracketsForMultiLineStatementsMustNotShareLine.DiagnosticId);
+            ImmutableArray.Create(SA1500BracesForMultiLineStatementsMustNotShareLine.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -54,14 +55,15 @@ namespace StyleCop.Analyzers.LayoutRules
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
+            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
             var braceToken = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-            var tokenReplacements = GenerateBraceFixes(document, ImmutableArray.Create(braceToken));
+            var tokenReplacements = GenerateBraceFixes(document, settings.Indentation, ImmutableArray.Create(braceToken));
 
             var newSyntaxRoot = syntaxRoot.ReplaceTokens(tokenReplacements.Keys, (originalToken, rewrittenToken) => tokenReplacements[originalToken]);
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
 
-        private static Dictionary<SyntaxToken, SyntaxToken> GenerateBraceFixes(Document document, ImmutableArray<SyntaxToken> braceTokens)
+        private static Dictionary<SyntaxToken, SyntaxToken> GenerateBraceFixes(Document document, IndentationSettings indentationSettings, ImmutableArray<SyntaxToken> braceTokens)
         {
             var tokenReplacements = new Dictionary<SyntaxToken, SyntaxToken>();
 
@@ -70,11 +72,9 @@ namespace StyleCop.Analyzers.LayoutRules
                 var braceLine = LocationHelpers.GetLineSpan(braceToken).StartLinePosition.Line;
                 var braceReplacementToken = braceToken;
 
-                var indentationOptions = IndentationOptions.FromDocument(document);
-                var indentationSteps = DetermineIndentationSteps(indentationOptions, braceToken);
+                var indentationSteps = DetermineIndentationSteps(indentationSettings, braceToken);
 
                 var previousToken = braceToken.GetPreviousToken();
-                var nextToken = braceToken.GetNextToken();
 
                 if (IsAccessorWithSingleLineBlock(previousToken, braceToken))
                 {
@@ -88,7 +88,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 }
                 else
                 {
-                    // Check if we need to apply a fix before the curly bracket
+                    // Check if we need to apply a fix before the brace
                     if (LocationHelpers.GetLineSpan(previousToken).StartLinePosition.Line == braceLine)
                     {
                         if (!braceTokens.Contains(previousToken))
@@ -102,12 +102,16 @@ namespace StyleCop.Analyzers.LayoutRules
                             AddReplacement(tokenReplacements, previousToken, previousToken.WithTrailingTrivia(previousTokenNewTrailingTrivia));
                         }
 
-                        braceReplacementToken = braceReplacementToken.WithLeadingTrivia(IndentationHelper.GenerateWhitespaceTrivia(indentationOptions, indentationSteps));
+                        braceReplacementToken = braceReplacementToken.WithLeadingTrivia(IndentationHelper.GenerateWhitespaceTrivia(indentationSettings, indentationSteps));
                     }
 
-                    // Check if we need to apply a fix after the curly bracket
-                    // if a closing curly bracket is followed by a semi-colon or closing paren, no fix is needed.
-                    if ((LocationHelpers.GetLineSpan(nextToken).StartLinePosition.Line == braceLine) &&
+                    // Check if we need to apply a fix after the brace. No fix is needed when:
+                    // - The closing brace is followed by a semi-colon or closing paren
+                    // - The closing brace is the last token in the file
+                    var nextToken = braceToken.GetNextToken();
+                    var nextTokenLine = nextToken.IsKind(SyntaxKind.None) ? -1 : LocationHelpers.GetLineSpan(nextToken).StartLinePosition.Line;
+
+                    if ((nextTokenLine == braceLine) &&
                         (!braceToken.IsKind(SyntaxKind.CloseBraceToken) || !IsValidFollowingToken(nextToken)))
                     {
                         var sharedTrivia = nextToken.LeadingTrivia.WithoutTrailingWhitespace();
@@ -132,7 +136,7 @@ namespace StyleCop.Analyzers.LayoutRules
                                 newIndentationSteps = indentationSteps;
                             }
 
-                            AddReplacement(tokenReplacements, nextToken, nextToken.WithLeadingTrivia(IndentationHelper.GenerateWhitespaceTrivia(indentationOptions, newIndentationSteps)));
+                            AddReplacement(tokenReplacements, nextToken, nextToken.WithLeadingTrivia(IndentationHelper.GenerateWhitespaceTrivia(indentationSettings, newIndentationSteps)));
                         }
 
                         braceReplacementToken = braceReplacementToken.WithTrailingTrivia(newTrailingTrivia);
@@ -145,9 +149,9 @@ namespace StyleCop.Analyzers.LayoutRules
             return tokenReplacements;
         }
 
-        private static bool IsAccessorWithSingleLineBlock(SyntaxToken previousToken, SyntaxToken curlyBracketToken)
+        private static bool IsAccessorWithSingleLineBlock(SyntaxToken previousToken, SyntaxToken braceToken)
         {
-            if (!curlyBracketToken.IsKind(SyntaxKind.OpenBraceToken))
+            if (!braceToken.IsKind(SyntaxKind.OpenBraceToken))
             {
                 return false;
             }
@@ -164,7 +168,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 return false;
             }
 
-            var token = curlyBracketToken;
+            var token = braceToken;
             var depth = 1;
 
             while (depth > 0)
@@ -182,7 +186,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 }
             }
 
-            return LocationHelpers.GetLineSpan(curlyBracketToken).StartLinePosition.Line == LocationHelpers.GetLineSpan(token).StartLinePosition.Line;
+            return LocationHelpers.GetLineSpan(braceToken).StartLinePosition.Line == LocationHelpers.GetLineSpan(token).StartLinePosition.Line;
         }
 
         private static bool IsValidFollowingToken(SyntaxToken nextToken)
@@ -199,9 +203,9 @@ namespace StyleCop.Analyzers.LayoutRules
             }
         }
 
-        private static int DetermineIndentationSteps(IndentationOptions indentationOptions, SyntaxToken token)
+        private static int DetermineIndentationSteps(IndentationSettings indentationSettings, SyntaxToken token)
         {
-            // For a closing curly bracket use the indentation of the corresponding opening curly bracket
+            // For a closing brace use the indentation of the corresponding opening brace
             if (token.IsKind(SyntaxKind.CloseBraceToken))
             {
                 var depth = 1;
@@ -229,7 +233,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 token = token.GetPreviousToken();
             }
 
-            return IndentationHelper.GetIndentationSteps(indentationOptions, token);
+            return IndentationHelper.GetIndentationSteps(indentationSettings, token);
         }
 
         private static bool ContainsStartOfLine(SyntaxToken token, int startLine)
@@ -257,9 +261,8 @@ namespace StyleCop.Analyzers.LayoutRules
             protected override string CodeActionTitle =>
                 LayoutResources.SA1500CodeFix;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
-                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
                 if (diagnostics.IsEmpty)
                 {
                     return null;
@@ -272,7 +275,9 @@ namespace StyleCop.Analyzers.LayoutRules
                     .OrderBy(token => token.SpanStart)
                     .ToImmutableArray();
 
-                var tokenReplacements = GenerateBraceFixes(document, tokens);
+                var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, fixAllContext.CancellationToken);
+
+                var tokenReplacements = GenerateBraceFixes(document, settings.Indentation, tokens);
 
                 return syntaxRoot.ReplaceTokens(tokenReplacements.Keys, (originalToken, rewrittenToken) => tokenReplacements[originalToken]);
             }

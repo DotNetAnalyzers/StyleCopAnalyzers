@@ -135,12 +135,27 @@ string Bar;
 string car;
 {0}
 string Dar;
+{0}
+string _ear;
+{0}
+string _Far;
+{0}
+string __gar;
+{0}
+string __Har;
+{0}
+string ___iar;
+{0}
+string ___Jar;
 }}";
 
             DiagnosticResult[] expected =
                 {
                     this.CSharpDiagnostic().WithArguments("Bar").WithLocation(4, 8),
-                    this.CSharpDiagnostic().WithArguments("Dar").WithLocation(8, 8)
+                    this.CSharpDiagnostic().WithArguments("Dar").WithLocation(8, 8),
+                    this.CSharpDiagnostic().WithArguments("_Far").WithLocation(12, 8),
+                    this.CSharpDiagnostic().WithArguments("__Har").WithLocation(16, 8),
+                    this.CSharpDiagnostic().WithArguments("___Jar").WithLocation(20, 8),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), expected, CancellationToken.None).ConfigureAwait(false);
@@ -153,10 +168,22 @@ string bar;
 string car;
 {0}
 string dar;
+{0}
+string _ear;
+{0}
+string _far;
+{0}
+string __gar;
+{0}
+string __har;
+{0}
+string ___iar;
+{0}
+string ___jar;
 }}";
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(fixedCode, modifiers), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers)).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers), numberOfFixAllIterations: 4, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -193,18 +220,6 @@ string bar, car, dar;
         }
 
         [Fact]
-        public async Task TestFieldStartingWithAnUnderscoreAsync()
-        {
-            // Makes sure SA1306 is not reported for fields starting with an underscore
-            var testCode = @"public class Foo
-{
-    public string _bar = ""baz"";
-}";
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
         public async Task TestFieldStartingWithLetterAsync()
         {
             var testCode = @"public class Foo
@@ -213,6 +228,52 @@ string bar, car, dar;
 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestFieldWithAllUnderscoresAsync()
+        {
+            var testCode = @"public class Foo
+{
+    private string _ = ""bar"";
+    private string __ = ""baz"";
+    private string ___ = ""qux"";
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestFieldWithTrailingUnderscoreAsync()
+        {
+            var testCode = @"public class Foo
+{
+    private string someVar_ = ""bar"";
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestFieldWithCodefixRenameConflictAsync()
+        {
+            var testCode = @"public class Foo
+{
+    private string _test = ""test1"";
+    private string _Test = ""test2"";
+}";
+
+            var fixedTestCode = @"public class Foo
+{
+    private string _test = ""test1"";
+    private string _test1 = ""test2"";
+}";
+
+            var expected = this.CSharpDiagnostic().WithArguments("_Test").WithLocation(4, 20);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         [Fact]

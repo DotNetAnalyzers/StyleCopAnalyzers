@@ -35,9 +35,8 @@ namespace StyleCop.Analyzers.SpacingRules
         }
 
         /// <inheritdoc/>
-        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
             foreach (var diagnostic in context.Diagnostics)
             {
                 context.RegisterCodeFix(
@@ -47,6 +46,8 @@ namespace StyleCop.Analyzers.SpacingRules
                         nameof(SA1028CodeFixProvider)),
                     diagnostic);
             }
+
+            return SpecializedTasks.CompletedTask;
         }
 
         /// <summary>
@@ -70,9 +71,8 @@ namespace StyleCop.Analyzers.SpacingRules
             protected override string CodeActionTitle =>
                 SpacingResources.SA1028CodeFix;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
-                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
                 if (diagnostics.IsEmpty)
                 {
                     return null;

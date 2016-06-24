@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.Settings
     using System.Collections.Immutable;
     using System.Threading;
     using System.Threading.Tasks;
+    using Analyzers.Settings.ObjectModel;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
@@ -28,9 +29,14 @@ namespace StyleCop.Analyzers.Test.Settings
             Assert.True(styleCopSettings.NamingRules.AllowCommonHungarianPrefixes);
             Assert.Equal(0, styleCopSettings.NamingRules.AllowedHungarianPrefixes.Length);
 
+            Assert.NotNull(styleCopSettings.OrderingRules);
+            Assert.Equal(UsingDirectivesPlacement.InsideNamespace, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
+
+            Assert.NotNull(styleCopSettings.LayoutRules);
+            Assert.Equal(EndOfFileHandling.Allow, styleCopSettings.LayoutRules.NewlineAtEndOfFile);
+
             Assert.NotNull(styleCopSettings.SpacingRules);
             Assert.NotNull(styleCopSettings.ReadabilityRules);
-            Assert.NotNull(styleCopSettings.OrderingRules);
             Assert.NotNull(styleCopSettings.MaintainabilityRules);
         }
 
@@ -51,6 +57,9 @@ namespace StyleCop.Analyzers.Test.Settings
     ""namingRules"": {
         ""allowCommonHungarianPrefixes"": false,
         ""allowedHungarianPrefixes"": [""a"", ""ab""]
+    },
+    ""orderingRules"": {
+        ""usingDirectivesPlacement"": ""outsideNamespace""
     }
   }
 }
@@ -63,6 +72,9 @@ namespace StyleCop.Analyzers.Test.Settings
             Assert.Equal("Custom copyright text.", styleCopSettings.DocumentationRules.CopyrightText);
             Assert.False(styleCopSettings.NamingRules.AllowCommonHungarianPrefixes);
             Assert.Equal(new[] { "a", "ab" }, styleCopSettings.NamingRules.AllowedHungarianPrefixes);
+
+            Assert.NotNull(styleCopSettings.OrderingRules);
+            Assert.Equal(UsingDirectivesPlacement.OutsideNamespace, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
         }
 
         /// <summary>
@@ -153,7 +165,7 @@ namespace StyleCop.Analyzers.Test.Settings
             var document = solution.GetDocument(documentId);
             var syntaxTree = await document.GetSyntaxTreeAsync().ConfigureAwait(false);
 
-            var stylecopJSONFile = new AdditionalTextHelper("stylecop.json", stylecopJSON);
+            var stylecopJSONFile = new AdditionalTextHelper(SettingsHelper.SettingsFileName, stylecopJSON);
             var additionalFiles = ImmutableArray.Create<AdditionalText>(stylecopJSONFile);
             var analyzerOptions = new AnalyzerOptions(additionalFiles);
 

@@ -221,6 +221,26 @@ class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1777.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestEmptyStatementAfterCallAsync()
+        {
+            string testCode = @"using System;
+class ClassName
+{
+    void MethodName()
+    {
+        Console.WriteLine();;
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestSingleLineAccessorsAsync()
         {
@@ -386,13 +406,7 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                new DiagnosticResult
-                {
-                    Id = "CS1002",
-                    Severity = DiagnosticSeverity.Error,
-                    Message = "; expected",
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 14) }
-                }
+                this.CSharpCompilerError("CS1002").WithMessage("; expected").WithLocation(6, 14),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

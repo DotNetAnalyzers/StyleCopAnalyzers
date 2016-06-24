@@ -39,7 +39,6 @@ namespace StyleCop.Analyzers.SpacingRules
         private const string MessagePreceded = "Opening parenthesis must be preceded by a space.";
         private const string MessageNotFollowed = "Opening parenthesis must not be followed by a space.";
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
 
         /// <summary>
@@ -70,12 +69,10 @@ namespace StyleCop.Analyzers.SpacingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxTreeActionHonorExclusions(SyntaxTreeAction);
+            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
         }
 
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -101,6 +98,50 @@ namespace StyleCop.Analyzers.SpacingRules
             }
 
             var prevToken = token.GetPreviousToken();
+
+            // Don't check leading spaces when preceded by a keyword that is already handled by SA1000
+            bool precededByKeyword;
+            switch (prevToken.Kind())
+            {
+            case SyntaxKind.AwaitKeyword:
+            case SyntaxKind.CaseKeyword:
+            case SyntaxKind.CatchKeyword:
+            case SyntaxKind.CheckedKeyword:
+            case SyntaxKind.DefaultKeyword:
+            case SyntaxKind.FixedKeyword:
+            case SyntaxKind.ForKeyword:
+            case SyntaxKind.ForEachKeyword:
+            case SyntaxKind.FromKeyword:
+            case SyntaxKind.GroupKeyword:
+            case SyntaxKind.IfKeyword:
+            case SyntaxKind.InKeyword:
+            case SyntaxKind.IntoKeyword:
+            case SyntaxKind.JoinKeyword:
+            case SyntaxKind.LetKeyword:
+            case SyntaxKind.LockKeyword:
+            case SyntaxKind.NameOfKeyword:
+            case SyntaxKind.NewKeyword:
+            case SyntaxKind.OrderByKeyword:
+            case SyntaxKind.ReturnKeyword:
+            case SyntaxKind.SelectKeyword:
+            case SyntaxKind.SizeOfKeyword:
+            case SyntaxKind.StackAllocKeyword:
+            case SyntaxKind.SwitchKeyword:
+            case SyntaxKind.ThrowKeyword:
+            case SyntaxKind.TypeOfKeyword:
+            case SyntaxKind.UncheckedKeyword:
+            case SyntaxKind.UsingKeyword:
+            case SyntaxKind.WhereKeyword:
+            case SyntaxKind.WhileKeyword:
+            case SyntaxKind.YieldKeyword:
+                precededByKeyword = true;
+                break;
+
+            default:
+                precededByKeyword = false;
+                break;
+            }
+
             var leadingTriviaList = TriviaHelper.MergeTriviaLists(prevToken.TrailingTrivia, token.LeadingTrivia);
 
             var isFirstOnLine = false;
@@ -191,7 +232,7 @@ namespace StyleCop.Analyzers.SpacingRules
 
             // Ignore spacing before if another opening parenthesis is before this.
             // That way the first opening parenthesis will report any spacing errors.
-            if (!prevTokenIsOpenParen)
+            if (!prevTokenIsOpenParen && !precededByKeyword)
             {
                 var hasLeadingComment = (leadingTriviaList.Count > 0) && leadingTriviaList.Last().IsKind(SyntaxKind.MultiLineCommentTrivia);
                 var hasLeadingSpace = (leadingTriviaList.Count > 0) && leadingTriviaList.Last().IsKind(SyntaxKind.WhitespaceTrivia);
