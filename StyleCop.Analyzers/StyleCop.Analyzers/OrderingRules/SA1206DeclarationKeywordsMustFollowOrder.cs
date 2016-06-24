@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.OrderingRules
 {
     using System;
     using System.Collections.Immutable;
+    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -79,46 +80,8 @@ namespace StyleCop.Analyzers.OrderingRules
 
         private static void HandleDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var modifiers = GetModifiersFromDeclaration(context.Node);
+            var modifiers = DeclarationModifiersHelper.GetModifiers(context.Node as MemberDeclarationSyntax);
             CheckModifiersOrderAndReportDiagnostics(context, modifiers);
-        }
-
-        // TODO: Can this be merged with DeclarationModifiersHelper.GetModifiersFromDeclaration?
-        private static SyntaxTokenList GetModifiersFromDeclaration(SyntaxNode node)
-        {
-            SyntaxTokenList result = default(SyntaxTokenList);
-
-            switch (node.Kind())
-            {
-                case SyntaxKind.ClassDeclaration:
-                case SyntaxKind.StructDeclaration:
-                case SyntaxKind.InterfaceDeclaration:
-                    result = ((BaseTypeDeclarationSyntax)node).Modifiers;
-                    break;
-                case SyntaxKind.EnumDeclaration:
-                    result = ((EnumDeclarationSyntax)node).Modifiers;
-                    break;
-                case SyntaxKind.DelegateDeclaration:
-                    result = ((DelegateDeclarationSyntax)node).Modifiers;
-                    break;
-                case SyntaxKind.FieldDeclaration:
-                case SyntaxKind.EventFieldDeclaration:
-                    result = ((BaseFieldDeclarationSyntax)node).Modifiers;
-                    break;
-                case SyntaxKind.PropertyDeclaration:
-                case SyntaxKind.EventDeclaration:
-                case SyntaxKind.IndexerDeclaration:
-                    result = ((BasePropertyDeclarationSyntax)node).Modifiers;
-                    break;
-                case SyntaxKind.MethodDeclaration:
-                case SyntaxKind.ConstructorDeclaration:
-                case SyntaxKind.OperatorDeclaration:
-                case SyntaxKind.ConversionOperatorDeclaration:
-                    result = ((BaseMethodDeclarationSyntax)node).Modifiers;
-                    break;
-            }
-
-            return result;
         }
 
         private static void CheckModifiersOrderAndReportDiagnostics(SyntaxNodeAnalysisContext context, SyntaxTokenList modifiers)
