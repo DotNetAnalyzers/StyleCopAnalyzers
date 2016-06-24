@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Collections.Generic;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.ReadabilityRules;
+    using StyleCop.Analyzers.Settings.ObjectModel;
     using TestHelper;
 
     /// <summary>
@@ -16,10 +17,29 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     /// </remarks>
     public partial class SA1117UnitTests : DiagnosticVerifier
     {
+        private AttributeParameterSplitting? attributeParameterSplitting;
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1117ParametersMustBeOnSameLineOrSeparateLines();
+        }
+
+        protected override string GetSettings()
+        {
+            if (this.attributeParameterSplitting == null)
+            {
+                return base.GetSettings();
+            }
+
+            return $@"
+{{
+  ""settings"": {{
+    ""readabilityRules"": {{
+      ""attributeParameterSplitting"": ""{this.attributeParameterSplitting.ToString().ToLowerInvariant()}""
+    }}
+  }}
+}}";
         }
     }
 }
