@@ -312,7 +312,11 @@
     <Compile Include="ReadabilityRules\SA1114UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1115UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1116UnitTests.cs" />
+    <Compile Include="ReadabilityRules\SA1117\SA1117UnitTests.Attributes.cs" />
+    <Compile Include="ReadabilityRules\SA1117\SA1117UnitTests.ConstructorInitializers.cs" />
     <Compile Include="ReadabilityRules\SA1117\SA1117UnitTests.cs" />
+    <Compile Include="ReadabilityRules\SA1117\SA1117UnitTests.Declarations.cs" />
+    <Compile Include="ReadabilityRules\SA1117\SA1117UnitTests.Expressions.cs" />
     <Compile Include="ReadabilityRules\SA1118UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1120UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1121UnitTests.cs" />
