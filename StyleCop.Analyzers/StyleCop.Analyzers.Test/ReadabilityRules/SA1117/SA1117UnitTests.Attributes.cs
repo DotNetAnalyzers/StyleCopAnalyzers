@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
+    using System;
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
@@ -61,15 +62,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
         private sealed class AttributeTestScenarios : TestScenarios<AttributeParameterSplitting?>
         {
-            internal AttributeTestScenarios()
-            {
-            }
-
-            protected override IEnumerable<TestScenario<AttributeParameterSplitting?>> Scenarios
-            {
-                get
-                {
-                    var attributeDeclaration = @"
+            private readonly string attributeDeclaration = @"
 [System.AttributeUsage(System.AttributeTargets.Class)]
 public class MyAttribute : System.Attribute
 {
@@ -83,7 +76,18 @@ public class MyAttribute : System.Attribute
 }
 ";
 
-                    yield return new TestScenario<AttributeParameterSplitting?>(attributeDeclaration + @"
+            private readonly Func<string, string> displayNameFunction;
+
+            internal AttributeTestScenarios()
+            {
+                this.displayNameFunction = c => c.Replace(this.attributeDeclaration, string.Empty);
+            }
+
+            protected override IEnumerable<TestScenario<AttributeParameterSplitting?>> Scenarios
+            {
+                get
+                {
+                    yield return this.CreateCustomAttributeScenario(@"
 [MyAttribute(1, 2, 3)]
 class Foo
 {
@@ -96,8 +100,8 @@ class ObsoleteType
 {
 }");
 
-                    yield return new TestScenario<AttributeParameterSplitting?>(
-                        attributeDeclaration + @"
+                    yield return this.CreateCustomAttributeScenario(
+@"
 [MyAttribute(
     1,
     2, 3)]
@@ -107,15 +111,15 @@ class Foo
                         new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.Default, 16, 8),
                         new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.PositionalParametersMayShareFirstLine, 16, 8));
 
-                    yield return new TestScenario<AttributeParameterSplitting?>(
-                        attributeDeclaration + @"
+                    yield return this.CreateCustomAttributeScenario(
+@"
 [MyAttribute(1, 2, 3, D = 4, E = 5)]
 class Foo
 {
 }");
 
-                    yield return new TestScenario<AttributeParameterSplitting?>(
-                        attributeDeclaration + @"
+                    yield return this.CreateCustomAttributeScenario(
+@"
 [MyAttribute(
     1,
     2,
@@ -126,8 +130,8 @@ class Foo
 {
 }");
 
-                yield return new TestScenario<AttributeParameterSplitting?>(
-                        attributeDeclaration + @"
+                yield return this.CreateCustomAttributeScenario(
+@"
 [MyAttribute(1, 2,
     3,
     D = 4,
@@ -138,8 +142,8 @@ class Foo
                         new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.Default, 14, 17),
                         new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.PositionalParametersMayShareFirstLine, 14, 17));
 
-                yield return new TestScenario<AttributeParameterSplitting?>(
-                        attributeDeclaration + @"
+                yield return this.CreateCustomAttributeScenario(
+@"
 [MyAttribute(1, 2, 3,
     D = 4,
     E = 5)]
@@ -148,8 +152,8 @@ class Foo
 }",
                         new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.Default, 14, 17));
 
-                    yield return new TestScenario<AttributeParameterSplitting?>(
-                        attributeDeclaration + @"
+                    yield return this.CreateCustomAttributeScenario(
+@"
 [MyAttribute(1, 2, 3,
     D = 4, E = 5)]
 class Foo
@@ -172,6 +176,16 @@ class Foo
                             AttributeParameterSplitting.PositionalParametersMayShareFirstLine
                         };
                 }
+            }
+
+            private TestScenario<AttributeParameterSplitting?> CreateCustomAttributeScenario(
+                string testCode,
+                params ExpectedViolation<AttributeParameterSplitting?>[] expectedViolations)
+            {
+                return new TestScenario<AttributeParameterSplitting?>(
+                    this.attributeDeclaration + testCode,
+                    this.displayNameFunction,
+                    expectedViolations);
             }
         }
     }
