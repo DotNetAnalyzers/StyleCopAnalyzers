@@ -76,6 +76,10 @@ public class MyAttribute : System.Attribute
     public MyAttribute(int a, int b, int c)
     {
     }
+
+    public int D { get; set; }
+
+    public int E { get; set; }
 }
 ";
 
@@ -100,10 +104,61 @@ class ObsoleteType
 class Foo
 {
 }",
-                        new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.Default, 12, 8),
-                        new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.PositionalParametersMayShareFirstLine, 12, 8));
+                        new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.Default, 16, 8),
+                        new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.PositionalParametersMayShareFirstLine, 16, 8));
+
+                    yield return new TestScenario<AttributeParameterSplitting?>(
+                        attributeDeclaration + @"
+[MyAttribute(1, 2, 3, D = 4, E = 5)]
+class Foo
+{
+}");
+
+                    yield return new TestScenario<AttributeParameterSplitting?>(
+                        attributeDeclaration + @"
+[MyAttribute(
+    1,
+    2,
+    3,
+    D = 4,
+    E = 5)]
+class Foo
+{
+}");
+
+                yield return new TestScenario<AttributeParameterSplitting?>(
+                        attributeDeclaration + @"
+[MyAttribute(1, 2,
+    3,
+    D = 4,
+    E = 5)]
+class Foo
+{
+}",
+                        new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.Default, 15, 5),
+                        new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.PositionalParametersMayShareFirstLine, 15, 5));
+
+                yield return new TestScenario<AttributeParameterSplitting?>(
+                        attributeDeclaration + @"
+[MyAttribute(1, 2, 3,
+    D = 4,
+    E = 5)]
+class Foo
+{
+}",
+                        new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.Default, 15, 5));
+
+                    yield return new TestScenario<AttributeParameterSplitting?>(
+                        attributeDeclaration + @"
+[MyAttribute(1, 2, 3,
+    D = 4, E = 5)]
+class Foo
+{
+}",
+                        new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.Default, 15, 5),
+                        new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.PositionalParametersMayShareFirstLine, 15, 12));
                 }
-            }
+    }
 
             protected override IEnumerable<AttributeParameterSplitting?> SettingsValues
             {
