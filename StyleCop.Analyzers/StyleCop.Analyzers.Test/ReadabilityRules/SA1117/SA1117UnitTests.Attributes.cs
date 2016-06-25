@@ -3,9 +3,14 @@
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.ReadabilityRules;
+    using StyleCop.Analyzers.Settings.ObjectModel;
+    using StyleCop.Analyzers.Test.Helpers;
     using TestHelper;
     using Xunit;
 
@@ -14,10 +19,57 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     /// </summary>
     public partial class SA1117UnitTests
     {
-        [Fact]
-        public async Task TestValidAttributeAsync()
+        private AttributeParameterSplitting? attributeParameterSplitting;
+
+        public static IEnumerable GetAttributeTestScenarios()
         {
-            var testCode = @"
+            return new AttributeTestScenarios().GetTestData();
+        }
+
+        [Theory]
+        [MemberData(nameof(GetAttributeTestScenarios))]
+        internal async Task TestAttributeScenarioAsync(
+            AttributeParameterSplitting? settingValue,
+            TestScenario<AttributeParameterSplitting?> scenario)
+        {
+            this.attributeParameterSplitting = settingValue;
+
+            var expectedViolations = scenario.ExpectedViolations.Where(s => s.Setting == (settingValue ?? AttributeParameterSplitting.Default)).ToList();
+            DiagnosticResult[] expected = (expectedViolations.Count == 0) ?
+                EmptyDiagnosticResults :
+                expectedViolations.Select(v => this.CSharpDiagnostic().WithLocation(v.Line, v.Column)).ToArray();
+
+            await this.VerifyCSharpDiagnosticAsync(scenario.TestCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected override string GetSettings()
+        {
+            if (this.attributeParameterSplitting == null)
+            {
+                return base.GetSettings();
+            }
+
+            return $@"
+{{
+  ""settings"": {{
+    ""readabilityRules"": {{
+      ""attributeParameterSplitting"": ""{this.attributeParameterSplitting.ToString().ToLowerInvariant()}""
+    }}
+  }}
+}}";
+        }
+
+        private sealed class AttributeTestScenarios : TestScenarios<AttributeParameterSplitting?>
+        {
+            internal AttributeTestScenarios()
+            {
+            }
+
+            protected override IEnumerable<TestScenario<AttributeParameterSplitting?>> Scenarios
+            {
+                get
+                {
+                    var attributeDeclaration = @"
 [System.AttributeUsage(System.AttributeTargets.Class)]
 public class MyAttribute : System.Attribute
 {
@@ -25,42 +77,47 @@ public class MyAttribute : System.Attribute
     {
     }
 }
+";
 
+                    yield return new TestScenario<AttributeParameterSplitting?>(attributeDeclaration + @"
 [MyAttribute(1, 2, 3)]
 class Foo
 {
-}
+}");
 
+                    yield return new TestScenario<AttributeParameterSplitting?>(@"
 // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1211
 [System.Obsolete]
 class ObsoleteType
 {
-}";
+}");
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestInvalidAttributeAsync()
-        {
-            var testCode = @"
-[System.AttributeUsage(System.AttributeTargets.Class)]
-public class MyAttribute : System.Attribute
-{
-    public MyAttribute(int a, int b, int c)
-    {
-    }
-}
-
+                    yield return new TestScenario<AttributeParameterSplitting?>(
+                        attributeDeclaration + @"
 [MyAttribute(
     1,
     2, 3)]
 class Foo
 {
-}";
+}",
+                        new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.Default, 12, 8),
+                        new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.PositionalParametersMayShareFirstLine, 12, 8));
+                }
+            }
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(12, 8);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            protected override IEnumerable<AttributeParameterSplitting?> SettingsValues
+            {
+                get
+                {
+                    return new AttributeParameterSplitting?[]
+                        {
+                            null,
+                            AttributeParameterSplitting.Default,
+                            AttributeParameterSplitting.Ignore,
+                            AttributeParameterSplitting.PositionalParametersMayShareFirstLine
+                        };
+                }
+            }
         }
     }
 }

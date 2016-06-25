@@ -177,8 +177,11 @@
     <Compile Include="Helpers\DiagnosticResultLocation.cs" />
     <Compile Include="Helpers\DiagnosticVerifier.Helper.cs" />
     <Compile Include="Helpers\ExclusionTestAnalyzer.cs" />
+    <Compile Include="Helpers\ExpectedViolation`1.cs" />
     <Compile Include="Helpers\MetadataReferences.cs" />
     <Compile Include="Helpers\TestDiagnosticProvider.cs" />
+    <Compile Include="Helpers\TestScenarios`1.cs" />
+    <Compile Include="Helpers\TestScenario`1.cs" />
     <Compile Include="Helpers\TestXmlReferenceResolver.cs" />
     <Compile Include="HelperTests\AccessLevelHelperTests.cs" />
     <Compile Include="HelperTests\IndentationHelperTests.cs" />
