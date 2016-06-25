@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// The parameters to a C# method or indexer call or declaration are not all on the same line or each on a separate
@@ -44,6 +45,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// {
     /// }
     /// </code>
+    /// <para>Desired behavior for attribute parameters may be configured via use of the
+    /// attributeParameterSplitting setting.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class SA1117ParametersMustBeOnSameLineOrSeparateLines : DiagnosticAnalyzer
@@ -73,7 +76,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly Action<SyntaxNodeAnalysisContext> ElementAccessExpressionAction = HandleElementAccessExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> ElementBindingExpressionAction = HandleElementBindingExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> ArrayCreationExpressionAction = HandleArrayCreationExpression;
-        private static readonly Action<SyntaxNodeAnalysisContext> AttributeAction = HandleAttribute;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> AttributeAction = HandleAttribute;
         private static readonly Action<SyntaxNodeAnalysisContext> AnonymousMethodExpressionAction = HandleAnonymousMethodExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> ParenthesizedLambdaExpressionAction = HandleParenthesizedLambdaExpression;
 
@@ -182,50 +185,53 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
-        private static void HandleAttribute(SyntaxNodeAnalysisContext context)
+        private static void HandleAttribute(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
-            var attribute = (AttributeSyntax)context.Node;
-            AttributeArgumentListSyntax argumentListSyntax = attribute.ArgumentList;
-            if (argumentListSyntax == null)
+            if (settings.ReadabilityRules.AttributeParameterSplitting != AttributeParameterSplitting.Ignore)
             {
-                return;
-            }
-
-            SeparatedSyntaxList<AttributeArgumentSyntax> arguments = argumentListSyntax.Arguments;
-            if (arguments.Count < 3)
-            {
-                return;
-            }
-
-            AttributeArgumentSyntax previousParameter = arguments[1];
-            int firstParameterLine = arguments[0].GetLine();
-            int previousLine = previousParameter.GetLine();
-            Func<int, int, bool> lineCondition;
-
-            if (firstParameterLine == previousLine)
-            {
-                // arguments must be on same line
-                lineCondition = (param1Line, param2Line) => param1Line == param2Line;
-            }
-            else
-            {
-                // each argument must be on its own line
-                lineCondition = (param1Line, param2Line) => param1Line != param2Line;
-            }
-
-            for (int i = 2; i < arguments.Count; ++i)
-            {
-                AttributeArgumentSyntax currentParameter = arguments[i];
-                int currentLine = currentParameter.GetLine();
-
-                if (lineCondition(previousLine, currentLine))
+                var attribute = (AttributeSyntax)context.Node;
+                AttributeArgumentListSyntax argumentListSyntax = attribute.ArgumentList;
+                if (argumentListSyntax == null)
                 {
-                    previousLine = currentLine;
-                    continue;
+                    return;
                 }
 
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentParameter.GetLocation()));
-                return;
+                SeparatedSyntaxList<AttributeArgumentSyntax> arguments = argumentListSyntax.Arguments;
+                if (arguments.Count < 3)
+                {
+                    return;
+                }
+
+                AttributeArgumentSyntax previousParameter = arguments[1];
+                int firstParameterLine = arguments[0].GetLine();
+                int previousLine = previousParameter.GetLine();
+                Func<int, int, bool> lineCondition;
+
+                if (firstParameterLine == previousLine)
+                {
+                    // arguments must be on same line
+                    lineCondition = (param1Line, param2Line) => param1Line == param2Line;
+                }
+                else
+                {
+                    // each argument must be on its own line
+                    lineCondition = (param1Line, param2Line) => param1Line != param2Line;
+                }
+
+                for (int i = 2; i < arguments.Count; ++i)
+                {
+                    AttributeArgumentSyntax currentParameter = arguments[i];
+                    int currentLine = currentParameter.GetLine();
+
+                    if (lineCondition(previousLine, currentLine))
+                    {
+                        previousLine = currentLine;
+                        continue;
+                    }
+
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentParameter.GetLocation()));
+                    return;
+                }
             }
         }
 

@@ -19,8 +19,8 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         Ignore = 1,
 
         /// <summary>
-        /// When splitting attribute parameters across lines,
-        /// any subset of the positional parameters may reside on the first line.
+        /// When splitting attribute parameters across lines, the positional parameters may reside
+        /// on the first line even if the named parameters reside on subsequent lines.
         /// </summary>
         PositionalParametersMayShareFirstLine = 2
     }
