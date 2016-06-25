@@ -135,8 +135,8 @@ class Foo
 class Foo
 {
 }",
-                        new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.Default, 15, 5),
-                        new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.PositionalParametersMayShareFirstLine, 15, 5));
+                        new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.Default, 14, 17),
+                        new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.PositionalParametersMayShareFirstLine, 14, 17));
 
                 yield return new TestScenario<AttributeParameterSplitting?>(
                         attributeDeclaration + @"
@@ -146,7 +146,7 @@ class Foo
 class Foo
 {
 }",
-                        new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.Default, 15, 5));
+                        new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.Default, 14, 17));
 
                     yield return new TestScenario<AttributeParameterSplitting?>(
                         attributeDeclaration + @"
@@ -155,7 +155,7 @@ class Foo
 class Foo
 {
 }",
-                        new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.Default, 15, 5),
+                        new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.Default, 14, 17),
                         new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.PositionalParametersMayShareFirstLine, 15, 12));
                 }
     }

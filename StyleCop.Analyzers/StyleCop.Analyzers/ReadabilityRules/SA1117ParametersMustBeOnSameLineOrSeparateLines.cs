@@ -4,7 +4,9 @@
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -187,7 +189,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleAttribute(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
-            if (settings.ReadabilityRules.AttributeParameterSplitting != AttributeParameterSplitting.Ignore)
+            var splitting = settings.ReadabilityRules.AttributeParameterSplitting;
+
+            if (splitting != AttributeParameterSplitting.Ignore)
             {
                 var attribute = (AttributeSyntax)context.Node;
                 AttributeArgumentListSyntax argumentListSyntax = attribute.ArgumentList;
@@ -202,37 +206,60 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     return;
                 }
 
-                AttributeArgumentSyntax previousParameter = arguments[1];
-                int firstParameterLine = arguments[0].GetLine();
-                int previousLine = previousParameter.GetLine();
-                Func<int, int, bool> lineCondition;
+                CheckArgumentPositions(context, splitting, arguments.Select(a => new AttributeArgument(a)).ToList());
+            }
+        }
 
-                if (firstParameterLine == previousLine)
+        private static void CheckArgumentPositions(SyntaxNodeAnalysisContext context, AttributeParameterSplitting splitting, IEnumerable<AttributeArgument> arguments)
+        {
+            var firstPositionProblem = FindFirstPositionProblem(splitting, arguments);
+            if (firstPositionProblem != null)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstPositionProblem.Syntax.GetLocation()));
+            }
+        }
+
+        private static AttributeArgument FindFirstPositionProblem(AttributeParameterSplitting splitting, IEnumerable<AttributeArgument> arguments)
+        {
+            AttributeArgument result = null;
+
+            var distinctLineCount = arguments.Select(a => a.Line).Distinct().Count();
+            if ((distinctLineCount > 1) && (distinctLineCount < arguments.Count()))
+            {
+                if ((splitting == AttributeParameterSplitting.PositionalParametersMayShareFirstLine) &&
+                    arguments.Any(a => !a.IsPositional))
                 {
-                    // arguments must be on same line
-                    lineCondition = (param1Line, param2Line) => param1Line == param2Line;
+                    var positionalArguments = arguments.Where(a => a.IsPositional);
+                    result = FindFirstPositionProblem(AttributeParameterSplitting.Default, positionalArguments);
+
+                    if (result == null)
+                    {
+                        result = FindFirstArgumentOnSharedLine(arguments.Skip(positionalArguments.Count() - 1));
+                    }
                 }
                 else
                 {
-                    // each argument must be on its own line
-                    lineCondition = (param1Line, param2Line) => param1Line != param2Line;
-                }
-
-                for (int i = 2; i < arguments.Count; ++i)
-                {
-                    AttributeArgumentSyntax currentParameter = arguments[i];
-                    int currentLine = currentParameter.GetLine();
-
-                    if (lineCondition(previousLine, currentLine))
-                    {
-                        previousLine = currentLine;
-                        continue;
-                    }
-
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentParameter.GetLocation()));
-                    return;
+                    result = FindFirstArgumentOnSharedLine(arguments);
                 }
             }
+
+            return result;
+        }
+
+        private static AttributeArgument FindFirstArgumentOnSharedLine(IEnumerable<AttributeArgument> arguments)
+        {
+            var previousArgument = arguments.First();
+            foreach (var argument in arguments.Skip(1))
+            {
+                if (argument.Line == previousArgument.Line)
+                {
+                    return argument;
+                }
+
+                previousArgument = argument;
+            }
+
+            return null;
         }
 
         private static void HandleAnonymousMethodExpression(SyntaxNodeAnalysisContext context)
@@ -368,6 +395,22 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentParameter.GetLocation()));
                 return;
             }
+        }
+
+        private sealed class AttributeArgument
+        {
+            internal AttributeArgument(AttributeArgumentSyntax syntax)
+            {
+                this.Syntax = syntax;
+                this.IsPositional = syntax.NameEquals == null;
+                this.Line = syntax.GetLine();
+            }
+
+            internal AttributeArgumentSyntax Syntax { get; }
+
+            internal bool IsPositional { get; }
+
+            internal int Line { get; }
         }
     }
 }
