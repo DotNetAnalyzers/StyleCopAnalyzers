@@ -58,6 +58,9 @@ namespace StyleCop.Analyzers.Test.Settings
         ""allowCommonHungarianPrefixes"": false,
         ""allowedHungarianPrefixes"": [""a"", ""ab""]
     },
+    ""readabilityRules"": {
+        ""attributeArgumentSplitting"": ""PositionalParametersMayShareFirstLine""
+    },
     ""orderingRules"": {
         ""usingDirectivesPlacement"": ""outsideNamespace""
     }
@@ -75,6 +78,9 @@ namespace StyleCop.Analyzers.Test.Settings
 
             Assert.NotNull(styleCopSettings.OrderingRules);
             Assert.Equal(UsingDirectivesPlacement.OutsideNamespace, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
+
+            Assert.NotNull(styleCopSettings.ReadabilityRules);
+            Assert.Equal(AttributeArgumentSplitting.PositionalParametersMayShareFirstLine, styleCopSettings.ReadabilityRules.AttributeArgumentSplitting);
         }
 
         /// <summary>

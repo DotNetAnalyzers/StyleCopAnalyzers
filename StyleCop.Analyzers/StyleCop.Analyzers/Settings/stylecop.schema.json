@@ -46,6 +46,16 @@
           "description": "Configuration for readability rules (SA1100-)",
           "additionalProperties": false,
           "properties": {
+            "attributeArgumentSplitting": {
+              "type": "string",
+              "description": "\"Specifies the argument splitting rules to be applied to attributes in rule SA1117\\r\\ndefault: Splitting conventions for attribute arguments follow the defaults for methods.\\r\\nignore: Attribute arguments may be split across lines in any manner.\\r\\npositionalParametersMayShareFirstLine: When splitting attribute arguments across lines, the positional arguments may reside on the first line even if the named arguments reside on subsequent lines.",
+              "enum": [
+                "default",
+                "ignore",
+                "positionalParametersMayShareFirstLine"
+              ],
+              "default": "default"
+            }
           }
         },
         "orderingRules": {

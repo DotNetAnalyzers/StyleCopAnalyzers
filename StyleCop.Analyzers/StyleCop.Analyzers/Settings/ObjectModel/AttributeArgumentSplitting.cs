@@ -4,23 +4,23 @@
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
     /// <summary>
-    /// Specifies the allowed splitting of attribute parameters across lines.
+    /// Specifies the allowed splitting of attribute arguments across lines.
     /// </summary>
-    internal enum AttributeParameterSplitting
+    internal enum AttributeArgumentSplitting
     {
         /// <summary>
-        /// Splitting conventions for attribute parameters follow the defaults for methods.
+        /// Splitting conventions for attribute arguments follow the defaults for methods.
         /// </summary>
         Default = 0,
 
         /// <summary>
-        /// Attribute parameters may be split across lines in any manner.
+        /// Attribute arguments may be split across lines in any manner.
         /// </summary>
         Ignore = 1,
 
         /// <summary>
-        /// When splitting attribute parameters across lines, the positional parameters may reside
-        /// on the first line even if the named parameters reside on subsequent lines.
+        /// When splitting attribute arguments across lines, the positional arguments may reside
+        /// on the first line even if the named arguments reside on subsequent lines.
         /// </summary>
         PositionalParametersMayShareFirstLine = 2
     }

@@ -20,7 +20,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     /// </summary>
     public partial class SA1117UnitTests
     {
-        private AttributeParameterSplitting? attributeParameterSplitting;
+        private AttributeArgumentSplitting? attributeArgumentSplitting;
 
         public static IEnumerable GetAttributeTestScenarios()
         {
@@ -30,12 +30,12 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         [Theory]
         [MemberData(nameof(GetAttributeTestScenarios))]
         internal async Task TestAttributeScenarioAsync(
-            AttributeParameterSplitting? settingValue,
-            TestScenario<AttributeParameterSplitting?> scenario)
+            AttributeArgumentSplitting? splitting,
+            TestScenario<AttributeArgumentSplitting?> scenario)
         {
-            this.attributeParameterSplitting = settingValue;
+            this.attributeArgumentSplitting = splitting;
 
-            var expectedViolations = scenario.ExpectedViolations.Where(s => s.Setting == (settingValue ?? AttributeParameterSplitting.Default)).ToList();
+            var expectedViolations = scenario.ExpectedViolations.Where(s => s.Setting == (splitting ?? AttributeArgumentSplitting.Default)).ToList();
             DiagnosticResult[] expected = (expectedViolations.Count == 0) ?
                 EmptyDiagnosticResults :
                 expectedViolations.Select(v => this.CSharpDiagnostic().WithLocation(v.Line, v.Column)).ToArray();
@@ -45,7 +45,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
         protected override string GetSettings()
         {
-            if (this.attributeParameterSplitting == null)
+            if (this.attributeArgumentSplitting == null)
             {
                 return base.GetSettings();
             }
@@ -54,13 +54,13 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 {{
   ""settings"": {{
     ""readabilityRules"": {{
-      ""attributeParameterSplitting"": ""{this.attributeParameterSplitting.ToString().ToLowerInvariant()}""
+      ""attributeArgumentSplitting"": ""{this.attributeArgumentSplitting.ToString().ToLowerInvariant()}""
     }}
   }}
 }}";
         }
 
-        private sealed class AttributeTestScenarios : TestScenarios<AttributeParameterSplitting?>
+        private sealed class AttributeTestScenarios : TestScenarios<AttributeArgumentSplitting?>
         {
             private readonly string attributeDeclaration = @"
 [System.AttributeUsage(System.AttributeTargets.Class)]
@@ -83,7 +83,7 @@ public class MyAttribute : System.Attribute
                 this.displayNameFunction = c => c.Replace(this.attributeDeclaration, string.Empty);
             }
 
-            protected override IEnumerable<TestScenario<AttributeParameterSplitting?>> Scenarios
+            protected override IEnumerable<TestScenario<AttributeArgumentSplitting?>> Scenarios
             {
                 get
                 {
@@ -93,7 +93,7 @@ class Foo
 {
 }");
 
-                    yield return new TestScenario<AttributeParameterSplitting?>(@"
+                    yield return new TestScenario<AttributeArgumentSplitting?>(@"
 // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1211
 [System.Obsolete]
 class ObsoleteType
@@ -108,8 +108,8 @@ class ObsoleteType
 class Foo
 {
 }",
-                        new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.Default, 16, 8),
-                        new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.PositionalParametersMayShareFirstLine, 16, 8));
+                        new ExpectedViolation<AttributeArgumentSplitting?>(AttributeArgumentSplitting.Default, 16, 8),
+                        new ExpectedViolation<AttributeArgumentSplitting?>(AttributeArgumentSplitting.PositionalParametersMayShareFirstLine, 16, 8));
 
                     yield return this.CreateCustomAttributeScenario(
 @"
@@ -139,8 +139,8 @@ class Foo
 class Foo
 {
 }",
-                        new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.Default, 14, 17),
-                        new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.PositionalParametersMayShareFirstLine, 14, 17));
+                        new ExpectedViolation<AttributeArgumentSplitting?>(AttributeArgumentSplitting.Default, 14, 17),
+                        new ExpectedViolation<AttributeArgumentSplitting?>(AttributeArgumentSplitting.PositionalParametersMayShareFirstLine, 14, 17));
 
                 yield return this.CreateCustomAttributeScenario(
 @"
@@ -150,7 +150,7 @@ class Foo
 class Foo
 {
 }",
-                        new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.Default, 14, 17));
+                        new ExpectedViolation<AttributeArgumentSplitting?>(AttributeArgumentSplitting.Default, 14, 17));
 
                     yield return this.CreateCustomAttributeScenario(
 @"
@@ -159,30 +159,30 @@ class Foo
 class Foo
 {
 }",
-                        new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.Default, 14, 17),
-                        new ExpectedViolation<AttributeParameterSplitting?>(AttributeParameterSplitting.PositionalParametersMayShareFirstLine, 15, 12));
+                        new ExpectedViolation<AttributeArgumentSplitting?>(AttributeArgumentSplitting.Default, 14, 17),
+                        new ExpectedViolation<AttributeArgumentSplitting?>(AttributeArgumentSplitting.PositionalParametersMayShareFirstLine, 15, 12));
                 }
     }
 
-            protected override IEnumerable<AttributeParameterSplitting?> SettingsValues
+            protected override IEnumerable<AttributeArgumentSplitting?> SettingsValues
             {
                 get
                 {
-                    return new AttributeParameterSplitting?[]
+                    return new AttributeArgumentSplitting?[]
                         {
                             null,
-                            AttributeParameterSplitting.Default,
-                            AttributeParameterSplitting.Ignore,
-                            AttributeParameterSplitting.PositionalParametersMayShareFirstLine
+                            AttributeArgumentSplitting.Default,
+                            AttributeArgumentSplitting.Ignore,
+                            AttributeArgumentSplitting.PositionalParametersMayShareFirstLine
                         };
                 }
             }
 
-            private TestScenario<AttributeParameterSplitting?> CreateCustomAttributeScenario(
+            private TestScenario<AttributeArgumentSplitting?> CreateCustomAttributeScenario(
                 string testCode,
-                params ExpectedViolation<AttributeParameterSplitting?>[] expectedViolations)
+                params ExpectedViolation<AttributeArgumentSplitting?>[] expectedViolations)
             {
-                return new TestScenario<AttributeParameterSplitting?>(
+                return new TestScenario<AttributeArgumentSplitting?>(
                     this.attributeDeclaration + testCode,
                     this.displayNameFunction,
                     expectedViolations);

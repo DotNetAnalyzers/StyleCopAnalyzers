@@ -48,7 +48,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// }
     /// </code>
     /// <para>Desired behavior for attribute parameters may be configured via use of the
-    /// attributeParameterSplitting setting.</para>
+    /// attributeArgumentSplitting setting.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class SA1117ParametersMustBeOnSameLineOrSeparateLines : DiagnosticAnalyzer
@@ -189,9 +189,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleAttribute(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
-            var splitting = settings.ReadabilityRules.AttributeParameterSplitting;
+            var splitting = settings.ReadabilityRules.AttributeArgumentSplitting;
 
-            if (splitting != AttributeParameterSplitting.Ignore)
+            if (splitting != AttributeArgumentSplitting.Ignore)
             {
                 var attribute = (AttributeSyntax)context.Node;
                 AttributeArgumentListSyntax argumentListSyntax = attribute.ArgumentList;
@@ -210,7 +210,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
-        private static void CheckArgumentPositions(SyntaxNodeAnalysisContext context, AttributeParameterSplitting splitting, IEnumerable<AttributeArgument> arguments)
+        private static void CheckArgumentPositions(SyntaxNodeAnalysisContext context, AttributeArgumentSplitting splitting, IEnumerable<AttributeArgument> arguments)
         {
             var firstPositionProblem = FindFirstPositionProblem(splitting, arguments);
             if (firstPositionProblem != null)
@@ -219,18 +219,18 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
-        private static AttributeArgument FindFirstPositionProblem(AttributeParameterSplitting splitting, IEnumerable<AttributeArgument> arguments)
+        private static AttributeArgument FindFirstPositionProblem(AttributeArgumentSplitting splitting, IEnumerable<AttributeArgument> arguments)
         {
             AttributeArgument result = null;
 
             var distinctLineCount = arguments.Select(a => a.Line).Distinct().Count();
             if ((distinctLineCount > 1) && (distinctLineCount < arguments.Count()))
             {
-                if ((splitting == AttributeParameterSplitting.PositionalParametersMayShareFirstLine) &&
+                if ((splitting == AttributeArgumentSplitting.PositionalParametersMayShareFirstLine) &&
                     arguments.Any(a => !a.IsPositional))
                 {
                     var positionalArguments = arguments.Where(a => a.IsPositional);
-                    result = FindFirstPositionProblem(AttributeParameterSplitting.Default, positionalArguments);
+                    result = FindFirstPositionProblem(AttributeArgumentSplitting.Default, positionalArguments);
 
                     if (result == null)
                     {

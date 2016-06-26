@@ -8,8 +8,8 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
     [JsonObject(MemberSerialization.OptIn)]
     internal class ReadabilitySettings
     {
-        [JsonProperty("attributeParameterSplitting", DefaultValueHandling = DefaultValueHandling.Include)]
-        private AttributeParameterSplitting attributeParameterSplitting;
+        [JsonProperty("attributeArgumentSplitting", DefaultValueHandling = DefaultValueHandling.Include)]
+        private AttributeArgumentSplitting attributeArgumentSplitting;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ReadabilitySettings"/> class during JSON deserialization.
@@ -17,10 +17,10 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         [JsonConstructor]
         protected internal ReadabilitySettings()
         {
-            this.attributeParameterSplitting = AttributeParameterSplitting.Default;
+            this.attributeArgumentSplitting = AttributeArgumentSplitting.Default;
         }
 
-        public AttributeParameterSplitting AttributeParameterSplitting =>
-            this.attributeParameterSplitting;
+        public AttributeArgumentSplitting AttributeArgumentSplitting =>
+            this.attributeArgumentSplitting;
     }
 }
