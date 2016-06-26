@@ -98,7 +98,29 @@ This section describes the features of readability rules which can be configured
 }
 ```
 
-> Currently there are no configurable settings for readability rules.
+The following properties are used to configure readability rules in StyleCop Analyzers.
+
+| Property | Default Value | Summary |
+| --- | --- | --- |
+| `attributeArgumentSplitting` | `"default"` | Specifies the allowed splitting of attribute arguments across lines. |
+
+### Attribute Argument Splitting
+
+The behavior of [SA1117 (Parameters must be on same line or separate lines)](SA1117.md) can be customized regarding the manner in which splitting of attribute arguments
+across lines handled. The `attributeArgumentSplitting` property supports the following values:
+
+* `"default"`: Splitting conventions for attribute arguments follow the defaults for methods (i.e.: either all on same line or all on default lines).
+* `"ignore"`: Attribute arguments may be split across lines in any manner.
+* `"positionalParametersMayShareFirstLine"`: When splitting attribute arguments across lines, the positional arguments may reside on the first line even if the named arguments reside on subsequent lines.
+
+For example, under `"positionalParametersMayShareFirstLine"` behavior, the following would not generate an [SA1117](SA1117.md) violation:
+
+```csharp
+[assembly: SuppressMessage("Microsoft.Design", "CA1020:AvoidNamespacesWithFewTypes",
+    Scope = "namespace",
+    Target = "Foo.Bar.SomeNamespace",
+    Justification = "There are no candidate classes or namespaces for merging.")]
+```
 
 ## Ordering Rules
 
