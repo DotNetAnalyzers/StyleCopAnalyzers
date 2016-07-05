@@ -154,7 +154,7 @@ var a = new[] { 1, 2, 3 }.ToArray();
 ### SA1208
 
 StyleCop Analyzers only considers using directives to be "System" using directives if they are not alias-qualified,
-while StyleCop Classic ignored the alias. For example, `using global::System;` would be not be considered a System using
+while StyleCop Classic ignored the alias. For example, `using global::System;` would not be considered a System using
 directive by StyleCop Analyzers, but it would be considered a System using directive by StyleCop Classic.
 
 ### SA1210
@@ -195,6 +195,9 @@ upper-case letter.
 ### SA1305
 
 This rule is disabled by default in StyleCop Analyzers, but can be enabled by users via a rule set file.
+
+:warning: StyleCop Analyzers does not report SA1305 for parameters in overriding methods and methods which implement an interface.
+StyleCop Classic reported SA1305 for all method.
 
 ## Maintainability Rules
 
