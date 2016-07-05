@@ -111,7 +111,7 @@ namespace StyleCop.Analyzers.NamingRules
                     return;
                 }
 
-                var fieldDeclaration = syntax.Parent.IsKind(SyntaxKind.FieldDeclaration);
+                var declarationType = syntax.Parent.IsKind(SyntaxKind.FieldDeclaration) ? "field" : "variable";
                 foreach (var variableDeclarator in syntax.Variables)
                 {
                     if (variableDeclarator == null)
@@ -120,7 +120,7 @@ namespace StyleCop.Analyzers.NamingRules
                     }
 
                     var identifier = variableDeclarator.Identifier;
-                    CheckIdentifier(context, identifier, settings, fieldDeclaration);
+                    CheckIdentifier(context, identifier, settings, declarationType);
                 }
             }
 
@@ -159,7 +159,7 @@ namespace StyleCop.Analyzers.NamingRules
                 CheckIdentifier(context, ((ForEachStatementSyntax)context.Node).Identifier, settings);
             }
 
-            private static void CheckIdentifier(SyntaxNodeAnalysisContext context, SyntaxToken identifier, StyleCopSettings settings, bool fieldDeclaration = false)
+            private static void CheckIdentifier(SyntaxNodeAnalysisContext context, SyntaxToken identifier, StyleCopSettings settings, string declarationType = "variable")
             {
                 if (identifier.IsMissing)
                 {
@@ -190,7 +190,7 @@ namespace StyleCop.Analyzers.NamingRules
                 }
 
                 // Variable names must begin with lower-case letter
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), fieldDeclaration ? "field" : "variable", name));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), declarationType, name));
             }
         }
     }
