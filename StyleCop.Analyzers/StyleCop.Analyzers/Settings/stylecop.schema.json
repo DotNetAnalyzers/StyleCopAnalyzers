@@ -194,6 +194,11 @@
               "description": "Determines whether the file header should be wrapped in the StyleCop-standard XML structure.",
               "default": true
             },
+            "headerDecoration": {
+              "type": "string",
+              "description": "The text used as decoration for the copyright header comment.",
+              "default": null
+            },
             "fileNamingConvention": {
               "type": "string",
               "description": "Specifies the preferred naming convention for files. The default value \"stylecop\" uses the naming convention defined by StyleCop Classic, while \"metadata\" uses a file naming convention that matches the metadata names of types.",
