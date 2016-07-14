@@ -119,6 +119,7 @@
     </Compile>
     <Compile Include="Helpers\LocationHelpers.cs" />
     <Compile Include="Helpers\MemberOrderHelper.cs" />
+    <Compile Include="Helpers\ModifierOrderHelper.cs" />
     <Compile Include="Helpers\NamedTypeHelpers.cs" />
     <Compile Include="Helpers\NameSyntaxHelpers.cs" />
     <Compile Include="Helpers\ObjectPools\ObjectPool`1.cs" />
