@@ -67,8 +67,18 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             var leadingTrivia = SyntaxFactory.TriviaList(oldNode.OpenParenToken.GetAllTrivia().Concat(oldNode.Expression.GetLeadingTrivia()));
             var trailingTrivia = oldNode.Expression.GetTrailingTrivia().AddRange(oldNode.CloseParenToken.GetAllTrivia());
 
+            // Workaround for Roslyn not handling elastic markers for directive trivia correctly.
+            if (!leadingTrivia.Any())
+            {
+                var previousToken = oldNode.OpenParenToken.GetPreviousToken();
+                if (TriviaHelper.IndexOfTrailingWhitespace(previousToken.TrailingTrivia) == -1)
+                {
+                    leadingTrivia = SyntaxFactory.TriviaList(SyntaxFactory.Space);
+                }
+            }
+
             return oldNode.Expression
-                .WithLeadingTrivia(leadingTrivia.Any() ? leadingTrivia : SyntaxFactory.TriviaList(SyntaxFactory.ElasticMarker))
+                .WithLeadingTrivia(leadingTrivia)
                 .WithTrailingTrivia(trailingTrivia.Any() ? trailingTrivia : SyntaxFactory.TriviaList(SyntaxFactory.ElasticMarker));
         }
 
