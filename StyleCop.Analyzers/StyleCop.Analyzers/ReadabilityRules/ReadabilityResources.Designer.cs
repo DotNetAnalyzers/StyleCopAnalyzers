@@ -1160,6 +1160,42 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Place enum values own their own lines.
+        /// </summary>
+        internal static string SA1136CodeFix {
+            get {
+                return ResourceManager.GetString("SA1136CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enum values should be placed on their own lines for maximum readability..
+        /// </summary>
+        internal static string SA1136Description {
+            get {
+                return ResourceManager.GetString("SA1136Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enum values should be on separate lines.
+        /// </summary>
+        internal static string SA1136MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1136MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enum values should be on separate lines.
+        /// </summary>
+        internal static string SA1136Title {
+            get {
+                return ResourceManager.GetString("SA1136Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove &apos;this.&apos; prefix.
         /// </summary>
         internal static string SX1101CodeFix {
