@@ -48,16 +48,24 @@ public partial class Bar
 {
 
 }";
-            var fixedCode = @"public partial class Foo
+
+            var fixedCode = new[]
+            {
+                @"public partial class Foo
 {
 }
-";
+",
+                @"public partial class Bar
+{
+
+}"
+            };
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 22);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(new[] { testCode }, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -70,15 +78,22 @@ public class Test0
 {
 }";
 
-            var fixedCode = @"public class Test0
+            var fixedCode = new[]
+            {
+                @"public class Test0
 {
-}";
+}",
+                @"public class Foo
+{
+}
+"
+            };
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(1, 14);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(new[] { testCode }, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
