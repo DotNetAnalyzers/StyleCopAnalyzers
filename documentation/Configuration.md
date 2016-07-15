@@ -328,11 +328,16 @@ The following properties are used to configure copyright headers in StyleCop Ana
 
 #### Configuring Copyright Text
 
-In order to successfully use StyleCop-checked file headers, most projects will need to configure the `companyName` property.
+In order to successfully use StyleCop-checked file headers, most projects will need to configure the `companyName`
+property.
 
-> The `companyName` property is so frequently customized that it is included in the default **stylecop.json** file produced by the code fix.
+> The `companyName` property is so frequently customized that it is included in the default **stylecop.json** file
+> produced by the code fix.
 
-The `copyrightText` property is a string which may contain placeholders. Each placeholder has the form `{variable}`, where `variable` is either `companyName` or the name of a property in the `variables` property. The following sample file shows a custom **stylecop.json** file which references both `companyName` and two custom variables within the `copyrightText`.
+The `copyrightText` property is a string which may contain placeholders. Each placeholder has the form `{variable}`,
+where `variable` is either a built-in variable (see below), or the name of a property in the `variables` property. The
+following sample file shows a custom **stylecop.json** file which references both `companyName` and two custom variables
+within the `copyrightText`.
 
 ```json
 {
@@ -357,6 +362,16 @@ With the above configuration, a file **TypeName.cs** would be expected to have t
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 // </copyright>
 ```
+
+##### Built-In Variables
+
+| Variable | Meaning |
+| --- | --- |
+| `companyName` | The value of the `companyName` configuration property in **stylecop.json** |
+| `fileName` | The file name of the current source file |
+
+> :memo: If a `fileName` variable is explicitly included within the `variables` property of **stylecop.json**, that
+> value will be used instead of the name of the current source file.
 
 #### Configuring XML Headers
 

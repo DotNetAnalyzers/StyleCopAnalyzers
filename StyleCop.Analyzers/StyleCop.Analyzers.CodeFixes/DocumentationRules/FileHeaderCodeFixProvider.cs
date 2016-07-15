@@ -19,6 +19,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.Formatting;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Settings.ObjectModel;
+    using Path = System.IO.Path;
 
     /// <summary>
     /// Implements a code fix for file header diagnostics.
@@ -137,8 +138,9 @@ namespace StyleCop.Analyzers.DocumentationRules
             // Pad line that used to be next to a /*
             triviaStringParts[0] = commentIndentation + interlinePadding + " " + triviaStringParts[0];
             StringBuilder sb = StringBuilderPool.Allocate();
+            string fileName = Path.GetFileName(document.FilePath);
             var copyrightText = commentIndentation + interlinePadding + " " +
-                GetCopyrightText(commentIndentation + interlinePadding, settings.DocumentationRules.CopyrightText, newLineText);
+                GetCopyrightText(commentIndentation + interlinePadding, settings.DocumentationRules.GetCopyrightText(fileName), newLineText);
             var newHeader = WrapInXmlComment(commentIndentation + interlinePadding, copyrightText, document.Name, settings, newLineText);
 
             sb.Append(commentIndentation);
@@ -354,18 +356,18 @@ namespace StyleCop.Analyzers.DocumentationRules
             return root.WithLeadingTrivia(newTrivia);
         }
 
-        private static SyntaxTriviaList CreateNewHeader(string prefixWithLeadingSpaces, string filename, StyleCopSettings settings, string newLineText)
+        private static SyntaxTriviaList CreateNewHeader(string prefixWithLeadingSpaces, string fileName, StyleCopSettings settings, string newLineText)
         {
-            var copyrightText = prefixWithLeadingSpaces + " " + GetCopyrightText(prefixWithLeadingSpaces, settings.DocumentationRules.CopyrightText, newLineText);
+            var copyrightText = prefixWithLeadingSpaces + " " + GetCopyrightText(prefixWithLeadingSpaces, settings.DocumentationRules.GetCopyrightText(fileName), newLineText);
             var newHeader = settings.DocumentationRules.XmlHeader
-                ? WrapInXmlComment(prefixWithLeadingSpaces, copyrightText, filename, settings, newLineText)
+                ? WrapInXmlComment(prefixWithLeadingSpaces, copyrightText, fileName, settings, newLineText)
                 : copyrightText;
             return SyntaxFactory.ParseLeadingTrivia(newHeader);
         }
 
-        private static string WrapInXmlComment(string prefixWithLeadingSpaces, string copyrightText, string filename, StyleCopSettings settings, string newLineText)
+        private static string WrapInXmlComment(string prefixWithLeadingSpaces, string copyrightText, string fileName, StyleCopSettings settings, string newLineText)
         {
-            string encodedFilename = new XAttribute("t", filename).ToString().Substring(2).Trim('"');
+            string encodedFilename = new XAttribute("t", fileName).ToString().Substring(2).Trim('"');
             string encodedCompanyName = new XAttribute("t", settings.DocumentationRules.CompanyName).ToString().Substring(2).Trim('"');
             string encodedCopyrightText = new XText(copyrightText).ToString();
 
