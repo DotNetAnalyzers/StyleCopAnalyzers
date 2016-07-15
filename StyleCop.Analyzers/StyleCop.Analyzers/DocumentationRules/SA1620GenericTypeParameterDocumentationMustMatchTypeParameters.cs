@@ -79,19 +79,13 @@ namespace StyleCop.Analyzers.DocumentationRules
             ImmutableArray<string> parentTypeParameters = parentTypeParametersEnumerable.ToImmutableArray();
 
             ImmutableArray<XmlNodeSyntax> nodes = syntax.Content
-                .Where(node => string.Equals(GetName(node)?.ToString(), XmlCommentHelper.TypeParamXmlTag))
+                .Where(node => string.Equals(node.GetName()?.ToString(), XmlCommentHelper.TypeParamXmlTag))
                 .ToImmutableArray();
 
             for (int i = 0; i < nodes.Length; i++)
             {
-                HandleElement(context, nodes[i], parentTypeParameters, i, GetName(nodes[i])?.GetLocation());
+                HandleElement(context, nodes[i], parentTypeParameters, i, nodes[i]?.GetName()?.GetLocation());
             }
-        }
-
-        private static XmlNameSyntax GetName(XmlNodeSyntax element)
-        {
-            return (element as XmlElementSyntax)?.StartTag?.Name
-                ?? (element as XmlEmptyElementSyntax)?.Name;
         }
 
         private static void HandleElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax element, ImmutableArray<string> parentTypeParameters, int index, Location alternativeDiagnosticLocation)
