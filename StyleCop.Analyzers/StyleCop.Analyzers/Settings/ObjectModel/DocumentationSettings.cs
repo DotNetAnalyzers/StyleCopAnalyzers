@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Text.RegularExpressions;
     using Newtonsoft.Json;
@@ -16,7 +17,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         internal const string DefaultCompanyName = "PlaceholderCompany";
 
         /// <summary>
-        /// The default value for the <see cref="CopyrightText"/> property.
+        /// The default value for the <see cref="GetCopyrightText(string)"/> method.
         /// </summary>
         internal const string DefaultCopyrightText = "Copyright (c) {companyName}. All rights reserved.";
 
@@ -27,13 +28,13 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         private string companyName;
 
         /// <summary>
-        /// This is the backing field for the <see cref="CopyrightText"/> property.
+        /// This is the backing field for the <see cref="GetCopyrightText(string)"/> method.
         /// </summary>
         [JsonProperty("copyrightText", DefaultValueHandling = DefaultValueHandling.Ignore)]
         private string copyrightText;
 
         /// <summary>
-        /// This is the cache for the <see cref="CopyrightText"/> property.
+        /// This is the cache for the <see cref="GetCopyrightText(string)"/> method.
         /// </summary>
         private string copyrightTextCache;
 
@@ -120,19 +121,6 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             }
         }
 
-        public string CopyrightText
-        {
-            get
-            {
-                if (this.copyrightTextCache == null)
-                {
-                    this.copyrightTextCache = this.BuildCopyrightText();
-                }
-
-                return this.copyrightTextCache;
-            }
-        }
-
         public string HeaderDecoration
         {
             get
@@ -175,8 +163,28 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         public FileNamingConvention FileNamingConvention =>
             this.fileNamingConvention;
 
-        private string BuildCopyrightText()
+        public string GetCopyrightText(string fileName)
         {
+            string copyrightText = this.copyrightTextCache;
+            if (copyrightText != null)
+            {
+                return copyrightText;
+            }
+
+            var expandedCopyrightText = this.BuildCopyrightText(fileName);
+            if (!expandedCopyrightText.Value)
+            {
+                // Unable to cache the copyright text due to use of a {fileName} variable.
+                return expandedCopyrightText.Key;
+            }
+
+            this.copyrightTextCache = expandedCopyrightText.Key;
+            return this.copyrightTextCache;
+        }
+
+        private KeyValuePair<string, bool> BuildCopyrightText(string fileName)
+        {
+            bool canCache = true;
             string pattern = Regex.Escape("{") + "(?<Property>[a-zA-Z0-9]+)" + Regex.Escape("}");
             MatchEvaluator evaluator =
                 match =>
@@ -197,13 +205,22 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                             return value;
                         }
 
+                        if (key == "fileName")
+                        {
+                            // The 'fileName' built-in variable is only applied when the user did not include an
+                            // explicit value for a custom 'fileName' variable.
+                            canCache = false;
+                            return fileName;
+                        }
+
                         break;
                     }
 
                     return "[InvalidReference]";
                 };
 
-            return Regex.Replace(this.copyrightText, pattern, evaluator);
+            string expanded = Regex.Replace(this.copyrightText, pattern, evaluator);
+            return new KeyValuePair<string, bool>(expanded, canCache);
         }
     }
 }
