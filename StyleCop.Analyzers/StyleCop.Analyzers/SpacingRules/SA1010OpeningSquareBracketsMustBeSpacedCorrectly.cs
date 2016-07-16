@@ -76,7 +76,7 @@ namespace StyleCop.Analyzers.SpacingRules
 
             if (!firstInLine)
             {
-                precededBySpace = token.IsPrecededByWhitespace();
+                precededBySpace = token.IsPrecededByWhitespace(context.CancellationToken);
 
                 // ignore if handled by SA1026
                 ignorePrecedingSpaceProblem = precededBySpace && token.GetPreviousToken().IsKind(SyntaxKind.NewKeyword);

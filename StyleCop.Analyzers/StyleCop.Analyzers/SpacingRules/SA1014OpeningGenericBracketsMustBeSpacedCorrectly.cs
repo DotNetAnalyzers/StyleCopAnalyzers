@@ -81,7 +81,7 @@ namespace StyleCop.Analyzers.SpacingRules
             }
 
             bool firstInLine = token.IsFirstInLine();
-            bool precededBySpace = firstInLine || token.IsPrecededByWhitespace();
+            bool precededBySpace = firstInLine || token.IsPrecededByWhitespace(context.CancellationToken);
             bool followedBySpace = token.IsFollowedByWhitespace();
 
             if (!firstInLine && precededBySpace)

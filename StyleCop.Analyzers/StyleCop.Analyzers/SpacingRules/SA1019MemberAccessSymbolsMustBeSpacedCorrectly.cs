@@ -98,7 +98,7 @@ namespace StyleCop.Analyzers.SpacingRules
         private static void HandleMemberAccessSymbol(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             bool firstInLine = token.IsFirstInLine();
-            bool precededBySpace = firstInLine || token.IsPrecededByWhitespace();
+            bool precededBySpace = firstInLine || token.IsPrecededByWhitespace(context.CancellationToken);
             bool followedBySpace = token.IsFollowedByWhitespace();
 
             if (!firstInLine && precededBySpace)

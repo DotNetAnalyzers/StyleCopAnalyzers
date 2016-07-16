@@ -76,7 +76,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 return;
             }
 
-            bool precededBySpace = token.IsFirstInLine() || token.IsPrecededByWhitespace();
+            bool precededBySpace = token.IsFirstInLine() || token.IsPrecededByWhitespace(context.CancellationToken);
             bool followedBySpace = token.IsFollowedByWhitespace();
             bool lastInLine = token.IsLastInLine();
             bool precedesStickyCharacter;
