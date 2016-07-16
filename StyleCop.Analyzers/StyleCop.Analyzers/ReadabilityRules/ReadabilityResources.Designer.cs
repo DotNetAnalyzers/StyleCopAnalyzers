@@ -989,6 +989,15 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Replace with lambda..
+        /// </summary>
+        internal static string SA1130CodeFix {
+            get {
+                return ResourceManager.GetString("SA1130CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Lambda expressions are more succinct and easier to read than anonymous methods, so they should are preferred whenever the two are functionally equivalent..
         /// </summary>
         internal static string SA1130Description {

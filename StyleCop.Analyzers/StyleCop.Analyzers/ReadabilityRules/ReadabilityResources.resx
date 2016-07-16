@@ -426,6 +426,9 @@
   <data name="SA1129Title" xml:space="preserve">
     <value>Do not use default value type constructor</value>
   </data>
+  <data name="SA1130CodeFix" xml:space="preserve">
+    <value>Replace with lambda.</value>
+  </data>
   <data name="SA1130Description" xml:space="preserve">
     <value>Lambda expressions are more succinct and easier to read than anonymous methods, so they should are preferred whenever the two are functionally equivalent.</value>
   </data>
