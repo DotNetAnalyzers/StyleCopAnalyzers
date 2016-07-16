@@ -119,7 +119,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             var textElement = summaryElement.Content.FirstOrDefault() as XmlTextSyntax;
             var text = textElement == null ? string.Empty : XmlCommentHelper.GetText(textElement, true).TrimStart();
 
-            bool startsWithGetOrSet = text.StartsWith(startingTextGetsOrSets, StringComparison.Ordinal);
+            bool startsWithGetOrSet = text.StartsWith(startingTextGetsOrSets, StringComparison.OrdinalIgnoreCase);
             bool getterVisible, setterVisible;
             if (getter != null && setter != null)
             {
@@ -217,6 +217,16 @@ namespace StyleCop.Analyzers.DocumentationRules
                     if (!startsWithGetOrSet)
                     {
                         diagnosticProperties.Add(ExpectedTextKey, startingTextGetsOrSets);
+
+                        if (text.StartsWith(startingTextGets, StringComparison.OrdinalIgnoreCase))
+                        {
+                            diagnosticProperties.Add(TextToRemoveKey, text.Substring(0, startingTextGets.Length));
+                        }
+                        else if (text.StartsWith(startingTextSets, StringComparison.OrdinalIgnoreCase))
+                        {
+                            diagnosticProperties.Add(TextToRemoveKey, text.Substring(0, startingTextSets.Length));
+                        }
+
                         context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextGetsOrSets));
                     }
                 }
@@ -228,7 +238,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                         diagnosticProperties.Add(TextToRemoveKey, startingTextGetsOrSets);
                         context.ReportDiagnostic(Diagnostic.Create(SA1624Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), "get", startingTextGets));
                     }
-                    else if (!text.StartsWith(startingTextGets, StringComparison.Ordinal))
+                    else if (!text.StartsWith(startingTextGets, StringComparison.OrdinalIgnoreCase))
                     {
                         diagnosticProperties.Add(ExpectedTextKey, startingTextGets);
                         context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextGets));
@@ -243,7 +253,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     diagnosticProperties.Add(TextToRemoveKey, startingTextGetsOrSets);
                     context.ReportDiagnostic(Diagnostic.Create(SA1624Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), "set", startingTextSets));
                 }
-                else if (!text.StartsWith(startingTextSets, StringComparison.Ordinal))
+                else if (!text.StartsWith(startingTextSets, StringComparison.OrdinalIgnoreCase))
                 {
                     diagnosticProperties.Add(ExpectedTextKey, startingTextSets);
                     context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextSets));
