@@ -106,7 +106,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var prefix = plusMinusSyntax == null
                 ? string.Empty
                 : plusMinusSyntax.OperatorToken.Text;
-            var literalWithoutSuffix = LiteralExpressionHelpers.StripLiteralSuffix(literalExpressionSyntax);
+            var literalWithoutSuffix = literalExpressionSyntax.StripLiteralSuffix();
             var correspondingSuffix = LiteralSyntaxKindToSuffix[typeToken.Kind()];
             var fixedCodePreservingText = SyntaxFactory.ParseExpression(prefix + literalWithoutSuffix + correspondingSuffix);
 
