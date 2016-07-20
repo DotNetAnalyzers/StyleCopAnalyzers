@@ -193,8 +193,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 {
                     var memberAccessSymbol = context.SemanticModel.GetSymbolInfo(nameExpression.Parent, context.CancellationToken).Symbol;
 
-                    switch (memberAccessSymbol.Kind)
+                    switch (memberAccessSymbol?.Kind)
                     {
+                        case null:
+                            break;
+
                         case SymbolKind.Field:
                         case SymbolKind.Method:
                         case SymbolKind.Property:
