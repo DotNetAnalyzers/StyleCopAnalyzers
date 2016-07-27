@@ -254,6 +254,7 @@
     <Compile Include="MaintainabilityRules\SA1410UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1411UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1412UnitTests.cs" />
+    <Compile Include="MaintainabilityRules\SA1413UnitTests.cs" />
     <Compile Include="NamingRules\SA1300UnitTests.cs" />
     <Compile Include="NamingRules\SA1301UnitTests.cs" />
     <Compile Include="NamingRules\SA1302UnitTests.cs" />
@@ -278,6 +279,7 @@
     <Compile Include="OrderingRules\SA1203UnitTests.cs" />
     <Compile Include="OrderingRules\SA1204UnitTests.cs" />
     <Compile Include="OrderingRules\SA1205UnitTests.cs" />
+    <Compile Include="OrderingRules\SA1206CodeFixProviderUnitTests.cs" />
     <Compile Include="OrderingRules\SA1206UnitTests.cs" />
     <Compile Include="OrderingRules\SA1207UnitTests.cs" />
     <Compile Include="OrderingRules\SA1208UnitTests.cs" />
@@ -329,6 +331,7 @@
     <Compile Include="ReadabilityRules\SA1132UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1133UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1134UnitTests.cs" />
+    <Compile Include="ReadabilityRules\SA1136UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1139UnitTests.cs" />
     <Compile Include="ReadabilityRules\SX1101UnitTests.cs" />
     <Compile Include="Settings\SettingsFileCodeFixProviderUnitTests.cs" />

@@ -6,10 +6,11 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Linq;
+    using System.Xml.Linq;
     using Helpers;
     using Helpers.ObjectPools;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -59,7 +60,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class SA1625ElementDocumentationMustNotBeCopiedAndPasted : DiagnosticAnalyzer
+    internal class SA1625ElementDocumentationMustNotBeCopiedAndPasted : ElementDocumentationBase
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1625ElementDocumentationMustNotBeCopiedAndPasted"/>
@@ -75,49 +76,92 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<SyntaxNodeAnalysisContext> DocumentationTriviaAction = HandleDocumentationTrivia;
+        public SA1625ElementDocumentationMustNotBeCopiedAndPasted()
+            : base(inheritDocSuppressesWarnings: false)
+        {
+        }
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        public override void Initialize(AnalysisContext context)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, IEnumerable<XmlNodeSyntax> syntaxList, params Location[] diagnosticLocations)
         {
-            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            context.EnableConcurrentExecution();
-
-            context.RegisterSyntaxNodeAction(DocumentationTriviaAction, SyntaxKinds.DocumentationComment);
-        }
-
-        private static void HandleDocumentationTrivia(SyntaxNodeAnalysisContext context)
-        {
-            DocumentationCommentTriviaSyntax syntax = context.Node as DocumentationCommentTriviaSyntax;
-
             var objectPool = SharedPools.Default<HashSet<string>>();
             HashSet<string> documentationTexts = objectPool.Allocate();
 
-            foreach (var content in syntax.Content)
+            foreach (var documentationSyntax in syntaxList)
             {
-                string text = XmlCommentHelper.GetText(content, true)?.Trim();
+                var documentation = XmlCommentHelper.GetText(documentationSyntax, true)?.Trim();
 
-                if (string.IsNullOrWhiteSpace(text) || string.Equals(text, ParameterNotUsed, StringComparison.Ordinal))
+                if (ShouldSkipElement(documentation))
                 {
                     continue;
                 }
 
-                if (documentationTexts.Contains(text))
+                if (documentationTexts.Contains(documentation))
                 {
                     // Add violation
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, content.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, documentationSyntax.GetLocation()));
                 }
                 else
                 {
-                    documentationTexts.Add(text);
+                    documentationTexts.Add(documentation);
                 }
             }
 
             objectPool.ClearAndFree(documentationTexts);
+        }
+
+        /// <inheritdoc/>
+        protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, XElement completeDocumentation, params Location[] diagnosticLocations)
+        {
+            var objectPool = SharedPools.Default<HashSet<string>>();
+            HashSet<string> documentationTexts = objectPool.Allocate();
+
+            // Concatenate all XML node values
+            var documentationElements = completeDocumentation.Nodes()
+                .OfType<XElement>()
+                .Select(x =>
+                {
+                    var builder = StringBuilderPool.Allocate();
+
+                    foreach (var node in x.Nodes())
+                    {
+                        builder.Append(node.ToString().Trim());
+                    }
+
+                    var elementValue = builder.ToString();
+                    StringBuilderPool.ReturnAndFree(builder);
+
+                    return elementValue;
+                });
+
+            foreach (var documentation in documentationElements)
+            {
+                if (ShouldSkipElement(documentation))
+                {
+                    continue;
+                }
+
+                if (documentationTexts.Contains(documentation))
+                {
+                    // Add violation
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, diagnosticLocations.First()));
+                }
+                else
+                {
+                    documentationTexts.Add(documentation);
+                }
+            }
+
+            objectPool.ClearAndFree(documentationTexts);
+        }
+
+        private static bool ShouldSkipElement(string element)
+        {
+            return string.IsNullOrWhiteSpace(element) || string.Equals(element, ParameterNotUsed, StringComparison.Ordinal);
         }
     }
 }

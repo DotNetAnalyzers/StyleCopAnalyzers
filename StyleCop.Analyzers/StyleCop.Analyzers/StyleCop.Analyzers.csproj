@@ -56,6 +56,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DocumentationResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="DocumentationRules\ElementDocumentationBase.cs" />
     <Compile Include="DocumentationRules\ElementDocumentationSummaryBase.cs" />
     <Compile Include="DocumentationRules\FileHeaderAnalyzers.cs" />
     <Compile Include="DocumentationRules\PartialElementDocumentationSummaryBase.cs" />
@@ -120,6 +121,7 @@
     <Compile Include="Helpers\LiteralExpressionHelpers.cs" />
     <Compile Include="Helpers\LocationHelpers.cs" />
     <Compile Include="Helpers\MemberOrderHelper.cs" />
+    <Compile Include="Helpers\ModifierOrderHelper.cs" />
     <Compile Include="Helpers\NamedTypeHelpers.cs" />
     <Compile Include="Helpers\NameSyntaxHelpers.cs" />
     <Compile Include="Helpers\ObjectPools\ObjectPool`1.cs" />
@@ -184,6 +186,7 @@
     <Compile Include="MaintainabilityRules\SA1410RemoveDelegateParenthesisWhenPossible.cs" />
     <Compile Include="MaintainabilityRules\SA1411AttributeConstructorMustNotUseUnnecessaryParenthesis.cs" />
     <Compile Include="MaintainabilityRules\SA1412StoreFilesAsUtf8.cs" />
+    <Compile Include="MaintainabilityRules\SA1413UseTrailingCommasInMultiLineInitializers.cs" />
     <Compile Include="MaintainabilityRules\SystemDiagnosticsDebugDiagnosticBase.cs" />
     <Compile Include="NamingRules\NamingResources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -267,6 +270,7 @@
     <Compile Include="ReadabilityRules\SA1132DoNotCombineFields.cs" />
     <Compile Include="ReadabilityRules\SA1133DoNotCombineAttributes.cs" />
     <Compile Include="ReadabilityRules\SA1134AttributesMustNotShareLine.cs" />
+    <Compile Include="ReadabilityRules\SA1136EnumValuesShouldBeOnSeparateLines.cs" />
     <Compile Include="ReadabilityRules\SA1139UseLiteralSuffixNotationInsteadOfCasting.cs" />
     <Compile Include="ReadabilityRules\SX1101DoNotPrefixLocalMembersWithThis.cs" />
     <Compile Include="Settings\DeserializationFailureBehavior.cs" />
