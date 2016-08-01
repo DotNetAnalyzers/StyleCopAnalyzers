@@ -193,17 +193,20 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 {
                     var memberAccessSymbol = context.SemanticModel.GetSymbolInfo(nameExpression.Parent, context.CancellationToken).Symbol;
 
-                    switch (memberAccessSymbol.Kind)
+                    switch (memberAccessSymbol?.Kind)
                     {
-                        case SymbolKind.Field:
-                        case SymbolKind.Method:
-                        case SymbolKind.Property:
-                            if (memberAccessSymbol.IsStatic && (memberAccessSymbol.ContainingType.Name == symbol.Name))
-                            {
-                                return;
-                            }
+                    case null:
+                        break;
 
-                            break;
+                    case SymbolKind.Field:
+                    case SymbolKind.Method:
+                    case SymbolKind.Property:
+                        if (memberAccessSymbol.IsStatic && (memberAccessSymbol.ContainingType.Name == symbol.Name))
+                        {
+                            return;
+                        }
+
+                        break;
                     }
                 }
 
