@@ -19,7 +19,7 @@ the same code are marked with this symbol.
 
 ## Disabled Rules
 
-Several rules present StyleCop Classic have been intentionally omitted from StyleCop Analyzers. The following table
+Several rules present in StyleCop Classic have been intentionally omitted from StyleCop Analyzers. The following table
 lists each of these issues, along with a link to the issue where the decision was made to omit the rule.
 
 | ID | Title | Issue |
