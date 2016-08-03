@@ -48,6 +48,7 @@ namespace StyleCop.Analyzers.LayoutRules
         private static readonly Action<SyntaxNodeAnalysisContext> WhileStatementAction = HandleWhileStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> ForStatementAction = HandleForStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> ForEachStatementAction = HandleForEachStatement;
+        private static readonly Action<SyntaxNodeAnalysisContext> UsingStatementAction = HandleUsingStatement;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -64,6 +65,7 @@ namespace StyleCop.Analyzers.LayoutRules
             context.RegisterSyntaxNodeAction(WhileStatementAction, SyntaxKind.WhileStatement);
             context.RegisterSyntaxNodeAction(ForStatementAction, SyntaxKind.ForStatement);
             context.RegisterSyntaxNodeAction(ForEachStatementAction, SyntaxKind.ForEachStatement);
+            context.RegisterSyntaxNodeAction(UsingStatementAction, SyntaxKind.UsingStatement);
         }
 
         private static void HandleIfStatement(SyntaxNodeAnalysisContext context)
@@ -104,6 +106,12 @@ namespace StyleCop.Analyzers.LayoutRules
         {
             var forEachStatement = (ForEachStatementSyntax)context.Node;
             CheckChildStatement(context, forEachStatement.Statement);
+        }
+
+        private static void HandleUsingStatement(SyntaxNodeAnalysisContext context)
+        {
+            var usingStatement = (UsingStatementSyntax)context.Node;
+            CheckChildStatement(context, usingStatement.Statement);
         }
 
         private static void CheckChildStatement(SyntaxNodeAnalysisContext context, StatementSyntax childStatement)
