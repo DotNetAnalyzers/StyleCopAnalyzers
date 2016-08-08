@@ -127,6 +127,12 @@ namespace StyleCop.Analyzers
             try
             {
                 var root = JsonConvert.DeserializeObject<SettingsFile>(text.ToString());
+
+                if (root == null)
+                {
+                    throw new JsonException($"Settings file was missing or empty.");
+                }
+
                 return root.Settings;
             }
             catch (JsonException) when (failureBehavior == DeserializationFailureBehavior.ReturnDefaultSettings)
@@ -160,6 +166,12 @@ namespace StyleCop.Analyzers
                     {
                         SourceText additionalTextContent = additionalFile.GetText(cancellationToken);
                         var root = JsonConvert.DeserializeObject<SettingsFile>(additionalTextContent.ToString());
+
+                        if (root == null)
+                        {
+                            throw new JsonException($"Settings file at `{Path.GetFileName(additionalFile.Path)}` was missing or empty.");
+                        }
+
                         return root.Settings;
                     }
                 }
