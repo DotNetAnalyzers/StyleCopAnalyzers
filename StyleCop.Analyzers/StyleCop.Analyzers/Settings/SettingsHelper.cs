@@ -169,7 +169,7 @@ namespace StyleCop.Analyzers
 
                         if (root == null)
                         {
-                            throw new JsonException($"Settings file at `{Path.GetFileName(additionalFile.Path)}` was missing or empty.");
+                            throw new JsonException($"Settings file at '{Path.GetFileName(additionalFile.Path)}' was missing or empty.");
                         }
 
                         return root.Settings;
