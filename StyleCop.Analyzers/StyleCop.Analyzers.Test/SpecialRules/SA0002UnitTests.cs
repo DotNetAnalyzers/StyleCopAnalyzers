@@ -58,6 +58,19 @@ namespace NamespaceName { }
             await this.VerifyCSharpDiagnosticAsync(TestCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestEmptySettingsAsync()
+        {
+            // The test infrastructure will not add a settings file to the compilation if GetSettings returns null or an empty string.
+            // This is why we set settings to a simple whitespace character.
+            this.settings = " ";
+
+            // This diagnostic is reported without a location
+            DiagnosticResult expected = this.CSharpDiagnostic();
+
+            await this.VerifyCSharpDiagnosticAsync(TestCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override string GetSettings()
         {
