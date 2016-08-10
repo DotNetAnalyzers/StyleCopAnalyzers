@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -63,7 +64,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         protected override string XmlTagToHandle => XmlCommentHelper.SummaryXmlTag;
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location diagnosticLocation)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, XElement completeDocumentation, Location diagnosticLocation)
         {
             var propertyDeclaration = (PropertyDeclarationSyntax)context.Node;
             var propertyType = context.SemanticModel.GetTypeInfo(propertyDeclaration.Type);

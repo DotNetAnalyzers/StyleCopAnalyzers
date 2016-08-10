@@ -4,6 +4,7 @@
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Immutable;
+    using System.Xml.Linq;
     using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -47,7 +48,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         protected override string XmlTagToHandle => XmlCommentHelper.ValueXmlTag;
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location diagnosticLocation)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, XElement completeDocumentation, Location diagnosticLocation)
         {
             if (syntax != null && XmlCommentHelper.IsConsideredEmpty(syntax))
             {
