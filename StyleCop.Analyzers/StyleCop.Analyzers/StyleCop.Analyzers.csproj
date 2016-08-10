@@ -139,6 +139,7 @@
     <Compile Include="Helpers\XmlCommentHelper.cs" />
     <Compile Include="Helpers\XmlFileHeader.cs" />
     <Compile Include="Helpers\XmlSyntaxFactory.cs" />
+    <Compile Include="Helpers\XPathExtensions.cs" />
     <Compile Include="LayoutRules\LayoutResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

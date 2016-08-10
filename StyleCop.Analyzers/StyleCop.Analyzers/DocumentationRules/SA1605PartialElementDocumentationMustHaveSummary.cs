@@ -3,8 +3,10 @@
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
+    using System;
     using System.Collections.Immutable;
     using System.Linq;
+    using System.Xml.Linq;
     using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -88,14 +90,29 @@ namespace StyleCop.Analyzers.DocumentationRules
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location[] diagnosticLocations)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, XElement completeDocumentation, Location[] diagnosticLocations)
         {
-            if (syntax == null)
+            if (completeDocumentation != null)
             {
-                foreach (var location in diagnosticLocations)
+                var hasSummaryTag = completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.SummaryXmlTag);
+                var hasContentTag = completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.ContentXmlTag);
+
+                if (hasSummaryTag || hasContentTag)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                    return;
                 }
+            }
+            else
+            {
+                if (syntax != null)
+                {
+                    return;
+                }
+            }
+
+            foreach (var location in diagnosticLocations)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
             }
         }
     }

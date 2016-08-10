@@ -29,6 +29,8 @@ namespace StyleCop.Analyzers.Helpers
         internal const string PermissionXmlTag = "permission";
         internal const string ExceptionXmlTag = "exception";
         internal const string IncludeXmlTag = "include";
+        internal const string FileAttributeName = "file";
+        internal const string PathAttributeName = "path";
         internal const string CrefArgumentName = "cref";
         internal const string NameArgumentName = "name";
 
