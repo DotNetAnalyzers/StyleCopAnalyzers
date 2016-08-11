@@ -5,6 +5,8 @@ namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.Linq;
+    using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -32,6 +34,12 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// The ID for diagnostics produced by the <see cref="SA1617VoidReturnValueMustNotBeDocumented"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1617";
+
+        /// <summary>
+        /// The key used for signalling that no codefix should be offered.
+        /// </summary>
+        internal const string NoCodeFixKey = "NoCodeFix";
+
         private const string Title = "Void return value must not be documented";
         private const string MessageFormat = "Void return value must not be documented";
         private const string Description = "A C# code element does not contain a return value, or returns void, but the documentation header for the element contains a <returns> tag.";
@@ -82,8 +90,32 @@ namespace StyleCop.Analyzers.DocumentationRules
                 {
                     // Check if the return value is documented
                     var returnsElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.ReturnsXmlTag);
+                    if (returnsElement == null)
+                    {
+                        var includeElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag);
+                        if (includeElement != null)
+                        {
+                            string rawDocumentation;
+                            var declaration = context.SemanticModel.GetDeclaredSymbol(context.Node, context.CancellationToken);
+                            rawDocumentation = declaration?.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
+                            var completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
+                            if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.InheritdocXmlTag))
+                            {
+                                // Ignore nodes with an <inheritdoc/> tag in the included XML.
+                                return;
+                            }
 
-                    if (returnsElement != null)
+                            var includedReturnsElement = completeDocumentation.Nodes().OfType<XElement>().FirstOrDefault(element => element.Name == XmlCommentHelper.ReturnsXmlTag);
+                            if (includedReturnsElement != null)
+                            {
+                                var properties = ImmutableDictionary.Create<string, string>()
+                                    .Add(NoCodeFixKey, string.Empty);
+
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptor, includeElement.GetLocation(), properties));
+                            }
+                        }
+                    }
+                    else
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, returnsElement.GetLocation()));
                     }
