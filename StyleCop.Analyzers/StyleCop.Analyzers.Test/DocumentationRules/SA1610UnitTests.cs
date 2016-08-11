@@ -339,6 +339,8 @@ public class ClassName
 }";
             var expected = this.CSharpDiagnostic().WithLocation(5, 16);
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            var offeredFixes = await this.GetOfferedCSharpFixesAsync(testCode).ConfigureAwait(false);
+            Assert.Empty(offeredFixes);
         }
 
         /// <summary>

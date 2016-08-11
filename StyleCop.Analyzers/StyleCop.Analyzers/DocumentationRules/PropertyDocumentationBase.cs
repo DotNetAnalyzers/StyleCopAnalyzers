@@ -17,6 +17,11 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     internal abstract class PropertyDocumentationBase : DiagnosticAnalyzer
     {
+        /// <summary>
+        /// The key used for signalling that no codefix should be offered.
+        /// </summary>
+        internal const string NoCodeFixKey = "NoCodeFix";
+
         private readonly Action<SyntaxNodeAnalysisContext> propertyDeclarationAction;
 
         protected PropertyDocumentationBase()

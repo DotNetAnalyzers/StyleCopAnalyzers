@@ -51,6 +51,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, XElement completeDocumentation, Location diagnosticLocation)
         {
+            var properties = ImmutableDictionary.Create<string, string>();
+
             if (completeDocumentation != null)
             {
                 var hasValueTag = completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.ValueXmlTag);
@@ -58,6 +60,8 @@ namespace StyleCop.Analyzers.DocumentationRules
                 {
                     return;
                 }
+
+                properties = properties.Add(NoCodeFixKey, string.Empty);
             }
             else
             {
@@ -67,7 +71,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, diagnosticLocation));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, diagnosticLocation, properties));
         }
     }
 }
