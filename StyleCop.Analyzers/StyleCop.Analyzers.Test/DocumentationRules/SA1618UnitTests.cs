@@ -317,7 +317,6 @@ public class TestClass
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-
         /// <summary>
         /// Verifies that a generic type without a typeparam in included documentation will flag.
         /// </summary>

@@ -20,7 +20,6 @@ namespace StyleCop.Analyzers.DocumentationRules
     {
         public const string ExpectedTextKey = "ExpectedText";
         public const string TextToRemoveKey = "TextToRemove";
-        public const string NoCodeFixKey = "NoCodeFix";
 
         private const string SA1623DiagnosticId = "SA1623";
         private const string SA1624DiagnosticId = "SA1624";

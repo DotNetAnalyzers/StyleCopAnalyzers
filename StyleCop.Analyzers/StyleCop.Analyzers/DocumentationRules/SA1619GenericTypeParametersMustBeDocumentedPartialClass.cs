@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System;
     using System.Collections.Immutable;
     using System.Linq;
+    using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -128,28 +129,65 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag) != null)
+            var includeElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag);
+            if (includeElement != null)
             {
-                // Ignore nodes with an <inheritdoc/> tag.
-                return;
-            }
+                string rawDocumentation;
 
-            if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.SummaryXmlTag) == null)
-            {
-                // Ignore nodes without a <summary> tag.
-                return;
-            }
-
-            var xmlParameterNames = documentation.Content.GetXmlElements(XmlCommentHelper.TypeParamXmlTag)
-                .Select(XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>)
-                .Where(x => x != null)
-                .ToImmutableArray();
-
-            foreach (var parameter in typeDeclaration.TypeParameterList.Parameters)
-            {
-                if (!xmlParameterNames.Any(x => x.Identifier.Identifier.ValueText == parameter.Identifier.ValueText))
+                var declaration = context.SemanticModel.GetDeclaredSymbol(typeDeclaration, context.CancellationToken);
+                rawDocumentation = declaration?.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
+                var completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
+                if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.InheritdocXmlTag))
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, parameter.Identifier.GetLocation(), parameter.Identifier.ValueText));
+                    // Ignore nodes with an <inheritdoc/> tag in the included XML.
+                    return;
+                }
+
+                if (completeDocumentation.Nodes().OfType<XElement>().All(element => element.Name != XmlCommentHelper.SummaryXmlTag))
+                {
+                    // Ignore nodes without a <summary> tag.
+                    return;
+                }
+
+                var typeParameterAttributes = completeDocumentation.Nodes()
+                    .OfType<XElement>()
+                    .Where(element => element.Name == XmlCommentHelper.TypeParamXmlTag)
+                    .Select(element => element.Attribute(XmlCommentHelper.NameArgumentName))
+                    .Where(x => x != null);
+
+                foreach (var parameter in typeDeclaration.TypeParameterList.Parameters)
+                {
+                    if (!typeParameterAttributes.Any(x => x.Value == parameter.Identifier.ValueText))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, parameter.Identifier.GetLocation(), parameter.Identifier.ValueText));
+                    }
+                }
+            }
+            else
+            {
+                if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag) != null)
+                {
+                    // Ignore nodes with an <inheritdoc/> tag.
+                    return;
+                }
+
+                if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.SummaryXmlTag) == null)
+                {
+                    // Ignore nodes without a <summary> tag.
+                    return;
+                }
+
+                var xmlParameterNames = documentation.Content.GetXmlElements(XmlCommentHelper.TypeParamXmlTag)
+                    .Select(XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>)
+                    .Where(x => x != null)
+                    .ToImmutableArray();
+
+                foreach (var parameter in typeDeclaration.TypeParameterList.Parameters)
+                {
+                    if (!xmlParameterNames.Any(x => x.Identifier.Identifier.ValueText == parameter.Identifier.ValueText))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, parameter.Identifier.GetLocation(), parameter.Identifier.ValueText));
+                    }
                 }
             }
         }
