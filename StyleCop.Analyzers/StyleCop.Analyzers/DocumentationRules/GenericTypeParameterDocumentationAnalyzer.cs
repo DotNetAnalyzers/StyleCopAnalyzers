@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// Analyzer that covers generic typeparam documentation checks. This currently includes SA1620, SA1621.
+    /// Analyzer that covers generic typeparam documentation checks. This currently includes SA1620, SA1621, and SA1622.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class GenericTypeParameterDocumentationAnalyzer : DiagnosticAnalyzer
@@ -32,6 +32,12 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly LocalizableString SA1621MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1621MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString SA1621Description = new LocalizableResourceString(nameof(DocumentationResources.SA1621Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly string SA1621HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1621.md";
+
+        private static readonly string SA1622DiagnosticId = "SA1622";
+        private static readonly LocalizableString SA1622Title = new LocalizableResourceString(nameof(DocumentationResources.SA1622Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString SA1622MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1622MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString SA1622Description = new LocalizableResourceString(nameof(DocumentationResources.SA1622Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly string SA1622HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1622.md";
 
         private static readonly Action<SyntaxNodeAnalysisContext> TypeDeclarationAction = HandleTypeDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> DelegateDeclarationAction = HandleDelegateDeclaration;
@@ -58,9 +64,16 @@ namespace StyleCop.Analyzers.DocumentationRules
         public static DiagnosticDescriptor SA1621Descriptor { get; } =
             new DiagnosticDescriptor(SA1621DiagnosticId, SA1621Title, SA1621MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1621Description, SA1621HelpLink);
 
+        /// <summary>
+        /// Gets the descriptor for SA1622.
+        /// </summary>
+        /// <value>The <see cref="DiagnosticDescriptor"/> for SA1621.</value>
+        public static DiagnosticDescriptor SA1622Descriptor { get; } =
+            new DiagnosticDescriptor(SA1622DiagnosticId, SA1622Title, SA1622MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1622Description, SA1622HelpLink);
+
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-            ImmutableArray.Create(SA1620MissingTypeParameterDescriptor, SA1621Descriptor);
+            ImmutableArray.Create(SA1620MissingTypeParameterDescriptor, SA1621Descriptor, SA1622Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -136,6 +149,14 @@ namespace StyleCop.Analyzers.DocumentationRules
                 {
                     var documentedParameterName = typeParameterAttributes[i].Attribute(XmlCommentHelper.NameArgumentName)?.Value;
                     HandleTypeParamElement(context, documentedParameterName, i, typeParameterList, includeElement.GetLocation());
+
+                    if (XmlCommentHelper.IsConsideredEmpty(typeParameterAttributes[i]))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                SA1622Descriptor,
+                                includeElement.GetLocation()));
+                    }
                 }
             }
             else
@@ -152,6 +173,14 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                     var location = nameAttribute?.Identifier?.GetLocation() ?? typeParameterTags[i].GetLocation();
                     HandleTypeParamElement(context, documentedParameterName, i, typeParameterList, location);
+
+                    if (XmlCommentHelper.IsConsideredEmpty(typeParameterTags[i], true))
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                SA1622Descriptor,
+                                typeParameterTags[i].GetLocation()));
+                    }
                 }
             }
         }

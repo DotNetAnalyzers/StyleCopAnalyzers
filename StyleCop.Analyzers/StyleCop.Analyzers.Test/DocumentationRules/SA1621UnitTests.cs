@@ -415,6 +415,11 @@ public class TestClass
             return project;
         }
 
+        protected override IEnumerable<string> GetDisabledDiagnostics()
+        {
+            yield return GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor.Id;
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new GenericTypeParameterDocumentationAnalyzer();

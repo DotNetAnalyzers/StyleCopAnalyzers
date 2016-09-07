@@ -197,6 +197,33 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A &lt;typeparam&gt; tag within the Xml header documentation for a generic C# element is empty..
+        /// </summary>
+        internal static string SA1622Description {
+            get {
+                return ResourceManager.GetString("SA1622Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generic type parameter documentation must have text..
+        /// </summary>
+        internal static string SA1622MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1622MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generic type parameter documentation must have text.
+        /// </summary>
+        internal static string SA1622Title {
+            get {
+                return ResourceManager.GetString("SA1622Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The documentation text within a C# property’s &lt;summary&gt; tag does not match the accessors within the property..
         /// </summary>
         internal static string SA1623Description {

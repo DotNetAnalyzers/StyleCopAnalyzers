@@ -83,7 +83,6 @@
     <Compile Include="DocumentationRules\SA1617VoidReturnValueMustNotBeDocumented.cs" />
     <Compile Include="DocumentationRules\SA1618GenericTypeParametersMustBeDocumented.cs" />
     <Compile Include="DocumentationRules\SA1619GenericTypeParametersMustBeDocumentedPartialClass.cs" />
-    <Compile Include="DocumentationRules\SA1622GenericTypeParameterDocumentationMustHaveText.cs" />
     <Compile Include="DocumentationRules\SA1625ElementDocumentationMustNotBeCopiedAndPasted.cs" />
     <Compile Include="DocumentationRules\SA1626SingleLineCommentsMustNotUseDocumentationStyleSlashes.cs" />
     <Compile Include="DocumentationRules\SA1627DocumentationTextMustNotBeEmpty.cs" />

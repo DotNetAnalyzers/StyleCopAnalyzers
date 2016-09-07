@@ -123,8 +123,8 @@ public class ClassName
     /// <summary>
     /// Foo
     /// </summary>
-    ///<typeparam name=""foo""></typeparam>
-    ///<typeparam name=""bar"">   
+    ///<typeparam name=""Ta""></typeparam>
+    ///<typeparam name=""Tb"">   
 
     ///</typeparam>
 $$
@@ -132,8 +132,8 @@ $$
 
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(10, 8),
-                this.CSharpDiagnostic().WithLocation(11, 8)
+                this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(10, 8),
+                this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(11, 8)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
@@ -147,16 +147,16 @@ $$
 /// <summary>
 /// Foo
 /// </summary>
-///<typeparam name=""foo""></typeparam>
-///<typeparam name=""bar"">   
+///<typeparam name=""Ta""></typeparam>
+///<typeparam name=""Tb"">   
 
 ///</typeparam>
 public $$";
 
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(5, 4),
-                this.CSharpDiagnostic().WithLocation(6, 4)
+                this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(5, 4),
+                this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(6, 4)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
@@ -175,8 +175,8 @@ public class ClassName
     /// <summary>
     /// Foo
     /// </summary>
-    ///<typeparam name=""foo""/>
-    ///<typeparam name=""bar"">
+    ///<typeparam name=""Ta""/>
+    ///<typeparam name=""Tb"">
     ///<para>
     ///     
     ///</para>
@@ -186,8 +186,8 @@ $$
 
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(10, 8),
-                this.CSharpDiagnostic().WithLocation(11, 8)
+                this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(10, 8),
+                this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(11, 8)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
@@ -201,8 +201,8 @@ $$
 /// <summary>
 /// Foo
 /// </summary>
-///<typeparam name=""foo""/>
-///<typeparam name=""bar"">
+///<typeparam name=""Ta""/>
+///<typeparam name=""Tb"">
 ///<para>
 ///     
 ///</para>
@@ -210,8 +210,8 @@ public $$";
 
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(5, 4),
-                this.CSharpDiagnostic().WithLocation(6, 4)
+                this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(5, 4),
+                this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(6, 4)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
@@ -219,7 +219,7 @@ public $$";
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1622GenericTypeParameterDocumentationMustHaveText();
+            yield return new GenericTypeParameterDocumentationAnalyzer();
         }
     }
 }

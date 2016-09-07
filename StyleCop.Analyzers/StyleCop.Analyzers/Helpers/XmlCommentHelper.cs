@@ -71,8 +71,9 @@ namespace StyleCop.Analyzers.Helpers
         /// A comment is empty if it does not have any text in any XML element and it does not have an empty XML element in it.
         /// </summary>
         /// <param name="xmlSyntax">The xmlSyntax that should be checked</param>
+        /// <param name="considerEmptyElements">Flag indicating if empty elements should be considered or assumed non-empty.</param>
         /// <returns>true, if the comment should be considered empty, false otherwise.</returns>
-        internal static bool IsConsideredEmpty(XmlNodeSyntax xmlSyntax)
+        internal static bool IsConsideredEmpty(XmlNodeSyntax xmlSyntax, bool considerEmptyElements = false)
         {
             var text = xmlSyntax as XmlTextSyntax;
             if (text != null)
@@ -120,7 +121,7 @@ namespace StyleCop.Analyzers.Helpers
             if (emptyElement != null)
             {
                 // This includes <inheritdoc/>
-                return false;
+                return considerEmptyElements;
             }
 
             var processingElement = xmlSyntax as XmlProcessingInstructionSyntax;
