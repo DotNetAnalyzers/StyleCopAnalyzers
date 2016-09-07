@@ -14,13 +14,10 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using Xunit;
 
     /// <summary>
-    /// This class contains unit tests for <see cref="SA1620GenericTypeParameterDocumentationMustMatchTypeParameters"/>.
+    /// This class contains unit tests for the SA1620 diagnostic.
     /// </summary>
     public class SA1620UnitTests : DiagnosticVerifier
     {
-        private const string OrderFormatString = "The type parameter documentation for '{0}' should be at position {1}.";
-        private const string ParameterDoesNotExistFormatString = "The type parameter '{0}' does not exist.";
-
         public static IEnumerable<object[]> Members
         {
             get
@@ -160,8 +157,7 @@ public class ClassName
     public ##
 }";
 
-            var diagnostic = this.CSharpDiagnostic()
-                .WithMessageFormat(OrderFormatString);
+            var diagnostic = this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1620WrongOrderDescriptor);
 
             var expected = new[]
             {
@@ -184,8 +180,7 @@ public class ClassName
 /// <typeparam name=""Ta"">Param 1</param>
 public ##";
 
-            var diagnostic = this.CSharpDiagnostic()
-                .WithMessageFormat(OrderFormatString);
+            var diagnostic = this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1620WrongOrderDescriptor);
 
             var expected = new[]
             {
@@ -297,9 +292,7 @@ public class ClassName
     public ##
 }";
 
-            var diagnostic = this.CSharpDiagnostic()
-                .WithMessageFormat(ParameterDoesNotExistFormatString);
-
+            var diagnostic = this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1620MissingTypeParameterDescriptor);
             var expected = diagnostic.WithLocation(12, 26).WithArguments("Tc");
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);
@@ -318,9 +311,7 @@ public class ClassName
 /// <typeparam name=""Tc"">Param 3</param>
 public ##";
 
-            var diagnostic = this.CSharpDiagnostic()
-                .WithMessageFormat(ParameterDoesNotExistFormatString);
-
+            var diagnostic = this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1620MissingTypeParameterDescriptor);
             var expected = diagnostic.WithLocation(7, 22).WithArguments("Tc");
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);
@@ -345,9 +336,7 @@ public class ClassName
     public ##
 }";
 
-            var diagnostic = this.CSharpDiagnostic()
-                .WithMessageFormat(OrderFormatString);
-
+            var diagnostic = this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1620WrongOrderDescriptor);
             var expected = diagnostic.WithLocation(12, 26).WithArguments("Tb", 2);
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);
@@ -366,9 +355,7 @@ public class ClassName
 /// <typeparam name=""Tb"">Param 3</param>
 public ##";
 
-            var diagnostic = this.CSharpDiagnostic()
-                .WithMessageFormat(OrderFormatString);
-
+            var diagnostic = this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1620WrongOrderDescriptor);
             var expected = diagnostic.WithLocation(7, 22).WithArguments("Tb", 2);
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);
@@ -438,10 +425,11 @@ public ##
 /// <include file='TypeWithWronglyOrderedTypeparamsDoc.xml' path='/Foo/*'/>
 public ##
 ";
+            var diagnostic = this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1620WrongOrderDescriptor);
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(2, 5).WithMessageFormat(OrderFormatString).WithArguments("Tb", 2),
-                this.CSharpDiagnostic().WithLocation(2, 5).WithMessageFormat(OrderFormatString).WithArguments("Ta", 1),
+                diagnostic.WithLocation(2, 5).WithArguments("Tb", 2),
+                diagnostic.WithLocation(2, 5).WithArguments("Ta", 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);
@@ -460,10 +448,14 @@ public ##
 /// <include file='TypeWithMissingTypeparamDoc.xml' path='/Foo/*'/>
 public ##
 ";
+
+            var wrongOrderDiagnostic = this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1620WrongOrderDescriptor);
+            var missingDiagnostic = this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1620MissingTypeParameterDescriptor);
+
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(2, 5).WithMessageFormat(OrderFormatString).WithArguments("Tb", 2),
-                this.CSharpDiagnostic().WithLocation(2, 5).WithMessageFormat(ParameterDoesNotExistFormatString).WithArguments("Tc"),
+                wrongOrderDiagnostic.WithLocation(2, 5).WithArguments("Tb", 2),
+                missingDiagnostic.WithLocation(2, 5).WithArguments("Tc"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);
@@ -549,10 +541,11 @@ public class TestClass
     public ##
 }
 ";
+            var diagnostic = this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1620WrongOrderDescriptor);
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(5, 9).WithMessageFormat(OrderFormatString).WithArguments("Tb", 2),
-                this.CSharpDiagnostic().WithLocation(5, 9).WithMessageFormat(OrderFormatString).WithArguments("Ta", 1),
+                diagnostic.WithLocation(5, 9).WithArguments("Tb", 2),
+                diagnostic.WithLocation(5, 9).WithArguments("Ta", 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);
@@ -575,10 +568,14 @@ public class TestClass
     public ##
 }
 ";
+
+            var wrongOrderDiagnostic = this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1620WrongOrderDescriptor);
+            var missingDiagnostic = this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1620MissingTypeParameterDescriptor);
+
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(5, 9).WithMessageFormat(OrderFormatString).WithArguments("Tb", 2),
-                this.CSharpDiagnostic().WithLocation(5, 9).WithMessageFormat(ParameterDoesNotExistFormatString).WithArguments("Tc"),
+                wrongOrderDiagnostic.WithLocation(5, 9).WithArguments("Tb", 2),
+                missingDiagnostic.WithLocation(5, 9).WithArguments("Tc"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);
@@ -687,7 +684,7 @@ public class TestClass
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1620GenericTypeParameterDocumentationMustMatchTypeParameters();
+            yield return new GenericTypeParameterDocumentationAnalyzer();
         }
     }
 }

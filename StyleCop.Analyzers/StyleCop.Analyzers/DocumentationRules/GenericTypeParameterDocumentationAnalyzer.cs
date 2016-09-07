@@ -15,48 +15,52 @@ namespace StyleCop.Analyzers.DocumentationRules
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// The <c>&lt;typeparam&gt;</c> tags within the XML header documentation for a generic C# element do not match the
-    /// generic type parameters on the element.
+    /// Analyzer that covers generic typeparam documentation checks. This currently includes SA1620, SA1621.
     /// </summary>
-    /// <remarks>
-    /// <para>C# syntax provides a mechanism for inserting documentation for classes and elements directly into the
-    /// code, through the use of XML documentation headers. For an introduction to these headers and a description of
-    /// the header syntax, see the following article:
-    /// <see href="http://msdn.microsoft.com/en-us/magazine/cc302121.aspx">XML Comments Let You Build Documentation
-    /// Directly From Your Visual Studio .NET Source Files</see>.</para>
-    ///
-    /// <para>A violation of this rule occurs if the <c>&lt;typeparam&gt;</c> tags within the element's header
-    /// documentation do not match the generic type parameters on the element, or do not appear in the same order as the
-    /// element's type parameters.</para>
-    /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class SA1620GenericTypeParameterDocumentationMustMatchTypeParameters : DiagnosticAnalyzer
+    internal class GenericTypeParameterDocumentationAnalyzer : DiagnosticAnalyzer
     {
-        /// <summary>
-        /// The ID for diagnostics produced by the
-        /// <see cref="SA1620GenericTypeParameterDocumentationMustMatchTypeParameters"/> analyzer.
-        /// </summary>
-        public const string DiagnosticId = "SA1620";
-        private const string Title = "Generic type parameter documentation must match type parameters";
-        private const string Description = "The <typeparam> tags within the Xml header documentation for a generic C# element do not match the generic type parameters on the element.";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1620.md";
+        private static readonly string SA1620DiagnosticId = "SA1620";
+        private static readonly LocalizableString SA1620Title = new LocalizableResourceString(nameof(DocumentationResources.SA1620Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString SA1620MissingMessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1620MissingMessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString SA1620WrongOrderMessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1620WrongOrderMessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString SA1620Description = new LocalizableResourceString(nameof(DocumentationResources.SA1620Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly string SA1620HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1620.md";
 
-        private const string MissingTypeParamForDocumentationMessageFormat = "The type parameter '{0}' does not exist.";
-        private const string TypeParamWrongOrderMessageFormat = "The type parameter documentation for '{0}' should be at position {1}.";
-
-        private static readonly DiagnosticDescriptor MissingTypeParameterDescriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MissingTypeParamForDocumentationMessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
-
-        private static readonly DiagnosticDescriptor OrderDescriptor =
-                   new DiagnosticDescriptor(DiagnosticId, Title, TypeParamWrongOrderMessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+        private static readonly string SA1621DiagnosticId = "SA1621";
+        private static readonly LocalizableString SA1621Title = new LocalizableResourceString(nameof(DocumentationResources.SA1621Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString SA1621MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1621MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString SA1621Description = new LocalizableResourceString(nameof(DocumentationResources.SA1621Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly string SA1621HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1621.md";
 
         private static readonly Action<SyntaxNodeAnalysisContext> TypeDeclarationAction = HandleTypeDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> DelegateDeclarationAction = HandleDelegateDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> MethodDeclarationAction = HandleMethodDeclaration;
 
+        /// <summary>
+        /// Gets the descriptor for SA1620, where the typeparam tag is missing.
+        /// </summary>
+        /// <value>The <see cref="DiagnosticDescriptor"/> for SA1620.</value>
+        public static DiagnosticDescriptor SA1620MissingTypeParameterDescriptor { get; } =
+            new DiagnosticDescriptor(SA1620DiagnosticId, SA1620Title, SA1620MissingMessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1620Description, SA1620HelpLink);
+
+        /// <summary>
+        /// Gets the descriptor for SA1620, where the typeparam tags is not ordered correctly.
+        /// </summary>
+        /// <value>The <see cref="DiagnosticDescriptor"/> for SA1620.</value>
+        public static DiagnosticDescriptor SA1620WrongOrderDescriptor { get; } =
+                   new DiagnosticDescriptor(SA1620DiagnosticId, SA1620Title, SA1620WrongOrderMessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1620Description, SA1620HelpLink);
+
+        /// <summary>
+        /// Gets the descriptor for SA1621.
+        /// </summary>
+        /// <value>The <see cref="DiagnosticDescriptor"/> for SA1621.</value>
+        public static DiagnosticDescriptor SA1621Descriptor { get; } =
+            new DiagnosticDescriptor(SA1621DiagnosticId, SA1621Title, SA1621MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, SA1621Description, SA1621HelpLink);
+
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-            ImmutableArray.Create(MissingTypeParameterDescriptor);
+            ImmutableArray.Create(SA1620MissingTypeParameterDescriptor, SA1621Descriptor);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -124,33 +128,30 @@ namespace StyleCop.Analyzers.DocumentationRules
                 var typeParameterAttributes = completeDocumentation.Nodes()
                     .OfType<XElement>()
                     .Where(element => element.Name == XmlCommentHelper.TypeParamXmlTag)
-                    .Select(element => element.Attribute(XmlCommentHelper.NameArgumentName))
-                    .Where(x => x != null)
                     .ToImmutableArray();
 
                 // Check based on the documented type parameters, as we must detect scenarios where there are too many type parameters documented.
                 // It is not necessary to detect missing type parameter documentation, this belongs to SA1618.
                 for (var i = 0; i < typeParameterAttributes.Length; i++)
                 {
-                    var documentedParameterName = typeParameterAttributes[i].Value;
+                    var documentedParameterName = typeParameterAttributes[i].Attribute(XmlCommentHelper.NameArgumentName)?.Value;
                     HandleTypeParamElement(context, documentedParameterName, i, typeParameterList, includeElement.GetLocation());
                 }
             }
             else
             {
-                var xmlParameterNames = documentation.Content.GetXmlElements(XmlCommentHelper.TypeParamXmlTag)
-                    .Select(XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>)
-                    .Where(x => x != null)
+                var typeParameterTags = documentation.Content.GetXmlElements(XmlCommentHelper.TypeParamXmlTag)
                     .ToImmutableArray();
 
                 // Check based on the documented type parameters, as we must detect scenarios where there are too many type parameters documented.
                 // It is not necessary to detect missing type parameter documentation, this belongs to SA1618.
-                for (var i = 0; i < xmlParameterNames.Length; i++)
+                for (var i = 0; i < typeParameterTags.Length; i++)
                 {
-                    var nameSyntax = xmlParameterNames[i].Identifier;
-                    var documentedParameterName = nameSyntax?.Identifier.ValueText;
+                    var nameAttribute = XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>(typeParameterTags[i]);
+                    var documentedParameterName = nameAttribute?.Identifier?.Identifier.ValueText;
 
-                    HandleTypeParamElement(context, documentedParameterName, i, typeParameterList, nameSyntax.Identifier.GetLocation());
+                    var location = nameAttribute?.Identifier?.GetLocation() ?? typeParameterTags[i].GetLocation();
+                    HandleTypeParamElement(context, documentedParameterName, i, typeParameterList, location);
                 }
             }
         }
@@ -159,7 +160,11 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             if (string.IsNullOrWhiteSpace(documentedParameterName))
             {
-                // Make sure we ignore violations that should be reported by SA1621 instead.
+                context.ReportDiagnostic(
+                    Diagnostic.Create(
+                        SA1621Descriptor,
+                        locationToReport));
+
                 return;
             }
 
@@ -174,7 +179,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             {
                 context.ReportDiagnostic(
                     Diagnostic.Create(
-                        OrderDescriptor,
+                        SA1620WrongOrderDescriptor,
                         locationToReport,
                         documentedParameterName,
                         typeParameterList.Parameters.IndexOf(matchingTypeParameter) + 1));
@@ -183,7 +188,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             {
                 context.ReportDiagnostic(
                     Diagnostic.Create(
-                        MissingTypeParameterDescriptor,
+                        SA1620MissingTypeParameterDescriptor,
                         locationToReport,
                         documentedParameterName));
             }
