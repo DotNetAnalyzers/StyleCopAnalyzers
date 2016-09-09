@@ -76,6 +76,16 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DocumentationResources.fr-FR.resx</DependentUpon>
     </Compile>
+    <Compile Include="DocumentationRules\DocumentationResources.pl-PL.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DocumentationResources.pl-PL.resx</DependentUpon>
+    </Compile>
+    <Compile Include="DocumentationRules\DocumentationResources.pt-BR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DocumentationResources.pt-BR.resx</DependentUpon>
+    </Compile>
     <Compile Include="DocumentationRules\ElementDocumentationBase.cs" />
     <Compile Include="DocumentationRules\ElementDocumentationSummaryBase.cs" />
     <Compile Include="DocumentationRules\FileHeaderAnalyzers.cs" />
@@ -430,6 +440,14 @@
     <EmbeddedResource Include="DocumentationRules\DocumentationResources.fr-FR.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>DocumentationResources.fr-FR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.pl-PL.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DocumentationResources.pl-PL.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.pt-BR.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>DocumentationResources.pt-BR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="DocumentationRules\DocumentationResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
