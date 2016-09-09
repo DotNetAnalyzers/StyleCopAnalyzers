@@ -6,8 +6,10 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System;
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Globalization;
     using System.Linq;
     using System.Text.RegularExpressions;
+    using System.Threading;
     using System.Threading.Tasks;
     using Helpers;
     using Microsoft.CodeAnalysis;
@@ -79,6 +81,9 @@ namespace StyleCop.Analyzers.DocumentationRules
             var typeDeclaration = node.FirstAncestorOrSelf<BaseTypeDeclarationSyntax>();
             var declarationSyntax = node.FirstAncestorOrSelf<BaseMethodDeclarationSyntax>();
             bool isStruct = typeDeclaration.IsKind(SyntaxKind.StructDeclaration);
+            var settings = document.Project.AnalyzerOptions.GetStyleCopSettings(CancellationToken.None);
+            var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
+            var resourceManager = DocumentationResources.ResourceManager;
 
             TypeParameterListSyntax typeParameterList;
             ClassDeclarationSyntax classDeclaration = typeDeclaration as ClassDeclarationSyntax;
@@ -122,7 +127,10 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
             else if (declarationSyntax is DestructorDeclarationSyntax)
             {
-                standardText = SA1643DestructorSummaryDocumentationMustBeginWithStandardText.DestructorStandardText;
+                standardText =
+                    ImmutableArray.Create(
+                        resourceManager.GetString("DestructorStandardTextFirstPart", culture),
+                        resourceManager.GetString("DestructorStandardTextSecondPart", culture));
             }
             else
             {
