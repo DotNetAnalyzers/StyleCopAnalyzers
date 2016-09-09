@@ -69,7 +69,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorCorrectDocumentationSimpleAsync(
                 typeKind,
                 "public",
-                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
                 false).ConfigureAwait(false);
         }
@@ -82,7 +82,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorCorrectDocumentationCustomizedAsync(
                 typeKind,
                 "public",
-                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
                 false).ConfigureAwait(false);
         }
@@ -95,7 +95,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorCorrectDocumentationSimpleAsync(
                 typeKind,
                 "public",
-                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
                 true).ConfigureAwait(false);
         }
@@ -108,7 +108,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorCorrectDocumentationCustomizedAsync(
                 typeKind,
                 "public",
-                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
                 true).ConfigureAwait(false);
         }
@@ -121,7 +121,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorCorrectDocumentationAsync(
                 typeKind,
                 "private",
-                DocumentationResources.PrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.PrivateConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.PrivateConstructorStandardTextSecondPart, typeKind),
                 string.Empty,
                 false).ConfigureAwait(false);
@@ -135,7 +135,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorCorrectDocumentationAsync(
                 typeKind,
                 "private",
-                DocumentationResources.PrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.PrivateConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.PrivateConstructorStandardTextSecondPart, typeKind) + " externally",
                 string.Empty,
                 false).ConfigureAwait(false);
@@ -149,7 +149,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorCorrectDocumentationSimpleAsync(
                 typeKind,
                 "private",
-                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
                 false).ConfigureAwait(false);
         }
@@ -162,7 +162,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorCorrectDocumentationCustomizedAsync(
                 typeKind,
                 "private",
-                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
                 false).ConfigureAwait(false);
         }
@@ -175,7 +175,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorCorrectDocumentationAsync(
                 typeKind,
                 "private",
-                DocumentationResources.PrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.PrivateConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.PrivateConstructorStandardTextSecondPart, typeKind),
                 string.Empty,
                 true).ConfigureAwait(false);
@@ -189,7 +189,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorCorrectDocumentationAsync(
                 typeKind,
                 "private",
-                DocumentationResources.PrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.PrivateConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.PrivateConstructorStandardTextSecondPart, typeKind) + " externally",
                 string.Empty,
                 true).ConfigureAwait(false);
@@ -203,7 +203,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorCorrectDocumentationSimpleAsync(
                 typeKind,
                 "private",
-                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
                 true).ConfigureAwait(false);
         }
@@ -216,7 +216,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorCorrectDocumentationCustomizedAsync(
                 typeKind,
                 "private",
-                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
                 true).ConfigureAwait(false);
         }
@@ -229,7 +229,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorCorrectDocumentationAsync(
                 typeKind,
                 "static",
-                DocumentationResources.StaticConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.StaticConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, typeKind),
                 string.Empty,
                 false).ConfigureAwait(false);
@@ -243,7 +243,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorCorrectDocumentationAsync(
                 typeKind,
                 "static",
-                DocumentationResources.StaticConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.StaticConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, typeKind),
                 string.Empty,
                 true).ConfigureAwait(false);
@@ -257,7 +257,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorMissingDocumentationAsync(
                 typeKind,
                 "public",
-                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
                 false).ConfigureAwait(false);
         }
@@ -270,7 +270,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorMissingDocumentationAsync(
                 typeKind,
                 "public",
-                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
                 true).ConfigureAwait(false);
         }
@@ -283,7 +283,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorMissingDocumentationAsync(
                 typeKind,
                 "private",
-                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
                 false).ConfigureAwait(false);
         }
@@ -296,7 +296,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorMissingDocumentationAsync(
                 typeKind,
                 "private",
-                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
                 true).ConfigureAwait(false);
         }
@@ -309,7 +309,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorMissingDocumentationAsync(
                 typeKind,
                 "static",
-                DocumentationResources.StaticConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.StaticConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, typeKind),
                 false).ConfigureAwait(false);
         }
@@ -322,7 +322,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorMissingDocumentationAsync(
                 typeKind,
                 "static",
-                DocumentationResources.StaticConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.StaticConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, typeKind),
                 true).ConfigureAwait(false);
         }
@@ -335,7 +335,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorSimpleDocumentationAsync(
                 typeKind,
                 "public",
-                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
                 false).ConfigureAwait(false);
         }
@@ -348,7 +348,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorSimpleDocumentationAsync(
                 typeKind,
                 "public",
-                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
                 true).ConfigureAwait(false);
         }
@@ -361,7 +361,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorSimpleDocumentationAsync(
                 typeKind,
                 "private",
-                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
                 false).ConfigureAwait(false);
         }
@@ -374,7 +374,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorSimpleDocumentationAsync(
                 typeKind,
                 "private",
-                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
                 true).ConfigureAwait(false);
         }
@@ -387,7 +387,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorSimpleDocumentationAsync(
                 typeKind,
                 "static",
-                DocumentationResources.StaticConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.StaticConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, typeKind),
                 false).ConfigureAwait(false);
         }
@@ -400,7 +400,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorSimpleDocumentationAsync(
                 typeKind,
                 "static",
-                DocumentationResources.StaticConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.StaticConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, typeKind),
                 true).ConfigureAwait(false);
         }
@@ -413,7 +413,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorSimpleDocumentationWrongTypeNameAsync(
                 typeKind,
                 "public",
-                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
                 false).ConfigureAwait(false);
         }
@@ -426,7 +426,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorSimpleDocumentationWrongTypeNameAsync(
                 typeKind,
                 "public",
-                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
                 true).ConfigureAwait(false);
         }
@@ -439,7 +439,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorSimpleDocumentationWrongTypeNameAsync(
                 typeKind,
                 "private",
-                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
                 false).ConfigureAwait(false);
         }
@@ -452,7 +452,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorSimpleDocumentationWrongTypeNameAsync(
                 typeKind,
                 "private",
-                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
                 true).ConfigureAwait(false);
         }
@@ -465,7 +465,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorSimpleDocumentationWrongTypeNameAsync(
                 typeKind,
                 "static",
-                DocumentationResources.StaticConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.StaticConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, typeKind),
                 false).ConfigureAwait(false);
         }
@@ -478,7 +478,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             await this.TestConstructorSimpleDocumentationWrongTypeNameAsync(
                 typeKind,
                 "static",
-                DocumentationResources.StaticConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.StaticConstructorStandardTextFirstPart, typeKind),
                 string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, typeKind),
                 true).ConfigureAwait(false);
         }

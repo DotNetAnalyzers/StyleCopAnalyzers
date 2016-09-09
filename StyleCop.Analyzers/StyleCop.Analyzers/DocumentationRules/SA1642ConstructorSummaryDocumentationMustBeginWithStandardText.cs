@@ -140,7 +140,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             {
                 HandleDeclaration(
                     context,
-                    resourceManager.GetString("StaticConstructorStandardTextFirstPart", culture),
+                    string.Format(resourceManager.GetString("StaticConstructorStandardTextFirstPart", culture), typeKindText),
                     string.Format(resourceManager.GetString("StaticConstructorStandardTextSecondPart", culture), typeKindText),
                     Descriptor);
             }
@@ -148,7 +148,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             {
                 var privateConstructorMatch = HandleDeclaration(
                     context,
-                    resourceManager.GetString("PrivateConstructorStandardTextFirstPart", culture),
+                    string.Format(resourceManager.GetString("PrivateConstructorStandardTextFirstPart", culture), typeKindText),
                     string.Format(
                         resourceManager.GetString("PrivateConstructorStandardTextSecondPart", culture),
                         typeKindText),
@@ -162,7 +162,8 @@ namespace StyleCop.Analyzers.DocumentationRules
                 // also allow the non-private wording for private constructors
                 HandleDeclaration(
                     context,
-                    resourceManager.GetString("NonPrivateConstructorStandardTextFirstPart", culture),
+                    string.Format(resourceManager.GetString("NonPrivateConstructorStandardTextFirstPart", culture),
+                        typeKindText),
                     string.Format(
                         resourceManager.GetString("NonPrivateConstructorStandardTextSecondPart", culture),
                         typeKindText),
@@ -172,7 +173,8 @@ namespace StyleCop.Analyzers.DocumentationRules
             {
                 HandleDeclaration(
                     context,
-                    resourceManager.GetString("NonPrivateConstructorStandardTextFirstPart", culture),
+                    string.Format(resourceManager.GetString("NonPrivateConstructorStandardTextFirstPart", culture),
+                        typeKindText),
                     string.Format(
                         resourceManager.GetString("NonPrivateConstructorStandardTextSecondPart", culture),
                         typeKindText),

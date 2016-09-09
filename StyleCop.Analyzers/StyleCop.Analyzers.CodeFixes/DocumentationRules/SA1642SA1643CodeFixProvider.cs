@@ -103,7 +103,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 if (declarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword))
                 {
                     standardText = ImmutableArray.Create(
-                        resourceManager.GetString("StaticConstructorStandardTextFirstPart", culture),
+                        string.Format(resourceManager.GetString("StaticConstructorStandardTextFirstPart", culture), typeKindText),
                         string.Format(resourceManager.GetString("StaticConstructorStandardTextSecondPart", culture), typeKindText));
                 }
                 else
@@ -112,7 +112,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     // acceptable for private constructors by the diagnostic.
                     // https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/413
                     standardText = ImmutableArray.Create(
-                        resourceManager.GetString("NonPrivateConstructorStandardTextFirstPart", culture),
+                        string.Format(resourceManager.GetString("NonPrivateConstructorStandardTextFirstPart", culture), typeKindText),
                         string.Format(resourceManager.GetString("NonPrivateConstructorStandardTextSecondPart", culture), typeKindText));
                 }
             }
