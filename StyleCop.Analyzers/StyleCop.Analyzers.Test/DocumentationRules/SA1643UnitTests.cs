@@ -4,18 +4,21 @@
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
+    using StyleCop.Analyzers.Test.Helpers;
+
     using TestHelper;
     using Xunit;
-    using static StyleCop.Analyzers.DocumentationRules.SA1643DestructorSummaryDocumentationMustBeginWithStandardText;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1643DestructorSummaryDocumentationMustBeginWithStandardText"/>-
     /// </summary>
+    [UseCulture("en-US")]
     public class SA1643UnitTests : CodeFixVerifier
     {
         [Fact]
@@ -37,37 +40,37 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [Fact]
         public async Task TestDestructorCorrectDocumentationSimpleAsync()
         {
-            await this.TestDestructorCorrectDocumentationSimpleImplAsync(DestructorStandardText[0], DestructorStandardText[1], false).ConfigureAwait(false);
+            await this.TestDestructorCorrectDocumentationSimpleImplAsync(DocumentationResources.DestructorStandardTextFirstPart, DocumentationResources.DestructorStandardTextSecondPart, false).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestDestructorCorrectDocumentationCustomizedAsync()
         {
-            await this.TestDestructorCorrectDocumentationCustomizedImplAsync(DestructorStandardText[0], DestructorStandardText[1], false).ConfigureAwait(false);
+            await this.TestDestructorCorrectDocumentationCustomizedImplAsync(DocumentationResources.DestructorStandardTextFirstPart, DocumentationResources.DestructorStandardTextSecondPart, false).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestNonPrivateConstructorCorrectDocumentationGenericSimpleAsync()
         {
-            await this.TestDestructorCorrectDocumentationSimpleImplAsync(DestructorStandardText[0], DestructorStandardText[1], true).ConfigureAwait(false);
+            await this.TestDestructorCorrectDocumentationSimpleImplAsync(DocumentationResources.DestructorStandardTextFirstPart, DocumentationResources.DestructorStandardTextSecondPart, true).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestDestructorCorrectDocumentationGenericCustomizedAsync()
         {
-            await this.TestDestructorCorrectDocumentationCustomizedImplAsync(DestructorStandardText[0], DestructorStandardText[1], true).ConfigureAwait(false);
+            await this.TestDestructorCorrectDocumentationCustomizedImplAsync(DocumentationResources.DestructorStandardTextFirstPart, DocumentationResources.DestructorStandardTextSecondPart, true).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestDestructorMissingDocumentationAsync()
         {
-            await this.TestDestructorMissingDocumentationImplAsync(DestructorStandardText[0], DestructorStandardText[1], false).ConfigureAwait(false);
+            await this.TestDestructorMissingDocumentationImplAsync(DocumentationResources.DestructorStandardTextFirstPart, DocumentationResources.DestructorStandardTextSecondPart, false).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestDestructorMissingDocumentationGenericAsync()
         {
-            await this.TestDestructorMissingDocumentationImplAsync(DestructorStandardText[0], DestructorStandardText[1], true).ConfigureAwait(false);
+            await this.TestDestructorMissingDocumentationImplAsync(DocumentationResources.DestructorStandardTextFirstPart, DocumentationResources.DestructorStandardTextSecondPart, true).ConfigureAwait(false);
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
