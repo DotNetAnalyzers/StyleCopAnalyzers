@@ -5,7 +5,10 @@ namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.Globalization;
     using System.Linq;
+    using System.Threading;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -170,29 +173,54 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var constructorDeclarationSyntax = (ConstructorDeclarationSyntax)context.Node;
 
+            var settings = context.Options.GetStyleCopSettings(CancellationToken.None);
+            var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
+            var resourceManager = DocumentationResources.ResourceManager;
+
             bool isStruct = constructorDeclarationSyntax.Parent?.IsKind(SyntaxKind.StructDeclaration) ?? false;
+            var typeKindText = resourceManager.GetString(isStruct ? "TypeTextStruct" : "TypeTextClass", culture);
 
             if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword))
             {
-                string secondPartText = isStruct ? " struct." : " class.";
-                HandleDeclaration(context, StaticConstructorStandardText, secondPartText, Descriptor);
+                HandleDeclaration(
+                    context,
+                    resourceManager.GetString("StaticConstructorStandardTextFirstPart", culture),
+                    string.Format(resourceManager.GetString("StaticConstructorStandardTextSecondPart", culture), typeKindText),
+                    Descriptor);
             }
             else if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.PrivateKeyword))
             {
-                string typeKindText = isStruct ? " struct" : " class";
+                var privateConstructorMatch = HandleDeclaration(
+                    context,
+                    resourceManager.GetString("PrivateConstructorStandardTextFirstPart", culture),
+                    string.Format(
+                        resourceManager.GetString("PrivateConstructorStandardTextSecondPart", culture),
+                        typeKindText),
+                    null);
 
-                if (HandleDeclaration(context, PrivateConstructorStandardText[0], typeKindText + PrivateConstructorStandardText[1], null) == MatchResult.FoundMatch)
+                if (privateConstructorMatch == MatchResult.FoundMatch)
                 {
                     return;
                 }
 
                 // also allow the non-private wording for private constructors
-                HandleDeclaration(context, NonPrivateConstructorStandardText, typeKindText, Descriptor);
+                HandleDeclaration(
+                    context,
+                    resourceManager.GetString("NonPrivateConstructorStandardTextFirstPart", culture),
+                    string.Format(
+                        resourceManager.GetString("NonPrivateConstructorStandardTextSecondPart", culture),
+                        typeKindText),
+                    Descriptor);
             }
             else
             {
-                string typeKindText = isStruct ? " struct" : " class";
-                HandleDeclaration(context, NonPrivateConstructorStandardText, typeKindText, Descriptor);
+                HandleDeclaration(
+                    context,
+                    resourceManager.GetString("NonPrivateConstructorStandardTextFirstPart", culture),
+                    string.Format(
+                        resourceManager.GetString("NonPrivateConstructorStandardTextSecondPart", culture),
+                        typeKindText),
+                    Descriptor);
             }
         }
     }
