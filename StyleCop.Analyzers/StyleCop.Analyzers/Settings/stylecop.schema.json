@@ -204,6 +204,11 @@
               "description": "Specifies the preferred naming convention for files. The default value \"stylecop\" uses the naming convention defined by StyleCop Classic, while \"metadata\" uses a file naming convention that matches the metadata names of types.",
               "default": "stylecop",
               "enum": [ "stylecop", "metadata" ]
+            },
+            "documentationCulture": {
+                "type": "string",
+                "description": "The culture that should be used for documentation comments.",
+                "default": "en-US"
             }
           }
         }

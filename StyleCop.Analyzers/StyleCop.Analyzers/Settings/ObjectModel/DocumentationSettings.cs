@@ -22,6 +22,11 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         internal const string DefaultCopyrightText = "Copyright (c) {companyName}. All rights reserved.";
 
         /// <summary>
+        /// The default value for the <see cref="DocumentationCulture"/> property.
+        /// </summary>
+        internal const string DefaultDocumentationCulture = "en-US";
+
+        /// <summary>
         /// This is the backing field for the <see cref="CompanyName"/> property.
         /// </summary>
         [JsonProperty("companyName", DefaultValueHandling = DefaultValueHandling.Ignore)]
@@ -93,6 +98,12 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         private FileNamingConvention fileNamingConvention;
 
         /// <summary>
+        /// This is the backing field for the <see cref="DocumentationCulture"/> property.
+        /// </summary>
+        [JsonProperty("documentationCulture", DefaultValueHandling = DefaultValueHandling.Include)]
+        private string documentationCulture;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="DocumentationSettings"/> class during JSON deserialization.
         /// </summary>
         [JsonConstructor]
@@ -109,6 +120,8 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.documentPrivateElements = false;
             this.documentInterfaces = true;
             this.documentPrivateFields = false;
+
+            this.documentationCulture = DefaultDocumentationCulture;
 
             this.fileNamingConvention = FileNamingConvention.StyleCop;
         }
@@ -162,6 +175,9 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
         public FileNamingConvention FileNamingConvention =>
             this.fileNamingConvention;
+
+        public string DocumentationCulture =>
+            this.documentationCulture;
 
         public string GetCopyrightText(string fileName)
         {
