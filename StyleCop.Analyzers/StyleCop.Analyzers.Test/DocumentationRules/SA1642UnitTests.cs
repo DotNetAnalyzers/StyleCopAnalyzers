@@ -9,13 +9,15 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
+    using StyleCop.Analyzers.Test.Helpers;
+
     using TestHelper;
     using Xunit;
-    using static StyleCop.Analyzers.DocumentationRules.SA1642ConstructorSummaryDocumentationMustBeginWithStandardText;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1642ConstructorSummaryDocumentationMustBeginWithStandardText"/>-
     /// </summary>
+    [UseCulture("en-US")]
     public class SA1642UnitTests : CodeFixVerifier
     {
         [Theory]
@@ -64,7 +66,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestNonPrivateConstructorCorrectDocumentationSimpleAsync(string typeKind)
         {
-            await this.TestConstructorCorrectDocumentationSimpleAsync(typeKind, "public", NonPrivateConstructorStandardText, $" {typeKind}", false).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationSimpleAsync(
+                typeKind,
+                "public",
+                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                false).ConfigureAwait(false);
         }
 
         [Theory]
@@ -72,7 +79,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestNonPrivateConstructorCorrectDocumentationCustomizedAsync(string typeKind)
         {
-            await this.TestConstructorCorrectDocumentationCustomizedAsync(typeKind, "public", NonPrivateConstructorStandardText, $" {typeKind}", false).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationCustomizedAsync(
+                typeKind,
+                "public",
+                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                false).ConfigureAwait(false);
         }
 
         [Theory]
@@ -80,7 +92,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestNonPrivateConstructorCorrectDocumentationGenericSimpleAsync(string typeKind)
         {
-            await this.TestConstructorCorrectDocumentationSimpleAsync(typeKind, "public", NonPrivateConstructorStandardText, $" {typeKind}", true).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationSimpleAsync(
+                typeKind,
+                "public",
+                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                true).ConfigureAwait(false);
         }
 
         [Theory]
@@ -88,7 +105,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestNonPrivateConstructorCorrectDocumentationGenericCustomizedAsync(string typeKind)
         {
-            await this.TestConstructorCorrectDocumentationCustomizedAsync(typeKind, "public", NonPrivateConstructorStandardText, $" {typeKind}", true).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationCustomizedAsync(
+                typeKind,
+                "public",
+                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                true).ConfigureAwait(false);
         }
 
         [Theory]
@@ -96,7 +118,13 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestPrivateConstructorCorrectDocumentationAsync(string typeKind)
         {
-            await this.TestConstructorCorrectDocumentationAsync(typeKind, "private", PrivateConstructorStandardText[0], $" {typeKind} from being created.", string.Empty, false).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationAsync(
+                typeKind,
+                "private",
+                DocumentationResources.PrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.PrivateConstructorStandardTextSecondPart, typeKind),
+                string.Empty,
+                false).ConfigureAwait(false);
         }
 
         [Theory]
@@ -104,7 +132,13 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestPrivateConstructorCorrectExtendedDocumentationAsync(string typeKind)
         {
-            await this.TestConstructorCorrectDocumentationAsync(typeKind, "private", PrivateConstructorStandardText[0], $" {typeKind} from being created externally.", string.Empty, false).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationAsync(
+                typeKind,
+                "private",
+                DocumentationResources.PrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.PrivateConstructorStandardTextSecondPart, typeKind) + " externally",
+                string.Empty,
+                false).ConfigureAwait(false);
         }
 
         [Theory]
@@ -112,7 +146,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestPrivateConstructorCorrectDocumentation_NonPrivateSimpleAsync(string typeKind)
         {
-            await this.TestConstructorCorrectDocumentationSimpleAsync(typeKind, "private", NonPrivateConstructorStandardText, $" {typeKind}", false).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationSimpleAsync(
+                typeKind,
+                "private",
+                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                false).ConfigureAwait(false);
         }
 
         [Theory]
@@ -120,7 +159,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestPrivateConstructorCorrectDocumentation_NonPrivateCustomizedAsync(string typeKind)
         {
-            await this.TestConstructorCorrectDocumentationCustomizedAsync(typeKind, "private", NonPrivateConstructorStandardText, $" {typeKind}", false).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationCustomizedAsync(
+                typeKind,
+                "private",
+                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                false).ConfigureAwait(false);
         }
 
         [Theory]
@@ -128,7 +172,13 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestPrivateConstructorCorrectDocumentationGenericAsync(string typeKind)
         {
-            await this.TestConstructorCorrectDocumentationAsync(typeKind, "private", PrivateConstructorStandardText[0], $" {typeKind} from being created.", string.Empty, true).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationAsync(
+                typeKind,
+                "private",
+                DocumentationResources.PrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.PrivateConstructorStandardTextSecondPart, typeKind),
+                string.Empty,
+                true).ConfigureAwait(false);
         }
 
         [Theory]
@@ -136,7 +186,13 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestPrivateConstructorCorrectExtendedDocumentationGenericAsync(string typeKind)
         {
-            await this.TestConstructorCorrectDocumentationAsync(typeKind, "private", PrivateConstructorStandardText[0], $" {typeKind} from being created externally.", string.Empty, true).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationAsync(
+                typeKind,
+                "private",
+                DocumentationResources.PrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.PrivateConstructorStandardTextSecondPart, typeKind) + " externally",
+                string.Empty,
+                true).ConfigureAwait(false);
         }
 
         [Theory]
@@ -144,7 +200,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestPrivateConstructorCorrectDocumentationGeneric_NonPrivateSimpleAsync(string typeKind)
         {
-            await this.TestConstructorCorrectDocumentationSimpleAsync(typeKind, "private", NonPrivateConstructorStandardText, $" {typeKind}", true).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationSimpleAsync(
+                typeKind,
+                "private",
+                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                true).ConfigureAwait(false);
         }
 
         [Theory]
@@ -152,7 +213,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestPrivateConstructorCorrectDocumentationGeneric_NonPrivateCustomizedAsync(string typeKind)
         {
-            await this.TestConstructorCorrectDocumentationCustomizedAsync(typeKind, "private", NonPrivateConstructorStandardText, $" {typeKind}", true).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationCustomizedAsync(
+                typeKind,
+                "private",
+                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                true).ConfigureAwait(false);
         }
 
         [Theory]
@@ -160,7 +226,13 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestStaticConstructorCorrectDocumentationAsync(string typeKind)
         {
-            await this.TestConstructorCorrectDocumentationAsync(typeKind, "static", StaticConstructorStandardText, $" {typeKind}.", string.Empty, false).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationAsync(
+                typeKind,
+                "static",
+                DocumentationResources.StaticConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, typeKind),
+                string.Empty,
+                false).ConfigureAwait(false);
         }
 
         [Theory]
@@ -168,7 +240,13 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestStaticConstructorCorrectDocumentationGenericAsync(string typeKind)
         {
-            await this.TestConstructorCorrectDocumentationAsync(typeKind, "static", StaticConstructorStandardText, $" {typeKind}.", string.Empty, true).ConfigureAwait(false);
+            await this.TestConstructorCorrectDocumentationAsync(
+                typeKind,
+                "static",
+                DocumentationResources.StaticConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, typeKind),
+                string.Empty,
+                true).ConfigureAwait(false);
         }
 
         [Theory]
@@ -176,7 +254,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestNonPrivateConstructorMissingDocumentationAsync(string typeKind)
         {
-            await this.TestConstructorMissingDocumentationAsync(typeKind, "public", NonPrivateConstructorStandardText, $" {typeKind}", false).ConfigureAwait(false);
+            await this.TestConstructorMissingDocumentationAsync(
+                typeKind,
+                "public",
+                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                false).ConfigureAwait(false);
         }
 
         [Theory]
@@ -184,7 +267,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestNonPrivateConstructorMissingDocumentationGenericAsync(string typeKind)
         {
-            await this.TestConstructorMissingDocumentationAsync(typeKind, "public", NonPrivateConstructorStandardText, $" {typeKind}", true).ConfigureAwait(false);
+            await this.TestConstructorMissingDocumentationAsync(
+                typeKind,
+                "public",
+                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                true).ConfigureAwait(false);
         }
 
         [Theory]
@@ -192,7 +280,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestPrivateConstructorMissingDocumentationAsync(string typeKind)
         {
-            await this.TestConstructorMissingDocumentationAsync(typeKind, "private", NonPrivateConstructorStandardText, $" {typeKind}", false).ConfigureAwait(false);
+            await this.TestConstructorMissingDocumentationAsync(
+                typeKind,
+                "private",
+                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                false).ConfigureAwait(false);
         }
 
         [Theory]
@@ -200,7 +293,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestPrivateConstructorMissingDocumentationGenericAsync(string typeKind)
         {
-            await this.TestConstructorMissingDocumentationAsync(typeKind, "private", NonPrivateConstructorStandardText, $" {typeKind}", true).ConfigureAwait(false);
+            await this.TestConstructorMissingDocumentationAsync(
+                typeKind,
+                "private",
+                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                true).ConfigureAwait(false);
         }
 
         [Theory]
@@ -208,7 +306,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestStaticConstructorMissingDocumentationAsync(string typeKind)
         {
-            await this.TestConstructorMissingDocumentationAsync(typeKind, "static", StaticConstructorStandardText, $" {typeKind}.", false).ConfigureAwait(false);
+            await this.TestConstructorMissingDocumentationAsync(
+                typeKind,
+                "static",
+                DocumentationResources.StaticConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, typeKind),
+                false).ConfigureAwait(false);
         }
 
         [Theory]
@@ -216,7 +319,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestStaticConstructorMissingDocumentationGenericAsync(string typeKind)
         {
-            await this.TestConstructorMissingDocumentationAsync(typeKind, "static", StaticConstructorStandardText, $" {typeKind}.", true).ConfigureAwait(false);
+            await this.TestConstructorMissingDocumentationAsync(
+                typeKind,
+                "static",
+                DocumentationResources.StaticConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, typeKind),
+                true).ConfigureAwait(false);
         }
 
         [Theory]
@@ -224,7 +332,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestNonPrivateConstructorSimpleDocumentationAsync(string typeKind)
         {
-            await this.TestConstructorSimpleDocumentationAsync(typeKind, "public", NonPrivateConstructorStandardText, $" {typeKind}", false).ConfigureAwait(false);
+            await this.TestConstructorSimpleDocumentationAsync(
+                typeKind,
+                "public",
+                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                false).ConfigureAwait(false);
         }
 
         [Theory]
@@ -232,7 +345,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestNonPrivateConstructorSimpleDocumentationGenericAsync(string typeKind)
         {
-            await this.TestConstructorSimpleDocumentationAsync(typeKind, "public", NonPrivateConstructorStandardText, $" {typeKind}", true).ConfigureAwait(false);
+            await this.TestConstructorSimpleDocumentationAsync(
+                typeKind,
+                "public",
+                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                true).ConfigureAwait(false);
         }
 
         [Theory]
@@ -240,7 +358,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestPrivateConstructorSimpleDocumentationAsync(string typeKind)
         {
-            await this.TestConstructorSimpleDocumentationAsync(typeKind, "private", NonPrivateConstructorStandardText, $" {typeKind}", false).ConfigureAwait(false);
+            await this.TestConstructorSimpleDocumentationAsync(
+                typeKind,
+                "private",
+                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                false).ConfigureAwait(false);
         }
 
         [Theory]
@@ -248,7 +371,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestPrivateConstructorSimpleDocumentationGenericAsync(string typeKind)
         {
-            await this.TestConstructorSimpleDocumentationAsync(typeKind, "private", NonPrivateConstructorStandardText, $" {typeKind}", true).ConfigureAwait(false);
+            await this.TestConstructorSimpleDocumentationAsync(
+                typeKind,
+                "private",
+                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                true).ConfigureAwait(false);
         }
 
         [Theory]
@@ -256,7 +384,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestStaticConstructorSimpleDocumentationAsync(string typeKind)
         {
-            await this.TestConstructorSimpleDocumentationAsync(typeKind, "static", StaticConstructorStandardText, $" {typeKind}.", false).ConfigureAwait(false);
+            await this.TestConstructorSimpleDocumentationAsync(
+                typeKind,
+                "static",
+                DocumentationResources.StaticConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, typeKind),
+                false).ConfigureAwait(false);
         }
 
         [Theory]
@@ -264,7 +397,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestStaticConstructorSimpleDocumentationGenericAsync(string typeKind)
         {
-            await this.TestConstructorSimpleDocumentationAsync(typeKind, "static", StaticConstructorStandardText, $" {typeKind}.", true).ConfigureAwait(false);
+            await this.TestConstructorSimpleDocumentationAsync(
+                typeKind,
+                "static",
+                DocumentationResources.StaticConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, typeKind),
+                true).ConfigureAwait(false);
         }
 
         [Theory]
@@ -272,7 +410,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestNonPrivateConstructorSimpleDocumentationWrongTypeNameAsync(string typeKind)
         {
-            await this.TestConstructorSimpleDocumentationWrongTypeNameAsync(typeKind, "public", NonPrivateConstructorStandardText, $" {typeKind}", false).ConfigureAwait(false);
+            await this.TestConstructorSimpleDocumentationWrongTypeNameAsync(
+                typeKind,
+                "public",
+                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                false).ConfigureAwait(false);
         }
 
         [Theory]
@@ -280,7 +423,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestNonPrivateConstructorSimpleDocumentationGenericWrongTypeNameAsync(string typeKind)
         {
-            await this.TestConstructorSimpleDocumentationWrongTypeNameAsync(typeKind, "public", NonPrivateConstructorStandardText, $" {typeKind}", true).ConfigureAwait(false);
+            await this.TestConstructorSimpleDocumentationWrongTypeNameAsync(
+                typeKind,
+                "public",
+                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                true).ConfigureAwait(false);
         }
 
         [Theory]
@@ -288,7 +436,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestPrivateConstructorSimpleDocumentationWrongTypeNameAsync(string typeKind)
         {
-            await this.TestConstructorSimpleDocumentationWrongTypeNameAsync(typeKind, "private", NonPrivateConstructorStandardText, $" {typeKind}", false).ConfigureAwait(false);
+            await this.TestConstructorSimpleDocumentationWrongTypeNameAsync(
+                typeKind,
+                "private",
+                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                false).ConfigureAwait(false);
         }
 
         [Theory]
@@ -296,7 +449,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestPrivateConstructorSimpleDocumentationGenericWrongTypeNameAsync(string typeKind)
         {
-            await this.TestConstructorSimpleDocumentationWrongTypeNameAsync(typeKind, "private", NonPrivateConstructorStandardText, $" {typeKind}", true).ConfigureAwait(false);
+            await this.TestConstructorSimpleDocumentationWrongTypeNameAsync(
+                typeKind,
+                "private",
+                DocumentationResources.NonPrivateConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.NonPrivateConstructorStandardTextSecondPart, typeKind),
+                true).ConfigureAwait(false);
         }
 
         [Theory]
@@ -304,7 +462,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestStaticConstructorSimpleDocumentationWrongTypeNameAsync(string typeKind)
         {
-            await this.TestConstructorSimpleDocumentationWrongTypeNameAsync(typeKind, "static", StaticConstructorStandardText, $" {typeKind}.", false).ConfigureAwait(false);
+            await this.TestConstructorSimpleDocumentationWrongTypeNameAsync(
+                typeKind,
+                "static",
+                DocumentationResources.StaticConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, typeKind),
+                false).ConfigureAwait(false);
         }
 
         [Theory]
@@ -312,7 +475,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("struct")]
         public async Task TestStaticConstructorSimpleDocumentationGenericWrongTypeNameAsync(string typeKind)
         {
-            await this.TestConstructorSimpleDocumentationWrongTypeNameAsync(typeKind, "static", StaticConstructorStandardText, $" {typeKind}.", true).ConfigureAwait(false);
+            await this.TestConstructorSimpleDocumentationWrongTypeNameAsync(
+                typeKind,
+                "static",
+                DocumentationResources.StaticConstructorStandardTextFirstPart,
+                string.Format(DocumentationResources.StaticConstructorStandardTextSecondPart, typeKind),
+                true).ConfigureAwait(false);
         }
 
         /// <summary>
