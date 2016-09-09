@@ -62,6 +62,24 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Finalizes an instance of the .
+        /// </summary>
+        internal static string DestructorStandardTextFirstPart {
+            get {
+                return ResourceManager.GetString("DestructorStandardTextFirstPart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  class..
+        /// </summary>
+        internal static string DestructorStandardTextSecondPart {
+            get {
+                return ResourceManager.GetString("DestructorStandardTextSecondPart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Inherit documentation.
         /// </summary>
         internal static string InheritdocCodeFix {

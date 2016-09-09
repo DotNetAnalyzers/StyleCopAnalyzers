@@ -5,6 +5,9 @@ namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.Globalization;
+    using System.Threading;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -96,7 +99,15 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             if (destructorDeclaration != null)
             {
-                HandleDeclaration(context, DestructorStandardText[0], DestructorStandardText[1], Descriptor);
+                var settings = context.Options.GetStyleCopSettings(CancellationToken.None);
+                var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
+                var resourceManager = DocumentationResources.ResourceManager;
+
+                HandleDeclaration(
+                    context,
+                    resourceManager.GetString("DestructorStandardTextFirstPart", culture),
+                    resourceManager.GetString("DestructorStandardTextSecondPart", culture),
+                    Descriptor);
             }
         }
     }
