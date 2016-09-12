@@ -118,6 +118,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>HelpersResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\LiteralExpressionHelpers.cs" />
     <Compile Include="Helpers\LocationHelpers.cs" />
     <Compile Include="Helpers\MemberOrderHelper.cs" />
     <Compile Include="Helpers\ModifierOrderHelper.cs" />
@@ -270,6 +271,7 @@
     <Compile Include="ReadabilityRules\SA1133DoNotCombineAttributes.cs" />
     <Compile Include="ReadabilityRules\SA1134AttributesMustNotShareLine.cs" />
     <Compile Include="ReadabilityRules\SA1136EnumValuesShouldBeOnSeparateLines.cs" />
+    <Compile Include="ReadabilityRules\SA1139UseLiteralSuffixNotationInsteadOfCasting.cs" />
     <Compile Include="ReadabilityRules\SX1101DoNotPrefixLocalMembersWithThis.cs" />
     <Compile Include="Settings\DeserializationFailureBehavior.cs" />
     <Compile Include="Settings\ObjectModel\DocumentationSettings.cs" />
