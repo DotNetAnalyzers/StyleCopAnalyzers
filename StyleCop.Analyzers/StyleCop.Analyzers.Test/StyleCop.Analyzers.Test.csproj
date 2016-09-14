@@ -177,8 +177,11 @@
     <Compile Include="Helpers\DiagnosticResultLocation.cs" />
     <Compile Include="Helpers\DiagnosticVerifier.Helper.cs" />
     <Compile Include="Helpers\ExclusionTestAnalyzer.cs" />
+    <Compile Include="Helpers\ExpectedViolation`1.cs" />
     <Compile Include="Helpers\MetadataReferences.cs" />
     <Compile Include="Helpers\TestDiagnosticProvider.cs" />
+    <Compile Include="Helpers\TestScenarios`1.cs" />
+    <Compile Include="Helpers\TestScenario`1.cs" />
     <Compile Include="Helpers\TestXmlReferenceResolver.cs" />
     <Compile Include="HelperTests\AccessLevelHelperTests.cs" />
     <Compile Include="HelperTests\IndentationHelperTests.cs" />
@@ -314,7 +317,11 @@
     <Compile Include="ReadabilityRules\SA1114UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1115UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1116UnitTests.cs" />
-    <Compile Include="ReadabilityRules\SA1117UnitTests.cs" />
+    <Compile Include="ReadabilityRules\SA1117\SA1117UnitTests.Attributes.cs" />
+    <Compile Include="ReadabilityRules\SA1117\SA1117UnitTests.ConstructorInitializers.cs" />
+    <Compile Include="ReadabilityRules\SA1117\SA1117UnitTests.cs" />
+    <Compile Include="ReadabilityRules\SA1117\SA1117UnitTests.Declarations.cs" />
+    <Compile Include="ReadabilityRules\SA1117\SA1117UnitTests.Expressions.cs" />
     <Compile Include="ReadabilityRules\SA1118UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1120UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1121UnitTests.cs" />
@@ -383,6 +390,7 @@
     <None Include="..\StyleCop.Analyzers.ruleset">
       <Link>StyleCop.Analyzers.ruleset</Link>
     </None>
+    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

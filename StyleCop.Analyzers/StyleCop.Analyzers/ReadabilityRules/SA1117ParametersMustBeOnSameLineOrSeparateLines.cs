@@ -4,12 +4,15 @@
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// The parameters to a C# method or indexer call or declaration are not all on the same line or each on a separate
@@ -44,6 +47,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// {
     /// }
     /// </code>
+    /// <para>Desired behavior for attribute parameters may be configured via use of the
+    /// attributeArgumentSplitting setting.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class SA1117ParametersMustBeOnSameLineOrSeparateLines : DiagnosticAnalyzer
@@ -73,7 +78,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly Action<SyntaxNodeAnalysisContext> ElementAccessExpressionAction = HandleElementAccessExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> ElementBindingExpressionAction = HandleElementBindingExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> ArrayCreationExpressionAction = HandleArrayCreationExpression;
-        private static readonly Action<SyntaxNodeAnalysisContext> AttributeAction = HandleAttribute;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> AttributeAction = HandleAttribute;
         private static readonly Action<SyntaxNodeAnalysisContext> AnonymousMethodExpressionAction = HandleAnonymousMethodExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> ParenthesizedLambdaExpressionAction = HandleParenthesizedLambdaExpression;
 
@@ -182,51 +187,79 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
-        private static void HandleAttribute(SyntaxNodeAnalysisContext context)
+        private static void HandleAttribute(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
-            var attribute = (AttributeSyntax)context.Node;
-            AttributeArgumentListSyntax argumentListSyntax = attribute.ArgumentList;
-            if (argumentListSyntax == null)
-            {
-                return;
-            }
+            var splitting = settings.ReadabilityRules.AttributeArgumentSplitting;
 
-            SeparatedSyntaxList<AttributeArgumentSyntax> arguments = argumentListSyntax.Arguments;
-            if (arguments.Count < 3)
+            if (splitting != AttributeArgumentSplitting.Ignore)
             {
-                return;
-            }
-
-            AttributeArgumentSyntax previousParameter = arguments[1];
-            int firstParameterLine = arguments[0].GetLine();
-            int previousLine = previousParameter.GetLine();
-            Func<int, int, bool> lineCondition;
-
-            if (firstParameterLine == previousLine)
-            {
-                // arguments must be on same line
-                lineCondition = (param1Line, param2Line) => param1Line == param2Line;
-            }
-            else
-            {
-                // each argument must be on its own line
-                lineCondition = (param1Line, param2Line) => param1Line != param2Line;
-            }
-
-            for (int i = 2; i < arguments.Count; ++i)
-            {
-                AttributeArgumentSyntax currentParameter = arguments[i];
-                int currentLine = currentParameter.GetLine();
-
-                if (lineCondition(previousLine, currentLine))
+                var attribute = (AttributeSyntax)context.Node;
+                AttributeArgumentListSyntax argumentListSyntax = attribute.ArgumentList;
+                if (argumentListSyntax == null)
                 {
-                    previousLine = currentLine;
-                    continue;
+                    return;
                 }
 
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentParameter.GetLocation()));
-                return;
+                SeparatedSyntaxList<AttributeArgumentSyntax> arguments = argumentListSyntax.Arguments;
+                if (arguments.Count < 3)
+                {
+                    return;
+                }
+
+                CheckArgumentPositions(context, splitting, arguments.Select(a => new AttributeArgument(a)).ToList());
             }
+        }
+
+        private static void CheckArgumentPositions(SyntaxNodeAnalysisContext context, AttributeArgumentSplitting splitting, IEnumerable<AttributeArgument> arguments)
+        {
+            var firstPositionProblem = FindFirstPositionProblem(splitting, arguments);
+            if (firstPositionProblem != null)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstPositionProblem.Syntax.GetLocation()));
+            }
+        }
+
+        private static AttributeArgument FindFirstPositionProblem(AttributeArgumentSplitting splitting, IEnumerable<AttributeArgument> arguments)
+        {
+            AttributeArgument result = null;
+
+            var distinctLineCount = arguments.Select(a => a.Line).Distinct().Count();
+            if ((distinctLineCount > 1) && (distinctLineCount < arguments.Count()))
+            {
+                if ((splitting == AttributeArgumentSplitting.PositionalParametersMayShareFirstLine) &&
+                    arguments.Any(a => !a.IsPositional))
+                {
+                    var positionalArguments = arguments.Where(a => a.IsPositional);
+                    result = FindFirstPositionProblem(AttributeArgumentSplitting.Default, positionalArguments);
+
+                    if (result == null)
+                    {
+                        result = FindFirstArgumentOnSharedLine(arguments.Skip(positionalArguments.Count() - 1));
+                    }
+                }
+                else
+                {
+                    result = FindFirstArgumentOnSharedLine(arguments);
+                }
+            }
+
+            return result;
+        }
+
+        private static AttributeArgument FindFirstArgumentOnSharedLine(IEnumerable<AttributeArgument> arguments)
+        {
+            var previousArgument = arguments.First();
+            foreach (var argument in arguments.Skip(1))
+            {
+                if (argument.Line == previousArgument.Line)
+                {
+                    return argument;
+                }
+
+                previousArgument = argument;
+            }
+
+            return null;
         }
 
         private static void HandleAnonymousMethodExpression(SyntaxNodeAnalysisContext context)
@@ -362,6 +395,22 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentParameter.GetLocation()));
                 return;
             }
+        }
+
+        private sealed class AttributeArgument
+        {
+            internal AttributeArgument(AttributeArgumentSyntax syntax)
+            {
+                this.Syntax = syntax;
+                this.IsPositional = syntax.NameEquals == null;
+                this.Line = syntax.GetLine();
+            }
+
+            internal AttributeArgumentSyntax Syntax { get; }
+
+            internal bool IsPositional { get; }
+
+            internal int Line { get; }
         }
     }
 }
