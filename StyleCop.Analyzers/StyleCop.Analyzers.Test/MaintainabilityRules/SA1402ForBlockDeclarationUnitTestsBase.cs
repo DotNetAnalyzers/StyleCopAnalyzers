@@ -134,6 +134,7 @@ public partial {this.Keyword} Bar
 
 }}";
 
+            var fixedFileNames = new[] { "Test0.cs", "Bar.cs" };
             var fixedCode = new[]
             {
                 $@"public partial {this.Keyword} Foo
@@ -150,7 +151,7 @@ public partial {this.Keyword} Bar
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(new[] { testCode }, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(new[] { testCode }, fixedCode, newFileNames: fixedFileNames, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -163,6 +164,7 @@ public {this.Keyword} Test0
 {{
 }}";
 
+            var fixedFileNames = new[] { "Test0.cs", "Foo.cs" };
             var fixedCode = new[]
             {
                 $@"public {this.Keyword} Test0
@@ -178,7 +180,7 @@ public {this.Keyword} Test0
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(new[] { testCode }, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(new[] { testCode }, fixedCode, newFileNames: fixedFileNames, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
