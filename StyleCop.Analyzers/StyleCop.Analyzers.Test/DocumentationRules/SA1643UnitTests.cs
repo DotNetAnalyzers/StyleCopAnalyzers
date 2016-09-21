@@ -6,9 +6,11 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.DocumentationRules.SA1643DestructorSummaryDocumentationMustBeginWithStandardText;
@@ -68,6 +70,130 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         public async Task TestDestructorMissingDocumentationGenericAsync()
         {
             await this.TestDestructorMissingDocumentationImplAsync(DestructorStandardText[0], DestructorStandardText[1], true).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a destructor with the correct summary text from included documentation will not produce any diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestDestructorWithValidSummaryInIncludedDocsAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    /// <include file='ValidSummary.xml' path='/TestClass/Destructor/*'/>
+    ~TestClass() { }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a destructor with the missing summary tag from included documentation will not produce any diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestDestructorWithMissingSummaryInIncludedDocsAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    /// <include file='MissingSummary.xml' path='/TestClass/Destructor/*'/>
+    ~TestClass() { }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a destructor with an empty summary tag from included documentation will produce a diagnostic and offer no codefix.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestDestructorWithEmptySummaryInIncludedDocsAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    /// <include file='EmptySummary.xml' path='/TestClass/Destructor/*'/>
+    ~TestClass() { }
+}
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(4, 9);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            var offeredFixes = await this.GetOfferedCSharpFixesAsync(testCode).ConfigureAwait(false);
+            Assert.Empty(offeredFixes);
+        }
+
+        /// <summary>
+        /// Verifies that a destructor with an invalid summary tag from included documentation will produce a diagnostic and offer no codefix.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestDestructorWithInvalidSummaryInIncludedDocsAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    /// <include file='InvalidSummary.xml' path='/TestClass/Destructor/*'/>
+    ~TestClass() { }
+}
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(4, 9);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            var offeredFixes = await this.GetOfferedCSharpFixesAsync(testCode).ConfigureAwait(false);
+            Assert.Empty(offeredFixes);
+        }
+
+        protected override Project ApplyCompilationOptions(Project project)
+        {
+            var resolver = new TestXmlReferenceResolver();
+
+            string contentValidSummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+  <Destructor>
+    <summary>Finalizes an instance of the <see cref=""TestClass""/> class.</summary>
+  </Destructor>
+</TestClass>
+";
+            resolver.XmlReferences.Add("ValidSummary.xml", contentValidSummary);
+
+            string contentMissingSummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+  <Destructor>
+  </Destructor>
+</TestClass>
+";
+            resolver.XmlReferences.Add("MissingSummary.xml", contentMissingSummary);
+
+            string contentEmptySummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+  <Destructor>
+    <summary></summary>
+  </Destructor>
+</TestClass>
+";
+            resolver.XmlReferences.Add("EmptySummary.xml", contentEmptySummary);
+
+            string contentInvalidSummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+  <Destructor>
+    <summary>Creates the <see cref=""TestClass""/> class.</summary>
+  </Destructor>
+</TestClass>
+";
+            resolver.XmlReferences.Add("InvalidSummary.xml", contentInvalidSummary);
+
+            project = base.ApplyCompilationOptions(project);
+            project = project.WithCompilationOptions(project.CompilationOptions.WithXmlReferenceResolver(resolver));
+            return project;
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
