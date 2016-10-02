@@ -271,7 +271,19 @@ This section describes the features of maintainability rules which can be config
 }
 ```
 
-> Currently there are no configurable settings for maintainability rules.
+The following properties are used to configure maintainability rules in StyleCop Analyzers.
+
+| Property | Default Value | Summary |
+| --- | --- | --- |
+| `topLevelTypes` | `[ "class" ]` | Specifies which kind of types that must be placed in separate files |
+
+The `topLevelTypes` property is an array which specifies which kind of types that must be placed in separate files
+according to rule SA1402. The following types are supported:
+* `class`
+* `interface`
+* `struct`
+* `enum`
+* `delegate`
 
 ## Layout Rules
 
