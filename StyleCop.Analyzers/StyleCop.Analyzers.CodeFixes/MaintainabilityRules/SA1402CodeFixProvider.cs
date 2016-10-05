@@ -19,7 +19,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     /// Implements a code fix for <see cref="SA1402FileMayOnlyContainASingleType"/>.
     /// </summary>
     /// <remarks>
-    /// <para>To fix a violation of this rule, move each class into its own file.</para>
+    /// <para>To fix a violation of this rule, move each type into its own file.</para>
     /// </remarks>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1402CodeFixProvider))]
     [Shared]
@@ -114,16 +114,22 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         {
             string extractedDocumentName = NamedTypeHelpers.GetNameOrIdentifier(memberDeclarationSyntax);
 
-            var delegateDeclarationSyntax = memberDeclarationSyntax as DelegateDeclarationSyntax;
-            if (delegateDeclarationSyntax?.TypeParameterList?.Parameters.Count > 0)
-            {
-                extractedDocumentName += "`" + delegateDeclarationSyntax.TypeParameterList.Parameters.Count;
-            }
-
             var typeDeclarationSyntax = memberDeclarationSyntax as TypeDeclarationSyntax;
-            if (typeDeclarationSyntax?.TypeParameterList?.Parameters.Count > 0)
+            var delegateDeclarationSyntax = memberDeclarationSyntax as DelegateDeclarationSyntax;
+
+            if (typeDeclarationSyntax != null)
             {
-                extractedDocumentName += "`" + typeDeclarationSyntax.TypeParameterList.Parameters.Count;
+                if (typeDeclarationSyntax.TypeParameterList?.Parameters.Count > 0)
+                {
+                    extractedDocumentName += "`" + typeDeclarationSyntax.TypeParameterList.Parameters.Count;
+                }
+            }
+            else if (delegateDeclarationSyntax != null)
+            {
+                if (delegateDeclarationSyntax.TypeParameterList?.Parameters.Count > 0)
+                {
+                    extractedDocumentName += "`" + delegateDeclarationSyntax.TypeParameterList.Parameters.Count;
+                }
             }
 
             return extractedDocumentName;
