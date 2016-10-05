@@ -20,6 +20,37 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         private bool ConfigureAsNonTopLevelType { get; set; } = false;
 
         [Fact]
+        public async Task TestTwoGenericElementsAsync()
+        {
+            var testCode = @"%1 Foo<T1>
+{
+}
+%1 Bar<T2, T3>
+{
+}";
+
+            var fixedCode = new[]
+            {
+                @"%1 Foo<T1>
+{
+}
+",
+                @"%1 Bar<T2, T3>
+{
+}"
+            };
+
+            testCode = testCode.Replace("%1", this.Keyword);
+            fixedCode = fixedCode.Select(c => c.Replace("%1", this.Keyword)).ToArray();
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, this.Keyword.Length + 2);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(new[] { testCode }, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestTwoElementsWithRuleDisabledAsync()
         {
             this.ConfigureAsNonTopLevelType = true;

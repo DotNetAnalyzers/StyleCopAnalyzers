@@ -47,6 +47,32 @@ public delegate void Bar();
         }
 
         [Fact]
+        public async Task TestTwoGenericElementsAsync()
+        {
+            var testCode = @"public delegate void Foo();
+
+public delegate void Bar<T1, T2, T3>(T1 x, T2 y, T3 z);
+";
+
+            var fixedCode = new[]
+            {
+                @"public delegate void Foo();
+",
+
+                // There should be no leading whitespace here... Why are there?
+                @"
+public delegate void Bar<T1, T2, T3>(T1 x, T2 y, T3 z);
+"
+            };
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 22);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(new[] { testCode }, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestTwoElementsWithRuleDisabledAsync()
         {
             this.ConfigureAsNonTopLevelType = true;
