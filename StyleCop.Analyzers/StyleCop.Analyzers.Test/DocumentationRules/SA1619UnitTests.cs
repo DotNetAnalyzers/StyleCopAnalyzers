@@ -166,6 +166,23 @@ public partial class TestClass<T>
         }
 
         /// <summary>
+        /// Verifies that a generic partial type without a summary tag in the included documentation will not produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestGenericPartialTypeWithoutSummaryInIncludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <include file='ClassWithoutSummary.xml' path='/TestClass/*'/>
+public partial class TestClass<T>
+{
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that a generic partial type without a typeparam in included documentation will flag.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
@@ -211,6 +228,12 @@ public partial class TestClass<T>
 </TestClass>
 ";
             resolver.XmlReferences.Add("ClassWithTypeparamDoc.xml", contentClassWithTypeparamDoc);
+
+            string contentClassWithoutSummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+</TestClass>
+";
+            resolver.XmlReferences.Add("ClassWithoutSummary.xml", contentClassWithoutSummary);
 
             string contentClassWithoutTypeparamDoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <TestClass>

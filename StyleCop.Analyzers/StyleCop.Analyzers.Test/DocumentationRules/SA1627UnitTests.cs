@@ -147,6 +147,44 @@ public class ClassName
         }
 
         /// <summary>
+        /// Checks an element with a custom (unsupported) empty element does not give an error.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestMemberWithCustomElementAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Class name.
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Join together two strings.
+    /// </summary>
+    /// <param name=""first"">First string.</param>
+    /// <param name=""second"">Second string.</param>
+    /// <custom1/>
+    public string JoinStrings(string first, string second) { return first + second; }
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that an orphaned include documentation statement does not produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestOrphanedIncludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <include file='AllFilled.xml' path='/TestClass/TestMethod/*'/>
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that member with valid elements in the included documentation does not produce diagnostics.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>

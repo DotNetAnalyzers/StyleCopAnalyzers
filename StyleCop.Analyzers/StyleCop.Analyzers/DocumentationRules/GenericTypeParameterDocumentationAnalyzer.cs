@@ -130,7 +130,12 @@ namespace StyleCop.Analyzers.DocumentationRules
             {
                 string rawDocumentation;
                 var declaration = context.SemanticModel.GetDeclaredSymbol(context.Node, context.CancellationToken);
-                rawDocumentation = declaration?.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
+                if (declaration == null)
+                {
+                    return;
+                }
+
+                rawDocumentation = declaration.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
                 var completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
                 if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.InheritdocXmlTag))
                 {

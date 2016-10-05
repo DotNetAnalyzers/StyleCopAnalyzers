@@ -92,12 +92,8 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static void HandleDestructor(SyntaxNodeAnalysisContext context)
         {
-            var destructorDeclaration = context.Node as DestructorDeclarationSyntax;
-
-            if (destructorDeclaration != null)
-            {
-                HandleDeclaration(context, DestructorStandardText[0], DestructorStandardText[1], Descriptor);
-            }
+            var destructorDeclaration = (DestructorDeclarationSyntax)context.Node;
+            HandleDeclaration(context, DestructorStandardText[0], DestructorStandardText[1], Descriptor);
         }
     }
 }

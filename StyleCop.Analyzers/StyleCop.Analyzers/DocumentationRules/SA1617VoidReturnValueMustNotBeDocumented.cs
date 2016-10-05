@@ -51,6 +51,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly Action<SyntaxNodeAnalysisContext> MethodDeclarationAction = HandleMethodDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> DelegateDeclarationAction = HandleDelegateDeclaration;
 
+        private static readonly ImmutableDictionary<string, string> NoCodeFixProperties = ImmutableDictionary.Create<string, string>().Add(NoCodeFixKey, string.Empty);
+
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(Descriptor);
@@ -67,59 +69,63 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var methodDeclaration = context.Node as MethodDeclarationSyntax;
-            HandleMember(context, methodDeclaration?.ReturnType);
+            var methodDeclaration = (MethodDeclarationSyntax)context.Node;
+            HandleMember(context, methodDeclaration.ReturnType);
         }
 
         private static void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var delegateDeclaration = context.Node as DelegateDeclarationSyntax;
+            var delegateDeclaration = (DelegateDeclarationSyntax)context.Node;
             HandleMember(context, delegateDeclaration?.ReturnType);
         }
 
         private static void HandleMember(SyntaxNodeAnalysisContext context, TypeSyntax returnValue)
         {
             var documentation = context.Node.GetDocumentationCommentTriviaSyntax();
-
-            if (context.Node != null && documentation != null)
+            if (documentation == null)
             {
-                var returnType = returnValue as PredefinedTypeSyntax;
+                return;
+            }
 
-                // Check if the return type is void.
-                if (returnType != null && returnType.Keyword.IsKind(SyntaxKind.VoidKeyword))
+            // Check if the return type is void.
+            var returnType = returnValue as PredefinedTypeSyntax;
+            if ((returnType == null) || !returnType.Keyword.IsKind(SyntaxKind.VoidKeyword))
+            {
+                return;
+            }
+
+            // Check if the return value is documented
+            var returnsElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.ReturnsXmlTag);
+            if (returnsElement == null)
+            {
+                var includeElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag);
+                if (includeElement != null)
                 {
-                    // Check if the return value is documented
-                    var returnsElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.ReturnsXmlTag);
-                    if (returnsElement == null)
+                    string rawDocumentation;
+                    var declaration = context.SemanticModel.GetDeclaredSymbol(context.Node, context.CancellationToken);
+                    if (declaration == null)
                     {
-                        var includeElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag);
-                        if (includeElement != null)
-                        {
-                            string rawDocumentation;
-                            var declaration = context.SemanticModel.GetDeclaredSymbol(context.Node, context.CancellationToken);
-                            rawDocumentation = declaration?.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
-                            var completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
-                            if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.InheritdocXmlTag))
-                            {
-                                // Ignore nodes with an <inheritdoc/> tag in the included XML.
-                                return;
-                            }
-
-                            var includedReturnsElement = completeDocumentation.Nodes().OfType<XElement>().FirstOrDefault(element => element.Name == XmlCommentHelper.ReturnsXmlTag);
-                            if (includedReturnsElement != null)
-                            {
-                                var properties = ImmutableDictionary.Create<string, string>()
-                                    .Add(NoCodeFixKey, string.Empty);
-
-                                context.ReportDiagnostic(Diagnostic.Create(Descriptor, includeElement.GetLocation(), properties));
-                            }
-                        }
+                        return;
                     }
-                    else
+
+                    rawDocumentation = declaration.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
+                    var completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
+                    if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.InheritdocXmlTag))
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, returnsElement.GetLocation()));
+                        // Ignore nodes with an <inheritdoc/> tag in the included XML.
+                        return;
+                    }
+
+                    var includedReturnsElement = completeDocumentation.Nodes().OfType<XElement>().FirstOrDefault(element => element.Name == XmlCommentHelper.ReturnsXmlTag);
+                    if (includedReturnsElement != null)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, includeElement.GetLocation(), NoCodeFixProperties));
                     }
                 }
+            }
+            else
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, returnsElement.GetLocation()));
             }
         }
     }

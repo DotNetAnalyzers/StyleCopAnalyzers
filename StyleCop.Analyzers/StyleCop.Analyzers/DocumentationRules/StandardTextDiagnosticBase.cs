@@ -23,6 +23,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// </summary>
         internal const string NoCodeFixKey = "NoCodeFix";
 
+        private static readonly ImmutableDictionary<string, string> NoCodeFixProperties = ImmutableDictionary.Create<string, string>().Add(NoCodeFixKey, string.Empty);
+
         /// <summary>
         /// Describes the result of matching a summary element to a specific desired wording.
         /// </summary>
@@ -60,12 +62,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <returns>A <see cref="MatchResult"/> describing the result of the analysis.</returns>
         protected static MatchResult HandleDeclaration(SyntaxNodeAnalysisContext context, string firstTextPart, string secondTextPart, DiagnosticDescriptor diagnosticDescriptor)
         {
-            var declarationSyntax = context.Node as BaseMethodDeclarationSyntax;
-            if (declarationSyntax == null)
-            {
-                return MatchResult.Unknown;
-            }
-
+            var declarationSyntax = (BaseMethodDeclarationSyntax)context.Node;
             var documentationStructure = declarationSyntax.GetDocumentationCommentTriviaSyntax();
             if (documentationStructure == null)
             {
@@ -79,10 +76,15 @@ namespace StyleCop.Analyzers.DocumentationRules
             if (includeElement != null)
             {
                 diagnosticLocation = includeElement.GetLocation();
-                diagnosticProperties = ImmutableDictionary.Create<string, string>().Add(NoCodeFixKey, string.Empty);
+                diagnosticProperties = NoCodeFixProperties;
 
                 var declaration = context.SemanticModel.GetDeclaredSymbol(declarationSyntax, context.CancellationToken);
-                var rawDocumentation = declaration?.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
+                if (declaration == null)
+                {
+                    return MatchResult.Unknown;
+                }
+
+                var rawDocumentation = declaration.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
                 var completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
 
                 var summaryElement = completeDocumentation.Nodes().OfType<XElement>().FirstOrDefault(element => element.Name == XmlCommentHelper.SummaryXmlTag);
@@ -211,12 +213,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             string secondTextPartText = XmlCommentHelper.GetText(secondTextPart, normalizeWhitespace: true);
-            if (!secondTextPartText.StartsWith(secondText, StringComparison.Ordinal))
-            {
-                return false;
-            }
-
-            return true;
+            return secondTextPartText.StartsWith(secondText, StringComparison.Ordinal);
         }
 
         private static bool TextPartsMatch(string firstText, string secondText, XText firstTextPart, XText secondTextPart)
@@ -228,12 +225,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             string secondTextPartText = secondTextPart.Value;
-            if (!secondTextPartText.StartsWith(secondText, StringComparison.Ordinal))
-            {
-                return false;
-            }
-
-            return true;
+            return secondTextPartText.StartsWith(secondText, StringComparison.Ordinal);
         }
     }
 }

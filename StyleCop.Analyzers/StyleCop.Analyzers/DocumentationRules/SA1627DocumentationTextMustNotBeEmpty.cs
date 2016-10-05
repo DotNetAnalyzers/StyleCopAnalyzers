@@ -84,9 +84,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var element = (XmlElementSyntax)context.Node;
 
-            var name = element.StartTag?.Name;
-
-            if (ElementsToCheck.Contains(name.ToString()) && XmlCommentHelper.IsConsideredEmpty(element))
+            var name = element.StartTag.Name.ToString();
+            if (ElementsToCheck.Contains(name) && XmlCommentHelper.IsConsideredEmpty(element))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, element.GetLocation(), name.ToString()));
             }
@@ -119,7 +118,12 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             var declaration = context.SemanticModel.GetDeclaredSymbol(memberDeclaration, context.CancellationToken);
-            var rawDocumentation = declaration?.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
+            if (declaration == null)
+            {
+                return;
+            }
+
+            var rawDocumentation = declaration.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
             var completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
             if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.InheritdocXmlTag))
             {
