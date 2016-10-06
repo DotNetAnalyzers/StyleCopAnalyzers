@@ -12,7 +12,7 @@ namespace StyleCop.Analyzers.SpacingRules
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.Text;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1025CodeMustNotContainMultipleWhitespaceInARow"/>.
@@ -52,15 +52,8 @@ namespace StyleCop.Analyzers.SpacingRules
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
-            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-
-            var whitespaceTrivia = root.FindTrivia(diagnostic.Location.SourceSpan.Start, true);
-            if (whitespaceTrivia.Span.Length > 1)
-            {
-                return document.WithSyntaxRoot(root.ReplaceTrivia(whitespaceTrivia, SyntaxFactory.Space));
-            }
-
-            return document;
+            var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+            return document.WithText(text.WithChanges(new TextChange(diagnostic.Location.SourceSpan, " ")));
         }
 
         private class FixAll : DocumentBasedFixAllProvider
@@ -78,19 +71,18 @@ namespace StyleCop.Analyzers.SpacingRules
                     return null;
                 }
 
-                var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
+                var text = await document.GetTextAsync().ConfigureAwait(false);
 
-                List<SyntaxTrivia> tokensToFix = new List<SyntaxTrivia>();
+                List<TextChange> changes = new List<TextChange>();
                 foreach (var diagnostic in diagnostics)
                 {
-                    SyntaxTrivia whitespace = syntaxRoot.FindTrivia(diagnostic.Location.SourceSpan.Start, findInsideTrivia: true);
-                    if (whitespace.Span.Length > 1)
-                    {
-                        tokensToFix.Add(whitespace);
-                    }
+                    changes.Add(new TextChange(diagnostic.Location.SourceSpan, " "));
                 }
 
-                return syntaxRoot.ReplaceTrivia(tokensToFix, (originalTrivia, rewrittenTrivia) => SyntaxFactory.Space);
+                changes.Sort((left, right) => left.Span.Start.CompareTo(right.Span.Start));
+
+                var tree = await document.GetSyntaxTreeAsync().ConfigureAwait(false);
+                return await tree.WithChangedText(text.WithChanges(changes)).GetRootAsync().ConfigureAwait(false);
             }
         }
     }
