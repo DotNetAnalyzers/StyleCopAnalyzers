@@ -6,5 +6,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     public class SA1402ForClassUnitTests : SA1402ForBlockDeclarationUnitTestsBase
     {
         public override string Keyword => "class";
+
+        protected override bool IsConfiguredAsTopLevelTypeByDefault => true;
     }
 }

@@ -67,7 +67,19 @@ public delegate void Bar<T1, T2, T3>(T1 x, T2 y, T3 z);
         [Fact]
         public async Task TestTwoElementsWithRuleDisabledAsync()
         {
-            this.ConfigureAsNonTopLevelType = true;
+            this.SettingsConfiguration = SA1402SettingsConfiguration.ConfigureAsNonTopLevelType;
+
+            var testCode = @"public delegate void Foo();
+public delegate void Bar();
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestTwoElementsWithDefaultRuleConfigurationAsync()
+        {
+            this.SettingsConfiguration = SA1402SettingsConfiguration.KeepDefaultConfiguration;
 
             var testCode = @"public delegate void Foo();
 public delegate void Bar();

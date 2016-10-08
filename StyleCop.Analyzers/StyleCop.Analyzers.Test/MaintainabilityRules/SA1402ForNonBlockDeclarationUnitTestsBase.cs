@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     using System.Collections.Generic;
-    using System.Linq;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.MaintainabilityRules;
@@ -14,28 +13,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     {
         public abstract string Keyword { get; }
 
-        protected bool ConfigureAsNonTopLevelType { get; set; } = false;
+        protected SA1402SettingsConfiguration SettingsConfiguration { get; set; } = SA1402SettingsConfiguration.ConfigureAsTopLevelType;
 
         protected override string GetSettings()
         {
-            var keywords = new List<string> { "class", "interface", "struct", "enum", "delegate" };
-            if (this.ConfigureAsNonTopLevelType)
-            {
-                keywords.Remove(this.Keyword);
-            }
-
-            var keywordsStr = string.Join(", ", keywords.Select(x => "\"" + x + "\""));
-
-            var settings = $@"
-{{
-  ""settings"": {{
-    ""maintainabilityRules"": {{
-      ""topLevelTypes"": [{keywordsStr}]
-    }}
-  }}
-}}";
-
-            return settings;
+            return this.SettingsConfiguration.GetSettings(this.Keyword);
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

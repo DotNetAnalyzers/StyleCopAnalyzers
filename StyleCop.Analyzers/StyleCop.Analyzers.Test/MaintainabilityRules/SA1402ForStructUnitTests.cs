@@ -6,5 +6,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     public class SA1402ForStructUnitTests : SA1402ForBlockDeclarationUnitTestsBase
     {
         public override string Keyword => "struct";
+
+        protected override bool IsConfiguredAsTopLevelTypeByDefault => false;
     }
 }

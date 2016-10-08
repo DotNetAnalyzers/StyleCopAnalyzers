@@ -17,7 +17,9 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     {
         public override bool SupportsCodeFix => true;
 
-        private bool ConfigureAsNonTopLevelType { get; set; } = false;
+        protected SA1402SettingsConfiguration SettingsConfiguration { get; set; } = SA1402SettingsConfiguration.ConfigureAsTopLevelType;
+
+        protected abstract bool IsConfiguredAsTopLevelTypeByDefault { get; }
 
         [Fact]
         public async Task TestTwoGenericElementsAsync()
@@ -53,7 +55,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         [Fact]
         public async Task TestTwoElementsWithRuleDisabledAsync()
         {
-            this.ConfigureAsNonTopLevelType = true;
+            this.SettingsConfiguration = SA1402SettingsConfiguration.ConfigureAsNonTopLevelType;
 
             var testCode = @"%1 Foo
 {
@@ -65,6 +67,46 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             testCode = testCode.Replace("%1", this.Keyword);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestTwoElementsWithDefaultRuleConfigurationAsync()
+        {
+            this.SettingsConfiguration = SA1402SettingsConfiguration.KeepDefaultConfiguration;
+
+            var testCode = @"%1 Foo
+{
+}
+%1 Bar
+{
+}";
+
+            var fixedCode = new[]
+            {
+                @"%1 Foo
+{
+}
+",
+                @"%1 Bar
+{
+}"
+            };
+
+            testCode = testCode.Replace("%1", this.Keyword);
+            fixedCode = fixedCode.Select(c => c.Replace("%1", this.Keyword)).ToArray();
+
+            if (this.IsConfiguredAsTopLevelTypeByDefault)
+            {
+                DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, this.Keyword.Length + 2);
+
+                await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpFixAsync(new[] { testCode }, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            }
+            else
+            {
+                await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            }
         }
 
         [Fact]
@@ -155,24 +197,7 @@ public {this.Keyword} Test0
 
         protected override string GetSettings()
         {
-            var keywords = new List<string> { "class", "interface", "struct", "enum", "delegate" };
-            if (this.ConfigureAsNonTopLevelType)
-            {
-                keywords.Remove(this.Keyword);
-            }
-
-            var keywordsStr = string.Join(", ", keywords.Select(x => "\"" + x + "\""));
-
-            var settings = $@"
-{{
-  ""settings"": {{
-    ""maintainabilityRules"": {{
-      ""topLevelTypes"": [{keywordsStr}]
-    }}
-  }}
-}}";
-
-            return settings;
+            return this.SettingsConfiguration.GetSettings(this.Keyword);
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

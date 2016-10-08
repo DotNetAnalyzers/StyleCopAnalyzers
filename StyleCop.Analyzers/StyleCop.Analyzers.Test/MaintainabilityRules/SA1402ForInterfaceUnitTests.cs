@@ -6,5 +6,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     public class SA1402ForInterfaceUnitTests : SA1402ForBlockDeclarationUnitTestsBase
     {
         public override string Keyword => "interface";
+
+        protected override bool IsConfiguredAsTopLevelTypeByDefault => false;
     }
 }

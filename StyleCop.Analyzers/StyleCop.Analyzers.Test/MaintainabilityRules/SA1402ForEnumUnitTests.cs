@@ -61,7 +61,25 @@ enum Bar
         [Fact]
         public async Task TestTwoElementsWithRuleDisabledAsync()
         {
-            this.ConfigureAsNonTopLevelType = true;
+            this.SettingsConfiguration = SA1402SettingsConfiguration.ConfigureAsNonTopLevelType;
+
+            var testCode = @"enum Foo
+{
+    A, B, C
+}
+enum Bar
+{
+    D, E
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestTwoElementsWithDefaultRuleConfigurationAsync()
+        {
+            this.SettingsConfiguration = SA1402SettingsConfiguration.KeepDefaultConfiguration;
 
             var testCode = @"enum Foo
 {
