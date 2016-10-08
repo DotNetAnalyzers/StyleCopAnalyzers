@@ -24,7 +24,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         public async Task TestTwoElementsAsync()
         {
             var testCode = @"public delegate void Foo();
-
 public delegate void Bar();
 ";
 
@@ -32,14 +31,11 @@ public delegate void Bar();
             {
                 @"public delegate void Foo();
 ",
-
-                // There should be no leading whitespace here... Why are there?
-                @"
-public delegate void Bar();
+                @"public delegate void Bar();
 "
             };
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 22);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 22);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -50,7 +46,6 @@ public delegate void Bar();
         public async Task TestTwoGenericElementsAsync()
         {
             var testCode = @"public delegate void Foo();
-
 public delegate void Bar<T1, T2, T3>(T1 x, T2 y, T3 z);
 ";
 
@@ -58,14 +53,11 @@ public delegate void Bar<T1, T2, T3>(T1 x, T2 y, T3 z);
             {
                 @"public delegate void Foo();
 ",
-
-                // There should be no leading whitespace here... Why are there?
-                @"
-public delegate void Bar<T1, T2, T3>(T1 x, T2 y, T3 z);
+                @"public delegate void Bar<T1, T2, T3>(T1 x, T2 y, T3 z);
 "
             };
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 22);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 22);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -78,7 +70,6 @@ public delegate void Bar<T1, T2, T3>(T1 x, T2 y, T3 z);
             this.ConfigureAsNonTopLevelType = true;
 
             var testCode = @"public delegate void Foo();
-
 public delegate void Bar();
 ";
 
@@ -89,9 +80,7 @@ public delegate void Bar();
         public async Task TestThreeElementsAsync()
         {
             var testCode = @"public delegate void Foo();
-
 public delegate void Bar();
-
 public delegate void FooBar();
 ";
 
@@ -99,22 +88,16 @@ public delegate void FooBar();
             {
                 @"public delegate void Foo();
 ",
-
-                // There should be no leading whitespace here... Why are there?
-                @"
-public delegate void Bar();
+                @"public delegate void Bar();
 ",
-
-                // There should be no leading whitespace here... Why are there?
-                @"
-public delegate void FooBar();
+                @"public delegate void FooBar();
 "
             };
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(3, 22),
-                this.CSharpDiagnostic().WithLocation(5, 22)
+                this.CSharpDiagnostic().WithLocation(2, 22),
+                this.CSharpDiagnostic().WithLocation(3, 22)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -126,17 +109,13 @@ public delegate void FooBar();
         public async Task TestPreferFilenameTypeAsync()
         {
             var testCode = @"public delegate void Foo();
-
 public delegate void Test0();
 ";
 
             var fixedCode = new[]
             {
-                // There should be no leading whitespace here... Why are there?
-                $@"
-public delegate void Test0();
+                $@"public delegate void Test0();
 ",
-
                 $@"public delegate void Foo();
 "
             };

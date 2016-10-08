@@ -31,7 +31,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     A, B, C
 }
-
 enum Bar
 {
     D, E
@@ -45,17 +44,14 @@ enum Bar
     A, B, C
 }
 ",
-
-                // There should be no leading whitespace here... Why are there?
-                @"
-enum Bar
+                @"enum Bar
 {
     D, E
 }
 "
             };
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 6);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 6);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -71,7 +67,6 @@ enum Bar
 {
     A, B, C
 }
-
 enum Bar
 {
     D, E
@@ -88,12 +83,10 @@ enum Bar
 {
     A, B, C
 }
-
 enum Bar
 {
     D, E
 }
-
 enum FooBar
 {
     F, G, H
@@ -107,18 +100,12 @@ enum FooBar
     A, B, C
 }
 ",
-
-                // There should be no leading whitespace here... Why are there?
-                @"
-enum Bar
+                @"enum Bar
 {
     D, E
 }
 ",
-
-                // There should be no leading whitespace here... Why are there?
-                @"
-enum FooBar
+                @"enum FooBar
 {
     F, G, H
 }
@@ -127,8 +114,8 @@ enum FooBar
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(6, 6),
-                this.CSharpDiagnostic().WithLocation(11, 6)
+                this.CSharpDiagnostic().WithLocation(5, 6),
+                this.CSharpDiagnostic().WithLocation(9, 6)
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -143,7 +130,6 @@ enum FooBar
 {
     A, B, C
 }
-
 enum Test0
 {
     D, E
@@ -152,9 +138,7 @@ enum Test0
 
             var fixedCode = new[]
             {
-                // There should be no leading whitespace here... Why are there?
-                @"
-enum Test0
+                @"enum Test0
 {
     D, E
 }
