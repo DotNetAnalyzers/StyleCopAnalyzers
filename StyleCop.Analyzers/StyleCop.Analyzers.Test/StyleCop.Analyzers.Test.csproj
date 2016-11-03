@@ -251,6 +251,7 @@
     <Compile Include="MaintainabilityRules\SA1402ForClassUnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1402ForBlockDeclarationUnitTestsBase.cs" />
     <Compile Include="MaintainabilityRules\SA1402SettingsConfiguration.cs" />
+    <Compile Include="MaintainabilityRules\SA1402SettingsConfigurationExtensions.cs" />
     <Compile Include="MaintainabilityRules\SA1403UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1404UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1405UnitTests.cs" />
