@@ -93,7 +93,7 @@ namespace StyleCop.Analyzers.Helpers
                     return ((DelegateDeclarationSyntax)member).Identifier.Text;
 
                 default:
-                    throw new InvalidOperationException("Unhandled declaration kind: " + member.Kind());
+                    throw new ArgumentException("Unhandled declaration kind: " + member.Kind());
             }
         }
 
