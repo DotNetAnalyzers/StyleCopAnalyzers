@@ -63,7 +63,10 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             }
 
             DocumentId extractedDocumentId = DocumentId.CreateNewId(document.Project.Id);
-            var extractedDocumentName = GetExtractedDocumentName(memberDeclarationSyntax) + ".cs";
+            string suffix;
+            FileNameHelpers.GetFileNameAndSuffix(document.Name, out suffix);
+            var settings = document.Project.AnalyzerOptions.GetStyleCopSettings(cancellationToken);
+            string extractedDocumentName = FileNameHelpers.GetConventionalFileName(memberDeclarationSyntax, settings.DocumentationRules.FileNamingConvention) + suffix;
 
             List<SyntaxNode> nodesToRemoveFromExtracted = new List<SyntaxNode>();
             SyntaxNode previous = node;
@@ -93,8 +96,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 }
             }
 
+            // Add the new file
             SyntaxNode extractedDocumentNode = root.RemoveNodes(nodesToRemoveFromExtracted, SyntaxRemoveOptions.KeepUnbalancedDirectives);
-
             Solution updatedSolution = document.Project.Solution.AddDocument(extractedDocumentId, extractedDocumentName, extractedDocumentNode, document.Folders);
 
             // Make sure to also add the file to linked projects
@@ -108,31 +111,6 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             updatedSolution = updatedSolution.WithDocumentSyntaxRoot(document.Id, root.RemoveNode(node, SyntaxRemoveOptions.KeepUnbalancedDirectives));
 
             return updatedSolution;
-        }
-
-        private static string GetExtractedDocumentName(MemberDeclarationSyntax memberDeclarationSyntax)
-        {
-            string extractedDocumentName = NamedTypeHelpers.GetNameOrIdentifier(memberDeclarationSyntax);
-
-            var typeDeclarationSyntax = memberDeclarationSyntax as TypeDeclarationSyntax;
-            var delegateDeclarationSyntax = memberDeclarationSyntax as DelegateDeclarationSyntax;
-
-            if (typeDeclarationSyntax != null)
-            {
-                if (typeDeclarationSyntax.TypeParameterList?.Parameters.Count > 0)
-                {
-                    extractedDocumentName += "`" + typeDeclarationSyntax.TypeParameterList.Parameters.Count;
-                }
-            }
-            else if (delegateDeclarationSyntax != null)
-            {
-                if (delegateDeclarationSyntax.TypeParameterList?.Parameters.Count > 0)
-                {
-                    extractedDocumentName += "`" + delegateDeclarationSyntax.TypeParameterList.Parameters.Count;
-                }
-            }
-
-            return extractedDocumentName;
         }
     }
 }
