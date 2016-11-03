@@ -61,7 +61,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         {
             var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
 
-            var typeNodes = GetTypeDeclarations(syntaxRoot, settings);
+            var typeNodes = GetTopLevelTypeDeclarations(syntaxRoot, settings);
 
             string suffix;
             var fileName = FileNameHelpers.GetFileNameAndSuffix(context.Tree.FilePath, out suffix);
@@ -90,14 +90,14 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             }
         }
 
-        private static IEnumerable<MemberDeclarationSyntax> GetTypeDeclarations(SyntaxNode root, StyleCopSettings settings)
+        private static IEnumerable<MemberDeclarationSyntax> GetTopLevelTypeDeclarations(SyntaxNode root, StyleCopSettings settings)
         {
-            var typeDeclarations = root.DescendantNodes(descendIntoChildren: node => ContainsTypeDeclarations(node)).OfType<MemberDeclarationSyntax>().ToList();
-            var relevantTypeDeclarations = typeDeclarations.Where(x => IsRelevantType(x, settings)).ToList();
+            var allTypeDeclarations = root.DescendantNodes(descendIntoChildren: node => ContainsTopLevelTypeDeclarations(node)).OfType<MemberDeclarationSyntax>().ToList();
+            var relevantTypeDeclarations = allTypeDeclarations.Where(x => IsRelevantType(x, settings)).ToList();
             return relevantTypeDeclarations;
         }
 
-        private static bool ContainsTypeDeclarations(SyntaxNode node)
+        private static bool ContainsTopLevelTypeDeclarations(SyntaxNode node)
         {
             return node.IsKind(SyntaxKind.CompilationUnit) || node.IsKind(SyntaxKind.NamespaceDeclaration);
         }
