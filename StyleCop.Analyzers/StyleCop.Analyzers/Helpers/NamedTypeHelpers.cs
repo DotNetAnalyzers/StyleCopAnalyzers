@@ -79,11 +79,22 @@ namespace StyleCop.Analyzers.Helpers
 
         internal static string GetNameOrIdentifier(MemberDeclarationSyntax member)
         {
-            string name = null;
-            name = name ?? (member as TypeDeclarationSyntax)?.Identifier.Text;
-            name = name ?? (member as EnumDeclarationSyntax)?.Identifier.Text;
-            name = name ?? (member as DelegateDeclarationSyntax)?.Identifier.Text;
-            return name;
+            switch (member.Kind())
+            {
+                case SyntaxKind.ClassDeclaration:
+                case SyntaxKind.InterfaceDeclaration:
+                case SyntaxKind.StructDeclaration:
+                    return ((TypeDeclarationSyntax)member).Identifier.Text;
+
+                case SyntaxKind.EnumDeclaration:
+                    return ((EnumDeclarationSyntax)member).Identifier.Text;
+
+                case SyntaxKind.DelegateDeclaration:
+                    return ((DelegateDeclarationSyntax)member).Identifier.Text;
+
+                default:
+                    throw new InvalidOperationException("Unhandled declaration kind: " + member.Kind());
+            }
         }
 
         internal static Location GetNameOrIdentifierLocation(SyntaxNode member)
