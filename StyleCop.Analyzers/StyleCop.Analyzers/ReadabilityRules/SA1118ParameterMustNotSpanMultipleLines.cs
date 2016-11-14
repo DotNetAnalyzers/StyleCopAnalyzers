@@ -77,7 +77,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             SyntaxKind.AnonymousMethodExpression,
             SyntaxKind.ParenthesizedLambdaExpression,
             SyntaxKind.SimpleLambdaExpression,
-            SyntaxKind.InvocationExpression
+            SyntaxKind.InvocationExpression,
+            SyntaxKind.ObjectCreationExpression
         };
 
         /// <inheritdoc/>
