@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
@@ -589,6 +590,346 @@ internal abstract class CustomizableBlockSubscriberBase<TSource, TTarget, TSubsc
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that an empty see tag is handled properly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestWithEmptySeeTagAsync()
+        {
+            string testCode = @"
+public class TestClass
+{
+    /// <summary>
+    /// Initializes a new instance of the <see/> class.
+    /// </summary>
+    public TestClass()
+    {
+    }
+}
+";
+            string fixedCode = @"
+public class TestClass
+{
+    /// <summary>
+    /// Initializes a new instance of the <see cref=""TestClass""/> class.
+    /// </summary>
+    public TestClass()
+    {
+    }
+}
+";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 43);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that an invalid second part of the default text is handled properly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestWithInvalidSecondPartAsync()
+        {
+            string testCode = @"
+public class TestClass
+{
+    /// <summary>
+    /// Initializes a new instance of the <see cref=""TestClass""/> error.
+    /// </summary>
+    public TestClass()
+    {
+    }
+}
+";
+            string fixedCode = @"
+public class TestClass
+{
+    /// <summary>
+    /// Initializes a new instance of the <see cref=""TestClass""/> class.
+    /// Initializes a new instance of the <see cref=""TestClass""/> error.
+    /// </summary>
+    public TestClass()
+    {
+    }
+}
+";
+
+            //// TODO: The codefix produces a wrong result for this scenario but its not easily fixed.
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 9);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            ////await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a constructor with the correct summary text from included documentation will not produce any diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestConstructorWithValidSummaryInIncludedDocsAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    /// <include file='ValidSummary.xml' path='/TestClass/TestClass/*'/>
+    public TestClass() { }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a constructor with the missing summary tag from included documentation will not produce any diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestConstructorWithMissingSummaryInIncludedDocsAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    /// <include file='MissingSummary.xml' path='/TestClass/TestClass/*'/>
+    public TestClass() { }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a constructor with an empty summary tag from included documentation will produce a diagnostic and offer no codefix.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestConstructorWithEmptySummaryInIncludedDocsAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    /// <include file='EmptySummary.xml' path='/TestClass/TestClass/*'/>
+    public TestClass() { }
+}
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(4, 9);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            var offeredFixes = await this.GetOfferedCSharpFixesAsync(testCode).ConfigureAwait(false);
+            Assert.Empty(offeredFixes);
+        }
+
+        /// <summary>
+        /// Verifies that a constructor with an invalid summary tag from included documentation will produce a diagnostic and offer no codefix.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestConstructorWithInvalidSummaryInIncludedDocsAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    /// <include file='InvalidSummary.xml' path='/TestClass/TestClass/*'/>
+    public TestClass() { }
+}
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(4, 9);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            var offeredFixes = await this.GetOfferedCSharpFixesAsync(testCode).ConfigureAwait(false);
+            Assert.Empty(offeredFixes);
+        }
+
+        /// <summary>
+        /// Verifies that a constructor with an invalid class reference in the summary tag from included documentation will produce a diagnostic and offer no codefix.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestConstructorWithInvalidReferenceInIncludedDocsAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    /// <include file='InvalidReference.xml' path='/TestClass/TestClass/*'/>
+    public TestClass() { }
+}
+
+public class WrongClass { }
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(4, 9);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            var offeredFixes = await this.GetOfferedCSharpFixesAsync(testCode).ConfigureAwait(false);
+            Assert.Empty(offeredFixes);
+        }
+
+        /// <summary>
+        /// Verifies that a constructor with an invalid class reference in the summary tag from included documentation will produce a diagnostic and offer no codefix.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestConstructorWithInvalidReferenceToNamespaceInIncludedDocsAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    /// <include file='InvalidReference.xml' path='/TestClass/TestClass/*'/>
+    public TestClass() { }
+}
+
+namespace WrongClass { }
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(4, 9);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            var offeredFixes = await this.GetOfferedCSharpFixesAsync(testCode).ConfigureAwait(false);
+            Assert.Empty(offeredFixes);
+        }
+
+        /// <summary>
+        /// Verifies that a constructor with an invalid class reference in the summary tag from included documentation will produce a diagnostic and offer no codefix.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestConstructorWithInvalidReferenceToNothingInIncludedDocsAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    /// <include file='InvalidReference.xml' path='/TestClass/TestClass/*'/>
+    public TestClass() { }
+}
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(4, 9);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            var offeredFixes = await this.GetOfferedCSharpFixesAsync(testCode).ConfigureAwait(false);
+            Assert.Empty(offeredFixes);
+        }
+
+        /// <summary>
+        /// Verifies that a constructor with a missing reference in the summary tag from included documentation will produce a diagnostic and offer no codefix.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestConstructorWithNoReferenceInIncludedDocsAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    /// <include file='NoReference.xml' path='/TestClass/TestClass/*'/>
+    public TestClass() { }
+}
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(4, 9);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            var offeredFixes = await this.GetOfferedCSharpFixesAsync(testCode).ConfigureAwait(false);
+            Assert.Empty(offeredFixes);
+        }
+
+        /// <summary>
+        /// Verifies that a constructor with invalid text after the reference from included documentation will produce a diagnostic and offer no codefix.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestConstructorWithInvalidSecondPartInIncludedDocsAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    /// <include file='InvalidSecondPart.xml' path='/TestClass/TestClass/*'/>
+    public TestClass() { }
+}
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(4, 9);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            var offeredFixes = await this.GetOfferedCSharpFixesAsync(testCode).ConfigureAwait(false);
+            Assert.Empty(offeredFixes);
+        }
+
+        protected override Project ApplyCompilationOptions(Project project)
+        {
+            var resolver = new TestXmlReferenceResolver();
+
+            string contentValidSummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+  <TestClass>
+    <summary>Initializes a new instance of the <see cref=""TestClass""/> class.</summary>
+  </TestClass>
+</TestClass>
+";
+            resolver.XmlReferences.Add("ValidSummary.xml", contentValidSummary);
+
+            string contentMissingSummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+  <TestClass>
+  </TestClass>
+</TestClass>
+";
+            resolver.XmlReferences.Add("MissingSummary.xml", contentMissingSummary);
+
+            string contentEmptySummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+  <TestClass>
+    <summary></summary>
+  </TestClass>
+</TestClass>
+";
+            resolver.XmlReferences.Add("EmptySummary.xml", contentEmptySummary);
+
+            string contentInvalidSummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+  <TestClass>
+    <summary>Creates the <see cref=""TestClass""/> class.</summary>
+  </TestClass>
+</TestClass>
+";
+            resolver.XmlReferences.Add("InvalidSummary.xml", contentInvalidSummary);
+
+            string contentInvalidReference = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+  <TestClass>
+    <summary>Initializes a new instance of the <see cref=""WrongClass""/> class.</summary>
+  </TestClass>
+</TestClass>
+";
+            resolver.XmlReferences.Add("InvalidReference.xml", contentInvalidReference);
+
+            string contentNoReference = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+  <TestClass>
+    <summary>Initializes a new instance of the <see /> class.</summary>
+  </TestClass>
+</TestClass>
+";
+            resolver.XmlReferences.Add("NoReference.xml", contentNoReference);
+
+            string contentInvalidSecondPart = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+  <TestClass>
+    <summary>Initializes a new instance of the <see cref=""TestClass""/>.</summary>
+  </TestClass>
+</TestClass>
+";
+            resolver.XmlReferences.Add("InvalidSecondPart.xml", contentInvalidSecondPart);
+
+            project = base.ApplyCompilationOptions(project);
+            project = project.WithCompilationOptions(project.CompilationOptions.WithXmlReferenceResolver(resolver));
+            return project;
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

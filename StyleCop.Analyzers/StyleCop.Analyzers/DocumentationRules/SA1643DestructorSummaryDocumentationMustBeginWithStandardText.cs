@@ -81,20 +81,16 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static void HandleDestructor(SyntaxNodeAnalysisContext context)
         {
-            var destructorDeclaration = context.Node as DestructorDeclarationSyntax;
+            var destructorDeclaration = (DestructorDeclarationSyntax)context.Node;
+            var settings = context.Options.GetStyleCopSettings(context.CancellationToken);
+            var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
+            var resourceManager = DocumentationResources.ResourceManager;
 
-            if (destructorDeclaration != null)
-            {
-                var settings = context.Options.GetStyleCopSettings(context.CancellationToken);
-                var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
-                var resourceManager = DocumentationResources.ResourceManager;
-
-                HandleDeclaration(
-                    context,
-                    resourceManager.GetString(nameof(DocumentationResources.DestructorStandardTextFirstPart), culture),
-                    resourceManager.GetString(nameof(DocumentationResources.DestructorStandardTextSecondPart), culture),
-                    Descriptor);
-            }
+            HandleDeclaration(
+                context,
+                resourceManager.GetString(nameof(DocumentationResources.DestructorStandardTextFirstPart), culture),
+                resourceManager.GetString(nameof(DocumentationResources.DestructorStandardTextSecondPart), culture),
+                Descriptor);
         }
     }
 }

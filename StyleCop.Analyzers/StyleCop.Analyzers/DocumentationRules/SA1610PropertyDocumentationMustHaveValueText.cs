@@ -4,6 +4,8 @@
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Immutable;
+    using System.Linq;
+    using System.Xml.Linq;
     using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -47,12 +49,41 @@ namespace StyleCop.Analyzers.DocumentationRules
         protected override string XmlTagToHandle => XmlCommentHelper.ValueXmlTag;
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location diagnosticLocation)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, XElement completeDocumentation, Location diagnosticLocation)
         {
-            if (syntax != null && XmlCommentHelper.IsConsideredEmpty(syntax))
+            var properties = ImmutableDictionary.Create<string, string>();
+
+            if (completeDocumentation != null)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, diagnosticLocation));
+                var valueTag = completeDocumentation.Nodes().OfType<XElement>().FirstOrDefault(element => element.Name == XmlCommentHelper.ValueXmlTag);
+                if (valueTag == null)
+                {
+                    // handled by SA1609
+                    return;
+                }
+
+                if (!XmlCommentHelper.IsConsideredEmpty(valueTag))
+                {
+                    return;
+                }
+
+                properties = properties.Add(NoCodeFixKey, string.Empty);
             }
+            else
+            {
+                if (syntax == null)
+                {
+                    // Handled by SA1609
+                    return;
+                }
+
+                if (!XmlCommentHelper.IsConsideredEmpty(syntax))
+                {
+                    return;
+                }
+            }
+
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, diagnosticLocation, properties));
         }
     }
 }

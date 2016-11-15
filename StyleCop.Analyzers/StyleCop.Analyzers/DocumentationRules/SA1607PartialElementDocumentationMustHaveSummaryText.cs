@@ -4,6 +4,8 @@
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Immutable;
+    using System.Linq;
+    using System.Xml.Linq;
     using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -87,17 +89,41 @@ namespace StyleCop.Analyzers.DocumentationRules
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location[] diagnosticLocations)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, XElement completeDocumentation, Location[] diagnosticLocations)
         {
-            if (syntax != null)
+            if (completeDocumentation != null)
             {
-                if (XmlCommentHelper.IsConsideredEmpty(syntax))
+                var summaryTag = completeDocumentation.Nodes().OfType<XElement>().FirstOrDefault(element => element.Name == XmlCommentHelper.SummaryXmlTag);
+                var contentTag = completeDocumentation.Nodes().OfType<XElement>().FirstOrDefault(element => element.Name == XmlCommentHelper.ContentXmlTag);
+
+                if ((summaryTag == null) && (contentTag == null))
                 {
-                    foreach (var location in diagnosticLocations)
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
-                    }
+                    // handled by SA1605
+                    return;
                 }
+
+                if (!XmlCommentHelper.IsConsideredEmpty(summaryTag) || !XmlCommentHelper.IsConsideredEmpty(contentTag))
+                {
+                    return;
+                }
+            }
+            else
+            {
+                if (syntax == null)
+                {
+                    // handled by SA1605
+                    return;
+                }
+
+                if (!XmlCommentHelper.IsConsideredEmpty(syntax))
+                {
+                    return;
+                }
+            }
+
+            foreach (var location in diagnosticLocations)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
             }
         }
     }

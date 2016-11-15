@@ -159,6 +159,36 @@
   <data name="SA1617CodeFix" xml:space="preserve">
     <value>Remove &lt;returns&gt; XML comment</value>
   </data>
+  <data name="SA1620Description" xml:space="preserve">
+    <value>The &lt;typeparam&gt; tags within the Xml header documentation for a generic C# element do not match the generic type parameters on the element.</value>
+  </data>
+  <data name="SA1620MissingMessageFormat" xml:space="preserve">
+    <value>The type parameter '{0}' does not exist.</value>
+  </data>
+  <data name="SA1620Title" xml:space="preserve">
+    <value>Generic type parameter documentation must match type parameters</value>
+  </data>
+  <data name="SA1620WrongOrderMessageFormat" xml:space="preserve">
+    <value>The type parameter documentation for '{0}' should be at position {1}.</value>
+  </data>
+  <data name="SA1621Description" xml:space="preserve">
+    <value>A &lt;typeparam&gt; tag within the XML header documentation for a generic C# element is missing a name attribute, or contains an empty name attribute.</value>
+  </data>
+  <data name="SA1621MessageFormat" xml:space="preserve">
+    <value>Generic type parameter documentation must declare parameter name.</value>
+  </data>
+  <data name="SA1621Title" xml:space="preserve">
+    <value>Generic type parameter documentation must declare parameter name</value>
+  </data>
+  <data name="SA1622Description" xml:space="preserve">
+    <value>A &lt;typeparam&gt; tag within the Xml header documentation for a generic C# element is empty.</value>
+  </data>
+  <data name="SA1622MessageFormat" xml:space="preserve">
+    <value>Generic type parameter documentation must have text.</value>
+  </data>
+  <data name="SA1622Title" xml:space="preserve">
+    <value>Generic type parameter documentation must have text</value>
+  </data>
   <data name="SA1623Description" xml:space="preserve">
     <value>The documentation text within a C# property’s &lt;summary&gt; tag does not match the accessors within the property.</value>
   </data>

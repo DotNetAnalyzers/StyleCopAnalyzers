@@ -59,6 +59,7 @@
     <Compile Include="DocumentationRules\ElementDocumentationBase.cs" />
     <Compile Include="DocumentationRules\ElementDocumentationSummaryBase.cs" />
     <Compile Include="DocumentationRules\FileHeaderAnalyzers.cs" />
+    <Compile Include="DocumentationRules\GenericTypeParameterDocumentationAnalyzer.cs" />
     <Compile Include="DocumentationRules\PartialElementDocumentationSummaryBase.cs" />
     <Compile Include="DocumentationRules\PropertyDocumentationBase.cs" />
     <Compile Include="DocumentationRules\PropertySummaryDocumentationAnalyzer.cs" />
@@ -82,9 +83,6 @@
     <Compile Include="DocumentationRules\SA1617VoidReturnValueMustNotBeDocumented.cs" />
     <Compile Include="DocumentationRules\SA1618GenericTypeParametersMustBeDocumented.cs" />
     <Compile Include="DocumentationRules\SA1619GenericTypeParametersMustBeDocumentedPartialClass.cs" />
-    <Compile Include="DocumentationRules\SA1620GenericTypeParameterDocumentationMustMatchTypeParameters.cs" />
-    <Compile Include="DocumentationRules\SA1621GenericTypeParameterDocumentationMustDeclareParameterName.cs" />
-    <Compile Include="DocumentationRules\SA1622GenericTypeParameterDocumentationMustHaveText.cs" />
     <Compile Include="DocumentationRules\SA1625ElementDocumentationMustNotBeCopiedAndPasted.cs" />
     <Compile Include="DocumentationRules\SA1626SingleLineCommentsMustNotUseDocumentationStyleSlashes.cs" />
     <Compile Include="DocumentationRules\SA1627DocumentationTextMustNotBeEmpty.cs" />
@@ -140,6 +138,7 @@
     <Compile Include="Helpers\XmlCommentHelper.cs" />
     <Compile Include="Helpers\XmlFileHeader.cs" />
     <Compile Include="Helpers\XmlSyntaxFactory.cs" />
+    <Compile Include="Helpers\XPathExtensions.cs" />
     <Compile Include="LayoutRules\LayoutResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

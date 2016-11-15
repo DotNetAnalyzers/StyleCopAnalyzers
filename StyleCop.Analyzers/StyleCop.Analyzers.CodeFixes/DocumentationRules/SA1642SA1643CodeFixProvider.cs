@@ -50,8 +50,12 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                var node = root.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
+                if (diagnostic.Properties.ContainsKey(StandardTextDiagnosticBase.NoCodeFixKey))
+                {
+                    continue;
+                }
 
+                var node = root.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
                 var xmlElementSyntax = node as XmlElementSyntax;
 
                 if (xmlElementSyntax != null)
