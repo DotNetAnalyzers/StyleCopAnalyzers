@@ -99,7 +99,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             protected override string CodeActionTitle
                 => MaintainabilityResources.SA1119CodeFix;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+            protected override async Task<Document> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
                 if (diagnostics.IsEmpty)
                 {
@@ -110,7 +110,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
                 var nodes = diagnostics.Select(diagnostic => syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true, findInsideTrivia: true));
 
-                return syntaxRoot.ReplaceNodes(nodes, (originalNode, rewrittenNode) => GetReplacement((ParenthesizedExpressionSyntax)rewrittenNode));
+                var newRoot = syntaxRoot.ReplaceNodes(nodes, (originalNode, rewrittenNode) => GetReplacement((ParenthesizedExpressionSyntax)rewrittenNode));
+                return document.WithSyntaxRoot(newRoot);
             }
         }
     }

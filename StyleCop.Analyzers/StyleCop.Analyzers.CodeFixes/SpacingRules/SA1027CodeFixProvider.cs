@@ -150,7 +150,7 @@ namespace StyleCop.Analyzers.SpacingRules
             protected override string CodeActionTitle
                 => SpacingResources.SA1027CodeFix;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+            protected override async Task<Document> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
                 if (diagnostics.IsEmpty)
                 {
@@ -168,8 +168,7 @@ namespace StyleCop.Analyzers.SpacingRules
 
                 changes.Sort((left, right) => left.Span.Start.CompareTo(right.Span.Start));
 
-                SyntaxTree tree = await document.GetSyntaxTreeAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
-                return await tree.WithChangedText(sourceText.WithChanges(changes)).GetRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                return document.WithText(sourceText.WithChanges(changes));
             }
         }
     }

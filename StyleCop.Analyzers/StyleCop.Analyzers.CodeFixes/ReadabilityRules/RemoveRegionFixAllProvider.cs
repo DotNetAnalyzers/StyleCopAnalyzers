@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     {
         protected override string CodeActionTitle => "Remove region";
 
-        protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+        protected override async Task<Document> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
         {
             if (diagnostics.IsEmpty)
             {
@@ -30,7 +30,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 .SelectMany(node => node.GetRelatedDirectives())
                 .Where(node => !node.IsMissing);
 
-            return root.RemoveNodes(nodesToRemove, SyntaxRemoveOptions.AddElasticMarker);
+            var newRoot = root.RemoveNodes(nodesToRemove, SyntaxRemoveOptions.AddElasticMarker);
+            return document.WithSyntaxRoot(newRoot);
         }
     }
 }

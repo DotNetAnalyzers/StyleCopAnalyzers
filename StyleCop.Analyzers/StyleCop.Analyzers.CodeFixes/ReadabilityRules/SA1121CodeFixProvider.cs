@@ -109,7 +109,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             protected override string CodeActionTitle
                 => ReadabilityResources.SA1121CodeFix;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+            protected override async Task<Document> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
                 if (diagnostics.IsEmpty)
                 {
@@ -127,7 +127,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     nodesToReplace.Add(node);
                 }
 
-                return syntaxRoot.ReplaceNodes(nodesToReplace, (originalNode, rewrittenNode) => ComputeReplacement(semanticModel, originalNode, fixAllContext.CancellationToken));
+                var newRoot = syntaxRoot.ReplaceNodes(nodesToReplace, (originalNode, rewrittenNode) => ComputeReplacement(semanticModel, originalNode, fixAllContext.CancellationToken));
+                return document.WithSyntaxRoot(newRoot);
             }
         }
     }

@@ -94,7 +94,7 @@ namespace StyleCop.Analyzers.LayoutRules
             protected override string CodeActionTitle =>
                 LayoutResources.SA1503CodeFix;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+            protected override async Task<Document> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
                 if (diagnostics.IsEmpty)
                 {
@@ -121,7 +121,8 @@ namespace StyleCop.Analyzers.LayoutRules
                     nodesNeedingBlocks.Add(node);
                 }
 
-                return syntaxRoot.ReplaceNodes(nodesNeedingBlocks, (originalNode, rewrittenNode) => SyntaxFactory.Block((StatementSyntax)rewrittenNode));
+                var newRoot = syntaxRoot.ReplaceNodes(nodesNeedingBlocks, (originalNode, rewrittenNode) => SyntaxFactory.Block((StatementSyntax)rewrittenNode));
+                return document.WithSyntaxRoot(newRoot);
             }
         }
     }

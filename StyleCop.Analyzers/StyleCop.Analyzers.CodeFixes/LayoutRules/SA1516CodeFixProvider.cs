@@ -114,7 +114,7 @@ namespace StyleCop.Analyzers.LayoutRules
             protected override string CodeActionTitle =>
                 LayoutResources.SA1516CodeFix;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+            protected override async Task<Document> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
                 if (diagnostics.IsEmpty)
                 {
@@ -136,13 +136,15 @@ namespace StyleCop.Analyzers.LayoutRules
                     }
                 }
 
-                return syntaxRoot.ReplaceNodes(nodes, (oldNode, newNode) =>
+                var newRoot = syntaxRoot.ReplaceNodes(nodes, (oldNode, newNode) =>
                 {
                     var newTriviaList = newNode.GetLeadingTrivia();
                     newTriviaList = newTriviaList.Insert(0, SyntaxFactory.CarriageReturnLineFeed);
 
                     return newNode.WithLeadingTrivia(newTriviaList);
                 });
+
+                return document.WithSyntaxRoot(newRoot);
             }
         }
     }

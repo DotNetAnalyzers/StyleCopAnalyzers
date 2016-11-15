@@ -104,7 +104,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             protected override string CodeActionTitle =>
                 ReadabilityResources.SA1133CodeFix;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+            protected override async Task<Document> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
                 if (diagnostics.IsEmpty)
                 {
@@ -125,7 +125,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     newRoot = newRoot.ReplaceNode(newRoot.GetCurrentNode(attributeList), GetNewAttributeList(attributeList, indentationTrivia));
                 }
 
-                return newRoot;
+                return document.WithSyntaxRoot(newRoot);
             }
         }
     }

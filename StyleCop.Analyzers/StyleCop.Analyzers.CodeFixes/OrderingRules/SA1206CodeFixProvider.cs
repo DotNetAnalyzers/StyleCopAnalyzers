@@ -161,7 +161,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
             protected override string CodeActionTitle => OrderingResources.ModifierOrderCodeFix;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+            protected override async Task<Document> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
                 if (diagnostics.IsEmpty)
                 {
@@ -199,7 +199,7 @@ namespace StyleCop.Analyzers.OrderingRules
                     syntaxRoot = UpdateSyntaxRoot(memberDeclaration, newModifierList, syntaxRoot);
                 }
 
-                return syntaxRoot;
+                return document.WithSyntaxRoot(syntaxRoot);
             }
         }
     }

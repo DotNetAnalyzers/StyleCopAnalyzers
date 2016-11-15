@@ -71,7 +71,7 @@ namespace StyleCop.Analyzers.LayoutRules
             protected override string CodeActionTitle =>
                 LayoutResources.SA1518CodeFix;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+            protected override async Task<Document> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
                 if (diagnostics.IsEmpty)
                 {
@@ -79,8 +79,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 }
 
                 var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, fixAllContext.CancellationToken);
-                Document updatedDocument = await FixEndOfFileAsync(document, diagnostics[0], settings.LayoutRules.NewlineAtEndOfFile, fixAllContext.CancellationToken).ConfigureAwait(false);
-                return await updatedDocument.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                return await FixEndOfFileAsync(document, diagnostics[0], settings.LayoutRules.NewlineAtEndOfFile, fixAllContext.CancellationToken).ConfigureAwait(false);
             }
         }
     }
