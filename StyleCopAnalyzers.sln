@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StyleCop.Analyzers", "StyleCop.Analyzers\StyleCop.Analyzers\StyleCop.Analyzers.csproj", "{3B052737-06CE-4182-AE0F-08EB82DFA73E}"
 EndProject
@@ -45,7 +45,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "documentation", "documentat
 		documentation\NamingRules.md = documentation\NamingRules.md
 		documentation\OrderingRules.md = documentation\OrderingRules.md
 		documentation\ReadabilityRules.md = documentation\ReadabilityRules.md
-		documentation\SA0000Roslyn7446Workaround.md = documentation\SA0000Roslyn7446Workaround.md
 		documentation\SA0001.md = documentation\SA0001.md
 		documentation\SA0002.md = documentation\SA0002.md
 		documentation\SA1000.md = documentation\SA1000.md
