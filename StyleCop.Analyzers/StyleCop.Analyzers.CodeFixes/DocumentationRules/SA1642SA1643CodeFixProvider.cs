@@ -59,7 +59,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     context.RegisterCodeFix(
                         CodeAction.Create(
                             DocumentationResources.SA1642SA1643CodeFix,
-                            cancellationToken => GetTransformedDocumentAsync(context.Document, root, xmlElementSyntax),
+                            cancellationToken => GetTransformedDocumentAsync(context.Document, root, xmlElementSyntax, cancellationToken),
                             nameof(SA1642SA1643CodeFixProvider)),
                         diagnostic);
                 }
@@ -76,12 +76,12 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
         }
 
-        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, XmlElementSyntax node)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, XmlElementSyntax node, CancellationToken cancellationToken)
         {
             var typeDeclaration = node.FirstAncestorOrSelf<BaseTypeDeclarationSyntax>();
             var declarationSyntax = node.FirstAncestorOrSelf<BaseMethodDeclarationSyntax>();
             bool isStruct = typeDeclaration.IsKind(SyntaxKind.StructDeclaration);
-            var settings = document.Project.AnalyzerOptions.GetStyleCopSettings(CancellationToken.None);
+            var settings = document.Project.AnalyzerOptions.GetStyleCopSettings(cancellationToken);
             var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
             var resourceManager = DocumentationResources.ResourceManager;
 
