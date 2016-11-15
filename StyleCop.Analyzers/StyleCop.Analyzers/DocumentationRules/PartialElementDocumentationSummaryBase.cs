@@ -92,12 +92,6 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag) != null)
-            {
-                // Ignore nodes with an <inheritdoc/> tag.
-                return;
-            }
-
             var xmlElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.SummaryXmlTag);
             if (xmlElement == null)
             {
