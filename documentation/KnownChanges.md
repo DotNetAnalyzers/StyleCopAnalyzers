@@ -201,10 +201,7 @@ interface. StyleCop Classic reported SA1305 for all methods.
 
 ## Maintainability Rules
 
-### SA1402
-
-StyleCop Classic can only report SA1402 for class declarations. In StyleCop Analyzers,
-it is possible to configure which type declarations are considered by SA1402.
+There are no known changes at this time.
 
 ## Layout Rules
 
