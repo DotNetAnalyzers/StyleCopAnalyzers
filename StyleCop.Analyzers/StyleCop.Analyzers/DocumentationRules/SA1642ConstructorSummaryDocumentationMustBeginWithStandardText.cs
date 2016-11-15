@@ -162,7 +162,8 @@ namespace StyleCop.Analyzers.DocumentationRules
                 // also allow the non-private wording for private constructors
                 HandleDeclaration(
                     context,
-                    string.Format(resourceManager.GetString("NonPrivateConstructorStandardTextFirstPart", culture),
+                    string.Format(
+                        resourceManager.GetString("NonPrivateConstructorStandardTextFirstPart", culture),
                         typeKindText),
                     string.Format(
                         resourceManager.GetString("NonPrivateConstructorStandardTextSecondPart", culture),
@@ -173,7 +174,8 @@ namespace StyleCop.Analyzers.DocumentationRules
             {
                 HandleDeclaration(
                     context,
-                    string.Format(resourceManager.GetString("NonPrivateConstructorStandardTextFirstPart", culture),
+                    string.Format(
+                        resourceManager.GetString("NonPrivateConstructorStandardTextFirstPart", culture),
                         typeKindText),
                     string.Format(
                         resourceManager.GetString("NonPrivateConstructorStandardTextSecondPart", culture),
