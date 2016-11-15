@@ -9,6 +9,9 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
     [JsonObject(MemberSerialization.OptIn)]
     internal class MaintainabilitySettings
     {
+        /// <summary>
+        /// The default value for the <see cref="TopLevelTypes"/> property.
+        /// </summary>
         private static readonly ImmutableArray<TopLevelType> DefaultTopLevelTypes =
             ImmutableArray.Create(TopLevelType.Class);
 
