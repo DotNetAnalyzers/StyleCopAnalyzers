@@ -116,6 +116,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>HelpersResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\LiteralExpressionHelpers.cs" />
     <Compile Include="Helpers\LocationHelpers.cs" />
     <Compile Include="Helpers\MemberOrderHelper.cs" />
     <Compile Include="Helpers\ModifierOrderHelper.cs" />
@@ -173,7 +174,7 @@
     <Compile Include="MaintainabilityRules\SA1119StatementMustNotUseUnnecessaryParenthesis.cs" />
     <Compile Include="MaintainabilityRules\SA1400AccessModifierMustBeDeclared.cs" />
     <Compile Include="MaintainabilityRules\SA1401FieldsMustBePrivate.cs" />
-    <Compile Include="MaintainabilityRules\SA1402FileMayOnlyContainASingleClass.cs" />
+    <Compile Include="MaintainabilityRules\SA1402FileMayOnlyContainASingleType.cs" />
     <Compile Include="MaintainabilityRules\SA1403FileMayOnlyContainASingleNamespace.cs" />
     <Compile Include="MaintainabilityRules\SA1404CodeAnalysisSuppressionMustHaveJustification.cs" />
     <Compile Include="MaintainabilityRules\SA1405DebugAssertMustProvideMessageText.cs" />
@@ -269,6 +270,7 @@
     <Compile Include="ReadabilityRules\SA1133DoNotCombineAttributes.cs" />
     <Compile Include="ReadabilityRules\SA1134AttributesMustNotShareLine.cs" />
     <Compile Include="ReadabilityRules\SA1136EnumValuesShouldBeOnSeparateLines.cs" />
+    <Compile Include="ReadabilityRules\SA1139UseLiteralSuffixNotationInsteadOfCasting.cs" />
     <Compile Include="ReadabilityRules\SX1101DoNotPrefixLocalMembersWithThis.cs" />
     <Compile Include="Settings\DeserializationFailureBehavior.cs" />
     <Compile Include="Settings\ObjectModel\DocumentationSettings.cs" />
@@ -284,6 +286,7 @@
     <Compile Include="Settings\ObjectModel\SettingsFile.cs" />
     <Compile Include="Settings\ObjectModel\SpacingSettings.cs" />
     <Compile Include="Settings\ObjectModel\StyleCopSettings.cs" />
+    <Compile Include="Settings\ObjectModel\TopLevelType.cs" />
     <Compile Include="Settings\ObjectModel\UsingDirectivesPlacement.cs" />
     <Compile Include="Settings\SettingsHelper.cs" />
     <Compile Include="Settings\SettingsResources.Designer.cs">
@@ -398,9 +401,30 @@
     <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.de-DE.resx">
+      <DependentUpon>DocumentationResources.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.en-GB.resx">
+      <DependentUpon>DocumentationResources.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.es-MX.resx">
+      <DependentUpon>DocumentationResources.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.fr-FR.resx">
+      <DependentUpon>DocumentationResources.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.pl-PL.resx">
+      <DependentUpon>DocumentationResources.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.pt-BR.resx">
+      <DependentUpon>DocumentationResources.resx</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DocumentationRules\DocumentationResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>DocumentationResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.ru-RU.resx">
+      <DependentUpon>DocumentationResources.resx</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Helpers\HelpersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

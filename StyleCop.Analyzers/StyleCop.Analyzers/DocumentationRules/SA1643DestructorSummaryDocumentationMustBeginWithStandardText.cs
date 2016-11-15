@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.Globalization;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -65,18 +66,6 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static readonly Action<SyntaxNodeAnalysisContext> DestructorDeclarationAction = HandleDestructor;
 
-        /// <summary>
-        /// Gets the standard text which is expected to appear at the beginning of the <c>&lt;summary&gt;</c>
-        /// documentation for a destructor.
-        /// </summary>
-        /// <value>
-        /// A two-element array containing the standard text which is expected to appear at the beginning of the
-        /// <c>&lt;summary&gt;</c> documentation for a destructor. The first element appears before the name of the
-        /// containing class, followed by a <c>&lt;see&gt;</c> element targeting the containing type, and finally
-        /// followed by the second element of this array.
-        /// </value>
-        public static ImmutableArray<string> DestructorStandardText { get; } = ImmutableArray.Create("Finalizes an instance of the ", " class.");
-
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(Descriptor);
@@ -93,7 +82,15 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static void HandleDestructor(SyntaxNodeAnalysisContext context)
         {
             var destructorDeclaration = (DestructorDeclarationSyntax)context.Node;
-            HandleDeclaration(context, DestructorStandardText[0], DestructorStandardText[1], Descriptor);
+            var settings = context.Options.GetStyleCopSettings(context.CancellationToken);
+            var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
+            var resourceManager = DocumentationResources.ResourceManager;
+
+            HandleDeclaration(
+                context,
+                resourceManager.GetString(nameof(DocumentationResources.DestructorStandardTextFirstPart), culture),
+                resourceManager.GetString(nameof(DocumentationResources.DestructorStandardTextSecondPart), culture),
+                Descriptor);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     {
         public abstract string Keyword { get; }
 
-        public virtual bool SupportsCodeFix => false;
+        public abstract bool SupportsCodeFix { get; }
 
         [Fact]
         public async Task TestOneElementAsync()

@@ -38,3 +38,4 @@ Identifier | Name | Description
 [SA1133](SA1133.md) | DoNotCombineAttributes | Two or more attributes appeared within the same set of square brackets. 
 [SA1134](SA1134.md) | AttributesMustNotShareLine | An attribute is placed on the same line of code as another attribute or element. 
 [SA1136](SA1136.md) | EnumValuesShouldBeOnSeparateLines | Multiple enum values are placed on the same line of code. 
+[SA1139](SA1139.md) | UseLiteralsSuffixNotationInsteadOfCasting | Use literal suffix notation instead of casting. 

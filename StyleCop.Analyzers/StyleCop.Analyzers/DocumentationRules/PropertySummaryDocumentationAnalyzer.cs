@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.Globalization;
     using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -28,13 +29,6 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly LocalizableString SA1623MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1623MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString SA1623Description = new LocalizableResourceString(nameof(DocumentationResources.SA1623Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly string SA1623HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1623.md";
-
-        private static readonly string StartingTextGets = DocumentationResources.StartingTextGets;
-        private static readonly string StartingTextSets = DocumentationResources.StartingTextSets;
-        private static readonly string StartingTextGetsOrSets = DocumentationResources.StartingTextGetsOrSets;
-        private static readonly string StartingTextGetsWhether = DocumentationResources.StartingTextGetsWhether;
-        private static readonly string StartingTextSetsWhether = DocumentationResources.StartingTextSetsWhether;
-        private static readonly string StartingTextGetsOrSetsWhether = DocumentationResources.StartingTextGetsOrSetsWhether;
 
         private static readonly LocalizableString SA1624Title = new LocalizableResourceString(nameof(DocumentationResources.SA1624Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString SA1624MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1624MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
@@ -67,14 +61,31 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var propertyDeclaration = (PropertyDeclarationSyntax)context.Node;
             var propertyType = context.SemanticModel.GetTypeInfo(propertyDeclaration.Type);
+            var settings = context.Options.GetStyleCopSettings(context.CancellationToken);
+            var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
+            var resourceManager = DocumentationResources.ResourceManager;
 
             if (propertyType.Type.SpecialType == SpecialType.System_Boolean)
             {
-                AnalyzeSummaryElement(context, syntax, diagnosticLocation, propertyDeclaration, StartingTextGetsWhether, StartingTextSetsWhether, StartingTextGetsOrSetsWhether);
+                AnalyzeSummaryElement(
+                    context,
+                    syntax,
+                    diagnosticLocation,
+                    propertyDeclaration,
+                    resourceManager.GetString(nameof(DocumentationResources.StartingTextGetsWhether), culture),
+                    resourceManager.GetString(nameof(DocumentationResources.StartingTextSetsWhether), culture),
+                    resourceManager.GetString(nameof(DocumentationResources.StartingTextGetsOrSetsWhether), culture));
             }
             else
             {
-                AnalyzeSummaryElement(context, syntax, diagnosticLocation, propertyDeclaration, StartingTextGets, StartingTextSets, StartingTextGetsOrSets);
+                AnalyzeSummaryElement(
+                    context,
+                    syntax,
+                    diagnosticLocation,
+                    propertyDeclaration,
+                    resourceManager.GetString(nameof(DocumentationResources.StartingTextGets), culture),
+                    resourceManager.GetString(nameof(DocumentationResources.StartingTextSets), culture),
+                    resourceManager.GetString(nameof(DocumentationResources.StartingTextGetsOrSets), culture));
             }
         }
 
