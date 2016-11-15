@@ -99,12 +99,12 @@ namespace StyleCop.Analyzers.DocumentationRules
             ImmutableArray<string> standardText;
             if (declarationSyntax is ConstructorDeclarationSyntax)
             {
-                var typeKindText = resourceManager.GetString(isStruct ? "TypeTextStruct" : "TypeTextClass", culture);
+                var typeKindText = resourceManager.GetString(isStruct ? nameof(DocumentationResources.TypeTextStruct) : nameof(DocumentationResources.TypeTextClass), culture);
                 if (declarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword))
                 {
                     standardText = ImmutableArray.Create(
-                        string.Format(resourceManager.GetString("StaticConstructorStandardTextFirstPart", culture), typeKindText),
-                        string.Format(resourceManager.GetString("StaticConstructorStandardTextSecondPart", culture), typeKindText));
+                        string.Format(resourceManager.GetString(nameof(DocumentationResources.StaticConstructorStandardTextFirstPart), culture), typeKindText),
+                        string.Format(resourceManager.GetString(nameof(DocumentationResources.StaticConstructorStandardTextSecondPart), culture), typeKindText));
                 }
                 else
                 {
@@ -112,16 +112,16 @@ namespace StyleCop.Analyzers.DocumentationRules
                     // acceptable for private constructors by the diagnostic.
                     // https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/413
                     standardText = ImmutableArray.Create(
-                        string.Format(resourceManager.GetString("NonPrivateConstructorStandardTextFirstPart", culture), typeKindText),
-                        string.Format(resourceManager.GetString("NonPrivateConstructorStandardTextSecondPart", culture), typeKindText));
+                        string.Format(resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextFirstPart), culture), typeKindText),
+                        string.Format(resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextSecondPart), culture), typeKindText));
                 }
             }
             else if (declarationSyntax is DestructorDeclarationSyntax)
             {
                 standardText =
                     ImmutableArray.Create(
-                        resourceManager.GetString("DestructorStandardTextFirstPart", culture),
-                        resourceManager.GetString("DestructorStandardTextSecondPart", culture));
+                        resourceManager.GetString(nameof(DocumentationResources.DestructorStandardTextFirstPart), culture),
+                        resourceManager.GetString(nameof(DocumentationResources.DestructorStandardTextSecondPart), culture));
             }
             else
             {

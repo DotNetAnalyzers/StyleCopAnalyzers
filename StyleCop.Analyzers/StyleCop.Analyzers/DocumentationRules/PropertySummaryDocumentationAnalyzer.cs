@@ -72,9 +72,9 @@ namespace StyleCop.Analyzers.DocumentationRules
                     syntax,
                     diagnosticLocation,
                     propertyDeclaration,
-                    resourceManager.GetString("StartingTextGetsWhether", culture),
-                    resourceManager.GetString("StartingTextSetsWhether", culture),
-                    resourceManager.GetString("StartingTextGetsOrSetsWhether", culture));
+                    resourceManager.GetString(nameof(DocumentationResources.StartingTextGetsWhether), culture),
+                    resourceManager.GetString(nameof(DocumentationResources.StartingTextSetsWhether), culture),
+                    resourceManager.GetString(nameof(DocumentationResources.StartingTextGetsOrSetsWhether), culture));
             }
             else
             {
@@ -83,9 +83,9 @@ namespace StyleCop.Analyzers.DocumentationRules
                     syntax,
                     diagnosticLocation,
                     propertyDeclaration,
-                    resourceManager.GetString("StartingTextGets", culture),
-                    resourceManager.GetString("StartingTextSets", culture),
-                    resourceManager.GetString("StartingTextGetsOrSets", culture));
+                    resourceManager.GetString(nameof(DocumentationResources.StartingTextGets), culture),
+                    resourceManager.GetString(nameof(DocumentationResources.StartingTextSets), culture),
+                    resourceManager.GetString(nameof(DocumentationResources.StartingTextGetsOrSets), culture));
             }
         }
 

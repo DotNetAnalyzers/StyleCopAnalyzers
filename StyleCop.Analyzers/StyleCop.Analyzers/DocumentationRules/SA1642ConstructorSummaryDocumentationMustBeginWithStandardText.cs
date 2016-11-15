@@ -132,23 +132,23 @@ namespace StyleCop.Analyzers.DocumentationRules
             var resourceManager = DocumentationResources.ResourceManager;
 
             bool isStruct = constructorDeclarationSyntax.Parent?.IsKind(SyntaxKind.StructDeclaration) ?? false;
-            var typeKindText = resourceManager.GetString(isStruct ? "TypeTextStruct" : "TypeTextClass", culture);
+            var typeKindText = resourceManager.GetString(isStruct ? nameof(DocumentationResources.TypeTextStruct) : nameof(DocumentationResources.TypeTextClass), culture);
 
             if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword))
             {
                 HandleDeclaration(
                     context,
-                    string.Format(resourceManager.GetString("StaticConstructorStandardTextFirstPart", culture), typeKindText),
-                    string.Format(resourceManager.GetString("StaticConstructorStandardTextSecondPart", culture), typeKindText),
+                    string.Format(resourceManager.GetString(nameof(DocumentationResources.StaticConstructorStandardTextFirstPart), culture), typeKindText),
+                    string.Format(resourceManager.GetString(nameof(DocumentationResources.StaticConstructorStandardTextSecondPart), culture), typeKindText),
                     Descriptor);
             }
             else if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.PrivateKeyword))
             {
                 var privateConstructorMatch = HandleDeclaration(
                     context,
-                    string.Format(resourceManager.GetString("PrivateConstructorStandardTextFirstPart", culture), typeKindText),
+                    string.Format(resourceManager.GetString(nameof(DocumentationResources.PrivateConstructorStandardTextFirstPart), culture), typeKindText),
                     string.Format(
-                        resourceManager.GetString("PrivateConstructorStandardTextSecondPart", culture),
+                        resourceManager.GetString(nameof(DocumentationResources.PrivateConstructorStandardTextSecondPart), culture),
                         typeKindText),
                     null);
 
@@ -161,10 +161,10 @@ namespace StyleCop.Analyzers.DocumentationRules
                 HandleDeclaration(
                     context,
                     string.Format(
-                        resourceManager.GetString("NonPrivateConstructorStandardTextFirstPart", culture),
+                        resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextFirstPart), culture),
                         typeKindText),
                     string.Format(
-                        resourceManager.GetString("NonPrivateConstructorStandardTextSecondPart", culture),
+                        resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextSecondPart), culture),
                         typeKindText),
                     Descriptor);
             }
@@ -173,10 +173,10 @@ namespace StyleCop.Analyzers.DocumentationRules
                 HandleDeclaration(
                     context,
                     string.Format(
-                        resourceManager.GetString("NonPrivateConstructorStandardTextFirstPart", culture),
+                        resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextFirstPart), culture),
                         typeKindText),
                     string.Format(
-                        resourceManager.GetString("NonPrivateConstructorStandardTextSecondPart", culture),
+                        resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextSecondPart), culture),
                         typeKindText),
                     Descriptor);
             }

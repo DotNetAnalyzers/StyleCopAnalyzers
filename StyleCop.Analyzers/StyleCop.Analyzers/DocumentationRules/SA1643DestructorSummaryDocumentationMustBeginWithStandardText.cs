@@ -91,8 +91,8 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 HandleDeclaration(
                     context,
-                    resourceManager.GetString("DestructorStandardTextFirstPart", culture),
-                    resourceManager.GetString("DestructorStandardTextSecondPart", culture),
+                    resourceManager.GetString(nameof(DocumentationResources.DestructorStandardTextFirstPart), culture),
+                    resourceManager.GetString(nameof(DocumentationResources.DestructorStandardTextSecondPart), culture),
                     Descriptor);
             }
         }
