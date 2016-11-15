@@ -7,7 +7,6 @@ namespace StyleCop.Analyzers.Test.Helpers
     using System.Globalization;
     using System.Reflection;
     using System.Threading;
-
     using Xunit.Sdk;
 
     /// <summary>
@@ -26,9 +25,9 @@ namespace StyleCop.Analyzers.Test.Helpers
     {
         private readonly Lazy<CultureInfo> culture;
 
-#pragma warning disable SA1305
+#pragma warning disable SA1305 // Field names must not use Hungarian notation
         private readonly Lazy<CultureInfo> uiCulture;
-#pragma warning restore SA1305
+#pragma warning restore SA1305 // Field names must not use Hungarian notation
 
         private CultureInfo originalCulture;
 

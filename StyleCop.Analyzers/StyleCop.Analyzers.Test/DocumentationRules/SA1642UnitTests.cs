@@ -10,7 +10,6 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Test.Helpers;
-
     using TestHelper;
     using Xunit;
 
