@@ -243,7 +243,15 @@
     <Compile Include="MaintainabilityRules\SA1119UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1400UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1401UnitTests.cs" />
-    <Compile Include="MaintainabilityRules\SA1402UnitTests.cs" />
+    <Compile Include="MaintainabilityRules\SA1402ForBlockDeclarationUnitTestsBase.cs" />
+    <Compile Include="MaintainabilityRules\SA1402ForClassUnitTests.cs" />
+    <Compile Include="MaintainabilityRules\SA1402ForDelegateUnitTests.cs" />
+    <Compile Include="MaintainabilityRules\SA1402ForEnumUnitTests.cs" />
+    <Compile Include="MaintainabilityRules\SA1402ForInterfaceUnitTests.cs" />
+    <Compile Include="MaintainabilityRules\SA1402ForNonBlockDeclarationUnitTestsBase.cs" />
+    <Compile Include="MaintainabilityRules\SA1402ForStructUnitTests.cs" />
+    <Compile Include="MaintainabilityRules\SA1402SettingsConfiguration.cs" />
+    <Compile Include="MaintainabilityRules\SA1402SettingsConfigurationExtensions.cs" />
     <Compile Include="MaintainabilityRules\SA1403UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1404UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1405UnitTests.cs" />

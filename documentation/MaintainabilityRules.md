@@ -6,7 +6,7 @@ Identifier | Name | Description
 [SA1119](SA1119.md) | StatementMustNotUseUnnecessaryParenthesis | A C# statement contains parenthesis which are unnecessary and should be removed. 
 [SA1400](SA1400.md) | AccessModifierMustBeDeclared | The access modifier for a C# element has not been explicitly defined. 
 [SA1401](SA1401.md) | FieldsMustBePrivate | A field within a C# class has an access modifier other than private. 
-[SA1402](SA1402.md) | FileMayOnlyContainASingleClass | A C# code file contains more than one unique class. 
+[SA1402](SA1402.md) | FileMayOnlyContainASingleType | A C# code file contains more than one unique type. 
 [SA1403](SA1403.md) | FileMayOnlyContainASingleNamespace | A C# code file contains more than one namespace. 
 [SA1404](SA1404.md) | CodeAnalysisSuppressionMustHaveJustification | A Code Analysis SuppressMessage attribute does not include a justification. 
 [SA1405](SA1405.md) | DebugAssertMustProvideMessageText | A call to Debug.Assert in C# code does not include a descriptive message. 

@@ -15,13 +15,9 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
     public class SA1403UnitTests : FileMayOnlyContainTestBase
     {
-        public override string Keyword
-        {
-            get
-            {
-                return "namespace";
-            }
-        }
+        public override string Keyword => "namespace";
+
+        public override bool SupportsCodeFix => false;
 
         [Fact]
         public async Task TestNestedNamespacesAsync()
