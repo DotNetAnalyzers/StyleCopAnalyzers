@@ -120,6 +120,24 @@
           "description": "Configuration for ordering rules (SA1400-)",
           "additionalProperties": false,
           "properties": {
+            "topLevelTypes": {
+              "type": "array",
+              "description": "The set of type kinds which must be placed in separate files according to the type name.",
+              "default": [
+                "class"
+              ],
+              "items": {
+                "type": "string",
+                "enum": [
+                  "class",
+                  "interface",
+                  "struct",
+                  "delegate",
+                  "enum"
+                ]
+              },
+              "uniqueItems": true
+            }
           }
         },
         "layoutRules": {
