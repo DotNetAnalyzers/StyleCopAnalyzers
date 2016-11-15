@@ -39,11 +39,11 @@ namespace StyleCop.Analyzers.Helpers
 
                 switch (convention)
                 {
-                    case FileNamingConvention.Metadata:
-                        return GetMetadataFileName(typeDeclaration);
+                case FileNamingConvention.Metadata:
+                    return GetMetadataFileName(typeDeclaration);
 
-                    default:
-                        return GetStyleCopFileName(typeDeclaration);
+                default:
+                    return GetStyleCopFileName(typeDeclaration);
                 }
             }
 

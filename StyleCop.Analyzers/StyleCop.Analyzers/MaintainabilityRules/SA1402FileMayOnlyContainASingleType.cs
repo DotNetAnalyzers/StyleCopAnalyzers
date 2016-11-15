@@ -109,21 +109,21 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
             switch (node.Kind())
             {
-                case SyntaxKind.ClassDeclaration:
-                    isRelevant = topLevelTypes.Contains(TopLevelType.Class);
-                    break;
-                case SyntaxKind.InterfaceDeclaration:
-                    isRelevant = topLevelTypes.Contains(TopLevelType.Interface);
-                    break;
-                case SyntaxKind.StructDeclaration:
-                    isRelevant = topLevelTypes.Contains(TopLevelType.Struct);
-                    break;
-                case SyntaxKind.EnumDeclaration:
-                    isRelevant = topLevelTypes.Contains(TopLevelType.Enum);
-                    break;
-                case SyntaxKind.DelegateDeclaration:
-                    isRelevant = topLevelTypes.Contains(TopLevelType.Delegate);
-                    break;
+            case SyntaxKind.ClassDeclaration:
+                isRelevant = topLevelTypes.Contains(TopLevelType.Class);
+                break;
+            case SyntaxKind.InterfaceDeclaration:
+                isRelevant = topLevelTypes.Contains(TopLevelType.Interface);
+                break;
+            case SyntaxKind.StructDeclaration:
+                isRelevant = topLevelTypes.Contains(TopLevelType.Struct);
+                break;
+            case SyntaxKind.EnumDeclaration:
+                isRelevant = topLevelTypes.Contains(TopLevelType.Enum);
+                break;
+            case SyntaxKind.DelegateDeclaration:
+                isRelevant = topLevelTypes.Contains(TopLevelType.Delegate);
+                break;
             }
 
             return isRelevant;
