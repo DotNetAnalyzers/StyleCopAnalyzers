@@ -100,7 +100,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// <summary>
         /// This is the backing field for the <see cref="DocumentationCulture"/> property.
         /// </summary>
-        [JsonProperty("documentationCulture", DefaultValueHandling = DefaultValueHandling.Include)]
+        [JsonProperty("documentationCulture", DefaultValueHandling = DefaultValueHandling.Ignore)]
         private string documentationCulture;
 
         /// <summary>
@@ -121,9 +121,9 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.documentInterfaces = true;
             this.documentPrivateFields = false;
 
-            this.documentationCulture = DefaultDocumentationCulture;
-
             this.fileNamingConvention = FileNamingConvention.StyleCop;
+
+            this.documentationCulture = DefaultDocumentationCulture;
         }
 
         public string CompanyName
