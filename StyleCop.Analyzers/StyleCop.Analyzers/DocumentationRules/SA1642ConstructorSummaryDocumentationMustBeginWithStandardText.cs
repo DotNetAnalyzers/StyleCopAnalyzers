@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.Globalization;
     using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -109,50 +110,6 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static readonly Action<SyntaxNodeAnalysisContext> ConstructorDeclarationAction = HandleConstructorDeclaration;
 
-        /// <summary>
-        /// Gets the standard text which is expected to appear at the beginning of the <c>&lt;summary&gt;</c>
-        /// documentation for a non-private constructor.
-        /// </summary>
-        /// <value>
-        /// The standard text which is expected to appear at the beginning of the <c>&lt;summary&gt;</c> documentation
-        /// for a non-private constructor. This text appears before the name of the containing class, followed by a
-        /// <c>&lt;see&gt;</c> element targeting the containing type, and finally followed by <c>class</c> or
-        /// <c>struct</c> as appropriate for the containing type.
-        /// </value>
-        public static string NonPrivateConstructorStandardText { get; } = "Initializes a new instance of the ";
-
-        /// <summary>
-        /// Gets the standard text which is expected to appear at the beginning of the <c>&lt;summary&gt;</c>
-        /// documentation for a private constructor.
-        /// </summary>
-        /// <remarks>
-        /// <para>In addition to the format given in <see cref="PrivateConstructorStandardText"/>, a private constructor
-        /// may choose to use <see cref="NonPrivateConstructorStandardText"/> instead. The code fix provided for this
-        /// diagnostic uses <see cref="NonPrivateConstructorStandardText"/> by default, since this is generally a more
-        /// accurate representation of a user's intent. In new code, <see langword="static"/> classes provide a
-        /// superior alternative to private constructors for the purpose of declaring utility types that cannot be
-        /// instantiated.</para>
-        /// </remarks>
-        /// <value>
-        /// The standard text which is expected to appear at the beginning of the <c>&lt;summary&gt;</c> documentation
-        /// for a private constructor. The first element appears before the name of the containing class, followed by a
-        /// <c>&lt;see&gt;</c> element targeting the containing type, then by <c>class</c> or <c>struct</c> as
-        /// appropriate for the containing type, and finally followed by the second element of this array.
-        /// </value>
-        public static ImmutableArray<string> PrivateConstructorStandardText { get; } = ImmutableArray.Create("Prevents a default instance of the ", " from being created");
-
-        /// <summary>
-        /// Gets the standard text which is expected to appear at the beginning of the <c>&lt;summary&gt;</c>
-        /// documentation for a static constructor.
-        /// </summary>
-        /// <value>
-        /// The standard text which is expected to appear at the beginning of the <c>&lt;summary&gt;</c> documentation
-        /// for a static constructor. The first element appears before the name of the containing class, followed by a
-        /// <c>&lt;see&gt;</c> element targeting the containing type, and finally followed by <c>class</c> or
-        /// <c>struct</c> as appropriate for the containing type.
-        /// </value>
-        public static string StaticConstructorStandardText { get; } = "Initializes static members of the ";
-
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(Descriptor);
@@ -170,29 +127,58 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var constructorDeclarationSyntax = (ConstructorDeclarationSyntax)context.Node;
 
+            var settings = context.Options.GetStyleCopSettings(context.CancellationToken);
+            var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
+            var resourceManager = DocumentationResources.ResourceManager;
+
             bool isStruct = constructorDeclarationSyntax.Parent?.IsKind(SyntaxKind.StructDeclaration) ?? false;
+            var typeKindText = resourceManager.GetString(isStruct ? nameof(DocumentationResources.TypeTextStruct) : nameof(DocumentationResources.TypeTextClass), culture);
 
             if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword))
             {
-                string secondPartText = isStruct ? " struct." : " class.";
-                HandleDeclaration(context, StaticConstructorStandardText, secondPartText, Descriptor);
+                HandleDeclaration(
+                    context,
+                    string.Format(resourceManager.GetString(nameof(DocumentationResources.StaticConstructorStandardTextFirstPart), culture), typeKindText),
+                    string.Format(resourceManager.GetString(nameof(DocumentationResources.StaticConstructorStandardTextSecondPart), culture), typeKindText),
+                    Descriptor);
             }
             else if (constructorDeclarationSyntax.Modifiers.Any(SyntaxKind.PrivateKeyword))
             {
-                string typeKindText = isStruct ? " struct" : " class";
+                var privateConstructorMatch = HandleDeclaration(
+                    context,
+                    string.Format(resourceManager.GetString(nameof(DocumentationResources.PrivateConstructorStandardTextFirstPart), culture), typeKindText),
+                    string.Format(
+                        resourceManager.GetString(nameof(DocumentationResources.PrivateConstructorStandardTextSecondPart), culture),
+                        typeKindText),
+                    null);
 
-                if (HandleDeclaration(context, PrivateConstructorStandardText[0], typeKindText + PrivateConstructorStandardText[1], null) == MatchResult.FoundMatch)
+                if (privateConstructorMatch == MatchResult.FoundMatch)
                 {
                     return;
                 }
 
                 // also allow the non-private wording for private constructors
-                HandleDeclaration(context, NonPrivateConstructorStandardText, typeKindText, Descriptor);
+                HandleDeclaration(
+                    context,
+                    string.Format(
+                        resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextFirstPart), culture),
+                        typeKindText),
+                    string.Format(
+                        resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextSecondPart), culture),
+                        typeKindText),
+                    Descriptor);
             }
             else
             {
-                string typeKindText = isStruct ? " struct" : " class";
-                HandleDeclaration(context, NonPrivateConstructorStandardText, typeKindText, Descriptor);
+                HandleDeclaration(
+                    context,
+                    string.Format(
+                        resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextFirstPart), culture),
+                        typeKindText),
+                    string.Format(
+                        resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextSecondPart), culture),
+                        typeKindText),
+                    Descriptor);
             }
         }
     }

@@ -62,11 +62,65 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Finalizes an instance of the .
+        /// </summary>
+        internal static string DestructorStandardTextFirstPart {
+            get {
+                return ResourceManager.GetString("DestructorStandardTextFirstPart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  class..
+        /// </summary>
+        internal static string DestructorStandardTextSecondPart {
+            get {
+                return ResourceManager.GetString("DestructorStandardTextSecondPart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Inherit documentation.
         /// </summary>
         internal static string InheritdocCodeFix {
             get {
                 return ResourceManager.GetString("InheritdocCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Initializes a new instance of the .
+        /// </summary>
+        internal static string NonPrivateConstructorStandardTextFirstPart {
+            get {
+                return ResourceManager.GetString("NonPrivateConstructorStandardTextFirstPart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  {0}.
+        /// </summary>
+        internal static string NonPrivateConstructorStandardTextSecondPart {
+            get {
+                return ResourceManager.GetString("NonPrivateConstructorStandardTextSecondPart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prevents a default instance of the .
+        /// </summary>
+        internal static string PrivateConstructorStandardTextFirstPart {
+            get {
+                return ResourceManager.GetString("PrivateConstructorStandardTextFirstPart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  {0} from being created.
+        /// </summary>
+        internal static string PrivateConstructorStandardTextSecondPart {
+            get {
+                return ResourceManager.GetString("PrivateConstructorStandardTextSecondPart", resourceCulture);
             }
         }
         
@@ -616,6 +670,42 @@ namespace StyleCop.Analyzers.DocumentationRules {
         internal static string StartingTextSetsWhether {
             get {
                 return ResourceManager.GetString("StartingTextSetsWhether", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Initializes static members of the .
+        /// </summary>
+        internal static string StaticConstructorStandardTextFirstPart {
+            get {
+                return ResourceManager.GetString("StaticConstructorStandardTextFirstPart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  {0}..
+        /// </summary>
+        internal static string StaticConstructorStandardTextSecondPart {
+            get {
+                return ResourceManager.GetString("StaticConstructorStandardTextSecondPart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to class.
+        /// </summary>
+        internal static string TypeTextClass {
+            get {
+                return ResourceManager.GetString("TypeTextClass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to struct.
+        /// </summary>
+        internal static string TypeTextStruct {
+            get {
+                return ResourceManager.GetString("TypeTextStruct", resourceCulture);
             }
         }
     }

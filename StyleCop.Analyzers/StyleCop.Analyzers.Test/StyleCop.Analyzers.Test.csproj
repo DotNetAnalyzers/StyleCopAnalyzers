@@ -180,6 +180,7 @@
     <Compile Include="Helpers\MetadataReferences.cs" />
     <Compile Include="Helpers\TestDiagnosticProvider.cs" />
     <Compile Include="Helpers\TestXmlReferenceResolver.cs" />
+    <Compile Include="Helpers\UseCultureAttribute.cs" />
     <Compile Include="HelperTests\AccessLevelHelperTests.cs" />
     <Compile Include="HelperTests\IndentationHelperTests.cs" />
     <Compile Include="HelperTests\TokenHelperTests.cs" />

@@ -402,9 +402,30 @@
     <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.de-DE.resx">
+      <DependentUpon>DocumentationResources.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.en-GB.resx">
+      <DependentUpon>DocumentationResources.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.es-MX.resx">
+      <DependentUpon>DocumentationResources.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.fr-FR.resx">
+      <DependentUpon>DocumentationResources.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.pl-PL.resx">
+      <DependentUpon>DocumentationResources.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.pt-BR.resx">
+      <DependentUpon>DocumentationResources.resx</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DocumentationRules\DocumentationResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>DocumentationResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.ru-RU.resx">
+      <DependentUpon>DocumentationResources.resx</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Helpers\HelpersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

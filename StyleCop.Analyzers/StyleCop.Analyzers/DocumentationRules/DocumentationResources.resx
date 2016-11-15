@@ -117,8 +117,26 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DestructorStandardTextFirstPart" xml:space="preserve">
+    <value>Finalizes an instance of the </value>
+  </data>
+  <data name="DestructorStandardTextSecondPart" xml:space="preserve">
+    <value> class.</value>
+  </data>
   <data name="InheritdocCodeFix" xml:space="preserve">
     <value>Inherit documentation</value>
+  </data>
+  <data name="NonPrivateConstructorStandardTextFirstPart" xml:space="preserve">
+    <value>Initializes a new instance of the </value>
+  </data>
+  <data name="NonPrivateConstructorStandardTextSecondPart" xml:space="preserve">
+    <value> {0}</value>
+  </data>
+  <data name="PrivateConstructorStandardTextFirstPart" xml:space="preserve">
+    <value>Prevents a default instance of the </value>
+  </data>
+  <data name="PrivateConstructorStandardTextSecondPart" xml:space="preserve">
+    <value> {0} from being created</value>
   </data>
   <data name="PropertySummaryStartTextCodeFix" xml:space="preserve">
     <value>Add standard text</value>
@@ -302,5 +320,17 @@
   </data>
   <data name="StartingTextSetsWhether" xml:space="preserve">
     <value>Sets a value indicating whether</value>
+  </data>
+  <data name="StaticConstructorStandardTextFirstPart" xml:space="preserve">
+    <value>Initializes static members of the </value>
+  </data>
+  <data name="StaticConstructorStandardTextSecondPart" xml:space="preserve">
+    <value> {0}.</value>
+  </data>
+  <data name="TypeTextClass" xml:space="preserve">
+    <value>class</value>
+  </data>
+  <data name="TypeTextStruct" xml:space="preserve">
+    <value>struct</value>
   </data>
 </root>

@@ -466,6 +466,44 @@ The following example shows a configuration file which requires developers to do
 }
 ```
 
+### Documentation Culture
+
+Some documentation rules require summary texts to start with specific strings. To allow teams to document their code in their native language, **stylecop.json** contains the `documentationCulture` property.
+
+| Property | Default Value | Summary |
+| --- | --- | --- |
+| `documentationCulture` | `"en-US"` | Specifies the culture or language to be used for certain documentation texts. |
+
+This property affects the behavior of the following rules which report incorrect documentation.
+
+* [SA1623 Property summary documentation must match accessors](SA1623.md)
+* [SA1624 Property summary documentation must omit set accessor with restricted access](SA1624.md)
+* [SA1642 Constructor summary documentation must begin with standard text](SA1642.md)
+* [SA1643 Destructor summary documentation must begin with standard text](SA1643.md)
+
+> :memo: The default value for `documentationCulture` is fixed instead of reflecting the user's system language. This is to ensure that different developers working on the same project always use the same value.
+
+The following values are currently supported. Unsupported values will automatically fall back to the default value.
+
+* `"de-DE"`
+* `"en-GB"`
+* `"en-US"`
+* `"es-MX"`
+* `"fr-FR"`
+* `"pl-PL"`
+* `"pt-BR"`
+* `"ru-RU"`
+
+```json
+{
+  "settings": {
+    "documentationRules": {
+      "documentationCulture": "de-DE"
+    }
+  }
+}
+```
+
 ### File naming conventions
 
 The `fileNamingConvention` property will determine how the [SA1649 File name must match type name](SA1649.md) analyzer will check file names.
