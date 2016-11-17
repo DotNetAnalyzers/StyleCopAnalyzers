@@ -132,6 +132,9 @@
   <data name="NonPrivateConstructorStandardTextSecondPart" xml:space="preserve">
     <value> {0}</value>
   </data>
+  <data name="ParameterNotUsed" xml:space="preserve">
+    <value>The parameter is not used.</value>
+  </data>
   <data name="PrivateConstructorStandardTextFirstPart" xml:space="preserve">
     <value>Prevents a default instance of the </value>
   </data>
