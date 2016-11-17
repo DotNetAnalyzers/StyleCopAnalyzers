@@ -107,6 +107,15 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The parameter is not used..
+        /// </summary>
+        internal static string ParameterNotUsed {
+            get {
+                return ResourceManager.GetString("ParameterNotUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Prevents a default instance of the .
         /// </summary>
         internal static string PrivateConstructorStandardTextFirstPart {
