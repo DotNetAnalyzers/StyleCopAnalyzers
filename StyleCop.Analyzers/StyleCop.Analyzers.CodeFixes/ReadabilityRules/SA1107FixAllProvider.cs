@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     {
         protected override string CodeActionTitle => ReadabilityResources.SA1107CodeFix;
 
-        protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+        protected override async Task<Document> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
         {
             if (diagnostics.IsEmpty)
             {
@@ -45,7 +45,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 editor.ReplaceNode(node, node.WithLeadingTrivia(SyntaxFactory.ElasticCarriageReturnLineFeed));
             }
 
-            return editor.GetChangedRoot();
+            return document.WithSyntaxRoot(editor.GetChangedRoot());
         }
     }
 }

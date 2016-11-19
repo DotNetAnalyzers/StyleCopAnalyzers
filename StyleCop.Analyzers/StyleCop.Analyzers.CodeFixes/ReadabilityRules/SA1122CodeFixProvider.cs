@@ -77,7 +77,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             protected override string CodeActionTitle
                 => ReadabilityResources.SA1122CodeFix;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+            protected override async Task<Document> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
                 if (diagnostics.IsEmpty)
                 {
@@ -93,9 +93,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     expressions.Add(node);
                 }
 
-                return syntaxRoot.ReplaceNodes(
+                var newRoot = syntaxRoot.ReplaceNodes(
                     expressions,
                     (originalNode, rewrittenNode) => StringEmptyExpression.WithTriviaFrom(rewrittenNode));
+                return document.WithSyntaxRoot(newRoot);
             }
         }
     }

@@ -261,7 +261,7 @@ namespace StyleCop.Analyzers.LayoutRules
             protected override string CodeActionTitle =>
                 LayoutResources.SA1500CodeFix;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+            protected override async Task<Document> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
                 if (diagnostics.IsEmpty)
                 {
@@ -279,7 +279,8 @@ namespace StyleCop.Analyzers.LayoutRules
 
                 var tokenReplacements = GenerateBraceFixes(document, settings.Indentation, tokens);
 
-                return syntaxRoot.ReplaceTokens(tokenReplacements.Keys, (originalToken, rewrittenToken) => tokenReplacements[originalToken]);
+                var newRoot = syntaxRoot.ReplaceTokens(tokenReplacements.Keys, (originalToken, rewrittenToken) => tokenReplacements[originalToken]);
+                return document.WithSyntaxRoot(newRoot);
             }
         }
     }

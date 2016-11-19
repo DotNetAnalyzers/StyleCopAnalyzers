@@ -60,11 +60,11 @@ namespace StyleCop.Analyzers.Helpers
         /// <param name="document">The document to fix.</param>
         /// <param name="diagnostics">The diagnostics to fix in the document.</param>
         /// <returns>
-        /// <para>The new <see cref="SyntaxNode"/> representing the root of the fixed document.</para>
+        /// <para>The new <see cref="Document"/> representing the fixed document.</para>
         /// <para>-or-</para>
         /// <para><see langword="null"/>, if no changes were made to the document.</para>
         /// </returns>
-        protected abstract Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics);
+        protected abstract Task<Document> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics);
 
         private async Task<Document> GetDocumentFixesAsync(FixAllContext fixAllContext)
         {
@@ -75,13 +75,8 @@ namespace StyleCop.Analyzers.Helpers
                 return fixAllContext.Document;
             }
 
-            var newRoot = await this.FixAllInDocumentAsync(fixAllContext, fixAllContext.Document, diagnostics).ConfigureAwait(false);
-            if (newRoot == null)
-            {
-                return fixAllContext.Document;
-            }
-
-            return fixAllContext.Document.WithSyntaxRoot(newRoot);
+            var newDocument = await this.FixAllInDocumentAsync(fixAllContext, fixAllContext.Document, diagnostics).ConfigureAwait(false);
+            return newDocument ?? fixAllContext.Document;
         }
 
         private async Task<Solution> GetSolutionFixesAsync(FixAllContext fixAllContext, ImmutableArray<Document> documents)
@@ -89,13 +84,13 @@ namespace StyleCop.Analyzers.Helpers
             var documentDiagnosticsToFix = await FixAllContextHelper.GetDocumentDiagnosticsToFixAsync(fixAllContext).ConfigureAwait(false);
 
             Solution solution = fixAllContext.Solution;
-            List<Task<SyntaxNode>> newDocuments = new List<Task<SyntaxNode>>(documents.Length);
+            List<Task<Document>> newDocuments = new List<Task<Document>>(documents.Length);
             foreach (var document in documents)
             {
                 ImmutableArray<Diagnostic> diagnostics;
                 if (!documentDiagnosticsToFix.TryGetValue(document, out diagnostics))
                 {
-                    newDocuments.Add(document.GetSyntaxRootAsync(fixAllContext.CancellationToken));
+                    newDocuments.Add(Task.FromResult(document));
                     continue;
                 }
 
@@ -110,7 +105,7 @@ namespace StyleCop.Analyzers.Helpers
                     continue;
                 }
 
-                solution = solution.WithDocumentSyntaxRoot(documents[i].Id, newDocumentRoot);
+                solution = solution.WithDocumentText(documents[i].Id, await newDocumentRoot.GetTextAsync(fixAllContext.CancellationToken).ConfigureAwait(false));
             }
 
             return solution;

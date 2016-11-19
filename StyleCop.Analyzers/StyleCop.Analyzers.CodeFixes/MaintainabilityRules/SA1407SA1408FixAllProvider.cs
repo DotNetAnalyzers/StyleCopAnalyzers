@@ -16,7 +16,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     {
         protected override string CodeActionTitle => MaintainabilityResources.SA1407SA1408CodeFix;
 
-        protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+        protected override async Task<Document> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
         {
             if (diagnostics.IsEmpty)
             {
@@ -37,7 +37,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 nodes.Add(node);
             }
 
-            return root.ReplaceNodes(nodes, (originalNode, rewrittenNode) => AddParentheses(originalNode, rewrittenNode));
+            var newRoot = root.ReplaceNodes(nodes, (originalNode, rewrittenNode) => AddParentheses(originalNode, rewrittenNode));
+            return document.WithSyntaxRoot(newRoot);
         }
 
         private static SyntaxNode AddParentheses(SyntaxNode originalNode, SyntaxNode rewrittenNode)

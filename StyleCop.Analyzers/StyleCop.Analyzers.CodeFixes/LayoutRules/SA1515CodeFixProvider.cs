@@ -112,7 +112,7 @@ namespace StyleCop.Analyzers.LayoutRules
             protected override string CodeActionTitle =>
                 LayoutResources.SA1515CodeFix;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+            protected override async Task<Document> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
                 if (diagnostics.IsEmpty)
                 {
@@ -141,7 +141,8 @@ namespace StyleCop.Analyzers.LayoutRules
                     replacements.Add(token, token.WithLeadingTrivia(newLeadingTrivia).WithTrailingTrivia(newTrailingTrivia));
                 }
 
-                return syntaxRoot.ReplaceTokens(replacements.Keys, (oldToken, newToken) => replacements[oldToken]);
+                var newRoot = syntaxRoot.ReplaceTokens(replacements.Keys, (oldToken, newToken) => replacements[oldToken]);
+                return document.WithSyntaxRoot(newRoot);
             }
         }
     }

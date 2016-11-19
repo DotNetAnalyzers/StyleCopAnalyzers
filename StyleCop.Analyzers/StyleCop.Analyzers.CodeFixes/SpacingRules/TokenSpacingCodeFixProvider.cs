@@ -248,7 +248,7 @@ namespace StyleCop.Analyzers.SpacingRules
 
             protected override string CodeActionTitle => SpacingResources.TokenSpacingCodeFix;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+            protected override async Task<Document> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
                 if (diagnostics.IsEmpty)
                 {
@@ -265,7 +265,8 @@ namespace StyleCop.Analyzers.SpacingRules
                     UpdateReplaceMap(replaceMap, token, diagnostic);
                 }
 
-                return syntaxRoot.ReplaceTokens(replaceMap.Keys, (t1, t2) => replaceMap[t1]);
+                var newRoot = syntaxRoot.ReplaceTokens(replaceMap.Keys, (t1, t2) => replaceMap[t1]);
+                return document.WithSyntaxRoot(newRoot);
             }
         }
     }

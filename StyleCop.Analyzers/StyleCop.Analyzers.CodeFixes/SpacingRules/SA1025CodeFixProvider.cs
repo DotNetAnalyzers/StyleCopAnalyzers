@@ -71,7 +71,7 @@ namespace StyleCop.Analyzers.SpacingRules
             protected override string CodeActionTitle
                 => SpacingResources.SA1025CodeFix;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+            protected override async Task<Document> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
                 if (diagnostics.IsEmpty)
                 {
@@ -90,7 +90,8 @@ namespace StyleCop.Analyzers.SpacingRules
                     }
                 }
 
-                return syntaxRoot.ReplaceTrivia(tokensToFix, (originalTrivia, rewrittenTrivia) => SyntaxFactory.Space);
+                var newRoot = syntaxRoot.ReplaceTrivia(tokensToFix, (originalTrivia, rewrittenTrivia) => SyntaxFactory.Space);
+                return document.WithSyntaxRoot(newRoot);
             }
         }
     }

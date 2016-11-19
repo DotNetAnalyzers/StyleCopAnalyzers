@@ -79,7 +79,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             protected override string CodeActionTitle =>
                 ReadabilityResources.SA1101CodeFix;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+            protected override async Task<Document> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
                 if (diagnostics.IsEmpty)
                 {
@@ -100,10 +100,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     nodesNeedingQualification.Add(node);
                 }
 
-                return syntaxRoot.ReplaceNodes(nodesNeedingQualification, (originalNode, rewrittenNode) =>
-                SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, ThisExpressionSyntax, (SimpleNameSyntax)rewrittenNode.WithoutTrivia().WithoutFormatting())
-                .WithTriviaFrom(rewrittenNode)
-                .WithoutFormatting());
+                var newRoot = syntaxRoot.ReplaceNodes(nodesNeedingQualification, (originalNode, rewrittenNode) =>
+                    SyntaxFactory.MemberAccessExpression(SyntaxKind.SimpleMemberAccessExpression, ThisExpressionSyntax, (SimpleNameSyntax)rewrittenNode.WithoutTrivia().WithoutFormatting())
+                        .WithTriviaFrom(rewrittenNode)
+                        .WithoutFormatting());
+                return document.WithSyntaxRoot(newRoot);
             }
         }
     }
