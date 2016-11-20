@@ -113,10 +113,10 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
             }
 
-            XmlElementSyntax summaryElement = (XmlElementSyntax)syntax;
+            XmlElementSyntax summaryElement = syntax as XmlElementSyntax;
             if (summaryElement == null)
             {
-                // This is reported by SA1604.
+                // This is reported by SA1604 or SA1606.
                 return;
             }
 
