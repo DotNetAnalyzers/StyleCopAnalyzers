@@ -278,6 +278,7 @@
     <Compile Include="NamingRules\SA1311UnitTests.cs" />
     <Compile Include="NamingRules\SA1312UnitTests.cs" />
     <Compile Include="NamingRules\SA1313UnitTests.cs" />
+    <Compile Include="NamingRules\SA1314UnitTests.cs" />
     <Compile Include="NamingRules\SX1309SUnitTests.cs" />
     <Compile Include="NamingRules\SX1309UnitTests.cs" />
     <Compile Include="OrderingRules\SA1200OutsideNamespaceUnitTests.cs" />
