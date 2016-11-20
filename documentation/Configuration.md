@@ -322,6 +322,9 @@ The `allowConsecutiveUsings` property specifies the behavior:
 * `true`: consecutive using statements without braces will not produce diagnostics
 * `false`: consecutive using statements without braces will produce a SA1519 diagnostic
 
+This only allows omitting the braces for a using followed by another using statement. A using statement followed by any other type of statement will still
+require braces to used.
+
 ## Documentation Rules
 
 This section describes the features of documentation rules which can be configured in **stylecop.json**. Each of the described properties are configured in the `documentationRules` object, which is shown in the following sample file.
