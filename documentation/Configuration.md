@@ -303,6 +303,7 @@ The following properties are used to configure layout rules in StyleCop Analyzer
 | Property | Default Value | Summary |
 | --- | --- | --- |
 | `newlineAtEndOfFile` | `"allow"` | Specifies the handling for newline characters which appear at the end of a file |
+| `allowConsecutiveUsings` | `true` | Specifies if SA1519 will allow consecutive using statements without braces |
 
 ### Lines at End of File
 
@@ -312,6 +313,17 @@ file are handled. The `newlineAtEndOfFile` property supports the following value
 * `"allow"`: Files are allowed to end with a single newline character, but it is not required
 * `"require"`: Files are required to end with a single newline character
 * `"omit"`: Files may not end with a newline character
+
+### Consecutive using statements without braces
+
+The behavior of [SA1519](SA1519.md) can be customized regarding the manner in which consecutive using statements without braces are treated.
+The `allowConsecutiveUsings` property specifies the behavior:
+
+* `true`: consecutive using statements without braces will not produce diagnostics
+* `false`: consecutive using statements without braces will produce a SA1519 diagnostic
+
+This only allows omitting the braces for a using followed by another using statement. A using statement followed by any other type of statement will still
+require braces to used.
 
 ## Documentation Rules
 

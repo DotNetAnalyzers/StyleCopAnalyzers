@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Settings.ObjectModel;
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
@@ -48,7 +49,7 @@ namespace StyleCop.Analyzers.LayoutRules
         private static readonly Action<SyntaxNodeAnalysisContext> WhileStatementAction = HandleWhileStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> ForStatementAction = HandleForStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> ForEachStatementAction = HandleForEachStatement;
-        private static readonly Action<SyntaxNodeAnalysisContext> UsingStatementAction = HandleUsingStatement;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> UsingStatementAction = HandleUsingStatement;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -108,9 +109,15 @@ namespace StyleCop.Analyzers.LayoutRules
             CheckChildStatement(context, forEachStatement.Statement);
         }
 
-        private static void HandleUsingStatement(SyntaxNodeAnalysisContext context)
+        private static void HandleUsingStatement(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             var usingStatement = (UsingStatementSyntax)context.Node;
+
+            if (settings.LayoutRules.AllowConsecutiveUsings && (usingStatement.Statement is UsingStatementSyntax))
+            {
+                return;
+            }
+
             CheckChildStatement(context, usingStatement.Statement);
         }
 
