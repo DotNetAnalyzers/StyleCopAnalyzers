@@ -154,6 +154,11 @@
                 "omit"
               ],
               "default": "allow"
+            },
+            "allowConsecutiveUsings": {
+              "type": "boolean",
+              "description": "Specifies if SA1519 will allow consecutive using statements without braces",
+              "default": true
             }
           }
         },

@@ -14,6 +14,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 
     public class SA1519UnitTests : CodeFixVerifier
     {
+        private string consecutiveUsingsSettings;
+
         /// <summary>
         /// Gets the statements that will be used in the theory test cases.
         /// </summary>
@@ -121,12 +123,44 @@ public class Foo
         }
 
         /// <summary>
+        /// This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2184.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestMultipleUsingStatementsWithDefaultSettingsAsync()
+        {
+            var testCode = @"using System;
+public class Foo
+{
+    public void Bar(int i)
+    {
+        using (default(IDisposable))
+        using (default(IDisposable))
+        {
+        }
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2180.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestMultipleUsingStatementsAsync()
+        public async Task TestMultipleUsingStatementsWithDisabledSettingAsync()
         {
+            this.consecutiveUsingsSettings = @"
+{
+  ""settings"": {
+    ""layoutRules"": {
+      ""allowConsecutiveUsings"": false
+    }
+  }
+}
+";
+
             var testCode = @"using System;
 public class Foo
 {
@@ -597,6 +631,11 @@ public class Foo
 }";
 
             await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
+        }
+
+        protected override string GetSettings()
+        {
+            return this.consecutiveUsingsSettings ?? base.GetSettings();
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

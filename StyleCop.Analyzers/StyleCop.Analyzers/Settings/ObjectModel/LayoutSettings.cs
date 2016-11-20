@@ -14,6 +14,9 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         [JsonProperty("newlineAtEndOfFile", DefaultValueHandling = DefaultValueHandling.Include)]
         private EndOfFileHandling newlineAtEndOfFile;
 
+        [JsonProperty("allowConsecutiveUsings", DefaultValueHandling = DefaultValueHandling.Include)]
+        private bool allowConsecutiveUsings;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="LayoutSettings"/> class during JSON deserialization.
         /// </summary>
@@ -21,9 +24,13 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         protected internal LayoutSettings()
         {
             this.newlineAtEndOfFile = EndOfFileHandling.Allow;
+            this.allowConsecutiveUsings = true;
         }
 
         public EndOfFileHandling NewlineAtEndOfFile =>
             this.newlineAtEndOfFile;
+
+        public bool AllowConsecutiveUsings =>
+            this.allowConsecutiveUsings;
     }
 }
