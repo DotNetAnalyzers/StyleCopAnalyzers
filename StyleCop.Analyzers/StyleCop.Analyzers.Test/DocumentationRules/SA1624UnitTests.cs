@@ -185,6 +185,25 @@ public class ContainerTestClass
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that an empty tag summary is ignored (should be handled by SA1606)
+        /// This is a regression test for #2230
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyEmptySummaryTagIsIgnoredAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    /// <summary/>
+    public int TestProperty { get; set; }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
