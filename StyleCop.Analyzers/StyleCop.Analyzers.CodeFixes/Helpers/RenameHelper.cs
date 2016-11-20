@@ -144,30 +144,30 @@ namespace StyleCop.Analyzers.Helpers
             {
                 switch (parent.Kind())
                 {
-                    case SyntaxKind.VariableDeclarator:
-                    case SyntaxKind.Parameter:
-                    case SyntaxKind.TypeParameter:
-                    case SyntaxKind.CatchDeclaration:
-                    case SyntaxKind.ExternAliasDirective:
-                    case SyntaxKind.QueryContinuation:
-                    case SyntaxKind.FromClause:
-                    case SyntaxKind.LetClause:
-                    case SyntaxKind.JoinClause:
-                    case SyntaxKind.JoinIntoClause:
-                    case SyntaxKind.ForEachStatement:
-                    case SyntaxKind.UsingDirective:
-                    case SyntaxKind.LabeledStatement:
-                    case SyntaxKind.AnonymousObjectMemberDeclarator:
-                        return parent;
+                case SyntaxKind.VariableDeclarator:
+                case SyntaxKind.Parameter:
+                case SyntaxKind.TypeParameter:
+                case SyntaxKind.CatchDeclaration:
+                case SyntaxKind.ExternAliasDirective:
+                case SyntaxKind.QueryContinuation:
+                case SyntaxKind.FromClause:
+                case SyntaxKind.LetClause:
+                case SyntaxKind.JoinClause:
+                case SyntaxKind.JoinIntoClause:
+                case SyntaxKind.ForEachStatement:
+                case SyntaxKind.UsingDirective:
+                case SyntaxKind.LabeledStatement:
+                case SyntaxKind.AnonymousObjectMemberDeclarator:
+                    return parent;
 
-                    default:
-                        var declarationParent = parent as MemberDeclarationSyntax;
-                        if (declarationParent != null)
-                        {
-                            return declarationParent;
-                        }
+                default:
+                    var declarationParent = parent as MemberDeclarationSyntax;
+                    if (declarationParent != null)
+                    {
+                        return declarationParent;
+                    }
 
-                        break;
+                    break;
                 }
 
                 parent = parent.Parent;
