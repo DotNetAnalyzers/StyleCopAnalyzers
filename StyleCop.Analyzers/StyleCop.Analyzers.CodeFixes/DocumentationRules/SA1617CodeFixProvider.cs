@@ -39,12 +39,15 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             foreach (Diagnostic diagnostic in context.Diagnostics)
             {
-                context.RegisterCodeFix(
-                    CodeAction.Create(
-                        DocumentationResources.SA1617CodeFix,
-                        cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
-                        nameof(SA1617CodeFixProvider)),
-                    diagnostic);
+                if (!diagnostic.Properties.ContainsKey(SA1617VoidReturnValueMustNotBeDocumented.NoCodeFixKey))
+                {
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            DocumentationResources.SA1617CodeFix,
+                            cancellationToken => GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
+                            nameof(SA1617CodeFixProvider)),
+                        diagnostic);
+                }
             }
 
             return SpecializedTasks.CompletedTask;

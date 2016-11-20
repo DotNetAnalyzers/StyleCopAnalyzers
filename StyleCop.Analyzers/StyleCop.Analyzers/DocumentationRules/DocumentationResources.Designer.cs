@@ -62,11 +62,74 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Finalizes an instance of the .
+        /// </summary>
+        internal static string DestructorStandardTextFirstPart {
+            get {
+                return ResourceManager.GetString("DestructorStandardTextFirstPart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  class..
+        /// </summary>
+        internal static string DestructorStandardTextSecondPart {
+            get {
+                return ResourceManager.GetString("DestructorStandardTextSecondPart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Inherit documentation.
         /// </summary>
         internal static string InheritdocCodeFix {
             get {
                 return ResourceManager.GetString("InheritdocCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Initializes a new instance of the .
+        /// </summary>
+        internal static string NonPrivateConstructorStandardTextFirstPart {
+            get {
+                return ResourceManager.GetString("NonPrivateConstructorStandardTextFirstPart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  {0}.
+        /// </summary>
+        internal static string NonPrivateConstructorStandardTextSecondPart {
+            get {
+                return ResourceManager.GetString("NonPrivateConstructorStandardTextSecondPart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The parameter is not used..
+        /// </summary>
+        internal static string ParameterNotUsed {
+            get {
+                return ResourceManager.GetString("ParameterNotUsed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prevents a default instance of the .
+        /// </summary>
+        internal static string PrivateConstructorStandardTextFirstPart {
+            get {
+                return ResourceManager.GetString("PrivateConstructorStandardTextFirstPart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  {0} from being created.
+        /// </summary>
+        internal static string PrivateConstructorStandardTextSecondPart {
+            get {
+                return ResourceManager.GetString("PrivateConstructorStandardTextSecondPart", resourceCulture);
             }
         }
         
@@ -130,6 +193,96 @@ namespace StyleCop.Analyzers.DocumentationRules {
         internal static string SA1617CodeFix {
             get {
                 return ResourceManager.GetString("SA1617CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The &lt;typeparam&gt; tags within the Xml header documentation for a generic C# element do not match the generic type parameters on the element..
+        /// </summary>
+        internal static string SA1620Description {
+            get {
+                return ResourceManager.GetString("SA1620Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The type parameter &apos;{0}&apos; does not exist..
+        /// </summary>
+        internal static string SA1620MissingMessageFormat {
+            get {
+                return ResourceManager.GetString("SA1620MissingMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generic type parameter documentation must match type parameters.
+        /// </summary>
+        internal static string SA1620Title {
+            get {
+                return ResourceManager.GetString("SA1620Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The type parameter documentation for &apos;{0}&apos; should be at position {1}..
+        /// </summary>
+        internal static string SA1620WrongOrderMessageFormat {
+            get {
+                return ResourceManager.GetString("SA1620WrongOrderMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A &lt;typeparam&gt; tag within the XML header documentation for a generic C# element is missing a name attribute, or contains an empty name attribute..
+        /// </summary>
+        internal static string SA1621Description {
+            get {
+                return ResourceManager.GetString("SA1621Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generic type parameter documentation must declare parameter name..
+        /// </summary>
+        internal static string SA1621MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1621MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generic type parameter documentation must declare parameter name.
+        /// </summary>
+        internal static string SA1621Title {
+            get {
+                return ResourceManager.GetString("SA1621Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A &lt;typeparam&gt; tag within the Xml header documentation for a generic C# element is empty..
+        /// </summary>
+        internal static string SA1622Description {
+            get {
+                return ResourceManager.GetString("SA1622Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generic type parameter documentation must have text..
+        /// </summary>
+        internal static string SA1622MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1622MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generic type parameter documentation must have text.
+        /// </summary>
+        internal static string SA1622Title {
+            get {
+                return ResourceManager.GetString("SA1622Title", resourceCulture);
             }
         }
         
@@ -494,6 +647,33 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;inheritdoc&gt; has been used on an element that doesn&apos;t inherit from a base class or implement an interface..
+        /// </summary>
+        internal static string SA1648Description {
+            get {
+                return ResourceManager.GetString("SA1648Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to inheritdoc must be used with inheriting class.
+        /// </summary>
+        internal static string SA1648MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1648MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to inheritdoc must be used with inheriting class.
+        /// </summary>
+        internal static string SA1648Title {
+            get {
+                return ResourceManager.GetString("SA1648Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Rename file to match first type name.
         /// </summary>
         internal static string SA1649CodeFix {
@@ -535,33 +715,6 @@ namespace StyleCop.Analyzers.DocumentationRules {
         internal static string SA1651CodeFix {
             get {
                 return ResourceManager.GetString("SA1651CodeFix", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The project is currently configured to not parse XML documentation comments; all diagnostics for documentation comments are disabled. Enable XML documentation output to enable these diagnostics..
-        /// </summary>
-        internal static string SA1652Description {
-            get {
-                return ResourceManager.GetString("SA1652Description", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Enable XML documentation output.
-        /// </summary>
-        internal static string SA1652MessageFormat {
-            get {
-                return ResourceManager.GetString("SA1652MessageFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Enable XML documentation output.
-        /// </summary>
-        internal static string SA1652Title {
-            get {
-                return ResourceManager.GetString("SA1652Title", resourceCulture);
             }
         }
         
@@ -616,6 +769,42 @@ namespace StyleCop.Analyzers.DocumentationRules {
         internal static string StartingTextSetsWhether {
             get {
                 return ResourceManager.GetString("StartingTextSetsWhether", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Initializes static members of the .
+        /// </summary>
+        internal static string StaticConstructorStandardTextFirstPart {
+            get {
+                return ResourceManager.GetString("StaticConstructorStandardTextFirstPart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  {0}..
+        /// </summary>
+        internal static string StaticConstructorStandardTextSecondPart {
+            get {
+                return ResourceManager.GetString("StaticConstructorStandardTextSecondPart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to class.
+        /// </summary>
+        internal static string TypeTextClass {
+            get {
+                return ResourceManager.GetString("TypeTextClass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to struct.
+        /// </summary>
+        internal static string TypeTextStruct {
+            get {
+                return ResourceManager.GetString("TypeTextStruct", resourceCulture);
             }
         }
     }

@@ -5,6 +5,8 @@ namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.Linq;
+    using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -32,6 +34,12 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// The ID for diagnostics produced by the <see cref="SA1617VoidReturnValueMustNotBeDocumented"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1617";
+
+        /// <summary>
+        /// The key used for signalling that no codefix should be offered.
+        /// </summary>
+        internal const string NoCodeFixKey = "NoCodeFix";
+
         private const string Title = "Void return value must not be documented";
         private const string MessageFormat = "Void return value must not be documented";
         private const string Description = "A C# code element does not contain a return value, or returns void, but the documentation header for the element contains a <returns> tag.";
@@ -40,9 +48,10 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> MethodDeclarationAction = HandleMethodDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> DelegateDeclarationAction = HandleDelegateDeclaration;
+
+        private static readonly ImmutableDictionary<string, string> NoCodeFixProperties = ImmutableDictionary.Create<string, string>().Add(NoCodeFixKey, string.Empty);
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -51,46 +60,72 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(DelegateDeclarationAction, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeAction(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(DelegateDeclarationAction, SyntaxKind.DelegateDeclaration);
         }
 
         private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var methodDeclaration = context.Node as MethodDeclarationSyntax;
-            HandleMember(context, methodDeclaration?.ReturnType);
+            var methodDeclaration = (MethodDeclarationSyntax)context.Node;
+            HandleMember(context, methodDeclaration.ReturnType);
         }
 
         private static void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var delegateDeclaration = context.Node as DelegateDeclarationSyntax;
+            var delegateDeclaration = (DelegateDeclarationSyntax)context.Node;
             HandleMember(context, delegateDeclaration?.ReturnType);
         }
 
         private static void HandleMember(SyntaxNodeAnalysisContext context, TypeSyntax returnValue)
         {
             var documentation = context.Node.GetDocumentationCommentTriviaSyntax();
-
-            if (context.Node != null && documentation != null)
+            if (documentation == null)
             {
-                var returnType = returnValue as PredefinedTypeSyntax;
+                return;
+            }
 
-                // Check if the return type is void.
-                if (returnType != null && returnType.Keyword.IsKind(SyntaxKind.VoidKeyword))
+            // Check if the return type is void.
+            var returnType = returnValue as PredefinedTypeSyntax;
+            if ((returnType == null) || !returnType.Keyword.IsKind(SyntaxKind.VoidKeyword))
+            {
+                return;
+            }
+
+            // Check if the return value is documented
+            var returnsElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.ReturnsXmlTag);
+            if (returnsElement == null)
+            {
+                var includeElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag);
+                if (includeElement != null)
                 {
-                    // Check if the return value is documented
-                    var returnsElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.ReturnsXmlTag);
-
-                    if (returnsElement != null)
+                    string rawDocumentation;
+                    var declaration = context.SemanticModel.GetDeclaredSymbol(context.Node, context.CancellationToken);
+                    if (declaration == null)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, returnsElement.GetLocation()));
+                        return;
+                    }
+
+                    rawDocumentation = declaration.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
+                    var completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
+                    if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.InheritdocXmlTag))
+                    {
+                        // Ignore nodes with an <inheritdoc/> tag in the included XML.
+                        return;
+                    }
+
+                    var includedReturnsElement = completeDocumentation.Nodes().OfType<XElement>().FirstOrDefault(element => element.Name == XmlCommentHelper.ReturnsXmlTag);
+                    if (includedReturnsElement != null)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, includeElement.GetLocation(), NoCodeFixProperties));
                     }
                 }
+            }
+            else
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, returnsElement.GetLocation()));
             }
         }
     }

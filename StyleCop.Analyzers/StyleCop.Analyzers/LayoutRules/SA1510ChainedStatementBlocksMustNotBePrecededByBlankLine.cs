@@ -52,7 +52,6 @@ namespace StyleCop.Analyzers.LayoutRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> ElseStatementAction = HandleElseStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> CatchClauseAction = HandleCatchClause;
         private static readonly Action<SyntaxNodeAnalysisContext> FinallyClauseAction = HandleFinallyClause;
@@ -64,14 +63,12 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(ElseStatementAction, SyntaxKind.ElseClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(CatchClauseAction, SyntaxKind.CatchClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(FinallyClauseAction, SyntaxKind.FinallyClause);
+            context.RegisterSyntaxNodeAction(ElseStatementAction, SyntaxKind.ElseClause);
+            context.RegisterSyntaxNodeAction(CatchClauseAction, SyntaxKind.CatchClause);
+            context.RegisterSyntaxNodeAction(FinallyClauseAction, SyntaxKind.FinallyClause);
         }
 
         private static void HandleElseStatement(SyntaxNodeAnalysisContext context)

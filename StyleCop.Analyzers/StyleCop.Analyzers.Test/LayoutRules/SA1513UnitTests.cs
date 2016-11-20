@@ -796,6 +796,36 @@ public class Program
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that code commented out with four slashes is accepted.
+        /// This is a regression test for #2041
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestFourSlashCommentsAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public int Do(int i)
+    {
+        if (i > 2)
+        {
+            return 1;
+        }
+        //// else if (i == 2)
+        //// {
+        ////     return 2;
+        //// }
+
+        return 0;
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {

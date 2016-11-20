@@ -180,6 +180,31 @@ class Foo
         }
 
         [Fact]
+        public async Task TestMethodCallPragmaDirectiveBetweenParametersAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    public void Bar(int i, int z)
+    {
+    }
+
+    public void Baz()
+    {
+        Bar(
+#pragma warning disable CS4014
+            1,
+#pragma warning restore CS4014
+            2);
+    }
+}";
+
+            DiagnosticResult[] expected = EmptyDiagnosticResults;
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestMethodCallSecondParameterOnTheNextLineAsync()
         {
             var testCode = @"
@@ -1126,6 +1151,122 @@ public class TestClass
 }
 ";
 
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that comment lines will not reported a diagnostic.
+        /// This is a regression test for #1921.
+        /// </summary>
+        /// <param name="commentText">The comment test to use for the test.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("/* comment */")]
+        [InlineData("// comment")]
+        [InlineData("//// comment")]
+        public async Task TestWithCommentLinesAsync(string commentText)
+        {
+            var testCode = $@"
+public class TestClass
+{{
+    public void MyTest(int v1, int v2)
+    {{
+    }}
+
+    public void MyTest2(
+        int v1,
+        {commentText}
+        int v2)
+    {{
+    }}
+
+    public void TestMethod()
+    {{
+        this.MyTest(
+            1,
+            {commentText}
+            2);
+    }}
+}}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that multiple comment lines will not reported a diagnostic.
+        /// This is a regression test for #1921.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestWithMultipleCommentLinesAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void MyTest1(
+        int v1,
+        //// bool b1,
+        //// bool b2,
+        int v2)
+    {
+    }
+
+    public void MyTest2(
+        int v1,
+        /*
+        bool b1,
+        bool b2,
+        */
+        int v2)
+    {
+    }
+
+    public void TestMethod()
+    {
+        this.MyTest1(
+            1,
+            //// true,
+            //// false,
+            2);
+
+        this.MyTest2(
+            1,
+            /*
+            true,
+            false,
+            */
+            2);
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMethodArgumentsWithAttributeAsync()
+        {
+            var testCode = @"
+[System.AttributeUsage(System.AttributeTargets.Parameter, AllowMultiple = true)]
+public class MyAttribute : System.Attribute
+{
+}
+
+class Foo
+{
+        public static void DoWork(
+            [MyAttribute]
+            string param1,
+            [MyAttribute]
+            string param2,
+            [MyAttribute]
+            string param3,
+            [MyAttribute]
+            string param4)
+    {
+    }
+}";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 

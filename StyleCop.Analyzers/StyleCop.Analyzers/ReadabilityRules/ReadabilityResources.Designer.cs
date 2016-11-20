@@ -989,6 +989,15 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Replace with lambda..
+        /// </summary>
+        internal static string SA1130CodeFix {
+            get {
+                return ResourceManager.GetString("SA1130CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Lambda expressions are more succinct and easier to read than anonymous methods, so they should are preferred whenever the two are functionally equivalent..
         /// </summary>
         internal static string SA1130Description {
@@ -1156,6 +1165,78 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         internal static string SA1134Title {
             get {
                 return ResourceManager.GetString("SA1134Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Place enum values own their own lines.
+        /// </summary>
+        internal static string SA1136CodeFix {
+            get {
+                return ResourceManager.GetString("SA1136CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enum values should be placed on their own lines for maximum readability..
+        /// </summary>
+        internal static string SA1136Description {
+            get {
+                return ResourceManager.GetString("SA1136Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enum values should be on separate lines.
+        /// </summary>
+        internal static string SA1136MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1136MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enum values should be on separate lines.
+        /// </summary>
+        internal static string SA1136Title {
+            get {
+                return ResourceManager.GetString("SA1136Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use literal suffix notation instead of casting.
+        /// </summary>
+        internal static string SA1139CodeFix {
+            get {
+                return ResourceManager.GetString("SA1139CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use literal suffix notation instead of casting, in order to improve readability, avoid bugs related to illegal casts and ensure that optimal IL is produced..
+        /// </summary>
+        internal static string SA1139Description {
+            get {
+                return ResourceManager.GetString("SA1139Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use literal suffix notation instead of casting.
+        /// </summary>
+        internal static string SA1139MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1139MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use literal suffix notation instead of casting.
+        /// </summary>
+        internal static string SA1139Title {
+            get {
+                return ResourceManager.GetString("SA1139Title", resourceCulture);
             }
         }
         

@@ -59,9 +59,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var nodeInSourceSpan = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
             AttributeListSyntax attributeList = nodeInSourceSpan.FirstAncestorOrSelf<AttributeListSyntax>();
 
-            var indentationOptions = IndentationOptions.FromDocument(document);
-            var indentationSteps = IndentationHelper.GetIndentationSteps(indentationOptions, attributeList);
-            var indentationTrivia = IndentationHelper.GenerateWhitespaceTrivia(indentationOptions, indentationSteps);
+            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
+            var indentationSteps = IndentationHelper.GetIndentationSteps(settings.Indentation, attributeList);
+            var indentationTrivia = IndentationHelper.GenerateWhitespaceTrivia(settings.Indentation, indentationSteps);
 
             List<AttributeListSyntax> newAttributeLists = GetNewAttributeList(attributeList, indentationTrivia);
 
@@ -77,7 +77,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             for (var i = 0; i < attributeList.Attributes.Count; i++)
             {
-                var newAttributes = SyntaxFactory.SingletonSeparatedList(attributeList.Attributes[i]);
+                var newAttributes = SyntaxFactory.SingletonSeparatedList(
+                    attributeList.Attributes[i].WithLeadingTrivia(
+                        attributeList.Attributes[i].GetLeadingTrivia().WithoutLeadingWhitespace()));
                 var newAttributeList = SyntaxFactory.AttributeList(attributeList.Target, newAttributes);
 
                 newAttributeList = (i == 0)
@@ -102,15 +104,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
             protected override string CodeActionTitle =>
                 ReadabilityResources.SA1133CodeFix;
 
-            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
             {
-                var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
                 if (diagnostics.IsEmpty)
                 {
                     return null;
                 }
 
-                var indentationOptions = IndentationOptions.FromDocument(document);
+                var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, fixAllContext.CancellationToken);
                 var syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
 
                 var nodes = diagnostics.Select(diagnostic => syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true).FirstAncestorOrSelf<AttributeListSyntax>());
@@ -119,8 +120,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 foreach (var attributeList in nodes)
                 {
-                    var indentationSteps = IndentationHelper.GetIndentationSteps(indentationOptions, attributeList);
-                    var indentationTrivia = IndentationHelper.GenerateWhitespaceTrivia(indentationOptions, indentationSteps);
+                    var indentationSteps = IndentationHelper.GetIndentationSteps(settings.Indentation, attributeList);
+                    var indentationTrivia = IndentationHelper.GenerateWhitespaceTrivia(settings.Indentation, indentationSteps);
                     newRoot = newRoot.ReplaceNode(newRoot.GetCurrentNode(attributeList), GetNewAttributeList(attributeList, indentationTrivia));
                 }
 

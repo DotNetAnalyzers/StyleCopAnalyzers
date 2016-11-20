@@ -186,7 +186,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -395,13 +395,7 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                new DiagnosticResult
-                {
-                    Id = "CS1513",
-                    Severity = DiagnosticSeverity.Error,
-                    Message = "} expected",
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 3, 2) }
-                }
+                this.CSharpCompilerError("CS1513").WithMessage("} expected").WithLocation(3, 2),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

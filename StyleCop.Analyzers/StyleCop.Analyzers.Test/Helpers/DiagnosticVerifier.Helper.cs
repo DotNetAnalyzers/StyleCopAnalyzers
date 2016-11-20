@@ -12,7 +12,12 @@ namespace TestHelper
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Formatting;
     using Microsoft.CodeAnalysis.Text;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
+    using StyleCop.Analyzers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.Test.Helpers;
 
     /// <summary>
@@ -21,8 +26,6 @@ namespace TestHelper
     /// </summary>
     public abstract partial class DiagnosticVerifier
     {
-        private const string SettingsFileName = "stylecop.json";
-
         private static readonly string DefaultFilePathPrefix = "Test";
         private static readonly string CSharpDefaultFileExt = "cs";
         private static readonly string VisualBasicDefaultExt = "vb";
@@ -47,29 +50,11 @@ namespace TestHelper
                 projects.Add(document.Project);
             }
 
-            var supportedDiagnosticsSpecificOptions = new Dictionary<string, ReportDiagnostic>();
-            foreach (var analyzer in analyzers)
-            {
-                foreach (var diagnostic in analyzer.SupportedDiagnostics)
-                {
-                    // make sure the analyzers we are testing are enabled
-                    supportedDiagnosticsSpecificOptions[diagnostic.Id] = ReportDiagnostic.Default;
-                }
-            }
-
-            // Report exceptions during the analysis process as errors
-            supportedDiagnosticsSpecificOptions.Add("AD0001", ReportDiagnostic.Error);
-
             var diagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
             foreach (var project in projects)
             {
-                // update the project compilation options
-                var modifiedSpecificDiagnosticOptions = supportedDiagnosticsSpecificOptions.ToImmutableDictionary().SetItems(project.CompilationOptions.SpecificDiagnosticOptions);
-                var modifiedCompilationOptions = project.CompilationOptions.WithSpecificDiagnosticOptions(modifiedSpecificDiagnosticOptions);
-                var processedProject = project.WithCompilationOptions(modifiedCompilationOptions);
-
-                var compilation = await processedProject.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
-                var compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, processedProject.AnalyzerOptions, cancellationToken);
+                var compilation = await project.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
+                var compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, project.AnalyzerOptions, cancellationToken);
                 var compilerDiagnostics = compilation.GetDiagnostics(cancellationToken);
                 var compilerErrors = compilerDiagnostics.Where(i => i.Severity == DiagnosticSeverity.Error);
                 var diags = await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().ConfigureAwait(false);
@@ -130,10 +115,6 @@ namespace TestHelper
         {
             var compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true);
 
-            var additionalDiagnosticOptions = this.GetDisabledDiagnostics().Select(id => new KeyValuePair<string, ReportDiagnostic>(id, ReportDiagnostic.Suppress));
-            var newSpecificOptions = compilationOptions.SpecificDiagnosticOptions.AddRange(additionalDiagnosticOptions);
-            compilationOptions = compilationOptions.WithSpecificDiagnosticOptions(newSpecificOptions);
-
             Solution solution = new AdhocWorkspace()
                 .CurrentSolution
                 .AddProject(projectId, TestProjectName, TestProjectName, language)
@@ -144,11 +125,47 @@ namespace TestHelper
                 .AddMetadataReference(projectId, MetadataReferences.CSharpSymbolsReference)
                 .AddMetadataReference(projectId, MetadataReferences.CodeAnalysisReference);
 
+            solution.Workspace.Options =
+                solution.Workspace.Options
+                .WithChangedOption(FormattingOptions.IndentationSize, language, this.IndentationSize)
+                .WithChangedOption(FormattingOptions.TabSize, language, this.TabSize)
+                .WithChangedOption(FormattingOptions.UseTabs, language, this.UseTabs);
+
             var settings = this.GetSettings();
+
+            StyleCopSettings defaultSettings = new StyleCopSettings();
+            if (this.IndentationSize != defaultSettings.Indentation.IndentationSize
+                || this.UseTabs != defaultSettings.Indentation.UseTabs
+                || this.TabSize != defaultSettings.Indentation.TabSize)
+            {
+                var indentationSettings = $@"
+{{
+  ""settings"": {{
+    ""indentation"": {{
+      ""indentationSize"": {this.IndentationSize},
+      ""useTabs"": {this.UseTabs.ToString().ToLowerInvariant()},
+      ""tabSize"": {this.TabSize}
+    }}
+  }}
+}}
+";
+
+                if (string.IsNullOrEmpty(settings))
+                {
+                    settings = indentationSettings;
+                }
+                else
+                {
+                    JObject mergedSettings = JsonConvert.DeserializeObject<JObject>(settings);
+                    mergedSettings.Merge(JsonConvert.DeserializeObject<JObject>(indentationSettings));
+                    settings = JsonConvert.SerializeObject(mergedSettings);
+                }
+            }
+
             if (!string.IsNullOrEmpty(settings))
             {
                 var documentId = DocumentId.CreateNewId(projectId);
-                solution = solution.AddAdditionalDocument(documentId, SettingsFileName, settings);
+                solution = solution.AddAdditionalDocument(documentId, SettingsHelper.SettingsFileName, settings);
             }
 
             ParseOptions parseOptions = solution.GetProject(projectId).ParseOptions;
@@ -179,17 +196,45 @@ namespace TestHelper
             var supportedDiagnostics = analyzers.SelectMany(analyzer => analyzer.SupportedDiagnostics);
             if (diagnosticId == null)
             {
-                return new DiagnosticResult(supportedDiagnostics.Single());
+                return this.CSharpDiagnostic(supportedDiagnostics.Single());
             }
             else
             {
-                return new DiagnosticResult(supportedDiagnostics.Single(i => i.Id == diagnosticId));
+                return this.CSharpDiagnostic(supportedDiagnostics.Single(i => i.Id == diagnosticId));
             }
         }
 
         protected DiagnosticResult CSharpDiagnostic(DiagnosticDescriptor descriptor)
         {
-            return this.CSharpDiagnostic(descriptor.Id).WithMessageFormat(descriptor.MessageFormat);
+            return new DiagnosticResult(descriptor);
+        }
+
+        protected DiagnosticResult CSharpCompilerError(string errorIdentifier)
+        {
+            return new DiagnosticResult
+            {
+                Id = errorIdentifier,
+                Severity = DiagnosticSeverity.Error,
+            };
+        }
+
+        /// <summary>
+        /// Create a project using the input strings as sources.
+        /// </summary>
+        /// <remarks>
+        /// <para>This method first creates a <see cref="Project"/> by calling <see cref="CreateProjectImpl"/>, and then
+        /// applies compilation options to the project by calling <see cref="ApplyCompilationOptions"/>.</para>
+        /// </remarks>
+        /// <param name="sources">Classes in the form of strings.</param>
+        /// <param name="language">The language the source classes are in. Values may be taken from the
+        /// <see cref="LanguageNames"/> class.</param>
+        /// <param name="filenames">The filenames or null if the default filename should be used</param>
+        /// <returns>A <see cref="Project"/> created out of the <see cref="Document"/>s created from the source
+        /// strings.</returns>
+        protected Project CreateProject(string[] sources, string language = LanguageNames.CSharp, string[] filenames = null)
+        {
+            Project project = this.CreateProjectImpl(sources, language, filenames);
+            return this.ApplyCompilationOptions(project);
         }
 
         /// <summary>
@@ -201,7 +246,7 @@ namespace TestHelper
         /// <param name="filenames">The filenames or null if the default filename should be used</param>
         /// <returns>A <see cref="Project"/> created out of the <see cref="Document"/>s created from the source
         /// strings.</returns>
-        protected virtual Project CreateProject(string[] sources, string language = LanguageNames.CSharp, string[] filenames = null)
+        protected virtual Project CreateProjectImpl(string[] sources, string language, string[] filenames)
         {
             string fileNamePrefix = DefaultFilePathPrefix;
             string fileExt = language == LanguageNames.CSharp ? CSharpDefaultFileExt : VisualBasicDefaultExt;
@@ -220,6 +265,47 @@ namespace TestHelper
             }
 
             return solution.GetProject(projectId);
+        }
+
+        /// <summary>
+        /// Applies compilation options to a project.
+        /// </summary>
+        /// <remarks>
+        /// <para>The default implementation configures the project by enabling all supported diagnostics of analyzers
+        /// included in <see cref="GetCSharpDiagnosticAnalyzers"/> as well as <c>AD0001</c>. After configuring these
+        /// diagnostics, any diagnostic IDs indicated in <see cref="GetDisabledDiagnostics"/> are explictly supressed
+        /// using <see cref="ReportDiagnostic.Suppress"/>.</para>
+        /// </remarks>
+        /// <param name="project">The project.</param>
+        /// <returns>The modified project.</returns>
+        protected virtual Project ApplyCompilationOptions(Project project)
+        {
+            var analyzers = this.GetCSharpDiagnosticAnalyzers();
+
+            var supportedDiagnosticsSpecificOptions = new Dictionary<string, ReportDiagnostic>();
+            foreach (var analyzer in analyzers)
+            {
+                foreach (var diagnostic in analyzer.SupportedDiagnostics)
+                {
+                    // make sure the analyzers we are testing are enabled
+                    supportedDiagnosticsSpecificOptions[diagnostic.Id] = ReportDiagnostic.Default;
+                }
+            }
+
+            // Report exceptions during the analysis process as errors
+            supportedDiagnosticsSpecificOptions.Add("AD0001", ReportDiagnostic.Error);
+
+            foreach (var id in this.GetDisabledDiagnostics())
+            {
+                supportedDiagnosticsSpecificOptions[id] = ReportDiagnostic.Suppress;
+            }
+
+            // update the project compilation options
+            var modifiedSpecificDiagnosticOptions = supportedDiagnosticsSpecificOptions.ToImmutableDictionary().SetItems(project.CompilationOptions.SpecificDiagnosticOptions);
+            var modifiedCompilationOptions = project.CompilationOptions.WithSpecificDiagnosticOptions(modifiedSpecificDiagnosticOptions);
+
+            Solution solution = project.Solution.WithProjectCompilationOptions(project.Id, modifiedCompilationOptions);
+            return solution.GetProject(project.Id);
         }
 
         /// <summary>

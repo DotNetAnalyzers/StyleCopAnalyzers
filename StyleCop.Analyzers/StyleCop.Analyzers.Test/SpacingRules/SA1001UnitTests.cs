@@ -193,13 +193,7 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                new DiagnosticResult
-                {
-                    Id = "CS1003",
-                    Severity = DiagnosticSeverity.Error,
-                    Message = "Syntax error, ',' expected",
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 25) }
-                }
+                this.CSharpCompilerError("CS1003").WithMessage("Syntax error, ',' expected").WithLocation(6, 25),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -268,7 +262,11 @@ class ClassName
             string fixedCode = string.Format(template, fixedStatement);
 
             await this.VerifyCSharpDiagnosticAsync(originalCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(originalCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            if (expected.Length > 0)
+            {
+                await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpFixAsync(originalCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            }
         }
     }
 }

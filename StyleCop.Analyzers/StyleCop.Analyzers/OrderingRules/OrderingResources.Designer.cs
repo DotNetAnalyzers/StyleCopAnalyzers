@@ -71,6 +71,15 @@ namespace StyleCop.Analyzers.OrderingRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fix modifier order.
+        /// </summary>
+        internal static string ModifierOrderCodeFix {
+            get {
+                return ResourceManager.GetString("ModifierOrderCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An element within a C# code file is out of order in relation to the other elements in the code..
         /// </summary>
         internal static string SA1201Description {

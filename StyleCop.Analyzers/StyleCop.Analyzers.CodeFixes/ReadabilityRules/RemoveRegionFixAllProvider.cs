@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
+    using System.Collections.Immutable;
     using System.Linq;
     using System.Threading.Tasks;
     using Helpers;
@@ -14,9 +15,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
     {
         protected override string CodeActionTitle => "Remove region";
 
-        protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document)
+        protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
         {
-            var diagnostics = await fixAllContext.GetDocumentDiagnosticsAsync(document).ConfigureAwait(false);
             if (diagnostics.IsEmpty)
             {
                 return null;

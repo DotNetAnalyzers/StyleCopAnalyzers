@@ -745,8 +745,48 @@ class Class1
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact(DisplayName = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1944")]
+        public async Task TestOverriddenInheritDocAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    ///
+    /// </summary>
+    /// <inheritdoc/>
+    public string Property => ""P"";
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(11, 19);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestIncompleteMemberAsync()
+        {
+            var testCode = @"
+class Class1
+{
+    /// <include file='ClassWithSummary.xml' path='/Class1/MethodName/*'/>
+    public string MethodName
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpCompilerError("CS1002").WithMessage("; expected").WithLocation(5, 29),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
-        protected override Project CreateProject(string[] sources, string language = "C#", string[] filenames = null)
+        protected override Project ApplyCompilationOptions(Project project)
         {
             var resolver = new TestXmlReferenceResolver();
             string contentWithSummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
@@ -785,7 +825,7 @@ class Class1
 ";
             resolver.XmlReferences.Add("ClassWithEmptySummary.xml", contentWithEmptySummary);
 
-            Project project = base.CreateProject(sources, language, filenames);
+            project = base.ApplyCompilationOptions(project);
             project = project.WithCompilationOptions(project.CompilationOptions.WithXmlReferenceResolver(resolver));
             return project;
         }

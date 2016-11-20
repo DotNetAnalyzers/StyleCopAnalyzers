@@ -43,7 +43,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, XElement completeDocumentation, Location[] diagnosticLocations)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, DocumentationCommentTriviaSyntax documentation, XmlNodeSyntax syntax, XElement completeDocumentation, Location[] diagnosticLocations)
         {
             if (completeDocumentation != null)
             {
@@ -52,11 +52,23 @@ namespace StyleCop.Analyzers.DocumentationRules
                 {
                     return;
                 }
+
+                if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.InheritdocXmlTag))
+                {
+                    // Ignore nodes with an <inheritdoc/> tag in the included XML.
+                    return;
+                }
             }
             else
             {
                 if (syntax != null)
                 {
+                    return;
+                }
+
+                if (documentation?.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag) != null)
+                {
+                    // Ignore nodes with an <inheritdoc/> tag.
                     return;
                 }
             }

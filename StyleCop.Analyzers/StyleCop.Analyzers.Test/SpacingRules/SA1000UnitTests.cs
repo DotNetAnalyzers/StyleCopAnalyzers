@@ -852,13 +852,7 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                new DiagnosticResult
-                {
-                    Id = "CS0742",
-                    Severity = DiagnosticSeverity.Error,
-                    Message = "A query body must end with a select clause or a group clause",
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 42) }
-                }
+                this.CSharpCompilerError("CS0742").WithMessage("A query body must end with a select clause or a group clause").WithLocation(6, 42),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -938,7 +932,11 @@ namespace Namespace
             string fixedTest = string.Format(testCodeFormat, asyncModifier, fixedStatement, unsafeModifier, awaitMethod, returnType);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            if (expected.Length > 0)
+            {
+                await this.VerifyCSharpDiagnosticAsync(fixedTest, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            }
         }
 
         private Task TestKeywordDeclarationAsync(string statement, DiagnosticResult expected, string fixedStatement)
@@ -965,7 +963,11 @@ namespace Namespace
             string fixedTest = string.Format(testCodeFormat, fixedStatement);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            if (expected.Length > 0)
+            {
+                await this.VerifyCSharpDiagnosticAsync(fixedTest, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpFixAsync(testCode, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            }
         }
     }
 }
