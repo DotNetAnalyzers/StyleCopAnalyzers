@@ -220,13 +220,13 @@
     <value>Replace tabs with spaces</value>
   </data>
   <data name="SA1027Description" xml:space="preserve">
-    <value>The C# code contains a tab character</value>
+    <value>The code contains a tab or space character which is not consistent with the current project settings.</value>
   </data>
   <data name="SA1027MessageFormat" xml:space="preserve">
-    <value>Tabs must not be used.</value>
+    <value>Tabs and spaces should be used correctly</value>
   </data>
   <data name="SA1027Title" xml:space="preserve">
-    <value>Tabs must not be used</value>
+    <value>Use tabs correctly</value>
   </data>
   <data name="SA1028CodeFix" xml:space="preserve">
     <value>Remove trailing whitespace</value>

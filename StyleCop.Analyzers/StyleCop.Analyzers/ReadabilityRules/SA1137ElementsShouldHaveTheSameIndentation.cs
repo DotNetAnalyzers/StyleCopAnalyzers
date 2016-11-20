@@ -29,7 +29,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> CompilationUnitAction = HandleCompilationUnit;
         private static readonly Action<SyntaxNodeAnalysisContext> NamespaceDeclarationAction = HandleNamespaceDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> TypeDeclarationAction = HandleTypeDeclaration;
@@ -54,27 +53,25 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(CompilationUnitAction, SyntaxKind.CompilationUnit);
-            context.RegisterSyntaxNodeActionHonorExclusions(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(EnumDeclarationAction, SyntaxKind.EnumDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(AccessorListAction, SyntaxKind.AccessorList);
-            context.RegisterSyntaxNodeActionHonorExclusions(VariableDeclarationAction, SyntaxKind.VariableDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(TypeParameterListAction, SyntaxKind.TypeParameterList);
-            context.RegisterSyntaxNodeActionHonorExclusions(BaseParameterListAction, SyntaxKinds.BaseParameterList);
-            context.RegisterSyntaxNodeActionHonorExclusions(BaseArgumentListAction, SyntaxKinds.BaseArgumentList);
-            context.RegisterSyntaxNodeActionHonorExclusions(AttributeListAction, SyntaxKind.AttributeList);
-            context.RegisterSyntaxNodeActionHonorExclusions(AttributeArgumentListAction, SyntaxKind.AttributeArgumentList);
-            context.RegisterSyntaxNodeActionHonorExclusions(BlockAction, SyntaxKind.Block);
-            context.RegisterSyntaxNodeActionHonorExclusions(SwitchStatementAction, SyntaxKind.SwitchStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(InitializerExpressionAction, SyntaxKinds.InitializerExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(AnonymousObjectCreationExpressionAction, SyntaxKind.AnonymousObjectCreationExpression);
+            context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
+            context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeAction(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
+            context.RegisterSyntaxNodeAction(EnumDeclarationAction, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeAction(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(AccessorListAction, SyntaxKind.AccessorList);
+            context.RegisterSyntaxNodeAction(VariableDeclarationAction, SyntaxKind.VariableDeclaration);
+            context.RegisterSyntaxNodeAction(TypeParameterListAction, SyntaxKind.TypeParameterList);
+            context.RegisterSyntaxNodeAction(BaseParameterListAction, SyntaxKinds.BaseParameterList);
+            context.RegisterSyntaxNodeAction(BaseArgumentListAction, SyntaxKinds.BaseArgumentList);
+            context.RegisterSyntaxNodeAction(AttributeListAction, SyntaxKind.AttributeList);
+            context.RegisterSyntaxNodeAction(AttributeArgumentListAction, SyntaxKind.AttributeArgumentList);
+            context.RegisterSyntaxNodeAction(BlockAction, SyntaxKind.Block);
+            context.RegisterSyntaxNodeAction(SwitchStatementAction, SyntaxKind.SwitchStatement);
+            context.RegisterSyntaxNodeAction(InitializerExpressionAction, SyntaxKinds.InitializerExpression);
+            context.RegisterSyntaxNodeAction(AnonymousObjectCreationExpressionAction, SyntaxKind.AnonymousObjectCreationExpression);
         }
 
         private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context)

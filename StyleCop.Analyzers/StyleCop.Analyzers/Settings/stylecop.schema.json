@@ -120,6 +120,24 @@
           "description": "Configuration for ordering rules (SA1400-)",
           "additionalProperties": false,
           "properties": {
+            "topLevelTypes": {
+              "type": "array",
+              "description": "The set of type kinds which must be placed in separate files according to the type name.",
+              "default": [
+                "class"
+              ],
+              "items": {
+                "type": "string",
+                "enum": [
+                  "class",
+                  "interface",
+                  "struct",
+                  "delegate",
+                  "enum"
+                ]
+              },
+              "uniqueItems": true
+            }
           }
         },
         "layoutRules": {
@@ -136,6 +154,11 @@
                 "omit"
               ],
               "default": "allow"
+            },
+            "allowConsecutiveUsings": {
+              "type": "boolean",
+              "description": "Specifies if SA1519 will allow consecutive using statements without braces",
+              "default": true
             }
           }
         },
@@ -194,11 +217,21 @@
               "description": "Determines whether the file header should be wrapped in the StyleCop-standard XML structure.",
               "default": true
             },
+            "headerDecoration": {
+              "type": "string",
+              "description": "The text used as decoration for the copyright header comment.",
+              "default": null
+            },
             "fileNamingConvention": {
               "type": "string",
               "description": "Specifies the preferred naming convention for files. The default value \"stylecop\" uses the naming convention defined by StyleCop Classic, while \"metadata\" uses a file naming convention that matches the metadata names of types.",
               "default": "stylecop",
               "enum": [ "stylecop", "metadata" ]
+            },
+            "documentationCulture": {
+                "type": "string",
+                "description": "The culture that should be used for documentation comments.",
+                "default": "en-US"
             }
           }
         }

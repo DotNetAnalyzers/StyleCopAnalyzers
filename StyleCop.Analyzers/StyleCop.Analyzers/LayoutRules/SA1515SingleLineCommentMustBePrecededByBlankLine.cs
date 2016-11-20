@@ -87,7 +87,6 @@ namespace StyleCop.Analyzers.LayoutRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
 
         /// <inheritdoc/>
@@ -97,54 +96,58 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxTreeActionHonorExclusions(SyntaxTreeAction);
+            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
         }
 
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
             var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
+            var previousCommentNotOnOwnLine = false;
 
             foreach (var trivia in syntaxRoot.DescendantTrivia().Where(trivia => trivia.IsKind(SyntaxKind.SingleLineCommentTrivia)))
             {
                 if (trivia.FullSpan.Start == 0)
                 {
                     // skip the trivia if it is at the start of the file
+                    previousCommentNotOnOwnLine = false;
                     continue;
                 }
 
                 if (trivia.ToString().StartsWith("////", StringComparison.Ordinal))
                 {
                     // ignore commented out code
+                    previousCommentNotOnOwnLine = false;
                     continue;
                 }
 
                 int triviaIndex;
-
-                // PERF: Explicitly cast to IReadOnlyList so we only box once.
                 var triviaList = TriviaHelper.GetContainingTriviaList(trivia, out triviaIndex);
 
                 if (!IsOnOwnLine(triviaList, triviaIndex))
                 {
                     // ignore comments after other code elements.
+                    previousCommentNotOnOwnLine = true;
                     continue;
                 }
 
                 if (IsPrecededByBlankLine(triviaList, triviaIndex))
                 {
                     // allow properly formatted blank line comments.
+                    previousCommentNotOnOwnLine = false;
                     continue;
                 }
 
-                if (IsPrecededBySingleLineCommentOrDocumentation(triviaList, triviaIndex))
+                if (!previousCommentNotOnOwnLine && IsPrecededBySingleLineCommentOrDocumentation(triviaList, triviaIndex))
                 {
                     // allow consecutive single line comments.
+                    previousCommentNotOnOwnLine = false;
                     continue;
                 }
+
+                previousCommentNotOnOwnLine = false;
 
                 if (IsAtStartOfScope(trivia))
                 {
@@ -187,7 +190,8 @@ namespace StyleCop.Analyzers.LayoutRules
             triviaIndex--;
             while ((eolCount < 2) && (triviaIndex >= 0))
             {
-                switch (triviaList[triviaIndex].Kind())
+                var currentTrivia = triviaList[triviaIndex];
+                switch (currentTrivia.Kind())
                 {
                 case SyntaxKind.WhitespaceTrivia:
                     triviaIndex--;

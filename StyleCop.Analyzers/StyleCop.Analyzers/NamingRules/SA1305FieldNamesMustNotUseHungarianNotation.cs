@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.NamingRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.Linq;
     using System.Text.RegularExpressions;
     using Helpers;
     using Microsoft.CodeAnalysis;
@@ -66,8 +67,8 @@ namespace StyleCop.Analyzers.NamingRules
 
         private static readonly Regex HungarianRegex = new Regex(@"^(?<notation>[a-z]{1,2})[A-Z]");
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> VariableDeclarationAction = Analyzer.HandleVariableDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> ParameterDeclarationAction = Analyzer.HandleParameterDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CatchDeclarationAction = Analyzer.HandleCatchDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> QueryContinuationAction = Analyzer.HandleQueryContinuation;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> FromClauseAction = Analyzer.HandleFromClause;
@@ -83,19 +84,18 @@ namespace StyleCop.Analyzers.NamingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(VariableDeclarationAction, SyntaxKind.VariableDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(CatchDeclarationAction, SyntaxKind.CatchDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(QueryContinuationAction, SyntaxKind.QueryContinuation);
-            context.RegisterSyntaxNodeActionHonorExclusions(FromClauseAction, SyntaxKind.FromClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(LetClauseAction, SyntaxKind.LetClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(JoinClauseAction, SyntaxKind.JoinClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(JoinIntoClauseAction, SyntaxKind.JoinIntoClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(ForEachStatementAction, SyntaxKind.ForEachStatement);
+            context.RegisterSyntaxNodeAction(VariableDeclarationAction, SyntaxKind.VariableDeclaration);
+            context.RegisterSyntaxNodeAction(ParameterDeclarationAction, SyntaxKind.Parameter);
+            context.RegisterSyntaxNodeAction(CatchDeclarationAction, SyntaxKind.CatchDeclaration);
+            context.RegisterSyntaxNodeAction(QueryContinuationAction, SyntaxKind.QueryContinuation);
+            context.RegisterSyntaxNodeAction(FromClauseAction, SyntaxKind.FromClause);
+            context.RegisterSyntaxNodeAction(LetClauseAction, SyntaxKind.LetClause);
+            context.RegisterSyntaxNodeAction(JoinClauseAction, SyntaxKind.JoinClause);
+            context.RegisterSyntaxNodeAction(JoinIntoClauseAction, SyntaxKind.JoinIntoClause);
+            context.RegisterSyntaxNodeAction(ForEachStatementAction, SyntaxKind.ForEachStatement);
         }
 
         private static class Analyzer
@@ -114,7 +114,7 @@ namespace StyleCop.Analyzers.NamingRules
                     return;
                 }
 
-                var fieldDeclaration = syntax.Parent.IsKind(SyntaxKind.FieldDeclaration);
+                var declarationType = syntax.Parent.IsKind(SyntaxKind.FieldDeclaration) ? "field" : "variable";
                 foreach (var variableDeclarator in syntax.Variables)
                 {
                     if (variableDeclarator == null)
@@ -123,8 +123,35 @@ namespace StyleCop.Analyzers.NamingRules
                     }
 
                     var identifier = variableDeclarator.Identifier;
-                    CheckIdentifier(context, identifier, settings, fieldDeclaration);
+                    CheckIdentifier(context, identifier, settings, declarationType);
                 }
+            }
+
+            public static void HandleParameterDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+            {
+                var parameter = (ParameterSyntax)context.Node;
+
+                if (NamedTypeHelpers.IsContainedInNativeMethodsClass(parameter))
+                {
+                    return;
+                }
+
+                // Only parameters from method declarations can be exempt from this rule
+                var memberDeclaration = parameter?.Parent?.Parent as MemberDeclarationSyntax;
+                if (memberDeclaration != null)
+                {
+                    var semanticModel = context.SemanticModel;
+                    var symbol = semanticModel.GetDeclaredSymbol(memberDeclaration);
+                    if (symbol != null)
+                    {
+                        if (symbol.IsOverride || NamedTypeHelpers.IsImplementingAnInterfaceMember(symbol))
+                        {
+                            return;
+                        }
+                    }
+                }
+
+                CheckIdentifier(context, parameter.Identifier, settings, "parameter");
             }
 
             public static void HandleCatchDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
@@ -162,7 +189,7 @@ namespace StyleCop.Analyzers.NamingRules
                 CheckIdentifier(context, ((ForEachStatementSyntax)context.Node).Identifier, settings);
             }
 
-            private static void CheckIdentifier(SyntaxNodeAnalysisContext context, SyntaxToken identifier, StyleCopSettings settings, bool fieldDeclaration = false)
+            private static void CheckIdentifier(SyntaxNodeAnalysisContext context, SyntaxToken identifier, StyleCopSettings settings, string declarationType = "variable")
             {
                 if (identifier.IsMissing)
                 {
@@ -193,7 +220,7 @@ namespace StyleCop.Analyzers.NamingRules
                 }
 
                 // Variable names must begin with lower-case letter
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), fieldDeclaration ? "field" : "variable", name));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), declarationType, name));
             }
         }
     }

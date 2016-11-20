@@ -14,6 +14,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 
     public class SA1519UnitTests : CodeFixVerifier
     {
+        private string consecutiveUsingsSettings;
+
         /// <summary>
         /// Gets the statements that will be used in the theory test cases.
         /// </summary>
@@ -28,6 +30,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
                 yield return new[] { "while (i == 0)" };
                 yield return new[] { "for (var j = 0; j < i; j++)" };
                 yield return new[] { "foreach (var j in new[] { 1, 2, 3 })" };
+                yield return new[] { "using (default(System.IDisposable))" };
             }
         }
 
@@ -114,6 +117,76 @@ public class Foo
 }";
 
             var expected = this.CSharpDiagnostic().WithLocation(7, 13);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2184.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestMultipleUsingStatementsWithDefaultSettingsAsync()
+        {
+            var testCode = @"using System;
+public class Foo
+{
+    public void Bar(int i)
+    {
+        using (default(IDisposable))
+        using (default(IDisposable))
+        {
+        }
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2180.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestMultipleUsingStatementsWithDisabledSettingAsync()
+        {
+            this.consecutiveUsingsSettings = @"
+{
+  ""settings"": {
+    ""layoutRules"": {
+      ""allowConsecutiveUsings"": false
+    }
+  }
+}
+";
+
+            var testCode = @"using System;
+public class Foo
+{
+    public void Bar(int i)
+    {
+        using (default(IDisposable))
+        using (default(IDisposable))
+        {
+        }
+    }
+}";
+            var fixedCode = @"using System;
+public class Foo
+{
+    public void Bar(int i)
+    {
+        using (default(IDisposable))
+        {
+            using (default(IDisposable))
+        {
+        }
+        }
+    }
+}";
+
+            var expected = this.CSharpDiagnostic().WithLocation(7, 9);
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
@@ -558,6 +631,11 @@ public class Foo
 }";
 
             await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
+        }
+
+        protected override string GetSettings()
+        {
+            return this.consecutiveUsingsSettings ?? base.GetSettings();
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

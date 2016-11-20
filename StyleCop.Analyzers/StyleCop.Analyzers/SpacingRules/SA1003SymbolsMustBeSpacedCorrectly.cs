@@ -118,7 +118,6 @@ namespace StyleCop.Analyzers.SpacingRules
                 SyntaxKind.ModuloAssignmentExpression,
                 SyntaxKind.SimpleAssignmentExpression);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> ConstructorDeclarationAction = HandleConstructorDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> ConditionalExpressionAction = HandleConditionalExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> TypeParameterConstraintClauseAction = HandleTypeParameterConstraintClause;
@@ -196,26 +195,24 @@ namespace StyleCop.Analyzers.SpacingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(ConstructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(ConditionalExpressionAction, SyntaxKind.ConditionalExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(TypeParameterConstraintClauseAction, SyntaxKind.TypeParameterConstraintClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(BinaryExpressionAction, BinaryExpressionKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(PrefixUnaryExpressionAction, PrefixUnaryExpressionKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(PostfixUnaryExpressionAction, PostfixUnaryExpressionKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(AssignmentExpressionAction, AssignmentExpressionKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(CastExpressionAction, SyntaxKind.CastExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(EqualsValueClauseAction, SyntaxKind.EqualsValueClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(LambdaExpressionAction, SyntaxKinds.LambdaExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(PropertyDeclarationAction, SyntaxKind.PropertyDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(IndexerDeclarationAction, SyntaxKind.IndexerDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(OperatorDeclarationAction, SyntaxKind.OperatorDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(ConversionOperatorDeclarationAction, SyntaxKind.ConversionOperatorDeclaration);
+            context.RegisterSyntaxNodeAction(ConstructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeAction(ConditionalExpressionAction, SyntaxKind.ConditionalExpression);
+            context.RegisterSyntaxNodeAction(TypeParameterConstraintClauseAction, SyntaxKind.TypeParameterConstraintClause);
+            context.RegisterSyntaxNodeAction(BinaryExpressionAction, BinaryExpressionKinds);
+            context.RegisterSyntaxNodeAction(PrefixUnaryExpressionAction, PrefixUnaryExpressionKinds);
+            context.RegisterSyntaxNodeAction(PostfixUnaryExpressionAction, PostfixUnaryExpressionKinds);
+            context.RegisterSyntaxNodeAction(AssignmentExpressionAction, AssignmentExpressionKinds);
+            context.RegisterSyntaxNodeAction(CastExpressionAction, SyntaxKind.CastExpression);
+            context.RegisterSyntaxNodeAction(EqualsValueClauseAction, SyntaxKind.EqualsValueClause);
+            context.RegisterSyntaxNodeAction(LambdaExpressionAction, SyntaxKinds.LambdaExpression);
+            context.RegisterSyntaxNodeAction(PropertyDeclarationAction, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeAction(IndexerDeclarationAction, SyntaxKind.IndexerDeclaration);
+            context.RegisterSyntaxNodeAction(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(OperatorDeclarationAction, SyntaxKind.OperatorDeclaration);
+            context.RegisterSyntaxNodeAction(ConversionOperatorDeclarationAction, SyntaxKind.ConversionOperatorDeclaration);
         }
 
         private static void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)

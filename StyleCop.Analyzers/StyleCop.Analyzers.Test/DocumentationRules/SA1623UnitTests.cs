@@ -176,6 +176,55 @@ public class TestClass
             Assert.Empty(offeredFixes);
         }
 
+        /// <summary>
+        /// Verifies that an incomplete summary tag (with only get or set, when get and set are needed) will be fixed
+        /// correctly. Regression test for #2098.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task IncompleteSummaryTagShouldBeFixedCorrectlyAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    /// <summary>
+    /// Gets the first test value.
+    /// </summary>
+    public int TestProperty1 { get; set; }
+
+    /// <summary>
+    /// Sets the seconds test value.
+    /// </summary>
+    public int TestProperty2 { get; set; }
+}
+";
+
+            var fixedTestCode = @"
+public class TestClass
+{
+    /// <summary>
+    /// Gets or sets the first test value.
+    /// </summary>
+    public int TestProperty1 { get; set; }
+
+    /// <summary>
+    /// Gets or sets the seconds test value.
+    /// </summary>
+    public int TestProperty2 { get; set; }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(7, 16).WithArguments("Gets or sets"),
+                this.CSharpDiagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(12, 16).WithArguments("Gets or sets"),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {

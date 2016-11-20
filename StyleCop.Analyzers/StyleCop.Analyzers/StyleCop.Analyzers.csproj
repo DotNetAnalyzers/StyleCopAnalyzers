@@ -56,8 +56,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DocumentationResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="DocumentationRules\ElementDocumentationBase.cs" />
     <Compile Include="DocumentationRules\ElementDocumentationSummaryBase.cs" />
     <Compile Include="DocumentationRules\FileHeaderAnalyzers.cs" />
+    <Compile Include="DocumentationRules\GenericTypeParameterDocumentationAnalyzer.cs" />
     <Compile Include="DocumentationRules\PartialElementDocumentationSummaryBase.cs" />
     <Compile Include="DocumentationRules\PropertyDocumentationBase.cs" />
     <Compile Include="DocumentationRules\PropertySummaryDocumentationAnalyzer.cs" />
@@ -81,9 +83,6 @@
     <Compile Include="DocumentationRules\SA1617VoidReturnValueMustNotBeDocumented.cs" />
     <Compile Include="DocumentationRules\SA1618GenericTypeParametersMustBeDocumented.cs" />
     <Compile Include="DocumentationRules\SA1619GenericTypeParametersMustBeDocumentedPartialClass.cs" />
-    <Compile Include="DocumentationRules\SA1620GenericTypeParameterDocumentationMustMatchTypeParameters.cs" />
-    <Compile Include="DocumentationRules\SA1621GenericTypeParameterDocumentationMustDeclareParameterName.cs" />
-    <Compile Include="DocumentationRules\SA1622GenericTypeParameterDocumentationMustHaveText.cs" />
     <Compile Include="DocumentationRules\SA1625ElementDocumentationMustNotBeCopiedAndPasted.cs" />
     <Compile Include="DocumentationRules\SA1626SingleLineCommentsMustNotUseDocumentationStyleSlashes.cs" />
     <Compile Include="DocumentationRules\SA1627DocumentationTextMustNotBeEmpty.cs" />
@@ -104,7 +103,6 @@
     <Compile Include="DocumentationRules\SA1651DoNotUsePlaceholderElements.cs" />
     <Compile Include="DocumentationRules\StandardTextDiagnosticBase.cs" />
     <Compile Include="ExcludeFromCodeCoverageAttribute.cs" />
-    <Compile Include="GeneratedCodeAnalysisExtensions.cs" />
     <Compile Include="Helpers\AccessLevel.cs" />
     <Compile Include="Helpers\AccessLevelHelper.cs" />
     <Compile Include="Helpers\DeclarationModifiersHelper.cs" />
@@ -118,8 +116,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>HelpersResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\LiteralExpressionHelpers.cs" />
     <Compile Include="Helpers\LocationHelpers.cs" />
     <Compile Include="Helpers\MemberOrderHelper.cs" />
+    <Compile Include="Helpers\ModifierOrderHelper.cs" />
     <Compile Include="Helpers\NamedTypeHelpers.cs" />
     <Compile Include="Helpers\NameSyntaxHelpers.cs" />
     <Compile Include="Helpers\ObjectPools\ObjectPool`1.cs" />
@@ -138,6 +138,7 @@
     <Compile Include="Helpers\XmlCommentHelper.cs" />
     <Compile Include="Helpers\XmlFileHeader.cs" />
     <Compile Include="Helpers\XmlSyntaxFactory.cs" />
+    <Compile Include="Helpers\XPathExtensions.cs" />
     <Compile Include="LayoutRules\LayoutResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -173,7 +174,7 @@
     <Compile Include="MaintainabilityRules\SA1119StatementMustNotUseUnnecessaryParenthesis.cs" />
     <Compile Include="MaintainabilityRules\SA1400AccessModifierMustBeDeclared.cs" />
     <Compile Include="MaintainabilityRules\SA1401FieldsMustBePrivate.cs" />
-    <Compile Include="MaintainabilityRules\SA1402FileMayOnlyContainASingleClass.cs" />
+    <Compile Include="MaintainabilityRules\SA1402FileMayOnlyContainASingleType.cs" />
     <Compile Include="MaintainabilityRules\SA1403FileMayOnlyContainASingleNamespace.cs" />
     <Compile Include="MaintainabilityRules\SA1404CodeAnalysisSuppressionMustHaveJustification.cs" />
     <Compile Include="MaintainabilityRules\SA1405DebugAssertMustProvideMessageText.cs" />
@@ -184,6 +185,7 @@
     <Compile Include="MaintainabilityRules\SA1410RemoveDelegateParenthesisWhenPossible.cs" />
     <Compile Include="MaintainabilityRules\SA1411AttributeConstructorMustNotUseUnnecessaryParenthesis.cs" />
     <Compile Include="MaintainabilityRules\SA1412StoreFilesAsUtf8.cs" />
+    <Compile Include="MaintainabilityRules\SA1413UseTrailingCommasInMultiLineInitializers.cs" />
     <Compile Include="MaintainabilityRules\SystemDiagnosticsDebugDiagnosticBase.cs" />
     <Compile Include="NamingRules\NamingResources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -204,6 +206,7 @@
     <Compile Include="NamingRules\SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter.cs" />
     <Compile Include="NamingRules\SA1312VariableNamesMustBeginWithLowerCaseLetter.cs" />
     <Compile Include="NamingRules\SA1313ParameterNamesMustBeginWithLowerCaseLetter.cs" />
+    <Compile Include="NamingRules\SA1314TypeParameterNamesMustBeginWithT.cs" />
     <Compile Include="NamingRules\SX1309FieldNamesMustBeginWithUnderscore.cs" />
     <Compile Include="NamingRules\SX1309SStaticFieldNamesMustBeginWithUnderscore.cs" />
     <Compile Include="NoCodeFixAttribute.cs" />
@@ -267,7 +270,9 @@
     <Compile Include="ReadabilityRules\SA1132DoNotCombineFields.cs" />
     <Compile Include="ReadabilityRules\SA1133DoNotCombineAttributes.cs" />
     <Compile Include="ReadabilityRules\SA1134AttributesMustNotShareLine.cs" />
+    <Compile Include="ReadabilityRules\SA1136EnumValuesShouldBeOnSeparateLines.cs" />
     <Compile Include="ReadabilityRules\SA1137ElementsShouldHaveTheSameIndentation.cs" />
+    <Compile Include="ReadabilityRules\SA1139UseLiteralSuffixNotationInsteadOfCasting.cs" />
     <Compile Include="ReadabilityRules\SX1101DoNotPrefixLocalMembersWithThis.cs" />
     <Compile Include="Settings\DeserializationFailureBehavior.cs" />
     <Compile Include="Settings\ObjectModel\DocumentationSettings.cs" />
@@ -283,6 +288,7 @@
     <Compile Include="Settings\ObjectModel\SettingsFile.cs" />
     <Compile Include="Settings\ObjectModel\SpacingSettings.cs" />
     <Compile Include="Settings\ObjectModel\StyleCopSettings.cs" />
+    <Compile Include="Settings\ObjectModel\TopLevelType.cs" />
     <Compile Include="Settings\ObjectModel\UsingDirectivesPlacement.cs" />
     <Compile Include="Settings\SettingsHelper.cs" />
     <Compile Include="Settings\SettingsResources.Designer.cs">
@@ -317,7 +323,7 @@
     <Compile Include="SpacingRules\SA1024ColonsMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1025CodeMustNotContainMultipleWhitespaceInARow.cs" />
     <Compile Include="SpacingRules\SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation.cs" />
-    <Compile Include="SpacingRules\SA1027TabsMustNotBeUsed.cs" />
+    <Compile Include="SpacingRules\SA1027UseTabsCorrectly.cs" />
     <Compile Include="SpacingRules\SA1028CodeMustNotContainTrailingWhitespace.cs" />
     <Compile Include="SpacingRules\SpacingResources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -325,7 +331,6 @@
       <DependentUpon>SpacingResources.resx</DependentUpon>
     </Compile>
     <Compile Include="SpacingRules\TokenSpacingProperties.cs" />
-    <Compile Include="SpecialRules\SA0000Roslyn7446Workaround.cs" />
     <Compile Include="SpecialRules\SA0001XmlCommentAnalysisDisabled.cs" />
     <Compile Include="SpecialRules\SA0002InvalidSettingsFile.cs" />
     <Compile Include="SpecialRules\SpecialResources.Designer.cs">
@@ -353,20 +358,20 @@
     </AdditionalFiles>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.CodeAnalysis, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.CodeAnalysis.Common.1.0.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.dll</HintPath>
+    <Reference Include="Microsoft.CodeAnalysis, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.CodeAnalysis.Common.1.2.1\lib\portable-net45+win8\Microsoft.CodeAnalysis.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.CodeAnalysis.CSharp.1.0.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.CodeAnalysis.CSharp.1.2.1\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.7.0.1\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Collections.Immutable, Version=1.1.36.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Collections.Immutable.1.1.36\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+    <Reference Include="System.Collections.Immutable, Version=1.1.37.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Collections.Immutable.1.1.37\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Composition.AttributedModel">
@@ -384,23 +389,44 @@
     <Reference Include="System.Composition.TypedParts">
       <HintPath>..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.TypedParts.dll</HintPath>
     </Reference>
-    <Reference Include="System.Reflection.Metadata, Version=1.0.21.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Reflection.Metadata.1.0.21\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
+    <Reference Include="System.Reflection.Metadata, Version=1.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Reflection.Metadata.1.2.0\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\..\packages\AsyncUsageAnalyzers.1.0.0-alpha003\analyzers\dotnet\AsyncUsageAnalyzers.dll" />
-    <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
-    <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
-    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0-rc3\analyzers\dotnet\cs\Newtonsoft.Json.dll" />
-    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0-rc3\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
-    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0-rc3\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+    <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
+    <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
+    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\Newtonsoft.Json.dll" />
+    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
+    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.de-DE.resx">
+      <DependentUpon>DocumentationResources.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.en-GB.resx">
+      <DependentUpon>DocumentationResources.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.es-MX.resx">
+      <DependentUpon>DocumentationResources.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.fr-FR.resx">
+      <DependentUpon>DocumentationResources.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.pl-PL.resx">
+      <DependentUpon>DocumentationResources.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.pt-BR.resx">
+      <DependentUpon>DocumentationResources.resx</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DocumentationRules\DocumentationResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>DocumentationResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.ru-RU.resx">
+      <DependentUpon>DocumentationResources.resx</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Helpers\HelpersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

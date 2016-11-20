@@ -18,7 +18,7 @@ namespace StyleCop.Analyzers.SpacingRules
     using Settings.ObjectModel;
 
     /// <summary>
-    /// Implements a code fix for <see cref="SA1027TabsMustNotBeUsed"/>.
+    /// Implements a code fix for <see cref="SA1027UseTabsCorrectly"/>.
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1027CodeFixProvider))]
     [Shared]
@@ -26,7 +26,7 @@ namespace StyleCop.Analyzers.SpacingRules
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(SA1027TabsMustNotBeUsed.DiagnosticId);
+            ImmutableArray.Create(SA1027UseTabsCorrectly.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -62,8 +62,17 @@ namespace StyleCop.Analyzers.SpacingRules
             TextSpan span = diagnostic.Location.SourceSpan;
 
             TextLine startLine = sourceText.Lines.GetLineFromPosition(span.Start);
+
+            bool useTabs = false;
+            string behavior;
+            if (diagnostic.Properties.TryGetValue(SA1027UseTabsCorrectly.BehaviorKey, out behavior))
+            {
+                useTabs = behavior == SA1027UseTabsCorrectly.ConvertToTabsBehavior;
+            }
+
             string text = sourceText.ToString(TextSpan.FromBounds(startLine.Start, span.End));
             StringBuilder replacement = StringBuilderPool.Allocate();
+            int spaceCount = 0;
             int column = 0;
             for (int i = 0; i < text.Length; i++)
             {
@@ -71,25 +80,57 @@ namespace StyleCop.Analyzers.SpacingRules
                 if (c == '\t')
                 {
                     var offsetWithinTabColumn = column % indentationSettings.TabSize;
-                    var spaceCount = indentationSettings.TabSize - offsetWithinTabColumn;
+                    var tabWidth = indentationSettings.TabSize - offsetWithinTabColumn;
 
                     if (i >= span.Start - startLine.Start)
                     {
-                        replacement.Append(' ', spaceCount);
+                        if (useTabs)
+                        {
+                            replacement.Length = replacement.Length - spaceCount;
+                            replacement.Append('\t');
+                            spaceCount = 0;
+                        }
+                        else
+                        {
+                            replacement.Append(' ', tabWidth);
+                        }
                     }
 
-                    column += spaceCount;
+                    column += tabWidth;
                 }
                 else
                 {
                     if (i >= span.Start - startLine.Start)
                     {
                         replacement.Append(c);
+                        if (c == ' ')
+                        {
+                            spaceCount++;
+                            if (useTabs)
+                            {
+                                // Note that we account for column not yet being incremented
+                                var offsetWithinTabColumn = (column + 1) % indentationSettings.TabSize;
+                                if (offsetWithinTabColumn == 0)
+                                {
+                                    // We reached a tab stop.
+                                    replacement.Length = replacement.Length - spaceCount;
+                                    replacement.Append('\t');
+                                    spaceCount = 0;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            spaceCount = 0;
+                        }
                     }
 
-                    if (c == '\n')
+                    if (c == '\r' || c == '\n')
                     {
+                        // Handle newlines. We can ignore CR/LF/CRLF issues because we are only tracking column position
+                        // in a line, and not the line numbers themselves.
                         column = 0;
+                        spaceCount = 0;
                     }
                     else
                     {

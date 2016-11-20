@@ -171,6 +171,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+
             context.RegisterCompilationStartAction(CompilationStartAction);
         }
 
@@ -181,7 +184,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             // Disabling SA1633 will disable all other header related diagnostics.
             if (!compilation.IsAnalyzerSuppressed(SA1633Identifier))
             {
-                context.RegisterSyntaxTreeActionHonorExclusions((ctx, settings) => Analyzer.HandleSyntaxTree(ctx, settings, compilation));
+                context.RegisterSyntaxTreeAction((ctx, settings) => Analyzer.HandleSyntaxTree(ctx, settings, compilation));
             }
         }
 
@@ -244,7 +247,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                             return;
                         }
 
-                        if (!CompareCopyrightText(settings.DocumentationRules, fileHeader.CopyrightText))
+                        if (!CompareCopyrightText(context, settings.DocumentationRules, fileHeader.CopyrightText))
                         {
                             context.ReportDiagnostic(Diagnostic.Create(SA1636Descriptor, fileHeader.GetLocation(context.Tree)));
                             return;
@@ -316,7 +319,8 @@ namespace StyleCop.Analyzers.DocumentationRules
                     return;
                 }
 
-                var settingsCopyrightText = documentationSettings.CopyrightText;
+                string fileName = Path.GetFileName(context.Tree.FilePath);
+                var settingsCopyrightText = documentationSettings.GetCopyrightText(fileName);
                 if (string.Equals(settingsCopyrightText, DocumentationSettings.DefaultCopyrightText, StringComparison.OrdinalIgnoreCase))
                 {
                     // The copyright text is meaningless until the company name is configured by the user.
@@ -324,7 +328,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
 
                 // trim any leading / trailing new line or whitespace characters (those are a result of the XML formatting)
-                if (!CompareCopyrightText(documentationSettings, copyrightText.Trim('\r', '\n', ' ', '\t')))
+                if (!CompareCopyrightText(context, documentationSettings, copyrightText.Trim('\r', '\n', ' ', '\t')))
                 {
                     var location = fileHeader.GetElementLocation(context.Tree, copyrightElement);
                     context.ReportDiagnostic(Diagnostic.Create(SA1636Descriptor, location));
@@ -375,10 +379,11 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
             }
 
-            private static bool CompareCopyrightText(DocumentationSettings documentationSettings, string copyrightText)
+            private static bool CompareCopyrightText(SyntaxTreeAnalysisContext context, DocumentationSettings documentationSettings, string copyrightText)
             {
                 // make sure that both \n and \r\n are accepted from the settings.
-                var reformattedCopyrightTextParts = documentationSettings.CopyrightText.Replace("\r\n", "\n").Split('\n');
+                string fileName = Path.GetFileName(context.Tree.FilePath);
+                var reformattedCopyrightTextParts = documentationSettings.GetCopyrightText(fileName).Replace("\r\n", "\n").Split('\n');
                 var fileHeaderCopyrightTextParts = copyrightText.Replace("\r\n", "\n").Split('\n');
 
                 if (reformattedCopyrightTextParts.Length != fileHeaderCopyrightTextParts.Length)

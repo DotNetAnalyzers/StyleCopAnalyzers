@@ -61,13 +61,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
             DiagnosticResult[] expected = new[]
             {
                 this.CSharpDiagnostic().WithArguments("test").WithLocation(1, 11),
-                this.CSharpDiagnostic().WithArguments("test").WithLocation(1, 11),
-                this.CSharpDiagnostic().WithArguments("test").WithLocation(1, 11),
                 this.CSharpDiagnostic().WithArguments("foo").WithLocation(1, 16),
-                this.CSharpDiagnostic().WithArguments("foo").WithLocation(1, 16),
-                this.CSharpDiagnostic().WithArguments("foo").WithLocation(1, 16),
-                this.CSharpDiagnostic().WithArguments("bar").WithLocation(1, 20),
-                this.CSharpDiagnostic().WithArguments("bar").WithLocation(1, 20),
                 this.CSharpDiagnostic().WithArguments("bar").WithLocation(1, 20)
             };
 

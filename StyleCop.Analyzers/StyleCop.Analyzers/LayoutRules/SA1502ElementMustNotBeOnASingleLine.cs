@@ -51,7 +51,6 @@ namespace StyleCop.Analyzers.LayoutRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> BaseTypeDeclarationAction = HandleBaseTypeDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> BasePropertyDeclarationAction = HandleBasePropertyDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> BaseMethodDeclarationAction = HandleBaseMethodDeclaration;
@@ -64,15 +63,13 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(BaseTypeDeclarationAction, SyntaxKinds.BaseTypeDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(BasePropertyDeclarationAction, SyntaxKinds.BasePropertyDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(BaseMethodDeclarationAction, SyntaxKinds.BaseMethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeAction(BaseTypeDeclarationAction, SyntaxKinds.BaseTypeDeclaration);
+            context.RegisterSyntaxNodeAction(BasePropertyDeclarationAction, SyntaxKinds.BasePropertyDeclaration);
+            context.RegisterSyntaxNodeAction(BaseMethodDeclarationAction, SyntaxKinds.BaseMethodDeclaration);
+            context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
         }
 
         private static void HandleBaseTypeDeclaration(SyntaxNodeAnalysisContext context)

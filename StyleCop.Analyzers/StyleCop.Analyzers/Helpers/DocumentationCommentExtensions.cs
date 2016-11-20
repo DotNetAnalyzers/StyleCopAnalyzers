@@ -9,7 +9,6 @@ namespace StyleCop.Analyzers.Helpers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using StyleCop.Analyzers.SpacingRules;
 
     internal static class DocumentationCommentExtensions
     {
@@ -243,6 +242,12 @@ namespace StyleCop.Analyzers.Helpers
             }
 
             return node.ReplaceTokens(replacements.Keys, (originalToken, rewrittenToken) => replacements[originalToken]);
+        }
+
+        public static XmlNameSyntax GetName(this XmlNodeSyntax element)
+        {
+            return (element as XmlElementSyntax)?.StartTag?.Name
+                ?? (element as XmlEmptyElementSyntax)?.Name;
         }
 
         private static SyntaxTrivia SelectExteriorTrivia(SyntaxTrivia rewrittenTrivia, SyntaxTrivia trivia, SyntaxTrivia triviaWithSpace)

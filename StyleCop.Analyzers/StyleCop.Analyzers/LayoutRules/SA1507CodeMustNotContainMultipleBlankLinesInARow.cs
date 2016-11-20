@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The C# code contains multiple blank lines in a row.
@@ -53,7 +54,6 @@ namespace StyleCop.Analyzers.LayoutRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
 
         /// <inheritdoc/>
@@ -63,16 +63,20 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxTreeActionHonorExclusions(SyntaxTreeAction);
+            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
         }
 
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
+            if (context.Tree.IsWhitespaceOnly(context.CancellationToken))
+            {
+                // Handling of empty documents is now the responsibility of the analyzers
+                return;
+            }
+
             SyntaxNode root = context.Tree.GetRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens(descendIntoTrivia: false))
             {

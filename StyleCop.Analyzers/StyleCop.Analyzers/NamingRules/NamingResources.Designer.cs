@@ -132,5 +132,41 @@ namespace StyleCop.Analyzers.NamingRules {
                 return ResourceManager.GetString("SA1313Title", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prefix type parameter name with &apos;T&apos;.
+        /// </summary>
+        internal static string SA1314CodeFix {
+            get {
+                return ResourceManager.GetString("SA1314CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The name of a C# type parameter does not begin with the capital letter T..
+        /// </summary>
+        internal static string SA1314Description {
+            get {
+                return ResourceManager.GetString("SA1314Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type parameter names must begin with T.
+        /// </summary>
+        internal static string SA1314MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1314MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type parameter names must begin with T.
+        /// </summary>
+        internal static string SA1314Title {
+            get {
+                return ResourceManager.GetString("SA1314Title", resourceCulture);
+            }
+        }
     }
 }

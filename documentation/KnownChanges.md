@@ -19,7 +19,7 @@ the same code are marked with this symbol.
 
 ## Disabled Rules
 
-Several rules present StyleCop Classic have been intentionally omitted from StyleCop Analyzers. The following table
+Several rules present in StyleCop Classic have been intentionally omitted from StyleCop Analyzers. The following table
 lists each of these issues, along with a link to the issue where the decision was made to omit the rule.
 
 | ID | Title | Issue |
@@ -154,8 +154,27 @@ var a = new[] { 1, 2, 3 }.ToArray();
 ### SA1208
 
 StyleCop Analyzers only considers using directives to be "System" using directives if they are not alias-qualified,
-while StyleCop Classic ignored the alias. For example, `using global::System;` would be not be considered a System using
+while StyleCop Classic ignored the alias. For example, `using global::System;` would not be considered a System using
 directive by StyleCop Analyzers, but it would be considered a System using directive by StyleCop Classic.
+
+### SA1210
+
+StyleCop Analyzers considers alias-qualifiers when sorting using directives, in order to match the default behavior of
+Visual Studio 2015. StyleCop Classic ignores alias-qualifiers when sorting using directives.
+
+Example showing sorting order for StyleCop Analyzers:
+```csharp
+using Beer;
+using global::Wine;
+using Tea;
+```
+
+Example showing sorting order for StyleCop Classic:
+```csharp
+using Beer;
+using Tea;
+using global::Wine;
+```
 
 ### SA1214
 
@@ -176,6 +195,9 @@ upper-case letter.
 ### SA1305
 
 This rule is disabled by default in StyleCop Analyzers, but can be enabled by users via a rule set file.
+
+:warning: StyleCop Analyzers does not report SA1305 for parameters in overriding methods and methods which implement an
+interface. StyleCop Classic reported SA1305 for all methods.
 
 ## Maintainability Rules
 

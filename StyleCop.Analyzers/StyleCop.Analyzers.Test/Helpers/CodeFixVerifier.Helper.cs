@@ -12,6 +12,7 @@ namespace TestHelper
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.Formatting;
     using Microsoft.CodeAnalysis.Simplification;
+    using Microsoft.CodeAnalysis.Text;
 
     /// <summary>
     /// Diagnostic Producer class with extra methods dealing with applying code fixes.
@@ -23,16 +24,16 @@ namespace TestHelper
         /// Apply the inputted <see cref="CodeAction"/> to the inputted document.
         /// Meant to be used to apply code fixes.
         /// </summary>
-        /// <param name="document">The <see cref="Document"/> to apply the fix on</param>
+        /// <param name="project">The <see cref="Project"/> to apply the fix on</param>
         /// <param name="codeAction">A <see cref="CodeAction"/> that will be applied to the
-        /// <paramref name="document"/>.</param>
+        /// <paramref name="project"/>.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
-        /// <returns>A <see cref="Document"/> with the changes from the <see cref="CodeAction"/>.</returns>
-        private static async Task<Document> ApplyFixAsync(Document document, CodeAction codeAction, CancellationToken cancellationToken)
+        /// <returns>A <see cref="Project"/> with the changes from the <see cref="CodeAction"/>.</returns>
+        private static async Task<Project> ApplyFixAsync(Project project, CodeAction codeAction, CancellationToken cancellationToken)
         {
             var operations = await codeAction.GetOperationsAsync(cancellationToken).ConfigureAwait(false);
             var solution = operations.OfType<ApplyChangesOperation>().Single().ChangedSolution;
-            return solution.GetDocument(document.Id);
+            return solution.GetProject(project.Id);
         }
 
         /// <summary>
@@ -75,13 +76,20 @@ namespace TestHelper
         /// <summary>
         /// Get the existing compiler diagnostics on the input document.
         /// </summary>
-        /// <param name="document">The <see cref="Document"/> to run the compiler diagnostic analyzers on.</param>
+        /// <param name="project">The <see cref="Project"/> to run the compiler diagnostic analyzers on.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>The compiler diagnostics that were found in the code.</returns>
-        private static async Task<ImmutableArray<Diagnostic>> GetCompilerDiagnosticsAsync(Document document, CancellationToken cancellationToken)
+        private static async Task<ImmutableArray<Diagnostic>> GetCompilerDiagnosticsAsync(Project project, CancellationToken cancellationToken)
         {
-            var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-            return semanticModel.GetDiagnostics(cancellationToken: cancellationToken);
+            var allDiagnostics = ImmutableArray.Create<Diagnostic>();
+
+            foreach (var document in project.Documents)
+            {
+                var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+                allDiagnostics = allDiagnostics.AddRange(semanticModel.GetDiagnostics(cancellationToken: cancellationToken));
+            }
+
+            return allDiagnostics;
         }
 
         /// <summary>
@@ -96,6 +104,50 @@ namespace TestHelper
             var formatted = await Formatter.FormatAsync(simplifiedDoc, Formatter.Annotation, cancellationToken: cancellationToken).ConfigureAwait(false);
             var sourceText = await formatted.GetTextAsync(cancellationToken).ConfigureAwait(false);
             return sourceText.ToString();
+        }
+
+        /// <summary>
+        /// Implements a workaround for issue #936, force re-parsing to get the same sort of syntax tree as the original document.
+        /// </summary>
+        /// <param name="project">The project to update.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
+        /// <returns>The updated <see cref="Project"/>.</returns>
+        private static async Task<Project> RecreateProjectDocumentsAsync(Project project, CancellationToken cancellationToken)
+        {
+            foreach (var documentId in project.DocumentIds)
+            {
+                var document = project.GetDocument(documentId);
+                document = await RecreateDocumentAsync(document, cancellationToken).ConfigureAwait(false);
+                project = document.Project;
+            }
+
+            return project;
+        }
+
+        private static async Task<Document> RecreateDocumentAsync(Document document, CancellationToken cancellationToken)
+        {
+            var newText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+            newText = newText.WithChanges(new TextChange(new TextSpan(0, 0), " "));
+            newText = newText.WithChanges(new TextChange(new TextSpan(0, 1), string.Empty));
+            return document.WithText(newText);
+        }
+
+        /// <summary>
+        /// Formats the whitespace in all documents of the specified <see cref="Project"/>.
+        /// </summary>
+        /// <param name="project">The project to update.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
+        /// <returns>The updated <see cref="Project"/>.</returns>
+        private static async Task<Project> ReformatProjectDocumentsAsync(Project project, CancellationToken cancellationToken)
+        {
+            foreach (var documentId in project.DocumentIds)
+            {
+                var document = project.GetDocument(documentId);
+                document = await Formatter.FormatAsync(document, Formatter.Annotation, cancellationToken: cancellationToken).ConfigureAwait(false);
+                project = document.Project;
+            }
+
+            return project;
         }
     }
 }

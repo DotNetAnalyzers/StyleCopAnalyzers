@@ -52,7 +52,6 @@ namespace StyleCop.Analyzers.LayoutRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
 
         /// <inheritdoc/>
@@ -62,12 +61,10 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxTreeActionHonorExclusions(SyntaxTreeAction);
+            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
         }
 
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -126,6 +123,27 @@ namespace StyleCop.Analyzers.LayoutRules
                 return false;
             }
 
+            private static bool StartsWithSpecialComment(SyntaxTriviaList triviaList)
+            {
+                foreach (var trivia in triviaList)
+                {
+                    switch (trivia.Kind())
+                    {
+                    case SyntaxKind.WhitespaceTrivia:
+                        // ignore
+                        break;
+
+                    case SyntaxKind.SingleLineCommentTrivia:
+                        return trivia.ToFullString().StartsWith("////", StringComparison.Ordinal);
+
+                    default:
+                        return false;
+                    }
+                }
+
+                return false;
+            }
+
             private static bool StartsWithDirectiveTrivia(SyntaxTriviaList triviaList)
             {
                 foreach (var trivia in triviaList)
@@ -166,9 +184,10 @@ namespace StyleCop.Analyzers.LayoutRules
             {
                 var nextToken = token.GetNextToken(true, true);
 
-                if (nextToken.HasLeadingTrivia && HasLeadingBlankLine(nextToken.LeadingTrivia))
+                if (nextToken.HasLeadingTrivia
+                    && (HasLeadingBlankLine(nextToken.LeadingTrivia) || StartsWithSpecialComment(nextToken.LeadingTrivia)))
                 {
-                    // the close brace has a trailing blank line
+                    // the close brace has a trailing blank line or is followed by a single line comment that starts with 4 slashes.
                     return;
                 }
 

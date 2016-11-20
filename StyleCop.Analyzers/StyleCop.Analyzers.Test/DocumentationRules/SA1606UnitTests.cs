@@ -777,12 +777,9 @@ class Class1
 }
 ";
 
-            var expected = new DiagnosticResult
+            DiagnosticResult[] expected =
             {
-                Id = "CS1002",
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 5, 29) },
-                Message = "; expected"
+                this.CSharpCompilerError("CS1002").WithMessage("; expected").WithLocation(5, 29),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

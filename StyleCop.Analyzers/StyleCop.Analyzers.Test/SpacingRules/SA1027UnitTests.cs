@@ -13,12 +13,10 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1027TabsMustNotBeUsed"/>
+    /// Unit tests for <see cref="SA1027UseTabsCorrectly"/>
     /// </summary>
     public class SA1027UnitTests : CodeFixVerifier
     {
-        private string settings;
-
         /// <summary>
         /// Verifies that tabs used inside string and char literals are not producing diagnostics.
         /// </summary>
@@ -37,7 +35,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         }
 
         /// <summary>
-        /// Verifies that tabs used inside disabled code is not producing diagnostics.
+        /// Verifies that tabs used inside disabled code are not producing diagnostics.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -127,7 +125,7 @@ public  class   Foo
                 this.CSharpDiagnostic().WithLocation(1, 1),
                 this.CSharpDiagnostic().WithLocation(1, 5),
                 this.CSharpDiagnostic().WithLocation(2, 1),
-                this.CSharpDiagnostic().WithLocation(2, 5),
+                this.CSharpDiagnostic().WithLocation(2, 9),
                 this.CSharpDiagnostic().WithLocation(3, 1),
                 this.CSharpDiagnostic().WithLocation(3, 5),
                 this.CSharpDiagnostic().WithLocation(4, 1),
@@ -177,7 +175,8 @@ public  class   Foo
                 this.CSharpDiagnostic().WithLocation(3, 1),
                 this.CSharpDiagnostic().WithLocation(4, 1),
                 this.CSharpDiagnostic().WithLocation(5, 1),
-                this.CSharpDiagnostic().WithLocation(5, 5),
+                this.CSharpDiagnostic().WithLocation(5, 7),
+                this.CSharpDiagnostic().WithLocation(5, 15),
                 this.CSharpDiagnostic().WithLocation(7, 1),
                 this.CSharpDiagnostic().WithLocation(8, 1),
                 this.CSharpDiagnostic().WithLocation(9, 1),
@@ -222,7 +221,10 @@ public  class   Foo
                 this.CSharpDiagnostic().WithLocation(3, 1),
                 this.CSharpDiagnostic().WithLocation(4, 1),
                 this.CSharpDiagnostic().WithLocation(5, 1),
-                this.CSharpDiagnostic().WithLocation(5, 5),
+                this.CSharpDiagnostic().WithLocation(6, 1),
+                this.CSharpDiagnostic().WithLocation(6, 11),
+                this.CSharpDiagnostic().WithLocation(7, 1),
+                this.CSharpDiagnostic().WithLocation(8, 1),
                 this.CSharpDiagnostic().WithLocation(9, 1),
                 this.CSharpDiagnostic().WithLocation(10, 1),
             };
@@ -232,42 +234,10 @@ public  class   Foo
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestUseTabsSettingAsync()
-        {
-            this.settings = @"
-{
-    ""settings"": {
-        ""indentation"": {
-            ""useTabs"": true
-        }
-    }
-}
-";
-
-            var testCode =
-                "using\tSystem.Diagnostics;\r\n" +
-                "\r\n" +
-                "public\tclass\tFoo\r\n" +
-                "{\r\n" +
-                "\tpublic void Bar()\r\n" +
-                "\t{\r\n" +
-                "\t  \t// Comment\r\n" +
-                "\t \tDebug.Indent();\r\n" +
-                "   \t}\r\n" +
-                "}\r\n";
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override string GetSettings() =>
-            this.settings;
-
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1027TabsMustNotBeUsed();
+            yield return new SA1027UseTabsCorrectly();
         }
 
         /// <inheritdoc/>

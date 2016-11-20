@@ -36,7 +36,6 @@ namespace StyleCop.Analyzers.SpacingRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> NullableTypeAction = HandleNullableType;
 
         /// <inheritdoc/>
@@ -46,12 +45,10 @@ namespace StyleCop.Analyzers.SpacingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(NullableTypeAction, SyntaxKind.NullableType);
+            context.RegisterSyntaxNodeAction(NullableTypeAction, SyntaxKind.NullableType);
         }
 
         private static void HandleNullableType(SyntaxNodeAnalysisContext context)

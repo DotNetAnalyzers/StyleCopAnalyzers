@@ -38,7 +38,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 SyntaxKind.GreaterThanOrEqualExpression,
                 SyntaxKind.LessThanOrEqualExpression);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> BinaryExpressionAction = HandleBinaryExpression;
 
         /// <inheritdoc/>
@@ -48,12 +47,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(BinaryExpressionAction, HandledBinaryExpressionKinds);
+            context.RegisterSyntaxNodeAction(BinaryExpressionAction, HandledBinaryExpressionKinds);
         }
 
         private static void HandleBinaryExpression(SyntaxNodeAnalysisContext context)

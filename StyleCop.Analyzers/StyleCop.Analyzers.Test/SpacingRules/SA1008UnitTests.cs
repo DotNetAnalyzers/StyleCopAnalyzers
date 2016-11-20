@@ -2026,13 +2026,7 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                new DiagnosticResult
-                {
-                    Id = "CS1003",
-                    Severity = DiagnosticSeverity.Error,
-                    Message = "Syntax error, '(' expected",
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 5, 15) }
-                }
+                this.CSharpCompilerError("CS1003").WithMessage("Syntax error, '(' expected").WithLocation(5, 15),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
