@@ -3,11 +3,12 @@
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
-    using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Linq;
+    using System.Xml.Linq;
     using Helpers;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -25,7 +26,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     [NoCodeFix("Cannot generate documentation")]
-    internal class SA1616ElementReturnValueDocumentationMustHaveText : DiagnosticAnalyzer
+    internal class SA1616ElementReturnValueDocumentationMustHaveText : ElementDocumentationBase
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1616ElementReturnValueDocumentationMustHaveText"/>
@@ -40,43 +41,41 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<SyntaxNodeAnalysisContext> XmlElementAction = HandleXmlElement;
-        private static readonly Action<SyntaxNodeAnalysisContext> XmlEmptyElementAction = HandleXmlEmptyElement;
+        public SA1616ElementReturnValueDocumentationMustHaveText()
+            : base(matchElementName: XmlCommentHelper.ReturnsXmlTag, inheritDocSuppressesWarnings: true)
+        {
+        }
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        public override void Initialize(AnalysisContext context)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, IEnumerable<XmlNodeSyntax> syntaxList, params Location[] diagnosticLocations)
         {
-            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            context.EnableConcurrentExecution();
-
-            context.RegisterSyntaxNodeAction(XmlElementAction, SyntaxKind.XmlElement);
-            context.RegisterSyntaxNodeAction(XmlEmptyElementAction, SyntaxKind.XmlEmptyElement);
-        }
-
-        private static void HandleXmlElement(SyntaxNodeAnalysisContext context)
-        {
-            XmlElementSyntax emptyElement = context.Node as XmlElementSyntax;
-
-            var name = emptyElement?.StartTag?.Name;
-
-            if (string.Equals(name.ToString(), XmlCommentHelper.ReturnsXmlTag) && XmlCommentHelper.IsConsideredEmpty(emptyElement))
+            foreach (var syntax in syntaxList)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, emptyElement.GetLocation()));
+                bool isEmpty = syntax is XmlEmptyElementSyntax || XmlCommentHelper.IsConsideredEmpty(syntax);
+                if (isEmpty)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.GetLocation()));
+                }
             }
         }
 
-        private static void HandleXmlEmptyElement(SyntaxNodeAnalysisContext context)
+        /// <inheritdoc/>
+        protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, XElement completeDocumentation, params Location[] diagnosticLocations)
         {
-            XmlEmptyElementSyntax emptyElement = context.Node as XmlEmptyElementSyntax;
+            var returnsNodes = completeDocumentation.Nodes()
+                .OfType<XElement>()
+                .Where(n => n.Name == XmlCommentHelper.ReturnsXmlTag);
 
-            if (string.Equals(emptyElement?.Name.ToString(), XmlCommentHelper.ReturnsXmlTag))
+            foreach (var node in returnsNodes)
             {
-                // <returns .../> is empty.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, emptyElement.GetLocation()));
+                if (XmlCommentHelper.IsConsideredEmpty(node))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, diagnosticLocations.First()));
+                }
             }
         }
     }

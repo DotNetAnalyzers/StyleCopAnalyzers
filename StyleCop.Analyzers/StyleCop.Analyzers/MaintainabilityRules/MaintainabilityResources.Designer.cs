@@ -123,5 +123,41 @@ namespace StyleCop.Analyzers.MaintainabilityRules {
                 return ResourceManager.GetString("SA1412CodeFix", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add trailing comma.
+        /// </summary>
+        internal static string SA1413CodeFix {
+            get {
+                return ResourceManager.GetString("SA1413CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A multi-line initializer in a C# code file must use a comma on the last line..
+        /// </summary>
+        internal static string SA1413Description {
+            get {
+                return ResourceManager.GetString("SA1413Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use trailing comma in multi-line initializers.
+        /// </summary>
+        internal static string SA1413MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1413MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use trailing comma in multi-line initializers.
+        /// </summary>
+        internal static string SA1413Title {
+            get {
+                return ResourceManager.GetString("SA1413Title", resourceCulture);
+            }
+        }
     }
 }

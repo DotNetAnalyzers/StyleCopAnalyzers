@@ -852,13 +852,7 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                new DiagnosticResult
-                {
-                    Id = "CS0742",
-                    Severity = DiagnosticSeverity.Error,
-                    Message = "A query body must end with a select clause or a group clause",
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 42) }
-                }
+                this.CSharpCompilerError("CS0742").WithMessage("A query body must end with a select clause or a group clause").WithLocation(6, 42),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

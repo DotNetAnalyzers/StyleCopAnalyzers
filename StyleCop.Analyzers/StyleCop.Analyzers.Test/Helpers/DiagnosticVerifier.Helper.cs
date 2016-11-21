@@ -209,6 +209,15 @@ namespace TestHelper
             return new DiagnosticResult(descriptor);
         }
 
+        protected DiagnosticResult CSharpCompilerError(string errorIdentifier)
+        {
+            return new DiagnosticResult
+            {
+                Id = errorIdentifier,
+                Severity = DiagnosticSeverity.Error,
+            };
+        }
+
         /// <summary>
         /// Create a project using the input strings as sources.
         /// </summary>

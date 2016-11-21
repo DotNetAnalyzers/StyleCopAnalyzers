@@ -25,7 +25,7 @@ namespace StyleCop.Analyzers.Test.Settings
             var styleCopSettings = SettingsHelper.GetStyleCopSettings(default(SyntaxTreeAnalysisContext), CancellationToken.None);
 
             Assert.Equal("PlaceholderCompany", styleCopSettings.DocumentationRules.CompanyName);
-            Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.CopyrightText);
+            Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
             Assert.True(styleCopSettings.NamingRules.AllowCommonHungarianPrefixes);
             Assert.Equal(0, styleCopSettings.NamingRules.AllowedHungarianPrefixes.Length);
 
@@ -74,7 +74,7 @@ namespace StyleCop.Analyzers.Test.Settings
             var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
 
             Assert.Equal("TestCompany", styleCopSettings.DocumentationRules.CompanyName);
-            Assert.Equal("Custom copyright text.", styleCopSettings.DocumentationRules.CopyrightText);
+            Assert.Equal("Custom copyright text.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
             Assert.False(styleCopSettings.NamingRules.AllowCommonHungarianPrefixes);
             Assert.Equal(new[] { "a", "ab" }, styleCopSettings.NamingRules.AllowedHungarianPrefixes);
 
@@ -107,7 +107,7 @@ namespace StyleCop.Analyzers.Test.Settings
             var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
 
             Assert.Equal("TestCompany", styleCopSettings.DocumentationRules.CompanyName);
-            Assert.Equal("Copyright (c) TestCompany. All rights reserved.", styleCopSettings.DocumentationRules.CopyrightText);
+            Assert.Equal("Copyright (c) TestCompany. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
         }
 
         [Fact]
@@ -126,7 +126,7 @@ namespace StyleCop.Analyzers.Test.Settings
 
             var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
 
-            Assert.Equal("[CircularReference]", styleCopSettings.DocumentationRules.CopyrightText);
+            Assert.Equal("[CircularReference]", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
         }
 
         [Fact]
@@ -145,7 +145,7 @@ namespace StyleCop.Analyzers.Test.Settings
 
             var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
 
-            Assert.Equal("[InvalidReference]", styleCopSettings.DocumentationRules.CopyrightText);
+            Assert.Equal("[InvalidReference]", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
         }
 
         [Fact]
@@ -158,7 +158,20 @@ namespace StyleCop.Analyzers.Test.Settings
 
             // The result is the same as the default settings.
             Assert.Equal("PlaceholderCompany", styleCopSettings.DocumentationRules.CompanyName);
-            Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.CopyrightText);
+            Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
+        }
+
+        [Fact]
+        public async Task VerifyEmptyOrMissingFileAsync()
+        {
+            var settings = string.Empty;
+            var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
+
+            // The result is the same as the default settings.
+            Assert.Equal("PlaceholderCompany", styleCopSettings.DocumentationRules.CompanyName);
+            Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
         }
 
         private static async Task<SyntaxTreeAnalysisContext> CreateAnalysisContextAsync(string stylecopJSON)

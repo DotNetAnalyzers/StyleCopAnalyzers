@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\packages\xunit.runner.visualstudio.2.2.0-beta1-build1144\build\net20\xunit.runner.visualstudio.props" Condition="Exists('..\..\packages\xunit.runner.visualstudio.2.2.0-beta1-build1144\build\net20\xunit.runner.visualstudio.props')" />
+  <Import Project="..\..\packages\xunit.runner.visualstudio.2.2.0-beta4-build1194\build\net20\xunit.runner.visualstudio.props" Condition="Exists('..\..\packages\xunit.runner.visualstudio.2.2.0-beta4-build1194\build\net20\xunit.runner.visualstudio.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -99,19 +99,19 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="xunit.abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\xunit.abstractions.2.0.0\lib\net35\xunit.abstractions.dll</HintPath>
+      <HintPath>..\..\packages\xunit.abstractions.2.0.1\lib\net35\xunit.abstractions.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="xunit.assert, Version=2.2.0.3239, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\xunit.assert.2.2.0-beta1-build3239\lib\dotnet\xunit.assert.dll</HintPath>
+    <Reference Include="xunit.assert, Version=2.2.0.3444, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\xunit.assert.2.2.0-beta4-build3444\lib\netstandard1.0\xunit.assert.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="xunit.core, Version=2.2.0.3239, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\xunit.extensibility.core.2.2.0-beta1-build3239\lib\dotnet\xunit.core.dll</HintPath>
+    <Reference Include="xunit.core, Version=2.2.0.3444, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\xunit.extensibility.core.2.2.0-beta4-build3444\lib\net45\xunit.core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="xunit.execution.desktop, Version=2.2.0.3239, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\xunit.extensibility.execution.2.2.0-beta1-build3239\lib\net45\xunit.execution.desktop.dll</HintPath>
+    <Reference Include="xunit.execution.desktop, Version=2.2.0.3444, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\xunit.extensibility.execution.2.2.0-beta4-build3444\lib\net45\xunit.execution.desktop.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -180,6 +180,7 @@
     <Compile Include="Helpers\MetadataReferences.cs" />
     <Compile Include="Helpers\TestDiagnosticProvider.cs" />
     <Compile Include="Helpers\TestXmlReferenceResolver.cs" />
+    <Compile Include="Helpers\UseCultureAttribute.cs" />
     <Compile Include="HelperTests\AccessLevelHelperTests.cs" />
     <Compile Include="HelperTests\IndentationHelperTests.cs" />
     <Compile Include="HelperTests\TokenHelperTests.cs" />
@@ -244,7 +245,15 @@
     <Compile Include="MaintainabilityRules\SA1119UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1400UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1401UnitTests.cs" />
-    <Compile Include="MaintainabilityRules\SA1402UnitTests.cs" />
+    <Compile Include="MaintainabilityRules\SA1402ForBlockDeclarationUnitTestsBase.cs" />
+    <Compile Include="MaintainabilityRules\SA1402ForClassUnitTests.cs" />
+    <Compile Include="MaintainabilityRules\SA1402ForDelegateUnitTests.cs" />
+    <Compile Include="MaintainabilityRules\SA1402ForEnumUnitTests.cs" />
+    <Compile Include="MaintainabilityRules\SA1402ForInterfaceUnitTests.cs" />
+    <Compile Include="MaintainabilityRules\SA1402ForNonBlockDeclarationUnitTestsBase.cs" />
+    <Compile Include="MaintainabilityRules\SA1402ForStructUnitTests.cs" />
+    <Compile Include="MaintainabilityRules\SA1402SettingsConfiguration.cs" />
+    <Compile Include="MaintainabilityRules\SA1402SettingsConfigurationExtensions.cs" />
     <Compile Include="MaintainabilityRules\SA1403UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1404UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1405UnitTests.cs" />
@@ -255,6 +264,7 @@
     <Compile Include="MaintainabilityRules\SA1410UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1411UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1412UnitTests.cs" />
+    <Compile Include="MaintainabilityRules\SA1413UnitTests.cs" />
     <Compile Include="NamingRules\SA1300UnitTests.cs" />
     <Compile Include="NamingRules\SA1301UnitTests.cs" />
     <Compile Include="NamingRules\SA1302UnitTests.cs" />
@@ -269,6 +279,7 @@
     <Compile Include="NamingRules\SA1311UnitTests.cs" />
     <Compile Include="NamingRules\SA1312UnitTests.cs" />
     <Compile Include="NamingRules\SA1313UnitTests.cs" />
+    <Compile Include="NamingRules\SA1314UnitTests.cs" />
     <Compile Include="NamingRules\SX1309SUnitTests.cs" />
     <Compile Include="NamingRules\SX1309UnitTests.cs" />
     <Compile Include="OrderingRules\SA1200OutsideNamespaceUnitTests.cs" />
@@ -279,6 +290,7 @@
     <Compile Include="OrderingRules\SA1203UnitTests.cs" />
     <Compile Include="OrderingRules\SA1204UnitTests.cs" />
     <Compile Include="OrderingRules\SA1205UnitTests.cs" />
+    <Compile Include="OrderingRules\SA1206CodeFixProviderUnitTests.cs" />
     <Compile Include="OrderingRules\SA1206UnitTests.cs" />
     <Compile Include="OrderingRules\SA1207UnitTests.cs" />
     <Compile Include="OrderingRules\SA1208UnitTests.cs" />
@@ -332,6 +344,8 @@
     <Compile Include="ReadabilityRules\SA1132UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1133UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1134UnitTests.cs" />
+    <Compile Include="ReadabilityRules\SA1136UnitTests.cs" />
+    <Compile Include="ReadabilityRules\SA1139UnitTests.cs" />
     <Compile Include="ReadabilityRules\SX1101UnitTests.cs" />
     <Compile Include="Settings\SettingsFileCodeFixProviderUnitTests.cs" />
     <Compile Include="Settings\SettingsUnitTests.cs" />
@@ -412,7 +426,7 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\xunit.runner.visualstudio.2.2.0-beta1-build1144\build\net20\xunit.runner.visualstudio.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\xunit.runner.visualstudio.2.2.0-beta1-build1144\build\net20\xunit.runner.visualstudio.props'))" />
+    <Error Condition="!Exists('..\..\packages\xunit.runner.visualstudio.2.2.0-beta4-build1194\build\net20\xunit.runner.visualstudio.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\xunit.runner.visualstudio.2.2.0-beta4-build1194\build\net20\xunit.runner.visualstudio.props'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

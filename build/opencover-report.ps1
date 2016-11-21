@@ -45,6 +45,7 @@ mkdir $report_folder | Out-Null
 	-hideskipped:All `
 	-filter:"+[StyleCop*]*" `
 	-excludebyattribute:*.ExcludeFromCodeCoverage* `
+	-excludebyfile:*\*Designer.cs `
 	-output:"$report_folder\OpenCover.StyleCopAnalyzers.xml" `
 	-target:"$xunit_runner_console" `
 	-targetargs:"$target_dll -noshadow"

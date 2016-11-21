@@ -210,6 +210,43 @@ public class TestClass
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that a comment between two statements with an end of line comment is handled properly.
+        /// This is a regression test for #2176
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestCommentBetweenStatementsWithEndOfLineCommentAsync()
+        {
+            var testCode = @"
+public class TestConstants
+{
+  public const string Constant1 = ""1""; // my end of line comment
+  // my comment
+  public const string Constant2 = ""2""; // my second end of line comment
+}
+";
+
+            var fixedTestCode = @"
+public class TestConstants
+{
+  public const string Constant1 = ""1""; // my end of line comment
+
+  // my comment
+  public const string Constant2 = ""2""; // my second end of line comment
+}
+";
+
+            DiagnosticResult[] expectedDiagnostic =
+            {
+                this.CSharpDiagnostic().WithLocation(5, 3),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {

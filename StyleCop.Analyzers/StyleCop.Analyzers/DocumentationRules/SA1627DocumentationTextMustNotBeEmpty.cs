@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System;
     using System.Collections.Immutable;
     using System.Linq;
+    using System.Xml.Linq;
     using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -83,9 +84,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var element = (XmlElementSyntax)context.Node;
 
-            var name = element.StartTag?.Name;
-
-            if (ElementsToCheck.Contains(name.ToString()) && XmlCommentHelper.IsConsideredEmpty(element))
+            var name = element.StartTag.Name.ToString();
+            if (ElementsToCheck.Contains(name) && XmlCommentHelper.IsConsideredEmpty(element))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, element.GetLocation(), name.ToString()));
             }
@@ -93,11 +93,52 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static void HandleXmlEmptyElement(SyntaxNodeAnalysisContext context)
         {
-            var element = (XmlEmptyElementSyntax)context.Node;
+            var elementSyntax = (XmlEmptyElementSyntax)context.Node;
+            var elementName = elementSyntax.Name.ToString();
+            var elementLocation = elementSyntax.GetLocation();
 
-            if (ElementsToCheck.Contains(element.Name.ToString()))
+            if (string.Equals(elementName, XmlCommentHelper.IncludeXmlTag, StringComparison.Ordinal))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, element.GetLocation(), element.Name.ToString()));
+                HandleIncludedDocumentation(context, elementSyntax, elementLocation);
+                return;
+            }
+
+            if (ElementsToCheck.Contains(elementName))
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, elementLocation, elementSyntax.Name.ToString()));
+            }
+        }
+
+        private static void HandleIncludedDocumentation(SyntaxNodeAnalysisContext context, XmlEmptyElementSyntax elementSyntax, Location elementLocation)
+        {
+            var memberDeclaration = elementSyntax.FirstAncestorOrSelf<MemberDeclarationSyntax>();
+            if (memberDeclaration == null)
+            {
+                return;
+            }
+
+            var declaration = context.SemanticModel.GetDeclaredSymbol(memberDeclaration, context.CancellationToken);
+            if (declaration == null)
+            {
+                return;
+            }
+
+            var rawDocumentation = declaration.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
+            var completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
+            if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.InheritdocXmlTag))
+            {
+                // Ignore nodes with an <inheritdoc/> tag in the included XML.
+                return;
+            }
+
+            var emptyElements = completeDocumentation.Nodes()
+                .OfType<XElement>()
+                .Where(element => ElementsToCheck.Contains(element.Name.ToString()))
+                .Where(x => XmlCommentHelper.IsConsideredEmpty(x));
+
+            foreach (var emptyElement in emptyElements)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, elementLocation, emptyElement.Name.ToString()));
             }
         }
     }
