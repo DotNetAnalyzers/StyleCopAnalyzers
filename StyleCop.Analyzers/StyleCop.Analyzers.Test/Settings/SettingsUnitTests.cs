@@ -31,9 +31,10 @@ namespace StyleCop.Analyzers.Test.Settings
 
             Assert.NotNull(styleCopSettings.OrderingRules);
             Assert.Equal(UsingDirectivesPlacement.InsideNamespace, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
+            Assert.Equal(OptionSetting.Allow, styleCopSettings.OrderingRules.BlankLinesBetweenUsingGroups);
 
             Assert.NotNull(styleCopSettings.LayoutRules);
-            Assert.Equal(EndOfFileHandling.Allow, styleCopSettings.LayoutRules.NewlineAtEndOfFile);
+            Assert.Equal(OptionSetting.Allow, styleCopSettings.LayoutRules.NewlineAtEndOfFile);
 
             Assert.NotNull(styleCopSettings.SpacingRules);
             Assert.NotNull(styleCopSettings.ReadabilityRules);
@@ -58,8 +59,12 @@ namespace StyleCop.Analyzers.Test.Settings
         ""allowCommonHungarianPrefixes"": false,
         ""allowedHungarianPrefixes"": [""a"", ""ab""]
     },
+    ""layoutRules"": {
+        ""newlineAtEndOfFile"": ""require""
+    },
     ""orderingRules"": {
-        ""usingDirectivesPlacement"": ""outsideNamespace""
+        ""usingDirectivesPlacement"": ""outsideNamespace"",
+        ""blankLinesBetweenUsingGroups"": ""omit"",
     }
   }
 }
@@ -73,8 +78,12 @@ namespace StyleCop.Analyzers.Test.Settings
             Assert.False(styleCopSettings.NamingRules.AllowCommonHungarianPrefixes);
             Assert.Equal(new[] { "a", "ab" }, styleCopSettings.NamingRules.AllowedHungarianPrefixes);
 
+            Assert.NotNull(styleCopSettings.LayoutRules);
+            Assert.Equal(OptionSetting.Require, styleCopSettings.LayoutRules.NewlineAtEndOfFile);
+
             Assert.NotNull(styleCopSettings.OrderingRules);
             Assert.Equal(UsingDirectivesPlacement.OutsideNamespace, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
+            Assert.Equal(OptionSetting.Omit, styleCopSettings.OrderingRules.BlankLinesBetweenUsingGroups);
         }
 
         /// <summary>

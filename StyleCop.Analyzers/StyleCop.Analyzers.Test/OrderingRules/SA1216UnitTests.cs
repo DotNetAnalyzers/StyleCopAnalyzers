@@ -150,7 +150,8 @@ using static System.Math;
 using System.Threading.Tasks;
 #endif";
 
-            var fixedTestCode = @"using System;
+            var fixedTestCode = @"
+using System;
 using Microsoft.VisualStudio;
 using static System.String;
 using MyList = System.Collections.Generic.List<int>;

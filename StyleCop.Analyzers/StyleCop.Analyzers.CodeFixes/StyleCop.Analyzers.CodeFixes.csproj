@@ -110,6 +110,9 @@
     <Compile Include="OrderingRules\SA1207CodeFixProvider.cs" />
     <Compile Include="OrderingRules\SA1212SA1213CodeFixProvider.cs" />
     <Compile Include="OrderingRules\UsingCodeFixProvider.cs" />
+    <Compile Include="OrderingRules\UsingCodeFixProvider.SourceMap.cs" />
+    <Compile Include="OrderingRules\UsingCodeFixProvider.TreeTextSpan.cs" />
+    <Compile Include="OrderingRules\UsingCodeFixProvider.UsingsSorter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReadabilityRules\RemoveRegionCodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\RemoveRegionFixAllProvider.cs" />

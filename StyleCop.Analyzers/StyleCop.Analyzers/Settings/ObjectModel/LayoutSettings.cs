@@ -12,7 +12,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// This is the backing field for the <see cref="NewlineAtEndOfFile"/> property.
         /// </summary>
         [JsonProperty("newlineAtEndOfFile", DefaultValueHandling = DefaultValueHandling.Include)]
-        private EndOfFileHandling newlineAtEndOfFile;
+        private OptionSetting newlineAtEndOfFile;
 
         [JsonProperty("allowConsecutiveUsings", DefaultValueHandling = DefaultValueHandling.Include)]
         private bool allowConsecutiveUsings;
@@ -23,11 +23,11 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         [JsonConstructor]
         protected internal LayoutSettings()
         {
-            this.newlineAtEndOfFile = EndOfFileHandling.Allow;
+            this.newlineAtEndOfFile = OptionSetting.Allow;
             this.allowConsecutiveUsings = true;
         }
 
-        public EndOfFileHandling NewlineAtEndOfFile =>
+        public OptionSetting NewlineAtEndOfFile =>
             this.newlineAtEndOfFile;
 
         public bool AllowConsecutiveUsings =>

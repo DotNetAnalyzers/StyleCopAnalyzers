@@ -234,6 +234,7 @@
     <Compile Include="LayoutRules\SA1514UnitTests.cs" />
     <Compile Include="LayoutRules\SA1515UnitTests.cs" />
     <Compile Include="LayoutRules\SA1516UnitTests.cs" />
+    <Compile Include="LayoutRules\SA1516UsingGroupsUnitTests.cs" />
     <Compile Include="LayoutRules\SA1517UnitTests.cs" />
     <Compile Include="LayoutRules\SA1518UnitTests.cs" />
     <Compile Include="LayoutRules\SA1519UnitTests.cs" />
@@ -304,6 +305,8 @@
     <Compile Include="OrderingRules\SA1216UnitTests.cs" />
     <Compile Include="OrderingRules\SA1217UnitTests.cs" />
     <Compile Include="OrderingRules\UsingCodeFixProviderCombinedSystemDirectivesUnitTests.cs" />
+    <Compile Include="OrderingRules\UsingCodeFixProviderGroupSeparationUnitTests.cs" />
+    <Compile Include="OrderingRules\UsingCodeFixProviderRegressionUnitTests.cs" />
     <Compile Include="OrderingRules\UsingCodeFixProviderUnitTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PublicApiTests.cs" />

@@ -184,6 +184,7 @@ The following properties are used to configure using directives in StyleCop Anal
 | --- | --- | --- |
 | `systemUsingDirectivesFirst` | true | Specifies whether `System` using directives are placed before other using directives |
 | `usingDirectivesPlacement` | `"insideNamespace"` | Specifies the desired placement of using directives |
+| `blankLinesBetweenUsingGroups` | `"allow"` | Specifies is blank lines are required to separate groups of using statements |
 
 #### Using Directives Placement
 
@@ -220,6 +221,45 @@ In this mode, using directives may be placed inside or outside of namespaces.
 
 * SA1200 does not report any violations
 * Using directives code fix may reorder using directives, but does not relocate them
+
+#### Blank Lines Between Groups
+The `blankLinesBetweenUsingGroups` property affects the behavior of the following rules which report the presence / absence
+of blanks lines between groups of using directives.
+
+* [SA1516 Elements must be separated by blank line](SA1516.md)
+
+Using directives can grouped based on the purpose of the using directive.
+StyleCop Analyzers recognizes the following using directive group types:
+
+- System using directives (only when `systemUsingDirectivesFirst` is true)
+- Normal using directives
+- Static using directives
+- Alias using directives
+
+This property has three allowed values, which are described as follows.
+
+##### `"allow"`
+
+In this mode, a blank line between groups for using directives is *optional*.
+
+* No diagnostic will be produced.
+* Using directives code fix will not insert blank lines.
+
+##### `"require"`
+
+In this mode, a blank line between groups for using directives is *mandatory*.
+
+* SA1516 reports missing blank lines between using directive groups.
+* Using directives code fix will insert blank lines.
+* SA1516 code fix will add a missing blank line.
+
+##### `"omit"`
+
+In this mode, a blank line between groups for using directives is *not allowed*.
+
+* SA1516 reports blank lines between using directive groups.
+* Using directives code fix will not insert blank lines.
+* SA1516 code fix will remove blank lines between using directive groups.
 
 ## Naming Rules
 
