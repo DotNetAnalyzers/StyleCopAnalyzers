@@ -140,37 +140,37 @@ namespace StyleCop.Analyzers.OrderingRules
                 {
                     switch (directiveTrivia.Kind())
                     {
-                        case SyntaxKind.IfDirectiveTrivia:
-                            AddNewDirectiveTriviaSpan(conditionalBuilder, conditionalStack, directiveTrivia);
-                            break;
+                    case SyntaxKind.IfDirectiveTrivia:
+                        AddNewDirectiveTriviaSpan(conditionalBuilder, conditionalStack, directiveTrivia);
+                        break;
 
-                        case SyntaxKind.ElifDirectiveTrivia:
-                        case SyntaxKind.ElseDirectiveTrivia:
-                            var previousSpan = conditionalStack.Pop();
-                            previousSpan.SetEnd(directiveTrivia.FullSpan.Start);
+                    case SyntaxKind.ElifDirectiveTrivia:
+                    case SyntaxKind.ElseDirectiveTrivia:
+                        var previousSpan = conditionalStack.Pop();
+                        previousSpan.SetEnd(directiveTrivia.FullSpan.Start);
 
-                            AddNewDirectiveTriviaSpan(conditionalBuilder, conditionalStack, directiveTrivia);
-                            break;
+                        AddNewDirectiveTriviaSpan(conditionalBuilder, conditionalStack, directiveTrivia);
+                        break;
 
-                        case SyntaxKind.EndIfDirectiveTrivia:
-                            CloseDirectiveTriviaSpan(conditionalBuilder, conditionalStack, directiveTrivia);
-                            break;
+                    case SyntaxKind.EndIfDirectiveTrivia:
+                        CloseDirectiveTriviaSpan(conditionalBuilder, conditionalStack, directiveTrivia);
+                        break;
 
-                        case SyntaxKind.RegionDirectiveTrivia:
-                            AddNewDirectiveTriviaSpan(regionBuilder, regionStack, directiveTrivia);
-                            break;
+                    case SyntaxKind.RegionDirectiveTrivia:
+                        AddNewDirectiveTriviaSpan(regionBuilder, regionStack, directiveTrivia);
+                        break;
 
-                        case SyntaxKind.EndRegionDirectiveTrivia:
-                            CloseDirectiveTriviaSpan(regionBuilder, regionStack, directiveTrivia);
-                            break;
+                    case SyntaxKind.EndRegionDirectiveTrivia:
+                        CloseDirectiveTriviaSpan(regionBuilder, regionStack, directiveTrivia);
+                        break;
 
-                        case SyntaxKind.PragmaWarningDirectiveTrivia:
-                            pragmaWarningList.Add(directiveTrivia);
-                            break;
+                    case SyntaxKind.PragmaWarningDirectiveTrivia:
+                        pragmaWarningList.Add(directiveTrivia);
+                        break;
 
-                        default:
-                            // ignore all other directive trivia
-                            break;
+                    default:
+                        // ignore all other directive trivia
+                        break;
                     }
                 }
 
@@ -226,33 +226,33 @@ namespace StyleCop.Analyzers.OrderingRules
 
                     switch (pragmaWarning.DisableOrRestoreKeyword.Kind())
                     {
-                        case SyntaxKind.DisableKeyword:
-                            foreach (var errorCode in errorCodes)
+                    case SyntaxKind.DisableKeyword:
+                        foreach (var errorCode in errorCodes)
+                        {
+                            if (!map.ContainsKey(errorCode))
                             {
-                                if (!map.ContainsKey(errorCode))
-                                {
-                                    // only add it if the warning isn't disabled already
-                                    map[errorCode] = pragmaWarning;
-                                }
+                                // only add it if the warning isn't disabled already
+                                map[errorCode] = pragmaWarning;
                             }
+                        }
 
-                            break;
+                        break;
 
-                        case SyntaxKind.RestoreKeyword:
-                            foreach (var errorCode in errorCodes)
+                    case SyntaxKind.RestoreKeyword:
+                        foreach (var errorCode in errorCodes)
+                        {
+                            PragmaWarningDirectiveTriviaSyntax startOfSpan;
+
+                            if (map.TryGetValue(errorCode, out startOfSpan))
                             {
-                                PragmaWarningDirectiveTriviaSyntax startOfSpan;
+                                map.Remove(errorCode);
 
-                                if (map.TryGetValue(errorCode, out startOfSpan))
-                                {
-                                    map.Remove(errorCode);
-
-                                    var childSpan = builder.AddChild(startOfSpan.FullSpan.Start);
-                                    childSpan.SetEnd(pragmaWarning.FullSpan.End);
-                                }
+                                var childSpan = builder.AddChild(startOfSpan.FullSpan.Start);
+                                childSpan.SetEnd(pragmaWarning.FullSpan.End);
                             }
+                        }
 
-                            break;
+                        break;
                     }
                 }
 

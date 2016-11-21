@@ -270,12 +270,12 @@
     <Compile Include="ReadabilityRules\SX1101DoNotPrefixLocalMembersWithThis.cs" />
     <Compile Include="Settings\DeserializationFailureBehavior.cs" />
     <Compile Include="Settings\ObjectModel\DocumentationSettings.cs" />
-    <Compile Include="Settings\ObjectModel\OptionSetting.cs" />
     <Compile Include="Settings\ObjectModel\FileNamingConvention.cs" />
     <Compile Include="Settings\ObjectModel\IndentationSettings.cs" />
     <Compile Include="Settings\ObjectModel\LayoutSettings.cs" />
     <Compile Include="Settings\ObjectModel\MaintainabilitySettings.cs" />
     <Compile Include="Settings\ObjectModel\NamingSettings.cs" />
+    <Compile Include="Settings\ObjectModel\OptionSetting.cs" />
     <Compile Include="Settings\ObjectModel\OrderingSettings.cs" />
     <Compile Include="Settings\ObjectModel\OrderingTrait.cs" />
     <Compile Include="Settings\ObjectModel\ReadabilitySettings.cs" />

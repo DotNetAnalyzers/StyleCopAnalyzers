@@ -148,34 +148,34 @@ namespace StyleCop.Analyzers.OrderingRules
         {
             switch (settings.OrderingRules.UsingDirectivesPlacement)
             {
-                case UsingDirectivesPlacement.InsideNamespace:
-                    var namespaceCount = CountNamespaces(compilationUnit.Members);
+            case UsingDirectivesPlacement.InsideNamespace:
+                var namespaceCount = CountNamespaces(compilationUnit.Members);
 
-                    // Only move using declarations inside the namespace when
-                    // - There are no global attributes
-                    // - There is only a single namespace declared at the top level
-                    // - OrderingSettings.UsingDirectivesPlacement is set to InsideNamespace
-                    if (compilationUnit.AttributeLists.Any()
-                        || compilationUnit.Members.Count > 1
-                        || namespaceCount > 1)
-                    {
-                        // Override the user's setting with a more conservative one
-                        return UsingDirectivesPlacement.Preserve;
-                    }
-
-                    if (namespaceCount == 0)
-                    {
-                        return UsingDirectivesPlacement.OutsideNamespace;
-                    }
-
-                    return UsingDirectivesPlacement.InsideNamespace;
-
-                case UsingDirectivesPlacement.OutsideNamespace:
-                    return UsingDirectivesPlacement.OutsideNamespace;
-
-                case UsingDirectivesPlacement.Preserve:
-                default:
+                // Only move using declarations inside the namespace when
+                // - There are no global attributes
+                // - There is only a single namespace declared at the top level
+                // - OrderingSettings.UsingDirectivesPlacement is set to InsideNamespace
+                if (compilationUnit.AttributeLists.Any()
+                    || compilationUnit.Members.Count > 1
+                    || namespaceCount > 1)
+                {
+                    // Override the user's setting with a more conservative one
                     return UsingDirectivesPlacement.Preserve;
+                }
+
+                if (namespaceCount == 0)
+                {
+                    return UsingDirectivesPlacement.OutsideNamespace;
+                }
+
+                return UsingDirectivesPlacement.InsideNamespace;
+
+            case UsingDirectivesPlacement.OutsideNamespace:
+                return UsingDirectivesPlacement.OutsideNamespace;
+
+            case UsingDirectivesPlacement.Preserve:
+            default:
+                return UsingDirectivesPlacement.Preserve;
             }
         }
 

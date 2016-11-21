@@ -207,27 +207,27 @@ namespace StyleCop.Analyzers.OrderingRules
                     {
                         switch (newLeadingTrivia[k].Kind())
                         {
-                            case SyntaxKind.WhitespaceTrivia:
+                        case SyntaxKind.WhitespaceTrivia:
+                            newLeadingTrivia.RemoveAt(k);
+                            break;
+
+                        case SyntaxKind.EndOfLineTrivia:
+                            if (startOfLine)
+                            {
                                 newLeadingTrivia.RemoveAt(k);
-                                break;
-
-                            case SyntaxKind.EndOfLineTrivia:
-                                if (startOfLine)
-                                {
-                                    newLeadingTrivia.RemoveAt(k);
-                                }
-                                else
-                                {
-                                    startOfLine = true;
-                                    k++;
-                                }
-
-                                break;
-
-                            default:
-                                startOfLine = newLeadingTrivia[k].IsDirective;
+                            }
+                            else
+                            {
+                                startOfLine = true;
                                 k++;
-                                break;
+                            }
+
+                            break;
+
+                        default:
+                            startOfLine = newLeadingTrivia[k].IsDirective;
+                            k++;
+                            break;
                         }
                     }
 
@@ -275,76 +275,76 @@ namespace StyleCop.Analyzers.OrderingRules
                 NameSyntax rewrittenName;
                 switch (originalName.Kind())
                 {
-                    case SyntaxKind.QualifiedName:
-                    case SyntaxKind.IdentifierName:
-                    case SyntaxKind.GenericName:
-                        if (originalName.Parent.IsKind(SyntaxKind.UsingDirective)
-                            || originalName.Parent.IsKind(SyntaxKind.TypeArgumentList))
+                case SyntaxKind.QualifiedName:
+                case SyntaxKind.IdentifierName:
+                case SyntaxKind.GenericName:
+                    if (originalName.Parent.IsKind(SyntaxKind.UsingDirective)
+                        || originalName.Parent.IsKind(SyntaxKind.TypeArgumentList))
+                    {
+                        var symbol = this.semanticModel.GetSymbolInfo(originalName, cancellationToken: CancellationToken.None).Symbol;
+                        if (symbol == null)
                         {
-                            var symbol = this.semanticModel.GetSymbolInfo(originalName, cancellationToken: CancellationToken.None).Symbol;
-                            if (symbol == null)
+                            rewrittenName = originalName;
+                            break;
+                        }
+
+                        if (symbol is INamespaceSymbol)
+                        {
+                            // TODO: Preserve inner trivia
+                            string fullName = symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+                            NameSyntax replacement = SyntaxFactory.ParseName(fullName);
+                            if (!originalName.DescendantNodesAndSelf().OfType<AliasQualifiedNameSyntax>().Any())
                             {
-                                rewrittenName = originalName;
-                                break;
+                                replacement = replacement.ReplaceNodes(
+                                    replacement.DescendantNodesAndSelf().OfType<AliasQualifiedNameSyntax>(),
+                                    (originalNode2, rewrittenNode2) => rewrittenNode2.Name);
                             }
 
-                            if (symbol is INamespaceSymbol)
+                            rewrittenName = replacement.WithTriviaFrom(originalName);
+                            break;
+                        }
+                        else if (symbol is INamedTypeSymbol)
+                        {
+                            // TODO: Preserve inner trivia
+                            // TODO: simplify after qualification
+                            string fullName;
+                            if (SpecialTypeHelper.IsPredefinedType(((INamedTypeSymbol)symbol).OriginalDefinition.SpecialType))
                             {
-                                // TODO: Preserve inner trivia
-                                string fullName = symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-                                NameSyntax replacement = SyntaxFactory.ParseName(fullName);
-                                if (!originalName.DescendantNodesAndSelf().OfType<AliasQualifiedNameSyntax>().Any())
-                                {
-                                    replacement = replacement.ReplaceNodes(
-                                        replacement.DescendantNodesAndSelf().OfType<AliasQualifiedNameSyntax>(),
-                                        (originalNode2, rewrittenNode2) => rewrittenNode2.Name);
-                                }
-
-                                rewrittenName = replacement.WithTriviaFrom(originalName);
-                                break;
-                            }
-                            else if (symbol is INamedTypeSymbol)
-                            {
-                                // TODO: Preserve inner trivia
-                                // TODO: simplify after qualification
-                                string fullName;
-                                if (SpecialTypeHelper.IsPredefinedType(((INamedTypeSymbol)symbol).OriginalDefinition.SpecialType))
-                                {
-                                    fullName = "global::System." + symbol.Name;
-                                }
-                                else
-                                {
-                                    fullName = symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-                                }
-
-                                NameSyntax replacement = SyntaxFactory.ParseName(fullName);
-                                if (!originalName.DescendantNodesAndSelf().OfType<AliasQualifiedNameSyntax>().Any())
-                                {
-                                    replacement = replacement.ReplaceNodes(
-                                        replacement.DescendantNodesAndSelf().OfType<AliasQualifiedNameSyntax>(),
-                                        (originalNode2, rewrittenNode2) => rewrittenNode2.Name);
-                                }
-
-                                rewrittenName = replacement.WithTriviaFrom(originalName);
-                                break;
+                                fullName = "global::System." + symbol.Name;
                             }
                             else
                             {
-                                rewrittenName = originalName;
-                                break;
+                                fullName = symbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
                             }
+
+                            NameSyntax replacement = SyntaxFactory.ParseName(fullName);
+                            if (!originalName.DescendantNodesAndSelf().OfType<AliasQualifiedNameSyntax>().Any())
+                            {
+                                replacement = replacement.ReplaceNodes(
+                                    replacement.DescendantNodesAndSelf().OfType<AliasQualifiedNameSyntax>(),
+                                    (originalNode2, rewrittenNode2) => rewrittenNode2.Name);
+                            }
+
+                            rewrittenName = replacement.WithTriviaFrom(originalName);
+                            break;
                         }
                         else
                         {
                             rewrittenName = originalName;
                             break;
                         }
-
-                    case SyntaxKind.AliasQualifiedName:
-                    case SyntaxKind.PredefinedType:
-                    default:
+                    }
+                    else
+                    {
                         rewrittenName = originalName;
                         break;
+                    }
+
+                case SyntaxKind.AliasQualifiedName:
+                case SyntaxKind.PredefinedType:
+                default:
+                    rewrittenName = originalName;
+                    break;
                 }
 
                 if (rewrittenName == originalName)

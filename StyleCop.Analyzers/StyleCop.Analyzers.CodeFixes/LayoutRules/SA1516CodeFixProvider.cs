@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.LayoutRules
 {
-    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
@@ -66,14 +65,14 @@ namespace StyleCop.Analyzers.LayoutRules
 
             switch (codeFixAction)
             {
-                case SA1516ElementsMustBeSeparatedByBlankLine.InsertBlankLineValue:
-                    return true;
+            case SA1516ElementsMustBeSeparatedByBlankLine.InsertBlankLineValue:
+                return true;
 
-                case SA1516ElementsMustBeSeparatedByBlankLine.RemoveBlankLinesValue:
-                    return false;
+            case SA1516ElementsMustBeSeparatedByBlankLine.RemoveBlankLinesValue:
+                return false;
 
-                default:
-                    return null;
+            default:
+                return null;
             }
         }
 

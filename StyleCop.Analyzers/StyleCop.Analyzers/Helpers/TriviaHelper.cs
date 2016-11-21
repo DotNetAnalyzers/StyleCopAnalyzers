@@ -406,23 +406,23 @@ namespace StyleCop.Analyzers.Helpers
             {
                 switch (trivia.Kind())
                 {
-                    case SyntaxKind.WhitespaceTrivia:
-                        // ignore whitespace
-                        break;
+                case SyntaxKind.WhitespaceTrivia:
+                    // ignore whitespace
+                    break;
 
-                    case SyntaxKind.EndOfLineTrivia:
-                        if (onBlankLine)
-                        {
-                            return true;
-                        }
+                case SyntaxKind.EndOfLineTrivia:
+                    if (onBlankLine)
+                    {
+                        return true;
+                    }
 
-                        onBlankLine = true;
-                        break;
+                    onBlankLine = true;
+                    break;
 
-                    default:
-                        // directive trivia have a builtin end-of-line.
-                        onBlankLine = trivia.IsDirective;
-                        break;
+                default:
+                    // directive trivia have a builtin end-of-line.
+                    onBlankLine = trivia.IsDirective;
+                    break;
                 }
             }
 
@@ -446,33 +446,33 @@ namespace StyleCop.Analyzers.Helpers
 
                 switch (trivia.Kind())
                 {
-                    case SyntaxKind.WhitespaceTrivia:
-                        newTriviaList.Add(trivia);
-                        break;
+                case SyntaxKind.WhitespaceTrivia:
+                    newTriviaList.Add(trivia);
+                    break;
 
-                    case SyntaxKind.EndOfLineTrivia:
-                        if (onBlankLine)
+                case SyntaxKind.EndOfLineTrivia:
+                    if (onBlankLine)
+                    {
+                        // strip all preceding white space in the blank line.
+                        while ((newTriviaList.Count > 0) && newTriviaList[newTriviaList.Count - 1].IsKind(SyntaxKind.WhitespaceTrivia))
                         {
-                            // strip all preceding white space in the blank line.
-                            while ((newTriviaList.Count > 0) && newTriviaList[newTriviaList.Count - 1].IsKind(SyntaxKind.WhitespaceTrivia))
-                            {
-                                newTriviaList.RemoveAt(newTriviaList.Count - 1);
-                            }
+                            newTriviaList.RemoveAt(newTriviaList.Count - 1);
                         }
-                        else
-                        {
-                            newTriviaList.Add(trivia);
-                            onBlankLine = true;
-                        }
-
-                        break;
-
-                    default:
+                    }
+                    else
+                    {
                         newTriviaList.Add(trivia);
+                        onBlankLine = true;
+                    }
 
-                        // directive trivia have a builtin end-of-line.
-                        onBlankLine = trivia.IsDirective;
-                        break;
+                    break;
+
+                default:
+                    newTriviaList.Add(trivia);
+
+                    // directive trivia have a builtin end-of-line.
+                    onBlankLine = trivia.IsDirective;
+                    break;
                 }
             }
 
