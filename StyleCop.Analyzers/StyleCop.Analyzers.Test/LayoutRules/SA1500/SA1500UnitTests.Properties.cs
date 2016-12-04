@@ -91,10 +91,6 @@ public class Foo
 
     // Valid property #8  (Valid for SA1500 only)
     public int[] Property8 { get; set; } = { 0, 1, 2 };
-
-    // Valid property #9  (Valid for SA1500 only)
-    public int[] Property9 { get; set; } = 
-    { 0, 1, 2 };
 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -219,6 +215,10 @@ public class Foo
     // Invalid property #14
     public int[] Property14 { get; set; } = { 0, 1, 2
     };
+
+    // Invalid property #15
+    public int[] Property15 { get; set; } = 
+    { 0, 1, 2 };
 }";
 
             var fixedTestCode = @"using System;
@@ -356,6 +356,12 @@ public class Foo
     {
         0, 1, 2
     };
+
+    // Invalid property #15
+    public int[] Property15 { get; set; } = 
+    {
+        0, 1, 2
+    };
 }";
 
             DiagnosticResult[] expectedDiagnostics =
@@ -410,6 +416,10 @@ public class Foo
 
                 // Invalid property #14
                 this.CSharpDiagnostic().WithLocation(111, 45),
+
+                // Invalid property #15
+                this.CSharpDiagnostic().WithLocation(116, 5),
+                this.CSharpDiagnostic().WithLocation(116, 15),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
