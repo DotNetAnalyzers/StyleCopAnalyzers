@@ -377,6 +377,42 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Start with capital letter.
+        /// </summary>
+        internal static string SA1628CodeFix {
+            get {
+                return ResourceManager.GetString("SA1628CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A section of the XML header documentation for a C# element does not begin with a capital letter..
+        /// </summary>
+        internal static string SA1628Description {
+            get {
+                return ResourceManager.GetString("SA1628Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The documentation text within the &apos;{0}&apos; tag should start with a capital letter.
+        /// </summary>
+        internal static string SA1628MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1628MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Documentation text must begin with a capital letter.
+        /// </summary>
+        internal static string SA1628Title {
+            get {
+                return ResourceManager.GetString("SA1628Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add file header.
         /// </summary>
         internal static string SA1633CodeFix {

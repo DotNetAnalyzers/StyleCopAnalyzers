@@ -222,6 +222,18 @@
   <data name="SA1627Title" xml:space="preserve">
     <value>Documentation text must not be empty</value>
   </data>
+  <data name="SA1628CodeFix" xml:space="preserve">
+    <value>Start with capital letter</value>
+  </data>
+  <data name="SA1628Description" xml:space="preserve">
+    <value>A section of the XML header documentation for a C# element does not begin with a capital letter.</value>
+  </data>
+  <data name="SA1628MessageFormat" xml:space="preserve">
+    <value>The documentation text within the '{0}' tag should start with a capital letter</value>
+  </data>
+  <data name="SA1628Title" xml:space="preserve">
+    <value>Documentation text must begin with a capital letter</value>
+  </data>
   <data name="SA1633CodeFix" xml:space="preserve">
     <value>Add file header</value>
   </data>

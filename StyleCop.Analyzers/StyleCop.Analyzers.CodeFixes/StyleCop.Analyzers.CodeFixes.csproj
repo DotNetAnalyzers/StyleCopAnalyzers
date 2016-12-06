@@ -54,6 +54,7 @@
     <Compile Include="DocumentationRules\SA1609SA1610CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1615SA1616CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1617CodeFixProvider.cs" />
+    <Compile Include="DocumentationRules\SA1628CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1626CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1642SA1643CodeFixProvider.cs" />
     <Compile Include="DocumentationRules\SA1649CodeFixProvider.cs" />
