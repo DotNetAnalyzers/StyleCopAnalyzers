@@ -136,7 +136,8 @@ namespace Test
     class A
     {
     }
-}", };
+}",
+            };
 
             DiagnosticResult[] expected =
             {
