@@ -385,11 +385,11 @@ public class Foo
             var invalidStatement = string.Format(
                 @"int i = 0;
             (i) {0};",
-            operatorValue);
+                operatorValue);
             var validStatement = string.Format(
                 @"int i = 0;
             (i){0};",
-            operatorValue);
+                operatorValue);
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(8, 15);
 
