@@ -16,6 +16,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Microsoft.CodeAnalysis.Text;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1413UseTrailingCommasInMultiLineInitializers"/>.
@@ -68,6 +69,11 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 newParent = RewriteAnonymousObjectInitializer((AnonymousObjectCreationExpressionSyntax)parent);
                 break;
 
+            case SyntaxKind.EnumDeclaration:
+                var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+                TextChange textChange = GetEnumMemberTextChange(diagnostic, syntaxRoot);
+                return document.WithText(text.WithChanges(textChange));
+
             default:
                 throw new InvalidOperationException("Unknown initializer type: " + parent.Kind());
             }
@@ -114,6 +120,12 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
             var fixedInitializer = initializer.WithInitializers(newInitializerExpressions);
             return fixedInitializer;
+        }
+
+        private static TextChange GetEnumMemberTextChange(Diagnostic diagnostic, SyntaxNode syntaxRoot)
+        {
+            var member = (EnumMemberDeclarationSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
+            return new TextChange(diagnostic.Location.SourceSpan, member.ToString() + ",");
         }
     }
 }
