@@ -224,7 +224,7 @@ public class TestClass
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(10, 50).WithArguments("value"),
-                this.CSharpDiagnostic().WithLocation(18, 51).WithArguments("value")
+                this.CSharpDiagnostic().WithLocation(18, 51).WithArguments("value"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

@@ -101,7 +101,7 @@ $$
             var expected = new[]
             {
                 this.CSharpDiagnostic().WithLocation(10, 21).WithArguments("boo"),
-                this.CSharpDiagnostic().WithLocation(11, 21).WithArguments("far")
+                this.CSharpDiagnostic().WithLocation(11, 21).WithArguments("far"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
@@ -153,7 +153,7 @@ public class ClassName
             var expected = new[]
             {
                 diagnostic.WithLocation(10, 22).WithArguments("bar", 2),
-                diagnostic.WithLocation(11, 22).WithArguments("foo", 1)
+                diagnostic.WithLocation(11, 22).WithArguments("foo", 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", p), expected, CancellationToken.None).ConfigureAwait(false);
@@ -248,7 +248,7 @@ public class ClassName
             var expected = new[]
             {
                 this.CSharpDiagnostic().WithLocation(8, 22).WithArguments("boo"),
-                this.CSharpDiagnostic().WithLocation(8, 22).WithArguments("far")
+                this.CSharpDiagnostic().WithLocation(8, 22).WithArguments("far"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

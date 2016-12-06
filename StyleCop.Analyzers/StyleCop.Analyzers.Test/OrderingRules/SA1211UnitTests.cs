@@ -151,7 +151,7 @@ namespace Spam
             {
                 this.CSharpDiagnostic().WithLocation(5, 5).WithArguments("character", "int"),
                 this.CSharpDiagnostic().WithLocation(14, 5).WithArguments("MemoryStream", "Stream"),
-                this.CSharpDiagnostic().WithLocation(21, 5).WithArguments("Character", "int")
+                this.CSharpDiagnostic().WithLocation(21, 5).WithArguments("Character", "int"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

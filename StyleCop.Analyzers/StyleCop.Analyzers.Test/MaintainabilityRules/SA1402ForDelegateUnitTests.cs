@@ -32,7 +32,7 @@ public delegate void Bar();
                 @"public delegate void Foo();
 ",
                 @"public delegate void Bar();
-"
+",
             };
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 22);
@@ -54,7 +54,7 @@ public delegate void Bar<T1, T2, T3>(T1 x, T2 y, T3 z);
                 @"public delegate void Foo();
 ",
                 @"public delegate void Bar<T1, T2, T3>(T1 x, T2 y, T3 z);
-"
+",
             };
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 22);
@@ -103,13 +103,13 @@ public delegate void FooBar();
                 @"public delegate void Bar();
 ",
                 @"public delegate void FooBar();
-"
+",
             };
 
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(2, 22),
-                this.CSharpDiagnostic().WithLocation(3, 22)
+                this.CSharpDiagnostic().WithLocation(3, 22),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -129,7 +129,7 @@ public delegate void Test0();
                 $@"public delegate void Test0();
 ",
                 $@"public delegate void Foo();
-"
+",
             };
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(1, 22);

@@ -371,7 +371,7 @@ public class Foo
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 28),
-                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 30)
+                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 30),
             };
 
             await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, validStatement, expected).ConfigureAwait(false);
@@ -651,7 +651,7 @@ public class TestClass
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(8, 21).WithArguments(string.Empty, "followed"),
-                this.CSharpDiagnostic().WithLocation(11, 25).WithArguments(string.Empty, "followed")
+                this.CSharpDiagnostic().WithLocation(11, 25).WithArguments(string.Empty, "followed"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

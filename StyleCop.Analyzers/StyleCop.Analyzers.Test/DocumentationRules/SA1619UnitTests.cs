@@ -116,7 +116,7 @@ public partial ##";
             var expected = new[]
             {
                 this.CSharpDiagnostic().WithLocation(5, 30).WithArguments("Ta"),
-                this.CSharpDiagnostic().WithLocation(5, 34).WithArguments("Tb")
+                this.CSharpDiagnostic().WithLocation(5, 34).WithArguments("Tb"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);

@@ -122,7 +122,7 @@ class ClassName
             DiagnosticResult[] expectedDiagnosticResult =
             {
                 this.CSharpDiagnostic().WithLocation(4, 10 + literalType.Length),
-                this.CSharpDiagnostic().WithLocation(8, 17)
+                this.CSharpDiagnostic().WithLocation(8, 17),
             };
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnosticResult, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
@@ -216,7 +216,7 @@ class ClassName
             {
                 this.CSharpCompilerError("CS0221")
                     .WithMessage($"Constant value '{castedLiteral}' cannot be converted to a '{type}' (use 'unchecked' syntax to override)")
-                    .WithLocation(6, 17)
+                    .WithLocation(6, 17),
             };
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnosticResult, CancellationToken.None).ConfigureAwait(false);
         }
@@ -263,7 +263,7 @@ class ClassName
             DiagnosticResult[] expectedDiagnosticResult =
             {
                 this.CSharpDiagnostic().WithLocation(8, 21),
-                this.CSharpDiagnostic().WithLocation(10, 27)
+                this.CSharpDiagnostic().WithLocation(10, 27),
             };
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnosticResult, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);

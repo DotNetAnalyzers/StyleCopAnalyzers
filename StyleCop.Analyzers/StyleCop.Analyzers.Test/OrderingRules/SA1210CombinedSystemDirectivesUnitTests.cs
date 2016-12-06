@@ -73,7 +73,7 @@ namespace Bar
             {
                 this.CSharpDiagnostic().WithLocation(3, 5),
                 this.CSharpDiagnostic().WithLocation(9, 5),
-                this.CSharpDiagnostic().WithLocation(11, 5)
+                this.CSharpDiagnostic().WithLocation(11, 5),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -153,7 +153,7 @@ namespace Food
                 this.CSharpDiagnostic().WithLocation(1, 1),
                 this.CSharpDiagnostic().WithLocation(3, 1),
                 this.CSharpDiagnostic().WithLocation(4, 1),
-                this.CSharpDiagnostic().WithLocation(5, 1)
+                this.CSharpDiagnostic().WithLocation(5, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

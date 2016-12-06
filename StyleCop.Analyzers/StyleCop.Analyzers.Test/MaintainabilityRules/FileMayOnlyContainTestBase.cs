@@ -45,7 +45,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 ",
                 @"%1 Bar
 {
-}"
+}",
             };
 
             testCode = testCode.Replace("%1", this.Keyword);
@@ -87,7 +87,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 ",
                 @"%1 FooBar
 {
-}"
+}",
             };
 
             testCode = testCode.Replace("%1", this.Keyword);
@@ -96,7 +96,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(4, this.Keyword.Length + 2),
-                this.CSharpDiagnostic().WithLocation(7, this.Keyword.Length + 2)
+                this.CSharpDiagnostic().WithLocation(7, this.Keyword.Length + 2),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -130,7 +130,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
 #pragma warning disable SomeWarning
 #pragma warning restore SomeWarning
-}"
+}",
             };
 
             testCode = testCode.Replace("%1", this.Keyword);
@@ -168,7 +168,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 @"%1 Bar
 {
 #pragma warning disable SomeWarning
-}"
+}",
             };
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, this.Keyword.Length + 2);
@@ -208,7 +208,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
 #if true
 #endif
-}"
+}",
             };
 
             testCode = testCode.Replace("%1", this.Keyword);
@@ -252,7 +252,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 %1 Bar
 {
 #endif
-}"
+}",
             };
 
             testCode = testCode.Replace("%1", this.Keyword);

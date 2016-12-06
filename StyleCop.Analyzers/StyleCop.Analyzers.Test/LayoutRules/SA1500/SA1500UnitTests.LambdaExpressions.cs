@@ -275,7 +275,7 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(58, 29),
 
                 // Invalid lambda expression #12
-                this.CSharpDiagnostic().WithLocation(62, 9)
+                this.CSharpDiagnostic().WithLocation(62, 9),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

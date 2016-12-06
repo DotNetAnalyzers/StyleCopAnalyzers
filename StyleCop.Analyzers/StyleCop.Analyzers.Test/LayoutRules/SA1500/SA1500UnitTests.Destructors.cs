@@ -202,7 +202,7 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(39, 29),
 
                 // Invalid destructor #6
-                this.CSharpDiagnostic().WithLocation(46, 9)
+                this.CSharpDiagnostic().WithLocation(46, 9),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

@@ -217,7 +217,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
                 this.CSharpDiagnostic().WithLocation(27, 20),
 
                 // Invalid if #6
-                this.CSharpDiagnostic().WithLocation(31, 9)
+                this.CSharpDiagnostic().WithLocation(31, 9),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -365,7 +365,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
                 this.CSharpDiagnostic().WithLocation(42, 20),
 
                 // Invalid if ... else #6
-                this.CSharpDiagnostic().WithLocation(49, 9)
+                this.CSharpDiagnostic().WithLocation(49, 9),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

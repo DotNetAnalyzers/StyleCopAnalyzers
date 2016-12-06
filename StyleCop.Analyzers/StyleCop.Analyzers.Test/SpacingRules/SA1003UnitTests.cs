@@ -180,13 +180,13 @@ v1;
                 this.CSharpDiagnostic(DescriptorNotAtEndOfLine).WithLocation(22, 26).WithArguments("++"),
                 this.CSharpDiagnostic(DescriptorNotAtEndOfLine).WithLocation(27, 26).WithArguments("--"),
                 this.CSharpDiagnostic(DescriptorNotAtEndOfLine).WithLocation(33, 15).WithArguments("++"),
-                this.CSharpDiagnostic(DescriptorNotAtEndOfLine).WithLocation(39, 15).WithArguments("--")
+                this.CSharpDiagnostic(DescriptorNotAtEndOfLine).WithLocation(39, 15).WithArguments("--"),
             };
 
             DiagnosticResult[] fixedExpected =
             {
                 this.CSharpDiagnostic(DescriptorNotFollowedByComment).WithLocation(12, 18).WithArguments("~"),
-                this.CSharpDiagnostic(DescriptorNotFollowedByComment).WithLocation(14, 18).WithArguments("~")
+                this.CSharpDiagnostic(DescriptorNotFollowedByComment).WithLocation(14, 18).WithArguments("~"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -398,7 +398,7 @@ public class Foo
                 this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(18, 22).WithArguments(":"),
                 this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(18, 22).WithArguments(":"),
 
-                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(20, 27).WithArguments(":")
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(20, 27).WithArguments(":"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -475,7 +475,7 @@ public class Foo
                 this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(3, 31).WithArguments(":"),
                 this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(8, 32).WithArguments(":"),
                 this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(13, 31).WithArguments(":"),
-                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(13, 31).WithArguments(":")
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(13, 31).WithArguments(":"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -590,12 +590,12 @@ public class Foo : Exception
                 this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(13, 28).WithArguments(":"),
                 this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(18, 9).WithArguments(":"),
                 this.CSharpDiagnostic(DescriptorNotAtEndOfLine).WithLocation(22, 27).WithArguments(":"),
-                this.CSharpDiagnostic(DescriptorNotAtEndOfLine).WithLocation(27, 29).WithArguments(":")
+                this.CSharpDiagnostic(DescriptorNotAtEndOfLine).WithLocation(27, 29).WithArguments(":"),
             };
 
             DiagnosticResult[] fixedExpected =
             {
-                this.CSharpDiagnostic(DescriptorNotAtEndOfLine).WithLocation(26, 29).WithArguments(":")
+                this.CSharpDiagnostic(DescriptorNotAtEndOfLine).WithLocation(26, 29).WithArguments(":"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -651,7 +651,7 @@ public class Foo : Exception
                 this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(3, 28).WithArguments("="),
                 this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(5, 29).WithArguments("="),
                 this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(7, 28).WithArguments("="),
-                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(7, 28).WithArguments("=")
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(7, 28).WithArguments("="),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

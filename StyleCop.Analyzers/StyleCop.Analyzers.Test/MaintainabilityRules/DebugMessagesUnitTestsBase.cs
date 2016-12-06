@@ -50,8 +50,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                     Id = "CS0029",
                     Message = "Cannot implicitly convert type 'int' to 'string'",
                     Severity = DiagnosticSeverity.Error,
-                    Spans = new[] { new FileLinePositionSpan("Test0.cs", linePosition, linePosition) }
-                }
+                    Spans = new[] { new FileLinePositionSpan("Test0.cs", linePosition, linePosition) },
+                },
             };
 
             await this.TestConstantMessage_Field_PassAsync("3", expected).ConfigureAwait(false);
@@ -80,8 +80,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                     Id = "CS0029",
                     Message = "Cannot implicitly convert type 'int' to 'string'",
                     Severity = DiagnosticSeverity.Error,
-                    Spans = new[] { new FileLinePositionSpan("Test0.cs", linePosition, linePosition) }
-                }
+                    Spans = new[] { new FileLinePositionSpan("Test0.cs", linePosition, linePosition) },
+                },
             };
 
             await this.TestConstantMessage_Local_PassAsync("3", expected).ConfigureAwait(false);
@@ -110,8 +110,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                     Id = "CS1503",
                     Message = $"Argument {1 + this.InitialArguments.Count()}: cannot convert from 'int' to 'string'",
                     Severity = DiagnosticSeverity.Error,
-                    Spans = new[] { new FileLinePositionSpan("Test0.cs", linePosition, linePosition) }
-                }
+                    Spans = new[] { new FileLinePositionSpan("Test0.cs", linePosition, linePosition) },
+                },
             };
 
             await this.TestConstantMessage_Inline_PassAsync("3", expected).ConfigureAwait(false);
@@ -272,7 +272,7 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(9, 9),
                 this.CSharpDiagnostic().WithLocation(10, 9),
                 this.CSharpDiagnostic().WithLocation(11, 9),
-                this.CSharpDiagnostic().WithLocation(12, 9)
+                this.CSharpDiagnostic().WithLocation(12, 9),
             };
 
             await this.VerifyCSharpDiagnosticAsync(this.BuildTestCode(testCode), expected, CancellationToken.None).ConfigureAwait(false);

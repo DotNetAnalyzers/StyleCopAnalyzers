@@ -1093,7 +1093,7 @@ public class Foo
             DiagnosticResult[] expected =
                 {
                     this.CSharpDiagnostic().WithLocation(6, 1),
-                    this.CSharpDiagnostic().WithLocation(7, 1)
+                    this.CSharpDiagnostic().WithLocation(7, 1),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -1510,7 +1510,7 @@ public class TestClass
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(6, 9),
-                this.CSharpDiagnostic().WithLocation(19, 13)
+                this.CSharpDiagnostic().WithLocation(19, 13),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

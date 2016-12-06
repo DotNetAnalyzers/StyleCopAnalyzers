@@ -137,7 +137,7 @@ $$
                 this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1621Descriptor).WithLocation(10, 8),
                 this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1621Descriptor).WithLocation(11, 8),
                 this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1621Descriptor).WithLocation(12, 25),
-                this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1621Descriptor).WithLocation(13, 25)
+                this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1621Descriptor).WithLocation(13, 25),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
@@ -162,7 +162,7 @@ public $$";
                 this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1621Descriptor).WithLocation(5, 4),
                 this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1621Descriptor).WithLocation(6, 4),
                 this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1621Descriptor).WithLocation(7, 21),
-                this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1621Descriptor).WithLocation(8, 21)
+                this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1621Descriptor).WithLocation(8, 21),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);

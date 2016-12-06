@@ -52,14 +52,14 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             yield return new object[]
             {
                 $@"public Foo(
-    int a, int b, string s) {{ }}"
+    int a, int b, string s) {{ }}",
             };
             yield return new object[]
             {
                 $@"public Foo(
     int a,
     int b,
-    string s) {{ }}"
+    string s) {{ }}",
             };
         }
 

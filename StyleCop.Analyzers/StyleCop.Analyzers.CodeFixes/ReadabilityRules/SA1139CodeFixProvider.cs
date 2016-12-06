@@ -32,7 +32,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 { SyntaxKind.UIntKeyword, "U" },
                 { SyntaxKind.FloatKeyword, "F" },
                 { SyntaxKind.DoubleKeyword, "D" },
-                { SyntaxKind.DecimalKeyword, "M" }
+                { SyntaxKind.DecimalKeyword, "M" },
             };
 
         private static readonly char[] LettersAllowedInLiteralSuffix = LiteralSyntaxKindToSuffix.Values

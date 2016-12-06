@@ -241,7 +241,7 @@ public class ClassName
             var expected = new[]
             {
                 this.CSharpDiagnostic().WithLocation(10, 30).WithArguments("Ta"),
-                this.CSharpDiagnostic().WithLocation(10, 34).WithArguments("Tb")
+                this.CSharpDiagnostic().WithLocation(10, 34).WithArguments("Tb"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);
@@ -260,7 +260,7 @@ public ##";
             var expected = new[]
             {
                 this.CSharpDiagnostic().WithLocation(5, 22).WithArguments("Ta"),
-                this.CSharpDiagnostic().WithLocation(5, 26).WithArguments("Tb")
+                this.CSharpDiagnostic().WithLocation(5, 26).WithArguments("Tb"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);

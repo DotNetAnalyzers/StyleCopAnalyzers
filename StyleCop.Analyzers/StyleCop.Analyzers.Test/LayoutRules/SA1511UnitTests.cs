@@ -223,7 +223,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
                 this.CSharpDiagnostic().WithLocation(14, 13),
                 this.CSharpDiagnostic().WithLocation(29, 13),
                 this.CSharpDiagnostic().WithLocation(44, 13),
-                this.CSharpDiagnostic().WithLocation(61, 13)
+                this.CSharpDiagnostic().WithLocation(61, 13),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);

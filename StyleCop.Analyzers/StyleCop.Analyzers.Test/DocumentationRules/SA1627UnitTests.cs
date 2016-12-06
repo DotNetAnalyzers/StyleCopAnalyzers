@@ -88,7 +88,7 @@ public class ClassName
             var expectedDiagnostics = new[]
             {
                 this.CSharpDiagnostic().WithLocation(13, 9).WithArguments("example"),
-                this.CSharpDiagnostic().WithLocation(14, 9).WithArguments("exception")
+                this.CSharpDiagnostic().WithLocation(14, 9).WithArguments("exception"),
             };
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
         }

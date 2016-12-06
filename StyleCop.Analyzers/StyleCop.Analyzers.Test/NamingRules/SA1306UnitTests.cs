@@ -205,7 +205,7 @@ string Bar, car, Dar;
             DiagnosticResult[] expected =
                 {
                     this.CSharpDiagnostic().WithArguments("Bar").WithLocation(4, 8),
-                    this.CSharpDiagnostic().WithArguments("Dar").WithLocation(4, 18)
+                    this.CSharpDiagnostic().WithArguments("Dar").WithLocation(4, 18),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), expected, CancellationToken.None).ConfigureAwait(false);
