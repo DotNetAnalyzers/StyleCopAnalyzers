@@ -359,7 +359,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The documentation text within the \&apos;{0}\&apos; tag must not be empty..
+        ///   Looks up a localized string similar to The documentation text within the &apos;{0}&apos; tag must not be empty..
         /// </summary>
         internal static string SA1627MessageFormat {
             get {
