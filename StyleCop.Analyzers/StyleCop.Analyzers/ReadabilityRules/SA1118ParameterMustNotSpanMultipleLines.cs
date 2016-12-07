@@ -78,7 +78,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             SyntaxKind.ParenthesizedLambdaExpression,
             SyntaxKind.SimpleLambdaExpression,
             SyntaxKind.InvocationExpression,
-            SyntaxKind.ObjectCreationExpression
+            SyntaxKind.ObjectCreationExpression,
         };
 
         /// <inheritdoc/>

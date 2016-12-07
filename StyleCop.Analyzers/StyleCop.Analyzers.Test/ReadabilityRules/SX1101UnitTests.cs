@@ -135,7 +135,7 @@ public class TestClass : BaseTestClass
                 this.CSharpDiagnostic().WithLocation(32, 13),
                 this.CSharpDiagnostic().WithLocation(36, 13),
                 this.CSharpDiagnostic().WithLocation(40, 9),
-                this.CSharpDiagnostic().WithLocation(41, 25)
+                this.CSharpDiagnostic().WithLocation(41, 25),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

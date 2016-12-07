@@ -39,7 +39,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 ",
                 @"%1 Bar<T2, T3>
 {
-}"
+}",
             };
 
             testCode = testCode.Replace("%1", this.Keyword);
@@ -89,7 +89,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 ",
                 @"%1 Bar
 {
-}"
+}",
             };
 
             testCode = testCode.Replace("%1", this.Keyword);
@@ -143,7 +143,7 @@ public partial {this.Keyword} Bar
                 $@"public partial {this.Keyword} Bar
 {{
 
-}}"
+}}",
             };
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 17 + this.Keyword.Length);
@@ -171,7 +171,7 @@ public {this.Keyword} Test0
                 $@"public {this.Keyword} Foo
 {{
 }}
-"
+",
             };
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(1, 9 + this.Keyword.Length);

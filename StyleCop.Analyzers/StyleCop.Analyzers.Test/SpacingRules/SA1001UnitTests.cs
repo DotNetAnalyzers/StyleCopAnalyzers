@@ -172,7 +172,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 17),
-                this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 17)
+                this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 17),
             };
 
             await this.TestCommaInStatementOrDeclAsync(spaceOnlyBeforeComma, expected, spaceOnlyAfterComma).ConfigureAwait(false);

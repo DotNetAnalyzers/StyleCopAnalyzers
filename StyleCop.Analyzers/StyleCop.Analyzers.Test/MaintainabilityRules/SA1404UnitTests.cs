@@ -348,8 +348,8 @@ public class Foo
                     Id = "CS0029",
                     Message = "Cannot implicitly convert type 'int' to 'string'",
                     Severity = DiagnosticSeverity.Error,
-                    Spans = new[] { new FileLinePositionSpan("Test0.cs", expectedLinePosition, expectedLinePosition) }
-                }
+                    Spans = new[] { new FileLinePositionSpan("Test0.cs", expectedLinePosition, expectedLinePosition) },
+                },
             };
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }

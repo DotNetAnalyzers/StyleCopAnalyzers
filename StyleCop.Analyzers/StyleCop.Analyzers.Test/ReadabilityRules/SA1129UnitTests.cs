@@ -180,7 +180,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(5, 27),
-                this.CSharpDiagnostic().WithLocation(9, 13)
+                this.CSharpDiagnostic().WithLocation(9, 13),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -229,7 +229,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(6, 16)
+                this.CSharpDiagnostic().WithLocation(6, 16),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

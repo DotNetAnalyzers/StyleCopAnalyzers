@@ -88,7 +88,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
                 this.CSharpDiagnostic().WithLocation(3, 12).WithArguments("field", "baR"),
                 this.CSharpDiagnostic().WithLocation(3, 17).WithArguments("field", "caRe"),
                 this.CSharpDiagnostic().WithLocation(3, 23).WithArguments("field", "daRE"),
-                this.CSharpDiagnostic().WithLocation(3, 29).WithArguments("field", "fAre")
+                this.CSharpDiagnostic().WithLocation(3, 29).WithArguments("field", "fAre"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -111,7 +111,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
                 this.CSharpDiagnostic().WithLocation(5, 16).WithArguments("variable", "baR"),
                 this.CSharpDiagnostic().WithLocation(5, 21).WithArguments("variable", "caRe"),
                 this.CSharpDiagnostic().WithLocation(5, 27).WithArguments("variable", "daRE"),
-                this.CSharpDiagnostic().WithLocation(5, 33).WithArguments("variable", "fAre")
+                this.CSharpDiagnostic().WithLocation(5, 33).WithArguments("variable", "fAre"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

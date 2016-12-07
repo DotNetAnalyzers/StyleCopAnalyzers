@@ -127,7 +127,7 @@ namespace Bar
             DiagnosticResult[] expectedDiagnostics =
             {
                 this.CSharpDiagnostic().WithLocation(5, 5).WithArguments("System.Math", "System.Array"),
-                this.CSharpDiagnostic().WithLocation(11, 5).WithArguments("System.Math", "System.Array")
+                this.CSharpDiagnostic().WithLocation(11, 5).WithArguments("System.Math", "System.Array"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

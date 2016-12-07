@@ -295,7 +295,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 
                 // Invalid do ... while #14
                 this.CSharpDiagnostic().WithLocation(75, 12),
-                this.CSharpDiagnostic().WithLocation(76, 9)
+                this.CSharpDiagnostic().WithLocation(76, 9),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

@@ -223,7 +223,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(3, 9),
-                this.CSharpDiagnostic().WithLocation(4, 18)
+                this.CSharpDiagnostic().WithLocation(4, 18),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

@@ -63,7 +63,7 @@ using System.Threading;
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(1, 1),
-                this.CSharpDiagnostic().WithLocation(2, 1)
+                this.CSharpDiagnostic().WithLocation(2, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -106,7 +106,7 @@ namespace Bar
             {
                 this.CSharpDiagnostic().WithLocation(3, 5),
                 this.CSharpDiagnostic().WithLocation(9, 5),
-                this.CSharpDiagnostic().WithLocation(11, 5)
+                this.CSharpDiagnostic().WithLocation(11, 5),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -211,7 +211,7 @@ namespace Foo
             {
                 this.CSharpDiagnostic().WithLocation(5, 1),
                 this.CSharpDiagnostic().WithLocation(6, 1),
-                this.CSharpDiagnostic().WithLocation(7, 1)
+                this.CSharpDiagnostic().WithLocation(7, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

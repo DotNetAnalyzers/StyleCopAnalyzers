@@ -86,7 +86,7 @@ public class TypeName
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithArguments("Bar").WithLocation(5, 16),
-                this.CSharpDiagnostic().WithArguments("Par").WithLocation(7, 16)
+                this.CSharpDiagnostic().WithArguments("Par").WithLocation(7, 16),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -119,7 +119,7 @@ public class TypeName
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithArguments("Bar").WithLocation(5, 16),
-                this.CSharpDiagnostic().WithArguments("Par").WithLocation(5, 26)
+                this.CSharpDiagnostic().WithArguments("Par").WithLocation(5, 26),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -551,7 +551,7 @@ public class TypeName
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithArguments("_").WithLocation(5, 16),
-                this.CSharpDiagnostic().WithArguments("__").WithLocation(6, 16)
+                this.CSharpDiagnostic().WithArguments("__").WithLocation(6, 16),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

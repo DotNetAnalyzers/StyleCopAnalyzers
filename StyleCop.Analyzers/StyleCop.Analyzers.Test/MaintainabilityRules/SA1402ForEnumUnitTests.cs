@@ -48,7 +48,7 @@ enum Bar
 {
     D, E
 }
-"
+",
             };
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 6);
@@ -127,13 +127,13 @@ enum FooBar
 {
     F, G, H
 }
-"
+",
             };
 
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(5, 6),
-                this.CSharpDiagnostic().WithLocation(9, 6)
+                this.CSharpDiagnostic().WithLocation(9, 6),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -165,7 +165,7 @@ enum Test0
 {
     A, B, C
 }
-"
+",
             };
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(1, 6);

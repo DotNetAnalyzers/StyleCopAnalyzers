@@ -60,7 +60,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>()
             {
                 [precedingToken] = precedingToken.WithTrailingTrivia(SyntaxFactory.CarriageReturnLineFeed),
-                [token] = token.WithLeadingTrivia(indentationTrivia)
+                [token] = token.WithLeadingTrivia(indentationTrivia),
             };
 
             var newSyntaxRoot = syntaxRoot.ReplaceTokens(replaceMap.Keys, (t1, t2) => replaceMap[t1]).WithoutFormatting();

@@ -155,7 +155,7 @@ namespace Foot
                 this.CSharpDiagnostic().WithLocation(37, 1),
                 this.CSharpDiagnostic().WithLocation(42, 1),
                 this.CSharpDiagnostic().WithLocation(45, 1),
-                this.CSharpDiagnostic().WithLocation(46, 1)
+                this.CSharpDiagnostic().WithLocation(46, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -217,7 +217,7 @@ namespace Foo
             {
                 this.CSharpDiagnostic().WithLocation(8, 1),
                 this.CSharpDiagnostic().WithLocation(12, 1),
-                this.CSharpDiagnostic().WithLocation(16, 1)
+                this.CSharpDiagnostic().WithLocation(16, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -328,7 +328,7 @@ public class Foo
             var expected = new[]
             {
                 this.CSharpDiagnostic().WithLocation(11, 1),
-                this.CSharpDiagnostic().WithLocation(23, 1)
+                this.CSharpDiagnostic().WithLocation(23, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -380,7 +380,7 @@ public class Foo
 }";
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(7, 1)
+                this.CSharpDiagnostic().WithLocation(7, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -447,7 +447,7 @@ public class Foo
 }";
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(8, 1)
+                this.CSharpDiagnostic().WithLocation(8, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -470,7 +470,7 @@ public class Foo
 }";
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(8, 1)
+                this.CSharpDiagnostic().WithLocation(8, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -494,7 +494,7 @@ public class Foo
 }";
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(11, 1)
+                this.CSharpDiagnostic().WithLocation(11, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -517,7 +517,7 @@ public class Foo
 }";
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(10, 1)
+                this.CSharpDiagnostic().WithLocation(10, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

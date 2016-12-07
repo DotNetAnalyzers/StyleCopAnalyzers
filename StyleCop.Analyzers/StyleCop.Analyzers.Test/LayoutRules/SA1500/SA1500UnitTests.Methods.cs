@@ -151,7 +151,7 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(25, 25),
 
                 // Invalid method #6
-                this.CSharpDiagnostic().WithLocation(29, 5)
+                this.CSharpDiagnostic().WithLocation(29, 5),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

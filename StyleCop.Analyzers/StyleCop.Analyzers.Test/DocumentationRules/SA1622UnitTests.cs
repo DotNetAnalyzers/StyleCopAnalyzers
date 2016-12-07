@@ -135,7 +135,7 @@ $$
             var expected = new[]
             {
                 this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(10, 8),
-                this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(11, 8)
+                this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(11, 8),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
@@ -158,7 +158,7 @@ public $$";
             var expected = new[]
             {
                 this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(5, 4),
-                this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(6, 4)
+                this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(6, 4),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
@@ -189,7 +189,7 @@ $$
             var expected = new[]
             {
                 this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(10, 8),
-                this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(11, 8)
+                this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(11, 8),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
@@ -213,7 +213,7 @@ public $$";
             var expected = new[]
             {
                 this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(5, 4),
-                this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(6, 4)
+                this.CSharpDiagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(6, 4),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);

@@ -116,7 +116,7 @@ public static class TestClass2 { }
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(2, 21)
+                this.CSharpDiagnostic().WithLocation(2, 21),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -152,7 +152,7 @@ public class TestClass1 { }
             {
                 this.CSharpDiagnostic().WithLocation(4, 23),
                 this.CSharpDiagnostic().WithLocation(6, 23),
-                this.CSharpDiagnostic().WithLocation(8, 24)
+                this.CSharpDiagnostic().WithLocation(8, 24),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -196,7 +196,7 @@ public class TestClass1 { }
             {
                 this.CSharpDiagnostic().WithLocation(4, 23),
                 this.CSharpDiagnostic().WithLocation(6, 23),
-                this.CSharpDiagnostic().WithLocation(8, 24)
+                this.CSharpDiagnostic().WithLocation(8, 24),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -235,7 +235,7 @@ public class TestClass1 { }
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(5, 5)
+                this.CSharpDiagnostic().WithLocation(5, 5),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

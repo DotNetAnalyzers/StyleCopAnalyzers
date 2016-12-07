@@ -117,7 +117,7 @@ namespace Foo
             DiagnosticResult[] expectedDiagnostic =
             {
                 this.CSharpDiagnostic().WithLocation(6, 9),
-                this.CSharpDiagnostic().WithLocation(12, 9)
+                this.CSharpDiagnostic().WithLocation(12, 9),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);

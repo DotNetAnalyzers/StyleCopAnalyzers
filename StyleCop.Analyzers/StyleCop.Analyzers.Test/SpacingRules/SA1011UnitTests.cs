@@ -101,7 +101,7 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(12, 27).WithArguments(" not",  "preceded"),
                 this.CSharpDiagnostic().WithLocation(13, 4).WithArguments(" not",  "preceded"),
                 this.CSharpDiagnostic().WithLocation(15, 27).WithArguments(" not",  "preceded"),
-                this.CSharpDiagnostic().WithLocation(15, 31).WithArguments(" not",  "preceded")
+                this.CSharpDiagnostic().WithLocation(15, 31).WithArguments(" not",  "preceded"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -216,7 +216,7 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(5, 16).WithArguments(string.Empty, "followed"),
                 this.CSharpDiagnostic().WithLocation(5, 32).WithArguments(string.Empty, "followed"),
                 this.CSharpDiagnostic().WithLocation(7, 13).WithArguments(string.Empty, "followed"),
-                this.CSharpDiagnostic().WithLocation(7, 30).WithArguments(string.Empty, "followed")
+                this.CSharpDiagnostic().WithLocation(7, 30).WithArguments(string.Empty, "followed"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

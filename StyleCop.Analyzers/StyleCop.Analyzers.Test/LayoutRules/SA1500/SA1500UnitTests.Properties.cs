@@ -408,7 +408,7 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(104, 45),
 
                 // Invalid property #14
-                this.CSharpDiagnostic().WithLocation(111, 45)
+                this.CSharpDiagnostic().WithLocation(111, 45),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -454,7 +454,7 @@ public class TestClass
             {
                 this.CSharpDiagnostic().WithLocation(6, 13),
                 this.CSharpDiagnostic().WithLocation(8, 43),
-                this.CSharpDiagnostic().WithLocation(8, 45)
+                this.CSharpDiagnostic().WithLocation(8, 45),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
