@@ -497,13 +497,13 @@ class TestClass
         {
             var testCode = @"enum TestEnum
 {
-    One = 2
+    One = 2 /* test comment */
 }
 ";
 
             var fixedTestCode = @"enum TestEnum
 {
-    One = 2,
+    One = 2, /* test comment */
 }
 ";
 

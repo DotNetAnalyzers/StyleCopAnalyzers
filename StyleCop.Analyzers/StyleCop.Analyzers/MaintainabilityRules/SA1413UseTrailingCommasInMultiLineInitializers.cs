@@ -86,8 +86,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 return;
             }
 
-            var commas = initializer.ChildNodesAndTokens().OfType<SyntaxNodeOrToken>().Where(token => token.IsKind(SyntaxKind.CommaToken));
-            if (initializer.Members.Count() != commas.Count())
+            if (initializer.Members.Count() != initializer.Members.SeparatorCount)
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, lastMember.GetLocation()));
             }
