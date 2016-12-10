@@ -548,6 +548,15 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Remove empty line(s).
+        /// </summary>
+        internal static string SA1114SA1115CodeFix {
+            get {
+                return ResourceManager.GetString("SA1114SA1115CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Parameter list must follow declaration.
         /// </summary>
         internal static string SA1114Title {

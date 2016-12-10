@@ -534,4 +534,7 @@
   <data name="SX1101Title" xml:space="preserve">
     <value>Do not prefix local calls with 'this.'</value>
   </data>
+  <data name="SA1114SA1115CodeFix" xml:space="preserve">
+    <value>Remove empty line(s)</value>
+  </data>
 </root>
