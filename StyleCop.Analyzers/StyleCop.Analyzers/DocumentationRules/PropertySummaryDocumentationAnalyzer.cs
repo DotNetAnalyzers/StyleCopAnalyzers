@@ -228,6 +228,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             {
                 if (setterVisible)
                 {
+                    // Both getter and setter are visible.
                     if (!startsWithGetsOrSets)
                     {
                         diagnosticProperties.Add(ExpectedTextKey, startingTextGetsOrSets);
@@ -244,8 +245,9 @@ namespace StyleCop.Analyzers.DocumentationRules
                         context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextGetsOrSets));
                     }
                 }
-                else
+                else if (setter != null)
                 {
+                    // Both getter and setter exist, but only getter is visible.
                     if (startsWithGetsOrSets)
                     {
                         diagnosticProperties.Add(ExpectedTextKey, startingTextGets);
@@ -255,6 +257,25 @@ namespace StyleCop.Analyzers.DocumentationRules
                     else if (!startsWithGets)
                     {
                         diagnosticProperties.Add(ExpectedTextKey, startingTextGets);
+                        context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextGets));
+                    }
+                }
+                else
+                {
+                    // Getter exists and is visible. Setter does not exist.
+                    if (!startsWithGets || startsWithGetsOrSets)
+                    {
+                        diagnosticProperties.Add(ExpectedTextKey, startingTextGets);
+
+                        if (startsWithSets)
+                        {
+                            diagnosticProperties.Add(TextToRemoveKey, text.Substring(0, startingTextSets.Length));
+                        }
+                        else if (startsWithGetsOrSets)
+                        {
+                            diagnosticProperties.Add(TextToRemoveKey, text.Substring(0, startingTextGetsOrSets.Length));
+                        }
+
                         context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextGets));
                     }
                 }
