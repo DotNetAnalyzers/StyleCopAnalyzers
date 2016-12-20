@@ -196,6 +196,8 @@ public class TestClass
         [InlineData("protected", "int", "=> 0;", "Gets or sets", "Gets")] // Regression test for #2253
         [InlineData("protected internal", "int", "=> 0;", "Gets or sets", "Gets")] // Regression test for #2253
         [InlineData("internal", "int", "=> 0;", "Gets or sets", "Gets")] // Regression test for #2253
+        [InlineData("public", "int", "{ set {} }", "Gets", "Sets")] // Regression test for #2253
+        [InlineData("public", "int", "{ set {} }", "Gets or sets", "Sets")] // Regression test for #2253
         public async Task IncorrectSummaryTagWithKnownPrefixShouldBeFixedCorrectlyAsync(string accessibility, string type, string accessors, string summaryPrefix, string expectedArgument)
         {
             var testCode = $@"

@@ -282,16 +282,39 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
             else if (setterVisible)
             {
-                if (startsWithGetsOrSets)
+                if (getter != null)
                 {
-                    diagnosticProperties.Add(ExpectedTextKey, startingTextSets);
-                    diagnosticProperties.Add(TextToRemoveKey, startingTextGetsOrSets);
-                    context.ReportDiagnostic(Diagnostic.Create(SA1624Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), "set", startingTextSets));
+                    // Both getter and setter exist, but only setter is visible
+                    if (startsWithGetsOrSets)
+                    {
+                        diagnosticProperties.Add(ExpectedTextKey, startingTextSets);
+                        diagnosticProperties.Add(TextToRemoveKey, startingTextGetsOrSets);
+                        context.ReportDiagnostic(Diagnostic.Create(SA1624Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), "set", startingTextSets));
+                    }
+                    else if (!startsWithSets)
+                    {
+                        diagnosticProperties.Add(ExpectedTextKey, startingTextSets);
+                        context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextSets));
+                    }
                 }
-                else if (!startsWithSets)
+                else
                 {
-                    diagnosticProperties.Add(ExpectedTextKey, startingTextSets);
-                    context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextSets));
+                    // Setter exists and is visible. Getter does not exist.
+                    if (!startsWithSets)
+                    {
+                        diagnosticProperties.Add(ExpectedTextKey, startingTextSets);
+
+                        if (startsWithGetsOrSets)
+                        {
+                            diagnosticProperties.Add(TextToRemoveKey, text.Substring(0, startingTextGetsOrSets.Length));
+                        }
+                        else if (startsWithGets)
+                        {
+                            diagnosticProperties.Add(TextToRemoveKey, text.Substring(0, startingTextGets.Length));
+                        }
+
+                        context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextSets));
+                    }
                 }
             }
         }
