@@ -231,18 +231,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     // Both getter and setter are visible.
                     if (!prefixIsGetsOrSets)
                     {
-                        diagnosticProperties.Add(ExpectedTextKey, startingTextGetsOrSets);
-
-                        if (prefixIsGets)
-                        {
-                            diagnosticProperties.Add(TextToRemoveKey, text.Substring(0, startingTextGets.Length));
-                        }
-                        else if (prefixIsSets)
-                        {
-                            diagnosticProperties.Add(TextToRemoveKey, text.Substring(0, startingTextSets.Length));
-                        }
-
-                        context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextGetsOrSets));
+                        ReportSa1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextGetsOrSets, unexpectedStartingText1: startingTextGets, unexpectedStartingText2: startingTextSets);
                     }
                 }
                 else if (setter != null)
@@ -252,20 +241,11 @@ namespace StyleCop.Analyzers.DocumentationRules
                     {
                         if (prefixIsGetsOrSets)
                         {
-                            diagnosticProperties.Add(ExpectedTextKey, startingTextGets);
-                            diagnosticProperties.Add(TextToRemoveKey, startingTextGetsOrSets);
-                            context.ReportDiagnostic(Diagnostic.Create(SA1624Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), "get", startingTextGets));
+                            ReportSa1624(context, diagnosticLocation, diagnosticProperties, accessor: "get", expectedStartingText: startingTextGets, startingTextToRemove: startingTextGetsOrSets);
                         }
                         else
                         {
-                            diagnosticProperties.Add(ExpectedTextKey, startingTextGets);
-
-                            if (prefixIsSets)
-                            {
-                                diagnosticProperties.Add(TextToRemoveKey, text.Substring(0, startingTextSets.Length));
-                            }
-
-                            context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextGets));
+                            ReportSa1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextGets, unexpectedStartingText1: startingTextSets);
                         }
                     }
                 }
@@ -274,18 +254,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     // Getter exists and is visible. Setter does not exist.
                     if (!prefixIsGets)
                     {
-                        diagnosticProperties.Add(ExpectedTextKey, startingTextGets);
-
-                        if (prefixIsSets)
-                        {
-                            diagnosticProperties.Add(TextToRemoveKey, text.Substring(0, startingTextSets.Length));
-                        }
-                        else if (prefixIsGetsOrSets)
-                        {
-                            diagnosticProperties.Add(TextToRemoveKey, text.Substring(0, startingTextGetsOrSets.Length));
-                        }
-
-                        context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextGets));
+                        ReportSa1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextGets, unexpectedStartingText1: startingTextSets, unexpectedStartingText2: startingTextGetsOrSets);
                     }
                 }
             }
@@ -298,20 +267,11 @@ namespace StyleCop.Analyzers.DocumentationRules
                     {
                         if (prefixIsGetsOrSets)
                         {
-                            diagnosticProperties.Add(ExpectedTextKey, startingTextSets);
-                            diagnosticProperties.Add(TextToRemoveKey, startingTextGetsOrSets);
-                            context.ReportDiagnostic(Diagnostic.Create(SA1624Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), "set", startingTextSets));
+                            ReportSa1624(context, diagnosticLocation, diagnosticProperties, accessor: "set", expectedStartingText: startingTextSets, startingTextToRemove: startingTextGetsOrSets);
                         }
                         else
                         {
-                            diagnosticProperties.Add(ExpectedTextKey, startingTextSets);
-
-                            if (prefixIsGets)
-                            {
-                                diagnosticProperties.Add(TextToRemoveKey, text.Substring(0, startingTextGets.Length));
-                            }
-
-                            context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextSets));
+                            ReportSa1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextSets, unexpectedStartingText1: startingTextGets);
                         }
                     }
                 }
@@ -320,21 +280,33 @@ namespace StyleCop.Analyzers.DocumentationRules
                     // Setter exists and is visible. Getter does not exist.
                     if (!prefixIsSets)
                     {
-                        diagnosticProperties.Add(ExpectedTextKey, startingTextSets);
-
-                        if (prefixIsGetsOrSets)
-                        {
-                            diagnosticProperties.Add(TextToRemoveKey, text.Substring(0, startingTextGetsOrSets.Length));
-                        }
-                        else if (prefixIsGets)
-                        {
-                            diagnosticProperties.Add(TextToRemoveKey, text.Substring(0, startingTextGets.Length));
-                        }
-
-                        context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextSets));
+                        ReportSa1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextSets, unexpectedStartingText1: startingTextGetsOrSets, unexpectedStartingText2: startingTextGets);
                     }
                 }
             }
+        }
+
+        private static void ReportSa1623(SyntaxNodeAnalysisContext context, Location diagnosticLocation, ImmutableDictionary<string, string>.Builder diagnosticProperties, string text, string expectedStartingText, string unexpectedStartingText1, string unexpectedStartingText2 = null)
+        {
+            diagnosticProperties.Add(ExpectedTextKey, expectedStartingText);
+
+            if (text.StartsWith(unexpectedStartingText1, StringComparison.OrdinalIgnoreCase))
+            {
+                diagnosticProperties.Add(TextToRemoveKey, text.Substring(0, unexpectedStartingText1.Length));
+            }
+            else if ((unexpectedStartingText2 != null) && text.StartsWith(unexpectedStartingText2, StringComparison.OrdinalIgnoreCase))
+            {
+                diagnosticProperties.Add(TextToRemoveKey, text.Substring(0, unexpectedStartingText2.Length));
+            }
+
+            context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), expectedStartingText));
+        }
+
+        private static void ReportSa1624(SyntaxNodeAnalysisContext context, Location diagnosticLocation, ImmutableDictionary<string, string>.Builder diagnosticProperties, string accessor, string expectedStartingText, string startingTextToRemove)
+        {
+            diagnosticProperties.Add(ExpectedTextKey, expectedStartingText);
+            diagnosticProperties.Add(TextToRemoveKey, startingTextToRemove);
+            context.ReportDiagnostic(Diagnostic.Create(SA1624Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), accessor, expectedStartingText));
         }
     }
 }
