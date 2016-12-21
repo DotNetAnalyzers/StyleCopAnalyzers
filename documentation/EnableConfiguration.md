@@ -22,6 +22,8 @@ manually perform the following additional steps after creating the **stylecop.js
 5. Save and close the project file.
 6. Right click the unloaded project in **Solution Explorer** and select **Reload Project**.
 
+Alternatively, you can select the file in Solution Explorer and in the Properties window set the value for **Build Action** to **AdditionalFiles**.
+
 ## Next steps
 
 Additional information about the content of **stylecop.json** is available in [Configuration.md](Configuration.md).
