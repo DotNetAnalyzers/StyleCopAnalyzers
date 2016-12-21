@@ -305,6 +305,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                         else
                         {
                             diagnosticProperties.Add(ExpectedTextKey, startingTextSets);
+
+                            if (prefixIsGets)
+                            {
+                                diagnosticProperties.Add(TextToRemoveKey, text.Substring(0, startingTextGets.Length));
+                            }
+
                             context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextSets));
                         }
                     }
