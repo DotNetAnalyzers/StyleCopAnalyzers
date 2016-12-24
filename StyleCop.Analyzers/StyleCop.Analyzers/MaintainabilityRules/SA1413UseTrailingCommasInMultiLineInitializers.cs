@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.Linq;
     using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -73,6 +74,22 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
             context.RegisterSyntaxNodeAction(HandleObjectInitializerAction, ObjectInitializerKinds);
             context.RegisterSyntaxNodeAction(HandleAnonymousObjectInitializerAction, SyntaxKind.AnonymousObjectCreationExpression);
+            context.RegisterSyntaxNodeAction(HandleEnumMemberDeclarationAction, SyntaxKind.EnumDeclaration);
+        }
+
+        private static void HandleEnumMemberDeclarationAction(SyntaxNodeAnalysisContext context)
+        {
+            var initializer = (EnumDeclarationSyntax)context.Node;
+            var lastMember = initializer.Members.LastOrDefault();
+            if (lastMember == null)
+            {
+                return;
+            }
+
+            if (initializer.Members.Count() != initializer.Members.SeparatorCount)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, lastMember.GetLocation()));
+            }
         }
 
         private static void HandleObjectInitializer(SyntaxNodeAnalysisContext context)
