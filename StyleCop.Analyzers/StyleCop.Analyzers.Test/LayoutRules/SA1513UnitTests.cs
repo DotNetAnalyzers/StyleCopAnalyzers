@@ -826,6 +826,93 @@ public class TestClass
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that setters with an accessibility restriction should not report a warning.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestSetterWithAccessibilityRestrictionAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public int TestProtected
+    {
+        get
+        {
+            return 1;
+        }
+        protected set
+        {
+        }
+    }
+
+    public int TestInternal
+    {
+        get
+        {
+            return 1;
+        }
+        internal set
+        {
+        }
+    }
+
+    public int TestPrivate
+    {
+        get
+        {
+            return 1;
+        }
+        private set
+        {
+        }
+    }
+
+    public int this[int i]
+    {
+        get
+        {
+            return 1;
+        }
+        protected set
+        {
+        }
+    }
+}
+
+public class TestClass2
+{
+    public int this[int i]
+    {
+        get
+        {
+            return 1;
+        }
+        internal set
+        {
+        }
+    }
+}
+
+public class TestClass3
+{
+    public int this[int i]
+    {
+        get
+        {
+            return 1;
+        }
+        private set
+        {
+        }
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {

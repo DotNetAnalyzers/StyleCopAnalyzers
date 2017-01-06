@@ -277,6 +277,15 @@ namespace StyleCop.Analyzers.LayoutRules
                         return;
                     }
 
+                    if ((nextToken.IsKind(SyntaxKind.PrivateKeyword)
+                        || nextToken.IsKind(SyntaxKind.ProtectedKeyword)
+                        || nextToken.IsKind(SyntaxKind.InternalKeyword))
+                        && (nextToken.Parent is AccessorDeclarationSyntax))
+                    {
+                        // the close brace is followed by an accessor with an accessibility restriction.
+                        return;
+                    }
+
                     var parenthesizedExpressionSyntax = nextToken.Parent as ParenthesizedExpressionSyntax;
                     if (parenthesizedExpressionSyntax?.CloseParenToken == nextToken)
                     {
