@@ -336,6 +336,31 @@ namespace System
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        // This is a regression test for issue 2284.
+        [Theory]
+        [InlineData("@Nullable<int>", "int?")]
+        [InlineData("System.@Nullable<int>", "int?")]
+        [InlineData("global::System.@Nullable<int>", "int?")]
+        public async Task TestNullableFieldWithAtSignPrefixInTypeAsync(string longForm, string shortForm)
+        {
+            string template = @"
+namespace System
+{{
+    class ClassName<T>
+        where T : struct
+    {{
+        {0} nullableField;
+    }}
+}}
+";
+            string testCode = string.Format(template, longForm);
+            string fixedCode = string.Format(template, shortForm);
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 9);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1125UseShorthandForNullableTypes();

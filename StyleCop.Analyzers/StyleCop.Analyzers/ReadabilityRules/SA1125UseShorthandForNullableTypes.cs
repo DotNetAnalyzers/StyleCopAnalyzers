@@ -53,7 +53,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             GenericNameSyntax genericNameSyntax = (GenericNameSyntax)context.Node;
 
-            if (genericNameSyntax.Identifier.IsMissing || genericNameSyntax.Identifier.Text != "Nullable")
+            if (genericNameSyntax.Identifier.IsMissing || genericNameSyntax.Identifier.ValueText != "Nullable")
             {
                 return;
             }
