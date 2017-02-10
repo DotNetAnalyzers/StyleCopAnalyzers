@@ -6,7 +6,9 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Globalization;
     using System.Linq;
+    using System.Resources;
     using System.Xml.Linq;
     using Helpers;
     using Helpers.ObjectPools;
@@ -67,7 +69,6 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1625";
-        private const string ParameterNotUsed = "The parameter is not used.";
         private const string Title = "Element documentation must not be copied and pasted";
         private const string MessageFormat = "Element documentation must not be copied and pasted";
         private const string Description = "The Xml documentation for a C# element contains two or more identical entries, indicating that the documentation has been copied and pasted. This can sometimes indicate invalid or poorly written documentation.";
@@ -90,12 +91,15 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var objectPool = SharedPools.Default<HashSet<string>>();
             HashSet<string> documentationTexts = objectPool.Allocate();
+            var settings = context.Options.GetStyleCopSettings(context.CancellationToken);
+            var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
+            var resourceManager = DocumentationResources.ResourceManager;
 
             foreach (var documentationSyntax in syntaxList)
             {
                 var documentation = XmlCommentHelper.GetText(documentationSyntax, true)?.Trim();
 
-                if (ShouldSkipElement(documentation))
+                if (ShouldSkipElement(documentation, resourceManager.GetString(nameof(DocumentationResources.ParameterNotUsed), culture)))
                 {
                     continue;
                 }
@@ -119,6 +123,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var objectPool = SharedPools.Default<HashSet<string>>();
             HashSet<string> documentationTexts = objectPool.Allocate();
+            var settings = context.Options.GetStyleCopSettings(context.CancellationToken);
+            var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
+            var resourceManager = DocumentationResources.ResourceManager;
 
             // Concatenate all XML node values
             var documentationElements = completeDocumentation.Nodes()
@@ -140,7 +147,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             foreach (var documentation in documentationElements)
             {
-                if (ShouldSkipElement(documentation))
+                if (ShouldSkipElement(documentation, resourceManager.GetString(nameof(DocumentationResources.ParameterNotUsed), culture)))
                 {
                     continue;
                 }
@@ -159,9 +166,9 @@ namespace StyleCop.Analyzers.DocumentationRules
             objectPool.ClearAndFree(documentationTexts);
         }
 
-        private static bool ShouldSkipElement(string element)
+        private static bool ShouldSkipElement(string element, string parameterNotUsed)
         {
-            return string.IsNullOrWhiteSpace(element) || string.Equals(element, ParameterNotUsed, StringComparison.Ordinal);
+            return string.IsNullOrWhiteSpace(element) || string.Equals(element, parameterNotUsed, StringComparison.Ordinal);
         }
     }
 }

@@ -102,6 +102,7 @@
     <Compile Include="NamingRules\SA1308CodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1309CodeFixProvider.cs" />
     <Compile Include="NamingRules\SA1310CodeFixProvider.cs" />
+    <Compile Include="NamingRules\SA1314CodeFixProvider.cs" />
     <Compile Include="NamingRules\SX1309CodeFixProvider.cs" />
     <Compile Include="OrderingRules\ElementOrderCodeFixProvider.cs" />
     <Compile Include="OrderingRules\SA1205CodeFixProvider.cs" />
@@ -109,7 +110,11 @@
     <Compile Include="OrderingRules\SA1207CodeFixProvider.cs" />
     <Compile Include="OrderingRules\SA1212SA1213CodeFixProvider.cs" />
     <Compile Include="OrderingRules\UsingCodeFixProvider.cs" />
+    <Compile Include="OrderingRules\UsingCodeFixProvider.SourceMap.cs" />
+    <Compile Include="OrderingRules\UsingCodeFixProvider.TreeTextSpan.cs" />
+    <Compile Include="OrderingRules\UsingCodeFixProvider.UsingsSorter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReadabilityRules\IndentationCodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\RemoveRegionCodeFixProvider.cs" />
     <Compile Include="ReadabilityRules\RemoveRegionFixAllProvider.cs" />
     <Compile Include="ReadabilityRules\SA1100CodeFixProvider.cs" />
@@ -219,9 +224,9 @@
     <Analyzer Include="..\..\packages\AsyncUsageAnalyzers.1.0.0-alpha003\analyzers\dotnet\AsyncUsageAnalyzers.dll" />
     <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
-    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\Newtonsoft.Json.dll" />
-    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
-    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.1.0-beta001\analyzers\dotnet\cs\Newtonsoft.Json.dll" />
+    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.1.0-beta001\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
+    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.1.0-beta001\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\StyleCop.Analyzers\StyleCop.Analyzers.csproj">

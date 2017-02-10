@@ -292,7 +292,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             var expected = new[]
             {
                 this.CSharpDiagnostic().WithLocation(5, 9),
-                this.CSharpDiagnostic().WithLocation(7, 9)
+                this.CSharpDiagnostic().WithLocation(7, 9),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

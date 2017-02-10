@@ -48,7 +48,7 @@ public class Foo
                     {
                         invalidAndFixedAccessModifier.Item1 + " " + declarationWithoutAccessModifier,
                         invalidAndFixedAccessModifier.Item2,
-                        invalidAndFixedAccessModifier.Item3 + " " + declarationWithoutAccessModifier
+                        invalidAndFixedAccessModifier.Item3 + " " + declarationWithoutAccessModifier,
                     };
             }
         }

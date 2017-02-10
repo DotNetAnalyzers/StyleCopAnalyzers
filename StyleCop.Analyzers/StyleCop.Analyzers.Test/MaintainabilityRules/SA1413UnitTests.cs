@@ -425,6 +425,98 @@ class TestClass
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that the last value of an empty enum does not produce a diagnostic.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyEmptyEnumAsync()
+        {
+            var testCode = @"enum EmptyEnum
+{
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the last value of an enum with a trailing comma does not produce a diagnostic.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyEnumWithTrailingCommaAsync()
+        {
+            var testCode = @"enum TestEnum
+{
+    One,
+    Two,
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the last value of an enum without a trailing comma produces a diagnostic.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyEnumWithoutTrailingCommaAsync()
+        {
+            var testCode = @"enum TestEnum
+{
+    One,
+    Two
+}
+";
+
+            var fixedTestCode = @"enum TestEnum
+{
+    One,
+    Two,
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(4, 5),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the last value of an enum without a trailing comma produces a diagnostic.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyEnumWithValueWithoutTrailingCommaAsync()
+        {
+            var testCode = @"enum TestEnum
+{
+    One = 2 /* test comment */
+}
+";
+
+            var fixedTestCode = @"enum TestEnum
+{
+    One = 2, /* test comment */
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(3, 5),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {

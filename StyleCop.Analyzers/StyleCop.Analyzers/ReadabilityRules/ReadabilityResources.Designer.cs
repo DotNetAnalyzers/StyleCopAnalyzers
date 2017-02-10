@@ -62,6 +62,15 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fix indentation.
+        /// </summary>
+        internal static string IndentationCodeFix {
+            get {
+                return ResourceManager.GetString("IndentationCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove region.
         /// </summary>
         internal static string RemoveRegionCodeFix {
@@ -1201,6 +1210,33 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         internal static string SA1136Title {
             get {
                 return ResourceManager.GetString("SA1136Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Elements at the same level in the syntax tree should have the same indentation..
+        /// </summary>
+        internal static string SA1137Description {
+            get {
+                return ResourceManager.GetString("SA1137Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Elements should have the same indentation.
+        /// </summary>
+        internal static string SA1137MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1137MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Elements should have the same indentation.
+        /// </summary>
+        internal static string SA1137Title {
+            get {
+                return ResourceManager.GetString("SA1137Title", resourceCulture);
             }
         }
         

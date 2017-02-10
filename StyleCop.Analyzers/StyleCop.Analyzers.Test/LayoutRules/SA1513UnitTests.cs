@@ -534,7 +534,7 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(73, 14),
 
                 // Invalid #8
-                this.CSharpDiagnostic().WithLocation(87, 18)
+                this.CSharpDiagnostic().WithLocation(87, 18),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

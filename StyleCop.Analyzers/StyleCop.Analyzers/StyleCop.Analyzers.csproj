@@ -59,6 +59,7 @@
     <Compile Include="DocumentationRules\ElementDocumentationBase.cs" />
     <Compile Include="DocumentationRules\ElementDocumentationSummaryBase.cs" />
     <Compile Include="DocumentationRules\FileHeaderAnalyzers.cs" />
+    <Compile Include="DocumentationRules\GenericTypeParameterDocumentationAnalyzer.cs" />
     <Compile Include="DocumentationRules\PartialElementDocumentationSummaryBase.cs" />
     <Compile Include="DocumentationRules\PropertyDocumentationBase.cs" />
     <Compile Include="DocumentationRules\PropertySummaryDocumentationAnalyzer.cs" />
@@ -82,9 +83,6 @@
     <Compile Include="DocumentationRules\SA1617VoidReturnValueMustNotBeDocumented.cs" />
     <Compile Include="DocumentationRules\SA1618GenericTypeParametersMustBeDocumented.cs" />
     <Compile Include="DocumentationRules\SA1619GenericTypeParametersMustBeDocumentedPartialClass.cs" />
-    <Compile Include="DocumentationRules\SA1620GenericTypeParameterDocumentationMustMatchTypeParameters.cs" />
-    <Compile Include="DocumentationRules\SA1621GenericTypeParameterDocumentationMustDeclareParameterName.cs" />
-    <Compile Include="DocumentationRules\SA1622GenericTypeParameterDocumentationMustHaveText.cs" />
     <Compile Include="DocumentationRules\SA1625ElementDocumentationMustNotBeCopiedAndPasted.cs" />
     <Compile Include="DocumentationRules\SA1626SingleLineCommentsMustNotUseDocumentationStyleSlashes.cs" />
     <Compile Include="DocumentationRules\SA1627DocumentationTextMustNotBeEmpty.cs" />
@@ -137,9 +135,11 @@
     <Compile Include="Helpers\TokenHelper.cs" />
     <Compile Include="Helpers\TriviaHelper.cs" />
     <Compile Include="Helpers\UsingDirectiveSyntaxHelpers.cs" />
+    <Compile Include="Helpers\UsingGroup.cs" />
     <Compile Include="Helpers\XmlCommentHelper.cs" />
     <Compile Include="Helpers\XmlFileHeader.cs" />
     <Compile Include="Helpers\XmlSyntaxFactory.cs" />
+    <Compile Include="Helpers\XPathExtensions.cs" />
     <Compile Include="LayoutRules\LayoutResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -175,7 +175,7 @@
     <Compile Include="MaintainabilityRules\SA1119StatementMustNotUseUnnecessaryParenthesis.cs" />
     <Compile Include="MaintainabilityRules\SA1400AccessModifierMustBeDeclared.cs" />
     <Compile Include="MaintainabilityRules\SA1401FieldsMustBePrivate.cs" />
-    <Compile Include="MaintainabilityRules\SA1402FileMayOnlyContainASingleClass.cs" />
+    <Compile Include="MaintainabilityRules\SA1402FileMayOnlyContainASingleType.cs" />
     <Compile Include="MaintainabilityRules\SA1403FileMayOnlyContainASingleNamespace.cs" />
     <Compile Include="MaintainabilityRules\SA1404CodeAnalysisSuppressionMustHaveJustification.cs" />
     <Compile Include="MaintainabilityRules\SA1405DebugAssertMustProvideMessageText.cs" />
@@ -207,6 +207,7 @@
     <Compile Include="NamingRules\SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter.cs" />
     <Compile Include="NamingRules\SA1312VariableNamesMustBeginWithLowerCaseLetter.cs" />
     <Compile Include="NamingRules\SA1313ParameterNamesMustBeginWithLowerCaseLetter.cs" />
+    <Compile Include="NamingRules\SA1314TypeParameterNamesMustBeginWithT.cs" />
     <Compile Include="NamingRules\SX1309FieldNamesMustBeginWithUnderscore.cs" />
     <Compile Include="NamingRules\SX1309SStaticFieldNamesMustBeginWithUnderscore.cs" />
     <Compile Include="NoCodeFixAttribute.cs" />
@@ -271,22 +272,24 @@
     <Compile Include="ReadabilityRules\SA1133DoNotCombineAttributes.cs" />
     <Compile Include="ReadabilityRules\SA1134AttributesMustNotShareLine.cs" />
     <Compile Include="ReadabilityRules\SA1136EnumValuesShouldBeOnSeparateLines.cs" />
+    <Compile Include="ReadabilityRules\SA1137ElementsShouldHaveTheSameIndentation.cs" />
     <Compile Include="ReadabilityRules\SA1139UseLiteralSuffixNotationInsteadOfCasting.cs" />
     <Compile Include="ReadabilityRules\SX1101DoNotPrefixLocalMembersWithThis.cs" />
     <Compile Include="Settings\DeserializationFailureBehavior.cs" />
     <Compile Include="Settings\ObjectModel\DocumentationSettings.cs" />
-    <Compile Include="Settings\ObjectModel\EndOfFileHandling.cs" />
     <Compile Include="Settings\ObjectModel\FileNamingConvention.cs" />
     <Compile Include="Settings\ObjectModel\IndentationSettings.cs" />
     <Compile Include="Settings\ObjectModel\LayoutSettings.cs" />
     <Compile Include="Settings\ObjectModel\MaintainabilitySettings.cs" />
     <Compile Include="Settings\ObjectModel\NamingSettings.cs" />
+    <Compile Include="Settings\ObjectModel\OptionSetting.cs" />
     <Compile Include="Settings\ObjectModel\OrderingSettings.cs" />
     <Compile Include="Settings\ObjectModel\OrderingTrait.cs" />
     <Compile Include="Settings\ObjectModel\ReadabilitySettings.cs" />
     <Compile Include="Settings\ObjectModel\SettingsFile.cs" />
     <Compile Include="Settings\ObjectModel\SpacingSettings.cs" />
     <Compile Include="Settings\ObjectModel\StyleCopSettings.cs" />
+    <Compile Include="Settings\ObjectModel\TopLevelType.cs" />
     <Compile Include="Settings\ObjectModel\UsingDirectivesPlacement.cs" />
     <Compile Include="Settings\SettingsHelper.cs" />
     <Compile Include="Settings\SettingsResources.Designer.cs">
@@ -396,14 +399,35 @@
     <Analyzer Include="..\..\packages\AsyncUsageAnalyzers.1.0.0-alpha003\analyzers\dotnet\AsyncUsageAnalyzers.dll" />
     <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.1.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
-    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\Newtonsoft.Json.dll" />
-    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
-    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.1.0-beta001\analyzers\dotnet\cs\Newtonsoft.Json.dll" />
+    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.1.0-beta001\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
+    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.1.0-beta001\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.de-DE.resx">
+      <DependentUpon>DocumentationResources.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.en-GB.resx">
+      <DependentUpon>DocumentationResources.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.es-MX.resx">
+      <DependentUpon>DocumentationResources.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.fr-FR.resx">
+      <DependentUpon>DocumentationResources.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.pl-PL.resx">
+      <DependentUpon>DocumentationResources.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.pt-BR.resx">
+      <DependentUpon>DocumentationResources.resx</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DocumentationRules\DocumentationResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>DocumentationResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DocumentationRules\DocumentationResources.ru-RU.resx">
+      <DependentUpon>DocumentationResources.resx</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Helpers\HelpersResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

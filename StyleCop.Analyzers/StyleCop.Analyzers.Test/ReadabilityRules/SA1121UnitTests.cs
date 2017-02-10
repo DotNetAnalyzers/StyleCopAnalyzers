@@ -22,7 +22,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         private static readonly Tuple<string, string>[] ReferenceTypesData = new Tuple<string, string>[]
         {
             new Tuple<string, string>("object", nameof(Object)),
-            new Tuple<string, string>("string", nameof(String))
+            new Tuple<string, string>("string", nameof(String)),
         };
 
         private static readonly Tuple<string, string>[] ValueTypesData = new Tuple<string, string>[]
@@ -39,7 +39,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             new Tuple<string, string>("float", nameof(Single)),
             new Tuple<string, string>("ushort", nameof(UInt16)),
             new Tuple<string, string>("uint", nameof(UInt32)),
-            new Tuple<string, string>("ulong", nameof(UInt64))
+            new Tuple<string, string>("ulong", nameof(UInt64)),
         };
 
         private static readonly Tuple<string, string>[] EnumBaseTypesData = new Tuple<string, string>[]
@@ -51,7 +51,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             new Tuple<string, string>("sbyte", nameof(SByte)),
             new Tuple<string, string>("ushort", nameof(UInt16)),
             new Tuple<string, string>("uint", nameof(UInt32)),
-            new Tuple<string, string>("ulong", nameof(UInt64))
+            new Tuple<string, string>("ulong", nameof(UInt64)),
         };
 
         private static readonly Tuple<string, string>[] AllTypesData = ReferenceTypesData.Concat(ValueTypesData).ToArray();
@@ -594,7 +594,7 @@ public class Foo
 }}";
             DiagnosticResult[] expected =
                 {
-                    this.CSharpDiagnostic().WithLocation(2, 33)
+                    this.CSharpDiagnostic().WithLocation(2, 33),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None).ConfigureAwait(false);
@@ -625,7 +625,7 @@ public class Foo
 public static class StaticGenericClass<T> {{ }}";
             DiagnosticResult[] expected =
                 {
-                    this.CSharpDiagnostic().WithLocation(2, 33)
+                    this.CSharpDiagnostic().WithLocation(2, 33),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, fullName), expected, CancellationToken.None).ConfigureAwait(false);

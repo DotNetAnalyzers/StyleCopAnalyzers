@@ -52,7 +52,7 @@ class Foo
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(4, 5),
-                this.CSharpDiagnostic().WithLocation(5, 5)
+                this.CSharpDiagnostic().WithLocation(5, 5),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

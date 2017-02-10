@@ -302,7 +302,7 @@ class TestClass
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(8, 9),
-                this.CSharpDiagnostic().WithLocation(11, 9)
+                this.CSharpDiagnostic().WithLocation(11, 9),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -346,7 +346,7 @@ public class SomeException : Exception
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(4, 5),
-                this.CSharpDiagnostic().WithLocation(9, 5)
+                this.CSharpDiagnostic().WithLocation(9, 5),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

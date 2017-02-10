@@ -359,7 +359,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             {
                 this.CSharpDiagnostic().WithLocation(2, 13),
                 this.CSharpDiagnostic().WithLocation(3, 20),
-                this.CSharpDiagnostic().WithLocation(4, 14)
+                this.CSharpDiagnostic().WithLocation(4, 14),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

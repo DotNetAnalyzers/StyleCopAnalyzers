@@ -30,9 +30,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 { SyntaxKind.LongKeyword, "L" },
                 { SyntaxKind.ULongKeyword, "UL" },
                 { SyntaxKind.UIntKeyword, "U" },
-                { SyntaxKind.FloatKeyword, "F"},
+                { SyntaxKind.FloatKeyword, "F" },
                 { SyntaxKind.DoubleKeyword, "D" },
-                { SyntaxKind.DecimalKeyword, "M" }
+                { SyntaxKind.DecimalKeyword, "M" },
             };
 
         private static readonly char[] LettersAllowedInLiteralSuffix = LiteralSyntaxKindToSuffix.Values

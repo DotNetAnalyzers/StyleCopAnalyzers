@@ -97,7 +97,7 @@ namespace StyleCop.Analyzers.SpacingRules
             var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>()
             {
                 [precedingToken] = precedingToken.WithTrailingTrivia(correctedTriviaList),
-                [questionToken] = questionToken.WithLeadingTrivia()
+                [questionToken] = questionToken.WithLeadingTrivia(),
             };
 
             var newSyntaxRoot = syntaxRoot.ReplaceTokens(replaceMap.Keys, (t1, t2) => replaceMap[t1]);

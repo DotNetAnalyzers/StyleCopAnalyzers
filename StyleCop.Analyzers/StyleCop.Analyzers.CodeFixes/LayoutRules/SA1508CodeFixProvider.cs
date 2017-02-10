@@ -88,7 +88,7 @@ namespace StyleCop.Analyzers.LayoutRules
             var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>()
             {
                 [previousToken] = previousToken.WithTrailingTrivia(triviaList.Take(lastEndOfLineIndex + 1)),
-                [closeBraceToken] = closeBraceToken.WithLeadingTrivia(triviaList.Skip(firstLeadingWhitespace))
+                [closeBraceToken] = closeBraceToken.WithLeadingTrivia(triviaList.Skip(firstLeadingWhitespace)),
             };
 
             var newSyntaxRoot = syntaxRoot.ReplaceTokens(replaceMap.Keys, (t1, t2) => replaceMap[t1]);

@@ -191,6 +191,7 @@ The following properties are used to configure using directives in StyleCop Anal
 | --- | --- | --- |
 | `systemUsingDirectivesFirst` | true | Specifies whether `System` using directives are placed before other using directives |
 | `usingDirectivesPlacement` | `"insideNamespace"` | Specifies the desired placement of using directives |
+| `blankLinesBetweenUsingGroups` | `"allow"` | Specifies is blank lines are required to separate groups of using statements |
 
 #### Using Directives Placement
 
@@ -227,6 +228,45 @@ In this mode, using directives may be placed inside or outside of namespaces.
 
 * SA1200 does not report any violations
 * Using directives code fix may reorder using directives, but does not relocate them
+
+#### Blank Lines Between Groups
+The `blankLinesBetweenUsingGroups` property affects the behavior of the following rules which report the presence / absence
+of blanks lines between groups of using directives.
+
+* [SA1516 Elements must be separated by blank line](SA1516.md)
+
+Using directives can grouped based on the purpose of the using directive.
+StyleCop Analyzers recognizes the following using directive group types:
+
+- System using directives (only when `systemUsingDirectivesFirst` is true)
+- Normal using directives
+- Static using directives
+- Alias using directives
+
+This property has three allowed values, which are described as follows.
+
+##### `"allow"`
+
+In this mode, a blank line between groups for using directives is *optional*.
+
+* No diagnostic will be produced.
+* Using directives code fix will not insert blank lines.
+
+##### `"require"`
+
+In this mode, a blank line between groups for using directives is *mandatory*.
+
+* SA1516 reports missing blank lines between using directive groups.
+* Using directives code fix will insert blank lines.
+* SA1516 code fix will add a missing blank line.
+
+##### `"omit"`
+
+In this mode, a blank line between groups for using directives is *not allowed*.
+
+* SA1516 reports blank lines between using directive groups.
+* Using directives code fix will not insert blank lines.
+* SA1516 code fix will remove blank lines between using directive groups.
 
 ## Naming Rules
 
@@ -278,7 +318,19 @@ This section describes the features of maintainability rules which can be config
 }
 ```
 
-> Currently there are no configurable settings for maintainability rules.
+The following properties are used to configure maintainability rules in StyleCop Analyzers.
+
+| Property | Default Value | Summary |
+| --- | --- | --- |
+| `topLevelTypes` | `[ "class" ]` | Specifies which kind of types that must be placed in separate files |
+
+The `topLevelTypes` property is an array which specifies which kind of types that must be placed in separate files
+according to rule SA1402. The following types are supported:
+* `class`
+* `interface`
+* `struct`
+* `enum`
+* `delegate`
 
 ## Layout Rules
 
@@ -298,6 +350,7 @@ The following properties are used to configure layout rules in StyleCop Analyzer
 | Property | Default Value | Summary |
 | --- | --- | --- |
 | `newlineAtEndOfFile` | `"allow"` | Specifies the handling for newline characters which appear at the end of a file |
+| `allowConsecutiveUsings` | `true` | Specifies if SA1519 will allow consecutive using statements without braces |
 
 ### Lines at End of File
 
@@ -307,6 +360,17 @@ file are handled. The `newlineAtEndOfFile` property supports the following value
 * `"allow"`: Files are allowed to end with a single newline character, but it is not required
 * `"require"`: Files are required to end with a single newline character
 * `"omit"`: Files may not end with a newline character
+
+### Consecutive using statements without braces
+
+The behavior of [SA1519](SA1519.md) can be customized regarding the manner in which consecutive using statements without braces are treated.
+The `allowConsecutiveUsings` property specifies the behavior:
+
+* `true`: consecutive using statements without braces will not produce diagnostics
+* `false`: consecutive using statements without braces will produce a SA1519 diagnostic
+
+This only allows omitting the braces for a using followed by another using statement. A using statement followed by any other type of statement will still
+require braces to used.
 
 ## Documentation Rules
 
@@ -456,6 +520,44 @@ The following example shows a configuration file which requires developers to do
     "documentationRules": {
       "documentInterfaces": true,
       "documentInternalMembers": false
+    }
+  }
+}
+```
+
+### Documentation Culture
+
+Some documentation rules require summary texts to start with specific strings. To allow teams to document their code in their native language, **stylecop.json** contains the `documentationCulture` property.
+
+| Property | Default Value | Summary |
+| --- | --- | --- |
+| `documentationCulture` | `"en-US"` | Specifies the culture or language to be used for certain documentation texts. |
+
+This property affects the behavior of the following rules which report incorrect documentation.
+
+* [SA1623 Property summary documentation must match accessors](SA1623.md)
+* [SA1624 Property summary documentation must omit set accessor with restricted access](SA1624.md)
+* [SA1642 Constructor summary documentation must begin with standard text](SA1642.md)
+* [SA1643 Destructor summary documentation must begin with standard text](SA1643.md)
+
+> :memo: The default value for `documentationCulture` is fixed instead of reflecting the user's system language. This is to ensure that different developers working on the same project always use the same value.
+
+The following values are currently supported. Unsupported values will automatically fall back to the default value.
+
+* `"de-DE"`
+* `"en-GB"`
+* `"en-US"`
+* `"es-MX"`
+* `"fr-FR"`
+* `"pl-PL"`
+* `"pt-BR"`
+* `"ru-RU"`
+
+```json
+{
+  "settings": {
+    "documentationRules": {
+      "documentationCulture": "de-DE"
     }
   }
 }

@@ -210,7 +210,7 @@ public class TypeName
                 this.CSharpDiagnostic().WithLocation(5, 7),
                 this.CSharpDiagnostic().WithLocation(7, 7),
                 this.CSharpDiagnostic().WithLocation(8, 7),
-                this.CSharpDiagnostic().WithLocation(9, 7)
+                this.CSharpDiagnostic().WithLocation(9, 7),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

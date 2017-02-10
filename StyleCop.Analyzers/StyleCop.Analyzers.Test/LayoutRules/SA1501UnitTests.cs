@@ -435,7 +435,7 @@ public class Foo
             DiagnosticResult[] expectedDiagnostics =
             {
                 this.CSharpDiagnostic().WithLocation(8, 13),
-                this.CSharpDiagnostic().WithLocation(11, 13)
+                this.CSharpDiagnostic().WithLocation(11, 13),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

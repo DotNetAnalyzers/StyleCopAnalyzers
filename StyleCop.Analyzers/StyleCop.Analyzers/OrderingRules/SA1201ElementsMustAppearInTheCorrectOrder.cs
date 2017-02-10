@@ -166,7 +166,7 @@ namespace StyleCop.Analyzers.OrderingRules
             [SyntaxKind.IndexerDeclaration] = "indexer",
             [SyntaxKind.MethodDeclaration] = "method",
             [SyntaxKind.ConversionOperatorDeclaration] = "conversion",
-            [SyntaxKind.OperatorDeclaration] = "operator"
+            [SyntaxKind.OperatorDeclaration] = "operator",
         };
 
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CompilationUnitAction = HandleCompilationUnit;

@@ -49,7 +49,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 {
                     this.CSharpDiagnostic(DiagnosticId).WithLocation(5, 17),
                     this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 17),
-                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 19)
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 19),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -125,7 +125,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 {
                     this.CSharpDiagnostic(DiagnosticId).WithLocation(5, 20),
                     this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 20),
-                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 31)
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 31),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -218,7 +218,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 {
                     this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 9),
                     this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 9),
-                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 20)
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 20),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -249,7 +249,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 {
                     this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 17),
                     this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 17),
-                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 23)
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 23),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -293,7 +293,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 {
                     this.CSharpDiagnostic(DiagnosticId).WithLocation(5, 17),
                     this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 17),
-                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 24)
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 24),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -337,7 +337,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 {
                     this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 13),
                     this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 13),
-                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 20)
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 20),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -531,7 +531,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 {
                     this.CSharpDiagnostic(DiagnosticId).WithLocation(5, 20),
                     this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 20),
-                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 32)
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 32),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -635,7 +635,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 {
                     this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 20),
                     this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 20),
-                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 30)
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 30),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -693,7 +693,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 {
                     this.CSharpDiagnostic(DiagnosticId).WithLocation(5, 20),
                     this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 20),
-                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 41)
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 41),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -749,7 +749,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 {
                     this.CSharpDiagnostic(DiagnosticId).WithLocation(5, 20),
                     this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 20),
-                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 35)
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 35),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -867,7 +867,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 {
                     this.CSharpDiagnostic(DiagnosticId).WithLocation(5, 19),
                     this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 19),
-                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 31)
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 31),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -924,7 +924,7 @@ public class Foo
                 {
                     this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 17),
                     this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 17),
-                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 52)
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 52),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -1039,7 +1039,7 @@ public class Foo
             {
                 this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 15),
                 this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 15),
-                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 19)
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 19),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -1071,7 +1071,7 @@ public class Foo
             {
                 this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 26),
                 this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 26),
-                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 31)
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 31),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -1207,7 +1207,7 @@ public class Foo
             {
                 this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 23),
                 this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 23),
-                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 42)
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 42),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -1269,7 +1269,7 @@ public class Foo
             {
                 this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 22),
                 this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 22),
-                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 35)
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 35),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -1331,7 +1331,7 @@ public class Foo
             {
                 this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 22),
                 this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 22),
-                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 30)
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 30),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -1393,7 +1393,7 @@ public class Foo
             {
                 this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 22),
                 this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 22),
-                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 29)
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 29),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

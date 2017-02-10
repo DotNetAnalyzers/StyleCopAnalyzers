@@ -67,7 +67,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(3, 57),
-                this.CSharpDiagnostic().WithLocation(5, 58)
+                this.CSharpDiagnostic().WithLocation(5, 58),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -107,7 +107,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(4, 9),
-                this.CSharpDiagnostic().WithLocation(7, 9)
+                this.CSharpDiagnostic().WithLocation(7, 9),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

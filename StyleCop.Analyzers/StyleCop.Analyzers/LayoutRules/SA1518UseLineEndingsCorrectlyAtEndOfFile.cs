@@ -144,7 +144,7 @@ namespace StyleCop.Analyzers.LayoutRules
             DiagnosticDescriptor descriptorToReport;
             switch (settings.LayoutRules.NewlineAtEndOfFile)
             {
-            case EndOfFileHandling.Omit:
+            case OptionSetting.Omit:
                 if (firstNewline < 0)
                 {
                     return;
@@ -153,7 +153,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 descriptorToReport = DescriptorOmit;
                 break;
 
-            case EndOfFileHandling.Require:
+            case OptionSetting.Require:
                 if (firstNewline >= 0 && firstNewline == trailingWhitespaceText.Length - 1)
                 {
                     return;
@@ -162,7 +162,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 descriptorToReport = DescriptorRequire;
                 break;
 
-            case EndOfFileHandling.Allow:
+            case OptionSetting.Allow:
             default:
                 if (secondNewline < 0)
                 {

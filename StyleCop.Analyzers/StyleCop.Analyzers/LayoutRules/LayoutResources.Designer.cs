@@ -242,11 +242,92 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fix blank lines.
+        /// </summary>
+        internal static string SA1516CodeFixAll {
+            get {
+                return ResourceManager.GetString("SA1516CodeFixAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Insert new line.
         /// </summary>
-        internal static string SA1516CodeFix {
+        internal static string SA1516CodeFixInsert {
             get {
-                return ResourceManager.GetString("SA1516CodeFix", resourceCulture);
+                return ResourceManager.GetString("SA1516CodeFixInsert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove blank line.
+        /// </summary>
+        internal static string SA1516CodeFixRemove {
+            get {
+                return ResourceManager.GetString("SA1516CodeFixRemove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjacent C# elements are not separated by a blank line..
+        /// </summary>
+        internal static string SA1516Description {
+            get {
+                return ResourceManager.GetString("SA1516Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjacent using directives must not be separated by a blank line..
+        /// </summary>
+        internal static string SA1516DescriptionOmit {
+            get {
+                return ResourceManager.GetString("SA1516DescriptionOmit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjacent using directives must be separated by a blank line..
+        /// </summary>
+        internal static string SA1516DescriptionRequire {
+            get {
+                return ResourceManager.GetString("SA1516DescriptionRequire", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Elements must be separated by blank line.
+        /// </summary>
+        internal static string SA1516MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1516MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Using directives must not be separated by blank line.
+        /// </summary>
+        internal static string SA1516MessageFormatOmit {
+            get {
+                return ResourceManager.GetString("SA1516MessageFormatOmit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Using directives myst be separated by blank line.
+        /// </summary>
+        internal static string SA1516MessageFormatRequire {
+            get {
+                return ResourceManager.GetString("SA1516MessageFormatRequire", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Elements must be separated by blank line.
+        /// </summary>
+        internal static string SA1516Title {
+            get {
+                return ResourceManager.GetString("SA1516Title", resourceCulture);
             }
         }
         

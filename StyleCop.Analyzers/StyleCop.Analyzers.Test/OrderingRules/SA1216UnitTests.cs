@@ -123,7 +123,7 @@ namespace Bar
             DiagnosticResult[] expectedDiagnostics =
             {
                 this.CSharpDiagnostic().WithLocation(3, 5),
-                this.CSharpDiagnostic().WithLocation(11, 5)
+                this.CSharpDiagnostic().WithLocation(11, 5),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -150,7 +150,8 @@ using static System.Math;
 using System.Threading.Tasks;
 #endif";
 
-            var fixedTestCode = @"using System;
+            var fixedTestCode = @"
+using System;
 using Microsoft.VisualStudio;
 using static System.String;
 using MyList = System.Collections.Generic.List<int>;

@@ -4,22 +4,22 @@
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
     /// <summary>
-    /// Specifies the handling for newline characters which appear at the end of a file.
+    /// Specifies the possible values for an option.
     /// </summary>
-    internal enum EndOfFileHandling
+    internal enum OptionSetting
     {
         /// <summary>
-        /// Files are allowed to end with a single newline character, but it is not required.
+        /// The option is allowed, but not required.
         /// </summary>
         Allow,
 
         /// <summary>
-        /// Files are required to end with a single newline character.
+        /// The option is required.
         /// </summary>
         Require,
 
         /// <summary>
-        /// Files may not end with a newline character.
+        /// The option is not allowed.
         /// </summary>
         Omit
     }

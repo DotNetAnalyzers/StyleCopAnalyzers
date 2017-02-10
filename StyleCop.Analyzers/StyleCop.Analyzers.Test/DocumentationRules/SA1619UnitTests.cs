@@ -7,7 +7,9 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Threading;
     using System.Threading.Tasks;
     using Analyzers.DocumentationRules;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Test.Helpers;
     using TestHelper;
     using Xunit;
 
@@ -114,7 +116,7 @@ public partial ##";
             var expected = new[]
             {
                 this.CSharpDiagnostic().WithLocation(5, 30).WithArguments("Ta"),
-                this.CSharpDiagnostic().WithLocation(5, 34).WithArguments("Tb")
+                this.CSharpDiagnostic().WithLocation(5, 34).WithArguments("Tb"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);
@@ -144,6 +146,112 @@ public ##";
 public partial ##";
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a generic partial type with included documentation will work.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestGenericPartialTypeWithIncludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <include file='ClassWithTypeparamDoc.xml' path='/TestClass/*'/>
+public partial class TestClass<T>
+{
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a generic partial type without a summary tag in the included documentation will not produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestGenericPartialTypeWithoutSummaryInIncludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <include file='ClassWithoutSummary.xml' path='/TestClass/*'/>
+public partial class TestClass<T>
+{
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a generic partial type without a typeparam in included documentation will flag.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestGenericPartialTypeWithoutTypeparamInIncludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <include file='ClassWithoutTypeparamDoc.xml' path='/TestClass/*'/>
+public partial class TestClass<T>
+{
+}
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(3, 32).WithArguments("T");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a generic partial type with &lt;inheritdoc&gt; in included documentation will work.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestGenericPartialTypeWithInheritdocInIncludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <include file='ClassWithIneheritdoc.xml' path='/TestClass/*'/>
+public partial class TestClass<T>
+{
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected override Project ApplyCompilationOptions(Project project)
+        {
+            var resolver = new TestXmlReferenceResolver();
+
+            string contentClassWithTypeparamDoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+  <summary>Test class</summary>
+  <typeparam name=""T"">Param 1</typeparam>
+</TestClass>
+";
+            resolver.XmlReferences.Add("ClassWithTypeparamDoc.xml", contentClassWithTypeparamDoc);
+
+            string contentClassWithoutSummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+</TestClass>
+";
+            resolver.XmlReferences.Add("ClassWithoutSummary.xml", contentClassWithoutSummary);
+
+            string contentClassWithoutTypeparamDoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+  <summary>Test class</summary>
+</TestClass>
+";
+            resolver.XmlReferences.Add("ClassWithoutTypeparamDoc.xml", contentClassWithoutTypeparamDoc);
+
+            string contentClassInheritdoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+  <inheritdoc/>
+</TestClass>
+";
+            resolver.XmlReferences.Add("ClassWithIneheritdoc.xml", contentClassInheritdoc);
+
+            project = base.ApplyCompilationOptions(project);
+            project = project.WithCompilationOptions(project.CompilationOptions.WithXmlReferenceResolver(resolver));
+            return project;
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

@@ -78,7 +78,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             SyntaxKind.FinallyClause,
             SyntaxKind.CheckedStatement,
             SyntaxKind.UncheckedStatement,
-            SyntaxKind.FixedStatement
+            SyntaxKind.FixedStatement,
         };
 
         /// <inheritdoc/>

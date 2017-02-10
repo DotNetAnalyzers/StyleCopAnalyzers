@@ -98,7 +98,7 @@ public class TypeName
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithArguments("Bar").WithLocation(3, 35),
-                this.CSharpDiagnostic().WithArguments("Par").WithLocation(3, 59)
+                this.CSharpDiagnostic().WithArguments("Par").WithLocation(3, 59),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -286,7 +286,7 @@ public class Test : ITest
             {
                 this.CSharpDiagnostic().WithLocation(4, 21).WithArguments("Param1"),
                 this.CSharpDiagnostic().WithLocation(4, 45).WithArguments("Param3"),
-                this.CSharpDiagnostic().WithLocation(9, 52).WithArguments("Other")
+                this.CSharpDiagnostic().WithLocation(9, 52).WithArguments("Other"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -337,7 +337,7 @@ public class Test : Testbase
             {
                 this.CSharpDiagnostic().WithLocation(4, 37).WithArguments("Param1"),
                 this.CSharpDiagnostic().WithLocation(4, 61).WithArguments("Param3"),
-                this.CSharpDiagnostic().WithLocation(9, 61).WithArguments("Other")
+                this.CSharpDiagnostic().WithLocation(9, 61).WithArguments("Other"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -431,7 +431,7 @@ public class Test : Testbase
             {
                 this.CSharpDiagnostic().WithArguments("__").WithLocation(5, 38),
                 this.CSharpDiagnostic().WithArguments("__").WithLocation(6, 39),
-                this.CSharpDiagnostic().WithArguments("__").WithLocation(7, 51)
+                this.CSharpDiagnostic().WithArguments("__").WithLocation(7, 51),
             };
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);

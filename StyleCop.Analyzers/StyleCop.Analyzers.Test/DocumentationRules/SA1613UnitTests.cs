@@ -105,7 +105,7 @@ $$
                 this.CSharpDiagnostic().WithLocation(10, 8),
                 this.CSharpDiagnostic().WithLocation(11, 8),
                 this.CSharpDiagnostic().WithLocation(12, 15),
-                this.CSharpDiagnostic().WithLocation(13, 15)
+                this.CSharpDiagnostic().WithLocation(13, 15),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
@@ -134,7 +134,7 @@ $$
                 this.CSharpDiagnostic().WithLocation(8, 8),
                 this.CSharpDiagnostic().WithLocation(9, 8),
                 this.CSharpDiagnostic().WithLocation(10, 15),
-                this.CSharpDiagnostic().WithLocation(11, 15)
+                this.CSharpDiagnostic().WithLocation(11, 15),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
@@ -188,7 +188,7 @@ public class ClassName
                 this.CSharpDiagnostic().WithLocation(8, 22),
                 this.CSharpDiagnostic().WithLocation(8, 22),
                 this.CSharpDiagnostic().WithLocation(8, 22),
-                this.CSharpDiagnostic().WithLocation(8, 22)
+                this.CSharpDiagnostic().WithLocation(8, 22),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -212,7 +212,7 @@ public class ClassName
                 this.CSharpDiagnostic().WithLocation(8, 22),
                 this.CSharpDiagnostic().WithLocation(8, 22),
                 this.CSharpDiagnostic().WithLocation(8, 22),
-                this.CSharpDiagnostic().WithLocation(8, 22)
+                this.CSharpDiagnostic().WithLocation(8, 22),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

@@ -28,20 +28,20 @@ public class Foo
     }
 }";
 
-        private EndOfFileHandling? newlineAtEndOfFile;
+        private OptionSetting? newlineAtEndOfFile;
 
         /// <summary>
         /// Verifies that blank lines at the end of the file will produce a warning.
         /// </summary>
-        /// <param name="newlineAtEndOfFile">The effective <see cref="EndOfFileHandling"/> setting.</param>
+        /// <param name="newlineAtEndOfFile">The effective <see cref="OptionSetting"/> setting.</param>
         /// <param name="result">The expected text to appear at the end of the file.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData(null, "\r\n")]
-        [InlineData(EndOfFileHandling.Allow, "\r\n")]
-        [InlineData(EndOfFileHandling.Require, "\r\n")]
-        [InlineData(EndOfFileHandling.Omit, "")]
-        internal async Task TestWithBlankLinesAtEndOfFileAsync(EndOfFileHandling? newlineAtEndOfFile, string result)
+        [InlineData(OptionSetting.Allow, "\r\n")]
+        [InlineData(OptionSetting.Require, "\r\n")]
+        [InlineData(OptionSetting.Omit, "")]
+        internal async Task TestWithBlankLinesAtEndOfFileAsync(OptionSetting? newlineAtEndOfFile, string result)
         {
             this.newlineAtEndOfFile = newlineAtEndOfFile;
 
@@ -57,15 +57,15 @@ public class Foo
         /// <summary>
         /// Verifies that linefeed only blank lines at the end of the file will produce a warning.
         /// </summary>
-        /// <param name="newlineAtEndOfFile">The effective <see cref="EndOfFileHandling"/> setting.</param>
+        /// <param name="newlineAtEndOfFile">The effective <see cref="OptionSetting"/> setting.</param>
         /// <param name="result">The expected text to appear at the end of the file.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData(null, "\r\n")]
-        [InlineData(EndOfFileHandling.Allow, "\r\n")]
-        [InlineData(EndOfFileHandling.Require, "\r\n")]
-        [InlineData(EndOfFileHandling.Omit, "")]
-        internal async Task TestWithLineFeedOnlyBlankLinesAtEndOfFileAsync(EndOfFileHandling? newlineAtEndOfFile, string result)
+        [InlineData(OptionSetting.Allow, "\r\n")]
+        [InlineData(OptionSetting.Require, "\r\n")]
+        [InlineData(OptionSetting.Omit, "")]
+        internal async Task TestWithLineFeedOnlyBlankLinesAtEndOfFileAsync(OptionSetting? newlineAtEndOfFile, string result)
         {
             this.newlineAtEndOfFile = newlineAtEndOfFile;
 
@@ -81,16 +81,16 @@ public class Foo
         /// <summary>
         /// Verifies that a single carriage return / linefeed at the end of the file will not produce a warning.
         /// </summary>
-        /// <param name="newlineAtEndOfFile">The effective <see cref="EndOfFileHandling"/> setting.</param>
+        /// <param name="newlineAtEndOfFile">The effective <see cref="OptionSetting"/> setting.</param>
         /// <param name="expectedText">The expected text to appear at the end of the file, or <see langword="null"/> if
         /// the input text is already correct.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData(null, null)]
-        [InlineData(EndOfFileHandling.Allow, null)]
-        [InlineData(EndOfFileHandling.Require, null)]
-        [InlineData(EndOfFileHandling.Omit, "")]
-        internal async Task TestWithSingleCarriageReturnLineFeedAtEndOfFileAsync(EndOfFileHandling? newlineAtEndOfFile, string expectedText)
+        [InlineData(OptionSetting.Allow, null)]
+        [InlineData(OptionSetting.Require, null)]
+        [InlineData(OptionSetting.Omit, "")]
+        internal async Task TestWithSingleCarriageReturnLineFeedAtEndOfFileAsync(OptionSetting? newlineAtEndOfFile, string expectedText)
         {
             this.newlineAtEndOfFile = newlineAtEndOfFile;
 
@@ -113,16 +113,16 @@ public class Foo
         /// <summary>
         /// Verifies that a single linefeed at the end of the file will not produce a warning.
         /// </summary>
-        /// <param name="newlineAtEndOfFile">The effective <see cref="EndOfFileHandling"/> setting.</param>
+        /// <param name="newlineAtEndOfFile">The effective <see cref="OptionSetting"/> setting.</param>
         /// <param name="expectedText">The expected text to appear at the end of the file, or <see langword="null"/> if
         /// the input text is already correct.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData(null, null)]
-        [InlineData(EndOfFileHandling.Allow, null)]
-        [InlineData(EndOfFileHandling.Require, null)]
-        [InlineData(EndOfFileHandling.Omit, "")]
-        internal async Task TestWithSingleLineFeedAtEndOfFileAsync(EndOfFileHandling? newlineAtEndOfFile, string expectedText)
+        [InlineData(OptionSetting.Allow, null)]
+        [InlineData(OptionSetting.Require, null)]
+        [InlineData(OptionSetting.Omit, "")]
+        internal async Task TestWithSingleLineFeedAtEndOfFileAsync(OptionSetting? newlineAtEndOfFile, string expectedText)
         {
             this.newlineAtEndOfFile = newlineAtEndOfFile;
 
@@ -145,16 +145,16 @@ public class Foo
         /// <summary>
         /// Verifies that a source file that ends without a carriage return / linefeed at the end of the file will not produce a warning.
         /// </summary>
-        /// <param name="newlineAtEndOfFile">The effective <see cref="EndOfFileHandling"/> setting.</param>
+        /// <param name="newlineAtEndOfFile">The effective <see cref="OptionSetting"/> setting.</param>
         /// <param name="expectedText">The expected text to appear at the end of the file, or <see langword="null"/> if
         /// the input text is already correct.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData(null, null)]
-        [InlineData(EndOfFileHandling.Allow, null)]
-        [InlineData(EndOfFileHandling.Require, "\r\n")]
-        [InlineData(EndOfFileHandling.Omit, null)]
-        internal async Task TestWithoutCarriageReturnLineFeedAtEndOfFileAsync(EndOfFileHandling? newlineAtEndOfFile, string expectedText)
+        [InlineData(OptionSetting.Allow, null)]
+        [InlineData(OptionSetting.Require, "\r\n")]
+        [InlineData(OptionSetting.Omit, null)]
+        internal async Task TestWithoutCarriageReturnLineFeedAtEndOfFileAsync(OptionSetting? newlineAtEndOfFile, string expectedText)
         {
             this.newlineAtEndOfFile = newlineAtEndOfFile;
 
@@ -177,15 +177,15 @@ public class Foo
         /// <summary>
         /// Verifies that a source file that ends with spaces will produce a warning.
         /// </summary>
-        /// <param name="newlineAtEndOfFile">The effective <see cref="EndOfFileHandling"/> setting.</param>
+        /// <param name="newlineAtEndOfFile">The effective <see cref="OptionSetting"/> setting.</param>
         /// <param name="expectedText">The expected text to appear at the end of the file.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData(null, "\r\n")]
-        [InlineData(EndOfFileHandling.Allow, "\r\n")]
-        [InlineData(EndOfFileHandling.Require, "\r\n")]
-        [InlineData(EndOfFileHandling.Omit, "")]
-        internal async Task TestFileEndsWithSpacesAsync(EndOfFileHandling? newlineAtEndOfFile, string expectedText)
+        [InlineData(OptionSetting.Allow, "\r\n")]
+        [InlineData(OptionSetting.Require, "\r\n")]
+        [InlineData(OptionSetting.Omit, "")]
+        internal async Task TestFileEndsWithSpacesAsync(OptionSetting? newlineAtEndOfFile, string expectedText)
         {
             this.newlineAtEndOfFile = newlineAtEndOfFile;
 
@@ -201,16 +201,16 @@ public class Foo
         /// <summary>
         /// Verifies that a comment at the end of the file is not flagged.
         /// </summary>
-        /// <param name="newlineAtEndOfFile">The effective <see cref="EndOfFileHandling"/> setting.</param>
+        /// <param name="newlineAtEndOfFile">The effective <see cref="OptionSetting"/> setting.</param>
         /// <param name="expectedText">The expected text to appear at the end of the file, or <see langword="null"/> if
         /// the input text is already correct.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData(null, null)]
-        [InlineData(EndOfFileHandling.Allow, null)]
-        [InlineData(EndOfFileHandling.Require, "\r\n")]
-        [InlineData(EndOfFileHandling.Omit, null)]
-        internal async Task TestFileEndingWithCommentAsync(EndOfFileHandling? newlineAtEndOfFile, string expectedText)
+        [InlineData(OptionSetting.Allow, null)]
+        [InlineData(OptionSetting.Require, "\r\n")]
+        [InlineData(OptionSetting.Omit, null)]
+        internal async Task TestFileEndingWithCommentAsync(OptionSetting? newlineAtEndOfFile, string expectedText)
         {
             this.newlineAtEndOfFile = newlineAtEndOfFile;
 
@@ -233,15 +233,15 @@ public class Foo
         /// <summary>
         /// Verifies that spurious end of lines after a comment at the end of the file are flagged.
         /// </summary>
-        /// <param name="newlineAtEndOfFile">The effective <see cref="EndOfFileHandling"/> setting.</param>
+        /// <param name="newlineAtEndOfFile">The effective <see cref="OptionSetting"/> setting.</param>
         /// <param name="expectedText">The expected text to appear at the end of the file.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData(null, "\r\n")]
-        [InlineData(EndOfFileHandling.Allow, "\r\n")]
-        [InlineData(EndOfFileHandling.Require, "\r\n")]
-        [InlineData(EndOfFileHandling.Omit, "")]
-        internal async Task TestFileEndingWithCommentAndSpuriousWhitespaceAsync(EndOfFileHandling? newlineAtEndOfFile, string expectedText)
+        [InlineData(OptionSetting.Allow, "\r\n")]
+        [InlineData(OptionSetting.Require, "\r\n")]
+        [InlineData(OptionSetting.Omit, "")]
+        internal async Task TestFileEndingWithCommentAndSpuriousWhitespaceAsync(OptionSetting? newlineAtEndOfFile, string expectedText)
         {
             this.newlineAtEndOfFile = newlineAtEndOfFile;
 
@@ -257,16 +257,16 @@ public class Foo
         /// <summary>
         /// Verifies that an endif at the end of the file is not flagged.
         /// </summary>
-        /// <param name="newlineAtEndOfFile">The effective <see cref="EndOfFileHandling"/> setting.</param>
+        /// <param name="newlineAtEndOfFile">The effective <see cref="OptionSetting"/> setting.</param>
         /// <param name="expectedText">The expected text to appear at the end of the file, or <see langword="null"/> if
         /// the input text is already correct.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData(null, null)]
-        [InlineData(EndOfFileHandling.Allow, null)]
-        [InlineData(EndOfFileHandling.Require, null)]
-        [InlineData(EndOfFileHandling.Omit, "")]
-        internal async Task TestFileEndingWithEndIfAsync(EndOfFileHandling? newlineAtEndOfFile, string expectedText)
+        [InlineData(OptionSetting.Allow, null)]
+        [InlineData(OptionSetting.Require, null)]
+        [InlineData(OptionSetting.Omit, "")]
+        internal async Task TestFileEndingWithEndIfAsync(OptionSetting? newlineAtEndOfFile, string expectedText)
         {
             this.newlineAtEndOfFile = newlineAtEndOfFile;
 
@@ -289,15 +289,15 @@ public class Foo
         /// <summary>
         /// Verifies that an endif at the end of the file is not flagged.
         /// </summary>
-        /// <param name="newlineAtEndOfFile">The effective <see cref="EndOfFileHandling"/> setting.</param>
+        /// <param name="newlineAtEndOfFile">The effective <see cref="OptionSetting"/> setting.</param>
         /// <param name="expectedText">The expected text to appear at the end of the file.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData(null, "\r\n")]
-        [InlineData(EndOfFileHandling.Allow, "\r\n")]
-        [InlineData(EndOfFileHandling.Require, "\r\n")]
-        [InlineData(EndOfFileHandling.Omit, "")]
-        internal async Task TestFileEndingWithEndIfWithSpuriousWhitespaceAsync(EndOfFileHandling? newlineAtEndOfFile, string expectedText)
+        [InlineData(OptionSetting.Allow, "\r\n")]
+        [InlineData(OptionSetting.Require, "\r\n")]
+        [InlineData(OptionSetting.Omit, "")]
+        internal async Task TestFileEndingWithEndIfWithSpuriousWhitespaceAsync(OptionSetting? newlineAtEndOfFile, string expectedText)
         {
             this.newlineAtEndOfFile = newlineAtEndOfFile;
 
@@ -313,15 +313,15 @@ public class Foo
         /// <summary>
         /// Verifies that the code fix provider will strip trailing blank lines.
         /// </summary>
-        /// <param name="newlineAtEndOfFile">The effective <see cref="EndOfFileHandling"/> setting.</param>
+        /// <param name="newlineAtEndOfFile">The effective <see cref="OptionSetting"/> setting.</param>
         /// <param name="expectedText">The expected text to appear at the end of the file.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData(null, "\r\n")]
-        [InlineData(EndOfFileHandling.Allow, "\r\n")]
-        [InlineData(EndOfFileHandling.Require, "\r\n")]
-        [InlineData(EndOfFileHandling.Omit, "")]
-        internal async Task TestCodeFixProviderStripsTrailingBlankLinesAsync(EndOfFileHandling? newlineAtEndOfFile, string expectedText)
+        [InlineData(OptionSetting.Allow, "\r\n")]
+        [InlineData(OptionSetting.Require, "\r\n")]
+        [InlineData(OptionSetting.Omit, "")]
+        internal async Task TestCodeFixProviderStripsTrailingBlankLinesAsync(OptionSetting? newlineAtEndOfFile, string expectedText)
         {
             this.newlineAtEndOfFile = newlineAtEndOfFile;
 
@@ -337,15 +337,15 @@ public class Foo
         /// <summary>
         /// Verifies that the code fix provider will strip trailing blank lines that include whitespace.
         /// </summary>
-        /// <param name="newlineAtEndOfFile">The effective <see cref="EndOfFileHandling"/> setting.</param>
+        /// <param name="newlineAtEndOfFile">The effective <see cref="OptionSetting"/> setting.</param>
         /// <param name="expectedText">The expected text to appear at the end of the file.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData(null, "\r\n")]
-        [InlineData(EndOfFileHandling.Allow, "\r\n")]
-        [InlineData(EndOfFileHandling.Require, "\r\n")]
-        [InlineData(EndOfFileHandling.Omit, "")]
-        internal async Task TestCodeFixProviderStripsTrailingBlankLinesIncludingWhitespaceAsync(EndOfFileHandling? newlineAtEndOfFile, string expectedText)
+        [InlineData(OptionSetting.Allow, "\r\n")]
+        [InlineData(OptionSetting.Require, "\r\n")]
+        [InlineData(OptionSetting.Omit, "")]
+        internal async Task TestCodeFixProviderStripsTrailingBlankLinesIncludingWhitespaceAsync(OptionSetting? newlineAtEndOfFile, string expectedText)
         {
             this.newlineAtEndOfFile = newlineAtEndOfFile;
 
@@ -361,15 +361,15 @@ public class Foo
         /// <summary>
         /// Verifies that the code fix provider will strip trailing linefeed only blank lines that include whitespace.
         /// </summary>
-        /// <param name="newlineAtEndOfFile">The effective <see cref="EndOfFileHandling"/> setting.</param>
+        /// <param name="newlineAtEndOfFile">The effective <see cref="OptionSetting"/> setting.</param>
         /// <param name="expectedText">The expected text to appear at the end of the file.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData(null, "\r\n")]
-        [InlineData(EndOfFileHandling.Allow, "\r\n")]
-        [InlineData(EndOfFileHandling.Require, "\r\n")]
-        [InlineData(EndOfFileHandling.Omit, "")]
-        internal async Task TestCodeFixProviderStripsTrailingLinefeedOnlyBlankLinesIncludingWhitespaceAsync(EndOfFileHandling? newlineAtEndOfFile, string expectedText)
+        [InlineData(OptionSetting.Allow, "\r\n")]
+        [InlineData(OptionSetting.Require, "\r\n")]
+        [InlineData(OptionSetting.Omit, "")]
+        internal async Task TestCodeFixProviderStripsTrailingLinefeedOnlyBlankLinesIncludingWhitespaceAsync(OptionSetting? newlineAtEndOfFile, string expectedText)
         {
             this.newlineAtEndOfFile = newlineAtEndOfFile;
 
@@ -385,15 +385,15 @@ public class Foo
         /// <summary>
         /// Verifies that the code fix provider will strip only trailing blank lines.
         /// </summary>
-        /// <param name="newlineAtEndOfFile">The effective <see cref="EndOfFileHandling"/> setting.</param>
+        /// <param name="newlineAtEndOfFile">The effective <see cref="OptionSetting"/> setting.</param>
         /// <param name="expectedText">The expected text to appear at the end of the file.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData(null, "\r\n")]
-        [InlineData(EndOfFileHandling.Allow, "\r\n")]
-        [InlineData(EndOfFileHandling.Require, "\r\n")]
-        [InlineData(EndOfFileHandling.Omit, "")]
-        internal async Task TestCodeFixProviderOnlyStripsTrailingBlankLinesAsync(EndOfFileHandling? newlineAtEndOfFile, string expectedText)
+        [InlineData(OptionSetting.Allow, "\r\n")]
+        [InlineData(OptionSetting.Require, "\r\n")]
+        [InlineData(OptionSetting.Omit, "")]
+        internal async Task TestCodeFixProviderOnlyStripsTrailingBlankLinesAsync(OptionSetting? newlineAtEndOfFile, string expectedText)
         {
             this.newlineAtEndOfFile = newlineAtEndOfFile;
 
@@ -436,17 +436,17 @@ public class Foo
             return new SA1518CodeFixProvider();
         }
 
-        private DiagnosticDescriptor GetDescriptor(EndOfFileHandling? endOfFileHandling)
+        private DiagnosticDescriptor GetDescriptor(OptionSetting? endOfFileHandling)
         {
             switch (endOfFileHandling)
             {
-            case EndOfFileHandling.Require:
+            case OptionSetting.Require:
                 return SA1518UseLineEndingsCorrectlyAtEndOfFile.DescriptorRequire;
 
-            case EndOfFileHandling.Omit:
+            case OptionSetting.Omit:
                 return SA1518UseLineEndingsCorrectlyAtEndOfFile.DescriptorOmit;
 
-            case EndOfFileHandling.Allow:
+            case OptionSetting.Allow:
             case null:
             default:
                 return SA1518UseLineEndingsCorrectlyAtEndOfFile.DescriptorAllow;

@@ -150,7 +150,7 @@ class ClassName
                     Id = "CS1003",
                     Message = "Syntax error, ']' expected",
                     Severity = DiagnosticSeverity.Error,
-                }
+                },
             };
 
             for (int i = 0; i < expected.Length; i++)

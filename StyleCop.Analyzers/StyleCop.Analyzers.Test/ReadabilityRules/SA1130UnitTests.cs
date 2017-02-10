@@ -58,7 +58,7 @@ public class TypeName
             {
                 this.CSharpDiagnostic().WithLocation(7, 26),
                 this.CSharpDiagnostic().WithLocation(8, 26),
-                this.CSharpDiagnostic().WithLocation(9, 31)
+                this.CSharpDiagnostic().WithLocation(9, 31),
             };
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -233,7 +233,7 @@ internal class TypeName
                 this.CSharpDiagnostic().WithLocation(14, 30),
                 this.CSharpDiagnostic(CS1670).WithLocation(14, 47),
                 this.CSharpDiagnostic().WithLocation(15, 25),
-                this.CSharpDiagnostic(CS1669).WithLocation(15, 42)
+                this.CSharpDiagnostic(CS1669).WithLocation(15, 42),
             };
 
             var expectedAfterFix = new[]
@@ -245,7 +245,7 @@ internal class TypeName
                 this.CSharpDiagnostic().WithLocation(14, 30),
                 this.CSharpDiagnostic(CS1670).WithLocation(14, 47),
                 this.CSharpDiagnostic().WithLocation(15, 25),
-                this.CSharpDiagnostic(CS1669).WithLocation(15, 42)
+                this.CSharpDiagnostic(CS1669).WithLocation(15, 42),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -287,7 +287,7 @@ public class TypeName
                 this.CSharpDiagnostic().WithLocation(7, 31),
                 this.CSharpDiagnostic().WithLocation(8, 31),
                 this.CSharpDiagnostic().WithLocation(9, 36),
-                this.CSharpDiagnostic().WithLocation(10, 37)
+                this.CSharpDiagnostic().WithLocation(10, 37),
             };
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);

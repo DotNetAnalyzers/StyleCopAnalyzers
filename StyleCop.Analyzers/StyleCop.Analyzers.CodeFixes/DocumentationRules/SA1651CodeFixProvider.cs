@@ -44,6 +44,12 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             foreach (var diagnostic in context.Diagnostics)
             {
+                if (diagnostic.Properties.ContainsKey(SA1651DoNotUsePlaceholderElements.NoCodeFixKey))
+                {
+                    // skip diagnostics that should not offer a code fix.
+                    continue;
+                }
+
                 var documentRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
                 SyntaxNode syntax = documentRoot.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
                 if (syntax == null)

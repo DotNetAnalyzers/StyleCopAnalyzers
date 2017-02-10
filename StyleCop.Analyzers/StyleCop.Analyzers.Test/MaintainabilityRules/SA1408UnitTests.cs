@@ -156,7 +156,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             DiagnosticResult[] expected =
                 {
                     this.CSharpDiagnostic().WithLocation(5, 18),
-                    this.CSharpDiagnostic().WithLocation(5, 35)
+                    this.CSharpDiagnostic().WithLocation(5, 35),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
