@@ -139,19 +139,17 @@ namespace StyleCop.Analyzers.DocumentationRules
             {
                 if (!getter.Modifiers.Any() && !setter.Modifiers.Any())
                 {
-                    // Case 1: The getter and setter have the same declared accessibility
+                    // The getter and setter have the same declared accessibility
                     getterVisible = true;
                     setterVisible = true;
                 }
                 else if (getter.Modifiers.Any(SyntaxKind.PrivateKeyword))
                 {
-                    // Case 3
                     getterVisible = false;
                     setterVisible = true;
                 }
                 else if (setter.Modifiers.Any(SyntaxKind.PrivateKeyword))
                 {
-                    // Case 3
                     getterVisible = true;
                     setterVisible = false;
                 }
@@ -163,7 +161,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                                                 || propertyAccessibility == Accessibility.Private;
                     if (propertyOnlyInternal)
                     {
-                        // Case 2: Property only internal and no accessor is explicitly private
+                        // Property only internal and no accessor is explicitly private
                         getterVisible = true;
                         setterVisible = true;
                     }
@@ -177,7 +175,6 @@ namespace StyleCop.Analyzers.DocumentationRules
                         case Accessibility.Public:
                         case Accessibility.ProtectedOrInternal:
                         case Accessibility.Protected:
-                            // Case 4
                             getterVisible = true;
                             break;
 
@@ -195,7 +192,6 @@ namespace StyleCop.Analyzers.DocumentationRules
                         case Accessibility.Public:
                         case Accessibility.ProtectedOrInternal:
                         case Accessibility.Protected:
-                            // Case 4
                             setterVisible = true;
                             break;
 
