@@ -131,7 +131,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             var text = textElement == null ? string.Empty : XmlCommentHelper.GetText(textElement, true).TrimStart();
 
             bool prefixIsGetsOrSets = text.StartsWith(startingTextGetsOrSets, StringComparison.OrdinalIgnoreCase);
-            bool prefixIsGets = text.StartsWith(startingTextGets, StringComparison.OrdinalIgnoreCase) && !prefixIsGetsOrSets;
+            bool prefixIsGets = !prefixIsGetsOrSets && text.StartsWith(startingTextGets, StringComparison.OrdinalIgnoreCase);
             bool prefixIsSets = text.StartsWith(startingTextSets, StringComparison.OrdinalIgnoreCase);
 
             bool getterVisible, setterVisible;
@@ -231,7 +231,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     // Both getter and setter are visible.
                     if (!prefixIsGetsOrSets)
                     {
-                        ReportSa1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextGetsOrSets, unexpectedStartingText1: startingTextGets, unexpectedStartingText2: startingTextSets);
+                        ReportSA1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextGetsOrSets, unexpectedStartingText1: startingTextGets, unexpectedStartingText2: startingTextSets);
                     }
                 }
                 else if (setter != null)
@@ -241,11 +241,11 @@ namespace StyleCop.Analyzers.DocumentationRules
                     {
                         if (prefixIsGetsOrSets)
                         {
-                            ReportSa1624(context, diagnosticLocation, diagnosticProperties, accessor: "get", expectedStartingText: startingTextGets, startingTextToRemove: startingTextGetsOrSets);
+                            ReportSA1624(context, diagnosticLocation, diagnosticProperties, accessor: "get", expectedStartingText: startingTextGets, startingTextToRemove: startingTextGetsOrSets);
                         }
                         else
                         {
-                            ReportSa1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextGets, unexpectedStartingText1: startingTextSets);
+                            ReportSA1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextGets, unexpectedStartingText1: startingTextSets);
                         }
                     }
                 }
@@ -254,7 +254,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     // Getter exists and is visible. Setter does not exist.
                     if (!prefixIsGets)
                     {
-                        ReportSa1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextGets, unexpectedStartingText1: startingTextSets, unexpectedStartingText2: startingTextGetsOrSets);
+                        ReportSA1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextGets, unexpectedStartingText1: startingTextSets, unexpectedStartingText2: startingTextGetsOrSets);
                     }
                 }
             }
@@ -267,11 +267,11 @@ namespace StyleCop.Analyzers.DocumentationRules
                     {
                         if (prefixIsGetsOrSets)
                         {
-                            ReportSa1624(context, diagnosticLocation, diagnosticProperties, accessor: "set", expectedStartingText: startingTextSets, startingTextToRemove: startingTextGetsOrSets);
+                            ReportSA1624(context, diagnosticLocation, diagnosticProperties, accessor: "set", expectedStartingText: startingTextSets, startingTextToRemove: startingTextGetsOrSets);
                         }
                         else
                         {
-                            ReportSa1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextSets, unexpectedStartingText1: startingTextGets);
+                            ReportSA1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextSets, unexpectedStartingText1: startingTextGets);
                         }
                     }
                 }
@@ -280,13 +280,13 @@ namespace StyleCop.Analyzers.DocumentationRules
                     // Setter exists and is visible. Getter does not exist.
                     if (!prefixIsSets)
                     {
-                        ReportSa1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextSets, unexpectedStartingText1: startingTextGetsOrSets, unexpectedStartingText2: startingTextGets);
+                        ReportSA1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextSets, unexpectedStartingText1: startingTextGetsOrSets, unexpectedStartingText2: startingTextGets);
                     }
                 }
             }
         }
 
-        private static void ReportSa1623(SyntaxNodeAnalysisContext context, Location diagnosticLocation, ImmutableDictionary<string, string>.Builder diagnosticProperties, string text, string expectedStartingText, string unexpectedStartingText1, string unexpectedStartingText2 = null)
+        private static void ReportSA1623(SyntaxNodeAnalysisContext context, Location diagnosticLocation, ImmutableDictionary<string, string>.Builder diagnosticProperties, string text, string expectedStartingText, string unexpectedStartingText1, string unexpectedStartingText2 = null)
         {
             diagnosticProperties.Add(ExpectedTextKey, expectedStartingText);
 
@@ -302,7 +302,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), expectedStartingText));
         }
 
-        private static void ReportSa1624(SyntaxNodeAnalysisContext context, Location diagnosticLocation, ImmutableDictionary<string, string>.Builder diagnosticProperties, string accessor, string expectedStartingText, string startingTextToRemove)
+        private static void ReportSA1624(SyntaxNodeAnalysisContext context, Location diagnosticLocation, ImmutableDictionary<string, string>.Builder diagnosticProperties, string accessor, string expectedStartingText, string startingTextToRemove)
         {
             diagnosticProperties.Add(ExpectedTextKey, expectedStartingText);
             diagnosticProperties.Add(TextToRemoveKey, startingTextToRemove);
