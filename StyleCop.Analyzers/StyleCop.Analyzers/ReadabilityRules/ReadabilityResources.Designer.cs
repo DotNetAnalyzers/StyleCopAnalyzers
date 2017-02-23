@@ -1277,7 +1277,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code should be wrapped to a maximum line length. See stylecop.settings.
+        ///   Looks up a localized string similar to Code should be wrapped to a maximum line length. See stylecop.json.
         /// </summary>
         internal static string SA1140Description {
             get {
@@ -1286,7 +1286,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Maximum line length is {lineLength}.
+        ///   Looks up a localized string similar to Maximum line length exceeded.
         /// </summary>
         internal static string SA1140MessageFormat {
             get {
@@ -1295,7 +1295,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Maximum line length is {lineLength}.
+        ///   Looks up a localized string similar to Maximum line length.
         /// </summary>
         internal static string SA1140Title {
             get {

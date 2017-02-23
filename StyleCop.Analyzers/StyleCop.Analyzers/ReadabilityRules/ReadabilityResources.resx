@@ -535,7 +535,7 @@
     <value>Do not prefix local calls with 'this.'</value>
   </data>
   <data name="SA1140Description" xml:space="preserve">
-    <value>Code should be wrapped to a maximum line length. See stylecop.settings</value>
+    <value>Code should be wrapped to a maximum line length. See stylecop.json</value>
   </data>
   <data name="SA1140MessageFormat" xml:space="preserve">
     <value>Maximum line length exceeded</value>
