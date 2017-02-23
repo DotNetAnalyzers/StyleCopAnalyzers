@@ -12,11 +12,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// The C# comment does not contain any comment text.
+    /// Maximum line length
     /// </summary>
     /// <remarks>
-    /// <para>A violation of this rule occurs whenever the code contains a C# comment which does not contain any
-    /// text.</para>
+    /// <para>A violation of this rule occurs whenever the code contains lines with more characters
+    /// than allowed in stylecop.json</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class SA1140MaximumLineLength : DiagnosticAnalyzer
