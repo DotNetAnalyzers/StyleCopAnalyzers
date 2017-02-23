@@ -1277,6 +1277,33 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Code should be wrapped to a maximum line length. See stylecop.settings.
+        /// </summary>
+        internal static string SA1140Description {
+            get {
+                return ResourceManager.GetString("SA1140Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Maximum line length is {lineLength}.
+        /// </summary>
+        internal static string SA1140MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1140MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Maximum line length is {lineLength}.
+        /// </summary>
+        internal static string SA1140Title {
+            get {
+                return ResourceManager.GetString("SA1140Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove &apos;this.&apos; prefix.
         /// </summary>
         internal static string SX1101CodeFix {
