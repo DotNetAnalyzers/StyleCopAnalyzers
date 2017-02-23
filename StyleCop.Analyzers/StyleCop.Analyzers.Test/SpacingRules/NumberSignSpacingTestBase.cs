@@ -424,6 +424,68 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestPrefixUnaryOperatorInInterpolationBracesAsync()
+        {
+            string testFormat = @"namespace Namespace
+{{
+    class Type
+    {{
+        void Foo()
+        {{
+            string x = $""{{{0}}}"";
+        }}
+    }}
+}}
+";
+
+            // in all cases the final output should be the following
+            string fixedTest = @"namespace Namespace
+{
+    class Type
+    {
+        void Foo()
+        {
+            string x = $""{" + this.Sign + @"0}"";
+        }
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(fixedTest, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+
+            string test = string.Format(testFormat, this.Sign + "0");
+            await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, numberOfFixAllIterations: 0, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+
+            test = string.Format(testFormat, " " + this.Sign + "0");
+            DiagnosticResult[] expected =
+                {
+                    this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 28),
+                };
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+
+            test = string.Format(testFormat, this.Sign + " 0");
+            expected =
+                new[]
+                {
+                    this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 27),
+                };
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+
+            test = string.Format(testFormat, " " + this.Sign + " 0");
+            expected =
+                new[]
+                {
+                    this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 28),
+                    this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 28),
+                };
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override abstract CodeFixProvider GetCSharpCodeFixProvider();
     }
 }
