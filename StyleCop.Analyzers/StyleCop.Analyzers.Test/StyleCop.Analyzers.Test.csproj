@@ -347,6 +347,7 @@
     <Compile Include="ReadabilityRules\SA1136UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1137UnitTests.cs" />
     <Compile Include="ReadabilityRules\SA1139UnitTests.cs" />
+    <Compile Include="ReadabilityRules\SA1140UnitTests.cs" />
     <Compile Include="ReadabilityRules\SX1101UnitTests.cs" />
     <Compile Include="Settings\SettingsFileCodeFixProviderUnitTests.cs" />
     <Compile Include="Settings\SettingsUnitTests.cs" />
