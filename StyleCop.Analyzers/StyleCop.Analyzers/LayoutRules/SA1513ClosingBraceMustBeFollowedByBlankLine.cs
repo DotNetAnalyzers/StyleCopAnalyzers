@@ -230,10 +230,15 @@ namespace StyleCop.Analyzers.LayoutRules
                         return;
                     }
 
-                    if (IsPartOf<QueryExpressionSyntax>(token) && ((nextToken.Parent is QueryClauseSyntax) || (nextToken.Parent is SelectOrGroupClauseSyntax)))
+                    if (IsPartOf<QueryExpressionSyntax>(token))
                     {
-                        // the close brace is part of a query expression
-                        return;
+                        if (nextToken.Parent is QueryClauseSyntax
+                            || nextToken.Parent is SelectOrGroupClauseSyntax
+                            || nextToken.Parent is QueryContinuationSyntax)
+                        {
+                            // the close brace is part of a query expression
+                            return;
+                        }
                     }
 
                     if (IsPartOf<ArgumentListSyntax>(token))

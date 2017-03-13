@@ -358,6 +358,23 @@ public class Foo
                               }).ToList();
     }
 
+    // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2306
+    public void MultiLineGroupByLinqQuery()
+    {
+        var someQuery = from f in Enumerable.Empty<int>()
+                        group f by new
+                        {
+                            f,
+                        }
+                        into a
+                        select a;
+
+        var someOtherQuery = from f in Enumerable.Empty<int>()
+                             group f by new { f }
+                             into a
+                             select a;
+    }
+
     // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1049
     public object[] ExpressionBodiedProperty =>
         new[]
