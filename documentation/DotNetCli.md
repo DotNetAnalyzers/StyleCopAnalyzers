@@ -37,7 +37,6 @@ On VS VS2017 / dotnet core 1.1.1 SDK 1.0.1 projects update `.csproj` as follows 
         <CodeAnalysisRuleSet>stylecop.ruleset</CodeAnalysisRuleSet>
     </PropertyGroup>
     <ItemGroup>
-        <None Remove="stylecop.json" />
         <AdditionalFiles Include="stylecop.json" />
     </ItemGroup>
 ```
