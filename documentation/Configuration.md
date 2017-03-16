@@ -59,11 +59,11 @@ properties are configured in the `indentation` object, which is shown in the fol
 
 The following properties are used to configure basic indentation in StyleCop Analyzers.
 
-| Property | Default Value | Summary |
-| --- | --- | --- |
-| `indentationSize` | **4** | The number of columns to use for each indentation of code. Depending on the `useTabs` and `tabSize` settings, this will be filled with tabs and/or spaces. |
-| `tabSize` | **4** | The width of a hard tab character in source code. This value is used when converting between tabs and spaces. |
-| `useTabs` | **false** | **true** to indent using hard tabs; otherwise, **false** to indent using spaces |
+| Property | Default Value | Minimum Version | Summary |
+| --- | --- | --- | --- |
+| `indentationSize` | **4** | 1.1.0 | The number of columns to use for each indentation of code. Depending on the `useTabs` and `tabSize` settings, this will be filled with tabs and/or spaces. |
+| `tabSize` | **4** | 1.1.0 | The width of a hard tab character in source code. This value is used when converting between tabs and spaces. |
+| `useTabs` | **false** | 1.1.0 | **true** to indent using hard tabs; otherwise, **false** to indent using spaces |
 
 > :bulb: When working in Visual Studio, the IDE will not automatically adjust editor settings according to the values in
 > **stylecop.json**. To provide this functionality as well, we recommend duplicating the basic indentation settings in a
@@ -117,9 +117,9 @@ This section describes the features of ordering rules which can be configured in
 
 The following properties are used to configure element ordering in StyleCop Analyzers.
 
-| Property | Default Value | Summary |
-| --- | --- | --- |
-| `elementOrder` | `[ "kind", "accessibility", "constant", "static", "readonly" ]` | Specifies the traits used for ordering elements within a document, along with their precedence |
+| Property | Default Value | Minimum Version | Summary |
+| --- | --- | --- | --- |
+| `elementOrder` | `[ "kind", "accessibility", "constant", "static", "readonly" ]` | 1.0.0 | Specifies the traits used for ordering elements within a document, along with their precedence |
 
 The `elementOrder` property is an array of element traits. The ordering rules (SA1201, SA1202, SA1203, SA1204, SA1214,
 and SA1215) evaluate these traits in the order they are defined to identify ordering problems, and the code fix uses
@@ -180,11 +180,11 @@ rules remain enforced.
 
 The following properties are used to configure using directives in StyleCop Analyzers.
 
-| Property | Default Value | Summary |
-| --- | --- | --- |
-| `systemUsingDirectivesFirst` | true | Specifies whether `System` using directives are placed before other using directives |
-| `usingDirectivesPlacement` | `"insideNamespace"` | Specifies the desired placement of using directives |
-| `blankLinesBetweenUsingGroups` | `"allow"` | Specifies is blank lines are required to separate groups of using statements |
+| Property | Default Value | Minimum Version | Summary |
+| --- | --- | --- | --- |
+| `systemUsingDirectivesFirst` | true | 1.0.0 | Specifies whether `System` using directives are placed before other using directives |
+| `usingDirectivesPlacement` | `"insideNamespace"` | 1.0.0 | Specifies the desired placement of using directives |
+| `blankLinesBetweenUsingGroups` | `"allow"` | 1.1.0 | Specifies is blank lines are required to separate groups of using statements |
 
 #### Using Directives Placement
 
@@ -278,10 +278,10 @@ This section describes the features of naming rules which can be configured in *
 
 The following properties are used to configure allowable Hungarian notation prefixes in StyleCop Analyzers.
 
-| Property | Default Value | Summary |
-| --- | --- | --- |
-| `allowCommonHungarianPrefixes` | **true** | Specifies whether common non-Hungarian notation prefixes should be allowed. When true, the two-letter words 'as', 'at', 'by', 'do', 'go', 'if', 'in', 'is', 'it', 'no', 'of', 'on', 'or', and 'to' are allowed to appear as prefixes for variable names. |
-| `allowedHungarianPrefixes` | `[ ]` | Specifies additional prefixes which are allowed to be used in variable names. See the example below for more information. |
+| Property | Default Value | Minimum Version | Summary |
+| --- | --- | --- | --- |
+| `allowCommonHungarianPrefixes` | **true** | 1.0.0 | Specifies whether common non-Hungarian notation prefixes should be allowed. When true, the two-letter words 'as', 'at', 'by', 'do', 'go', 'if', 'in', 'is', 'it', 'no', 'of', 'on', 'or', and 'to' are allowed to appear as prefixes for variable names. |
+| `allowedHungarianPrefixes` | `[ ]` | 1.0.0 | Specifies additional prefixes which are allowed to be used in variable names. See the example below for more information. |
 
 The following example shows a settings file which allows the common prefixes as well as the custom prefixes 'md' and 'cd'.
 
@@ -313,9 +313,9 @@ This section describes the features of maintainability rules which can be config
 
 The following properties are used to configure maintainability rules in StyleCop Analyzers.
 
-| Property | Default Value | Summary |
-| --- | --- | --- |
-| `topLevelTypes` | `[ "class" ]` | Specifies which kind of types that must be placed in separate files |
+| Property | Default Value | Minimum Version | Summary |
+| --- | --- | --- | --- |
+| `topLevelTypes` | `[ "class" ]` | 1.1.0 | Specifies which kind of types that must be placed in separate files |
 
 The `topLevelTypes` property is an array which specifies which kind of types that must be placed in separate files
 according to rule SA1402. The following types are supported:
@@ -340,10 +340,10 @@ This section describes the features of layout rules which can be configured in *
 
 The following properties are used to configure layout rules in StyleCop Analyzers.
 
-| Property | Default Value | Summary |
-| --- | --- | --- |
-| `newlineAtEndOfFile` | `"allow"` | Specifies the handling for newline characters which appear at the end of a file |
-| `allowConsecutiveUsings` | `true` | Specifies if SA1519 will allow consecutive using statements without braces |
+| Property | Default Value | Minimum Version | Summary |
+| --- | --- | --- | --- |
+| `newlineAtEndOfFile` | `"allow"` | 1.0.0 | Specifies the handling for newline characters which appear at the end of a file |
+| `allowConsecutiveUsings` | `true` | 1.1.0 | Specifies if SA1519 will allow consecutive using statements without braces |
 
 ### Lines at End of File
 
@@ -382,13 +382,13 @@ This section describes the features of documentation rules which can be configur
 
 The following properties are used to configure copyright headers in StyleCop Analyzers.
 
-| Property | Default Value | Summary |
-| --- | --- | --- |
-| `companyName` | `"PlaceholderCompany"` | Specifies the company name which should appear in copyright notices |
-| `copyrightText` | `"Copyright (c) {companyName}. All rights reserved."` | Specifies the default copyright text which should appear in copyright headers |
-| `xmlHeader` | **true** | Specifies whether file headers should use standard StyleCop XML format, where the copyright notice is wrapped in a `<copyright>` element |
-| `variables` | n/a | Specifies replacement variables which can be referenced in the `copyrightText` value |
-| `headerDecoration` | n/a | This value can be set to add a decoration for the header comment so headers look similar to the ones generated by the StyleCop Classic ReSharper fix | 
+| Property | Default Value | Minimum Version | Summary |
+| --- | --- | --- | --- |
+| `companyName` | `"PlaceholderCompany"` | 1.0.0 | Specifies the company name which should appear in copyright notices |
+| `copyrightText` | `"Copyright (c) {companyName}. All rights reserved."` | 1.0.0 | Specifies the default copyright text which should appear in copyright headers |
+| `xmlHeader` | **true** | 1.0.0 | Specifies whether file headers should use standard StyleCop XML format, where the copyright notice is wrapped in a `<copyright>` element |
+| `variables` | n/a | 1.0.0 | Specifies replacement variables which can be referenced in the `copyrightText` value |
+| `headerDecoration` | n/a | 1.1.0 | This value can be set to add a decoration for the header comment so headers look similar to the ones generated by the StyleCop Classic ReSharper fix | 
 
 #### Configuring Copyright Text
 
@@ -488,13 +488,13 @@ With the above configuration, the fix for a file **TypeName.cs** would look like
 
 StyleCop Analyzers includes rules which require developers to document the majority of a code base by default. This requirement can easily overwhelm a team which did not use StyleCop for the entire development process. To help guide developers towards a properly documented code base, several properties are available in **stylecop.json** to progressively increase the documentation requirements.
 
-| Property | Default Value | Summary |
-| --- | --- | --- |
-| `documentInterfaces` | **true** | Specifies whether interface members need to be documented. When true, all interface members require documentation, regardless of accessibility. |
-| `documentExposedElements` | **true** | Specifies whether exposed elements need to be documented. When true, all publicly-exposed types and members require documentation. |
-| `documentInternalElements` | **true** | Specifies whether internal elements need to be documented. When true, all internally-exposed types and members require documentation. |
-| `documentPrivateElements` | **false** | Specifies whether private elements need to be documented. When true, all types and members except for declared private fields require documentation. |
-| `documentPrivateFields` | **false** | Specifies whether private fields need to be documented. When true, all fields require documentation, regardless of accessibility. |
+| Property | Default Value | Minimum Version | Summary |
+| --- | --- | --- | --- |
+| `documentInterfaces` | **true** | 1.0.0 | Specifies whether interface members need to be documented. When true, all interface members require documentation, regardless of accessibility. |
+| `documentExposedElements` | **true** | 1.0.0 | Specifies whether exposed elements need to be documented. When true, all publicly-exposed types and members require documentation. |
+| `documentInternalElements` | **true** | 1.0.0 | Specifies whether internal elements need to be documented. When true, all internally-exposed types and members require documentation. |
+| `documentPrivateElements` | **false** | 1.0.0 | Specifies whether private elements need to be documented. When true, all types and members except for declared private fields require documentation. |
+| `documentPrivateFields` | **false** | 1.0.0 | Specifies whether private fields need to be documented. When true, all fields require documentation, regardless of accessibility. |
 
 These properties affect the behavior of the following rules which report missing documentation. Rules which report incorrect or incomplete documentation continue to apply to all documentation comments in the code.
 
@@ -522,9 +522,9 @@ The following example shows a configuration file which requires developers to do
 
 Some documentation rules require summary texts to start with specific strings. To allow teams to document their code in their native language, **stylecop.json** contains the `documentationCulture` property.
 
-| Property | Default Value | Summary |
-| --- | --- | --- |
-| `documentationCulture` | `"en-US"` | Specifies the culture or language to be used for certain documentation texts. |
+| Property | Default Value | Minimum Version | Summary |
+| --- | --- | --- | --- |
+| `documentationCulture` | `"en-US"` |  1.1.0 | Specifies the culture or language to be used for certain documentation texts. |
 
 This property affects the behavior of the following rules which report incorrect documentation.
 
