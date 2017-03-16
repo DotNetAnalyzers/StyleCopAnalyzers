@@ -92,7 +92,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     return;
                 }
 
-                var parentParameter = parentParameters.FirstOrDefault(s => s.Identifier.Text == nameAttributeText);
+                var parentParameter = parentParameters.FirstOrDefault(s => s.Identifier.ValueText == nameAttributeText);
                 if (parentParameter == null)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(MissingParameterDescriptor, location ?? identifierLocation, nameAttributeText));
@@ -150,7 +150,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     return;
                 }
 
-                var parentParameter = parentParameters.FirstOrDefault(s => s.Identifier.Text == nameAttributeText);
+                var parentParameter = parentParameters.FirstOrDefault(s => s.Identifier.ValueText == nameAttributeText);
                 if (parentParameter == null)
                 {
                     context.ReportDiagnostic(Diagnostic.Create(MissingParameterDescriptor, identifierLocation, nameAttributeText));
