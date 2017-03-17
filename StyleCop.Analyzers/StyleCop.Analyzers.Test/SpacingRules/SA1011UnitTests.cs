@@ -349,6 +349,24 @@ class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(2289, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2289")]
+        public async Task TestCommaCanFollowSquareBracketWhenPartOfInterpolationFormatClauseAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    void Method()
+    {
+        var x = new[] { 1, 2, 3, 4, 5, 6, 7 };
+        var t = $""{ x[2],3}"";
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {

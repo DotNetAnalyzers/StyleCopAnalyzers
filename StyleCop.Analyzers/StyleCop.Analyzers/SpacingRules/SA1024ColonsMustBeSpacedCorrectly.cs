@@ -42,8 +42,8 @@ namespace StyleCop.Analyzers.SpacingRules
     /// }
     /// </code>
     ///
-    /// <para>A colon that appears as part of format string component should not have leading whitespace characters. For
-    /// example:</para>
+    /// <para>A colon that appears as part of a string interpolation formatting component should not have leading
+    /// whitespace characters. For example:</para>
     ///
     /// <code language="cs">
     /// var s = $"{x:N}";

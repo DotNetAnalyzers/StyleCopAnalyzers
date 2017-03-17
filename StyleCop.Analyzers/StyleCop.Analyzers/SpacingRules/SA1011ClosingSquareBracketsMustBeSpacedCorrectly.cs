@@ -22,8 +22,8 @@ namespace StyleCop.Analyzers.SpacingRules
     ///
     /// <para>A closing square bracket should be followed by whitespace, unless it is the last character on the line, it
     /// is followed by a closing bracket or an opening parenthesis, it is followed by a comma or semicolon, it is
-    /// followed by a alignment component or format string component, or it is followed by certain types of operator
-    /// symbols.</para>
+    /// followed by a string interpolation alignment component or string interpolation formatting component, or it is
+    /// followed by certain types of operator symbols.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class SA1011ClosingSquareBracketsMustBeSpacedCorrectly : DiagnosticAnalyzer

@@ -16,8 +16,8 @@ namespace StyleCop.Analyzers.SpacingRules
     /// <remarks>
     /// <para>A violation of this rule occurs when the spacing around a comma is incorrect.</para>
     ///
-    /// <para>A comma should always be followed by a single space, unless it is the last character on the line
-    /// or it is part of an alignment component, and a comma should never be preceded by any whitespace,
+    /// <para>A comma should always be followed by a single space, unless it is the last character on the line or it is
+    /// part of a string interpolation alignment component, and a comma should never be preceded by any whitespace,
     /// unless it is the first character on the line.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
