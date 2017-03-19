@@ -49,7 +49,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, new[] { diagnosticLine4 }, CancellationToken.None).ConfigureAwait(false);
 
             this.SetLineLengthSettings(42);
-            await this.VerifyCSharpDiagnosticAsync(testCode, new[] {}, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
 
         }
 
