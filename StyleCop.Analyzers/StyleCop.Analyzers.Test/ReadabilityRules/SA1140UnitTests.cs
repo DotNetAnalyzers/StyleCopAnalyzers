@@ -47,6 +47,10 @@ public class Foo
 
             this.SetLineLengthSettings(41);
             await this.VerifyCSharpDiagnosticAsync(testCode, new[] { diagnosticLine4 }, CancellationToken.None).ConfigureAwait(false);
+
+            this.SetLineLengthSettings(42);
+            await this.VerifyCSharpDiagnosticAsync(testCode, new[] {}, CancellationToken.None).ConfigureAwait(false);
+
         }
 
         /// <inheritdoc/>
