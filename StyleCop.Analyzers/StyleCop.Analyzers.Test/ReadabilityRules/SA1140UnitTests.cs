@@ -50,7 +50,6 @@ public class Foo
 
             this.SetLineLengthSettings(42);
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-
         }
 
         /// <inheritdoc/>
