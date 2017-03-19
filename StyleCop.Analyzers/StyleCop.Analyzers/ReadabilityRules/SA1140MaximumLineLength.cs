@@ -18,7 +18,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// <para>A violation of this rule occurs whenever the code contains lines with more characters
     /// than allowed in stylecop.json</para>
     /// </remarks>
-    [NoCodeFix]
+    [NoCodeFix("No code fix implemented")]
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class SA1140MaximumLineLength : DiagnosticAnalyzer
     {
