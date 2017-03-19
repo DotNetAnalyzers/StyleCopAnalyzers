@@ -54,13 +54,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var readabilityRules = context.GetStyleCopSettings(context.CancellationToken).ReadabilityRules;
 
             // Only proceed if rule is enabled
-            if (readabilityRules.LineLength > 0)
+            if (readabilityRules.MaximumLineLength > 0)
             {
                 SyntaxNode root = context.Tree.GetCompilationUnitRoot(context.CancellationToken);
                 var fileText = context.Tree.GetText(context.CancellationToken);
                 foreach (var line in fileText.Lines)
                 {
-                    if ((line.End - line.Start) > readabilityRules.LineLength)
+                    if ((line.End - line.Start) > readabilityRules.MaximumLineLength)
                     {
                         var location = root.SyntaxTree.GetLocation(line.Span);
                         var diagnostic = Diagnostic.Create(Descriptor, location);
