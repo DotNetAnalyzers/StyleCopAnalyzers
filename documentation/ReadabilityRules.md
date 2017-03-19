@@ -39,4 +39,4 @@ Identifier | Name | Description
 [SA1134](SA1134.md) | AttributesMustNotShareLine | An attribute is placed on the same line of code as another attribute or element. 
 [SA1136](SA1136.md) | EnumValuesShouldBeOnSeparateLines | Multiple enum values are placed on the same line of code. 
 [SA1139](SA1139.md) | UseLiteralsSuffixNotationInsteadOfCasting | Use literal suffix notation instead of casting. 
-[SA1140](SA1140.md) | SA1140MaximumLineLength | Code should be wrapped to a maximum line length. 
+[SA1140](SA1140.md) | MaximumLineLength | Code should be wrapped to a maximum line length. 
