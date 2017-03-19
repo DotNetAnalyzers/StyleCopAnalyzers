@@ -70,7 +70,7 @@ public class Foo
 {
     ""settings"": {
         ""readabilityRules"": {
-            ""lineLength"": " + maxLineLength.ToString() + @"
+            ""maximumLineLength"": " + maxLineLength.ToString() + @"
         }
     }
 }

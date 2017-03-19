@@ -9,10 +9,10 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
     internal class ReadabilitySettings
     {
         /// <summary>
-        /// This is the backing field for the <see cref="lineLength"/> property.
+        /// This is the backing field for the <see cref="maximumLineLength"/> property.
         /// </summary>
-        [JsonProperty("lineLength", DefaultValueHandling = DefaultValueHandling.Include)]
-        private int lineLength;
+        [JsonProperty("maximumLineLength", DefaultValueHandling = DefaultValueHandling.Include)]
+        private int maximumLineLength;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ReadabilitySettings"/> class during JSON deserialization.
@@ -20,10 +20,10 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         [JsonConstructor]
         protected internal ReadabilitySettings()
         {
-            this.lineLength = 0;
+            this.maximumLineLength = 0;
         }
 
-        public int LineLength =>
-            this.lineLength;
+        public int MaximumLineLength =>
+            this.maximumLineLength;
     }
 }
