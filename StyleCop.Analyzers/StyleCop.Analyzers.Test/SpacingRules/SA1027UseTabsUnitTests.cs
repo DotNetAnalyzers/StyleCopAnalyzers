@@ -66,7 +66,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 "    public void Bar()\r\n" +
                 "    {\r\n" +
                 "  \t  \t// Comment\r\n" +
-                "\t \tDebug.Indent();\r\n" +
+                "\t \tDebug.Fail(null);\r\n" +
                 "   \t}\r\n" +
                 "}\r\n";
 
@@ -78,7 +78,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 "\tpublic void Bar()\r\n" +
                 "\t{\r\n" +
                 "\t\t// Comment\r\n" +
-                "\t\tDebug.Indent();\r\n" +
+                "\t\tDebug.Fail(null);\r\n" +
                 "\t}\r\n" +
                 "}\r\n";
 

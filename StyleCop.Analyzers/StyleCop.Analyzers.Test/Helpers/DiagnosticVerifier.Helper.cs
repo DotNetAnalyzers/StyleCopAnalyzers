@@ -119,9 +119,17 @@ namespace TestHelper
                 .CurrentSolution
                 .AddProject(projectId, TestProjectName, TestProjectName, language)
                 .WithProjectCompilationOptions(projectId, compilationOptions)
+                .AddMetadataReference(projectId, MetadataReferences.MscorlibReference)
+                .AddMetadataReference(projectId, MetadataReferences.RuntimeReference)
                 .AddMetadataReference(projectId, MetadataReferences.CorlibReference)
+                .AddMetadataReference(projectId, MetadataReferences.SystemLinqExpressionsReference)
                 .AddMetadataReference(projectId, MetadataReferences.SystemReference)
                 .AddMetadataReference(projectId, MetadataReferences.SystemCoreReference)
+                .AddMetadataReference(projectId, MetadataReferences.SystemNetReference)
+                .AddMetadataReference(projectId, MetadataReferences.SystemCollectionsReference)
+                .AddMetadataReference(projectId, MetadataReferences.MicrosoftVisualStudioReference)
+                .AddMetadataReference(projectId, MetadataReferences.SystemComponentModelReference)
+                .AddMetadataReference(projectId, MetadataReferences.SystemComponentModelDataAnnotationsReference)
                 .AddMetadataReference(projectId, MetadataReferences.CSharpSymbolsReference)
                 .AddMetadataReference(projectId, MetadataReferences.CodeAnalysisReference)
                 .AddMetadataReference(projectId, MetadataReferences.ValueTupleReference);
@@ -359,7 +367,7 @@ namespace TestHelper
 
             if (sources.Length != documents.Length)
             {
-                throw new SystemException("Amount of sources did not match amount of Documents created");
+                throw new Exception("Amount of sources did not match amount of Documents created");
             }
 
             return documents;

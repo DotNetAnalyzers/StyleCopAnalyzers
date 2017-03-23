@@ -36,18 +36,18 @@ public class Foo
     // Valid constructor #2
     public Foo(bool a)
     {
-        Debug.Indent();
+        Debug.Fail(null);
     }
 
     // Valid constructor #3 (Valid only for SA1500)
     public Foo(byte a) { }
 
     // Valid constructor #4 (Valid only for SA1500)
-    public Foo(short a) { Debug.Indent(); }
+    public Foo(short a) { Debug.Fail(null); }
 
     // Valid constructor #5 (Valid only for SA1500)
     public Foo(ushort a) 
-    { Debug.Indent(); }
+    { Debug.Fail(null); }
 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -70,25 +70,25 @@ public class Foo
 
     // Invalid constructor #2
     public Foo(bool a) {
-        Debug.Indent();
+        Debug.Fail(null);
     }
 
     // Invalid constructor #3
     public Foo(byte a) {
-        Debug.Indent(); }
+        Debug.Fail(null); }
 
     // Invalid constructor #4
-    public Foo(short a) { Debug.Indent();
+    public Foo(short a) { Debug.Fail(null);
     }
 
     // Invalid constructor #5
     public Foo(ushort a)
     {
-        Debug.Indent(); }
+        Debug.Fail(null); }
 
     // Invalid constructor #6
     public Foo(int a)
-    { Debug.Indent();
+    { Debug.Fail(null);
     }
 }";
 
@@ -104,31 +104,31 @@ public class Foo
     // Invalid constructor #2
     public Foo(bool a)
     {
-        Debug.Indent();
+        Debug.Fail(null);
     }
 
     // Invalid constructor #3
     public Foo(byte a)
     {
-        Debug.Indent();
+        Debug.Fail(null);
     }
 
     // Invalid constructor #4
     public Foo(short a)
     {
-        Debug.Indent();
+        Debug.Fail(null);
     }
 
     // Invalid constructor #5
     public Foo(ushort a)
     {
-        Debug.Indent();
+        Debug.Fail(null);
     }
 
     // Invalid constructor #6
     public Foo(int a)
     {
-        Debug.Indent();
+        Debug.Fail(null);
     }
 }";
 
@@ -142,13 +142,13 @@ public class Foo
 
                 // Invalid constructor #3
                 this.CSharpDiagnostic().WithLocation(15, 24),
-                this.CSharpDiagnostic().WithLocation(16, 25),
+                this.CSharpDiagnostic().WithLocation(16, 27),
 
                 // Invalid constructor #4
                 this.CSharpDiagnostic().WithLocation(19, 25),
 
                 // Invalid constructor #5
-                this.CSharpDiagnostic().WithLocation(25, 25),
+                this.CSharpDiagnostic().WithLocation(25, 27),
 
                 // Invalid constructor #6
                 this.CSharpDiagnostic().WithLocation(29, 5),

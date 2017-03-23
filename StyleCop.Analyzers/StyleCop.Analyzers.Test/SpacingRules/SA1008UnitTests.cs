@@ -2045,6 +2045,7 @@ class ClassName
     {
         public (string primary, string alternate) CalculateMetaphone(string word)
         {
+            return (null, null);
         }
     }
 }
@@ -2066,6 +2067,7 @@ class ClassName
     {
         public (string primary, string alternate) CalculateMetaphone(string word)
         {
+            return (null, null);
         }
     }
 }
@@ -2083,10 +2085,11 @@ class ClassName
         {
             var testCode = @"namespace TestNamespace
 {
-    private class TestClass
+    public class TestClass
     {
         public (string primary, string alternate) CalculateMetaphone(string word)
         {
+            return (null, null);
         }
     }
 }
@@ -2104,10 +2107,11 @@ class ClassName
         {
             var testCode = @"namespace TestNamespace
 {
-    protected class TestClass
+    public class TestClass
     {
         public (string primary, string alternate) CalculateMetaphone(string word)
         {
+            return (null, null);
         }
     }
 }

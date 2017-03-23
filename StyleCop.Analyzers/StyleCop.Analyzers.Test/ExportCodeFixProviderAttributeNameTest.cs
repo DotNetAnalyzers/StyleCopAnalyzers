@@ -19,6 +19,7 @@ namespace StyleCop.Analyzers.Test
             get
             {
                 var codeFixProviders = typeof(TokenSpacingCodeFixProvider)
+                    .GetTypeInfo()
                     .Assembly
                     .GetTypes()
                     .Where(t => typeof(CodeFixProvider).IsAssignableFrom(t));
@@ -31,8 +32,8 @@ namespace StyleCop.Analyzers.Test
         [MemberData(nameof(CodeFixProviderTypeData))]
         public void TestExportCodeFixProviderAttribute(Type codeFixProvider)
         {
-            var exportCodeFixProviderAttribute = codeFixProvider.GetCustomAttributes<ExportCodeFixProviderAttribute>(false).FirstOrDefault();
-            var noCodeFixAttribute = codeFixProvider.GetCustomAttributes<NoCodeFixAttribute>(false).FirstOrDefault();
+            var exportCodeFixProviderAttribute = codeFixProvider.GetTypeInfo().GetCustomAttributes<ExportCodeFixProviderAttribute>(false).FirstOrDefault();
+            var noCodeFixAttribute = codeFixProvider.GetTypeInfo().GetCustomAttributes<NoCodeFixAttribute>(false).FirstOrDefault();
 
             if (noCodeFixAttribute != null)
             {

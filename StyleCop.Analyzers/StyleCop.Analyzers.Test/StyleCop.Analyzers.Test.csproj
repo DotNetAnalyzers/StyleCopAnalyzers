@@ -1,12 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 <PropertyGroup>
-    <TargetFramework>net46</TargetFramework>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
     <CodeAnalysisRuleSet>..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
     <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
     <SignAssembly>true</SignAssembly>
     <Company>Tunnel Vision Laboratories, LLC</Company>
     <Description></Description>
     <Copyright>Copyright © Sam Harwell 2015</Copyright>
+  <PackageTargetFallback>
+    $(PackageTargetFallback);portable-net45+win8+wp8+wpa81;
+  </PackageTargetFallback>
   </PropertyGroup>
   <PropertyGroup>
     <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>

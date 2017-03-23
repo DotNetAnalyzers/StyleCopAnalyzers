@@ -226,7 +226,7 @@ namespace Foo
 {
     using System;
     using Foo;
-    using static System.Uri;
+    using static System.Convert;
     using static System.Math;
 }";
 

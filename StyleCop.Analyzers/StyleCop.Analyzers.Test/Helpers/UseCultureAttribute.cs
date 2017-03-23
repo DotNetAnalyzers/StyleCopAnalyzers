@@ -76,29 +76,29 @@ namespace StyleCop.Analyzers.Test.Helpers
         public CultureInfo UiCulture => this.uiCulture.Value;
 
         /// <summary>
-        /// Stores the current <see cref="Thread.CurrentPrincipal" />
+        /// Stores the current
         /// <see cref="CultureInfo.CurrentCulture" /> and <see cref="CultureInfo.CurrentUICulture" />
         /// and replaces them with the new cultures defined in the constructor.
         /// </summary>
         /// <param name="methodUnderTest">The method under test</param>
         public override void Before(MethodInfo methodUnderTest)
         {
-            this.originalCulture = Thread.CurrentThread.CurrentCulture;
-            this.originalUiCulture = Thread.CurrentThread.CurrentUICulture;
+            this.originalCulture = CultureInfo.CurrentCulture;
+            this.originalUiCulture = CultureInfo.CurrentUICulture;
 
-            Thread.CurrentThread.CurrentCulture = this.Culture;
-            Thread.CurrentThread.CurrentUICulture = this.UiCulture;
+            CultureInfo.CurrentCulture = this.Culture;
+            CultureInfo.CurrentUICulture = this.UiCulture;
         }
 
         /// <summary>
         /// Restores the original <see cref="CultureInfo.CurrentCulture" /> and
-        /// <see cref="CultureInfo.CurrentUICulture" /> to <see cref="Thread.CurrentPrincipal" />
+        /// <see cref="CultureInfo.CurrentUICulture" />.
         /// </summary>
         /// <param name="methodUnderTest">The method under test</param>
         public override void After(MethodInfo methodUnderTest)
         {
-            Thread.CurrentThread.CurrentCulture = this.originalCulture;
-            Thread.CurrentThread.CurrentUICulture = this.originalUiCulture;
+            CultureInfo.CurrentCulture = this.originalCulture;
+            CultureInfo.CurrentUICulture = this.originalUiCulture;
         }
     }
 }

@@ -134,9 +134,9 @@ public class Foo
         public async Task TestAttributeWithParametersAndNoSpaceAfterClosingParenthesisAsync()
         {
             const string testCode = @"using System;
-using System.Security.Permissions;
+using System.ComponentModel.DataAnnotations;
 
-[PermissionSet(SecurityAction.LinkDemand, Name = ""FullTrust"")]
+[CustomValidation(null, null, ErrorMessage = ""FullTrust"")]
 public class Foo
 {
     public void Method(int param1, int param2)
@@ -150,9 +150,9 @@ public class Foo
         public async Task TestAttributeWithParametersAndSpaceAfterClosingParenthesisAsync()
         {
             const string testCode = @"using System;
-using System.Security.Permissions;
+using System.ComponentModel.DataAnnotations;
 
-[PermissionSet(SecurityAction.LinkDemand, Name = ""FullTrust"") ]
+[CustomValidation(null, null, ErrorMessage = ""FullTrust"") ]
 public class Foo
 {
     public void Method(int param1, int param2)
@@ -161,9 +161,9 @@ public class Foo
 }";
 
             const string fixedCode = @"using System;
-using System.Security.Permissions;
+using System.ComponentModel.DataAnnotations;
 
-[PermissionSet(SecurityAction.LinkDemand, Name = ""FullTrust"")]
+[CustomValidation(null, null, ErrorMessage = ""FullTrust"")]
 public class Foo
 {
     public void Method(int param1, int param2)
@@ -171,7 +171,7 @@ public class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(4, 61);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(4, 57);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -775,7 +775,7 @@ public class TestClass
 {
     public void TestMethod()
     {
-        System.Console.WriteLine(""{0}"", 1 /*text*/ );
+        System.Diagnostics.Debug.WriteLine(""{0}"", 1 /*text*/ );
     }
 }
 ";
@@ -784,12 +784,12 @@ public class TestClass
 {
     public void TestMethod()
     {
-        System.Console.WriteLine(""{0}"", 1 /*text*/);
+        System.Diagnostics.Debug.WriteLine(""{0}"", 1 /*text*/);
     }
 }
 ";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 52).WithArguments(" not", "preceded");
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 62).WithArguments(" not", "preceded");
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);

@@ -40,7 +40,7 @@ public class Foo
         MyDelegate item1 = delegate { };
         
         // Valid delegate #2
-        MyDelegate item2 = delegate { Debug.Indent(); };
+        MyDelegate item2 = delegate { Debug.Fail(null); };
 
         // Valid delegate #3
         MyDelegate item3 = delegate
@@ -50,12 +50,12 @@ public class Foo
         // Valid delegate #4
         MyDelegate item4 = delegate
         {
-            Debug.Indent();
+            Debug.Fail(null);
         };
 
         // Valid delegate #5
         MyDelegate item7 = delegate 
-        { Debug.Indent(); };
+        { Debug.Fail(null); };
 
         // Valid delegate #6
         this.TestMethod(delegate { });
@@ -66,17 +66,17 @@ public class Foo
         });
 
         // Valid delegate #8
-        this.TestMethod(delegate { Debug.Indent(); });
+        this.TestMethod(delegate { Debug.Fail(null); });
 
         // Valid delegate #9
         this.TestMethod(delegate 
         { 
-            Debug.Indent(); 
+            Debug.Fail(null); 
         });
 
         // Valid delegate #10
         this.TestMethod(delegate 
-        { Debug.Indent(); });
+        { Debug.Fail(null); });
     }
 }";
 
@@ -108,25 +108,25 @@ public class Foo
         
         // Invalid delegate #2
         MyDelegate item2 = delegate {
-            Debug.Indent(); 
+            Debug.Fail(null); 
         };
 
         // Invalid delegate #3
         MyDelegate item3 = delegate {
-            Debug.Indent(); };
+            Debug.Fail(null); };
 
         // Invalid delegate #4
-        MyDelegate item4 = delegate { Debug.Indent();
+        MyDelegate item4 = delegate { Debug.Fail(null);
         };
 
         // Invalid delegate #5
         MyDelegate item5 = delegate
         {
-            Debug.Indent(); };
+            Debug.Fail(null); };
 
         // Invalid delegate #6
         MyDelegate item6 = delegate
-        { Debug.Indent();
+        { Debug.Fail(null);
         };
 
         // Invalid delegate #7
@@ -135,25 +135,25 @@ public class Foo
 
         // Invalid delegate #8
         this.TestMethod(delegate {
-            Debug.Indent();
+            Debug.Fail(null);
         });
 
         // Invalid delegate #9
         this.TestMethod(delegate {
-            Debug.Indent(); });
+            Debug.Fail(null); });
 
         // Invalid delegate #10
-        this.TestMethod(delegate { Debug.Indent();
+        this.TestMethod(delegate { Debug.Fail(null);
         });
 
         // Invalid delegate #11
         this.TestMethod(delegate
         {
-            Debug.Indent(); });
+            Debug.Fail(null); });
 
         // Invalid delegate #12
         this.TestMethod(delegate
-        { Debug.Indent();
+        { Debug.Fail(null);
         });
     }
 }";
@@ -178,31 +178,31 @@ public class Foo
         // Invalid delegate #2
         MyDelegate item2 = delegate
         {
-            Debug.Indent(); 
+            Debug.Fail(null); 
         };
 
         // Invalid delegate #3
         MyDelegate item3 = delegate
         {
-            Debug.Indent();
+            Debug.Fail(null);
         };
 
         // Invalid delegate #4
         MyDelegate item4 = delegate
         {
-            Debug.Indent();
+            Debug.Fail(null);
         };
 
         // Invalid delegate #5
         MyDelegate item5 = delegate
         {
-            Debug.Indent();
+            Debug.Fail(null);
         };
 
         // Invalid delegate #6
         MyDelegate item6 = delegate
         {
-            Debug.Indent();
+            Debug.Fail(null);
         };
 
         // Invalid delegate #7
@@ -213,31 +213,31 @@ public class Foo
         // Invalid delegate #8
         this.TestMethod(delegate
         {
-            Debug.Indent();
+            Debug.Fail(null);
         });
 
         // Invalid delegate #9
         this.TestMethod(delegate
         {
-            Debug.Indent();
+            Debug.Fail(null);
         });
 
         // Invalid delegate #10
         this.TestMethod(delegate
         {
-            Debug.Indent();
+            Debug.Fail(null);
         });
 
         // Invalid delegate #11
         this.TestMethod(delegate
         {
-            Debug.Indent();
+            Debug.Fail(null);
         });
 
         // Invalid delegate #12
         this.TestMethod(delegate
         {
-            Debug.Indent();
+            Debug.Fail(null);
         });
     }
 }";
@@ -252,13 +252,13 @@ public class Foo
 
                 // Invalid delegate #3
                 this.CSharpDiagnostic().WithLocation(23, 37),
-                this.CSharpDiagnostic().WithLocation(24, 29),
+                this.CSharpDiagnostic().WithLocation(24, 31),
 
                 // Invalid delegate #4
                 this.CSharpDiagnostic().WithLocation(27, 37),
 
                 // Invalid delegate #5
-                this.CSharpDiagnostic().WithLocation(33, 29),
+                this.CSharpDiagnostic().WithLocation(33, 31),
 
                 // Invalid delegate #6
                 this.CSharpDiagnostic().WithLocation(37, 9),
@@ -271,13 +271,13 @@ public class Foo
 
                 // Invalid delegate #9
                 this.CSharpDiagnostic().WithLocation(50, 34),
-                this.CSharpDiagnostic().WithLocation(51, 29),
+                this.CSharpDiagnostic().WithLocation(51, 31),
 
                 // Invalid delegate #10
                 this.CSharpDiagnostic().WithLocation(54, 34),
 
                 // Invalid delegate #11
-                this.CSharpDiagnostic().WithLocation(60, 29),
+                this.CSharpDiagnostic().WithLocation(60, 31),
 
                 // Invalid delegate #12
                 this.CSharpDiagnostic().WithLocation(64, 9),

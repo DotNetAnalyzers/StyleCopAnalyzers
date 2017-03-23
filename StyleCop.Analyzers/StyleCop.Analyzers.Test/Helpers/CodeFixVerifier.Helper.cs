@@ -120,15 +120,15 @@ namespace TestHelper
                 document = await RecreateDocumentAsync(document, cancellationToken).ConfigureAwait(false);
                 project = document.Project;
             }
-
             return project;
         }
 
         private static async Task<Document> RecreateDocumentAsync(Document document, CancellationToken cancellationToken)
         {
-            var newText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
-            newText = newText.WithChanges(new TextChange(new TextSpan(0, 0), " "));
-            newText = newText.WithChanges(new TextChange(new TextSpan(0, 1), string.Empty));
+            var oldText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
+            var newText = oldText;
+            newText = newText.WithChanges(new TextChange(new TextSpan(0, newText.Length), ""));
+            newText = newText.WithChanges(new TextChange(new TextSpan(0, 0), oldText.ToString()));
             return document.WithText(newText);
         }
 
