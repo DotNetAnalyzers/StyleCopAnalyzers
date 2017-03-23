@@ -10,14 +10,6 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("StyleCop.Analyzers")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Tunnel Vision Laboratories, LLC")]
-[assembly: AssemblyProduct("StyleCop.Analyzers")]
-[assembly: AssemblyCopyright("Copyright © Sam Harwell 2015")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
 [assembly: CLSCompliant(false)]
 [assembly: NeutralResourcesLanguage("en-US")]
 
@@ -25,19 +17,6 @@ using System.Runtime.InteropServices;
 // to COM components.  If you need to access a type in this assembly from
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
-
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Build and Revision Numbers
-// by using the '*' as shown below:
-[assembly: AssemblyVersion("1.1.0.32")]
-[assembly: AssemblyFileVersion("1.1.0.32")]
-[assembly: AssemblyInformationalVersion("1.1.0-dev")]
 
 #if DEVELOPMENT_KEY
 [assembly: InternalsVisibleTo("StyleCop.Analyzers.CodeFixes, PublicKey=0024000004800000940000000602000000240000525341310004000001000100fbe8bc154d11de9907c4e19600890ebef9cf9c8456c9a8ee05f0a8c9e69bd4f66c038ff4ea769c8864e6c5a38a1aad538876d6b2549962856f1b39e10d33bb13940c6538d2e863542ae15bc6e251946ca18094b6902690866d514f1fcd9395756732f927f9aeab1d6e1af5190816a251ad29db9c5b4cb86de7d909fc6c3d18a0")]

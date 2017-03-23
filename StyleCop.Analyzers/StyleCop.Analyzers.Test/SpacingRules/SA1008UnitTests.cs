@@ -2036,7 +2036,7 @@ class ClassName
         /// Verifies that spacing for public tuple return type is handled properly.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact(Skip = "Tuples currently require System.ValueTuple nuget package to be installed")]
+        [Fact]
         public async Task TestNoFalsePositiveOnPublicTupleReturnAsync()
         {
             var testCode = @"namespace TestNamespace
@@ -2057,7 +2057,7 @@ class ClassName
         /// Verifies that spacing for internal tuple return type is handled properly.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact(Skip = "Tuples currently require System.ValueTuple nuget package to be installed")]
+        [Fact]
         public async Task TestNoFalsePositiveOnInternalTupleReturnAsync()
         {
             var testCode = @"namespace TestNamespace
@@ -2078,7 +2078,7 @@ class ClassName
         /// Verifies that spacing for private tuple return type is handled properly.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact(Skip = "Tuples currently require System.ValueTuple nuget package to be installed")]
+        [Fact]
         public async Task TestNoFalsePositiveOnPrivateTupleReturnAsync()
         {
             var testCode = @"namespace TestNamespace
@@ -2099,7 +2099,7 @@ class ClassName
         /// Verifies that spacing for protected tuple return type is handled properly.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact(Skip = "Tuples currently require System.ValueTuple nuget package to be installed")]
+        [Fact]
         public async Task TestNoFalsePositiveProtectedOnTupleReturnAsync()
         {
             var testCode = @"namespace TestNamespace

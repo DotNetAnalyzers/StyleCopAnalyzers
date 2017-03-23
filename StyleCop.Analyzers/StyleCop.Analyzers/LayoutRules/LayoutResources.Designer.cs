@@ -314,7 +314,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Using directives myst be separated by blank line.
+        ///   Looks up a localized string similar to Using directives must be separated by blank line.
         /// </summary>
         internal static string SA1516MessageFormatRequire {
             get {

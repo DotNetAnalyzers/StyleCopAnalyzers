@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Test.Helpers
 {
+    using System;
     using System.Collections.Immutable;
     using System.Linq;
     using Microsoft.CodeAnalysis;
@@ -18,5 +19,7 @@ namespace StyleCop.Analyzers.Test.Helpers
         internal static readonly MetadataReference SystemCoreReference = MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location);
         internal static readonly MetadataReference CSharpSymbolsReference = MetadataReference.CreateFromFile(typeof(CSharpCompilation).Assembly.Location);
         internal static readonly MetadataReference CodeAnalysisReference = MetadataReference.CreateFromFile(typeof(Compilation).Assembly.Location);
+        internal static readonly MetadataReference ValueTupleReference = MetadataReference.CreateFromFile(typeof(ValueTuple<,>).Assembly.Location);
+
     }
 }

@@ -123,7 +123,8 @@ namespace TestHelper
                 .AddMetadataReference(projectId, MetadataReferences.SystemReference)
                 .AddMetadataReference(projectId, MetadataReferences.SystemCoreReference)
                 .AddMetadataReference(projectId, MetadataReferences.CSharpSymbolsReference)
-                .AddMetadataReference(projectId, MetadataReferences.CodeAnalysisReference);
+                .AddMetadataReference(projectId, MetadataReferences.CodeAnalysisReference)
+                .AddMetadataReference(projectId, MetadataReferences.ValueTupleReference);
 
             solution.Workspace.Options =
                 solution.Workspace.Options
