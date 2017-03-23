@@ -1,6 +1,6 @@
 param (
 	[switch]$Debug,
-	[string]$VisualStudioVersion = '14.0',
+	[string]$VisualStudioVersion = '15.0',
 	[switch]$SkipKeyCheck,
 	[string]$Verbosity = 'minimal',
 	[string]$Logger,
@@ -30,38 +30,11 @@ If ($Version.Contains('-')) {
 	$KeyConfiguration = 'Final'
 }
 
-# download nuget.exe if necessary
-$nuget = '..\.nuget\nuget.exe'
-If (-not (Test-Path $nuget)) {
-	If (-not (Test-Path '..\.nuget')) {
-		mkdir '..\.nuget'
-	}
-
-	$nugetSource = 'https://dist.nuget.org/win-x86-commandline/latest/nuget.exe'
-	Invoke-WebRequest $nugetSource -OutFile $nuget
-	If (-not $?) {
-		$host.ui.WriteErrorLine('Unable to download NuGet executable, aborting!')
-		exit $LASTEXITCODE
-	}
-}
-
 # build the main project
-$msbuild = "${env:ProgramFiles(x86)}\MSBuild\$VisualStudioVersion\Bin\MSBuild.exe"
-If (-not (Test-Path $msbuild)) {
-	$host.UI.WriteErrorLine("Couldn't find MSBuild.exe")
+$dotnet = "dotnet"
+If (-not (Get-Command $dotnet -ErrorAction SilentlyContinue)) {
+	$host.UI.WriteErrorLine("Couldn't find dotnet.exe")
 	exit 1
-}
-
-# Attempt to restore packages up to 3 times, to improve resiliency to connection timeouts and access denied errors.
-$maxAttempts = 3
-For ($attempt = 0; $attempt -lt $maxAttempts; $attempt++) {
-	&$nuget 'restore' $SolutionPath
-	If ($?) {
-		Break
-	} ElseIf (($attempt + 1) -eq $maxAttempts) {
-		$host.ui.WriteErrorLine('Failed to restore required NuGet packages, aborting!')
-		exit $LASTEXITCODE
-	}
 }
 
 If ($Logger) {
@@ -74,7 +47,7 @@ If ($Incremental) {
 	$Target = 'rebuild'
 }
 
-&$msbuild '/nologo' '/m' '/nr:false' "/t:$Target" $LoggerArgument "/verbosity:$Verbosity" "/p:Configuration=$BuildConfig" "/p:VisualStudioVersion=$VisualStudioVersion" "/p:KeyConfiguration=$KeyConfiguration" $SolutionPath
+&$dotnet 'msbuild' '/nologo' '/m' "/t:$Target" $LoggerArgument "/verbosity:$Verbosity" "/p:Configuration=$BuildConfig" "/p:VisualStudioVersion=$VisualStudioVersion" "/p:KeyConfiguration=$KeyConfiguration" $SolutionPath
 If (-not $?) {
 	$host.ui.WriteErrorLine('Build failed, aborting!')
 	exit $LASTEXITCODE
