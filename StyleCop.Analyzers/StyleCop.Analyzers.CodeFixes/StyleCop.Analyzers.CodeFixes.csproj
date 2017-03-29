@@ -2,7 +2,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
     <CodeAnalysisRuleSet>..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
     <SignAssembly>true</SignAssembly>
     <Company>Tunnel Vision Laboratories, LLC</Company>
     <Description></Description>
@@ -46,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.0.0" />
+    <PackageReference Include="NuGet.CommandLine" Version="3.5.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\StyleCop.Analyzers\StyleCop.Analyzers.csproj" />
