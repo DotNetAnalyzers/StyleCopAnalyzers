@@ -11,7 +11,7 @@ build:
 test_script:
 - cd "StyleCop.Analyzers\StyleCop.Analyzers.CodeFixes"
 - nuget install OpenCover -Version 4.6.519 -OutputDirectory opencover
-- .\opencover\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:"-target:C:\Program Files\dotnet\dotnet.exe" -targetargs:"test" -returntargetcode -filter:"+[StyleCop*]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -excludebyfile:*\*Designer.cs -hideskipped:All -output:.\StyleCopAnalyzers_coverage.xml -oldstyle
+- .\opencover\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:"C:\Program Files\dotnet\dotnet.exe" -targetargs:"test" -returntargetcode -filter:"+[StyleCop*]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -excludebyfile:*\*Designer.cs -hideskipped:All -output:.\StyleCopAnalyzers_coverage.xml -oldstyle
 - "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
 - pip install codecov
 - codecov -f "StyleCopAnalyzers_coverage.xml"
