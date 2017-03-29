@@ -15,7 +15,7 @@ $opencover_console = "$packages_folder\opencover\4.6.519\tools\OpenCover.Console
 	-filter:"+[StyleCop*]*" `
 	-excludebyattribute:*.ExcludeFromCodeCoverage* `
 	-excludebyfile:*\*Designer.cs `
-	-output:"OpenCover.StyleCopAnalyzers.xml" `
+	-output:"StyleCopAnalyzers_coverage.xml" `
 	-target:"C:\Program Files\dotnet\dotnet.exe" `
 	-targetargs:"test" `
     -oldstyle
