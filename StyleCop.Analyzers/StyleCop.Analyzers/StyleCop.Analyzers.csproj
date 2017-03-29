@@ -56,20 +56,10 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>HelpersResources.resx</DependentUpon>
     </Compile>
-    <Compile Update="LayoutRules\LayoutResources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>LayoutResources.resx</DependentUpon>
-    </Compile>
     <Compile Update="MaintainabilityRules\MaintainabilityResources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>MaintainabilityResources.resx</DependentUpon>
-    </Compile>
-    <Compile Update="NamingRules\NamingResources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>NamingResources.resx</DependentUpon>
     </Compile>
     <Compile Update="OrderingRules\OrderingResources.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -108,7 +98,6 @@
     </EmbeddedResource>
     <EmbeddedResource Update="LayoutRules\LayoutResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>LayoutResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="MaintainabilityRules\MaintainabilityResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -116,7 +105,6 @@
     </EmbeddedResource>
     <EmbeddedResource Update="NamingRules\NamingResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>NamingResources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="OrderingRules\OrderingResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

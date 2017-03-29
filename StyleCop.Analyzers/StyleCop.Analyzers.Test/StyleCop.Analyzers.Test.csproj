@@ -6,18 +6,20 @@
     <Company>Tunnel Vision Laboratories, LLC</Company>
     <Description></Description>
     <Copyright>Copyright © Sam Harwell 2015</Copyright>
+    <DebugType>full</DebugType>
+    <DebugSymbols>True</DebugSymbols>
   <PackageTargetFallback>
     $(PackageTargetFallback);portable-net45+win8+wp8+wpa81;
   </PackageTargetFallback>
-  </PropertyGroup>
-  <PropertyGroup>
-    <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
-    <CodeAnalysisRuleSet>..\StyleCop.Analyzers.Internal.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\..\build\keys\TestingKey.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
+</PropertyGroup>
+<PropertyGroup>
+  <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
+  <CodeAnalysisRuleSet>..\StyleCop.Analyzers.Internal.ruleset</CodeAnalysisRuleSet>
+</PropertyGroup>
+<PropertyGroup>
+  <SignAssembly>true</SignAssembly>
+  <AssemblyOriginatorKeyFile>..\..\build\keys\TestingKey.snk</AssemblyOriginatorKeyFile>
+</PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
     <PackageReference Include="ReportGenerator" Version="2.5.6" />

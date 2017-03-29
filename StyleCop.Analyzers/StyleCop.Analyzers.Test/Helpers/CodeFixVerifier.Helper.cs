@@ -125,11 +125,7 @@ namespace TestHelper
 
         private static async Task<Document> RecreateDocumentAsync(Document document, CancellationToken cancellationToken)
         {
-            var oldText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
-            var newText = oldText;
-            newText = newText.WithChanges(new TextChange(new TextSpan(0, newText.Length), ""));
-            newText = newText.WithChanges(new TextChange(new TextSpan(0, 0), oldText.ToString()));
-            return document.WithText(newText);
+            return document.WithText(SourceText.From((await document.GetTextAsync(cancellationToken).ConfigureAwait(false)).ToString()));
         }
 
         /// <summary>
