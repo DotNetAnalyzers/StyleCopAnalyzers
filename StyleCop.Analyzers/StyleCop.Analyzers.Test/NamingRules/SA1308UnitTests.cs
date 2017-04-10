@@ -14,6 +14,8 @@ namespace StyleCop.Analyzers.Test.NamingRules
 
     public class SA1308UnitTests : CodeFixVerifier
     {
+        private const string UnderscoreEscapeSequence = @"\\u005F";
+
         private readonly string[] modifiers = new[] { "public", "private", "protected", "public readonly", "internal readonly", "public static", "private static" };
 
         public static IEnumerable<object[]> PrefixesData()
@@ -21,15 +23,15 @@ namespace StyleCop.Analyzers.Test.NamingRules
             yield return new object[] { "m_" };
             yield return new object[] { "s_" };
             yield return new object[] { "t_" };
-            yield return new object[] { "m\\u005F" };
-            yield return new object[] { "s\\u005F" };
-            yield return new object[] { "t\\u005F" };
+            yield return new object[] { $"m{UnderscoreEscapeSequence}" };
+            yield return new object[] { $"s{UnderscoreEscapeSequence}" };
+            yield return new object[] { $"t{UnderscoreEscapeSequence}" };
         }
 
         public static IEnumerable<object[]> MultipleDistinctPrefixesData()
         {
             yield return new object[] { "m_t_s_", "m_" };
-            yield return new object[] { "s\\u005Fm\\u005Ft\\u005F", "s_" };
+            yield return new object[] { $"s{UnderscoreEscapeSequence}m{UnderscoreEscapeSequence}t{UnderscoreEscapeSequence}", "s_" };
         }
 
         [Fact]
@@ -40,9 +42,9 @@ namespace StyleCop.Analyzers.Test.NamingRules
                 await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "m_", "m_").ConfigureAwait(false);
                 await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "s_", "s_").ConfigureAwait(false);
                 await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "t_", "t_").ConfigureAwait(false);
-                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "m\\u005F", "m_").ConfigureAwait(false);
-                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "s\\u005F", "s_").ConfigureAwait(false);
-                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "t\\u005F", "t_").ConfigureAwait(false);
+                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, $"m{UnderscoreEscapeSequence}", "m_").ConfigureAwait(false);
+                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, $"s{UnderscoreEscapeSequence}", "s_").ConfigureAwait(false);
+                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, $"t{UnderscoreEscapeSequence}", "t_").ConfigureAwait(false);
             }
         }
 
@@ -100,10 +102,10 @@ string m_bar = ""baz"";
     private string {prefix}{prefix}bar = ""baz"";
 }}";
 
-            string diagnosticPrefix = prefix.Replace("\\u005F", "_");
+            string diagnosticPrefix = UnescapeUnderscores(prefix);
             DiagnosticResult expected =
                 this.CSharpDiagnostic()
-                .WithArguments($"{prefix}{prefix}bar", diagnosticPrefix)
+                .WithArguments($"{diagnosticPrefix}{diagnosticPrefix}bar", diagnosticPrefix)
                 .WithLocation(3, 20);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -121,9 +123,10 @@ string m_bar = ""baz"";
     private string {prefix}{prefix} = ""baz"";
 }}";
 
+            string diagnosticPrefix = UnescapeUnderscores(prefix);
             DiagnosticResult expected =
                 this.CSharpDiagnostic()
-                .WithArguments($"{prefix}{prefix}", prefix)
+                .WithArguments($"{diagnosticPrefix}{diagnosticPrefix}", diagnosticPrefix)
                 .WithLocation(3, 20);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -149,9 +152,10 @@ string m_bar = ""baz"";
     private string {prefixes}bar = ""baz"";
 }}";
 
+            string diagnosticPrefixes = UnescapeUnderscores(prefixes);
             DiagnosticResult expected =
                 this.CSharpDiagnostic()
-                .WithArguments($"{prefixes}bar", diagnosticPrefix)
+                .WithArguments($"{diagnosticPrefixes}bar", diagnosticPrefix)
                 .WithLocation(3, 20);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -169,9 +173,10 @@ string m_bar = ""baz"";
     private string {prefixes} = ""baz"";
 }}";
 
+            string diagnosticPrefixes = UnescapeUnderscores(prefixes);
             DiagnosticResult expected =
                 this.CSharpDiagnostic()
-                .WithArguments(prefixes, diagnosticPrefix)
+                .WithArguments(diagnosticPrefixes, diagnosticPrefix)
                 .WithLocation(3, 20);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -189,6 +194,8 @@ string m_bar = ""baz"";
         {
             return new SA1308CodeFixProvider();
         }
+
+        private static string UnescapeUnderscores(string identifier) => identifier.Replace(UnderscoreEscapeSequence, "_");
 
         private async Task TestFieldSpecifyingModifierAndPrefixAsync(string modifier, string codePrefix, string diagnosticPrefix)
         {
