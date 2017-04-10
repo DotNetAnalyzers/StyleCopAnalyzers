@@ -371,6 +371,7 @@ This section describes the features of documentation rules which can be configur
 
 ```json
 {
+  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
   "settings": {
     "documentationRules": {
     }
