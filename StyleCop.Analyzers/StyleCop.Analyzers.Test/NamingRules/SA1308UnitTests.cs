@@ -87,6 +87,7 @@ string m_bar = ""baz"";
         /// <summary>
         /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#627.
         /// </summary>
+        /// <param name="prefix">The prefix to repeat in the variable name.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/627">#627: Code Fixes For Naming
         /// Rules SA1308 and SA1309 Do Not Always Fix The Name Entirely</seealso>
@@ -99,9 +100,10 @@ string m_bar = ""baz"";
     private string {prefix}{prefix}bar = ""baz"";
 }}";
 
+            string diagnosticPrefix = prefix.Replace("\\u005F", "_");
             DiagnosticResult expected =
                 this.CSharpDiagnostic()
-                .WithArguments($"{prefix}{prefix}bar", prefix)
+                .WithArguments($"{prefix}{prefix}bar", diagnosticPrefix)
                 .WithLocation(3, 20);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -125,6 +127,7 @@ string m_bar = ""baz"";
                 .WithLocation(3, 20);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
             // A code fix is not offered as removing the prefixes would create an empty identifier.
             await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
         }
@@ -132,6 +135,8 @@ string m_bar = ""baz"";
         /// <summary>
         /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#627.
         /// </summary>
+        /// <param name="prefixes">The prefixes to prepend to the variable name.</param>
+        /// <param name="diagnosticPrefix">The prefix that should be reported in the diagnostic.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/627">#627: Code Fixes For Naming
         /// Rules SA1308 and SA1309 Do Not Always Fix The Name Entirely</seealso>
@@ -146,7 +151,7 @@ string m_bar = ""baz"";
 
             DiagnosticResult expected =
                 this.CSharpDiagnostic()
-                .WithArguments($"{prefixes}bar", firstPrefix)
+                .WithArguments($"{prefixes}bar", diagnosticPrefix)
                 .WithLocation(3, 20);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -166,12 +171,13 @@ string m_bar = ""baz"";
 
             DiagnosticResult expected =
                 this.CSharpDiagnostic()
-                .WithArguments(prefixes, firstPrefix)
+                .WithArguments(prefixes, diagnosticPrefix)
                 .WithLocation(3, 20);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
             // A code fix is not offered as removing the prefixes would create an empty identifier.
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
