@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
 
     public class SA1308UnitTests : CodeFixVerifier
     {
-        private const string UnderscoreEscapeSequence = @"\\u005F";
+        private const string UnderscoreEscapeSequence = @"\u005F";
 
         private readonly string[] modifiers = new[] { "public", "private", "protected", "public readonly", "internal readonly", "public static", "private static" };
 
