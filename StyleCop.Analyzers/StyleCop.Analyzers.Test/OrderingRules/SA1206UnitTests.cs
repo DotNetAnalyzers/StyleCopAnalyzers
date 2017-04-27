@@ -40,7 +40,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
             {
                 this.CSharpDiagnostic().WithLocation(3, 11).WithArguments("static", "async"),
                 this.CSharpDiagnostic().WithLocation(3, 18).WithArguments("public", "static"),
-                this.CSharpDiagnostic().WithLocation(3, 18).WithArguments("public", "async")
+                this.CSharpDiagnostic().WithLocation(3, 18).WithArguments("public", "async"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -81,7 +81,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
                 this.CSharpDiagnostic().WithLocation(12, 12).WithArguments("public", "extern"),
                 this.CSharpDiagnostic().WithLocation(13, 12).WithArguments("static", "extern"),
                 this.CSharpDiagnostic().WithLocation(14, 14).WithArguments("internal", "volatile"),
-                this.CSharpDiagnostic().WithLocation(14, 23).WithArguments("static", "volatile")
+                this.CSharpDiagnostic().WithLocation(14, 23).WithArguments("static", "volatile"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -161,7 +161,7 @@ public class ExtendedClass : TestClass
                 this.CSharpDiagnostic().WithLocation(4, 12).WithArguments("static", "extern"),
                 this.CSharpDiagnostic().WithLocation(4, 19).WithArguments("public", "static"),
                 this.CSharpDiagnostic().WithLocation(4, 19).WithArguments("public", "extern"),
-                this.CSharpDiagnostic().WithLocation(5, 19).WithArguments("static", "extern")
+                this.CSharpDiagnostic().WithLocation(5, 19).WithArguments("static", "extern"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -177,7 +177,7 @@ public class ExtendedClass : TestClass
             DiagnosticResult[] expected = new[]
             {
                 this.CSharpDiagnostic().WithLocation(1, 8).WithArguments("public", "unsafe"),
-                this.CSharpDiagnostic().WithLocation(3, 12).WithArguments("public", "unsafe")
+                this.CSharpDiagnostic().WithLocation(3, 12).WithArguments("public", "unsafe"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -191,12 +191,9 @@ public class ExtendedClass : TestClass
     new public string
 }";
 
-            var expected = new DiagnosticResult
+            DiagnosticResult[] expected =
             {
-                Id = "CS1519",
-                Message = "Invalid token '}' in class, struct, or interface member declaration",
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 4, 1) }
+                this.CSharpCompilerError("CS1519").WithMessage("Invalid token '}' in class, struct, or interface member declaration").WithLocation(4, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

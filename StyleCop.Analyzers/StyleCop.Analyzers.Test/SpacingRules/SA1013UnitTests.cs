@@ -88,7 +88,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(12, 25).WithArguments(" not", "preceded"),
-                this.CSharpDiagnostic().WithLocation(13, 25).WithArguments(" not", "preceded")
+                this.CSharpDiagnostic().WithLocation(13, 25).WithArguments(" not", "preceded"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -125,7 +125,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(6, 45).WithArguments(string.Empty, "preceded")
+                this.CSharpDiagnostic().WithLocation(6, 45).WithArguments(string.Empty, "preceded"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -181,7 +181,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 this.CSharpDiagnostic().WithLocation(11, 48).WithArguments(string.Empty, "preceded"),
                 this.CSharpDiagnostic().WithLocation(12, 46).WithArguments(string.Empty, "preceded"),
                 this.CSharpDiagnostic().WithLocation(12, 46).WithArguments(string.Empty, "followed"),
-                this.CSharpDiagnostic().WithLocation(12, 47).WithArguments(string.Empty, "preceded")
+                this.CSharpDiagnostic().WithLocation(12, 47).WithArguments(string.Empty, "preceded"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -395,13 +395,7 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                new DiagnosticResult
-                {
-                    Id = "CS1513",
-                    Severity = DiagnosticSeverity.Error,
-                    Message = "} expected",
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 3, 2) }
-                }
+                this.CSharpCompilerError("CS1513").WithMessage("} expected").WithLocation(3, 2),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

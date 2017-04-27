@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
     using System.Collections.Immutable;
+    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -45,10 +46,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly ImmutableArray<SyntaxKind> SimpleNameKinds =
-            ImmutableArray.Create(SyntaxKind.IdentifierName, SyntaxKind.GenericName);
-
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> MemberAccessExpressionAction = HandleMemberAccessExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> SimpleNameAction = HandleSimpleName;
 
@@ -59,13 +56,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(MemberAccessExpressionAction, SyntaxKind.SimpleMemberAccessExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(SimpleNameAction, SimpleNameKinds);
+            context.RegisterSyntaxNodeAction(MemberAccessExpressionAction, SyntaxKind.SimpleMemberAccessExpression);
+            context.RegisterSyntaxNodeAction(SimpleNameAction, SyntaxKinds.SimpleName);
         }
 
         /// <summary>
@@ -190,17 +185,28 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     return;
                 }
 
-                // This is a workaround for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1501 and can
-                // be removed when the underlying bug in roslyn is resolved
+                // This is a workaround for:
+                // - https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1501
+                // - https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2093
+                // and can be removed when the underlying bug in roslyn is resolved
                 if (nameExpression.Parent is MemberAccessExpressionSyntax)
                 {
-                    var parentSymbol = context.SemanticModel.GetSymbolInfo(nameExpression.Parent, context.CancellationToken).Symbol as IFieldSymbol;
+                    var memberAccessSymbol = context.SemanticModel.GetSymbolInfo(nameExpression.Parent, context.CancellationToken).Symbol;
 
-                    if (parentSymbol != null
-                        && parentSymbol.IsStatic
-                        && parentSymbol.ContainingType.Name == symbol.Name)
+                    switch (memberAccessSymbol?.Kind)
                     {
-                        return;
+                    case null:
+                        break;
+
+                    case SymbolKind.Field:
+                    case SymbolKind.Method:
+                    case SymbolKind.Property:
+                        if (memberAccessSymbol.IsStatic && (memberAccessSymbol.ContainingType.Name == symbol.Name))
+                        {
+                            return;
+                        }
+
+                        break;
                     }
                 }
 

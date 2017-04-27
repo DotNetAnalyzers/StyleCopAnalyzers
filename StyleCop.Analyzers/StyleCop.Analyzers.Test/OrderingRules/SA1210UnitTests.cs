@@ -63,7 +63,7 @@ using System.Threading;
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(1, 1),
-                this.CSharpDiagnostic().WithLocation(2, 1)
+                this.CSharpDiagnostic().WithLocation(2, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -106,7 +106,7 @@ namespace Bar
             {
                 this.CSharpDiagnostic().WithLocation(3, 5),
                 this.CSharpDiagnostic().WithLocation(9, 5),
-                this.CSharpDiagnostic().WithLocation(11, 5)
+                this.CSharpDiagnostic().WithLocation(11, 5),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -153,15 +153,16 @@ namespace Foo
     using System;
 }";
 
-            var fixedTestCode = @"namespace Foo
+            var fixedTestCode = @"using System.Threading;
+using global::System;
+using global::System.IO;
+using global::System.Linq;
+using XYZ = System.IO;
+
+namespace Foo
 {
     using System;
-    using System.Threading;
     using global::Foo;
-    using global::System;
-    using global::System.IO;
-    using global::System.Linq;
-    using XYZ = System.IO;
 }";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 1);
@@ -191,25 +192,26 @@ namespace Foo
 }";
 
             var fixedTestCode = @"extern alias corlib;
+using System.Threading;
+using corlib::System;
+using Foo;
+using global::Foo;
+using global::System;
+using global::System.IO;
+using global::System.Linq;
+using Microsoft;
+
 namespace Foo
 {
     using System;
-    using System.Threading;
-    using corlib::System;
-    using Foo;
     using global::Foo;
-    using global::Foo;
-    using global::System;
-    using global::System.IO;
-    using global::System.Linq;
-    using Microsoft;
 }";
 
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(5, 1),
                 this.CSharpDiagnostic().WithLocation(6, 1),
-                this.CSharpDiagnostic().WithLocation(7, 1)
+                this.CSharpDiagnostic().WithLocation(7, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -298,7 +300,8 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 #endif";
 
-            var fixedTestCode = @"using System;
+            var fixedTestCode = @"
+using System;
 using Microsoft.VisualStudio;
 using MyList = System.Collections.Generic.List<int>;
 
@@ -360,8 +363,6 @@ namespace Newtonsoft.Json
             // The same diagnostic is reported multiple times due to a bug in Roslyn 1.0
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(8, 5),
-                this.CSharpDiagnostic().WithLocation(8, 5),
                 this.CSharpDiagnostic().WithLocation(8, 5),
             };
 

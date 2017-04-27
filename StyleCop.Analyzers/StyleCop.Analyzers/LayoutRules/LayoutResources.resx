@@ -177,8 +177,35 @@
   <data name="SA1515CodeFix" xml:space="preserve">
     <value>Insert blank line before comment</value>
   </data>
-  <data name="SA1516CodeFix" xml:space="preserve">
+  <data name="SA1516CodeFixAll" xml:space="preserve">
+    <value>Fix blank lines</value>
+  </data>
+  <data name="SA1516CodeFixInsert" xml:space="preserve">
     <value>Insert new line</value>
+  </data>
+  <data name="SA1516CodeFixRemove" xml:space="preserve">
+    <value>Remove blank line</value>
+  </data>
+  <data name="SA1516Description" xml:space="preserve">
+    <value>Adjacent C# elements are not separated by a blank line.</value>
+  </data>
+  <data name="SA1516DescriptionOmit" xml:space="preserve">
+    <value>Adjacent using directives must not be separated by a blank line.</value>
+  </data>
+  <data name="SA1516DescriptionRequire" xml:space="preserve">
+    <value>Adjacent using directives must be separated by a blank line.</value>
+  </data>
+  <data name="SA1516MessageFormat" xml:space="preserve">
+    <value>Elements must be separated by blank line</value>
+  </data>
+  <data name="SA1516MessageFormatOmit" xml:space="preserve">
+    <value>Using directives must not be separated by blank line</value>
+  </data>
+  <data name="SA1516MessageFormatRequire" xml:space="preserve">
+    <value>Using directives must be separated by blank line</value>
+  </data>
+  <data name="SA1516Title" xml:space="preserve">
+    <value>Elements must be separated by blank line</value>
   </data>
   <data name="SA1517CodeFix" xml:space="preserve">
     <value>Remove blank lines at the start of the file</value>

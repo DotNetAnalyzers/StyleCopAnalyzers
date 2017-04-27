@@ -14,6 +14,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using Settings.ObjectModel;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1501StatementMustNotBeOnASingleLine"/>.
@@ -51,6 +52,7 @@ namespace StyleCop.Analyzers.LayoutRules
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
             var statement = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) as StatementSyntax;
             if (statement == null)
             {
@@ -61,18 +63,18 @@ namespace StyleCop.Analyzers.LayoutRules
             BlockSyntax block = statement as BlockSyntax;
             if (block != null)
             {
-                newSyntaxRoot = ReformatBlockAndParent(document, syntaxRoot, block);
+                newSyntaxRoot = ReformatBlockAndParent(document, settings.Indentation, syntaxRoot, block);
             }
             else
             {
-                newSyntaxRoot = ReformatStatementAndParent(document, syntaxRoot, statement);
+                newSyntaxRoot = ReformatStatementAndParent(document, settings.Indentation, syntaxRoot, statement);
             }
 
             var newDocument = document.WithSyntaxRoot(newSyntaxRoot);
             return newDocument;
         }
 
-        private static SyntaxNode ReformatBlockAndParent(Document document, SyntaxNode syntaxRoot, BlockSyntax block)
+        private static SyntaxNode ReformatBlockAndParent(Document document, IndentationSettings indentationSettings, SyntaxNode syntaxRoot, BlockSyntax block)
         {
             var parentLastToken = block.OpenBraceToken.GetPreviousToken();
 
@@ -100,14 +102,14 @@ namespace StyleCop.Analyzers.LayoutRules
                 newParentNextToken = newParentNextToken.WithLeadingTrivia(parentLastToken.LeadingTrivia);
             }
 
-            var newBlock = ReformatBlock(document, block);
+            var newBlock = ReformatBlock(document, indentationSettings, block);
             var rewriter = new BlockRewriter(parentLastToken, newParentLastToken, block, newBlock, parentNextToken, newParentNextToken);
 
             var newSyntaxRoot = rewriter.Visit(syntaxRoot);
             return newSyntaxRoot.WithoutFormatting();
         }
 
-        private static SyntaxNode ReformatStatementAndParent(Document document, SyntaxNode syntaxRoot, StatementSyntax statement)
+        private static SyntaxNode ReformatStatementAndParent(Document document, IndentationSettings indentationSettings, SyntaxNode syntaxRoot, StatementSyntax statement)
         {
             var parentLastToken = statement.GetFirstToken().GetPreviousToken();
 
@@ -132,13 +134,12 @@ namespace StyleCop.Analyzers.LayoutRules
             var newParentNextToken = parentNextToken;
             if (nextTokenLine == statementCloseLine)
             {
-                var indentationOptions = IndentationOptions.FromDocument(document);
-                var parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationOptions, GetStatementParent(statement.Parent));
-                var indentationString = IndentationHelper.GenerateIndentationString(indentationOptions, parentIndentationLevel);
+                var parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationSettings, GetStatementParent(statement.Parent));
+                var indentationString = IndentationHelper.GenerateIndentationString(indentationSettings, parentIndentationLevel);
                 newParentNextToken = newParentNextToken.WithLeadingTrivia(SyntaxFactory.Whitespace(indentationString));
             }
 
-            var newStatement = ReformatStatement(document, statement);
+            var newStatement = ReformatStatement(document, indentationSettings, statement);
             var newSyntaxRoot = syntaxRoot.ReplaceSyntax(
                 new[] { statement },
                 (originalNode, rewrittenNode) => originalNode == statement ? newStatement : rewrittenNode,
@@ -164,10 +165,9 @@ namespace StyleCop.Analyzers.LayoutRules
             return newSyntaxRoot.WithoutFormatting();
         }
 
-        private static BlockSyntax ReformatBlock(Document document, BlockSyntax block)
+        private static BlockSyntax ReformatBlock(Document document, IndentationSettings indentationSettings, BlockSyntax block)
         {
-            var indentationOptions = IndentationOptions.FromDocument(document);
-            var parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationOptions, GetStatementParent(block.Parent));
+            var parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationSettings, GetStatementParent(block.Parent));
 
             // use one additional step of indentation for lambdas / anonymous methods
             switch (block.Parent.Kind())
@@ -179,8 +179,8 @@ namespace StyleCop.Analyzers.LayoutRules
                 break;
             }
 
-            var indentationString = IndentationHelper.GenerateIndentationString(indentationOptions, parentIndentationLevel);
-            var statementIndentationString = IndentationHelper.GenerateIndentationString(indentationOptions, parentIndentationLevel + 1);
+            var indentationString = IndentationHelper.GenerateIndentationString(indentationSettings, parentIndentationLevel);
+            var statementIndentationString = IndentationHelper.GenerateIndentationString(indentationSettings, parentIndentationLevel + 1);
 
             var newOpenBraceLeadingTrivia = block.OpenBraceToken.LeadingTrivia
                 .WithoutTrailingWhitespace()
@@ -244,10 +244,9 @@ namespace StyleCop.Analyzers.LayoutRules
             return SyntaxFactory.Block(openBraceToken, statements, closeBraceToken);
         }
 
-        private static StatementSyntax ReformatStatement(Document document, StatementSyntax statement)
+        private static StatementSyntax ReformatStatement(Document document, IndentationSettings indentationSettings, StatementSyntax statement)
         {
-            var indentationOptions = IndentationOptions.FromDocument(document);
-            var parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationOptions, GetStatementParent(statement.Parent));
+            var parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationSettings, GetStatementParent(statement.Parent));
 
             // use one additional step of indentation for lambdas / anonymous methods
             switch (statement.Parent.Kind())
@@ -259,7 +258,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 break;
             }
 
-            var statementIndentationString = IndentationHelper.GenerateIndentationString(indentationOptions, parentIndentationLevel + 1);
+            var statementIndentationString = IndentationHelper.GenerateIndentationString(indentationSettings, parentIndentationLevel + 1);
 
             var newFirstTokenLeadingTrivia = statement.GetFirstToken().LeadingTrivia
                 .WithoutTrailingWhitespace()

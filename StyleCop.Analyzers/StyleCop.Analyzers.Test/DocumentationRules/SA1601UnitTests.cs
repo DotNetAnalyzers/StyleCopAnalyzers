@@ -17,7 +17,6 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     /// </summary>
     public class SA1601UnitTests : DiagnosticVerifier
     {
-        private const string SettingsFileName = "stylecop.json";
         private const string TestSettings = @"
 {
   ""settings"": {

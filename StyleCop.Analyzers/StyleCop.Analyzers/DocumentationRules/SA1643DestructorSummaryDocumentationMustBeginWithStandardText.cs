@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.Globalization;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -63,20 +64,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> DestructorDeclarationAction = HandleDestructor;
-
-        /// <summary>
-        /// Gets the standard text which is expected to appear at the beginning of the <c>&lt;summary&gt;</c>
-        /// documentation for a destructor.
-        /// </summary>
-        /// <value>
-        /// A two-element array containing the standard text which is expected to appear at the beginning of the
-        /// <c>&lt;summary&gt;</c> documentation for a destructor. The first element appears before the name of the
-        /// containing class, followed by a <c>&lt;see&gt;</c> element targeting the containing type, and finally
-        /// followed by the second element of this array.
-        /// </value>
-        public static ImmutableArray<string> DestructorStandardText { get; } = ImmutableArray.Create("Finalizes an instance of the ", " class.");
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -85,22 +73,24 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(DestructorDeclarationAction, SyntaxKind.DestructorDeclaration);
+            context.RegisterSyntaxNodeAction(DestructorDeclarationAction, SyntaxKind.DestructorDeclaration);
         }
 
         private static void HandleDestructor(SyntaxNodeAnalysisContext context)
         {
-            var destructorDeclaration = context.Node as DestructorDeclarationSyntax;
+            var destructorDeclaration = (DestructorDeclarationSyntax)context.Node;
+            var settings = context.Options.GetStyleCopSettings(context.CancellationToken);
+            var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
+            var resourceManager = DocumentationResources.ResourceManager;
 
-            if (destructorDeclaration != null)
-            {
-                HandleDeclaration(context, DestructorStandardText[0], DestructorStandardText[1], Descriptor);
-            }
+            HandleDeclaration(
+                context,
+                resourceManager.GetString(nameof(DocumentationResources.DestructorStandardTextFirstPart), culture),
+                resourceManager.GetString(nameof(DocumentationResources.DestructorStandardTextSecondPart), culture),
+                Descriptor);
         }
     }
 }

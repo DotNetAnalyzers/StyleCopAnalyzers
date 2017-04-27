@@ -7,6 +7,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Threading;
     using System.Threading.Tasks;
     using Analyzers.DocumentationRules;
+    using Helpers;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using TestHelper;
     using Xunit;
@@ -21,6 +23,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             get
             {
                 yield return new[] { "    public ClassName Method(string foo, string bar) { return null; }" };
+                yield return new[] { "    public delegate ClassName Method(string foo, string bar);" };
                 yield return new[] { "    public ClassName this[string foo, string bar] { get { return null; } set { } }" };
             }
         }
@@ -102,7 +105,7 @@ $$
                 this.CSharpDiagnostic().WithLocation(10, 8),
                 this.CSharpDiagnostic().WithLocation(11, 8),
                 this.CSharpDiagnostic().WithLocation(12, 15),
-                this.CSharpDiagnostic().WithLocation(13, 15)
+                this.CSharpDiagnostic().WithLocation(13, 15),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
@@ -131,10 +134,150 @@ $$
                 this.CSharpDiagnostic().WithLocation(8, 8),
                 this.CSharpDiagnostic().WithLocation(9, 8),
                 this.CSharpDiagnostic().WithLocation(10, 15),
-                this.CSharpDiagnostic().WithLocation(11, 15)
+                this.CSharpDiagnostic().WithLocation(11, 15),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task VerifyMemberWithoutParamsAndIncludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <include file='MissingParamDocumentation.xml' path='/ClassName/Method/*' />
+    public ClassName Method(string foo, string bar) { return null; }
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task VerifyMemberWithValidParamsAndIncludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <include file='WithParamDocumentation.xml' path='/ClassName/Method/*' />
+    public ClassName Method(string foo, string bar) { return null; }
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task VerifyMemberWithInvalidParamsAndIncludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <include file='WithInvalidParamDocumentation.xml' path='/ClassName/Method/*' />
+    public ClassName Method(string foo, string bar) { return null; }
+}";
+
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(8, 22),
+                this.CSharpDiagnostic().WithLocation(8, 22),
+                this.CSharpDiagnostic().WithLocation(8, 22),
+                this.CSharpDiagnostic().WithLocation(8, 22),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task VerifyMemberWithInvalidParamsAndInheritDocAndIncludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <include file='WithInheritedDocumentation.xml' path='/ClassName/Method/*' />
+    public ClassName Method(string foo, string bar) { return null; }
+}";
+
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(8, 22),
+                this.CSharpDiagnostic().WithLocation(8, 22),
+                this.CSharpDiagnostic().WithLocation(8, 22),
+                this.CSharpDiagnostic().WithLocation(8, 22),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
+        protected override Project ApplyCompilationOptions(Project project)
+        {
+            var resolver = new TestXmlReferenceResolver();
+
+            string contentWithoutParamDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<ClassName>
+    <Method>
+        <summary>
+            Foo
+        </summary>
+    </Method>
+</ClassName>
+";
+            resolver.XmlReferences.Add("MissingParamDocumentation.xml", contentWithoutParamDocumentation);
+
+            string contentWithParamDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<ClassName>
+    <Method>
+        <summary>
+            Foo
+        </summary>
+        <param name=""foo"">Param 1</param>
+        <param name=""bar"">Param 2</param>
+    </Method>
+</ClassName>
+";
+            resolver.XmlReferences.Add("WithParamDocumentation.xml", contentWithParamDocumentation);
+
+            string contentWithInvalidParamDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<ClassName>
+    <Method>
+        <summary>
+            Foo
+        </summary>
+        <param>Test</param>
+        <param/>
+        <param name="""">Test</param>
+        <param name=""    "">Test</param>
+    </Method>
+</ClassName>
+";
+            resolver.XmlReferences.Add("WithInvalidParamDocumentation.xml", contentWithInvalidParamDocumentation);
+
+            string contentWithInheritedDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+ <ClassName>
+    <Method>
+        <inheritdoc />
+        <param>Test</param>
+        <param/>
+        <param name="""">Test</param>
+        <param name=""    "">Test</param>
+    </Method>
+ </ClassName>
+ ";
+            resolver.XmlReferences.Add("WithInheritedDocumentation.xml", contentWithInheritedDocumentation);
+
+            project = base.ApplyCompilationOptions(project);
+            project = project.WithCompilationOptions(project.CompilationOptions.WithXmlReferenceResolver(resolver));
+            return project;
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

@@ -4,6 +4,8 @@
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Immutable;
+    using System.Linq;
+    using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -47,12 +49,29 @@ namespace StyleCop.Analyzers.DocumentationRules
         protected override string XmlTagToHandle => XmlCommentHelper.ValueXmlTag;
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location diagnosticLocation)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, XElement completeDocumentation, Location diagnosticLocation)
         {
-            if (syntax == null)
+            var properties = ImmutableDictionary.Create<string, string>();
+
+            if (completeDocumentation != null)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, diagnosticLocation));
+                var hasValueTag = completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.ValueXmlTag);
+                if (hasValueTag)
+                {
+                    return;
+                }
+
+                properties = properties.Add(NoCodeFixKey, string.Empty);
             }
+            else
+            {
+                if (syntax != null)
+                {
+                    return;
+                }
+            }
+
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, diagnosticLocation, properties));
         }
     }
 }

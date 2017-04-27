@@ -25,15 +25,16 @@ namespace StyleCop.Analyzers.Test.Settings
             var styleCopSettings = SettingsHelper.GetStyleCopSettings(default(SyntaxTreeAnalysisContext), CancellationToken.None);
 
             Assert.Equal("PlaceholderCompany", styleCopSettings.DocumentationRules.CompanyName);
-            Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.CopyrightText);
+            Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
             Assert.True(styleCopSettings.NamingRules.AllowCommonHungarianPrefixes);
             Assert.Equal(0, styleCopSettings.NamingRules.AllowedHungarianPrefixes.Length);
 
             Assert.NotNull(styleCopSettings.OrderingRules);
             Assert.Equal(UsingDirectivesPlacement.InsideNamespace, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
+            Assert.Equal(OptionSetting.Allow, styleCopSettings.OrderingRules.BlankLinesBetweenUsingGroups);
 
             Assert.NotNull(styleCopSettings.LayoutRules);
-            Assert.Equal(EndOfFileHandling.Allow, styleCopSettings.LayoutRules.NewlineAtEndOfFile);
+            Assert.Equal(OptionSetting.Allow, styleCopSettings.LayoutRules.NewlineAtEndOfFile);
 
             Assert.NotNull(styleCopSettings.SpacingRules);
             Assert.NotNull(styleCopSettings.ReadabilityRules);
@@ -58,8 +59,12 @@ namespace StyleCop.Analyzers.Test.Settings
         ""allowCommonHungarianPrefixes"": false,
         ""allowedHungarianPrefixes"": [""a"", ""ab""]
     },
+    ""layoutRules"": {
+        ""newlineAtEndOfFile"": ""require""
+    },
     ""orderingRules"": {
-        ""usingDirectivesPlacement"": ""outsideNamespace""
+        ""usingDirectivesPlacement"": ""outsideNamespace"",
+        ""blankLinesBetweenUsingGroups"": ""omit"",
     }
   }
 }
@@ -69,12 +74,16 @@ namespace StyleCop.Analyzers.Test.Settings
             var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
 
             Assert.Equal("TestCompany", styleCopSettings.DocumentationRules.CompanyName);
-            Assert.Equal("Custom copyright text.", styleCopSettings.DocumentationRules.CopyrightText);
+            Assert.Equal("Custom copyright text.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
             Assert.False(styleCopSettings.NamingRules.AllowCommonHungarianPrefixes);
             Assert.Equal(new[] { "a", "ab" }, styleCopSettings.NamingRules.AllowedHungarianPrefixes);
 
+            Assert.NotNull(styleCopSettings.LayoutRules);
+            Assert.Equal(OptionSetting.Require, styleCopSettings.LayoutRules.NewlineAtEndOfFile);
+
             Assert.NotNull(styleCopSettings.OrderingRules);
             Assert.Equal(UsingDirectivesPlacement.OutsideNamespace, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
+            Assert.Equal(OptionSetting.Omit, styleCopSettings.OrderingRules.BlankLinesBetweenUsingGroups);
         }
 
         /// <summary>
@@ -98,7 +107,7 @@ namespace StyleCop.Analyzers.Test.Settings
             var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
 
             Assert.Equal("TestCompany", styleCopSettings.DocumentationRules.CompanyName);
-            Assert.Equal("Copyright (c) TestCompany. All rights reserved.", styleCopSettings.DocumentationRules.CopyrightText);
+            Assert.Equal("Copyright (c) TestCompany. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
         }
 
         [Fact]
@@ -117,7 +126,7 @@ namespace StyleCop.Analyzers.Test.Settings
 
             var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
 
-            Assert.Equal("[CircularReference]", styleCopSettings.DocumentationRules.CopyrightText);
+            Assert.Equal("[CircularReference]", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
         }
 
         [Fact]
@@ -136,7 +145,7 @@ namespace StyleCop.Analyzers.Test.Settings
 
             var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
 
-            Assert.Equal("[InvalidReference]", styleCopSettings.DocumentationRules.CopyrightText);
+            Assert.Equal("[InvalidReference]", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
         }
 
         [Fact]
@@ -149,7 +158,20 @@ namespace StyleCop.Analyzers.Test.Settings
 
             // The result is the same as the default settings.
             Assert.Equal("PlaceholderCompany", styleCopSettings.DocumentationRules.CompanyName);
-            Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.CopyrightText);
+            Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
+        }
+
+        [Fact]
+        public async Task VerifyEmptyOrMissingFileAsync()
+        {
+            var settings = string.Empty;
+            var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
+
+            // The result is the same as the default settings.
+            Assert.Equal("PlaceholderCompany", styleCopSettings.DocumentationRules.CompanyName);
+            Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
         }
 
         private static async Task<SyntaxTreeAnalysisContext> CreateAnalysisContextAsync(string stylecopJSON)
@@ -165,7 +187,7 @@ namespace StyleCop.Analyzers.Test.Settings
             var document = solution.GetDocument(documentId);
             var syntaxTree = await document.GetSyntaxTreeAsync().ConfigureAwait(false);
 
-            var stylecopJSONFile = new AdditionalTextHelper("stylecop.json", stylecopJSON);
+            var stylecopJSONFile = new AdditionalTextHelper(SettingsHelper.SettingsFileName, stylecopJSON);
             var additionalFiles = ImmutableArray.Create<AdditionalText>(stylecopJSONFile);
             var analyzerOptions = new AnalyzerOptions(additionalFiles);
 

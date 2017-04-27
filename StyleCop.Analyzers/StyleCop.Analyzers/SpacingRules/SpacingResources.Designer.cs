@@ -368,7 +368,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The C# code contains a tab character.
+        ///   Looks up a localized string similar to The code contains a tab or space character which is not consistent with the current project settings..
         /// </summary>
         internal static string SA1027Description {
             get {
@@ -377,7 +377,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tabs must not be used..
+        ///   Looks up a localized string similar to Tabs and spaces should be used correctly.
         /// </summary>
         internal static string SA1027MessageFormat {
             get {
@@ -386,7 +386,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tabs must not be used.
+        ///   Looks up a localized string similar to Use tabs correctly.
         /// </summary>
         internal static string SA1027Title {
             get {

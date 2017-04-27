@@ -96,14 +96,14 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 this.CSharpDiagnostic().WithLocation(16, 1),
 
                 // v6
-                this.CSharpDiagnostic().WithLocation(22, 1)
+                this.CSharpDiagnostic().WithLocation(22, 1),
             };
 
             // The fixed test code will have diagnostics, because not all cases can be code fixed automatically.
             DiagnosticResult[] fixedExpectedResults =
             {
                 this.CSharpDiagnostic().WithLocation(13, 1),
-                this.CSharpDiagnostic().WithLocation(19, 1)
+                this.CSharpDiagnostic().WithLocation(19, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
@@ -134,13 +134,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             DiagnosticResult[] expected =
             {
-                new DiagnosticResult
-                {
-                    Id = "CS1031",
-                    Message = "Type expected",
-                    Severity = DiagnosticSeverity.Error,
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 10, 2) }
-                }
+                this.CSharpCompilerError("CS1031").WithMessage("Type expected").WithLocation(10, 2),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

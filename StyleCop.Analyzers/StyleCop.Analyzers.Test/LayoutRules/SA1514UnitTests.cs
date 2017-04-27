@@ -214,7 +214,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
             {
                 this.CSharpDiagnostic().WithLocation(6, 9),
                 this.CSharpDiagnostic().WithLocation(12, 9),
-                this.CSharpDiagnostic().WithLocation(18, 9)
+                this.CSharpDiagnostic().WithLocation(18, 9),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -323,7 +323,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
             DiagnosticResult[] expectedDiagnostics =
             {
                 this.CSharpDiagnostic().WithLocation(6, 9),
-                this.CSharpDiagnostic().WithLocation(13, 9)
+                this.CSharpDiagnostic().WithLocation(13, 9),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -707,7 +707,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
             DiagnosticResult[] expectedDiagnostics =
             {
                 this.CSharpDiagnostic().WithLocation(8, 9),
-                this.CSharpDiagnostic().WithLocation(12, 9)
+                this.CSharpDiagnostic().WithLocation(12, 9),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -857,7 +857,7 @@ namespace TestNamespace
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(4, 5),
-                this.CSharpDiagnostic().WithLocation(10, 9)
+                this.CSharpDiagnostic().WithLocation(10, 9),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -902,7 +902,7 @@ namespace TestNamespace
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(6, 5)
+                this.CSharpDiagnostic().WithLocation(6, 5),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -1116,7 +1116,7 @@ public class TestClass
                 this.CSharpDiagnostic().WithLocation(27, 5),
                 this.CSharpDiagnostic().WithLocation(34, 5),
                 this.CSharpDiagnostic().WithLocation(42, 5),
-                this.CSharpDiagnostic().WithLocation(49, 5)
+                this.CSharpDiagnostic().WithLocation(49, 5),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -1175,7 +1175,7 @@ public class TestClass
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(14, 9)
+                this.CSharpDiagnostic().WithLocation(14, 9),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

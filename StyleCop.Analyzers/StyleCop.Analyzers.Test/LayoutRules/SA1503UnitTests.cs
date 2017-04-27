@@ -123,7 +123,7 @@ public class Foo
             var expected = new[]
             {
                 this.CSharpDiagnostic().WithLocation(7, 13),
-                this.CSharpDiagnostic().WithLocation(9, 13)
+                this.CSharpDiagnostic().WithLocation(9, 13),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -205,7 +205,7 @@ public class Foo
             var expected = new[]
             {
                 this.CSharpDiagnostic().WithLocation(6, 21),
-                this.CSharpDiagnostic().WithLocation(6, 33)
+                this.CSharpDiagnostic().WithLocation(6, 33),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

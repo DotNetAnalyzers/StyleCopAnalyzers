@@ -111,7 +111,7 @@ namespace Foo
             DiagnosticResult[] expectedDiagnostic =
             {
                 this.CSharpDiagnostic().WithLocation(5, 9),
-                this.CSharpDiagnostic().WithLocation(11, 13)
+                this.CSharpDiagnostic().WithLocation(11, 13),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
@@ -149,7 +149,7 @@ namespace Foo
 
             DiagnosticResult[] expectedDiagnostic =
             {
-                this.CSharpDiagnostic().WithLocation(5, 9)
+                this.CSharpDiagnostic().WithLocation(5, 9),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
@@ -249,7 +249,7 @@ namespace Foo
 
             DiagnosticResult[] expectedDiagnostic =
             {
-                this.CSharpDiagnostic().WithLocation(5, 1)
+                this.CSharpDiagnostic().WithLocation(5, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);

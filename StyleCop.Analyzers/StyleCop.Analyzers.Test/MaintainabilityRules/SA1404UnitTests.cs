@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.MaintainabilityRules;
     using TestHelper;
     using Xunit;
@@ -338,6 +339,7 @@ public class Foo
     }
 }";
 
+            var expectedLinePosition = new LinePosition(4, 82);
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(4, 66),
@@ -346,8 +348,8 @@ public class Foo
                     Id = "CS0029",
                     Message = "Cannot implicitly convert type 'int' to 'string'",
                     Severity = DiagnosticSeverity.Error,
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 4, 82) }
-                }
+                    Spans = new[] { new FileLinePositionSpan("Test0.cs", expectedLinePosition, expectedLinePosition) },
+                },
             };
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }

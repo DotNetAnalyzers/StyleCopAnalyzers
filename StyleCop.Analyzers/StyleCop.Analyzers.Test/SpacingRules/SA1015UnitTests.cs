@@ -85,7 +85,7 @@ public class TestClass3<T> where T : IEnumerable<object>
             {
                 this.CSharpDiagnostic().WithLocation(7, 27).WithArguments(" not", "preceded"),
                 this.CSharpDiagnostic().WithLocation(7, 58).WithArguments(" not", "preceded"),
-                this.CSharpDiagnostic().WithLocation(11, 26).WithArguments(string.Empty, "followed")
+                this.CSharpDiagnostic().WithLocation(11, 26).WithArguments(string.Empty, "followed"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -131,7 +131,7 @@ public class TestClass
                 this.CSharpDiagnostic().WithLocation(8, 33).WithArguments(string.Empty, "followed"),
                 this.CSharpDiagnostic().WithLocation(9, 33).WithArguments(" not", "preceded"),
                 this.CSharpDiagnostic().WithLocation(9, 35).WithArguments(" not", "preceded"),
-                this.CSharpDiagnostic().WithLocation(9, 35).WithArguments(string.Empty, "followed")
+                this.CSharpDiagnostic().WithLocation(9, 35).WithArguments(string.Empty, "followed"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -220,7 +220,7 @@ public class TestClass
                 this.CSharpDiagnostic().WithLocation(25, 35).WithArguments(" not", "preceded"),
                 this.CSharpDiagnostic().WithLocation(25, 35).WithArguments(string.Empty, "followed"),
                 this.CSharpDiagnostic().WithLocation(25, 50).WithArguments(" not", "preceded"),
-                this.CSharpDiagnostic().WithLocation(25, 50).WithArguments(" not", "followed")
+                this.CSharpDiagnostic().WithLocation(25, 50).WithArguments(" not", "followed"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -300,7 +300,7 @@ public class TestClass
                 this.CSharpDiagnostic().WithLocation(18, 28).WithArguments(" not", "preceded"),
                 this.CSharpDiagnostic().WithLocation(19, 27).WithArguments(" not", "followed"),
                 this.CSharpDiagnostic().WithLocation(20, 28).WithArguments(" not", "preceded"),
-                this.CSharpDiagnostic().WithLocation(20, 28).WithArguments(" not", "followed")
+                this.CSharpDiagnostic().WithLocation(20, 28).WithArguments(" not", "followed"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -384,13 +384,7 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                new DiagnosticResult
-                {
-                    Id = "CS1003",
-                    Severity = DiagnosticSeverity.Error,
-                    Message = "Syntax error, '>' expected",
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 7, 35) }
-                }
+                this.CSharpCompilerError("CS1003").WithMessage("Syntax error, '>' expected").WithLocation(7, 35),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

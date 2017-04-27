@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="IndentationCodeFix" xml:space="preserve">
+    <value>Fix indentation</value>
+  </data>
   <data name="RemoveRegionCodeFix" xml:space="preserve">
     <value>Remove region</value>
   </data>
@@ -426,6 +429,9 @@
   <data name="SA1129Title" xml:space="preserve">
     <value>Do not use default value type constructor</value>
   </data>
+  <data name="SA1130CodeFix" xml:space="preserve">
+    <value>Replace with lambda.</value>
+  </data>
   <data name="SA1130Description" xml:space="preserve">
     <value>Lambda expressions are more succinct and easier to read than anonymous methods, so they should are preferred whenever the two are functionally equivalent.</value>
   </data>
@@ -482,6 +488,39 @@
   </data>
   <data name="SA1134Title" xml:space="preserve">
     <value>Attributes must not share line</value>
+  </data>
+  <data name="SA1136CodeFix" xml:space="preserve">
+    <value>Place enum values own their own lines</value>
+  </data>
+  <data name="SA1136Description" xml:space="preserve">
+    <value>Enum values should be placed on their own lines for maximum readability.</value>
+  </data>
+  <data name="SA1136MessageFormat" xml:space="preserve">
+    <value>Enum values should be on separate lines</value>
+  </data>
+  <data name="SA1136Title" xml:space="preserve">
+    <value>Enum values should be on separate lines</value>
+  </data>
+  <data name="SA1137Description" xml:space="preserve">
+    <value>Elements at the same level in the syntax tree should have the same indentation.</value>
+  </data>
+  <data name="SA1137MessageFormat" xml:space="preserve">
+    <value>Elements should have the same indentation</value>
+  </data>
+  <data name="SA1137Title" xml:space="preserve">
+    <value>Elements should have the same indentation</value>
+  </data>
+  <data name="SA1139Description" xml:space="preserve">
+    <value>Use literal suffix notation instead of casting, in order to improve readability, avoid bugs related to illegal casts and ensure that optimal IL is produced.</value>
+  </data>
+  <data name="SA1139MessageFormat" xml:space="preserve">
+    <value>Use literal suffix notation instead of casting</value>
+  </data>
+  <data name="SA1139Title" xml:space="preserve">
+    <value>Use literal suffix notation instead of casting</value>
+  </data>
+  <data name="SA1139CodeFix" xml:space="preserve">
+    <value>Use literal suffix notation instead of casting</value>
   </data>
   <data name="SX1101CodeFix" xml:space="preserve">
     <value>Remove 'this.' prefix</value>

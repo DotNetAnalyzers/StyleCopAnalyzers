@@ -30,14 +30,14 @@ If ($Version.Contains('-')) {
 	$KeyConfiguration = 'Final'
 }
 
-# download NuGet.exe if necessary
-$nuget = '..\.nuget\NuGet.exe'
+# download nuget.exe if necessary
+$nuget = '..\.nuget\nuget.exe'
 If (-not (Test-Path $nuget)) {
 	If (-not (Test-Path '..\.nuget')) {
 		mkdir '..\.nuget'
 	}
 
-	$nugetSource = 'http://nuget.org/nuget.exe'
+	$nugetSource = 'https://dist.nuget.org/win-x86-commandline/latest/nuget.exe'
 	Invoke-WebRequest $nugetSource -OutFile $nuget
 	If (-not $?) {
 		$host.ui.WriteErrorLine('Unable to download NuGet executable, aborting!')

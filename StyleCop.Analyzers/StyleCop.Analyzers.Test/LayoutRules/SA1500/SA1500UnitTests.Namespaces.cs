@@ -122,7 +122,35 @@ namespace InvalidNamespace6
                 this.CSharpDiagnostic().WithLocation(16, 19),
 
                 // InvalidNamespace6
-                this.CSharpDiagnostic().WithLocation(19, 1)
+                this.CSharpDiagnostic().WithLocation(19, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that an invalid namespace at the end of the source file will be handled correctly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestNamespaceInvalidAtEndOfFileAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+  using System; }";
+
+            var fixedTestCode = @"
+namespace TestNamespace
+{
+  using System;
+}";
+
+            DiagnosticResult[] expectedDiagnostics =
+            {
+                this.CSharpDiagnostic().WithLocation(4, 17),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

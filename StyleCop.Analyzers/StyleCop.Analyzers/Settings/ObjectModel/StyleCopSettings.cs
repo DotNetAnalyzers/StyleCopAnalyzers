@@ -9,6 +9,12 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
     internal class StyleCopSettings
     {
         /// <summary>
+        /// This is the backing field for the <see cref="Indentation"/> property.
+        /// </summary>
+        [JsonProperty("indentation", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        private IndentationSettings indentation;
+
+        /// <summary>
         /// This is the backing field for the <see cref="SpacingRules"/> property.
         /// </summary>
         [JsonProperty("spacingRules", DefaultValueHandling = DefaultValueHandling.Ignore)]
@@ -56,6 +62,8 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         [JsonConstructor]
         protected internal StyleCopSettings()
         {
+            this.indentation = new IndentationSettings();
+
             this.spacingRules = new SpacingSettings();
             this.readabilityRules = new ReadabilitySettings();
             this.orderingRules = new OrderingSettings();
@@ -64,6 +72,9 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.layoutRules = new LayoutSettings();
             this.documentationRules = new DocumentationSettings();
         }
+
+        public IndentationSettings Indentation =>
+            this.indentation;
 
         public SpacingSettings SpacingRules =>
             this.spacingRules;

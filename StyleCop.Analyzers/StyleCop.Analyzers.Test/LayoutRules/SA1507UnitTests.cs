@@ -179,7 +179,7 @@ namespace Microsoft
                 /* line 23 should not report a diagnostic, as it's part of the directive is inactive */
                 this.CSharpDiagnostic().WithLocation(27, 1),
                 /* line 30 should not report a diagnostic, as it's part of a comment */
-                this.CSharpDiagnostic().WithLocation(35, 1)
+                this.CSharpDiagnostic().WithLocation(35, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(TestCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

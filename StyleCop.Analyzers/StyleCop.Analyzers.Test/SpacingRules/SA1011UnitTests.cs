@@ -101,7 +101,7 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(12, 27).WithArguments(" not",  "preceded"),
                 this.CSharpDiagnostic().WithLocation(13, 4).WithArguments(" not",  "preceded"),
                 this.CSharpDiagnostic().WithLocation(15, 27).WithArguments(" not",  "preceded"),
-                this.CSharpDiagnostic().WithLocation(15, 31).WithArguments(" not",  "preceded")
+                this.CSharpDiagnostic().WithLocation(15, 31).WithArguments(" not",  "preceded"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -216,7 +216,7 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(5, 16).WithArguments(string.Empty, "followed"),
                 this.CSharpDiagnostic().WithLocation(5, 32).WithArguments(string.Empty, "followed"),
                 this.CSharpDiagnostic().WithLocation(7, 13).WithArguments(string.Empty, "followed"),
-                this.CSharpDiagnostic().WithLocation(7, 30).WithArguments(string.Empty, "followed")
+                this.CSharpDiagnostic().WithLocation(7, 30).WithArguments(string.Empty, "followed"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -304,27 +304,9 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                new DiagnosticResult
-                {
-                    Id = "CS0443",
-                    Severity = DiagnosticSeverity.Error,
-                    Message = "Syntax error; value expected",
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 28) }
-                },
-                new DiagnosticResult
-                {
-                    Id = "CS1003",
-                    Severity = DiagnosticSeverity.Error,
-                    Message = "Syntax error, ',' expected",
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 28) }
-                },
-                new DiagnosticResult
-                {
-                    Id = "CS1003",
-                    Severity = DiagnosticSeverity.Error,
-                    Message = "Syntax error, ']' expected",
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 28) }
-                }
+                this.CSharpCompilerError("CS0443").WithMessage("Syntax error; value expected").WithLocation(6, 28),
+                this.CSharpCompilerError("CS1003").WithMessage("Syntax error, ',' expected").WithLocation(6, 28),
+                this.CSharpCompilerError("CS1003").WithMessage("Syntax error, ']' expected").WithLocation(6, 28),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

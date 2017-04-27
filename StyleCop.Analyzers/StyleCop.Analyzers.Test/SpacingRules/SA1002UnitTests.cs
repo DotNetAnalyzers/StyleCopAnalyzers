@@ -84,7 +84,7 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(6, 14)
+                this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(6, 14),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -116,7 +116,7 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(6, 18)
+                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(6, 18),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -148,7 +148,7 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(6, 16)
+                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(6, 16),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -406,13 +406,7 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                new DiagnosticResult
-                {
-                    Id = "CS1002",
-                    Severity = DiagnosticSeverity.Error,
-                    Message = "; expected",
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 14) }
-                }
+                this.CSharpCompilerError("CS1002").WithMessage("; expected").WithLocation(6, 14),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

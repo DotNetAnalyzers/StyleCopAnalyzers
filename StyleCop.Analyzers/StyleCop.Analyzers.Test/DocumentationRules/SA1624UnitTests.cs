@@ -27,7 +27,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         /// <param name="expectedArgument1">The first expected argument for the diagnostic.</param>
         /// <param name="expectedArgument2">The second expected argument for the diagnostic.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Theory]
+        [Theory(DisplayName = "Property Findings")]
         [InlineData("public", "int", "get; internal set;", "Gets or sets", "get", "Gets")]
         [InlineData("public", "int", "get; private set;", "Gets or sets", "get", "Gets")]
         [InlineData("public", "int", "internal get; set;", "Gets or sets", "set", "Sets")]
@@ -78,20 +78,20 @@ public class TestClass
         }
 
         /// <summary>
-        /// Verifies that documentation that starts with the proper text for multiple accessors will not produce this
+        /// Verifies that documentation that starts with the proper text for a lone getter will not produce this
         /// diagnostic when the property has an expression body.
         /// </summary>
         /// <param name="accessibility">The accessibility of the property.</param>
         /// <param name="type">The type to use for the property.</param>
         /// <param name="summaryPrefix">The prefix to use in the summary text.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Theory]
-        [InlineData("public", "int", "Gets or sets")]
-        [InlineData("public", "bool", "Gets or sets a value indicating whether")]
-        [InlineData("protected", "int", "Gets or sets")]
-        [InlineData("protected internal", "int", "Gets or sets")]
-        [InlineData("internal", "int", "Gets or sets")]
-        public async Task VerifyThatInvalidDocumentationWillReportDiagnosticForExpressionBodyAsync(string accessibility, string type, string summaryPrefix)
+        [Theory(DisplayName = "ExpressionBody Gets")]
+        [InlineData("public", "int", "Gets")]
+        [InlineData("public", "bool", "Gets a value indicating whether")]
+        [InlineData("protected", "int", "Gets")]
+        [InlineData("protected internal", "int", "Gets")]
+        [InlineData("internal", "int", "Gets")]
+        public async Task VerifyThatValidDocumentationOnExpressionBodyIsAcceptedAsync(string accessibility, string type, string summaryPrefix)
         {
             var testCode = $@"
 public class TestClass
@@ -112,7 +112,7 @@ public class TestClass
         /// </summary>
         /// <param name="typeKeyword">The type keyword to use.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Theory]
+        [Theory(DisplayName = "PrivateContainer Findings")]
         [InlineData("class")]
         [InlineData("struct")]
         public async Task VerifyPrivateAccessorInPrivateContainerAsync(string typeKeyword)
@@ -139,10 +139,23 @@ public class ContainerTestClass
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override IEnumerable<string> GetDisabledDiagnostics()
+        /// <summary>
+        /// Verifies that an empty tag summary is ignored (should be handled by SA1606)
+        /// This is a regression test for #2230
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyEmptySummaryTagIsIgnoredAsync()
         {
-            yield return PropertySummaryDocumentationAnalyzer.SA1623Descriptor.Id;
+            var testCode = @"
+public class TestClass
+{
+    /// <summary/>
+    public int TestProperty { get; set; }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

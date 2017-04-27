@@ -52,7 +52,7 @@ class Foo
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(4, 5),
-                this.CSharpDiagnostic().WithLocation(5, 5)
+                this.CSharpDiagnostic().WithLocation(5, 5),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -124,12 +124,9 @@ class Foo
     {declaration}
 }}";
 
-            DiagnosticResult expected = new DiagnosticResult
+            DiagnosticResult[] expected =
             {
-                Id = id,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 4, column) },
-                Message = message
+                this.CSharpCompilerError(id).WithMessage(message).WithLocation(4, column),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

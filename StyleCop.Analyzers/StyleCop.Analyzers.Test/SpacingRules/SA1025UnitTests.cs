@@ -110,7 +110,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 this.CSharpDiagnostic().WithLocation(4, 18),
                 this.CSharpDiagnostic().WithLocation(5, 10),
                 this.CSharpDiagnostic().WithLocation(5, 18),
-                this.CSharpDiagnostic().WithLocation(5, 21)
+                this.CSharpDiagnostic().WithLocation(5, 21),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -150,7 +150,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 this.CSharpDiagnostic().WithLocation(3, 43),
                 this.CSharpDiagnostic().WithLocation(3, 50),
                 this.CSharpDiagnostic().WithLocation(3, 53),
-                this.CSharpDiagnostic().WithLocation(3, 56)
+                this.CSharpDiagnostic().WithLocation(3, 56),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -192,7 +192,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 this.CSharpDiagnostic().WithLocation(5, 15),
                 this.CSharpDiagnostic().WithLocation(5, 21),
                 this.CSharpDiagnostic().WithLocation(5, 37),
-                this.CSharpDiagnostic().WithLocation(5, 46)
+                this.CSharpDiagnostic().WithLocation(5, 46),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -240,7 +240,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 this.CSharpDiagnostic().WithLocation(7, 23),
                 this.CSharpDiagnostic().WithLocation(7, 27),
                 this.CSharpDiagnostic().WithLocation(7, 30),
-                this.CSharpDiagnostic().WithLocation(8, 19)
+                this.CSharpDiagnostic().WithLocation(8, 19),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -285,7 +285,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 this.CSharpDiagnostic().WithLocation(5, 38),
                 this.CSharpDiagnostic().WithLocation(6, 49),
                 this.CSharpDiagnostic().WithLocation(7, 33),
-                this.CSharpDiagnostic().WithLocation(7, 37)
+                this.CSharpDiagnostic().WithLocation(7, 37),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -334,7 +334,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 this.CSharpDiagnostic().WithLocation(7, 23),
                 this.CSharpDiagnostic().WithLocation(7, 26),
                 this.CSharpDiagnostic().WithLocation(7, 33),
-                this.CSharpDiagnostic().WithLocation(7, 36)
+                this.CSharpDiagnostic().WithLocation(7, 36),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -387,7 +387,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 this.CSharpDiagnostic().WithLocation(7, 38),
                 this.CSharpDiagnostic().WithLocation(7, 42),
                 this.CSharpDiagnostic().WithLocation(7, 45),
-                this.CSharpDiagnostic().WithLocation(8, 19)
+                this.CSharpDiagnostic().WithLocation(8, 19),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

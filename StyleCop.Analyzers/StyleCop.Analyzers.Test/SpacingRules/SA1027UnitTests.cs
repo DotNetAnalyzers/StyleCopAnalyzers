@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1027TabsMustNotBeUsed"/>
+    /// Unit tests for <see cref="SA1027UseTabsCorrectly"/>
     /// </summary>
     public class SA1027UnitTests : CodeFixVerifier
     {
@@ -35,7 +35,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         }
 
         /// <summary>
-        /// Verifies that tabs used inside disabled code is not producing diagnostics.
+        /// Verifies that tabs used inside disabled code are not producing diagnostics.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -89,7 +89,7 @@ public  class   Foo
                 this.CSharpDiagnostic().WithLocation(6, 1),
                 this.CSharpDiagnostic().WithLocation(7, 1),
                 this.CSharpDiagnostic().WithLocation(8, 1),
-                this.CSharpDiagnostic().WithLocation(9, 1)
+                this.CSharpDiagnostic().WithLocation(9, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -125,7 +125,7 @@ public  class   Foo
                 this.CSharpDiagnostic().WithLocation(1, 1),
                 this.CSharpDiagnostic().WithLocation(1, 5),
                 this.CSharpDiagnostic().WithLocation(2, 1),
-                this.CSharpDiagnostic().WithLocation(2, 5),
+                this.CSharpDiagnostic().WithLocation(2, 9),
                 this.CSharpDiagnostic().WithLocation(3, 1),
                 this.CSharpDiagnostic().WithLocation(3, 5),
                 this.CSharpDiagnostic().WithLocation(4, 1),
@@ -175,7 +175,8 @@ public  class   Foo
                 this.CSharpDiagnostic().WithLocation(3, 1),
                 this.CSharpDiagnostic().WithLocation(4, 1),
                 this.CSharpDiagnostic().WithLocation(5, 1),
-                this.CSharpDiagnostic().WithLocation(5, 5),
+                this.CSharpDiagnostic().WithLocation(5, 7),
+                this.CSharpDiagnostic().WithLocation(5, 15),
                 this.CSharpDiagnostic().WithLocation(7, 1),
                 this.CSharpDiagnostic().WithLocation(8, 1),
                 this.CSharpDiagnostic().WithLocation(9, 1),
@@ -220,7 +221,10 @@ public  class   Foo
                 this.CSharpDiagnostic().WithLocation(3, 1),
                 this.CSharpDiagnostic().WithLocation(4, 1),
                 this.CSharpDiagnostic().WithLocation(5, 1),
-                this.CSharpDiagnostic().WithLocation(5, 5),
+                this.CSharpDiagnostic().WithLocation(6, 1),
+                this.CSharpDiagnostic().WithLocation(6, 11),
+                this.CSharpDiagnostic().WithLocation(7, 1),
+                this.CSharpDiagnostic().WithLocation(8, 1),
                 this.CSharpDiagnostic().WithLocation(9, 1),
                 this.CSharpDiagnostic().WithLocation(10, 1),
             };
@@ -233,7 +237,7 @@ public  class   Foo
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
-            yield return new SA1027TabsMustNotBeUsed();
+            yield return new SA1027UseTabsCorrectly();
         }
 
         /// <inheritdoc/>

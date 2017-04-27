@@ -12,6 +12,8 @@ namespace TestHelper
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Formatting;
+    using Microsoft.CodeAnalysis.Text;
     using Xunit;
 
     /// <summary>
@@ -19,6 +21,55 @@ namespace TestHelper
     /// </summary>
     public abstract partial class DiagnosticVerifier
     {
+        private const int DefaultIndentationSize = 4;
+        private const int DefaultTabSize = 4;
+        private const bool DefaultUseTabs = false;
+
+        public DiagnosticVerifier()
+        {
+            this.IndentationSize = DefaultIndentationSize;
+            this.TabSize = DefaultTabSize;
+            this.UseTabs = DefaultUseTabs;
+        }
+
+        /// <summary>
+        /// Gets or sets the value of the <see cref="FormattingOptions.IndentationSize"/> to apply to the test
+        /// workspace.
+        /// </summary>
+        /// <value>
+        /// The value of the <see cref="FormattingOptions.IndentationSize"/> to apply to the test workspace.
+        /// </value>
+        public int IndentationSize
+        {
+            get;
+            protected set;
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the <see cref="FormattingOptions.UseTabs"/> option is applied to the
+        /// test workspace.
+        /// </summary>
+        /// <value>
+        /// The value of the <see cref="FormattingOptions.UseTabs"/> to apply to the test workspace.
+        /// </value>
+        public bool UseTabs
+        {
+            get;
+            protected set;
+        }
+
+        /// <summary>
+        /// Gets or sets the value of the <see cref="FormattingOptions.TabSize"/> to apply to the test workspace.
+        /// </summary>
+        /// <value>
+        /// The value of the <see cref="FormattingOptions.TabSize"/> to apply to the test workspace.
+        /// </value>
+        public int TabSize
+        {
+            get;
+            protected set;
+        }
+
         protected static DiagnosticResult[] EmptyDiagnosticResults { get; } = { };
 
         /// <summary>
@@ -118,7 +169,7 @@ namespace TestHelper
         /// <summary>
         /// Checks each of the actual <see cref="Diagnostic"/>s found and compares them with the corresponding
         /// <see cref="DiagnosticResult"/> in the array of expected results. <see cref="Diagnostic"/>s are considered
-        /// equal only if the <see cref="DiagnosticResult.Locations"/>, <see cref="DiagnosticResult.Id"/>,
+        /// equal only if the <see cref="DiagnosticResult.Spans"/>, <see cref="DiagnosticResult.Id"/>,
         /// <see cref="DiagnosticResult.Severity"/>, and <see cref="DiagnosticResult.Message"/> of the
         /// <see cref="DiagnosticResult"/> match the actual <see cref="Diagnostic"/>.
         /// </summary>
@@ -146,7 +197,7 @@ namespace TestHelper
                 var actual = actualResults.ElementAt(i);
                 var expected = expectedResults[i];
 
-                if (expected.Line == -1 && expected.Column == -1)
+                if (!expected.HasLocation)
                 {
                     if (actual.Location != Location.None)
                     {
@@ -159,23 +210,23 @@ namespace TestHelper
                 }
                 else
                 {
-                    VerifyDiagnosticLocation(analyzers, actual, actual.Location, expected.Locations.First());
+                    VerifyDiagnosticLocation(analyzers, actual, actual.Location, expected.Spans.First());
                     var additionalLocations = actual.AdditionalLocations.ToArray();
 
-                    if (additionalLocations.Length != expected.Locations.Length - 1)
+                    if (additionalLocations.Length != expected.Spans.Length - 1)
                     {
-                        string message =
+                        Assert.True(
+                            false,
                             string.Format(
                                 "Expected {0} additional locations but got {1} for Diagnostic:\r\n    {2}\r\n",
-                                expected.Locations.Length - 1,
+                                expected.Spans.Length - 1,
                                 additionalLocations.Length,
-                                FormatDiagnostics(analyzers, actual));
-                        Assert.True(false, message);
+                                FormatDiagnostics(analyzers, actual)));
                     }
 
                     for (int j = 0; j < additionalLocations.Length; ++j)
                     {
-                        VerifyDiagnosticLocation(analyzers, actual, additionalLocations[j], expected.Locations[j + 1]);
+                        VerifyDiagnosticLocation(analyzers, actual, additionalLocations[j], expected.Spans[j + 1]);
                     }
                 }
 
@@ -217,14 +268,14 @@ namespace TestHelper
         /// <summary>
         /// Helper method to <see cref="VerifyDiagnosticResults"/> that checks the location of a
         /// <see cref="Diagnostic"/> and compares it with the location described by a
-        /// <see cref="DiagnosticResultLocation"/>.
+        /// <see cref="FileLinePositionSpan"/>.
         /// </summary>
         /// <param name="analyzers">The analyzer that have been run on the sources.</param>
         /// <param name="diagnostic">The diagnostic that was found in the code.</param>
         /// <param name="actual">The location of the diagnostic found in the code.</param>
-        /// <param name="expected">The <see cref="DiagnosticResultLocation"/> describing the expected location of the
+        /// <param name="expected">The <see cref="FileLinePositionSpan"/> describing the expected location of the
         /// diagnostic.</param>
-        private static void VerifyDiagnosticLocation(ImmutableArray<DiagnosticAnalyzer> analyzers, Diagnostic diagnostic, Location actual, DiagnosticResultLocation expected)
+        private static void VerifyDiagnosticLocation(ImmutableArray<DiagnosticAnalyzer> analyzers, Diagnostic diagnostic, Location actual, FileLinePositionSpan expected)
         {
             var actualSpan = actual.GetLineSpan();
 
@@ -238,36 +289,42 @@ namespace TestHelper
                 actualSpan.Path == expected.Path || (actualSpan.Path != null && actualSpan.Path.Contains("Test0.") && expected.Path.Contains("Test.")),
                 message);
 
-            var actualLinePosition = actualSpan.StartLinePosition;
+            var actualStartLinePosition = actualSpan.StartLinePosition;
+            var actualEndLinePosition = actualSpan.EndLinePosition;
 
-            // Only check line position if it matters
-            if (expected.Line > 0)
+            VerifyLinePosition(analyzers, diagnostic, actualSpan.StartLinePosition, expected.StartLinePosition, "start");
+            if (expected.StartLinePosition < expected.EndLinePosition)
             {
-                if (actualLinePosition.Line + 1 != expected.Line)
-                {
-                    string message2 =
-                        string.Format(
-                            "Expected diagnostic to be on line \"{0}\" was actually on line \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                            expected.Line,
-                            actualLinePosition.Line + 1,
-                            FormatDiagnostics(analyzers, diagnostic));
-                    Assert.True(false, message2);
-                }
+                VerifyLinePosition(analyzers, diagnostic, actualSpan.EndLinePosition, expected.EndLinePosition, "end");
+            }
+        }
+
+        private static void VerifyLinePosition(ImmutableArray<DiagnosticAnalyzer> analyzers, Diagnostic diagnostic, LinePosition actualLinePosition, LinePosition expectedLinePosition, string positionText)
+        {
+            // Only check the line position if it matters
+            if (expectedLinePosition.Line > 0)
+            {
+                Assert.True(
+                    (actualLinePosition.Line + 1) == expectedLinePosition.Line,
+                    string.Format(
+                        "Expected diagnostic to {0} on line \"{1}\" was actually on line \"{2}\"\r\n\r\nDiagnostic:\r\n    {3}\r\n",
+                        positionText,
+                        expectedLinePosition.Line,
+                        actualLinePosition.Line + 1,
+                        FormatDiagnostics(analyzers, diagnostic)));
             }
 
-            // Only check column position if it matters
-            if (expected.Column > 0)
+            // Only check the column position if it matters
+            if (expectedLinePosition.Character > 0)
             {
-                if (actualLinePosition.Character + 1 != expected.Column)
-                {
-                    string message2 =
-                        string.Format(
-                            "Expected diagnostic to start at column \"{0}\" was actually at column \"{1}\"\r\n\r\nDiagnostic:\r\n    {2}\r\n",
-                            expected.Column,
-                            actualLinePosition.Character + 1,
-                            FormatDiagnostics(analyzers, diagnostic));
-                    Assert.True(false, message2);
-                }
+                Assert.True(
+                    (actualLinePosition.Character + 1) == expectedLinePosition.Character,
+                    string.Format(
+                        "Expected diagnostic to {0} at column \"{1}\" was actually at column \"{2}\"\r\n\r\nDiagnostic:\r\n    {3}\r\n",
+                        positionText,
+                        expectedLinePosition.Character,
+                        actualLinePosition.Character + 1,
+                        FormatDiagnostics(analyzers, diagnostic)));
             }
         }
 
@@ -326,6 +383,26 @@ namespace TestHelper
             return builder.ToString();
         }
 
+        private static bool IsSubjectToExclusion(DiagnosticResult result)
+        {
+            if (result.Id.StartsWith("CS", StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            if (result.Id.StartsWith("AD", StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            if (result.Spans.Length == 0)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         /// <summary>
         /// General method that gets a collection of actual <see cref="Diagnostic"/>s found in the source after the
         /// analyzer is run, then verifies each of them.
@@ -346,12 +423,13 @@ namespace TestHelper
             if (filenames == null)
             {
                 // Also check if the analyzer honors exclusions
-                if (expected.Any(x => x.Id.StartsWith("SA", StringComparison.Ordinal) || x.Id.StartsWith("SX", StringComparison.Ordinal)))
+                if (expected.Any(IsSubjectToExclusion))
                 {
-                    // We want to look at non-stylecop diagnostics only. We also insert a new line at the beginning
-                    // so we have to move all diagnostic location down by one line
+                    // Diagnostics reported by the compiler and analyzer diagnostics which don't have a location will
+                    // still be reported. We also insert a new line at the beginning so we have to move all diagnostic
+                    // locations which have a specific position down by one line.
                     var expectedResults = expected
-                        .Where(x => !x.Id.StartsWith("SA", StringComparison.Ordinal) && !x.Id.StartsWith("SX", StringComparison.Ordinal))
+                        .Where(x => !IsSubjectToExclusion(x))
                         .Select(x => x.WithLineOffset(1))
                         .ToArray();
 

@@ -172,7 +172,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 17),
-                this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 17)
+                this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 17),
             };
 
             await this.TestCommaInStatementOrDeclAsync(spaceOnlyBeforeComma, expected, spaceOnlyAfterComma).ConfigureAwait(false);
@@ -193,13 +193,7 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                new DiagnosticResult
-                {
-                    Id = "CS1003",
-                    Severity = DiagnosticSeverity.Error,
-                    Message = "Syntax error, ',' expected",
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 25) }
-                }
+                this.CSharpCompilerError("CS1003").WithMessage("Syntax error, ',' expected").WithLocation(6, 25),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

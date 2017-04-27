@@ -70,11 +70,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
             }
 
-            IndentationOptions indentationOptions = IndentationOptions.FromDocument(document);
+            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
             SyntaxTriviaList newTrivia =
                 SyntaxFactory.TriviaList(
                     SyntaxFactory.CarriageReturnLineFeed,
-                    SyntaxFactory.Whitespace(lineText.Substring(0, indentLength) + IndentationHelper.GenerateIndentationString(indentationOptions, 1)));
+                    SyntaxFactory.Whitespace(lineText.Substring(0, indentLength) + IndentationHelper.GenerateIndentationString(settings.Indentation, 1)));
 
             SyntaxToken updatedToken = originalToken.WithLeadingTrivia(originalToken.LeadingTrivia.AddRange(newTrivia));
             SyntaxNode updatedRoot = root.ReplaceToken(originalToken, updatedToken);

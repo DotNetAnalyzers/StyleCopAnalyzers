@@ -40,7 +40,7 @@ namespace StyleCop.Analyzers.NamingRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SymbolAnalysisContext> FieldDeclarationAction = Analyzer.HandleFieldDeclaration;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -49,25 +49,15 @@ namespace StyleCop.Analyzers.NamingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+
+            context.RegisterSymbolAction(Analyzer.HandleFieldDeclaration, SymbolKind.Field);
         }
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
+        private static class Analyzer
         {
-            Analyzer analyzer = new Analyzer(context.Compilation.GetOrCreateGeneratedDocumentCache());
-            context.RegisterSymbolAction(analyzer.HandleFieldDeclaration, SymbolKind.Field);
-        }
-
-        private sealed class Analyzer
-        {
-            private readonly ConcurrentDictionary<SyntaxTree, bool> generatedHeaderCache;
-
-            public Analyzer(ConcurrentDictionary<SyntaxTree, bool> generatedHeaderCache)
-            {
-                this.generatedHeaderCache = generatedHeaderCache;
-            }
-
-            public void HandleFieldDeclaration(SymbolAnalysisContext context)
+            public static void HandleFieldDeclaration(SymbolAnalysisContext context)
             {
                 var symbol = context.Symbol as IFieldSymbol;
 
@@ -98,11 +88,6 @@ namespace StyleCop.Analyzers.NamingRules
                         if (!location.IsInSource)
                         {
                             // assume symbols not defined in a source document are "out of reach"
-                            return;
-                        }
-
-                        if (location.SourceTree.IsGeneratedDocument(this.generatedHeaderCache, context.CancellationToken))
-                        {
                             return;
                         }
                     }
