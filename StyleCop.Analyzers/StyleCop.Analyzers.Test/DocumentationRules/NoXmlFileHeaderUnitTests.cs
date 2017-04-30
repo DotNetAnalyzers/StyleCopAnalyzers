@@ -25,7 +25,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
       ""copyrightText"": ""Copyright (c) {companyName}. All rights reserved.\nLicensed under the {licenseName} license. See {licenseFile} file in the project root for full license information."",
       ""variables"": {
         ""licenseName"": ""???"",
-        ""licenseFile"": ""LICENSE"",
+        ""licenseFile"": ""LICENSE""
       },
       ""xmlHeader"": false
     }

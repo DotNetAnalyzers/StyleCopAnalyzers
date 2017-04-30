@@ -3,17 +3,28 @@
 
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
-    using Newtonsoft.Json;
+    using LightJson;
 
-    [JsonObject(MemberSerialization.OptIn)]
     internal class SpacingSettings
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SpacingSettings"/> class during JSON deserialization.
         /// </summary>
-        [JsonConstructor]
         protected internal SpacingSettings()
         {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SpacingSettings"/> class.
+        /// </summary>
+        /// <param name="spacingSettingsObject">The JSON object containing the settings.</param>
+        protected internal SpacingSettings(JsonObject spacingSettingsObject)
+            : this()
+        {
+            if (spacingSettingsObject.Count > 0)
+            {
+                throw new InvalidSettingsException($"spacingRules should not contain any child objects");
+            }
         }
     }
 }
