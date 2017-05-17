@@ -39,7 +39,7 @@ public class Foo
         Action item1 = () => { };
         
         // Valid lambda expression #2
-        Action item2 = () => { Debug.Indent(); };
+        Action item2 = () => { Debug.Fail(null); };
 
         // Valid lambda expression #3
         Action item3 = () =>
@@ -49,12 +49,12 @@ public class Foo
         // Valid lambda expression #4
         Action item4 = () =>
         {
-            Debug.Indent();
+            Debug.Fail(null);
         };
 
         // Valid lambda expression #5
         Action item5 = () =>
-        { Debug.Indent(); };
+        { Debug.Fail(null); };
 
         // Valid lambda expression #6
         this.TestMethod(() => { });
@@ -65,17 +65,17 @@ public class Foo
         });
 
         // Valid lambda expression #8
-        this.TestMethod(() => { Debug.Indent(); });
+        this.TestMethod(() => { Debug.Fail(null); });
 
         // Valid lambda expression #9
         this.TestMethod(() =>
         { 
-            Debug.Indent(); 
+            Debug.Fail(null); 
         });
 
         // Valid lambda expression #10
         this.TestMethod(() =>
-        { Debug.Indent(); });
+        { Debug.Fail(null); });
     }
 }";
 
@@ -105,25 +105,25 @@ public class Foo
         
         // Invalid lambda expression #2
         Action item2 = () => {
-            Debug.Indent();
+            Debug.Fail(null);
         };
 
         // Invalid lambda expression #3
         Action item3 = () => {
-            Debug.Indent(); };
+            Debug.Fail(null); };
 
         // Invalid lambda expression #4
-        Action item4 = () => { Debug.Indent();
+        Action item4 = () => { Debug.Fail(null);
         };
 
         // Invalid lambda expression #5
         Action item5 = () =>
         {
-            Debug.Indent(); };
+            Debug.Fail(null); };
 
         // Invalid lambda expression #6
         Action item6 = () =>
-        { Debug.Indent();
+        { Debug.Fail(null);
         };
 
         // Invalid lambda expression #7
@@ -132,25 +132,25 @@ public class Foo
 
         // Invalid lambda expression #8
         this.TestMethod(() => {
-            Debug.Indent();
+            Debug.Fail(null);
         });
 
         // Invalid lambda expression #9
         this.TestMethod(() => {
-            Debug.Indent(); });
+            Debug.Fail(null); });
 
         // Invalid lambda expression #10
-        this.TestMethod(() => { Debug.Indent();
+        this.TestMethod(() => { Debug.Fail(null);
         });
 
         // Invalid lambda expression #11
         this.TestMethod(() =>
         {
-            Debug.Indent(); });
+            Debug.Fail(null); });
 
         // Invalid lambda expression #12
         this.TestMethod(() =>
-        { Debug.Indent();
+        { Debug.Fail(null);
         });
     }
 }";
@@ -173,31 +173,31 @@ public class Foo
         // Invalid lambda expression #2
         Action item2 = () =>
         {
-            Debug.Indent();
+            Debug.Fail(null);
         };
 
         // Invalid lambda expression #3
         Action item3 = () =>
         {
-            Debug.Indent();
+            Debug.Fail(null);
         };
 
         // Invalid lambda expression #4
         Action item4 = () =>
         {
-            Debug.Indent();
+            Debug.Fail(null);
         };
 
         // Invalid lambda expression #5
         Action item5 = () =>
         {
-            Debug.Indent();
+            Debug.Fail(null);
         };
 
         // Invalid lambda expression #6
         Action item6 = () =>
         {
-            Debug.Indent();
+            Debug.Fail(null);
         };
 
         // Invalid lambda expression #7
@@ -208,31 +208,31 @@ public class Foo
         // Invalid lambda expression #8
         this.TestMethod(() =>
         {
-            Debug.Indent();
+            Debug.Fail(null);
         });
 
         // Invalid lambda expression #9
         this.TestMethod(() =>
         {
-            Debug.Indent();
+            Debug.Fail(null);
         });
 
         // Invalid lambda expression #10
         this.TestMethod(() =>
         {
-            Debug.Indent();
+            Debug.Fail(null);
         });
 
         // Invalid lambda expression #11
         this.TestMethod(() =>
         {
-            Debug.Indent();
+            Debug.Fail(null);
         });
 
         // Invalid lambda expression #12
         this.TestMethod(() =>
         {
-            Debug.Indent();
+            Debug.Fail(null);
         });
     }
 }";
@@ -247,13 +247,13 @@ public class Foo
 
                 // Invalid lambda expression #3
                 this.CSharpDiagnostic().WithLocation(21, 30),
-                this.CSharpDiagnostic().WithLocation(22, 29),
+                this.CSharpDiagnostic().WithLocation(22, 31),
 
                 // Invalid lambda expression #4
                 this.CSharpDiagnostic().WithLocation(25, 30),
 
                 // Invalid lambda expression #5
-                this.CSharpDiagnostic().WithLocation(31, 29),
+                this.CSharpDiagnostic().WithLocation(31, 31),
 
                 // Invalid lambda expression #6
                 this.CSharpDiagnostic().WithLocation(35, 9),
@@ -266,13 +266,13 @@ public class Foo
 
                 // Invalid lambda expression #9
                 this.CSharpDiagnostic().WithLocation(48, 31),
-                this.CSharpDiagnostic().WithLocation(49, 29),
+                this.CSharpDiagnostic().WithLocation(49, 31),
 
                 // Invalid lambda expression #10
                 this.CSharpDiagnostic().WithLocation(52, 31),
 
                 // Invalid lambda expression #11
-                this.CSharpDiagnostic().WithLocation(58, 29),
+                this.CSharpDiagnostic().WithLocation(58, 31),
 
                 // Invalid lambda expression #12
                 this.CSharpDiagnostic().WithLocation(62, 9),

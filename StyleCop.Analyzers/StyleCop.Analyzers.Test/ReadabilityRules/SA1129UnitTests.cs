@@ -91,7 +91,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     {
         var v1 = new TestStruct();
 
-        System.Console.WriteLine(new TestStruct());
+        System.Console.WriteLine(new TestStruct().ToString());
     }
 
     private struct TestStruct
@@ -107,7 +107,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     {
         var v1 = default(TestStruct);
 
-        System.Console.WriteLine(default(TestStruct));
+        System.Console.WriteLine(default(TestStruct).ToString());
     }
 
     private struct TestStruct

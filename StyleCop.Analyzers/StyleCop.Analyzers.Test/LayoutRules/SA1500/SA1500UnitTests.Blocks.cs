@@ -36,14 +36,14 @@ public class Foo
 
         // valid block #2
         {
-            Debug.Indent();
+            Debug.Fail(null);
         }
 
         // valid block #3 (valid only for SA1500)
         { }
 
         // valid block #4 (valid only for SA1500)
-        { Debug.Indent(); }
+        { Debug.Fail(null); }
     }
 }";
 
@@ -64,12 +64,12 @@ public class Foo
     public void Bar()
     {
         // invalid block #1
-        { Debug.Indent();
+        { Debug.Fail(null);
         }
 
         // invalid block #2
         {
-            Debug.Indent(); }
+            Debug.Fail(null); }
     }
 }";
 
@@ -81,12 +81,12 @@ public class Foo
     {
         // invalid block #1
         {
-            Debug.Indent();
+            Debug.Fail(null);
         }
 
         // invalid block #2
         {
-            Debug.Indent();
+            Debug.Fail(null);
         }
     }
 }";
@@ -94,7 +94,7 @@ public class Foo
             DiagnosticResult[] expectedDiagnostics =
             {
                 this.CSharpDiagnostic().WithLocation(8, 9),
-                this.CSharpDiagnostic().WithLocation(13, 29),
+                this.CSharpDiagnostic().WithLocation(13, 31),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

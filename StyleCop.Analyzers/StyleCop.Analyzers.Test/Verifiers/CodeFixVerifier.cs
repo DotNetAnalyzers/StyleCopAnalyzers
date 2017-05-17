@@ -88,30 +88,31 @@ namespace TestHelper
             }
             else
             {
-                if (Debugger.IsAttached)
+                bool isDebugging = Debugger.IsAttached;
+                if (isDebugging)
                 {
                     await t1;
                 }
 
                 var t2 = this.VerifyFixInternalAsync(LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), this.GetCSharpCodeFixProvider(), oldSources, batchNewSources ?? newSources, oldFileNames, newFileNames, codeFixIndex, allowNewCompilerDiagnostics, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInDocumentAsync, cancellationToken).ConfigureAwait(false);
-                if (Debugger.IsAttached)
+                if (isDebugging)
                 {
                     await t2;
                 }
 
                 var t3 = this.VerifyFixInternalAsync(LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), this.GetCSharpCodeFixProvider(), oldSources, batchNewSources ?? newSources, oldFileNames, newFileNames, codeFixIndex, allowNewCompilerDiagnostics, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInProjectAsync, cancellationToken).ConfigureAwait(false);
-                if (Debugger.IsAttached)
+                if (isDebugging)
                 {
                     await t3;
                 }
 
                 var t4 = this.VerifyFixInternalAsync(LanguageNames.CSharp, this.GetCSharpDiagnosticAnalyzers().ToImmutableArray(), this.GetCSharpCodeFixProvider(), oldSources, batchNewSources ?? newSources, oldFileNames, newFileNames, codeFixIndex, allowNewCompilerDiagnostics, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInSolutionAsync, cancellationToken).ConfigureAwait(false);
-                if (Debugger.IsAttached)
+                if (isDebugging)
                 {
                     await t4;
                 }
 
-                if (!Debugger.IsAttached)
+                if (!isDebugging)
                 {
                     // Allow the operations to run in parallel
                     await t1;

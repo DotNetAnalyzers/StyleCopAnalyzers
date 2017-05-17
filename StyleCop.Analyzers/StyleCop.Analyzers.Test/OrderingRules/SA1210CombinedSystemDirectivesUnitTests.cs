@@ -168,7 +168,7 @@ namespace Food
 {
     using Food;
     using System;
-    using static System.Uri;
+    using static System.Console;
     using static System.Math;
 }";
 

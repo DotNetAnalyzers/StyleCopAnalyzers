@@ -812,7 +812,7 @@ public class Foo : Exception
     public class C1
     {
         public int Answer=>42; // Property
-        public void DoStuff(int a)=>System.Console.WriteLine(a); // method
+        public void DoStuff(int a)=>System.Console.WriteLine(a.ToString()); // method
         public static C1 operator +(C1 a, C1 b)=>a; // operator
         public static explicit operator C1(int i)=>null; // conversion operator
         public int this[int index]=>23; // indexer
@@ -824,7 +824,7 @@ public class Foo : Exception
     public class C1
     {
         public int Answer => 42; // Property
-        public void DoStuff(int a) => System.Console.WriteLine(a); // method
+        public void DoStuff(int a) => System.Console.WriteLine(a.ToString()); // method
         public static C1 operator +(C1 a, C1 b) => a; // operator
         public static explicit operator C1(int i) => null; // conversion operator
         public int this[int index] => 23; // indexer

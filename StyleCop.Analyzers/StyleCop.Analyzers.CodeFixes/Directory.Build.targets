@@ -1,0 +1,21 @@
+<Project>
+
+  <Target Name="AfterBuild">
+    <PropertyGroup>
+      <JsonVersion>10.0.1</JsonVersion>
+    </PropertyGroup>
+    <ItemGroup>
+      <NewtonsoftJsonPath Include="$(NuGetPackageRoot)\Newtonsoft.Json\$(JsonVersion)\lib\$(TargetFramework)\Newtonsoft.Json.*"/>
+      <_NuGetExe Include="@(FileDefinitions->'%(ResolvedPath)')" Condition="$([System.String]::new('%(FileDefinitions.ResolvedPath)').EndsWith('NuGet.exe'))" />
+    </ItemGroup>
+    <Copy SourceFiles="@(NewtonsoftJsonPath)" DestinationFolder="$(OutDir)"/>
+    <Exec Command="&quot;@(_NuGetExe)&quot; pack &quot;$(MSBuildProjectDirectory)\StyleCop.Analyzers.nuspec&quot; -NoPackageAnalysis -Version &quot;$(Version)&quot; -OutputDirectory &quot;$(OutDir) &quot; -BasePath &quot;$(OutDir) &quot;"
+          LogStandardErrorAsError="true"
+          ConsoleToMSBuild="true"
+          StandardOutputImportance="Low" />
+    <ItemGroup>
+      <_Nupkg Include="$(OutDir)*TEST.nupkg" />
+    </ItemGroup>
+  </Target>
+
+</Project>

@@ -41,7 +41,7 @@ using System.Collections.Concurrent;
 #endif
 
 using Math = System.Math;
-using Queue = System.Collections.Queue;
+using Queue = System.Collections.Generic.Queue<string>;
 
 namespace Microsoft.VisualStudio.Shell
 {
@@ -69,7 +69,7 @@ using System.Collections.Concurrent;
 #endif
 
 using Math = System.Math;
-using Queue = System.Collections.Queue;
+using Queue = System.Collections.Generic.Queue<string>;
 
 namespace Microsoft.VisualStudio.Shell
 {

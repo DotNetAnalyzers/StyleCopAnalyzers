@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "StyleCop.Analyzers.Vsix": {
+      "commandName": "Executable",
+      "executablePath": "$(DevEnvDir)devenv.exe",
+      "commandLineArgs": "/rootsuffix Roslyn"
+    }
+  }
+}

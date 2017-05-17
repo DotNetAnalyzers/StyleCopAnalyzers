@@ -805,7 +805,7 @@ public class Program
                 1,
                 2,
                 3
-            });
+            }.ToString());
     }
 }
 ";

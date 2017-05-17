@@ -22,7 +22,6 @@ namespace StyleCop.Analyzers.DocumentationRules
     {
         private static readonly XElement EmptyElement = new XElement("empty");
 
-        private readonly Action<CompilationStartAnalysisContext> compilationStartAction;
         private readonly Action<SyntaxNodeAnalysisContext> typeDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext> methodDeclarationAction;
 

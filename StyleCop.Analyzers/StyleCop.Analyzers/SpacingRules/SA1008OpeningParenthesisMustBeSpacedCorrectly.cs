@@ -134,7 +134,11 @@ namespace StyleCop.Analyzers.SpacingRules
             case SyntaxKind.WhereKeyword:
             case SyntaxKind.WhileKeyword:
             case SyntaxKind.YieldKeyword:
-                precededByKeyword = true;
+            case SyntaxKind.PublicKeyword:
+            case SyntaxKind.PrivateKeyword:
+            case SyntaxKind.InternalKeyword:
+            case SyntaxKind.ProtectedKeyword:
+                    precededByKeyword = true;
                 break;
 
             default:

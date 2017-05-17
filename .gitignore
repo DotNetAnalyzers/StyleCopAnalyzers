@@ -13,6 +13,7 @@ OpenCover.Reports/
 .nuget/NuGet.exe
 build/nuget/
 *.log
+*.xml
 
 # Visual Studio performance tools
 *.psess

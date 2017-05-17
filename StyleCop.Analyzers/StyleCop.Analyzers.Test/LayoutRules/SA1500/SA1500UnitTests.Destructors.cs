@@ -41,7 +41,7 @@ public class Foo
     {
         ~TestClass2()
         {
-            Debug.Indent();
+            Debug.Fail(null);
         }
     }
 
@@ -54,14 +54,14 @@ public class Foo
     // Valid destructor #4 (Valid only for SA1500)
     public class TestClass4
     {
-        ~TestClass4() { Debug.Indent(); }
+        ~TestClass4() { Debug.Fail(null); }
     }
 
     // Valid destructor #5 (Valid only for SA1500)
     public class TestClass5
     {
         ~TestClass5() 
-        { Debug.Indent(); }
+        { Debug.Fail(null); }
     }
 }";
 
@@ -90,7 +90,7 @@ public class Foo
     public class TestClass2
     {
         ~TestClass2() {
-            Debug.Indent();
+            Debug.Fail(null);
         }
     }
 
@@ -98,13 +98,13 @@ public class Foo
     public class TestClass3
     {
         ~TestClass3() {
-            Debug.Indent(); }
+            Debug.Fail(null); }
     }
 
     // Invalid destructor #4
     public class TestClass4
     {
-        ~TestClass4() { Debug.Indent();
+        ~TestClass4() { Debug.Fail(null);
         }
     }
 
@@ -113,14 +113,14 @@ public class Foo
     {
         ~TestClass5()
         {
-            Debug.Indent(); }
+            Debug.Fail(null); }
     }
 
     // Invalid destructor #6
     public class TestClass6
     {
         ~TestClass6()
-        { Debug.Indent();
+        { Debug.Fail(null);
         }
     }
 }";
@@ -142,7 +142,7 @@ public class Foo
     {
         ~TestClass2()
         {
-            Debug.Indent();
+            Debug.Fail(null);
         }
     }
 
@@ -151,7 +151,7 @@ public class Foo
     {
         ~TestClass3()
         {
-            Debug.Indent();
+            Debug.Fail(null);
         }
     }
 
@@ -160,7 +160,7 @@ public class Foo
     {
         ~TestClass4()
         {
-            Debug.Indent();
+            Debug.Fail(null);
         }
     }
 
@@ -169,7 +169,7 @@ public class Foo
     {
         ~TestClass5()
         {
-            Debug.Indent();
+            Debug.Fail(null);
         }
     }
 
@@ -178,7 +178,7 @@ public class Foo
     {
         ~TestClass6()
         {
-            Debug.Indent();
+            Debug.Fail(null);
         }
     }
 }";
@@ -193,13 +193,13 @@ public class Foo
 
                 // Invalid destructor #3
                 this.CSharpDiagnostic().WithLocation(23, 23),
-                this.CSharpDiagnostic().WithLocation(24, 29),
+                this.CSharpDiagnostic().WithLocation(24, 31),
 
                 // Invalid destructor #4
                 this.CSharpDiagnostic().WithLocation(30, 23),
 
                 // Invalid destructor #5
-                this.CSharpDiagnostic().WithLocation(39, 29),
+                this.CSharpDiagnostic().WithLocation(39, 31),
 
                 // Invalid destructor #6
                 this.CSharpDiagnostic().WithLocation(46, 9),

@@ -119,11 +119,20 @@ namespace TestHelper
                 .CurrentSolution
                 .AddProject(projectId, TestProjectName, TestProjectName, language)
                 .WithProjectCompilationOptions(projectId, compilationOptions)
+                .AddMetadataReference(projectId, MetadataReferences.MscorlibReference)
+                .AddMetadataReference(projectId, MetadataReferences.RuntimeReference)
                 .AddMetadataReference(projectId, MetadataReferences.CorlibReference)
-                .AddMetadataReference(projectId, MetadataReferences.SystemReference)
-                .AddMetadataReference(projectId, MetadataReferences.SystemCoreReference)
-                .AddMetadataReference(projectId, MetadataReferences.CSharpSymbolsReference)
-                .AddMetadataReference(projectId, MetadataReferences.CodeAnalysisReference);
+                .AddMetadataReference(projectId, MetadataReferences.SystemLinqExpressionsReference)
+                .AddMetadataReference(projectId, MetadataReferences.SystemDiagnosticsDebugReference)
+                .AddMetadataReference(projectId, MetadataReferences.SystemLinqReference)
+                .AddMetadataReference(projectId, MetadataReferences.SystemNetPrimitivesReference)
+                .AddMetadataReference(projectId, MetadataReferences.SystemCollectionsReference)
+                .AddMetadataReference(projectId, MetadataReferences.MicrosoftVisualStudioTestPlatformCommon)
+                .AddMetadataReference(projectId, MetadataReferences.SystemComponentModelPrimitivesReference)
+                .AddMetadataReference(projectId, MetadataReferences.SystemComponentModelAnnotationsReference)
+                .AddMetadataReference(projectId, MetadataReferences.MicrosoftCodeAnalysisCSharpReference)
+                .AddMetadataReference(projectId, MetadataReferences.MicrosoftCodeAnalysisCommonReference)
+                .AddMetadataReference(projectId, MetadataReferences.SystemValueTupleReference);
 
             solution.Workspace.Options =
                 solution.Workspace.Options
@@ -358,7 +367,7 @@ namespace TestHelper
 
             if (sources.Length != documents.Length)
             {
-                throw new SystemException("Amount of sources did not match amount of Documents created");
+                throw new Exception("Amount of sources did not match amount of Documents created");
             }
 
             return documents;

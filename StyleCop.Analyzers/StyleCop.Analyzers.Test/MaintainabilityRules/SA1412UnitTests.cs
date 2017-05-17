@@ -29,7 +29,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             {
                 yield return new object[] { Encoding.ASCII.CodePage };
                 yield return new object[] { Encoding.BigEndianUnicode.CodePage };
-                yield return new object[] { Encoding.Default.CodePage };
+                // Encoding.Default is not available in netcoreapp1.1
+                // yield return new object[] { Encoding.Default.CodePage };
                 yield return new object[] { Encoding.Unicode.CodePage };
                 yield return new object[] { Encoding.UTF32.CodePage };
                 yield return new object[] { Encoding.UTF7.CodePage };

@@ -4,6 +4,7 @@
 namespace StyleCop.Analyzers.Test
 {
     using System;
+    using System.Reflection;
     using System.Text;
     using Xunit;
 
@@ -19,7 +20,7 @@ namespace StyleCop.Analyzers.Test
         public void TestAllTypesAreInternal()
         {
             StringBuilder publicTypes = new StringBuilder();
-            foreach (Type type in typeof(AnalyzerCategory).Assembly.ExportedTypes)
+            foreach (Type type in typeof(AnalyzerCategory).GetTypeInfo().Assembly.ExportedTypes)
             {
                 if (publicTypes.Length > 0)
                 {

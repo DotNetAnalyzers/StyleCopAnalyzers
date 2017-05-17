@@ -18,21 +18,21 @@
   <files>
 
     <!-- Binaries and symbols -->
-    <file src="bin\$Configuration$\StyleCop.Analyzers.dll" target="analyzers\dotnet\cs" />
-    <file src="bin\$Configuration$\**\StyleCop.Analyzers.resources.dll" target="analyzers\dotnet\cs" />
-    <file src="bin\$Configuration$\StyleCop.Analyzers.pdb" target="analyzers\dotnet\cs" />
-    <file src="bin\$Configuration$\StyleCop.Analyzers.CodeFixes.dll" target="analyzers\dotnet\cs" />
-    <file src="bin\$Configuration$\**\StyleCop.Analyzers.CodeFixes.resources.dll" target="analyzers\dotnet\cs" />
-    <file src="bin\$Configuration$\StyleCop.Analyzers.CodeFixes.pdb" target="analyzers\dotnet\cs" />
-    <file src="..\..\packages\Newtonsoft.Json.7.0.1\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll" target="analyzers\dotnet\cs" />
+    <file src="StyleCop.Analyzers.dll" target="analyzers\dotnet\cs" />
+    <file src="**\StyleCop.Analyzers.resources.dll" target="analyzers\dotnet\cs" />
+    <file src="StyleCop.Analyzers.pdb" target="analyzers\dotnet\cs" />
+    <file src="StyleCop.Analyzers.CodeFixes.dll" target="analyzers\dotnet\cs" />
+    <file src="**\StyleCop.Analyzers.CodeFixes.resources.dll" target="analyzers\dotnet\cs" />
+    <file src="StyleCop.Analyzers.CodeFixes.pdb" target="analyzers\dotnet\cs" />
+    <file src="Newtonsoft.Json.dll" target="analyzers\dotnet\cs" />
 
     <!-- Scripts -->
-    <file src="tools\install.ps1" target="tools\" />
-    <file src="tools\uninstall.ps1" target="tools\" />
+    <file src="..\..\..\tools\install.ps1" target="tools\" />
+    <file src="..\..\..\tools\uninstall.ps1" target="tools\" />
 
     <!-- Source code -->
-    <file src="..\StyleCop.Analyzers\**\*.cs" exclude="..\StyleCop.Analyzers\obj\**\*.cs" target="src"/>
-    <file src="**\*.cs" exclude="obj\**\*.cs;Properties\AssemblyInfo.cs" target="src"/>
+    <file src="..\..\..\..\StyleCop.Analyzers\**\*.cs" exclude="..\StyleCop.Analyzers\obj\**\*.cs" target="src"/>
+    <file src="..\..\..\**\*.cs" exclude="..\..\..\obj\**\*.cs;Properties\AssemblyInfo.cs" target="src"/>
 
   </files>
 </package>

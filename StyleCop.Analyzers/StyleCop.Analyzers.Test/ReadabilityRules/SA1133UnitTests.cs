@@ -109,13 +109,13 @@ public class TestClass
         [Fact]
         public async Task VerifyThatMultipleAttributeListsAreHandledCorrectlyAsync()
         {
-            var testCode = @"using System.ComponentModel;
+            var testCode = @"using System.ComponentModel; using System.ComponentModel;
 
 [EditorBrowsable(EditorBrowsableState.Never), DesignOnly(true)]
 #if false
-[DataObject(true), Browsable(true)]
+[Category(null), Browsable(true)]
 #else
-[DataObject(true), Browsable(false)]
+[Category(null), Browsable(false)]
 #endif
 public class TestClass
 {
@@ -129,14 +129,14 @@ public class TestClass
 }
 ";
 
-            var fixedTestCode = @"using System.ComponentModel;
+            var fixedTestCode = @"using System.ComponentModel; using System.ComponentModel;
 
 [EditorBrowsable(EditorBrowsableState.Never)]
 [DesignOnly(true)]
 #if false
-[DataObject(true), Browsable(true)]
+[Category(null), Browsable(true)]
 #else
-[DataObject(true)]
+[Category(null)]
 [Browsable(false)]
 #endif
 public class TestClass
@@ -156,7 +156,7 @@ public class TestClass
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(3, 47),
-                this.CSharpDiagnostic().WithLocation(7, 20),
+                this.CSharpDiagnostic().WithLocation(7, 18),
                 this.CSharpDiagnostic().WithLocation(14, 51),
             };
 

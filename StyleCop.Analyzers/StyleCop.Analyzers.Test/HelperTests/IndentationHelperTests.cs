@@ -153,10 +153,10 @@ namespace StyleCop.Analyzers.Test.HelperTests
                 .AddProject(projectId, TestProjectName, TestProjectName, LanguageNames.CSharp)
                 .WithProjectCompilationOptions(projectId, compilationOptions)
                 .AddMetadataReference(projectId, MetadataReferences.CorlibReference)
-                .AddMetadataReference(projectId, MetadataReferences.SystemReference)
-                .AddMetadataReference(projectId, MetadataReferences.SystemCoreReference)
-                .AddMetadataReference(projectId, MetadataReferences.CSharpSymbolsReference)
-                .AddMetadataReference(projectId, MetadataReferences.CodeAnalysisReference)
+                .AddMetadataReference(projectId, MetadataReferences.SystemDiagnosticsDebugReference)
+                .AddMetadataReference(projectId, MetadataReferences.SystemLinqReference)
+                .AddMetadataReference(projectId, MetadataReferences.MicrosoftCodeAnalysisCSharpReference)
+                .AddMetadataReference(projectId, MetadataReferences.MicrosoftCodeAnalysisCommonReference)
                 .AddDocument(documentId, TestFilename, SourceText.From(source));
 
             StyleCopSettings defaultSettings = new StyleCopSettings();
