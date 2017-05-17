@@ -9,11 +9,21 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
     internal class ReadabilitySettings
     {
         /// <summary>
+        /// This is the backing field for the <see cref="maximumLineLength"/> property.
+        /// </summary>
+        [JsonProperty("maximumLineLength", DefaultValueHandling = DefaultValueHandling.Include)]
+        private int maximumLineLength;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ReadabilitySettings"/> class during JSON deserialization.
         /// </summary>
         [JsonConstructor]
         protected internal ReadabilitySettings()
         {
+            this.maximumLineLength = 0;
         }
+
+        public int MaximumLineLength =>
+            this.maximumLineLength;
     }
 }

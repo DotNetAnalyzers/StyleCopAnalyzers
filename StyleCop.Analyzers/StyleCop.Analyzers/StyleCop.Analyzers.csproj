@@ -274,6 +274,7 @@
     <Compile Include="ReadabilityRules\SA1136EnumValuesShouldBeOnSeparateLines.cs" />
     <Compile Include="ReadabilityRules\SA1137ElementsShouldHaveTheSameIndentation.cs" />
     <Compile Include="ReadabilityRules\SA1139UseLiteralSuffixNotationInsteadOfCasting.cs" />
+    <Compile Include="ReadabilityRules\SA1140MaximumLineLength.cs" />
     <Compile Include="ReadabilityRules\SX1101DoNotPrefixLocalMembersWithThis.cs" />
     <Compile Include="Settings\DeserializationFailureBehavior.cs" />
     <Compile Include="Settings\ObjectModel\DocumentationSettings.cs" />
