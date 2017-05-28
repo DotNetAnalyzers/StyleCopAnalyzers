@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.NamingRules
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1309FieldNamesMustNotBeginWithUnderscore"/>.
@@ -45,10 +46,9 @@ namespace StyleCop.Analyzers.NamingRules
                 {
                     var newName = token.ValueText.TrimStart(new[] { '_' });
 
-                    if (string.IsNullOrEmpty(newName))
+                    if (!SyntaxFacts.IsValidIdentifier(newName))
                     {
-                        // The variable consisted of only underscores. In this case we cannot
-                        // generate a valid variable name and thus will not offer a code fix.
+                        // The proposed name was not legal, so no code fix will be offered.
                         continue;
                     }
 
