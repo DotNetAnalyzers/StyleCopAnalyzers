@@ -162,12 +162,6 @@ namespace StyleCop.Analyzers.LayoutRules
                 return false;
             }
 
-            private static bool IsQueryClause(SyntaxToken token)
-            {
-                return (token.Parent is FromClauseSyntax) ||
-                       (token.Parent is GroupClauseSyntax);
-            }
-
             private static bool IsPartOf<T>(SyntaxToken token)
             {
                 var result = false;
