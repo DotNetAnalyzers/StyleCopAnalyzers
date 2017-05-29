@@ -4,12 +4,144 @@
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Linq;
+    using System.Linq.Expressions;
+    using System.Reflection;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
 
     internal static class LightupHelpers
     {
+        private static readonly ConcurrentDictionary<Type, ConcurrentDictionary<SyntaxKind, bool>> SupportedWrappers
+            = new ConcurrentDictionary<Type, ConcurrentDictionary<SyntaxKind, bool>>();
+
         public static bool SupportsCSharp7 { get; }
             = Enum.GetNames(typeof(SyntaxKind)).Contains(nameof(SyntaxKindEx.IsPatternExpression));
+
+        internal static bool CanWrapNode(SyntaxNode node, Type underlyingType)
+        {
+            if (node == null)
+            {
+                // The wrappers support a null instance
+                return true;
+            }
+
+            if (underlyingType == null)
+            {
+                // The current runtime doesn't define the target type of the conversion, so no instance of it can exist
+                return false;
+            }
+
+            ConcurrentDictionary<SyntaxKind, bool> wrappedSyntax = SupportedWrappers.GetOrAdd(underlyingType, _ => new ConcurrentDictionary<SyntaxKind, bool>());
+
+            // Avoid creating the delegate if the value already exists
+            bool canCast;
+            if (!wrappedSyntax.TryGetValue(node.Kind(), out canCast))
+            {
+                canCast = wrappedSyntax.GetOrAdd(
+                    node.Kind(),
+                    kind => underlyingType.GetTypeInfo().IsAssignableFrom(node.GetType().GetTypeInfo()));
+            }
+
+            return canCast;
+        }
+
+        internal static Func<TSyntax, TProperty> CreateSyntaxPropertyAccessor<TSyntax, TProperty>(Type type, string propertyName)
+        {
+            if (type == null)
+            {
+                return syntax => default(TProperty);
+            }
+
+            if (!typeof(TSyntax).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()))
+            {
+                throw new InvalidOperationException();
+            }
+
+            var property = type.GetTypeInfo().GetDeclaredProperty(propertyName);
+            if (property == null)
+            {
+                return syntax => default(TProperty);
+            }
+
+            if (!typeof(TProperty).GetTypeInfo().IsAssignableFrom(property.PropertyType.GetTypeInfo()))
+            {
+                throw new InvalidOperationException();
+            }
+
+            var syntaxParameter = Expression.Parameter(typeof(TSyntax), "syntax");
+            Expression instance =
+                type.GetTypeInfo().IsAssignableFrom(typeof(TSyntax).GetTypeInfo())
+                ? (Expression)syntaxParameter
+                : Expression.Convert(syntaxParameter, type);
+
+            Expression<Func<TSyntax, TProperty>> expression =
+                Expression.Lambda<Func<TSyntax, TProperty>>(
+                    Expression.Call(instance, property.GetMethod),
+                    syntaxParameter);
+            return expression.Compile();
+        }
+
+        internal static Func<TSyntax, TProperty, TSyntax> CreateSyntaxWithPropertyAccessor<TSyntax, TProperty>(Type type, string propertyName)
+        {
+            if (type == null)
+            {
+                return (syntax, newValue) =>
+                {
+                    if (Equals(newValue, default(TProperty)))
+                    {
+                        return syntax;
+                    }
+
+                    throw new NotSupportedException();
+                };
+            }
+
+            if (!typeof(TSyntax).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()))
+            {
+                throw new InvalidOperationException();
+            }
+
+            var property = type.GetTypeInfo().GetDeclaredProperty(propertyName);
+            if (property == null)
+            {
+                return (syntax, newValue) =>
+                {
+                    if (Equals(newValue, default(TProperty)))
+                    {
+                        return syntax;
+                    }
+
+                    throw new NotSupportedException();
+                };
+            }
+
+            if (!typeof(TProperty).GetTypeInfo().IsAssignableFrom(property.PropertyType.GetTypeInfo()))
+            {
+                throw new InvalidOperationException();
+            }
+
+            var methodInfo = type.GetTypeInfo().GetDeclaredMethods("With" + propertyName)
+                .Single(m => !m.IsStatic && m.GetParameters().Length == 1 && m.GetParameters()[0].GetType().Equals(property.PropertyType));
+
+            var syntaxParameter = Expression.Parameter(typeof(TSyntax), "syntax");
+            var valueParameter = Expression.Parameter(typeof(TProperty), methodInfo.GetParameters()[0].Name);
+            Expression instance =
+                type.GetTypeInfo().IsAssignableFrom(typeof(TSyntax).GetTypeInfo())
+                ? (Expression)syntaxParameter
+                : Expression.Convert(syntaxParameter, type);
+            Expression value =
+                property.PropertyType.GetTypeInfo().IsAssignableFrom(typeof(TProperty).GetTypeInfo())
+                ? (Expression)valueParameter
+                : Expression.Convert(valueParameter, property.PropertyType);
+
+            Expression<Func<TSyntax, TProperty, TSyntax>> expression =
+                Expression.Lambda<Func<TSyntax, TProperty, TSyntax>>(
+                    Expression.Call(instance, methodInfo, value),
+                    syntaxParameter,
+                    valueParameter);
+            return expression.Compile();
+        }
     }
 }
