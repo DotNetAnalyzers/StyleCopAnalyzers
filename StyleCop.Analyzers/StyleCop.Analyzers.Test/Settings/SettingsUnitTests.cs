@@ -139,6 +139,88 @@ namespace StyleCop.Analyzers.Test.Settings
             Assert.Equal("[InvalidReference]", styleCopSettings.DocumentationRules.CopyrightText);
         }
 
+        /// <summary>
+        /// Verifies that the settings successfully parse line comments.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifySettingsSupportsLineCommentsAsync()
+        {
+            var settings = @"
+{
+  // Set value for company name
+  ""settings"": {
+    ""documentationRules"": {
+      ""companyName"": ""TestCompany""
+    }
+  }
+}
+";
+            var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
+
+            Assert.Equal("TestCompany", styleCopSettings.DocumentationRules.CompanyName);
+            Assert.Equal("Copyright (c) TestCompany. All rights reserved.", styleCopSettings.DocumentationRules.CopyrightText);
+        }
+
+        /// <summary>
+        /// Verifies that the settings successfully parse block comments.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifySettingsSupportsBlockCommentsAsync()
+        {
+            var settings = @"
+{
+  /*
+   * Set value for company name
+   */
+  ""settings"": {
+    ""documentationRules"": {
+      ""companyName"": ""TestCompany""
+    }
+  }
+}
+";
+            var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
+
+            Assert.Equal("TestCompany", styleCopSettings.DocumentationRules.CompanyName);
+            Assert.Equal("Copyright (c) TestCompany. All rights reserved.", styleCopSettings.DocumentationRules.CopyrightText);
+        }
+
+        /// <summary>
+        /// Verifies that the settings successfully parse trailing commas.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifySettingsSupportsTrailingCommasAsync()
+        {
+            var settings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""companyName"": ""TestCompany"",
+    },
+    ""namingRules"": {
+      ""allowedHungarianPrefixes"": [ ""a"", ],
+    },
+  }
+}
+";
+            var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
+
+            Assert.Equal("TestCompany", styleCopSettings.DocumentationRules.CompanyName);
+            Assert.Equal("Copyright (c) TestCompany. All rights reserved.", styleCopSettings.DocumentationRules.CopyrightText);
+
+            Assert.Equal(1, styleCopSettings.NamingRules.AllowedHungarianPrefixes.Length);
+            Assert.Equal("a", styleCopSettings.NamingRules.AllowedHungarianPrefixes[0]);
+        }
+
         [Fact]
         public async Task VerifyInvalidJsonBehaviorAsync()
         {
