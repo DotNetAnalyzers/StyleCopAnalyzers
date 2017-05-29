@@ -358,6 +358,15 @@ namespace LightJson.Serialization
                     this.scanner.SkipWhitespace();
 
                     var next = this.scanner.Read();
+                    if (next == ',')
+                    {
+                        // Allow trailing commas in objects
+                        this.scanner.SkipWhitespace();
+                        if (this.scanner.Peek() == '}')
+                        {
+                            next = this.scanner.Read();
+                        }
+                    }
 
                     if (next == '}')
                     {
@@ -407,6 +416,15 @@ namespace LightJson.Serialization
                     this.scanner.SkipWhitespace();
 
                     var next = this.scanner.Read();
+                    if (next == ',')
+                    {
+                        // Allow trailing commas in arrays
+                        this.scanner.SkipWhitespace();
+                        if (this.scanner.Peek() == ']')
+                        {
+                            next = this.scanner.Read();
+                        }
+                    }
 
                     if (next == ']')
                     {
