@@ -4,9 +4,8 @@
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
     using System.Collections.Immutable;
-    using Newtonsoft.Json;
+    using LightJson;
 
-    [JsonObject(MemberSerialization.OptIn)]
     internal class MaintainabilitySettings
     {
         /// <summary>
@@ -18,16 +17,41 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// <summary>
         /// This is the backing field for the <see cref="TopLevelTypes"/> property.
         /// </summary>
-        [JsonProperty("topLevelTypes", DefaultValueHandling = DefaultValueHandling.Ignore)]
         private ImmutableArray<TopLevelType>.Builder topLevelTypes;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MaintainabilitySettings"/> class during JSON deserialization.
+        /// Initializes a new instance of the <see cref="MaintainabilitySettings"/> class.
         /// </summary>
-        [JsonConstructor]
         protected internal MaintainabilitySettings()
         {
             this.topLevelTypes = ImmutableArray.CreateBuilder<TopLevelType>();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MaintainabilitySettings"/> class.
+        /// </summary>
+        /// <param name="maintainabilitySettingsObject">The JSON object containing the settings.</param>
+        protected internal MaintainabilitySettings(JsonObject maintainabilitySettingsObject)
+            : this()
+        {
+            foreach (var kvp in maintainabilitySettingsObject)
+            {
+                switch (kvp.Key)
+                {
+                case "topLevelTypes":
+                    kvp.AssertIsArray();
+                    foreach (var value in kvp.Value.AsJsonArray)
+                    {
+                        var typeKind = value.ToEnumValue<TopLevelType>(kvp.Key);
+                        this.topLevelTypes.Add(typeKind);
+                    }
+
+                    break;
+
+                default:
+                    break;
+                }
+            }
         }
 
         public ImmutableArray<TopLevelType> TopLevelTypes

@@ -4,31 +4,65 @@
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
     using System.Collections.Immutable;
-    using Newtonsoft.Json;
+    using System.Text.RegularExpressions;
+    using LightJson;
 
-    [JsonObject(MemberSerialization.OptIn)]
     internal class NamingSettings
     {
         /// <summary>
         /// This is the backing field for the <see cref="AllowCommonHungarianPrefixes"/> property.
         /// </summary>
-        [JsonProperty("allowCommonHungarianPrefixes", DefaultValueHandling = DefaultValueHandling.Include)]
         private bool allowCommonHungarianPrefixes;
 
         /// <summary>
         /// This is the backing field for the <see cref="AllowedHungarianPrefixes"/> property.
         /// </summary>
-        [JsonProperty("allowedHungarianPrefixes", DefaultValueHandling = DefaultValueHandling.Ignore)]
         private ImmutableArray<string>.Builder allowedHungarianPrefixes;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NamingSettings"/> class during JSON deserialization.
+        /// Initializes a new instance of the <see cref="NamingSettings"/> class.
         /// </summary>
-        [JsonConstructor]
         protected internal NamingSettings()
         {
             this.allowCommonHungarianPrefixes = true;
-            this.allowedHungarianPrefixes = ImmutableArray<string>.Empty.ToBuilder();
+            this.allowedHungarianPrefixes = ImmutableArray.CreateBuilder<string>();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NamingSettings"/> class.
+        /// </summary>
+        /// <param name="namingSettingsObject">The JSON object containing the settings.</param>
+        protected internal NamingSettings(JsonObject namingSettingsObject)
+            : this()
+        {
+            foreach (var kvp in namingSettingsObject)
+            {
+                switch (kvp.Key)
+                {
+                case "allowCommonHungarianPrefixes":
+                    this.allowCommonHungarianPrefixes = kvp.ToBooleanValue();
+                    break;
+
+                case "allowedHungarianPrefixes":
+                    kvp.AssertIsArray();
+                    foreach (var prefixJsonValue in kvp.Value.AsJsonArray)
+                    {
+                        var prefix = prefixJsonValue.ToStringValue(kvp.Key);
+
+                        if (!Regex.IsMatch(prefix, "^[a-z]{1,2}$"))
+                        {
+                            continue;
+                        }
+
+                        this.allowedHungarianPrefixes.Add(prefix);
+                    }
+
+                    break;
+
+                default:
+                    break;
+                }
+            }
         }
 
         public bool AllowCommonHungarianPrefixes =>

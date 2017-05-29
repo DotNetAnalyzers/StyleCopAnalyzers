@@ -40,6 +40,7 @@ namespace NamespaceName { }
         [Fact]
         public async Task TestInvalidSettingsAsync()
         {
+            // The settings file is missing a comma after the $schema property
             this.settings = @"
 {
   ""$schema"": ""https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json""
@@ -47,6 +48,25 @@ namespace NamespaceName { }
     ""documentationRules"": {
       ""companyName"": ""ACME, Inc"",
       ""copyrightText"": ""Copyright 2015 {companyName}. All rights reserved.""
+    }
+  }
+}
+";
+
+            // This diagnostic is reported without a location
+            DiagnosticResult expected = this.CSharpDiagnostic();
+
+            await this.VerifyCSharpDiagnosticAsync(TestCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestInvalidSettingValueAsync()
+        {
+            this.settings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""companyName"": 3
     }
   }
 }

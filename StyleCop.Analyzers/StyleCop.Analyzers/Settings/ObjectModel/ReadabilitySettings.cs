@@ -3,16 +3,23 @@
 
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
-    using Newtonsoft.Json;
+    using LightJson;
 
-    [JsonObject(MemberSerialization.OptIn)]
     internal class ReadabilitySettings
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ReadabilitySettings"/> class during JSON deserialization.
+        /// Initializes a new instance of the <see cref="ReadabilitySettings"/> class.
         /// </summary>
-        [JsonConstructor]
         protected internal ReadabilitySettings()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ReadabilitySettings"/> class.
+        /// </summary>
+        /// <param name="readabilitySettingsObject">The JSON object containing the settings.</param>
+        protected internal ReadabilitySettings(JsonObject readabilitySettingsObject)
+            : this()
         {
         }
     }

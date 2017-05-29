@@ -166,6 +166,16 @@
     <Compile Include="LayoutRules\SA1518UseLineEndingsCorrectlyAtEndOfFile.cs" />
     <Compile Include="LayoutRules\SA1519BracesMustNotBeOmittedFromMultiLineChildStatement.cs" />
     <Compile Include="LayoutRules\SA1520UseBracesConsistently.cs" />
+    <Compile Include="LightJson\JsonArray.cs" />
+    <Compile Include="LightJson\JsonObject.cs" />
+    <Compile Include="LightJson\JsonValue.cs" />
+    <Compile Include="LightJson\JsonValueType.cs" />
+    <Compile Include="LightJson\Serialization\JsonParseException.cs" />
+    <Compile Include="LightJson\Serialization\JsonReader.cs" />
+    <Compile Include="LightJson\Serialization\JsonSerializationException.cs" />
+    <Compile Include="LightJson\Serialization\JsonWriter.cs" />
+    <Compile Include="LightJson\Serialization\TextPosition.cs" />
+    <Compile Include="LightJson\Serialization\TextScanner.cs" />
     <Compile Include="LinqHelpers\SyntaxTriviaListEnumerable.cs" />
     <Compile Include="MaintainabilityRules\MaintainabilityResources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -276,6 +286,8 @@
     <Compile Include="ReadabilityRules\SA1139UseLiteralSuffixNotationInsteadOfCasting.cs" />
     <Compile Include="ReadabilityRules\SX1101DoNotPrefixLocalMembersWithThis.cs" />
     <Compile Include="Settings\DeserializationFailureBehavior.cs" />
+    <Compile Include="Settings\InvalidSettingsException.cs" />
+    <Compile Include="Settings\JsonHelper.cs" />
     <Compile Include="Settings\ObjectModel\DocumentationSettings.cs" />
     <Compile Include="Settings\ObjectModel\FileNamingConvention.cs" />
     <Compile Include="Settings\ObjectModel\IndentationSettings.cs" />
@@ -286,7 +298,6 @@
     <Compile Include="Settings\ObjectModel\OrderingSettings.cs" />
     <Compile Include="Settings\ObjectModel\OrderingTrait.cs" />
     <Compile Include="Settings\ObjectModel\ReadabilitySettings.cs" />
-    <Compile Include="Settings\ObjectModel\SettingsFile.cs" />
     <Compile Include="Settings\ObjectModel\SpacingSettings.cs" />
     <Compile Include="Settings\ObjectModel\StyleCopSettings.cs" />
     <Compile Include="Settings\ObjectModel\TopLevelType.cs" />
@@ -365,10 +376,6 @@
     </Reference>
     <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=1.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.CodeAnalysis.CSharp.1.2.1\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.7.0.1\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Collections.Immutable, Version=1.1.37.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
