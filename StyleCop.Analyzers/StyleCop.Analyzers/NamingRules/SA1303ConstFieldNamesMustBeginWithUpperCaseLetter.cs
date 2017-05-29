@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.NamingRules
 {
     using System;
-    using System.Collections.Concurrent;
     using System.Collections.Immutable;
     using System.Linq;
     using Microsoft.CodeAnalysis;
