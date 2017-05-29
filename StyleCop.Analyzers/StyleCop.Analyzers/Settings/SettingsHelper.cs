@@ -11,10 +11,10 @@ namespace StyleCop.Analyzers
     using System.Reflection;
     using System.Runtime.ExceptionServices;
     using System.Threading;
+    using LightJson.Serialization;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
-    using Newtonsoft.Json;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -69,12 +69,24 @@ namespace StyleCop.Analyzers
                     if (Path.GetFileName(additionalFile.Path).ToLowerInvariant() == SettingsFileName)
                     {
                         SourceText additionalTextContent = GetText(additionalFile, cancellationToken);
-                        var root = JsonConvert.DeserializeObject<SettingsFile>(additionalTextContent.ToString());
-                        return root.Settings;
+
+                        var rootValue = JsonReader.Parse(additionalTextContent.ToString());
+                        if (rootValue.IsJsonObject)
+                        {
+                            var settingsObject = rootValue.AsJsonObject["settings"];
+                            if (settingsObject.IsJsonObject)
+                            {
+                                return new StyleCopSettings(settingsObject.AsJsonObject);
+                            }
+                        }
                     }
                 }
             }
-            catch (JsonException)
+            catch (InvalidSettingsException)
+            {
+                // The settings file is invalid -> return the default settings.
+            }
+            catch (JsonParseException)
             {
                 // The settings file is invalid -> return the default settings.
             }

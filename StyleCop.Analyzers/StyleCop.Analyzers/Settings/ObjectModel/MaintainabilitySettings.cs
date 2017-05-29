@@ -3,16 +3,23 @@
 
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
-    using Newtonsoft.Json;
+    using LightJson;
 
-    [JsonObject(MemberSerialization.OptIn)]
     internal class MaintainabilitySettings
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MaintainabilitySettings"/> class during JSON deserialization.
+        /// Initializes a new instance of the <see cref="MaintainabilitySettings"/> class.
         /// </summary>
-        [JsonConstructor]
         protected internal MaintainabilitySettings()
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MaintainabilitySettings"/> class.
+        /// </summary>
+        /// <param name="maintainabilitySettingsObject">The JSON object containing the settings.</param>
+        protected internal MaintainabilitySettings(JsonObject maintainabilitySettingsObject)
+            : this()
         {
         }
     }
