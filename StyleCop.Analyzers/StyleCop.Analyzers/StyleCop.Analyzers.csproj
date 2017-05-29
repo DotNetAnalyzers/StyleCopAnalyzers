@@ -176,6 +176,12 @@
     <Compile Include="LightJson\Serialization\JsonWriter.cs" />
     <Compile Include="LightJson\Serialization\TextPosition.cs" />
     <Compile Include="LightJson\Serialization\TextScanner.cs" />
+    <Compile Include="Lightup\AccessorDeclarationSyntaxExtensions.cs" />
+    <Compile Include="Lightup\BaseMethodDeclarationSyntaxExtensions.cs" />
+    <Compile Include="Lightup\ConstructorDeclarationSyntaxExtensions.cs" />
+    <Compile Include="Lightup\DestructorDeclarationSyntaxExtensions.cs" />
+    <Compile Include="Lightup\LightupHelpers.cs" />
+    <Compile Include="Lightup\SyntaxKindEx.cs" />
     <Compile Include="LinqHelpers\SyntaxTriviaListEnumerable.cs" />
     <Compile Include="MaintainabilityRules\MaintainabilityResources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -361,6 +367,7 @@
     <None Include="..\StyleCop.Analyzers.ruleset">
       <Link>StyleCop.Analyzers.ruleset</Link>
     </None>
+    <None Include="Lightup\CSharp7.md" />
     <None Include="packages.config" />
     <None Include="Settings\stylecop.schema.json" />
   </ItemGroup>
