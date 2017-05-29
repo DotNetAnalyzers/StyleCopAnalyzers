@@ -90,9 +90,23 @@ namespace LightJson.Serialization
         /// </summary>
         public void SkipWhitespace()
         {
-            while (char.IsWhiteSpace(this.Peek()))
+            while (true)
             {
-                this.Read();
+                char next = this.Peek();
+                if (char.IsWhiteSpace(next))
+                {
+                    this.Read();
+                    continue;
+                }
+                else if (next == '/')
+                {
+                    this.SkipCommentOrInvalidSlash();
+                    continue;
+                }
+                else
+                {
+                    break;
+                }
             }
         }
 
@@ -122,6 +136,89 @@ namespace LightJson.Serialization
             for (var i = 0; i < next.Length; i += 1)
             {
                 this.Assert(next[i]);
+            }
+        }
+
+        private void SkipCommentOrInvalidSlash()
+        {
+            // First character is the a slash
+            this.Read();
+            switch (this.Peek())
+            {
+            case '/':
+                this.SkipLineComment();
+                return;
+
+            case '*':
+                this.SkipBlockComment();
+                return;
+
+            default:
+                return;
+            }
+        }
+
+        private void SkipLineComment()
+        {
+            // First character is the second '/' of the opening '//'
+            this.Read();
+
+            while (true)
+            {
+                switch (this.reader.Peek())
+                {
+                case '\n':
+                    // Reached the end of the line
+                    this.Read();
+                    return;
+
+                case -1:
+                    // Reached the end of the file
+                    return;
+
+                default:
+                    this.Read();
+                    continue;
+                }
+            }
+        }
+
+        private void SkipBlockComment()
+        {
+            // First character is the '*' of the opening '/*'
+            this.Read();
+
+            bool foundStar = false;
+            while (true)
+            {
+                switch (this.reader.Peek())
+                {
+                case '*':
+                    this.Read();
+                    foundStar = true;
+                    continue;
+
+                case '/':
+                    this.Read();
+                    if (foundStar)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        foundStar = false;
+                        continue;
+                    }
+
+                case -1:
+                    // Reached the end of the file
+                    return;
+
+                default:
+                    this.Read();
+                    foundStar = false;
+                    continue;
+                }
             }
         }
     }
