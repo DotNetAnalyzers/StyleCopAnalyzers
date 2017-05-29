@@ -21,10 +21,6 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         protected internal ReadabilitySettings(JsonObject readabilitySettingsObject)
             : this()
         {
-            if (readabilitySettingsObject.Count > 0)
-            {
-                throw new InvalidSettingsException($"readabilityRules should not contain any child objects");
-            }
         }
     }
 }

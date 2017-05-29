@@ -36,7 +36,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                     break;
 
                 default:
-                    throw new InvalidSettingsException($"layoutRules should not contain a child named {kvp.Key}");
+                    break;
                 }
             }
         }

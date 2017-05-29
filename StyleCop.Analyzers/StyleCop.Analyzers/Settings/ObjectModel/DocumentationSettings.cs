@@ -141,7 +141,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
                         if (!Regex.IsMatch(name, "^[a-zA-Z0-9]+$"))
                         {
-                            throw new InvalidSettingsException($"{name} contains invalid characters");
+                            continue;
                         }
 
                         string value = child.ToStringValue();
@@ -160,7 +160,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                     break;
 
                 default:
-                    throw new InvalidSettingsException($"documentationRules should not contain a child named {kvp.Key}");
+                    break;
                 }
             }
         }

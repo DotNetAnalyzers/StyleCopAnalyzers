@@ -21,10 +21,6 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         protected internal MaintainabilitySettings(JsonObject maintainabilitySettingsObject)
             : this()
         {
-            if (maintainabilitySettingsObject.Count > 0)
-            {
-                throw new InvalidSettingsException($"maintainabilityRules should not contain any child objects");
-            }
         }
     }
 }

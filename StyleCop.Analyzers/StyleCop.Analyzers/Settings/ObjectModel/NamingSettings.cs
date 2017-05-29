@@ -51,7 +51,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
                         if (!Regex.IsMatch(prefix, "^[a-z]{1,2}$"))
                         {
-                            throw new InvalidSettingsException($"{kvp.Key} contains an invalid prefix.");
+                            continue;
                         }
 
                         this.allowedHungarianPrefixes.Add(prefix);
@@ -60,7 +60,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                     break;
 
                 default:
-                    throw new InvalidSettingsException($"namingRules should not contain a child named {kvp.Key}");
+                    break;
                 }
             }
         }

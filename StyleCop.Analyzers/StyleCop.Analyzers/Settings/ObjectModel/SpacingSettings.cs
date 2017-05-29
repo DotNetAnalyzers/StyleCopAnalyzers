@@ -21,10 +21,6 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         protected internal SpacingSettings(JsonObject spacingSettingsObject)
             : this()
         {
-            if (spacingSettingsObject.Count > 0)
-            {
-                throw new InvalidSettingsException($"spacingRules should not contain any child objects");
-            }
         }
     }
 }

@@ -448,7 +448,7 @@ const string foo = ""a"";
         ""kind"",
         ""constant"",
         ""static"",
-        ""readonly""
+        ""readonly"",
       ]
     }
   }

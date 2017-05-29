@@ -61,39 +61,46 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         {
             foreach (var kvp in settingsObject)
             {
-                if (!kvp.Value.IsJsonObject)
-                {
-                    throw new InvalidSettingsException("settings can only contain objects");
-                }
-
                 var childSettingsObject = kvp.Value.AsJsonObject;
-
                 switch (kvp.Key)
                 {
                 case "spacingRules":
+                    kvp.AssertIsObject();
                     this.spacingRules = new SpacingSettings(childSettingsObject);
                     break;
+
                 case "readabilityRules":
+                    kvp.AssertIsObject();
                     this.readabilityRules = new ReadabilitySettings(childSettingsObject);
                     break;
+
                 case "orderingRules":
+                    kvp.AssertIsObject();
                     this.orderingRules = new OrderingSettings(childSettingsObject);
                     break;
+
                 case "namingRules":
+                    kvp.AssertIsObject();
                     this.namingRules = new NamingSettings(childSettingsObject);
                     break;
+
                 case "maintainabilityRules":
+                    kvp.AssertIsObject();
                     this.maintainabilityRules = new MaintainabilitySettings(childSettingsObject);
                     break;
+
                 case "layoutRules":
+                    kvp.AssertIsObject();
                     this.layoutRules = new LayoutSettings(childSettingsObject);
                     break;
+
                 case "documentationRules":
+                    kvp.AssertIsObject();
                     this.documentationRules = new DocumentationSettings(childSettingsObject);
                     break;
 
                 default:
-                    throw new InvalidSettingsException($"settings should not contain child object '{kvp.Key}'");
+                    break;
                 }
             }
         }
