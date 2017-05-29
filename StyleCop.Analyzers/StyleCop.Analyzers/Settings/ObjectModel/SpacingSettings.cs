@@ -8,7 +8,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
     internal class SpacingSettings
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SpacingSettings"/> class during JSON deserialization.
+        /// Initializes a new instance of the <see cref="SpacingSettings"/> class.
         /// </summary>
         protected internal SpacingSettings()
         {

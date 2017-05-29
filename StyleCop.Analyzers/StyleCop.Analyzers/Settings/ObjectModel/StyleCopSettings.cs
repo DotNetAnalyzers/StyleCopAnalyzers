@@ -43,7 +43,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         private DocumentationSettings documentationRules;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StyleCopSettings"/> class during JSON deserialization.
+        /// Initializes a new instance of the <see cref="StyleCopSettings"/> class.
         /// </summary>
         protected internal StyleCopSettings()
         {

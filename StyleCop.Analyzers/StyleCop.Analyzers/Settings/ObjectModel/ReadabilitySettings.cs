@@ -8,7 +8,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
     internal class ReadabilitySettings
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ReadabilitySettings"/> class during JSON deserialization.
+        /// Initializes a new instance of the <see cref="ReadabilitySettings"/> class.
         /// </summary>
         protected internal ReadabilitySettings()
         {

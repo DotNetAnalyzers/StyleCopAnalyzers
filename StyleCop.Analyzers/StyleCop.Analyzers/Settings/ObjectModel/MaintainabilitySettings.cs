@@ -8,7 +8,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
     internal class MaintainabilitySettings
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="MaintainabilitySettings"/> class during JSON deserialization.
+        /// Initializes a new instance of the <see cref="MaintainabilitySettings"/> class.
         /// </summary>
         protected internal MaintainabilitySettings()
         {

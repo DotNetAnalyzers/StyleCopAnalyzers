@@ -33,7 +33,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         private UsingDirectivesPlacement usingDirectivesPlacement;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="OrderingSettings"/> class during JSON deserialization.
+        /// Initializes a new instance of the <see cref="OrderingSettings"/> class.
         /// </summary>
         protected internal OrderingSettings()
         {
