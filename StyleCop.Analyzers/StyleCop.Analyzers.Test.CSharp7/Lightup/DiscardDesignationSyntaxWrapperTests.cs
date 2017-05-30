@@ -19,6 +19,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var discardDesignationSyntax = (DiscardDesignationSyntaxWrapper)syntaxNode;
             Assert.Null(discardDesignationSyntax.SyntaxNode);
             Assert.Throws<NullReferenceException>(() => discardDesignationSyntax.UnderscoreToken);
+            Assert.Throws<NullReferenceException>(() => discardDesignationSyntax.WithUnderscoreToken(SyntaxFactory.Token(SyntaxKind.UnderscoreToken)));
         }
 
         [Fact]
@@ -35,7 +36,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             discardDesignationSyntax = discardDesignationSyntax.WithUnderscoreToken(SpacingExtensions.WithoutTrivia(SyntaxFactory.Token(SyntaxKind.UnderscoreToken)));
             Assert.NotNull(discardDesignationSyntax.SyntaxNode);
             Assert.NotSame(syntaxNode, discardDesignationSyntax.SyntaxNode);
-            Assert.NotEqual(syntaxNode.UnderscoreToken, discardDesignationSyntax.UnderscoreToken);
+            Assert.False(syntaxNode.UnderscoreToken.IsEquivalentTo(discardDesignationSyntax.UnderscoreToken));
         }
 
         [Fact]

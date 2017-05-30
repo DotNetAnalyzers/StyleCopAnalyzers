@@ -18,6 +18,7 @@ namespace StyleCop.Analyzers.Test.Lightup
             var discardDesignationSyntax = (DiscardDesignationSyntaxWrapper)syntaxNode;
             Assert.Null(discardDesignationSyntax.SyntaxNode);
             Assert.Throws<NullReferenceException>(() => discardDesignationSyntax.UnderscoreToken);
+            Assert.Throws<NullReferenceException>(() => discardDesignationSyntax.WithUnderscoreToken(SyntaxFactory.Token((SyntaxKind)SyntaxKindEx.UnderscoreToken)));
         }
 
         [Fact]
