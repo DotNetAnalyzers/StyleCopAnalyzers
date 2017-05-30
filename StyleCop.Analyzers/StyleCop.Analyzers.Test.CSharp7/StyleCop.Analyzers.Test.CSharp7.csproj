@@ -201,6 +201,7 @@
     <Compile Include="Lightup\DeclarationPatternSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\DestructorDeclarationSyntaxExtensionsTests.cs" />
     <Compile Include="Lightup\DiscardDesignationSyntaxWrapperTests.cs" />
+    <Compile Include="Lightup\PatternSyntaxWrapperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
