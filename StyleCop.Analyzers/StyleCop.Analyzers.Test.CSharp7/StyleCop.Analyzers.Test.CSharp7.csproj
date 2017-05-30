@@ -195,6 +195,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Lightup\AccessorDeclarationSyntaxExtensionsTests.cs" />
+    <Compile Include="Lightup\BaseMethodDeclarationSyntaxExtensionsTests.cs" />
+    <Compile Include="Lightup\ConstructorDeclarationSyntaxExtensionsTests.cs" />
+    <Compile Include="Lightup\DestructorDeclarationSyntaxExtensionsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -4,8 +4,7 @@
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
-    using System.Linq.Expressions;
-    using System.Reflection;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class BaseMethodDeclarationSyntaxExtensions
@@ -14,24 +13,30 @@ namespace StyleCop.Analyzers.Lightup
 
         static BaseMethodDeclarationSyntaxExtensions()
         {
-            if (LightupHelpers.SupportsCSharp7)
-            {
-                var expressionBodyProperty = typeof(BaseMethodDeclarationSyntax).GetTypeInfo().GetDeclaredProperty(nameof(ExpressionBody));
-                var syntaxParameter = Expression.Parameter(typeof(BaseMethodDeclarationSyntax), "syntax");
-                Expression<Func<BaseMethodDeclarationSyntax, ArrowExpressionClauseSyntax>> expression =
-                    Expression.Lambda<Func<BaseMethodDeclarationSyntax, ArrowExpressionClauseSyntax>>(
-                        Expression.Call(syntaxParameter, expressionBodyProperty.GetMethod),
-                        syntaxParameter);
-                ExpressionBodyAccessor = expression.Compile();
-            }
-            else
-            {
-                ExpressionBodyAccessor = syntax => null;
-            }
+            ExpressionBodyAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<BaseMethodDeclarationSyntax, ArrowExpressionClauseSyntax>(typeof(BaseMethodDeclarationSyntax), nameof(ExpressionBody));
         }
 
         public static ArrowExpressionClauseSyntax ExpressionBody(this BaseMethodDeclarationSyntax syntax)
         {
+            if (!LightupHelpers.SupportsCSharp7)
+            {
+                // Prior to C# 7, the ExpressionBody properties did not override a base method.
+                switch (syntax.Kind())
+                {
+                case SyntaxKind.MethodDeclaration:
+                    return ((MethodDeclarationSyntax)syntax).ExpressionBody;
+
+                case SyntaxKind.OperatorDeclaration:
+                    return ((OperatorDeclarationSyntax)syntax).ExpressionBody;
+
+                case SyntaxKind.ConversionOperatorDeclaration:
+                    return ((ConversionOperatorDeclarationSyntax)syntax).ExpressionBody;
+
+                default:
+                    break;
+                }
+            }
+
             return ExpressionBodyAccessor(syntax);
         }
     }
