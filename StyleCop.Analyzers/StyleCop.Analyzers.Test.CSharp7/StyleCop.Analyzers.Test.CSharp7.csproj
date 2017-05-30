@@ -194,6 +194,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Lightup\AccessorDeclarationSyntaxExtensionsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
