@@ -1,4 +1,4 @@
-﻿# Configuring StyleCop Analyzers
+# Configuring StyleCop Analyzers
 
 StyleCop Analyzers is configured using two separate mechanisms: code analysis rule set files, and **stylecop.json**.
 
