@@ -209,6 +209,37 @@
     <Compile Include="Lightup\SyntaxWrapperTests.cs" />
     <Compile Include="Lightup\VariableDesignationSyntaxWrapperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SpacingRules\SA1000CSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1001CSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1002CSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1003CSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1004CSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1005CSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1006CSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1007CSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1008CSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1009CSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1010CSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1011CSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1012CSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1013CSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1014CSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1015CSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1016CSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1017CSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1018CSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1019CSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1020CSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1021CSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1022CSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1023CSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1024CSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1025CSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1026CSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1027AlternateIndentationCSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1027CSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1027UseTabsCSharp7UnitTests.cs" />
+    <Compile Include="SpacingRules\SA1028CSharp7UnitTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\build\keys\TestingKey.snk">
