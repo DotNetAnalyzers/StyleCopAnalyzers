@@ -16,6 +16,22 @@ namespace StyleCop.Analyzers.Test.NamingRules
     {
         private readonly string[] modifiers = new[] { "public", "private", "protected", "public readonly", "internal readonly", "public static", "private static" };
 
+        public static IEnumerable<object[]> PrefixesData()
+        {
+            yield return new object[] { "m_" };
+            yield return new object[] { "s_" };
+            yield return new object[] { "t_" };
+            yield return new object[] { "m\\u005F" };
+            yield return new object[] { "s\\u005F" };
+            yield return new object[] { "t\\u005F" };
+        }
+
+        public static IEnumerable<object[]> MultipleDistinctPrefixesData()
+        {
+            yield return new object[] { "m_t_s_", "m_" };
+            yield return new object[] { "s\\u005Fm\\u005Ft\\u005F", "s_" };
+        }
+
         [Fact]
         public async Task TestFieldStartingWithPrefixesToTriggerDiagnosticAsync()
         {
@@ -71,54 +87,97 @@ string m_bar = ""baz"";
         /// <summary>
         /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#627.
         /// </summary>
+        /// <param name="prefix">The prefix to repeat in the variable name.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/627">#627: Code Fixes For Naming
         /// Rules SA1308 and SA1309 Do Not Always Fix The Name Entirely</seealso>
-        [Fact]
-        public async Task TestFixingMultipleIdenticalPrefixesAsync()
+        [Theory]
+        [MemberData(nameof(PrefixesData))]
+        public async Task TestFixingMultipleIdenticalPrefixesAsync(string prefix)
         {
-            var testCode = @"public class Foo
-{
-    private string m_m_bar = ""baz"";
-}";
+            var testCode = $@"public class Foo
+{{
+    private string {prefix}{prefix}bar = ""baz"";
+}}";
 
+            string diagnosticPrefix = prefix.Replace("\\u005F", "_");
             DiagnosticResult expected =
                 this.CSharpDiagnostic()
-                .WithArguments("m_m_bar", "m_")
+                .WithArguments($"{prefix}{prefix}bar", diagnosticPrefix)
                 .WithLocation(3, 20);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
-            var fixedCode = testCode.Replace("m_", string.Empty);
+            var fixedCode = testCode.Replace(prefix, string.Empty);
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(PrefixesData))]
+        public async Task TestMultipleIdenticalPrefixesOnlyAsync(string prefix)
+        {
+            var testCode = $@"public class Foo
+{{
+    private string {prefix}{prefix} = ""baz"";
+}}";
+
+            DiagnosticResult expected =
+                this.CSharpDiagnostic()
+                .WithArguments($"{prefix}{prefix}", prefix)
+                .WithLocation(3, 20);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            // A code fix is not offered as removing the prefixes would create an empty identifier.
+            await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
         }
 
         /// <summary>
         /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#627.
         /// </summary>
+        /// <param name="prefixes">The prefixes to prepend to the variable name.</param>
+        /// <param name="diagnosticPrefix">The prefix that should be reported in the diagnostic.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/627">#627: Code Fixes For Naming
         /// Rules SA1308 and SA1309 Do Not Always Fix The Name Entirely</seealso>
-        [Fact]
-        public async Task TestFixingMultipleIndependentPrefixesAsync()
+        [Theory]
+        [MemberData(nameof(MultipleDistinctPrefixesData))]
+        public async Task TestFixingMultipleDistinctPrefixesAsync(string prefixes, string diagnosticPrefix)
         {
-            var testCode = @"public class Foo
-{
-    private string m_t_s_bar = ""baz"";
-}";
+            var testCode = $@"public class Foo
+{{
+    private string {prefixes}bar = ""baz"";
+}}";
 
             DiagnosticResult expected =
                 this.CSharpDiagnostic()
-                .WithArguments("m_t_s_bar", "m_")
+                .WithArguments($"{prefixes}bar", diagnosticPrefix)
                 .WithLocation(3, 20);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
-            var fixedCode = testCode.Replace("m_", string.Empty);
-            fixedCode = fixedCode.Replace("s_", string.Empty);
-            fixedCode = fixedCode.Replace("t_", string.Empty);
-
+            var fixedCode = testCode.Replace(prefixes, string.Empty);
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(MultipleDistinctPrefixesData))]
+        public async Task TestMultipleDistinctPrefixesOnlyAsync(string prefixes, string diagnosticPrefix)
+        {
+            var testCode = $@"public class Foo
+{{
+    private string {prefixes} = ""baz"";
+}}";
+
+            DiagnosticResult expected =
+                this.CSharpDiagnostic()
+                .WithArguments(prefixes, diagnosticPrefix)
+                .WithLocation(3, 20);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            // A code fix is not offered as removing the prefixes would create an empty identifier.
+            await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
