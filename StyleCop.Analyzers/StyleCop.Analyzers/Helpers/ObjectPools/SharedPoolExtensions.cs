@@ -166,7 +166,9 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
             pool.Free(set);
         }
 
-        public static void ClearAndFree<TKey, TValue>(this ObjectPool<Dictionary<TKey, TValue>> pool, Dictionary<TKey, TValue> map)
+        public static void ClearAndFree<TKey, TValue>(
+            this ObjectPool<Dictionary<TKey, TValue>> pool
+            , Dictionary<TKey, TValue> map)
         {
             if (map == null)
             {

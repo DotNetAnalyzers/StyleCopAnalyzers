@@ -37,7 +37,8 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
 
         public static PooledObject<StringBuilder> Create(ObjectPool<StringBuilder> pool)
         {
-            return new PooledObject<StringBuilder>(pool, Allocator, Releaser);
+            return new PooledObject<StringBuilder>(pool
+                , Allocator, Releaser);
         }
 
         public static PooledObject<Stack<TItem>> Create<TItem>(ObjectPool<Stack<TItem>> pool)
