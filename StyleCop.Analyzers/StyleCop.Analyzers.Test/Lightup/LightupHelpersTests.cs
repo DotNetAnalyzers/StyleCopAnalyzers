@@ -41,7 +41,7 @@ namespace StyleCop.Analyzers.Test.Lightup
             Assert.NotNull(separatedListWithPropertyAccessor);
             Assert.NotNull(separatedListWithPropertyAccessor(SyntaxFactory.AccessorList(), null));
             Assert.ThrowsAny<NotSupportedException>(() => separatedListWithPropertyAccessor(SyntaxFactory.AccessorList(), new SeparatedSyntaxListWrapper<SyntaxNode>.AutoWrapSeparatedSyntaxList<LiteralExpressionSyntax>(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)))));
-            Assert.Throws<NullReferenceException>(() => separatedListWithPropertyAccessor(null, new SeparatedSyntaxListWrapper<SyntaxNode>.UnsupportedSyntaxList()));
+            Assert.Throws<NullReferenceException>(() => separatedListWithPropertyAccessor(null, SeparatedSyntaxListWrapper<SyntaxNode>.UnsupportedEmpty));
         }
 
         [Fact]

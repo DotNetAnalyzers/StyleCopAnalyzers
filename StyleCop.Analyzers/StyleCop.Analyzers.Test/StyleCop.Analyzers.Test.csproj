@@ -236,6 +236,7 @@
     <Compile Include="LayoutRules\SA1519UnitTests.cs" />
     <Compile Include="LayoutRules\SA1520UnitTests.cs" />
     <Compile Include="Lightup\AccessorDeclarationSyntaxExtensionsTests.cs" />
+    <Compile Include="Lightup\AutoWrapSeparatedSyntaxListTests.cs" />
     <Compile Include="Lightup\BaseMethodDeclarationSyntaxExtensionsTests.cs" />
     <Compile Include="Lightup\ConstantPatternSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\ConstructorDeclarationSyntaxExtensionsTests.cs" />
@@ -245,8 +246,10 @@
     <Compile Include="Lightup\LightupHelpersTests.cs" />
     <Compile Include="Lightup\ParenthesizedVariableDesignationSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\PatternSyntaxWrapperTests.cs" />
+    <Compile Include="Lightup\SeparatedSyntaxListWrapperTestBase.cs" />
     <Compile Include="Lightup\SingleVariableDesignationSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\SyntaxWrapperTests.cs" />
+    <Compile Include="Lightup\UnsupportedSyntaxListTests.cs" />
     <Compile Include="Lightup\VariableDesignationSyntaxWrapperTests.cs" />
     <Compile Include="LinqHelpers\SyntaxTriviaListEnumerableTests.cs" />
     <Compile Include="MaintainabilityRules\DebugMessagesUnitTestsBase.cs" />

@@ -281,7 +281,7 @@ namespace StyleCop.Analyzers.Lightup
                 => this.syntaxList.ToString();
         }
 
-        internal sealed class UnsupportedSyntaxList : SeparatedSyntaxListWrapper<TNode>
+        private sealed class UnsupportedSyntaxList : SeparatedSyntaxListWrapper<TNode>
         {
             private static readonly SeparatedSyntaxList<SyntaxNode> SyntaxList = default(SeparatedSyntaxList<SyntaxNode>);
 
