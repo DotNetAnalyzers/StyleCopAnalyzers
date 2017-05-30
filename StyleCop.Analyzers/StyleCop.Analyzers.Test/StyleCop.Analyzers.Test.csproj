@@ -243,6 +243,7 @@
     <Compile Include="Lightup\DestructorDeclarationSyntaxExtensionsTests.cs" />
     <Compile Include="Lightup\DiscardDesignationSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\PatternSyntaxWrapperTests.cs" />
+    <Compile Include="Lightup\VariableDesignationSyntaxWrapperTests.cs" />
     <Compile Include="LinqHelpers\SyntaxTriviaListEnumerableTests.cs" />
     <Compile Include="MaintainabilityRules\DebugMessagesUnitTestsBase.cs" />
     <Compile Include="MaintainabilityRules\FileMayOnlyContainTestBase.cs" />
