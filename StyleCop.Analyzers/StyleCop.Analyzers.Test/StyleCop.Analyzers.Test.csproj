@@ -242,9 +242,11 @@
     <Compile Include="Lightup\DeclarationPatternSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\DestructorDeclarationSyntaxExtensionsTests.cs" />
     <Compile Include="Lightup\DiscardDesignationSyntaxWrapperTests.cs" />
+    <Compile Include="Lightup\LightupHelpersTests.cs" />
     <Compile Include="Lightup\ParenthesizedVariableDesignationSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\PatternSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\SingleVariableDesignationSyntaxWrapperTests.cs" />
+    <Compile Include="Lightup\SyntaxWrapperTests.cs" />
     <Compile Include="Lightup\VariableDesignationSyntaxWrapperTests.cs" />
     <Compile Include="LinqHelpers\SyntaxTriviaListEnumerableTests.cs" />
     <Compile Include="MaintainabilityRules\DebugMessagesUnitTestsBase.cs" />
