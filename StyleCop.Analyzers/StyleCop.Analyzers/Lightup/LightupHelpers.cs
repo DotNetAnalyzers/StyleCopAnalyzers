@@ -49,9 +49,22 @@ namespace StyleCop.Analyzers.Lightup
 
         internal static Func<TSyntax, TProperty> CreateSyntaxPropertyAccessor<TSyntax, TProperty>(Type type, string propertyName)
         {
+            Func<TSyntax, TProperty> fallbackAccessor =
+                syntax =>
+                {
+                    if (syntax == null)
+                    {
+                        // Unlike an extension method which would throw ArgumentNullException here, the light-up
+                        // behavior needs to match behavior of the underlying property.
+                        throw new NullReferenceException();
+                    }
+
+                    return default(TProperty);
+                };
+
             if (type == null)
             {
-                return syntax => default(TProperty);
+                return fallbackAccessor;
             }
 
             if (!typeof(TSyntax).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()))
@@ -62,7 +75,7 @@ namespace StyleCop.Analyzers.Lightup
             var property = type.GetTypeInfo().GetDeclaredProperty(propertyName);
             if (property == null)
             {
-                return syntax => default(TProperty);
+                return fallbackAccessor;
             }
 
             if (!typeof(TProperty).GetTypeInfo().IsAssignableFrom(property.PropertyType.GetTypeInfo()))
@@ -85,10 +98,16 @@ namespace StyleCop.Analyzers.Lightup
 
         internal static Func<TSyntax, TProperty, TSyntax> CreateSyntaxWithPropertyAccessor<TSyntax, TProperty>(Type type, string propertyName)
         {
-            if (type == null)
-            {
-                return (syntax, newValue) =>
+            Func<TSyntax, TProperty, TSyntax> fallbackAccessor =
+                (syntax, newValue) =>
                 {
+                    if (syntax == null)
+                    {
+                        // Unlike an extension method which would throw ArgumentNullException here, the light-up
+                        // behavior needs to match behavior of the underlying property.
+                        throw new NullReferenceException();
+                    }
+
                     if (Equals(newValue, default(TProperty)))
                     {
                         return syntax;
@@ -96,6 +115,10 @@ namespace StyleCop.Analyzers.Lightup
 
                     throw new NotSupportedException();
                 };
+
+            if (type == null)
+            {
+                return fallbackAccessor;
             }
 
             if (!typeof(TSyntax).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()))
@@ -106,15 +129,7 @@ namespace StyleCop.Analyzers.Lightup
             var property = type.GetTypeInfo().GetDeclaredProperty(propertyName);
             if (property == null)
             {
-                return (syntax, newValue) =>
-                {
-                    if (Equals(newValue, default(TProperty)))
-                    {
-                        return syntax;
-                    }
-
-                    throw new NotSupportedException();
-                };
+                return fallbackAccessor;
             }
 
             if (!typeof(TProperty).GetTypeInfo().IsAssignableFrom(property.PropertyType.GetTypeInfo()))

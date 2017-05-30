@@ -237,6 +237,7 @@
     <Compile Include="LayoutRules\SA1520UnitTests.cs" />
     <Compile Include="Lightup\AccessorDeclarationSyntaxExtensionsTests.cs" />
     <Compile Include="Lightup\BaseMethodDeclarationSyntaxExtensionsTests.cs" />
+    <Compile Include="Lightup\ConstantPatternSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\ConstructorDeclarationSyntaxExtensionsTests.cs" />
     <Compile Include="Lightup\DestructorDeclarationSyntaxExtensionsTests.cs" />
     <Compile Include="LinqHelpers\SyntaxTriviaListEnumerableTests.cs" />
