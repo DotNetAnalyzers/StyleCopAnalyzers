@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Lightup;
     using Xunit;
 
@@ -30,6 +31,9 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var syntaxNode = SyntaxFactory.DeclarationPattern(
                 SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword)),
                 SyntaxFactory.DiscardDesignation());
+            Assert.True(syntaxNode.IsKind(SyntaxKind.DeclarationPattern));
+            Assert.True(syntaxNode.IsKind(SyntaxKindEx.DeclarationPattern));
+
             var declarationPatternSyntax = (DeclarationPatternSyntaxWrapper)syntaxNode;
             Assert.Same(syntaxNode, declarationPatternSyntax.SyntaxNode);
             Assert.Same(syntaxNode.Type, declarationPatternSyntax.Type);

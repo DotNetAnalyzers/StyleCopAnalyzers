@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
     using System;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Lightup;
     using Xunit;
 
@@ -25,6 +26,9 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
         public void TestExpression()
         {
             var syntaxNode = SyntaxFactory.ConstantPattern(SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression));
+            Assert.True(syntaxNode.IsKind(SyntaxKind.ConstantPattern));
+            Assert.True(syntaxNode.IsKind(SyntaxKindEx.ConstantPattern));
+
             var constantPatternSyntax = (ConstantPatternSyntaxWrapper)syntaxNode;
             Assert.Same(syntaxNode, constantPatternSyntax.SyntaxNode);
             Assert.Same(syntaxNode.Expression, constantPatternSyntax.Expression);
