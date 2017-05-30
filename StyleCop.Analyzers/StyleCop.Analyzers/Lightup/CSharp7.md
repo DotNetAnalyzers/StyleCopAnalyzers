@@ -197,10 +197,10 @@
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedVariableDesignationSyntax.CloseParenToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedVariableDesignationSyntax.OpenParenToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
 * [x] ~~`Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedVariableDesignationSyntax.Update(Microsoft.CodeAnalysis.SyntaxToken openParenToken, Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.VariableDesignationSyntax> variables, Microsoft.CodeAnalysis.SyntaxToken closeParenToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedVariableDesignationSyntax`~~
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedVariableDesignationSyntax.Variables.get -> Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.VariableDesignationSyntax>`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedVariableDesignationSyntax.Variables.get -> Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.VariableDesignationSyntax>`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedVariableDesignationSyntax.WithCloseParenToken(Microsoft.CodeAnalysis.SyntaxToken closeParenToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedVariableDesignationSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedVariableDesignationSyntax.WithOpenParenToken(Microsoft.CodeAnalysis.SyntaxToken openParenToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedVariableDesignationSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedVariableDesignationSyntax.WithVariables(Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.VariableDesignationSyntax> variables) -> Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedVariableDesignationSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedVariableDesignationSyntax.WithVariables(Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.VariableDesignationSyntax> variables) -> Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedVariableDesignationSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.PatternSyntax`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.RefExpressionSyntax`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.RefExpressionSyntax.Expression.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax`

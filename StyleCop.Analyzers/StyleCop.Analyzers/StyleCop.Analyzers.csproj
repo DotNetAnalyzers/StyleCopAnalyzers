@@ -188,8 +188,10 @@
     <Compile Include="Lightup\LightupHelpers.cs" />
     <Compile Include="Lightup\ParenthesizedVariableDesignationSyntaxWrapper.cs" />
     <Compile Include="Lightup\PatternSyntaxWrapper.cs" />
+    <Compile Include="Lightup\SeparatedSyntaxListWrapper`1.cs" />
     <Compile Include="Lightup\SingleVariableDesignationSyntaxWrapper.cs" />
     <Compile Include="Lightup\SyntaxKindEx.cs" />
+    <Compile Include="Lightup\SyntaxWrapper`1.cs" />
     <Compile Include="Lightup\VariableDesignationSyntaxWrapper.cs" />
     <Compile Include="LinqHelpers\SyntaxTriviaListEnumerable.cs" />
     <Compile Include="MaintainabilityRules\MaintainabilityResources.Designer.cs">

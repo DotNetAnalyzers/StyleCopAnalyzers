@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
     using System;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Lightup;
     using Xunit;
@@ -19,7 +20,11 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var parenthesizedVariableDesignationSyntax = (ParenthesizedVariableDesignationSyntaxWrapper)syntaxNode;
             Assert.Null(parenthesizedVariableDesignationSyntax.SyntaxNode);
             Assert.Throws<NullReferenceException>(() => parenthesizedVariableDesignationSyntax.OpenParenToken);
+            Assert.Throws<NullReferenceException>(() => parenthesizedVariableDesignationSyntax.Variables);
             Assert.Throws<NullReferenceException>(() => parenthesizedVariableDesignationSyntax.CloseParenToken);
+            Assert.Throws<NullReferenceException>(() => parenthesizedVariableDesignationSyntax.WithOpenParenToken(SyntaxFactory.Token(SyntaxKind.OpenParenToken)));
+            Assert.Throws<NullReferenceException>(() => parenthesizedVariableDesignationSyntax.WithVariables(new SeparatedSyntaxListWrapper<VariableDesignationSyntaxWrapper>.AutoWrapSeparatedSyntaxList<VariableDesignationSyntax>(SyntaxFactory.SeparatedList<VariableDesignationSyntax>())));
+            Assert.Throws<NullReferenceException>(() => parenthesizedVariableDesignationSyntax.WithCloseParenToken(SyntaxFactory.Token(SyntaxKind.CloseParenToken)));
         }
 
         [Fact]
@@ -38,6 +43,12 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             Assert.NotSame(syntaxNode, parenthesizedVariableDesignationSyntax.SyntaxNode);
             Assert.False(syntaxNode.OpenParenToken.IsEquivalentTo(parenthesizedVariableDesignationSyntax.OpenParenToken));
             Assert.True(syntaxNode.CloseParenToken.IsEquivalentTo(parenthesizedVariableDesignationSyntax.CloseParenToken));
+
+            var variables = SyntaxFactory.SingletonSeparatedList<VariableDesignationSyntax>(SyntaxFactory.DiscardDesignation());
+            parenthesizedVariableDesignationSyntax = parenthesizedVariableDesignationSyntax.WithVariables(new SeparatedSyntaxListWrapper<VariableDesignationSyntaxWrapper>.AutoWrapSeparatedSyntaxList<VariableDesignationSyntax>(variables));
+            Assert.Same(
+                ((ParenthesizedVariableDesignationSyntax)parenthesizedVariableDesignationSyntax.SyntaxNode).Variables[0],
+                parenthesizedVariableDesignationSyntax.Variables[0].SyntaxNode);
 
             parenthesizedVariableDesignationSyntax = parenthesizedVariableDesignationSyntax.WithCloseParenToken(SpacingExtensions.WithoutTrivia(SyntaxFactory.Token(SyntaxKind.CloseParenToken)));
             Assert.NotNull(parenthesizedVariableDesignationSyntax.SyntaxNode);

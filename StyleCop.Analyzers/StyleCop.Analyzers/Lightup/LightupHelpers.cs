@@ -96,6 +96,62 @@ namespace StyleCop.Analyzers.Lightup
             return expression.Compile();
         }
 
+        internal static Func<TSyntax, SeparatedSyntaxListWrapper<TProperty>> CreateSeparatedSyntaxListPropertyAccessor<TSyntax, TProperty>(Type type, string propertyName)
+        {
+            Func<TSyntax, SeparatedSyntaxListWrapper<TProperty>> fallbackAccessor =
+                syntax =>
+                {
+                    if (syntax == null)
+                    {
+                        // Unlike an extension method which would throw ArgumentNullException here, the light-up
+                        // behavior needs to match behavior of the underlying property.
+                        throw new NullReferenceException();
+                    }
+
+                    return SeparatedSyntaxListWrapper<TProperty>.UnsupportedEmpty;
+                };
+
+            if (type == null)
+            {
+                return fallbackAccessor;
+            }
+
+            if (!typeof(TSyntax).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()))
+            {
+                throw new InvalidOperationException();
+            }
+
+            var property = type.GetTypeInfo().GetDeclaredProperty(propertyName);
+            if (property == null)
+            {
+                return fallbackAccessor;
+            }
+
+            if (property.PropertyType.GetGenericTypeDefinition() != typeof(SeparatedSyntaxList<>))
+            {
+                throw new InvalidOperationException();
+            }
+
+            var propertySyntaxType = property.PropertyType.GenericTypeArguments[0];
+
+            var syntaxParameter = Expression.Parameter(typeof(TSyntax), "syntax");
+            Expression instance =
+                type.GetTypeInfo().IsAssignableFrom(typeof(TSyntax).GetTypeInfo())
+                ? (Expression)syntaxParameter
+                : Expression.Convert(syntaxParameter, type);
+            Expression propertyAccess = Expression.Call(instance, property.GetMethod);
+
+            var unboundWrapperType = typeof(SeparatedSyntaxListWrapper<>.AutoWrapSeparatedSyntaxList<>);
+            var boundWrapperType = unboundWrapperType.MakeGenericType(typeof(TProperty), propertySyntaxType);
+            var constructorInfo = boundWrapperType.GetTypeInfo().DeclaredConstructors.Single();
+
+            Expression<Func<TSyntax, SeparatedSyntaxListWrapper<TProperty>>> expression =
+                Expression.Lambda<Func<TSyntax, SeparatedSyntaxListWrapper<TProperty>>>(
+                    Expression.New(constructorInfo, propertyAccess),
+                    syntaxParameter);
+            return expression.Compile();
+        }
+
         internal static Func<TSyntax, TProperty, TSyntax> CreateSyntaxWithPropertyAccessor<TSyntax, TProperty>(Type type, string propertyName)
         {
             Func<TSyntax, TProperty, TSyntax> fallbackAccessor =
@@ -153,6 +209,72 @@ namespace StyleCop.Analyzers.Lightup
 
             Expression<Func<TSyntax, TProperty, TSyntax>> expression =
                 Expression.Lambda<Func<TSyntax, TProperty, TSyntax>>(
+                    Expression.Call(instance, methodInfo, value),
+                    syntaxParameter,
+                    valueParameter);
+            return expression.Compile();
+        }
+
+        internal static Func<TSyntax, SeparatedSyntaxListWrapper<TProperty>, TSyntax> CreateSeparatedSyntaxListWithPropertyAccessor<TSyntax, TProperty>(Type type, string propertyName)
+        {
+            Func<TSyntax, SeparatedSyntaxListWrapper<TProperty>, TSyntax> fallbackAccessor =
+                (syntax, newValue) =>
+                {
+                    if (syntax == null)
+                    {
+                        // Unlike an extension method which would throw ArgumentNullException here, the light-up
+                        // behavior needs to match behavior of the underlying property.
+                        throw new NullReferenceException();
+                    }
+
+                    if (ReferenceEquals(newValue, null))
+                    {
+                        return syntax;
+                    }
+
+                    throw new NotSupportedException();
+                };
+
+            if (type == null)
+            {
+                return fallbackAccessor;
+            }
+
+            if (!typeof(TSyntax).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()))
+            {
+                throw new InvalidOperationException();
+            }
+
+            var property = type.GetTypeInfo().GetDeclaredProperty(propertyName);
+            if (property == null)
+            {
+                return fallbackAccessor;
+            }
+
+            if (property.PropertyType.GetGenericTypeDefinition() != typeof(SeparatedSyntaxList<>))
+            {
+                throw new InvalidOperationException();
+            }
+
+            var propertySyntaxType = property.PropertyType.GenericTypeArguments[0];
+
+            var methodInfo = type.GetTypeInfo().GetDeclaredMethods("With" + propertyName)
+                .Single(m => !m.IsStatic && m.GetParameters().Length == 1 && m.GetParameters()[0].ParameterType.Equals(property.PropertyType));
+
+            var syntaxParameter = Expression.Parameter(typeof(TSyntax), "syntax");
+            var valueParameter = Expression.Parameter(typeof(SeparatedSyntaxListWrapper<TProperty>), methodInfo.GetParameters()[0].Name);
+            Expression instance =
+                type.GetTypeInfo().IsAssignableFrom(typeof(TSyntax).GetTypeInfo())
+                ? (Expression)syntaxParameter
+                : Expression.Convert(syntaxParameter, type);
+
+            var underlyingListProperty = typeof(SeparatedSyntaxListWrapper<TProperty>).GetTypeInfo().GetDeclaredProperty(nameof(SeparatedSyntaxListWrapper<TProperty>.UnderlyingList));
+            Expression value = Expression.Convert(
+                Expression.Call(valueParameter, underlyingListProperty.GetMethod),
+                property.PropertyType);
+
+            Expression<Func<TSyntax, SeparatedSyntaxListWrapper<TProperty>, TSyntax>> expression =
+                Expression.Lambda<Func<TSyntax, SeparatedSyntaxListWrapper<TProperty>, TSyntax>>(
                     Expression.Call(instance, methodInfo, value),
                     syntaxParameter,
                     valueParameter);
