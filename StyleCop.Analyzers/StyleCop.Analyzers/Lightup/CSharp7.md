@@ -218,12 +218,12 @@
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SingleVariableDesignationSyntax.Identifier.get -> Microsoft.CodeAnalysis.SyntaxToken`
 * [x] ~~`Microsoft.CodeAnalysis.CSharp.Syntax.SingleVariableDesignationSyntax.Update(Microsoft.CodeAnalysis.SyntaxToken identifier) -> Microsoft.CodeAnalysis.CSharp.Syntax.SingleVariableDesignationSyntax`~~
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SingleVariableDesignationSyntax.WithIdentifier(Microsoft.CodeAnalysis.SyntaxToken identifier) -> Microsoft.CodeAnalysis.CSharp.Syntax.SingleVariableDesignationSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ThrowExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ThrowExpressionSyntax.Expression.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ThrowExpressionSyntax.ThrowKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ThrowExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ThrowExpressionSyntax.Expression.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ThrowExpressionSyntax.ThrowKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
 * [x] ~~`Microsoft.CodeAnalysis.CSharp.Syntax.ThrowExpressionSyntax.Update(Microsoft.CodeAnalysis.SyntaxToken throwKeyword, Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax expression) -> Microsoft.CodeAnalysis.CSharp.Syntax.ThrowExpressionSyntax`~~
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ThrowExpressionSyntax.WithExpression(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax expression) -> Microsoft.CodeAnalysis.CSharp.Syntax.ThrowExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ThrowExpressionSyntax.WithThrowKeyword(Microsoft.CodeAnalysis.SyntaxToken throwKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.ThrowExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ThrowExpressionSyntax.WithExpression(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax expression) -> Microsoft.CodeAnalysis.CSharp.Syntax.ThrowExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ThrowExpressionSyntax.WithThrowKeyword(Microsoft.CodeAnalysis.SyntaxToken throwKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.ThrowExpressionSyntax`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleElementSyntax`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleElementSyntax.Identifier.get -> Microsoft.CodeAnalysis.SyntaxToken`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleElementSyntax.Type.get -> Microsoft.CodeAnalysis.CSharp.Syntax.TypeSyntax`

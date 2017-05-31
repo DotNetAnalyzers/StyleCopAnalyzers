@@ -195,6 +195,7 @@
     <Compile Include="Lightup\SingleVariableDesignationSyntaxWrapper.cs" />
     <Compile Include="Lightup\SyntaxKindEx.cs" />
     <Compile Include="Lightup\SyntaxWrapper`1.cs" />
+    <Compile Include="Lightup\ThrowExpressionSyntaxWrapper.cs" />
     <Compile Include="Lightup\VariableDesignationSyntaxWrapper.cs" />
     <Compile Include="Lightup\WhenClauseSyntaxWrapper.cs" />
     <Compile Include="LinqHelpers\SyntaxTriviaListEnumerable.cs" />
