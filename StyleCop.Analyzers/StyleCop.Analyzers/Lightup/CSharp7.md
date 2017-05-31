@@ -202,18 +202,18 @@
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedVariableDesignationSyntax.WithOpenParenToken(Microsoft.CodeAnalysis.SyntaxToken openParenToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedVariableDesignationSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedVariableDesignationSyntax.WithVariables(Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.VariableDesignationSyntax> variables) -> Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedVariableDesignationSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.PatternSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.RefExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.RefExpressionSyntax.Expression.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.RefExpressionSyntax.RefKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.RefExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.RefExpressionSyntax.Expression.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.RefExpressionSyntax.RefKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
 * [x] ~~`Microsoft.CodeAnalysis.CSharp.Syntax.RefExpressionSyntax.Update(Microsoft.CodeAnalysis.SyntaxToken refKeyword, Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax expression) -> Microsoft.CodeAnalysis.CSharp.Syntax.RefExpressionSyntax`~~
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.RefExpressionSyntax.WithExpression(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax expression) -> Microsoft.CodeAnalysis.CSharp.Syntax.RefExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.RefExpressionSyntax.WithRefKeyword(Microsoft.CodeAnalysis.SyntaxToken refKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.RefExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.RefTypeSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.RefTypeSyntax.RefKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.RefTypeSyntax.Type.get -> Microsoft.CodeAnalysis.CSharp.Syntax.TypeSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.RefExpressionSyntax.WithExpression(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax expression) -> Microsoft.CodeAnalysis.CSharp.Syntax.RefExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.RefExpressionSyntax.WithRefKeyword(Microsoft.CodeAnalysis.SyntaxToken refKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.RefExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.RefTypeSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.RefTypeSyntax.RefKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.RefTypeSyntax.Type.get -> Microsoft.CodeAnalysis.CSharp.Syntax.TypeSyntax`
 * [x] ~~`Microsoft.CodeAnalysis.CSharp.Syntax.RefTypeSyntax.Update(Microsoft.CodeAnalysis.SyntaxToken refKeyword, Microsoft.CodeAnalysis.CSharp.Syntax.TypeSyntax type) -> Microsoft.CodeAnalysis.CSharp.Syntax.RefTypeSyntax`~~
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.RefTypeSyntax.WithRefKeyword(Microsoft.CodeAnalysis.SyntaxToken refKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.RefTypeSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.RefTypeSyntax.WithType(Microsoft.CodeAnalysis.CSharp.Syntax.TypeSyntax type) -> Microsoft.CodeAnalysis.CSharp.Syntax.RefTypeSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.RefTypeSyntax.WithRefKeyword(Microsoft.CodeAnalysis.SyntaxToken refKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.RefTypeSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.RefTypeSyntax.WithType(Microsoft.CodeAnalysis.CSharp.Syntax.TypeSyntax type) -> Microsoft.CodeAnalysis.CSharp.Syntax.RefTypeSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SingleVariableDesignationSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SingleVariableDesignationSyntax.Identifier.get -> Microsoft.CodeAnalysis.SyntaxToken`
 * [x] ~~`Microsoft.CodeAnalysis.CSharp.Syntax.SingleVariableDesignationSyntax.Update(Microsoft.CodeAnalysis.SyntaxToken identifier) -> Microsoft.CodeAnalysis.CSharp.Syntax.SingleVariableDesignationSyntax`~~

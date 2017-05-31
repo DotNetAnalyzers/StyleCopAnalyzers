@@ -189,6 +189,8 @@
     <Compile Include="Lightup\LightupHelpers.cs" />
     <Compile Include="Lightup\ParenthesizedVariableDesignationSyntaxWrapper.cs" />
     <Compile Include="Lightup\PatternSyntaxWrapper.cs" />
+    <Compile Include="Lightup\RefExpressionSyntaxWrapper.cs" />
+    <Compile Include="Lightup\RefTypeSyntaxWrapper.cs" />
     <Compile Include="Lightup\SeparatedSyntaxListWrapper`1.cs" />
     <Compile Include="Lightup\SingleVariableDesignationSyntaxWrapper.cs" />
     <Compile Include="Lightup\SyntaxKindEx.cs" />
