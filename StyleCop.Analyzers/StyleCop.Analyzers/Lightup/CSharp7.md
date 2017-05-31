@@ -116,14 +116,14 @@
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.AccessorDeclarationSyntax.ExpressionBody.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ArrowExpressionClauseSyntax`
 * [x] ~~`Microsoft.CodeAnalysis.CSharp.Syntax.AccessorDeclarationSyntax.Update(Microsoft.CodeAnalysis.SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.AttributeListSyntax> attributeLists, Microsoft.CodeAnalysis.SyntaxTokenList modifiers, Microsoft.CodeAnalysis.SyntaxToken keyword, Microsoft.CodeAnalysis.CSharp.Syntax.BlockSyntax body, Microsoft.CodeAnalysis.CSharp.Syntax.ArrowExpressionClauseSyntax expressionBody, Microsoft.CodeAnalysis.SyntaxToken semicolonToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.AccessorDeclarationSyntax`~~
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.AccessorDeclarationSyntax.WithExpressionBody(Microsoft.CodeAnalysis.CSharp.Syntax.ArrowExpressionClauseSyntax expressionBody) -> Microsoft.CodeAnalysis.CSharp.Syntax.AccessorDeclarationSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax.Pattern.get -> Microsoft.CodeAnalysis.CSharp.Syntax.PatternSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax.Pattern.get -> Microsoft.CodeAnalysis.CSharp.Syntax.PatternSyntax`
 * [x] ~~`Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax.Update(Microsoft.CodeAnalysis.SyntaxToken keyword, Microsoft.CodeAnalysis.CSharp.Syntax.PatternSyntax pattern, Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax whenClause, Microsoft.CodeAnalysis.SyntaxToken colonToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax`~~
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax.WhenClause.get -> Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax.WithColonToken(Microsoft.CodeAnalysis.SyntaxToken colonToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax.WithKeyword(Microsoft.CodeAnalysis.SyntaxToken keyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax.WithPattern(Microsoft.CodeAnalysis.CSharp.Syntax.PatternSyntax pattern) -> Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax.WithWhenClause(Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax whenClause) -> Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax.WhenClause.get -> Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax.WithColonToken(Microsoft.CodeAnalysis.SyntaxToken colonToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax.WithKeyword(Microsoft.CodeAnalysis.SyntaxToken keyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax.WithPattern(Microsoft.CodeAnalysis.CSharp.Syntax.PatternSyntax pattern) -> Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax.WithWhenClause(Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax whenClause) -> Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.CommonForEachStatementSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ConstantPatternSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ConstantPatternSyntax.Expression.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax`
@@ -249,12 +249,12 @@
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax.WithElements(Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.TupleElementSyntax> elements) -> Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax.WithOpenParenToken(Microsoft.CodeAnalysis.SyntaxToken openParenToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.VariableDesignationSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax.Condition.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax.Condition.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax`
 * [x] ~~`Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax.Update(Microsoft.CodeAnalysis.SyntaxToken whenKeyword, Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax condition) -> Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax`~~
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax.WhenKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax.WithCondition(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax condition) -> Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax.WithWhenKeyword(Microsoft.CodeAnalysis.SyntaxToken whenKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax.WhenKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax.WithCondition(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax condition) -> Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax.WithWhenKeyword(Microsoft.CodeAnalysis.SyntaxToken whenKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.CasePatternSwitchLabel = 9009 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
 * [x] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.ConstantPattern = 9002 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
 * [x] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.DeclarationExpression = 9040 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`

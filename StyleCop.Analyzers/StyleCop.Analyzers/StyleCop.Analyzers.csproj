@@ -179,6 +179,7 @@
     <Compile Include="LightJson\Serialization\TextScanner.cs" />
     <Compile Include="Lightup\AccessorDeclarationSyntaxExtensions.cs" />
     <Compile Include="Lightup\BaseMethodDeclarationSyntaxExtensions.cs" />
+    <Compile Include="Lightup\CasePatternSwitchLabelSyntaxWrapper.cs" />
     <Compile Include="Lightup\ConstantPatternSyntaxWrapper.cs" />
     <Compile Include="Lightup\ConstructorDeclarationSyntaxExtensions.cs" />
     <Compile Include="Lightup\DeclarationPatternSyntaxWrapper.cs" />
@@ -193,6 +194,7 @@
     <Compile Include="Lightup\SyntaxKindEx.cs" />
     <Compile Include="Lightup\SyntaxWrapper`1.cs" />
     <Compile Include="Lightup\VariableDesignationSyntaxWrapper.cs" />
+    <Compile Include="Lightup\WhenClauseSyntaxWrapper.cs" />
     <Compile Include="LinqHelpers\SyntaxTriviaListEnumerable.cs" />
     <Compile Include="MaintainabilityRules\MaintainabilityResources.Designer.cs">
       <AutoGen>True</AutoGen>
