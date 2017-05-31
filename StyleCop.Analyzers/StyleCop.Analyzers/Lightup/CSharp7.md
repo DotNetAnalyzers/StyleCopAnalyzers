@@ -224,30 +224,30 @@
 * [x] ~~`Microsoft.CodeAnalysis.CSharp.Syntax.ThrowExpressionSyntax.Update(Microsoft.CodeAnalysis.SyntaxToken throwKeyword, Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax expression) -> Microsoft.CodeAnalysis.CSharp.Syntax.ThrowExpressionSyntax`~~
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ThrowExpressionSyntax.WithExpression(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax expression) -> Microsoft.CodeAnalysis.CSharp.Syntax.ThrowExpressionSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ThrowExpressionSyntax.WithThrowKeyword(Microsoft.CodeAnalysis.SyntaxToken throwKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.ThrowExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleElementSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleElementSyntax.Identifier.get -> Microsoft.CodeAnalysis.SyntaxToken`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleElementSyntax.Type.get -> Microsoft.CodeAnalysis.CSharp.Syntax.TypeSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleElementSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleElementSyntax.Identifier.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleElementSyntax.Type.get -> Microsoft.CodeAnalysis.CSharp.Syntax.TypeSyntax`
 * [x] ~~`Microsoft.CodeAnalysis.CSharp.Syntax.TupleElementSyntax.Update(Microsoft.CodeAnalysis.CSharp.Syntax.TypeSyntax type, Microsoft.CodeAnalysis.SyntaxToken identifier) -> Microsoft.CodeAnalysis.CSharp.Syntax.TupleElementSyntax`~~
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleElementSyntax.WithIdentifier(Microsoft.CodeAnalysis.SyntaxToken identifier) -> Microsoft.CodeAnalysis.CSharp.Syntax.TupleElementSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleElementSyntax.WithType(Microsoft.CodeAnalysis.CSharp.Syntax.TypeSyntax type) -> Microsoft.CodeAnalysis.CSharp.Syntax.TupleElementSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleExpressionSyntax.AddArguments(params Microsoft.CodeAnalysis.CSharp.Syntax.ArgumentSyntax[] items) -> Microsoft.CodeAnalysis.CSharp.Syntax.TupleExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleExpressionSyntax.Arguments.get -> Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.ArgumentSyntax>`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleExpressionSyntax.CloseParenToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleExpressionSyntax.OpenParenToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleElementSyntax.WithIdentifier(Microsoft.CodeAnalysis.SyntaxToken identifier) -> Microsoft.CodeAnalysis.CSharp.Syntax.TupleElementSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleElementSyntax.WithType(Microsoft.CodeAnalysis.CSharp.Syntax.TypeSyntax type) -> Microsoft.CodeAnalysis.CSharp.Syntax.TupleElementSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleExpressionSyntax.AddArguments(params Microsoft.CodeAnalysis.CSharp.Syntax.ArgumentSyntax[] items) -> Microsoft.CodeAnalysis.CSharp.Syntax.TupleExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleExpressionSyntax.Arguments.get -> Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.ArgumentSyntax>`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleExpressionSyntax.CloseParenToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleExpressionSyntax.OpenParenToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
 * [x] ~~`Microsoft.CodeAnalysis.CSharp.Syntax.TupleExpressionSyntax.Update(Microsoft.CodeAnalysis.SyntaxToken openParenToken, Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.ArgumentSyntax> arguments, Microsoft.CodeAnalysis.SyntaxToken closeParenToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.TupleExpressionSyntax`~~
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleExpressionSyntax.WithArguments(Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.ArgumentSyntax> arguments) -> Microsoft.CodeAnalysis.CSharp.Syntax.TupleExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleExpressionSyntax.WithCloseParenToken(Microsoft.CodeAnalysis.SyntaxToken closeParenToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.TupleExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleExpressionSyntax.WithOpenParenToken(Microsoft.CodeAnalysis.SyntaxToken openParenToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.TupleExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax.AddElements(params Microsoft.CodeAnalysis.CSharp.Syntax.TupleElementSyntax[] items) -> Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax.CloseParenToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax.Elements.get -> Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.TupleElementSyntax>`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax.OpenParenToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleExpressionSyntax.WithArguments(Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.ArgumentSyntax> arguments) -> Microsoft.CodeAnalysis.CSharp.Syntax.TupleExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleExpressionSyntax.WithCloseParenToken(Microsoft.CodeAnalysis.SyntaxToken closeParenToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.TupleExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleExpressionSyntax.WithOpenParenToken(Microsoft.CodeAnalysis.SyntaxToken openParenToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.TupleExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax.AddElements(params Microsoft.CodeAnalysis.CSharp.Syntax.TupleElementSyntax[] items) -> Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax.CloseParenToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax.Elements.get -> Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.TupleElementSyntax>`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax.OpenParenToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
 * [x] ~~`Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax.Update(Microsoft.CodeAnalysis.SyntaxToken openParenToken, Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.TupleElementSyntax> elements, Microsoft.CodeAnalysis.SyntaxToken closeParenToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax`~~
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax.WithCloseParenToken(Microsoft.CodeAnalysis.SyntaxToken closeParenToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax.WithElements(Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.TupleElementSyntax> elements) -> Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax.WithOpenParenToken(Microsoft.CodeAnalysis.SyntaxToken openParenToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax.WithCloseParenToken(Microsoft.CodeAnalysis.SyntaxToken closeParenToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax.WithElements(Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.TupleElementSyntax> elements) -> Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax.WithOpenParenToken(Microsoft.CodeAnalysis.SyntaxToken openParenToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.VariableDesignationSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax.Condition.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax`
