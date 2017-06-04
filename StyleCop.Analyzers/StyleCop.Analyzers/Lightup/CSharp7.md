@@ -193,7 +193,7 @@
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.LocalFunctionStatementSyntax.WithSemicolonToken(Microsoft.CodeAnalysis.SyntaxToken semicolonToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.LocalFunctionStatementSyntax`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.LocalFunctionStatementSyntax.WithTypeParameterList(Microsoft.CodeAnalysis.CSharp.Syntax.TypeParameterListSyntax typeParameterList) -> Microsoft.CodeAnalysis.CSharp.Syntax.LocalFunctionStatementSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedVariableDesignationSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedVariableDesignationSyntax.AddVariables(params Microsoft.CodeAnalysis.CSharp.Syntax.VariableDesignationSyntax[] items) -> Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedVariableDesignationSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedVariableDesignationSyntax.AddVariables(params Microsoft.CodeAnalysis.CSharp.Syntax.VariableDesignationSyntax[] items) -> Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedVariableDesignationSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedVariableDesignationSyntax.CloseParenToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedVariableDesignationSyntax.OpenParenToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
 * [x] ~~`Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedVariableDesignationSyntax.Update(Microsoft.CodeAnalysis.SyntaxToken openParenToken, Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.VariableDesignationSyntax> variables, Microsoft.CodeAnalysis.SyntaxToken closeParenToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedVariableDesignationSyntax`~~
