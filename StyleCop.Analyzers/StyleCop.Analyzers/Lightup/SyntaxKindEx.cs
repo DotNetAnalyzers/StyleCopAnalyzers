@@ -5,25 +5,27 @@
 
 namespace StyleCop.Analyzers.Lightup
 {
-    internal enum SyntaxKindEx
+    using Microsoft.CodeAnalysis.CSharp;
+
+    internal static class SyntaxKindEx
     {
-        UnderscoreToken = 8491,
-        IsPatternExpression = 8657,
-        LocalFunctionStatement = 8830,
-        TupleType = 8924,
-        TupleElement = 8925,
-        TupleExpression = 8926,
-        SingleVariableDesignation = 8927,
-        ParenthesizedVariableDesignation = 8928,
-        ForEachVariableStatement = 8929,
-        DeclarationPattern = 9000,
-        ConstantPattern = 9002,
-        CasePatternSwitchLabel = 9009,
-        WhenClause = 9013,
-        DiscardDesignation = 9014,
-        DeclarationExpression = 9040,
-        RefExpression = 9050,
-        RefType = 9051,
-        ThrowExpression = 9052,
+        public const SyntaxKind UnderscoreToken = (SyntaxKind)8491;
+        public const SyntaxKind IsPatternExpression = (SyntaxKind)8657;
+        public const SyntaxKind LocalFunctionStatement = (SyntaxKind)8830;
+        public const SyntaxKind TupleType = (SyntaxKind)8924;
+        public const SyntaxKind TupleElement = (SyntaxKind)8925;
+        public const SyntaxKind TupleExpression = (SyntaxKind)8926;
+        public const SyntaxKind SingleVariableDesignation = (SyntaxKind)8927;
+        public const SyntaxKind ParenthesizedVariableDesignation = (SyntaxKind)8928;
+        public const SyntaxKind ForEachVariableStatement = (SyntaxKind)8929;
+        public const SyntaxKind DeclarationPattern = (SyntaxKind)9000;
+        public const SyntaxKind ConstantPattern = (SyntaxKind)9002;
+        public const SyntaxKind CasePatternSwitchLabel = (SyntaxKind)9009;
+        public const SyntaxKind WhenClause = (SyntaxKind)9013;
+        public const SyntaxKind DiscardDesignation = (SyntaxKind)9014;
+        public const SyntaxKind DeclarationExpression = (SyntaxKind)9040;
+        public const SyntaxKind RefExpression = (SyntaxKind)9050;
+        public const SyntaxKind RefType = (SyntaxKind)9051;
+        public const SyntaxKind ThrowExpression = (SyntaxKind)9052;
     }
 }
