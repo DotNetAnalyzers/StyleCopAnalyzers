@@ -191,6 +191,7 @@
     <Compile Include="Lightup\IsPatternExpressionSyntaxWrapper.cs" />
     <Compile Include="Lightup\ISyntaxWrapper`1.cs" />
     <Compile Include="Lightup\LightupHelpers.cs" />
+    <Compile Include="Lightup\LocalFunctionStatementSyntaxWrapper.cs" />
     <Compile Include="Lightup\ParenthesizedVariableDesignationSyntaxWrapper.cs" />
     <Compile Include="Lightup\PatternSyntaxWrapper.cs" />
     <Compile Include="Lightup\RefExpressionSyntaxWrapper.cs" />
