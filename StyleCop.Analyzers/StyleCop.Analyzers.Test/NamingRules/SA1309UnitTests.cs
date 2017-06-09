@@ -149,6 +149,25 @@ namespace StyleCop.Analyzers.Test.NamingRules
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task VerifyThatAFieldStartingWithUnderscoreAndFollowedByKeywordTriggersDiagnosticAndIsCorrectedByCodefixAsync()
+        {
+            var testCode = @"public class Foo
+{
+    private string _int = ""baz"";
+}";
+
+            var fixedCode = @"public class Foo
+{
+    private string @int = ""baz"";
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("_int").WithLocation(3, 20);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1309FieldNamesMustNotBeginWithUnderscore();
