@@ -131,12 +131,12 @@
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ConstantPatternSyntax.WithExpression(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax expression) -> Microsoft.CodeAnalysis.CSharp.Syntax.ConstantPatternSyntax`
 * [x] ~~`Microsoft.CodeAnalysis.CSharp.Syntax.ConstructorDeclarationSyntax.Update(Microsoft.CodeAnalysis.SyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.AttributeListSyntax> attributeLists, Microsoft.CodeAnalysis.SyntaxTokenList modifiers, Microsoft.CodeAnalysis.SyntaxToken identifier, Microsoft.CodeAnalysis.CSharp.Syntax.ParameterListSyntax parameterList, Microsoft.CodeAnalysis.CSharp.Syntax.ConstructorInitializerSyntax initializer, Microsoft.CodeAnalysis.CSharp.Syntax.BlockSyntax body, Microsoft.CodeAnalysis.CSharp.Syntax.ArrowExpressionClauseSyntax expressionBody, Microsoft.CodeAnalysis.SyntaxToken semicolonToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.ConstructorDeclarationSyntax`~~
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ConstructorDeclarationSyntax.WithExpressionBody(Microsoft.CodeAnalysis.CSharp.Syntax.ArrowExpressionClauseSyntax expressionBody) -> Microsoft.CodeAnalysis.CSharp.Syntax.ConstructorDeclarationSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.DeclarationExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.DeclarationExpressionSyntax.Designation.get -> Microsoft.CodeAnalysis.CSharp.Syntax.VariableDesignationSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.DeclarationExpressionSyntax.Type.get -> Microsoft.CodeAnalysis.CSharp.Syntax.TypeSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.DeclarationExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.DeclarationExpressionSyntax.Designation.get -> Microsoft.CodeAnalysis.CSharp.Syntax.VariableDesignationSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.DeclarationExpressionSyntax.Type.get -> Microsoft.CodeAnalysis.CSharp.Syntax.TypeSyntax`
 * [x] ~~`Microsoft.CodeAnalysis.CSharp.Syntax.DeclarationExpressionSyntax.Update(Microsoft.CodeAnalysis.CSharp.Syntax.TypeSyntax type, Microsoft.CodeAnalysis.CSharp.Syntax.VariableDesignationSyntax designation) -> Microsoft.CodeAnalysis.CSharp.Syntax.DeclarationExpressionSyntax`~~
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.DeclarationExpressionSyntax.WithDesignation(Microsoft.CodeAnalysis.CSharp.Syntax.VariableDesignationSyntax designation) -> Microsoft.CodeAnalysis.CSharp.Syntax.DeclarationExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.DeclarationExpressionSyntax.WithType(Microsoft.CodeAnalysis.CSharp.Syntax.TypeSyntax type) -> Microsoft.CodeAnalysis.CSharp.Syntax.DeclarationExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.DeclarationExpressionSyntax.WithDesignation(Microsoft.CodeAnalysis.CSharp.Syntax.VariableDesignationSyntax designation) -> Microsoft.CodeAnalysis.CSharp.Syntax.DeclarationExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.DeclarationExpressionSyntax.WithType(Microsoft.CodeAnalysis.CSharp.Syntax.TypeSyntax type) -> Microsoft.CodeAnalysis.CSharp.Syntax.DeclarationExpressionSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.DeclarationPatternSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.DeclarationPatternSyntax.Designation.get -> Microsoft.CodeAnalysis.CSharp.Syntax.VariableDesignationSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.DeclarationPatternSyntax.Type.get -> Microsoft.CodeAnalysis.CSharp.Syntax.TypeSyntax`

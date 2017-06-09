@@ -183,6 +183,7 @@
     <Compile Include="Lightup\CommonForEachStatementSyntaxWrapper.cs" />
     <Compile Include="Lightup\ConstantPatternSyntaxWrapper.cs" />
     <Compile Include="Lightup\ConstructorDeclarationSyntaxExtensions.cs" />
+    <Compile Include="Lightup\DeclarationExpressionSyntaxWrapper.cs" />
     <Compile Include="Lightup\DeclarationPatternSyntaxWrapper.cs" />
     <Compile Include="Lightup\DestructorDeclarationSyntaxExtensions.cs" />
     <Compile Include="Lightup\DiscardDesignationSyntaxWrapper.cs" />
