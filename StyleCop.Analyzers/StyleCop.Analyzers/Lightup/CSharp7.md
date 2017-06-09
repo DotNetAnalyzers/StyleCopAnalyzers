@@ -159,14 +159,14 @@
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.WithOpenParenToken(Microsoft.CodeAnalysis.SyntaxToken openParenToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.WithStatement(Microsoft.CodeAnalysis.CSharp.Syntax.StatementSyntax statement) -> Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.WithVariable(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax variable) -> Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.IsPatternExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.IsPatternExpressionSyntax.Expression.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.IsPatternExpressionSyntax.IsKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.IsPatternExpressionSyntax.Pattern.get -> Microsoft.CodeAnalysis.CSharp.Syntax.PatternSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.IsPatternExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.IsPatternExpressionSyntax.Expression.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.IsPatternExpressionSyntax.IsKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.IsPatternExpressionSyntax.Pattern.get -> Microsoft.CodeAnalysis.CSharp.Syntax.PatternSyntax`
 * [x] ~~`Microsoft.CodeAnalysis.CSharp.Syntax.IsPatternExpressionSyntax.Update(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax expression, Microsoft.CodeAnalysis.SyntaxToken isKeyword, Microsoft.CodeAnalysis.CSharp.Syntax.PatternSyntax pattern) -> Microsoft.CodeAnalysis.CSharp.Syntax.IsPatternExpressionSyntax`~~
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.IsPatternExpressionSyntax.WithExpression(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax expression) -> Microsoft.CodeAnalysis.CSharp.Syntax.IsPatternExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.IsPatternExpressionSyntax.WithIsKeyword(Microsoft.CodeAnalysis.SyntaxToken isKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.IsPatternExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.IsPatternExpressionSyntax.WithPattern(Microsoft.CodeAnalysis.CSharp.Syntax.PatternSyntax pattern) -> Microsoft.CodeAnalysis.CSharp.Syntax.IsPatternExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.IsPatternExpressionSyntax.WithExpression(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax expression) -> Microsoft.CodeAnalysis.CSharp.Syntax.IsPatternExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.IsPatternExpressionSyntax.WithIsKeyword(Microsoft.CodeAnalysis.SyntaxToken isKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.IsPatternExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.IsPatternExpressionSyntax.WithPattern(Microsoft.CodeAnalysis.CSharp.Syntax.PatternSyntax pattern) -> Microsoft.CodeAnalysis.CSharp.Syntax.IsPatternExpressionSyntax`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.LocalFunctionStatementSyntax`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.LocalFunctionStatementSyntax.AddBodyStatements(params Microsoft.CodeAnalysis.CSharp.Syntax.StatementSyntax[] items) -> Microsoft.CodeAnalysis.CSharp.Syntax.LocalFunctionStatementSyntax`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.LocalFunctionStatementSyntax.AddConstraintClauses(params Microsoft.CodeAnalysis.CSharp.Syntax.TypeParameterConstraintClauseSyntax[] items) -> Microsoft.CodeAnalysis.CSharp.Syntax.LocalFunctionStatementSyntax`

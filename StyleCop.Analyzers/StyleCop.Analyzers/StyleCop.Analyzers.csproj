@@ -188,6 +188,7 @@
     <Compile Include="Lightup\DestructorDeclarationSyntaxExtensions.cs" />
     <Compile Include="Lightup\DiscardDesignationSyntaxWrapper.cs" />
     <Compile Include="Lightup\ForEachVariableStatementSyntaxWrapper.cs" />
+    <Compile Include="Lightup\IsPatternExpressionSyntaxWrapper.cs" />
     <Compile Include="Lightup\ISyntaxWrapper`1.cs" />
     <Compile Include="Lightup\LightupHelpers.cs" />
     <Compile Include="Lightup\ParenthesizedVariableDesignationSyntaxWrapper.cs" />
