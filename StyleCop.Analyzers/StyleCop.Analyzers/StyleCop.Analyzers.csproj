@@ -180,11 +180,13 @@
     <Compile Include="Lightup\AccessorDeclarationSyntaxExtensions.cs" />
     <Compile Include="Lightup\BaseMethodDeclarationSyntaxExtensions.cs" />
     <Compile Include="Lightup\CasePatternSwitchLabelSyntaxWrapper.cs" />
+    <Compile Include="Lightup\CommonForEachStatementSyntaxWrapper.cs" />
     <Compile Include="Lightup\ConstantPatternSyntaxWrapper.cs" />
     <Compile Include="Lightup\ConstructorDeclarationSyntaxExtensions.cs" />
     <Compile Include="Lightup\DeclarationPatternSyntaxWrapper.cs" />
     <Compile Include="Lightup\DestructorDeclarationSyntaxExtensions.cs" />
     <Compile Include="Lightup\DiscardDesignationSyntaxWrapper.cs" />
+    <Compile Include="Lightup\ForEachVariableStatementSyntaxWrapper.cs" />
     <Compile Include="Lightup\ISyntaxWrapper`1.cs" />
     <Compile Include="Lightup\LightupHelpers.cs" />
     <Compile Include="Lightup\ParenthesizedVariableDesignationSyntaxWrapper.cs" />

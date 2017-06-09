@@ -124,7 +124,7 @@
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax.WithKeyword(Microsoft.CodeAnalysis.SyntaxToken keyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax.WithPattern(Microsoft.CodeAnalysis.CSharp.Syntax.PatternSyntax pattern) -> Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax.WithWhenClause(Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax whenClause) -> Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.CommonForEachStatementSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.CommonForEachStatementSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ConstantPatternSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ConstantPatternSyntax.Expression.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax`
 * [x] ~~`Microsoft.CodeAnalysis.CSharp.Syntax.ConstantPatternSyntax.Update(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax expression) -> Microsoft.CodeAnalysis.CSharp.Syntax.ConstantPatternSyntax`~~
@@ -149,16 +149,16 @@
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.DiscardDesignationSyntax.UnderscoreToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
 * [x] ~~`Microsoft.CodeAnalysis.CSharp.Syntax.DiscardDesignationSyntax.Update(Microsoft.CodeAnalysis.SyntaxToken underscoreToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.DiscardDesignationSyntax`~~
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.DiscardDesignationSyntax.WithUnderscoreToken(Microsoft.CodeAnalysis.SyntaxToken underscoreToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.DiscardDesignationSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax`
 * [x] ~~`Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.Update(Microsoft.CodeAnalysis.SyntaxToken forEachKeyword, Microsoft.CodeAnalysis.SyntaxToken openParenToken, Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax variable, Microsoft.CodeAnalysis.SyntaxToken inKeyword, Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax expression, Microsoft.CodeAnalysis.SyntaxToken closeParenToken, Microsoft.CodeAnalysis.CSharp.Syntax.StatementSyntax statement) -> Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax`~~
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.Variable.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.WithCloseParenToken(Microsoft.CodeAnalysis.SyntaxToken closeParenToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.WithExpression(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax expression) -> Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.WithForEachKeyword(Microsoft.CodeAnalysis.SyntaxToken forEachKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.WithInKeyword(Microsoft.CodeAnalysis.SyntaxToken inKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.WithOpenParenToken(Microsoft.CodeAnalysis.SyntaxToken openParenToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.WithStatement(Microsoft.CodeAnalysis.CSharp.Syntax.StatementSyntax statement) -> Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.WithVariable(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax variable) -> Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.Variable.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.WithCloseParenToken(Microsoft.CodeAnalysis.SyntaxToken closeParenToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.WithExpression(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax expression) -> Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.WithForEachKeyword(Microsoft.CodeAnalysis.SyntaxToken forEachKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.WithInKeyword(Microsoft.CodeAnalysis.SyntaxToken inKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.WithOpenParenToken(Microsoft.CodeAnalysis.SyntaxToken openParenToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.WithStatement(Microsoft.CodeAnalysis.CSharp.Syntax.StatementSyntax statement) -> Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.WithVariable(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax variable) -> Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.IsPatternExpressionSyntax`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.IsPatternExpressionSyntax.Expression.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.IsPatternExpressionSyntax.IsKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
@@ -274,12 +274,12 @@
 * [x] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.UnderscoreToken = 8491 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
 * [x] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.WhenClause = 9013 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
 * [x] `abstract Microsoft.CodeAnalysis.CSharp.Syntax.BaseMethodDeclarationSyntax.ExpressionBody.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ArrowExpressionClauseSyntax`
-* [ ] `abstract Microsoft.CodeAnalysis.CSharp.Syntax.CommonForEachStatementSyntax.CloseParenToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
-* [ ] `abstract Microsoft.CodeAnalysis.CSharp.Syntax.CommonForEachStatementSyntax.Expression.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax`
-* [ ] `abstract Microsoft.CodeAnalysis.CSharp.Syntax.CommonForEachStatementSyntax.ForEachKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
-* [ ] `abstract Microsoft.CodeAnalysis.CSharp.Syntax.CommonForEachStatementSyntax.InKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
-* [ ] `abstract Microsoft.CodeAnalysis.CSharp.Syntax.CommonForEachStatementSyntax.OpenParenToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
-* [ ] `abstract Microsoft.CodeAnalysis.CSharp.Syntax.CommonForEachStatementSyntax.Statement.get -> Microsoft.CodeAnalysis.CSharp.Syntax.StatementSyntax`
+* [x] `abstract Microsoft.CodeAnalysis.CSharp.Syntax.CommonForEachStatementSyntax.CloseParenToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `abstract Microsoft.CodeAnalysis.CSharp.Syntax.CommonForEachStatementSyntax.Expression.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax`
+* [x] `abstract Microsoft.CodeAnalysis.CSharp.Syntax.CommonForEachStatementSyntax.ForEachKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `abstract Microsoft.CodeAnalysis.CSharp.Syntax.CommonForEachStatementSyntax.InKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `abstract Microsoft.CodeAnalysis.CSharp.Syntax.CommonForEachStatementSyntax.OpenParenToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `abstract Microsoft.CodeAnalysis.CSharp.Syntax.CommonForEachStatementSyntax.Statement.get -> Microsoft.CodeAnalysis.CSharp.Syntax.StatementSyntax`
 * [ ] `override Microsoft.CodeAnalysis.CSharp.CSharpCompilationOptions.Language.get -> string`
 * [ ] `override Microsoft.CodeAnalysis.CSharp.CSharpParseOptions.Language.get -> string`
 * [ ] `override Microsoft.CodeAnalysis.CSharp.CSharpSyntaxRewriter.VisitCasePatternSwitchLabel(Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax node) -> Microsoft.CodeAnalysis.SyntaxNode`
@@ -314,20 +314,20 @@
 * [x] `override Microsoft.CodeAnalysis.CSharp.Syntax.DestructorDeclarationSyntax.ExpressionBody.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ArrowExpressionClauseSyntax`
 * [ ] `override Microsoft.CodeAnalysis.CSharp.Syntax.DiscardDesignationSyntax.Accept(Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor visitor) -> void`
 * [ ] `override Microsoft.CodeAnalysis.CSharp.Syntax.DiscardDesignationSyntax.Accept<TResult>(Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor<TResult> visitor) -> TResult`
-* [ ] `override Microsoft.CodeAnalysis.CSharp.Syntax.ForEachStatementSyntax.CloseParenToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
-* [ ] `override Microsoft.CodeAnalysis.CSharp.Syntax.ForEachStatementSyntax.Expression.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax`
-* [ ] `override Microsoft.CodeAnalysis.CSharp.Syntax.ForEachStatementSyntax.ForEachKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
-* [ ] `override Microsoft.CodeAnalysis.CSharp.Syntax.ForEachStatementSyntax.InKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
-* [ ] `override Microsoft.CodeAnalysis.CSharp.Syntax.ForEachStatementSyntax.OpenParenToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
-* [ ] `override Microsoft.CodeAnalysis.CSharp.Syntax.ForEachStatementSyntax.Statement.get -> Microsoft.CodeAnalysis.CSharp.Syntax.StatementSyntax`
+* [x] `override Microsoft.CodeAnalysis.CSharp.Syntax.ForEachStatementSyntax.CloseParenToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `override Microsoft.CodeAnalysis.CSharp.Syntax.ForEachStatementSyntax.Expression.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax`
+* [x] `override Microsoft.CodeAnalysis.CSharp.Syntax.ForEachStatementSyntax.ForEachKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `override Microsoft.CodeAnalysis.CSharp.Syntax.ForEachStatementSyntax.InKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `override Microsoft.CodeAnalysis.CSharp.Syntax.ForEachStatementSyntax.OpenParenToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `override Microsoft.CodeAnalysis.CSharp.Syntax.ForEachStatementSyntax.Statement.get -> Microsoft.CodeAnalysis.CSharp.Syntax.StatementSyntax`
 * [ ] `override Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.Accept(Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor visitor) -> void`
 * [ ] `override Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.Accept<TResult>(Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor<TResult> visitor) -> TResult`
-* [ ] `override Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.CloseParenToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
-* [ ] `override Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.Expression.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax`
-* [ ] `override Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.ForEachKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
-* [ ] `override Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.InKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
-* [ ] `override Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.OpenParenToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
-* [ ] `override Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.Statement.get -> Microsoft.CodeAnalysis.CSharp.Syntax.StatementSyntax`
+* [x] `override Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.CloseParenToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `override Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.Expression.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax`
+* [x] `override Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.ForEachKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `override Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.InKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `override Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.OpenParenToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `override Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax.Statement.get -> Microsoft.CodeAnalysis.CSharp.Syntax.StatementSyntax`
 * [ ] `override Microsoft.CodeAnalysis.CSharp.Syntax.IsPatternExpressionSyntax.Accept(Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor visitor) -> void`
 * [ ] `override Microsoft.CodeAnalysis.CSharp.Syntax.IsPatternExpressionSyntax.Accept<TResult>(Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor<TResult> visitor) -> TResult`
 * [ ] `override Microsoft.CodeAnalysis.CSharp.Syntax.LocalFunctionStatementSyntax.Accept(Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor visitor) -> void`
