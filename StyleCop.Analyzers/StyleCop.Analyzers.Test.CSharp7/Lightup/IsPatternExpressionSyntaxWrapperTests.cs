@@ -37,9 +37,10 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             Assert.Same(syntaxNode, isPatternExpressionSyntax.SyntaxNode);
             Assert.Same(syntaxNode.Expression, isPatternExpressionSyntax.Expression);
             Assert.True(syntaxNode.IsKeyword.IsEquivalentTo(isPatternExpressionSyntax.IsKeyword));
-            Assert.Same(syntaxNode.Pattern, isPatternExpressionSyntax.Pattern);
+            Assert.Same(syntaxNode.Pattern, isPatternExpressionSyntax.Pattern.SyntaxNode);
+            Assert.Equal(SyntaxKind.NullLiteralExpression, ((ConstantPatternSyntax)isPatternExpressionSyntax.Pattern).Expression.Kind());
 
-            var newExpression = SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Token(default(SyntaxTriviaList), SyntaxKind.NumericLiteralToken, "0", "0", default(SyntaxTriviaList)));
+            var newExpression = SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal(0));
             var modifiedExpression = isPatternExpressionSyntax.WithExpression(newExpression);
             Assert.NotNull(modifiedExpression.SyntaxNode);
             Assert.NotSame(syntaxNode.Expression, modifiedExpression.Expression);
@@ -54,8 +55,8 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var newPattern = SyntaxFactory.ConstantPattern(newExpression);
             var modifiedPattern = isPatternExpressionSyntax.WithPattern((PatternSyntaxWrapper)newPattern);
             Assert.NotNull(modifiedPattern.SyntaxNode);
-            Assert.Equal(SyntaxKind.DefaultExpression, modifiedExpression.Expression.Kind());
-            Assert.Equal(SyntaxKind.NumericLiteralExpression, modifiedPattern.Pattern.SyntaxNode.Kind());
+            Assert.Equal(SyntaxKind.DefaultExpression, modifiedPattern.Expression.Kind());
+            Assert.Equal(SyntaxKind.NumericLiteralExpression, ((ConstantPatternSyntax)modifiedPattern.Pattern).Expression.Kind());
         }
 
         [Fact]
