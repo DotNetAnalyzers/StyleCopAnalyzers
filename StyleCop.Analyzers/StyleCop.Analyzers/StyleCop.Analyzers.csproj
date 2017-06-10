@@ -176,6 +176,40 @@
     <Compile Include="LightJson\Serialization\JsonWriter.cs" />
     <Compile Include="LightJson\Serialization\TextPosition.cs" />
     <Compile Include="LightJson\Serialization\TextScanner.cs" />
+    <Compile Include="Lightup\AccessorDeclarationSyntaxExtensions.cs" />
+    <Compile Include="Lightup\BaseMethodDeclarationSyntaxExtensions.cs" />
+    <Compile Include="Lightup\CasePatternSwitchLabelSyntaxWrapper.cs" />
+    <Compile Include="Lightup\CommonForEachStatementSyntaxWrapper.cs" />
+    <Compile Include="Lightup\ConstantPatternSyntaxWrapper.cs" />
+    <Compile Include="Lightup\ConstructorDeclarationSyntaxExtensions.cs" />
+    <Compile Include="Lightup\DeclarationExpressionSyntaxWrapper.cs" />
+    <Compile Include="Lightup\DeclarationPatternSyntaxWrapper.cs" />
+    <Compile Include="Lightup\DestructorDeclarationSyntaxExtensions.cs" />
+    <Compile Include="Lightup\DiscardDesignationSyntaxWrapper.cs" />
+    <Compile Include="Lightup\ForEachVariableStatementSyntaxWrapper.cs" />
+    <Compile Include="Lightup\IsPatternExpressionSyntaxWrapper.cs" />
+    <Compile Include="Lightup\ISyntaxWrapper`1.cs" />
+    <Compile Include="Lightup\LanguageVersionEx.cs" />
+    <Compile Include="Lightup\LightupHelpers.cs" />
+    <Compile Include="Lightup\LocalFunctionStatementSyntaxWrapper.cs" />
+    <Compile Include="Lightup\MethodKindEx.cs" />
+    <Compile Include="Lightup\ParenthesizedVariableDesignationSyntaxWrapper.cs" />
+    <Compile Include="Lightup\PatternSyntaxWrapper.cs" />
+    <Compile Include="Lightup\RefExpressionSyntaxWrapper.cs" />
+    <Compile Include="Lightup\RefTypeSyntaxWrapper.cs" />
+    <Compile Include="Lightup\SeparatedSyntaxListWrapper`1.cs" />
+    <Compile Include="Lightup\SingleVariableDesignationSyntaxWrapper.cs" />
+    <Compile Include="Lightup\SymbolDisplayLocalOptionsEx.cs" />
+    <Compile Include="Lightup\SymbolDisplayMemberOptionsEx.cs" />
+    <Compile Include="Lightup\SymbolKindEx.cs" />
+    <Compile Include="Lightup\SyntaxKindEx.cs" />
+    <Compile Include="Lightup\SyntaxWrapper`1.cs" />
+    <Compile Include="Lightup\ThrowExpressionSyntaxWrapper.cs" />
+    <Compile Include="Lightup\TupleElementSyntaxWrapper.cs" />
+    <Compile Include="Lightup\TupleExpressionSyntaxWrapper.cs" />
+    <Compile Include="Lightup\TupleTypeSyntaxWrapper.cs" />
+    <Compile Include="Lightup\VariableDesignationSyntaxWrapper.cs" />
+    <Compile Include="Lightup\WhenClauseSyntaxWrapper.cs" />
     <Compile Include="LinqHelpers\SyntaxTriviaListEnumerable.cs" />
     <Compile Include="MaintainabilityRules\MaintainabilityResources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -361,6 +395,7 @@
     <None Include="..\StyleCop.Analyzers.ruleset">
       <Link>StyleCop.Analyzers.ruleset</Link>
     </None>
+    <None Include="Lightup\CSharp7.md" />
     <None Include="packages.config" />
     <None Include="Settings\stylecop.schema.json" />
   </ItemGroup>
