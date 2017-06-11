@@ -801,7 +801,7 @@ public class Foo : Exception
         }
 
         /// <summary>
-        /// Verifies that unary plus expression will not trigger any diagnostics.
+        /// Verifies that the <c>=&gt;</c> operator for expression-bodied members triggers diagnostics as expected.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
