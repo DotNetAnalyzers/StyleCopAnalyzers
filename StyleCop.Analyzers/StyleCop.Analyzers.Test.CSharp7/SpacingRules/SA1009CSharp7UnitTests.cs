@@ -3,12 +3,8 @@
 
 namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 {
-    using System;
-    using System.Linq;
-    using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using StyleCop.Analyzers.Test.SpacingRules;
     using TestHelper;
     using Xunit;
@@ -91,15 +87,6 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
-        }
-
-        protected override Solution CreateSolution(ProjectId projectId, string language)
-        {
-            Solution solution = base.CreateSolution(projectId, language);
-            Assembly systemRuntime = AppDomain.CurrentDomain.GetAssemblies().Single(x => x.GetName().Name == "System.Runtime");
-            return solution
-                .AddMetadataReference(projectId, MetadataReference.CreateFromFile(systemRuntime.Location))
-                .AddMetadataReference(projectId, MetadataReference.CreateFromFile(typeof(ValueTuple).Assembly.Location));
         }
     }
 }

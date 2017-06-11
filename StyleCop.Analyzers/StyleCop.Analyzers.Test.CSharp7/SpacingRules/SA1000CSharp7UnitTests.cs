@@ -3,11 +3,7 @@
 
 namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 {
-    using System;
-    using System.Linq;
-    using System.Reflection;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using StyleCop.Analyzers.Test.SpacingRules;
     using TestHelper;
     using Xunit;
@@ -74,15 +70,6 @@ ref @Int32 Call(ref @Int32 p)
             };
 
             await this.TestKeywordStatementAsync(statementWithoutSpace, expected, statementWithSpace).ConfigureAwait(false);
-        }
-
-        protected override Solution CreateSolution(ProjectId projectId, string language)
-        {
-            Solution solution = base.CreateSolution(projectId, language);
-            Assembly systemRuntime = AppDomain.CurrentDomain.GetAssemblies().Single(x => x.GetName().Name == "System.Runtime");
-            return solution
-                .AddMetadataReference(projectId, MetadataReference.CreateFromFile(systemRuntime.Location))
-                .AddMetadataReference(projectId, MetadataReference.CreateFromFile(typeof(ValueTuple).Assembly.Location));
         }
     }
 }

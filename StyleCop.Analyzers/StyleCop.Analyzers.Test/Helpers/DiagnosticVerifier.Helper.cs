@@ -125,6 +125,16 @@ namespace TestHelper
                 .AddMetadataReference(projectId, MetadataReferences.CSharpSymbolsReference)
                 .AddMetadataReference(projectId, MetadataReferences.CodeAnalysisReference);
 
+            if (MetadataReferences.SystemRuntimeReference != null)
+            {
+                solution = solution.AddMetadataReference(projectId, MetadataReferences.SystemRuntimeReference);
+            }
+
+            if (MetadataReferences.SystemValueTupleReference != null)
+            {
+                solution = solution.AddMetadataReference(projectId, MetadataReferences.SystemValueTupleReference);
+            }
+
             solution.Workspace.Options =
                 solution.Workspace.Options
                 .WithChangedOption(FormattingOptions.IndentationSize, language, this.IndentationSize)
