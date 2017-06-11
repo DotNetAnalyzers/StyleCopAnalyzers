@@ -10,8 +10,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using SpacingRules;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
+    using StyleCop.Analyzers.SpacingRules;
 
     /// <summary>
     /// The opening parenthesis or brace in a call to a C# method or indexer, or the declaration of a method or
@@ -51,6 +52,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<SyntaxNodeAnalysisContext> MethodDeclarationAction = HandleMethodDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> LocalFunctionStatementAction = HandleLocalFunctionStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> ConstructorDeclarationAction = HandleConstructorDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> InvocationExpressionAction = HandleInvocationExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> ObjectCreationExpressionAction = HandleObjectCreationExpression;
@@ -74,6 +76,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.EnableConcurrentExecution();
 
             context.RegisterSyntaxNodeAction(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(LocalFunctionStatementAction, SyntaxKindEx.LocalFunctionStatement);
             context.RegisterSyntaxNodeAction(ConstructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
             context.RegisterSyntaxNodeAction(InvocationExpressionAction, SyntaxKind.InvocationExpression);
             context.RegisterSyntaxNodeAction(ObjectCreationExpressionAction, SyntaxKind.ObjectCreationExpression);
@@ -310,6 +313,18 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 bool preserveLayout = methodDeclaration.ParameterList.Parameters.Any();
                 CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, methodDeclaration.ParameterList.OpenParenToken, preserveLayout);
+            }
+        }
+
+        private static void HandleLocalFunctionStatement(SyntaxNodeAnalysisContext context)
+        {
+            var localFunctionStatement = (LocalFunctionStatementSyntaxWrapper)context.Node;
+            if (localFunctionStatement.ParameterList != null
+                && !localFunctionStatement.ParameterList.OpenParenToken.IsMissing
+                && !localFunctionStatement.Identifier.IsMissing)
+            {
+                bool preserveLayout = localFunctionStatement.ParameterList.Parameters.Any();
+                CheckIfLocationOfPreviousTokenAndOpenTokenAreTheSame(context, localFunctionStatement.ParameterList.OpenParenToken, preserveLayout);
             }
         }
 
