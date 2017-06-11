@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 {
+    using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.Test.SpacingRules;
     using TestHelper;
@@ -70,6 +71,60 @@ ref @Int32 Call(ref @Int32 p)
             };
 
             await this.TestKeywordStatementAsync(statementWithoutSpace, expected, statementWithSpace).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that spacing for tuple expressions is handled properly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        /// <seealso cref="SA1008CSharp7UnitTests.TestTupleExpressionsAsync"/>
+        [Fact]
+        public async Task TestReturnTupleExpressionsAsync()
+        {
+            var testCode = @"using System.Collections.Generic;
+
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod()
+        {
+            // Returns (leading spaces after keyword checked in SA1000, not SA1008)
+            (int, int) LocalFunction1() { return( 1, 2); }
+            (int, int) LocalFunction2() { return(1, 2); }
+            (int, int) LocalFunction3() { return ( 1, 2); }
+        }
+    }
+}
+";
+
+            var fixedCode = @"using System.Collections.Generic;
+
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod()
+        {
+            // Returns (leading spaces after keyword checked in SA1000, not SA1008)
+            (int, int) LocalFunction1() { return ( 1, 2); }
+            (int, int) LocalFunction2() { return (1, 2); }
+            (int, int) LocalFunction3() { return ( 1, 2); }
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expectedDiagnostics =
+            {
+                // Returns
+                this.CSharpDiagnostic().WithArguments("return", string.Empty, "followed").WithLocation(10, 43),
+                this.CSharpDiagnostic().WithArguments("return", string.Empty, "followed").WithLocation(11, 43),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
     }
 }

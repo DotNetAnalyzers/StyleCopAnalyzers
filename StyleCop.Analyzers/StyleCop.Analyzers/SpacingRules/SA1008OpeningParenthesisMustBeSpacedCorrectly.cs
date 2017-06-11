@@ -11,6 +11,7 @@ namespace StyleCop.Analyzers.SpacingRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// An opening parenthesis within a C# statement is not spaced correctly.
@@ -201,7 +202,12 @@ namespace StyleCop.Analyzers.SpacingRules
                 haveLeadingSpace = false;
                 break;
 
+            case SyntaxKindEx.ParenthesizedVariableDesignation:
+                haveLeadingSpace = true;
+                break;
+
             case SyntaxKind.ParenthesizedExpression:
+            case SyntaxKindEx.TupleExpression:
                 if (prevToken.Parent.IsKind(SyntaxKind.Interpolation))
                 {
                     haveLeadingSpace = false;
@@ -227,6 +233,13 @@ namespace StyleCop.Analyzers.SpacingRules
             case SyntaxKind.ParameterList:
                 var partOfLambdaExpression = token.Parent.Parent.IsKind(SyntaxKind.ParenthesizedLambdaExpression);
                 haveLeadingSpace = partOfLambdaExpression;
+                break;
+
+            case SyntaxKindEx.TupleType:
+                // Comma covers tuple types in parameters and nested within other tuple types.
+                // Return types are handled by a helper.
+                haveLeadingSpace = prevToken.IsKind(SyntaxKind.CommaToken)
+                    || ((TypeSyntax)token.Parent).IsReturnType();
                 break;
             }
 
