@@ -33,6 +33,10 @@ namespace N1
         public event EventHandler E { add=>e += value; remove=>e -= value; } // Event accessors
         public int Answer { get=>42; set=>x = 2; } // Property accessors
         public int this[int index] { get=>42; set=>x = value; } // Indexer accessors
+        public void Method()
+        {
+            int LocalFunction()=>42; // Local functions
+        }
     }
 }
 ";
@@ -49,6 +53,10 @@ namespace N1
         public event EventHandler E { add => e += value; remove => e -= value; } // Event accessors
         public int Answer { get => 42; set => x = 2; } // Property accessors
         public int this[int index] { get => 42; set => x = value; } // Indexer accessors
+        public void Method()
+        {
+            int LocalFunction() => 42; // Local functions
+        }
     }
 }
 ";
@@ -74,6 +82,9 @@ namespace N1
                 this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(13, 41).WithArguments("=>"),
                 this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(13, 50).WithArguments("=>"),
                 this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(13, 50).WithArguments("=>"),
+
+                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(16, 32).WithArguments("=>"),
+                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(16, 32).WithArguments("=>"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
