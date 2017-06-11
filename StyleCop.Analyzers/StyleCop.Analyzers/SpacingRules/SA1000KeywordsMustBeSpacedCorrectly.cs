@@ -104,7 +104,6 @@ namespace StyleCop.Analyzers.SpacingRules
                 case SyntaxKind.StackAllocKeyword:
                 case SyntaxKind.SwitchKeyword:
                 case SyntaxKind.UsingKeyword:
-                case SyntaxKind.TypeVarKeyword:
                 case SyntaxKind.WhereKeyword:
                 case SyntaxKind.WhileKeyword:
                 case SyntaxKind.YieldKeyword:
