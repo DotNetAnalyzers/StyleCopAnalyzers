@@ -223,6 +223,8 @@ class ClassName
         [InlineData("(int)1_000_000_000_000_000_000L", "-1486618624")]
         [InlineData("(int)0xFFFF_FFFF_FFFF_FFFFL", "-1")]
         [InlineData("(uint)0xFFFF_FFFF_FFFF_FFFFL", "4294967295U")]
+        [InlineData("(int)0b11111111_11111111_11111111_11111111_11111111_11111111_11111111_11111111L", "-1")]
+        [InlineData("(uint)0b11111111_11111111_11111111_11111111_11111111_11111111_11111111_11111111L", "4294967295U")]
         public async Task TestCastsWithSeparatorsInUncheckedEnviromentShouldPreserveValueAsync(string castExpression, string correctLiteral)
         {
             var testCode = $@"
