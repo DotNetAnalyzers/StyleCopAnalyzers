@@ -58,6 +58,41 @@ public class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies spacing around a <c>&gt;</c> character in tuple types.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        /// <seealso cref="SA1001CSharp7UnitTests.TestClosingGenericBracketsInTupleTypesNotFollowedBySpaceAsync"/>
+        /// <seealso cref="SA1015CSharp7UnitTests.TestClosingGenericBracketsInTupleTypesNotPrecededBySpaceAsync"/>
+        [Fact]
+        public async Task TestClosingGenericBracketsInTupleTypesNotFollowedBySpaceAsync()
+        {
+            const string testCode = @"using System;
+
+public class Foo
+{
+    public void TestMethod()
+    {
+        (Func<int > , Func<int > ) value = (null, null);
+    }
+}";
+            const string fixedCode = @"using System;
+
+public class Foo
+{
+    public void TestMethod()
+    {
+        (Func<int > , Func<int >) value = (null, null);
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 34).WithArguments(" not", "preceded");
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override Solution CreateSolution(ProjectId projectId, string language)
         {
             Solution solution = base.CreateSolution(projectId, language);
