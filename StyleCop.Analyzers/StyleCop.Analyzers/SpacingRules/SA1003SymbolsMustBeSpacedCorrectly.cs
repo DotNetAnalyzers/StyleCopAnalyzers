@@ -128,11 +128,7 @@ namespace StyleCop.Analyzers.SpacingRules
         private static readonly Action<SyntaxNodeAnalysisContext> CastExpressionAction = HandleCastExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> EqualsValueClauseAction = HandleEqualsValueClause;
         private static readonly Action<SyntaxNodeAnalysisContext> LambdaExpressionAction = HandleLambdaExpression;
-        private static readonly Action<SyntaxNodeAnalysisContext> PropertyDeclarationAction = HandlePropertyDeclaration;
-        private static readonly Action<SyntaxNodeAnalysisContext> MethodDeclarationAction = HandleMethodDeclaration;
-        private static readonly Action<SyntaxNodeAnalysisContext> OperatorDeclarationAction = HandleOperatorDeclaration;
-        private static readonly Action<SyntaxNodeAnalysisContext> ConversionOperatorDeclarationAction = HandleConversionOperatorDeclaration;
-        private static readonly Action<SyntaxNodeAnalysisContext> IndexerDeclarationAction = HandleIndexerDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> ArrowExpressionClauseAction = HandleArrowExpressionClause;
 
         /// <summary>
         /// Gets the descriptor for prefix unary expression that may not be followed by a comment.
@@ -208,11 +204,7 @@ namespace StyleCop.Analyzers.SpacingRules
             context.RegisterSyntaxNodeAction(CastExpressionAction, SyntaxKind.CastExpression);
             context.RegisterSyntaxNodeAction(EqualsValueClauseAction, SyntaxKind.EqualsValueClause);
             context.RegisterSyntaxNodeAction(LambdaExpressionAction, SyntaxKinds.LambdaExpression);
-            context.RegisterSyntaxNodeAction(PropertyDeclarationAction, SyntaxKind.PropertyDeclaration);
-            context.RegisterSyntaxNodeAction(IndexerDeclarationAction, SyntaxKind.IndexerDeclaration);
-            context.RegisterSyntaxNodeAction(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeAction(OperatorDeclarationAction, SyntaxKind.OperatorDeclaration);
-            context.RegisterSyntaxNodeAction(ConversionOperatorDeclarationAction, SyntaxKind.ConversionOperatorDeclaration);
+            context.RegisterSyntaxNodeAction(ArrowExpressionClauseAction, SyntaxKind.ArrowExpressionClause);
         }
 
         private static void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
@@ -350,42 +342,10 @@ namespace StyleCop.Analyzers.SpacingRules
             CheckToken(context, lambdaExpression.ArrowToken, true, true, true);
         }
 
-        private static void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleArrowExpressionClause(SyntaxNodeAnalysisContext context)
         {
-            var propertyDeclaration = (PropertyDeclarationSyntax)context.Node;
-            HandleArrowExpressionClause(context, propertyDeclaration.ExpressionBody);
-        }
-
-        private static void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            var indexerDeclaration = (IndexerDeclarationSyntax)context.Node;
-            HandleArrowExpressionClause(context, indexerDeclaration.ExpressionBody);
-        }
-
-        private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            var methodDeclaration = (MethodDeclarationSyntax)context.Node;
-            HandleArrowExpressionClause(context, methodDeclaration.ExpressionBody);
-        }
-
-        private static void HandleOperatorDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            var operatorDeclaration = (OperatorDeclarationSyntax)context.Node;
-            HandleArrowExpressionClause(context, operatorDeclaration.ExpressionBody);
-        }
-
-        private static void HandleConversionOperatorDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            var conversionOperatorDeclaration = (ConversionOperatorDeclarationSyntax)context.Node;
-            HandleArrowExpressionClause(context, conversionOperatorDeclaration.ExpressionBody);
-        }
-
-        private static void HandleArrowExpressionClause(SyntaxNodeAnalysisContext context, ArrowExpressionClauseSyntax arrowExpressionClause)
-        {
-            if (arrowExpressionClause != null)
-            {
-                CheckToken(context, arrowExpressionClause.ArrowToken, true, true, true);
-            }
+            ArrowExpressionClauseSyntax arrowExpressionClause = (ArrowExpressionClauseSyntax)context.Node;
+            CheckToken(context, arrowExpressionClause.ArrowToken, true, true, true);
         }
 
         private static void CheckToken(SyntaxNodeAnalysisContext context, SyntaxToken token, bool withLeadingWhitespace, bool allowAtEndOfLine, bool withTrailingWhitespace, string tokenText = null)
