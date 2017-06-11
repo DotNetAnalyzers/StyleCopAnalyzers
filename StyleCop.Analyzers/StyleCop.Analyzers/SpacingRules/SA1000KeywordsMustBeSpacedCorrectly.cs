@@ -19,9 +19,10 @@ namespace StyleCop.Analyzers.SpacingRules
     /// <para>The following C# keywords must always be followed by a single space: <strong>catch</strong>,
     /// <strong>fixed</strong>, <strong>for</strong>, <strong>foreach</strong>, <strong>from</strong>,
     /// <strong>group</strong>, <strong>if</strong>, <strong>in</strong>, <strong>into</strong>, <strong>join</strong>,
-    /// <strong>let</strong>, <strong>lock</strong>, <strong>orderby</strong>, <strong>return</strong>,
-    /// <strong>select</strong>, <strong>stackalloc</strong>, <strong>switch</strong>, <strong>throw</strong>,
-    /// <strong>using</strong>, <strong>where</strong>, <strong>while</strong>, <strong>yield</strong>.</para>
+    /// <strong>let</strong>, <strong>lock</strong>, <strong>orderby</strong>, <strong>out</strong>,
+    /// <strong>ref</strong>, <strong>return</strong>, <strong>select</strong>, <strong>stackalloc</strong>,
+    /// <strong>switch</strong>, <strong>throw</strong>, <strong>using</strong>, <strong>var</strong>,
+    /// <strong>where</strong>, <strong>while</strong>, <strong>yield</strong>.</para>
     ///
     /// <para>The following keywords must not be followed by any space: <strong>checked</strong>,
     /// <strong>default</strong>, <strong>sizeof</strong>, <strong>typeof</strong>, <strong>unchecked</strong>.</para>
@@ -46,6 +47,7 @@ namespace StyleCop.Analyzers.SpacingRules
 
         private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
         private static readonly Action<SyntaxNodeAnalysisContext> InvocationExpressionAction = HandleInvocationExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> IdentifierNameAction = HandleIdentifierName;
         private static readonly ReportDiagnosticCallback<SyntaxTreeAnalysisContext> ReportSyntaxTreeDiagnostic =
             (ref SyntaxTreeAnalysisContext context, Diagnostic diagnostic) => context.ReportDiagnostic(diagnostic);
 
@@ -69,6 +71,9 @@ namespace StyleCop.Analyzers.SpacingRules
 
             // handle nameof (which appears as an invocation expression??)
             context.RegisterSyntaxNodeAction(InvocationExpressionAction, SyntaxKind.InvocationExpression);
+
+            // handle var (which appears as an identifier name??)
+            context.RegisterSyntaxNodeAction(IdentifierNameAction, SyntaxKind.IdentifierName);
         }
 
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -93,10 +98,13 @@ namespace StyleCop.Analyzers.SpacingRules
                 case SyntaxKind.LetKeyword:
                 case SyntaxKind.LockKeyword:
                 case SyntaxKind.OrderByKeyword:
+                case SyntaxKind.OutKeyword:
+                case SyntaxKind.RefKeyword:
                 case SyntaxKind.SelectKeyword:
                 case SyntaxKind.StackAllocKeyword:
                 case SyntaxKind.SwitchKeyword:
                 case SyntaxKind.UsingKeyword:
+                case SyntaxKind.TypeVarKeyword:
                 case SyntaxKind.WhereKeyword:
                 case SyntaxKind.WhileKeyword:
                 case SyntaxKind.YieldKeyword:
@@ -168,8 +176,20 @@ namespace StyleCop.Analyzers.SpacingRules
             }
         }
 
+        private static void HandleIdentifierName(SyntaxNodeAnalysisContext context)
+        {
+            IdentifierNameSyntax identifierNameSyntax = (IdentifierNameSyntax)context.Node;
+            if (identifierNameSyntax.IsVar)
+            {
+                HandleRequiredSpaceToken(ref context, identifierNameSyntax.Identifier);
+            }
+        }
+
         private static void HandleRequiredSpaceToken(ref SyntaxTreeAnalysisContext context, SyntaxToken token)
             => HandleRequiredSpaceToken(ReportSyntaxTreeDiagnostic, ref context, token);
+
+        private static void HandleRequiredSpaceToken(ref SyntaxNodeAnalysisContext context, SyntaxToken token)
+            => HandleRequiredSpaceToken(ReportSyntaxNodeDiagnostic, ref context, token);
 
         private static void HandleRequiredSpaceToken<TContext>(ReportDiagnosticCallback<TContext> reportDiagnostic, ref TContext context, SyntaxToken token)
         {

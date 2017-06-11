@@ -838,6 +838,20 @@ default:
         }
 
         [Fact]
+        public async Task TestVarKeywordAsync()
+        {
+            string statementWithoutSpace = @"var@x = ""test"";";
+
+            string statementWithSpace = @"var @x = ""test"";";
+
+            await this.TestKeywordStatementAsync(statementWithSpace, EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("var", string.Empty, "followed").WithLocation(12, 13);
+
+            await this.TestKeywordStatementAsync(statementWithoutSpace, expected, statementWithSpace).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestMissingSelectTokenAsync()
         {
             string testCode = @"
@@ -900,12 +914,12 @@ class ClassName
             return new TokenSpacingCodeFixProvider();
         }
 
-        private Task TestKeywordStatementAsync(string statement, DiagnosticResult expected, string fixedStatement, string returnType = "void", bool asyncMethod = false)
+        protected Task TestKeywordStatementAsync(string statement, DiagnosticResult expected, string fixedStatement, string returnType = "void", bool asyncMethod = false)
         {
             return this.TestKeywordStatementAsync(statement, new[] { expected }, fixedStatement, returnType, asyncMethod);
         }
 
-        private async Task TestKeywordStatementAsync(string statement, DiagnosticResult[] expected, string fixedStatement, string returnType = "void", bool asyncMethod = false)
+        protected async Task TestKeywordStatementAsync(string statement, DiagnosticResult[] expected, string fixedStatement, string returnType = "void", bool asyncMethod = false)
         {
             string testCodeFormat = @"
 using System;
