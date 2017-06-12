@@ -302,7 +302,7 @@ namespace Test
         public async Task TestPreprocessorDirectivesAsync()
         {
             var testCode = @"using System;
-using Microsoft.VisualStudio;
+using Microsoft.Win32;
 using MyList = System.Collections.Generic.List<int>;
 using Microsoft.CodeAnalysis;
 
@@ -321,7 +321,7 @@ using System.Collections;
 
             var fixedTestCode = @"using System;
 using Microsoft.CodeAnalysis;
-using Microsoft.VisualStudio;
+using Microsoft.Win32;
 using MyList = System.Collections.Generic.List<int>;
 
 #if true
