@@ -12,6 +12,7 @@ namespace StyleCop.Analyzers.Helpers
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Rename;
+    using StyleCop.Analyzers.Lightup;
 
     internal static class RenameHelper
     {
@@ -158,6 +159,8 @@ namespace StyleCop.Analyzers.Helpers
                 case SyntaxKind.UsingDirective:
                 case SyntaxKind.LabeledStatement:
                 case SyntaxKind.AnonymousObjectMemberDeclarator:
+                case SyntaxKindEx.LocalFunctionStatement:
+                case SyntaxKindEx.SingleVariableDesignation:
                     return parent;
 
                 default:
@@ -189,6 +192,25 @@ namespace StyleCop.Analyzers.Helpers
             {
                 get;
                 private set;
+            }
+
+            public override void Visit(SyntaxNode node)
+            {
+                switch (node.Kind())
+                {
+                case SyntaxKindEx.LocalFunctionStatement:
+                    this.Found |= ((LocalFunctionStatementSyntaxWrapper)node).Identifier.ValueText == this.name;
+                    break;
+
+                case SyntaxKindEx.SingleVariableDesignation:
+                    this.Found |= ((SingleVariableDesignationSyntaxWrapper)node).Identifier.ValueText == this.name;
+                    break;
+
+                default:
+                    break;
+                }
+
+                base.Visit(node);
             }
 
             public override void VisitVariableDeclarator(VariableDeclaratorSyntax node)

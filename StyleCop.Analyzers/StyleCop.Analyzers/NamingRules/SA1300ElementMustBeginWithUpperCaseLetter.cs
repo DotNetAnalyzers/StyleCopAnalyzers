@@ -11,6 +11,7 @@ namespace StyleCop.Analyzers.NamingRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// The name of a C# element does not begin with an upper-case letter.
@@ -53,6 +54,7 @@ namespace StyleCop.Analyzers.NamingRules
         private static readonly Action<SyntaxNodeAnalysisContext> EventDeclarationAction = HandleEventDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> EventFieldDeclarationAction = HandleEventFieldDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> MethodDeclarationAction = HandleMethodDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> LocalFunctionStatementAction = HandleLocalFunctionStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> PropertyDeclarationAction = HandlePropertyDeclaration;
 
         /// <inheritdoc/>
@@ -76,6 +78,7 @@ namespace StyleCop.Analyzers.NamingRules
             context.RegisterSyntaxNodeAction(EventDeclarationAction, SyntaxKind.EventDeclaration);
             context.RegisterSyntaxNodeAction(EventFieldDeclarationAction, SyntaxKind.EventFieldDeclaration);
             context.RegisterSyntaxNodeAction(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(LocalFunctionStatementAction, SyntaxKindEx.LocalFunctionStatement);
             context.RegisterSyntaxNodeAction(PropertyDeclarationAction, SyntaxKind.PropertyDeclaration);
         }
 
@@ -177,6 +180,12 @@ namespace StyleCop.Analyzers.NamingRules
             }
 
             CheckElementNameToken(context, methodDeclaration.Identifier);
+        }
+
+        private static void HandleLocalFunctionStatement(SyntaxNodeAnalysisContext context)
+        {
+            var localFunctionStatement = (LocalFunctionStatementSyntaxWrapper)context.Node;
+            CheckElementNameToken(context, localFunctionStatement.Identifier);
         }
 
         private static void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
