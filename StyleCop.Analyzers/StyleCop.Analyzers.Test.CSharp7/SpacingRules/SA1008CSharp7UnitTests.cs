@@ -702,5 +702,99 @@ namespace TestNamespace
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that spacing for <c>new</c> expressions for an array of a tuple type is handled correctly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        /// <seealso cref="SA1000CSharp7UnitTests.TestNewTupleArrayAsync"/>
+        [Fact]
+        public async Task TestNewTupleArrayAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod()
+        {
+            var x = new( int, int)[0];
+            var y = new(int, int)[0];
+            var z = new ( int, int)[0];
+        }
+    }
+}
+";
+
+            var fixedCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod()
+        {
+            var x = new(int, int)[0];
+            var y = new(int, int)[0];
+            var z = new (int, int)[0];
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expectedDiagnostics =
+            {
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(7, 24),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(9, 25),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that spacing for <c>foreach</c> expressions using tuple deconstruction is handled properly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        /// <seealso cref="SA1000CSharp7UnitTests.TestForEachVariableStatementAsync"/>
+        [Fact]
+        public async Task TestForEachVariableStatementAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod()
+        {
+            foreach( var (x, y) in new (int, int)[0]) { }
+            foreach(var (x, y) in new (int, int)[0]) { }
+            foreach ( var (x, y) in new (int, int)[0]) { }
+        }
+    }
+}
+";
+
+            var fixedCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod()
+        {
+            foreach(var (x, y) in new (int, int)[0]) { }
+            foreach(var (x, y) in new (int, int)[0]) { }
+            foreach (var (x, y) in new (int, int)[0]) { }
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expectedDiagnostics =
+            {
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(7, 20),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(9, 21),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
     }
 }

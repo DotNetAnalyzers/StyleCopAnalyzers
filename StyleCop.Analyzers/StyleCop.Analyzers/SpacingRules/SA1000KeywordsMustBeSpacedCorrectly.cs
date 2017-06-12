@@ -241,22 +241,39 @@ namespace StyleCop.Analyzers.SpacingRules
                 return;
             }
 
-            // if the next token is [ or (, then treat as disallowed
+            bool needSpace;
             SyntaxToken nextToken = token.GetNextToken();
-            if (nextToken.IsKind(SyntaxKind.OpenBracketToken) || nextToken.IsKind(SyntaxKind.OpenParenToken))
+            switch (nextToken.Kind())
             {
+            case SyntaxKind.OpenBracketToken:
                 if (token.Parent.IsKind(SyntaxKind.ImplicitArrayCreationExpression))
                 {
                     // This is handled by SA1026
                     return;
                 }
 
-                HandleDisallowedSpaceToken(ref context, token);
-                return;
+                // Disallowed, but can we hit this??
+                needSpace = false;
+                break;
+
+            case SyntaxKind.OpenParenToken:
+                // Disallowed for new() constraint, but otherwise allowed for tuple types
+                needSpace = !token.Parent.IsKind(SyntaxKind.ConstructorConstraint);
+                break;
+
+            default:
+                needSpace = true;
+                break;
             }
 
-            // otherwise treat as required
-            HandleRequiredSpaceToken(ref context, token);
+            if (!needSpace)
+            {
+                HandleDisallowedSpaceToken(ref context, token);
+            }
+            else
+            {
+                HandleRequiredSpaceToken(ref context, token);
+            }
         }
 
         private static void HandleReturnKeywordToken(ref SyntaxTreeAnalysisContext context, SyntaxToken token)
