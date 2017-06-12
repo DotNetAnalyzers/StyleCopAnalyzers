@@ -195,7 +195,7 @@ namespace Bar
         {
             var testCode = @"
 using System;
-using Microsoft.VisualStudio;
+using Microsoft.Win32;
 using MyList = System.Collections.Generic.List<int>;
 using static System.Tuple;
 
@@ -209,7 +209,7 @@ using static System.Math;
 
             var fixedTestCode = @"
 using System;
-using Microsoft.VisualStudio;
+using Microsoft.Win32;
 using static System.Tuple;
 using MyList = System.Collections.Generic.List<int>;
 
