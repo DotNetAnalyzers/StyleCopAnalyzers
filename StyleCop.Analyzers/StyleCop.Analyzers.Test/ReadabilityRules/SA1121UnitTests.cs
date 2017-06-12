@@ -663,7 +663,8 @@ public class Foo
         [MemberData(nameof(AllTypes))]
         public async Task TestDocumentationCommentDirectReferenceCodeFixAsync(string predefined, string fullName)
         {
-            string testCode = @"namespace System {{
+            string testCode = @"#pragma warning disable CS0419 // Ambiguous reference in cref attribute
+namespace System {{
 /// <seealso cref=""{0}""/>
 public class Foo
 {{
