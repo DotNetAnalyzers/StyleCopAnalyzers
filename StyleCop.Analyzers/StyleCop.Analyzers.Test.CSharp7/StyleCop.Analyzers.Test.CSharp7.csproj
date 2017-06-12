@@ -340,6 +340,8 @@
     <Compile Include="SpacingRules\SA1027CSharp7UnitTests.cs" />
     <Compile Include="SpacingRules\SA1027UseTabsCSharp7UnitTests.cs" />
     <Compile Include="SpacingRules\SA1028CSharp7UnitTests.cs" />
+    <Compile Include="SpecialRules\SA0001CSharp7UnitTests.cs" />
+    <Compile Include="SpecialRules\SA0002CSharp7UnitTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\build\keys\TestingKey.snk">
