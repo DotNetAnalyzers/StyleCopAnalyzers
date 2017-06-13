@@ -259,6 +259,7 @@
     <Compile Include="Lightup\PatternSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\SingleVariableDesignationSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\SyntaxWrapperTests.cs" />
+    <Compile Include="Lightup\ThrowExpressionSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\VariableDesignationSyntaxWrapperTests.cs" />
     <Compile Include="MaintainabilityRules\SA1119CSharp7UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1400CSharp7UnitTests.cs" />
