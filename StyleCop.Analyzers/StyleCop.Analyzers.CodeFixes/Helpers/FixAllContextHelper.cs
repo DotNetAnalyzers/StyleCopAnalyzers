@@ -106,7 +106,7 @@ namespace StyleCop.Analyzers.Helpers
 
         public static async Task<ImmutableArray<Diagnostic>> GetAllDiagnosticsAsync(Compilation compilation, CompilationWithAnalyzers compilationWithAnalyzers, ImmutableArray<DiagnosticAnalyzer> analyzers, IEnumerable<Document> documents, bool includeCompilerDiagnostics, CancellationToken cancellationToken)
         {
-            return await compilationWithAnalyzers.GetAllDiagnosticsAsync().ConfigureAwait(false);
+            return await compilationWithAnalyzers.GetAllDiagnosticsAsync(cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
