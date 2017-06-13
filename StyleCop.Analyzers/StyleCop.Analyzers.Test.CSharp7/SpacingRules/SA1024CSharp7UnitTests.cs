@@ -49,5 +49,52 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestSpacingAroundColonInCasePatternSwitchLabelAsync()
+        {
+            const string testCode = @"
+public class Foo
+{
+    public void TestMethod()
+    {
+        switch (new object())
+        {
+        case int a when (a > 0):
+        case short b when (b > 0) :
+        case int x:
+        case short y :
+        default:
+            break;
+        }
+    }
+}";
+            const string fixedCode = @"
+public class Foo
+{
+    public void TestMethod()
+    {
+        switch (new object())
+        {
+        case int a when (a > 0):
+        case short b when (b > 0):
+        case int x:
+        case short y:
+        default:
+            break;
+        }
+    }
+}";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(9, 35).WithArguments(" not", "preceded", string.Empty),
+                this.CSharpDiagnostic().WithLocation(11, 22).WithArguments(" not", "preceded", string.Empty),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

@@ -5,11 +5,11 @@ namespace StyleCop.Analyzers.SpacingRules
 {
     using System;
     using System.Collections.Immutable;
-    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// A colon within a C# element is not spaced correctly.
@@ -112,6 +112,7 @@ namespace StyleCop.Analyzers.SpacingRules
             case SyntaxKind.LabeledStatement:
             case SyntaxKind.CaseSwitchLabel:
             case SyntaxKind.DefaultSwitchLabel:
+            case SyntaxKindEx.CasePatternSwitchLabel:
             // NameColon is not explicitly listed in the description of this warning, but the behavior is inferred
             case SyntaxKind.NameColon:
                 requireBefore = false;
