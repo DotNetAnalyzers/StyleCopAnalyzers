@@ -60,11 +60,6 @@ namespace StyleCop.Analyzers.NamingRules
                     break;
                 }
 
-                if (numberOfCharsToRemove == 0)
-                {
-                    continue;
-                }
-
                 // The prefix is the full variable name. In this case we cannot generate a valid variable name and thus will not offer a code fix.
                 if (token.ValueText.Length == numberOfCharsToRemove)
                 {
