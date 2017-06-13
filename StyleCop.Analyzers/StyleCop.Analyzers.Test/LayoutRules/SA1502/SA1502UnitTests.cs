@@ -20,6 +20,11 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     /// </remarks>
     public partial class SA1502UnitTests : CodeFixVerifier
     {
+        protected static string FormatTestCode(string testCode, string placeHolderReplacement)
+        {
+            return testCode.Replace("##PH##", placeHolderReplacement);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
@@ -30,11 +35,6 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new SA1502CodeFixProvider();
-        }
-
-        private static string FormatTestCode(string testCode, string placeHolderReplacement)
-        {
-            return testCode.Replace("##PH##", placeHolderReplacement);
         }
     }
 }
