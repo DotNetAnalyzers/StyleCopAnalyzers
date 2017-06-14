@@ -250,6 +250,7 @@
     <Compile Include="Lightup\SeparatedSyntaxListWrapperTestBase.cs" />
     <Compile Include="Lightup\SingleVariableDesignationSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\SyntaxWrapperTests.cs" />
+    <Compile Include="Lightup\ThrowExpressionSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\UnsupportedSyntaxListTests.cs" />
     <Compile Include="Lightup\VariableDesignationSyntaxWrapperTests.cs" />
     <Compile Include="LinqHelpers\SyntaxTriviaListEnumerableTests.cs" />
