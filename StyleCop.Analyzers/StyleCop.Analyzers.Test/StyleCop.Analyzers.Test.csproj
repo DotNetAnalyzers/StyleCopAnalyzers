@@ -252,6 +252,7 @@
     <Compile Include="Lightup\SyntaxWrapperTests.cs" />
     <Compile Include="Lightup\UnsupportedSyntaxListTests.cs" />
     <Compile Include="Lightup\VariableDesignationSyntaxWrapperTests.cs" />
+    <Compile Include="Lightup\WhenClauseSyntaxWrapperTests.cs" />
     <Compile Include="LinqHelpers\SyntaxTriviaListEnumerableTests.cs" />
     <Compile Include="MaintainabilityRules\DebugMessagesUnitTestsBase.cs" />
     <Compile Include="MaintainabilityRules\FileMayOnlyContainTestBase.cs" />
