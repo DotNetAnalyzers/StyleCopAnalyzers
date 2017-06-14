@@ -583,7 +583,7 @@ namespace LightJson
         /// Converts the given JsonValue into an Int.
         /// </summary>
         /// <param name="jsonValue">The JsonValue to be converted.</param>
-        public static implicit operator int(JsonValue jsonValue)
+        public static explicit operator int(JsonValue jsonValue)
         {
             if (jsonValue.IsInteger)
             {
@@ -603,7 +603,7 @@ namespace LightJson
         /// Throws System.InvalidCastException when the inner value type of the
         /// JsonValue is not the desired type of the conversion.
         /// </exception>
-        public static implicit operator int?(JsonValue jsonValue)
+        public static explicit operator int?(JsonValue jsonValue)
         {
             if (jsonValue.IsNull)
             {
@@ -619,7 +619,7 @@ namespace LightJson
         /// Converts the given JsonValue into a Bool.
         /// </summary>
         /// <param name="jsonValue">The JsonValue to be converted.</param>
-        public static implicit operator bool(JsonValue jsonValue)
+        public static explicit operator bool(JsonValue jsonValue)
         {
             if (jsonValue.IsBoolean)
             {
@@ -639,7 +639,7 @@ namespace LightJson
         /// Throws System.InvalidCastException when the inner value type of the
         /// JsonValue is not the desired type of the conversion.
         /// </exception>
-        public static implicit operator bool?(JsonValue jsonValue)
+        public static explicit operator bool?(JsonValue jsonValue)
         {
             if (jsonValue.IsNull)
             {
@@ -655,7 +655,7 @@ namespace LightJson
         /// Converts the given JsonValue into a Double.
         /// </summary>
         /// <param name="jsonValue">The JsonValue to be converted.</param>
-        public static implicit operator double(JsonValue jsonValue)
+        public static explicit operator double(JsonValue jsonValue)
         {
             if (jsonValue.IsNumber)
             {
@@ -675,7 +675,7 @@ namespace LightJson
         /// Throws System.InvalidCastException when the inner value type of the
         /// JsonValue is not the desired type of the conversion.
         /// </exception>
-        public static implicit operator double?(JsonValue jsonValue)
+        public static explicit operator double?(JsonValue jsonValue)
         {
             if (jsonValue.IsNull)
             {
@@ -691,7 +691,7 @@ namespace LightJson
         /// Converts the given JsonValue into a String.
         /// </summary>
         /// <param name="jsonValue">The JsonValue to be converted.</param>
-        public static implicit operator string(JsonValue jsonValue)
+        public static explicit operator string(JsonValue jsonValue)
         {
             if (jsonValue.IsString || jsonValue.IsNull)
             {
@@ -707,7 +707,7 @@ namespace LightJson
         /// Converts the given JsonValue into a JsonObject.
         /// </summary>
         /// <param name="jsonValue">The JsonValue to be converted.</param>
-        public static implicit operator JsonObject(JsonValue jsonValue)
+        public static explicit operator JsonObject(JsonValue jsonValue)
         {
             if (jsonValue.IsJsonObject || jsonValue.IsNull)
             {
@@ -723,7 +723,7 @@ namespace LightJson
         /// Converts the given JsonValue into a JsonArray.
         /// </summary>
         /// <param name="jsonValue">The JsonValue to be converted.</param>
-        public static implicit operator JsonArray(JsonValue jsonValue)
+        public static explicit operator JsonArray(JsonValue jsonValue)
         {
             if (jsonValue.IsJsonArray || jsonValue.IsNull)
             {
@@ -739,7 +739,7 @@ namespace LightJson
         /// Converts the given JsonValue into a DateTime.
         /// </summary>
         /// <param name="jsonValue">The JsonValue to be converted.</param>
-        public static implicit operator DateTime(JsonValue jsonValue)
+        public static explicit operator DateTime(JsonValue jsonValue)
         {
             var dateTime = jsonValue.AsDateTime;
 
@@ -757,7 +757,7 @@ namespace LightJson
         /// Converts the given JsonValue into a nullable DateTime.
         /// </summary>
         /// <param name="jsonValue">The JsonValue to be converted.</param>
-        public static implicit operator DateTime?(JsonValue jsonValue)
+        public static explicit operator DateTime?(JsonValue jsonValue)
         {
             if (jsonValue.IsDateTime || jsonValue.IsNull)
             {
