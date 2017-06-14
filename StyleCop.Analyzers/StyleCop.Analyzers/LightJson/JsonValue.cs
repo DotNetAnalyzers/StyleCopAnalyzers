@@ -4,7 +4,9 @@
 namespace LightJson
 {
     using System;
+    using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using LightJson.Serialization;
 
     /// <summary>
@@ -191,16 +193,8 @@ namespace LightJson
                     return false;
                 }
 
-                try
-                {
-                    var value = this.value;
-
-                    return ((int)value) == value;
-                }
-                catch (OverflowException)
-                {
-                    return false;
-                }
+                var value = this.value;
+                return unchecked((int)value) == value;
             }
         }
 
@@ -810,11 +804,15 @@ namespace LightJson
         /// <inheritdoc/>
         public override bool Equals(object obj)
         {
-            var jsonValue = obj as JsonValue?;
-
-            if (jsonValue == null)
+            if (obj == null)
             {
                 return this.IsNull;
+            }
+
+            var jsonValue = obj as JsonValue?;
+            if (jsonValue == null)
+            {
+                return false;
             }
             else
             {
@@ -833,10 +831,11 @@ namespace LightJson
             {
                 return this.Type.GetHashCode()
                     ^ this.value.GetHashCode()
-                    ^ this.reference.GetHashCode();
+                    ^ EqualityComparer<object>.Default.GetHashCode(this.reference);
             }
         }
 
+        [ExcludeFromCodeCoverage]
         private class JsonValueDebugView
         {
             private JsonValue jsonValue;

@@ -235,6 +235,7 @@
     <Compile Include="LayoutRules\SA1518UnitTests.cs" />
     <Compile Include="LayoutRules\SA1519UnitTests.cs" />
     <Compile Include="LayoutRules\SA1520UnitTests.cs" />
+    <Compile Include="LightJson\JsonValueTests.cs" />
     <Compile Include="Lightup\AccessorDeclarationSyntaxExtensionsTests.cs" />
     <Compile Include="Lightup\AutoWrapSeparatedSyntaxListTests.cs" />
     <Compile Include="Lightup\BaseMethodDeclarationSyntaxExtensionsTests.cs" />

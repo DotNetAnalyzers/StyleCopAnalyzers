@@ -40,10 +40,20 @@ namespace LightJson.Serialization
         /// </summary>
         /// <returns>The next character in the stream.</returns>
         public char Peek()
+            => (char)this.Peek(throwAtEndOfFile: true);
+
+        /// <summary>
+        /// Reads the next character in the stream without changing the current position.
+        /// </summary>
+        /// <param name="throwAtEndOfFile"><see langword="true"/> to throw an exception if the end of the file is
+        /// reached; otherwise, <see langword="false"/>.</param>
+        /// <returns>The next character in the stream, or -1 if the end of the file is reached with
+        /// <paramref name="throwAtEndOfFile"/> set to <see langword="false"/>.</returns>
+        public int Peek(bool throwAtEndOfFile)
         {
             var next = this.reader.Peek();
 
-            if (next == -1)
+            if (next == -1 && throwAtEndOfFile)
             {
                 throw new JsonParseException(
                     ErrorType.IncompleteMessage,
@@ -51,7 +61,7 @@ namespace LightJson.Serialization
             }
             else
             {
-                return (char)next;
+                return next;
             }
         }
 

@@ -125,8 +125,14 @@ namespace LightJson.Serialization
 
         private void ReadDigits(StringBuilder builder)
         {
-            while (char.IsNumber(this.scanner.Peek()))
+            while (true)
             {
+                int next = this.scanner.Peek(throwAtEndOfFile: false);
+                if (next == -1 || !char.IsNumber((char)next))
+                {
+                    return;
+                }
+
                 builder.Append(this.scanner.Read());
             }
         }
@@ -149,13 +155,13 @@ namespace LightJson.Serialization
                 this.ReadDigits(builder);
             }
 
-            if (this.scanner.Peek() == '.')
+            if (this.scanner.Peek(throwAtEndOfFile: false) == '.')
             {
                 builder.Append(this.scanner.Read());
                 this.ReadDigits(builder);
             }
 
-            if (char.ToLower(this.scanner.Peek()) == 'e')
+            if (this.scanner.Peek(throwAtEndOfFile: false) == 'e' || this.scanner.Peek(throwAtEndOfFile: false) == 'E')
             {
                 builder.Append(this.scanner.Read());
 
