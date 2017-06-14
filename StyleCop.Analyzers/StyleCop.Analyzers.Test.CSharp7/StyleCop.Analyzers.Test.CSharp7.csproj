@@ -279,6 +279,7 @@
     <Compile Include="Lightup\LightupHelpersTestsCSharp7.cs" />
     <Compile Include="Lightup\ParenthesizedVariableDesignationSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\PatternSyntaxWrapperTests.cs" />
+    <Compile Include="Lightup\RefTypeSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\SingleVariableDesignationSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\SyntaxWrapperTests.cs" />
     <Compile Include="Lightup\ThrowExpressionSyntaxWrapperTests.cs" />
