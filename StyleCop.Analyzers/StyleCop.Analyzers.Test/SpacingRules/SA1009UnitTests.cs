@@ -232,6 +232,25 @@ public class Foo
             await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, validStatement, expected).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#255 and
+        /// DotNetAnalyzers/StyleCopAnalyzers#256.
+        /// </summary>
+        /// <param name="operatorToken">The operator to test.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        [Theory]
+        [InlineData("+")]
+        [InlineData("-")]
+        public async Task TestNotReportedWhenFollowedByUnaryPlusOrMinusAsync(string operatorToken)
+        {
+            // This will be reported as SA1021 or SA1022
+            var ignoredStatement = $"var i = (int) {operatorToken}2;";
+            var correctStatement = $"var i = (int){operatorToken}2;";
+
+            await this.TestWhitespaceInStatementOrDeclAsync(ignoredStatement, string.Empty, EmptyDiagnosticResults).ConfigureAwait(false);
+            await this.TestWhitespaceInStatementOrDeclAsync(correctStatement, string.Empty, EmptyDiagnosticResults).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestSpaceBeforeParenthisInIncrementingForLoopAsync()
         {
