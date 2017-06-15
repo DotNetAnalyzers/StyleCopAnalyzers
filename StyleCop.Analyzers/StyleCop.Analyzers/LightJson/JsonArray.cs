@@ -3,8 +3,10 @@
 
 namespace LightJson
 {
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
     /// Represents an ordered collection of JsonValues.
@@ -30,6 +32,11 @@ namespace LightJson
         public JsonArray(params JsonValue[] values)
             : this()
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+
             foreach (var value in values)
             {
                 this.items.Add(value);
@@ -157,6 +164,7 @@ namespace LightJson
             return this.GetEnumerator();
         }
 
+        [ExcludeFromCodeCoverage]
         private class JsonArrayDebugView
         {
             private JsonArray jsonArray;
