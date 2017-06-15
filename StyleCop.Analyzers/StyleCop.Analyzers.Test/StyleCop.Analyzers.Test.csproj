@@ -237,8 +237,8 @@
     <Compile Include="LayoutRules\SA1520UnitTests.cs" />
     <Compile Include="LightJson\JsonArrayTests.cs" />
     <Compile Include="LightJson\JsonObjectTests.cs" />
-    <Compile Include="LightJson\JsonReaderTests.cs" />
     <Compile Include="LightJson\JsonValueTests.cs" />
+    <Compile Include="LightJson\Serialization\JsonReaderTests.cs" />
     <Compile Include="LightJson\Serialization\TextScannerTests.cs" />
     <Compile Include="Lightup\AccessorDeclarationSyntaxExtensionsTests.cs" />
     <Compile Include="Lightup\AutoWrapSeparatedSyntaxListTests.cs" />
