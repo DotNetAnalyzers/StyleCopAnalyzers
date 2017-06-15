@@ -30,7 +30,7 @@ namespace LightJson.Serialization
         {
             if (reader == null)
             {
-                throw new ArgumentNullException("reader");
+                throw new ArgumentNullException(nameof(reader));
             }
 
             return new JsonReader(reader).Parse();
@@ -45,12 +45,12 @@ namespace LightJson.Serialization
         {
             if (source == null)
             {
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
             }
 
             using (var reader = new StringReader(source))
             {
-                return new JsonReader(reader).Parse();
+                return Parse(reader);
             }
         }
 
@@ -112,14 +112,9 @@ namespace LightJson.Serialization
                     this.scanner.Assert("true");
                     return true;
 
-                case 'f':
+                default:
                     this.scanner.Assert("false");
                     return false;
-
-                default:
-                    throw new JsonParseException(
-                        ErrorType.InvalidOrUnexpectedCharacter,
-                        this.scanner.Position);
             }
         }
 
@@ -191,10 +186,12 @@ namespace LightJson.Serialization
 
             while (true)
             {
+                var errorPosition = this.scanner.Position;
                 var c = this.scanner.Read();
 
                 if (c == '\\')
                 {
+                    errorPosition = this.scanner.Position;
                     c = this.scanner.Read();
 
                     switch (char.ToLower(c))
@@ -225,7 +222,7 @@ namespace LightJson.Serialization
                         default:
                             throw new JsonParseException(
                                 ErrorType.InvalidOrUnexpectedCharacter,
-                                this.scanner.Position);
+                                errorPosition);
                     }
                 }
                 else if (c == '"')
@@ -238,7 +235,7 @@ namespace LightJson.Serialization
                     {
                         throw new JsonParseException(
                             ErrorType.InvalidOrUnexpectedCharacter,
-                            this.scanner.Position);
+                            errorPosition);
                     }
                     else
                     {
@@ -252,6 +249,7 @@ namespace LightJson.Serialization
 
         private int ReadHexDigit()
         {
+            var errorPosition = this.scanner.Position;
             switch (char.ToUpper(this.scanner.Read()))
             {
                 case '0':
@@ -305,7 +303,7 @@ namespace LightJson.Serialization
                 default:
                     throw new JsonParseException(
                         ErrorType.InvalidOrUnexpectedCharacter,
-                        this.scanner.Position);
+                        errorPosition);
             }
         }
 
@@ -342,13 +340,14 @@ namespace LightJson.Serialization
                 {
                     this.scanner.SkipWhitespace();
 
+                    var errorPosition = this.scanner.Position;
                     var key = this.ReadJsonKey();
 
                     if (jsonObject.ContainsKey(key))
                     {
                         throw new JsonParseException(
                             ErrorType.DuplicateObjectKeys,
-                            this.scanner.Position);
+                            errorPosition);
                     }
 
                     this.scanner.SkipWhitespace();
@@ -363,6 +362,7 @@ namespace LightJson.Serialization
 
                     this.scanner.SkipWhitespace();
 
+                    errorPosition = this.scanner.Position;
                     var next = this.scanner.Read();
                     if (next == ',')
                     {
@@ -386,7 +386,7 @@ namespace LightJson.Serialization
                     {
                         throw new JsonParseException(
                             ErrorType.InvalidOrUnexpectedCharacter,
-                            this.scanner.Position);
+                            errorPosition);
                     }
                 }
             }
@@ -421,6 +421,7 @@ namespace LightJson.Serialization
 
                     this.scanner.SkipWhitespace();
 
+                    var errorPosition = this.scanner.Position;
                     var next = this.scanner.Read();
                     if (next == ',')
                     {
@@ -444,7 +445,7 @@ namespace LightJson.Serialization
                     {
                         throw new JsonParseException(
                             ErrorType.InvalidOrUnexpectedCharacter,
-                            this.scanner.Position);
+                            errorPosition);
                     }
                 }
             }
