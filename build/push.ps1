@@ -5,4 +5,4 @@ If ($Version.EndsWith('-dev')) {
 	Exit 1
 }
 
-..\.nuget\NuGet.exe 'push' ".\nuget\StyleCop.Analyzers.$Version.nupkg"
+..\.nuget\NuGet.exe 'push' ".\nuget\StyleCop.Analyzers.$Version.nupkg" -Source 'https://www.nuget.org/api/v2/package'
