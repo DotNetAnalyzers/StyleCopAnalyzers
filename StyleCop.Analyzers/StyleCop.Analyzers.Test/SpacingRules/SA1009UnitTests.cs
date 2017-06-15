@@ -232,51 +232,6 @@ public class Foo
             await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, validStatement, expected).ConfigureAwait(false);
         }
 
-        [Theory]
-        [InlineData("+")]
-        [InlineData("-")]
-        [InlineData("*")]
-        [InlineData("/")]
-        public async Task TestSpaceAfterParenthisisInArithmeticOperationAsync(string operatorValue)
-        {
-            // e.g. var i = (1 + 1) + 2
-            var validStatement = string.Format(@"var i = (1 + 1) {0} 2;", operatorValue);
-
-            await this.TestWhitespaceInStatementOrDeclAsync(validStatement, string.Empty, EmptyDiagnosticResults).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestNoSpaceAfterParenthisisInAddOperationAsync()
-        {
-            // Note - this looks wrong but according to comments in the implementation "this will be reported as SA1022"
-            var invalidStatement = @"var i = (1 + 1)+ 2;";
-
-            await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, string.Empty, EmptyDiagnosticResults).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestNoSpaceAfterParenthisisInSubtractOperationAsync()
-        {
-            // Note - this looks wrong but according to comments in the implementation "this will be reported as SA1021"
-            var invalidStatement = @"var i = (1 + 1)- 2;";
-
-            await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, string.Empty, EmptyDiagnosticResults).ConfigureAwait(false);
-        }
-
-        [Theory]
-        [InlineData("*")]
-        [InlineData("/")]
-        public async Task TestNoSpaceAfterParenthisisInArithmeticOperationAsync(string operatorValue)
-        {
-            // e.g. var i = (1 + 1)* 2;
-            var invalidStatement = string.Format(@"var i = (1 + 1){0} 2;", operatorValue);
-            var validStatement = string.Format(@"var i = (1 + 1) {0} 2;", operatorValue);
-
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 27);
-
-            await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, validStatement, expected).ConfigureAwait(false);
-        }
-
         [Fact]
         public async Task TestSpaceBeforeParenthisInIncrementingForLoopAsync()
         {
@@ -833,6 +788,83 @@ class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#2409.
+        /// </summary>
+        /// <param name="operatorToken">The operator to test.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        [Theory]
+        [InlineData("*")]
+        [InlineData("/")]
+        [InlineData("%")]
+        [InlineData("+")]
+        [InlineData("-")]
+        [InlineData("<<")]
+        [InlineData(">>")]
+        [InlineData("<")]
+        [InlineData(">")]
+        [InlineData("<=")]
+        [InlineData(">=")]
+        [InlineData("==")]
+        [InlineData("!=")]
+        [InlineData("&")]
+        [InlineData("^")]
+        [InlineData("|")]
+        public async Task TestFollowedByBinaryOperatorAsync(string operatorToken)
+        {
+            string testCode = $"var x = (3 + 2){operatorToken} 4;";
+            string fixedCode = $"var x = (3 + 2) {operatorToken} 4;";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 27).WithArguments(string.Empty, "followed");
+
+            await this.TestWhitespaceInStatementOrDeclAsync(testCode, fixedCode, expected).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#2409.
+        /// </summary>
+        /// <param name="operatorToken">The operator to test.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        [Theory]
+        [InlineData("&&")]
+        [InlineData("||")]
+        public async Task TestFollowedByConditionalOperatorAsync(string operatorToken)
+        {
+            string testCode = $"var x = (true){operatorToken} false;";
+            string fixedCode = $"var x = (true) {operatorToken} false;";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 26).WithArguments(string.Empty, "followed");
+
+            await this.TestWhitespaceInStatementOrDeclAsync(testCode, fixedCode, expected).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#2409.
+        /// </summary>
+        /// <param name="operatorToken">The operator to test.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        [Theory]
+        [InlineData("=")]
+        [InlineData("+=")]
+        [InlineData("-=")]
+        [InlineData("*=")]
+        [InlineData("/=")]
+        [InlineData("%=")]
+        [InlineData("&=")]
+        [InlineData("|=")]
+        [InlineData("^=")]
+        [InlineData("<<=")]
+        [InlineData(">>=")]
+        public async Task TestFollowedByAssignmentOperatorAsync(string operatorToken)
+        {
+            string testCode = $"var x = 0; (x){operatorToken} 4;";
+            string fixedCode = $"var x = 0; (x) {operatorToken} 4;";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 26).WithArguments(string.Empty, "followed");
+
+            await this.TestWhitespaceInStatementOrDeclAsync(testCode, fixedCode, expected).ConfigureAwait(false);
         }
 
         [Fact]

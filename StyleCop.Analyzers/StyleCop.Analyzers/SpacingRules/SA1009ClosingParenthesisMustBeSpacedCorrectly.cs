@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.SpacingRules
 {
     using System;
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -94,8 +93,11 @@ namespace StyleCop.Analyzers.SpacingRules
             case SyntaxKind.SemicolonToken:
             case SyntaxKind.CommaToken:
             case SyntaxKind.DoubleQuoteToken:
-            case SyntaxKind.GreaterThanToken:
                 precedesStickyCharacter = true;
+                break;
+
+            case SyntaxKind.GreaterThanToken:
+                precedesStickyCharacter = nextToken.Parent.IsKind(SyntaxKind.TypeArgumentList);
                 break;
 
             case SyntaxKind.QuestionToken:
@@ -116,14 +118,14 @@ namespace StyleCop.Analyzers.SpacingRules
                 precedesStickyCharacter = nextToken.Parent.IsKind(SyntaxKind.UnaryPlusExpression);
 
                 // this will be reported as SA1022
-                suppressFollowingSpaceError = true;
+                suppressFollowingSpaceError = precedesStickyCharacter;
                 break;
 
             case SyntaxKind.MinusToken:
                 precedesStickyCharacter = nextToken.Parent.IsKind(SyntaxKind.UnaryMinusExpression);
 
                 // this will be reported as SA1021
-                suppressFollowingSpaceError = true;
+                suppressFollowingSpaceError = precedesStickyCharacter;
                 break;
 
             case SyntaxKind.DotToken:
