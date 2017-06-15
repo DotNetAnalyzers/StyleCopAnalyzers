@@ -110,7 +110,7 @@ namespace LightJson.Serialization
                 }
                 else if (next == '/')
                 {
-                    this.SkipCommentOrInvalidSlash();
+                    this.SkipComment();
                     continue;
                 }
                 else
@@ -127,12 +127,13 @@ namespace LightJson.Serialization
         /// <param name="next">The expected character.</param>
         public void Assert(char next)
         {
+            var errorPosition = this.position;
             if (this.Read() != next)
             {
                 throw new JsonParseException(
                     string.Format("Parser expected '{0}'", next),
                     ErrorType.InvalidOrUnexpectedCharacter,
-                    this.position);
+                    errorPosition);
             }
         }
 
@@ -149,9 +150,9 @@ namespace LightJson.Serialization
             }
         }
 
-        private void SkipCommentOrInvalidSlash()
+        private void SkipComment()
         {
-            // First character is the a slash
+            // First character is the first slash
             this.Read();
             switch (this.Peek())
             {
@@ -164,7 +165,10 @@ namespace LightJson.Serialization
                 return;
 
             default:
-                return;
+                throw new JsonParseException(
+                    string.Format("Parser expected '{0}'", this.Peek()),
+                    ErrorType.InvalidOrUnexpectedCharacter,
+                    this.position);
             }
         }
 
