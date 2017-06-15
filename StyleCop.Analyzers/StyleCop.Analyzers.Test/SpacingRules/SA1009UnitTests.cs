@@ -245,6 +245,38 @@ public class Foo
             await this.TestWhitespaceInStatementOrDeclAsync(validStatement, string.Empty, EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
+        [Theory]
+        [InlineData(">")]
+        [InlineData(">=")]
+        [InlineData("<")]
+        [InlineData("<=")]
+        [InlineData("==")]
+        [InlineData("&")]
+        [InlineData("%")]
+        [InlineData("^")]
+        [InlineData("|")]
+        [InlineData("*")]
+        [InlineData(">>")]
+        [InlineData("<<")]
+        public async Task TestSpaceAfterParenthisisBeforeOperatorAsync(string operatorValue)
+        {
+            // e.g. var i = (1 + 1) >= 2
+            var validStatement = string.Format(@"var i = (1 + 1) {0} 2;", operatorValue);
+
+            await this.TestWhitespaceInStatementOrDeclAsync(validStatement, string.Empty, EmptyDiagnosticResults).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("&&")]
+        [InlineData("||")]
+        public async Task TestSpaceAfterParenthisisBeforeConditionalOperatorAsync(string operatorValue)
+        {
+            // e.g. var i = (1 == 2) || (1 != 2)
+            var validStatement = string.Format(@"var i = (1 == 2) {0} (1 != 2);", operatorValue);
+
+            await this.TestWhitespaceInStatementOrDeclAsync(validStatement, string.Empty, EmptyDiagnosticResults).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestNoSpaceAfterParenthisisInAddOperationAsync()
         {
