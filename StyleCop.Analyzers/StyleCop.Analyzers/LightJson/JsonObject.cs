@@ -5,6 +5,7 @@ namespace LightJson
 {
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
     /// Represents a key-value pair collection of JsonValue objects.
@@ -121,6 +122,12 @@ namespace LightJson
         /// <returns>Returns this JsonObject.</returns>
         public JsonObject Rename(string oldKey, string newKey)
         {
+            if (oldKey == newKey)
+            {
+                // Renaming to the same name just does nothing
+                return this;
+            }
+
             JsonValue value;
 
             if (this.properties.TryGetValue(oldKey, out value))
@@ -179,6 +186,7 @@ namespace LightJson
             return this.GetEnumerator();
         }
 
+        [ExcludeFromCodeCoverage]
         private class JsonObjectDebugView
         {
             private JsonObject jsonObject;

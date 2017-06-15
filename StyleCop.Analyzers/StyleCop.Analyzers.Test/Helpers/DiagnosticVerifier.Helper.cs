@@ -166,8 +166,8 @@ namespace TestHelper
                 }
                 else
                 {
-                    JsonObject indentationObject = JsonReader.Parse(indentationSettings);
-                    JsonObject settingsObject = JsonReader.Parse(settings);
+                    JsonObject indentationObject = JsonReader.Parse(indentationSettings).AsJsonObject;
+                    JsonObject settingsObject = JsonReader.Parse(settings).AsJsonObject;
                     JsonObject mergedSettings = MergeJsonObjects(settingsObject, indentationObject);
                     using (var writer = new JsonWriter(pretty: true))
                     {

@@ -5,6 +5,7 @@ namespace LightJson.Serialization
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Globalization;
     using System.IO;
     using ErrorType = JsonSerializationException.ErrorType;
@@ -135,31 +136,21 @@ namespace LightJson.Serialization
             switch (value.Type)
             {
             case JsonValueType.Null:
-                this.writer.Write("null");
+                this.Write("null");
                 break;
 
             case JsonValueType.Boolean:
-                this.writer.Write(value.AsString);
+                this.Write(value.AsString);
                 break;
 
             case JsonValueType.Number:
-                this.writer.Write(((double)value).ToString(CultureInfo.InvariantCulture));
-                break;
-
-            case JsonValueType.String:
-                this.WriteEncodedString((string)value);
-                break;
-
-            case JsonValueType.Object:
-                this.writer.Write(string.Format("JsonObject[{0}]", value.AsJsonObject.Count));
-                break;
-
-            case JsonValueType.Array:
-                this.writer.Write(string.Format("JsonArray[{0}]", value.AsJsonArray.Count));
+                this.Write(((double)value).ToString(CultureInfo.InvariantCulture));
                 break;
 
             default:
-                throw new InvalidOperationException("Invalid value type.");
+                Debug.Assert(value.Type == JsonValueType.String, "value.Type == JsonValueType.String");
+                this.WriteEncodedString((string)value);
+                break;
             }
         }
 
