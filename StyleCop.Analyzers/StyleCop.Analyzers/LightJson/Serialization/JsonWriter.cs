@@ -136,15 +136,15 @@ namespace LightJson.Serialization
             switch (value.Type)
             {
             case JsonValueType.Null:
-                this.writer.Write("null");
+                this.Write("null");
                 break;
 
             case JsonValueType.Boolean:
-                this.writer.Write(value.AsString);
+                this.Write(value.AsString);
                 break;
 
             case JsonValueType.Number:
-                this.writer.Write(((double)value).ToString(CultureInfo.InvariantCulture));
+                this.Write(((double)value).ToString(CultureInfo.InvariantCulture));
                 break;
 
             default:
@@ -246,12 +246,6 @@ namespace LightJson.Serialization
 
         private void Render(JsonValue value)
         {
-            if (this.isNewLine)
-            {
-                this.isNewLine = false;
-                this.WriteIndentation();
-            }
-
             switch (value.Type)
             {
             case JsonValueType.Null:
