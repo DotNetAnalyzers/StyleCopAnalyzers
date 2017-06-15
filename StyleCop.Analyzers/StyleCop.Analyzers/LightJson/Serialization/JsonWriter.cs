@@ -255,6 +255,12 @@ namespace LightJson.Serialization
 
         private void Render(JsonValue value)
         {
+            if (this.isNewLine)
+            {
+                this.isNewLine = false;
+                this.WriteIndentation();
+            }
+
             switch (value.Type)
             {
             case JsonValueType.Null:

@@ -239,6 +239,7 @@
     <Compile Include="LightJson\JsonObjectTests.cs" />
     <Compile Include="LightJson\JsonValueTests.cs" />
     <Compile Include="LightJson\Serialization\JsonReaderTests.cs" />
+    <Compile Include="LightJson\Serialization\JsonWriterTests.cs" />
     <Compile Include="LightJson\Serialization\TextScannerTests.cs" />
     <Compile Include="Lightup\AccessorDeclarationSyntaxExtensionsTests.cs" />
     <Compile Include="Lightup\AutoWrapSeparatedSyntaxListTests.cs" />
