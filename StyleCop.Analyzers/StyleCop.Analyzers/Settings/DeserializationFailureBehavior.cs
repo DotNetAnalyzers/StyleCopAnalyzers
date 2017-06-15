@@ -20,6 +20,6 @@ namespace StyleCop.Analyzers
         /// When deserialization fails, throw a <see cref="JsonParseException"/> or
         /// <see cref="InvalidSettingsException"/> containing details about the error.
         /// </summary>
-        ThrowException
+        ThrowException,
     }
 }
