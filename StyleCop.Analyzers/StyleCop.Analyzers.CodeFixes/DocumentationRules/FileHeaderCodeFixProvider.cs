@@ -211,7 +211,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             bool onBlankLine = false;
             bool inCopyright = isMalformedHeader;
             int? copyrightTriviaIndex = null;
-            var removalList = new System.Collections.Generic.List<int>();
+            var removalList = new List<int>();
             var leadingSpaces = string.Empty;
             string possibleLeadingSpaces = string.Empty;
 
@@ -351,7 +351,34 @@ namespace StyleCop.Analyzers.DocumentationRules
             string newLineText = document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp);
             var newLineTrivia = SyntaxFactory.EndOfLine(newLineText);
             var newTrivia = CreateNewHeader("//", name, settings, newLineText).Add(newLineTrivia).Add(newLineTrivia);
-            newTrivia = newTrivia.AddRange(root.GetLeadingTrivia());
+
+            // Skip blank lines already at the beginning of the document, since we add our own
+            SyntaxTriviaList leadingTrivia = root.GetLeadingTrivia();
+            int skipCount = 0;
+            for (int i = 0; i < leadingTrivia.Count; i++)
+            {
+                bool done = false;
+                switch (leadingTrivia[i].Kind())
+                {
+                case SyntaxKind.WhitespaceTrivia:
+                    break;
+
+                case SyntaxKind.EndOfLineTrivia:
+                    skipCount = i + 1;
+                    break;
+
+                default:
+                    done = true;
+                    break;
+                }
+
+                if (done)
+                {
+                    break;
+                }
+            }
+
+            newTrivia = newTrivia.AddRange(leadingTrivia.RemoveRange(0, skipCount));
 
             return root.WithLeadingTrivia(newTrivia);
         }
