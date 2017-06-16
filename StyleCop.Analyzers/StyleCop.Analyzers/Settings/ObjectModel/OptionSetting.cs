@@ -21,6 +21,6 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// <summary>
         /// The option is not allowed.
         /// </summary>
-        Omit
+        Omit,
     }
 }

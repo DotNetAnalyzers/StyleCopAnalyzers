@@ -21,6 +21,6 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// <summary>
         /// Allow using directives inside or outside the namespace definition.
         /// </summary>
-        Preserve
+        Preserve,
     }
 }

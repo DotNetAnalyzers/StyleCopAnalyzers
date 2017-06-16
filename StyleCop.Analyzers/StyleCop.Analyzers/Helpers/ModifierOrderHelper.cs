@@ -31,7 +31,7 @@ namespace StyleCop.Analyzers.OrderingRules
             /// <summary>
             /// Represents other modifiers i.e partial, virtual, abstract, override, extern, unsafe, new, async, const, sealed, readonly, volatile, fixed
             /// </summary>
-            Other
+            Other,
         }
 
         internal static ModifierType GetModifierType(SyntaxToken modifier)

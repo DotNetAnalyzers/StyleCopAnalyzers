@@ -24,6 +24,6 @@ namespace StyleCop.Analyzers.Helpers
         Internal,
 
         /// <summary>Public access.</summary>
-        Public
+        Public,
     }
 }
