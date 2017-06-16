@@ -26,6 +26,24 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
         }
 
         [Fact]
+        [WorkItem(2419, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2419")]
+        public async Task TestOutVarDiscardAsync()
+        {
+            string statementWithSpace = @"int.TryParse(""0"", out var _);";
+
+            await this.TestKeywordStatementAsync(statementWithSpace, EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2419, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2419")]
+        public async Task TestOutDiscardAsync()
+        {
+            string statementWithSpace = @"int.TryParse(""0"", out _);";
+
+            await this.TestKeywordStatementAsync(statementWithSpace, EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestVarKeywordTupleTypeAsync()
         {
             string statementWithoutSpace = @"var(a, b) = (2, 3);";
