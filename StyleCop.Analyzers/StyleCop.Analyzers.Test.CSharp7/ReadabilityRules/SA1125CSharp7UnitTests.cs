@@ -44,15 +44,12 @@ namespace System
     }}
 }}
 ";
+
             string testCode = string.Format(template, longForm);
             string fixedCode = string.Format(template, shortForm);
 
-            if (testCode != fixedCode)
-            {
-                DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 36);
-                await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            }
-
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 36);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
