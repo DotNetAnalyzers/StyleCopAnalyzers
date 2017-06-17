@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Lightup
     {
         public const SyntaxKind UnderscoreToken = (SyntaxKind)8491;
         public const SyntaxKind IsPatternExpression = (SyntaxKind)8657;
+        public const SyntaxKind DefaultLiteralExpression = (SyntaxKind)8755;
         public const SyntaxKind LocalFunctionStatement = (SyntaxKind)8830;
         public const SyntaxKind TupleType = (SyntaxKind)8924;
         public const SyntaxKind TupleElement = (SyntaxKind)8925;

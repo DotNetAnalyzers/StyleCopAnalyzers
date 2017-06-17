@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.SpacingRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// The spacing around a C# keyword is incorrect.
@@ -124,6 +125,15 @@ namespace StyleCop.Analyzers.SpacingRules
                     break;
 
                 case SyntaxKind.DefaultKeyword:
+                    if (token.Parent.IsKind(SyntaxKindEx.DefaultLiteralExpression))
+                    {
+                        // Ignore spacing around a default literal expression for now
+                        break;
+                    }
+
+                    HandleDisallowedSpaceToken(ref context, token);
+                    break;
+
                 case SyntaxKind.NameOfKeyword:
                 case SyntaxKind.SizeOfKeyword:
                 case SyntaxKind.TypeOfKeyword:
