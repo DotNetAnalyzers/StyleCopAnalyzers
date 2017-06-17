@@ -68,7 +68,7 @@ namespace NamespaceName { }
         }
 
         [Fact]
-        public async Task TestInvalidSettingValueAsync()
+        public async Task TestInvalidSettingStringValueAsync()
         {
             this.settings = @"
 {
@@ -76,6 +76,156 @@ namespace NamespaceName { }
     ""documentationRules"": {
       ""companyName"": 3
     }
+  }
+}
+";
+
+            // This diagnostic is reported without a location
+            DiagnosticResult expected = this.CSharpDiagnostic();
+
+            await this.VerifyCSharpDiagnosticAsync(TestCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestInvalidSettingStringArrayElementValueAsync()
+        {
+            this.settings = @"
+{
+  ""settings"": {
+    ""namingRules"": {
+      ""allowedHungarianPrefixes"": [ 3 ]
+    }
+  }
+}
+";
+
+            // This diagnostic is reported without a location
+            DiagnosticResult expected = this.CSharpDiagnostic();
+
+            await this.VerifyCSharpDiagnosticAsync(TestCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestInvalidSettingBooleanValueAsync()
+        {
+            this.settings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""xmlHeader"": 3
+    }
+  }
+}
+";
+
+            // This diagnostic is reported without a location
+            DiagnosticResult expected = this.CSharpDiagnostic();
+
+            await this.VerifyCSharpDiagnosticAsync(TestCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestInvalidSettingIntegerValueAsync()
+        {
+            this.settings = @"
+{
+  ""settings"": {
+    ""indentation"": {
+      ""tabSize"": ""3""
+    }
+  }
+}
+";
+
+            // This diagnostic is reported without a location
+            DiagnosticResult expected = this.CSharpDiagnostic();
+
+            await this.VerifyCSharpDiagnosticAsync(TestCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestInvalidSettingEnumValueNotStringAsync()
+        {
+            this.settings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""fileNamingConvention"": 3
+    }
+  }
+}
+";
+
+            // This diagnostic is reported without a location
+            DiagnosticResult expected = this.CSharpDiagnostic();
+
+            await this.VerifyCSharpDiagnosticAsync(TestCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestInvalidSettingArrayElementEnumValueNotStringAsync()
+        {
+            this.settings = @"
+{
+  ""settings"": {
+    ""maintainabilityRules"": {
+      ""topLevelTypes"": [ 3 ]
+    }
+  }
+}
+";
+
+            // This diagnostic is reported without a location
+            DiagnosticResult expected = this.CSharpDiagnostic();
+
+            await this.VerifyCSharpDiagnosticAsync(TestCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestInvalidSettingArrayElementEnumValueNotRecognizedAsync()
+        {
+            this.settings = @"
+{
+  ""settings"": {
+    ""maintainabilityRules"": {
+      ""topLevelTypes"": [ ""Some incorrect value"" ]
+    }
+  }
+}
+";
+
+            // This diagnostic is reported without a location
+            DiagnosticResult expected = this.CSharpDiagnostic();
+
+            await this.VerifyCSharpDiagnosticAsync(TestCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestInvalidSettingArrayAsync()
+        {
+            this.settings = @"
+{
+  ""settings"": {
+    ""namingRules"": {
+      ""allowedHungarianPrefixes"": ""ah""
+    }
+  }
+}
+";
+
+            // This diagnostic is reported without a location
+            DiagnosticResult expected = this.CSharpDiagnostic();
+
+            await this.VerifyCSharpDiagnosticAsync(TestCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestInvalidSettingObjectAsync()
+        {
+            this.settings = @"
+{
+  ""settings"": {
+    ""namingRules"": true
   }
 }
 ";
