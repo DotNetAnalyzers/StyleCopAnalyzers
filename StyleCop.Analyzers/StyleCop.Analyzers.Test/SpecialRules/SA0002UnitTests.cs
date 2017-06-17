@@ -79,6 +79,26 @@ namespace NamespaceName { }
         }
 
         [Fact]
+        public async Task TestInvalidSettingSyntaxAsync()
+        {
+            // Missing the ':' between "companyName" and "name"
+            this.settings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""companyName"" ""name""
+    }
+  }
+}
+";
+
+            // This diagnostic is reported without a location
+            DiagnosticResult expected = this.CSharpDiagnostic();
+
+            await this.VerifyCSharpDiagnosticAsync(TestCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestEmptySettingsAsync()
         {
             // The test infrastructure will not add a settings file to the compilation if GetSettings returns null or an empty string.
