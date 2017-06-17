@@ -76,11 +76,6 @@ namespace StyleCop.Analyzers.SpacingRules
 
         private static void HandleHashToken(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
-            if (token.IsMissing)
-            {
-                return;
-            }
-
             if (!token.HasTrailingTrivia || token.TrailingTrivia.Any(SyntaxKind.EndOfLineTrivia))
             {
                 return;
