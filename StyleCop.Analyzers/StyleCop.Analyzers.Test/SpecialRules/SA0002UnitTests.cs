@@ -3,14 +3,22 @@
 
 namespace StyleCop.Analyzers.Test.SpecialRules
 {
+    extern alias system;
+
+    using System;
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using System.Threading;
     using System.Threading.Tasks;
     using Analyzers.Settings;
     using Analyzers.SpecialRules;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Text;
     using TestHelper;
     using Xunit;
+
+    using ExcludeFromCodeCoverageAttribute = system::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute;
 
     /// <summary>
     /// Unit tests for <see cref="SA0002InvalidSettingsFile"/>.
@@ -111,6 +119,21 @@ namespace NamespaceName { }
             await this.VerifyCSharpDiagnosticAsync(TestCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public void TestUnexpectedExceptionNotCaught()
+        {
+            var analysisContext = new AnalysisContextMissingOptions();
+            var analyzer = new SA0002InvalidSettingsFile();
+            analyzer.Initialize(analysisContext);
+            Assert.NotNull(analysisContext.CompilationAction);
+
+            var additionalFiles = ImmutableArray.Create<AdditionalText>(new InvalidAdditionalText());
+            Assert.Null(additionalFiles[0].Path);
+            Assert.Null(additionalFiles[0].GetText(CancellationToken.None));
+            var context = new CompilationAnalysisContext(compilation: null, options: new AnalyzerOptions(additionalFiles), reportDiagnostic: null, isSupportedDiagnostic: null, cancellationToken: CancellationToken.None);
+            Assert.Throws<NullReferenceException>(() => analysisContext.CompilationAction(context));
+        }
+
         /// <inheritdoc/>
         protected override string GetSettings()
         {
@@ -121,6 +144,74 @@ namespace NamespaceName { }
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA0002InvalidSettingsFile();
+        }
+
+        private class InvalidAdditionalText : AdditionalText
+        {
+            public override string Path => null;
+
+            public override SourceText GetText(CancellationToken cancellationToken) => null;
+        }
+
+        /// <summary>
+        /// This analysis context is used for testing the specific case where an exception occurs while evaluating the
+        /// stylecop.json settings file, but it is not one of the JSON deserialization exceptions caused by this
+        /// library's code.
+        /// </summary>
+        private class AnalysisContextMissingOptions : AnalysisContext
+        {
+            public Action<CompilationAnalysisContext> CompilationAction
+            {
+                get;
+                private set;
+            }
+
+            [ExcludeFromCodeCoverage]
+            public override void RegisterCodeBlockAction(Action<CodeBlockAnalysisContext> action)
+            {
+                throw new NotImplementedException();
+            }
+
+            [ExcludeFromCodeCoverage]
+            public override void RegisterCodeBlockStartAction<TLanguageKindEnum>(Action<CodeBlockStartAnalysisContext<TLanguageKindEnum>> action)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override void RegisterCompilationAction(Action<CompilationAnalysisContext> action)
+            {
+                this.CompilationAction = action;
+            }
+
+            [ExcludeFromCodeCoverage]
+            public override void RegisterCompilationStartAction(Action<CompilationStartAnalysisContext> action)
+            {
+                throw new NotImplementedException();
+            }
+
+            [ExcludeFromCodeCoverage]
+            public override void RegisterSemanticModelAction(Action<SemanticModelAnalysisContext> action)
+            {
+                throw new NotImplementedException();
+            }
+
+            [ExcludeFromCodeCoverage]
+            public override void RegisterSymbolAction(Action<SymbolAnalysisContext> action, ImmutableArray<SymbolKind> symbolKinds)
+            {
+                throw new NotImplementedException();
+            }
+
+            [ExcludeFromCodeCoverage]
+            public override void RegisterSyntaxNodeAction<TLanguageKindEnum>(Action<SyntaxNodeAnalysisContext> action, ImmutableArray<TLanguageKindEnum> syntaxKinds)
+            {
+                throw new NotImplementedException();
+            }
+
+            [ExcludeFromCodeCoverage]
+            public override void RegisterSyntaxTreeAction(Action<SyntaxTreeAnalysisContext> action)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }
