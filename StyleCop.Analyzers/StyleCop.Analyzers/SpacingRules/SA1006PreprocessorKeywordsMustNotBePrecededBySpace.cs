@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.SpacingRules
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A C# preprocessor-type keyword is preceded by space.
@@ -82,7 +83,7 @@ namespace StyleCop.Analyzers.SpacingRules
             }
 
             SyntaxToken targetToken = token.GetNextToken(includeDirectives: true);
-            if (targetToken.IsMissing)
+            if (targetToken.IsMissingOrDefault())
             {
                 return;
             }

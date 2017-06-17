@@ -106,6 +106,20 @@ more invalid text
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestMissingDirectiveNameOnLastLineAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+}
+# ";
+
+            DiagnosticResult expected = this.CSharpCompilerError("CS1024").WithMessage("Preprocessor directive expected").WithLocation(5, 1);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1006PreprocessorKeywordsMustNotBePrecededBySpace();
