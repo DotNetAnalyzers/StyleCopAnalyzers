@@ -412,6 +412,7 @@
     <Compile Include="SpecialRules\SA0002UnitTests.cs" />
     <Compile Include="Verifiers\CodeFixVerifier.cs" />
     <Compile Include="Verifiers\DiagnosticVerifier.cs" />
+    <Compile Include="Verifiers\DiagnosticVerifierTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\build\keys\TestingKey.snk">
