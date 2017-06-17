@@ -102,6 +102,50 @@ class ClassName
         }
 
         [Fact]
+        public async Task TestValidBehaviorWithFullSpanAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    int property;
+    int PropertyName
+    {
+        get{return this.property;}
+    }
+}
+";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithSpan(7, 33, 7, 34);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestUnexpectedLocationForProjectDiagnosticAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    int property;
+    int PropertyName
+    {
+        get{return this.property;}
+    }
+}
+";
+
+            // By failing to include a location, the verified thinks we're only trying to verify a project diagnostic.
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Empty, "followed");
+
+            var ex = await Assert.ThrowsAnyAsync<XunitException>(
+                async () =>
+                {
+                    await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+                }).ConfigureAwait(false);
+            Assert.StartsWith("Expected:\nA project diagnostic with No location\nActual:\n", ex.Message);
+        }
+
+        [Fact]
         public async Task TestUnexpectedMessageAsync()
         {
             string testCode = @"
@@ -199,6 +243,31 @@ class ClassName
         }
 
         [Fact]
+        public async Task TestInvalidDiagnosticIdAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    int property;
+    int PropertyName
+    {
+        get{return this.property;}
+    }
+}
+";
+
+            var descriptor = new DiagnosticDescriptor("SA9999", "Title", "Message", "Category", DiagnosticSeverity.Warning, isEnabledByDefault: true);
+            DiagnosticResult expected = this.CSharpDiagnostic(descriptor).WithLocation(7, 33);
+
+            var ex = await Assert.ThrowsAnyAsync<XunitException>(
+                async () =>
+                {
+                    await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+                }).ConfigureAwait(false);
+            Assert.StartsWith("Expected diagnostic id to be \"SA9999\" was \"SA1002\"", ex.Message);
+        }
+
+        [Fact]
         public async Task TestInvalidSeverityAsync()
         {
             string testCode = @"
@@ -223,7 +292,7 @@ class ClassName
         }
 
         [Fact]
-        public async Task TestIncorrectLocationLineAsync()
+        public async Task TestIncorrectLocationLine1Async()
         {
             string testCode = @"
 class ClassName
@@ -244,6 +313,35 @@ class ClassName
                     await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
             Assert.StartsWith("Expected diagnostic to start on line \"8\" was actually on line \"7\"", ex.Message);
+        }
+
+        [Fact]
+        public async Task TestIncorrectLocationLine2Async()
+        {
+            string testCode = @"
+class ClassName
+{
+    int property;
+    int PropertyName
+    {
+        get{return this.property;}
+        set{this.property = value;}
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 33),
+                this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 34),
+            };
+
+            var ex = await Assert.ThrowsAnyAsync<XunitException>(
+                async () =>
+                {
+                    await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+                }).ConfigureAwait(false);
+            Assert.StartsWith("Expected diagnostic to start on line \"7\" was actually on line \"8\"", ex.Message);
         }
 
         [Fact]
