@@ -112,6 +112,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnalyzerExtensionsTests.cs" />
     <Compile Include="AttributeTests.cs" />
     <Compile Include="DocumentationRules\FileHeaderTestBase.cs" />
     <Compile Include="DocumentationRules\InheritdocCodeFixProviderUnitTests.cs" />
