@@ -180,6 +180,8 @@
     <Compile Include="Helpers\UseCultureAttribute.cs" />
     <Compile Include="HelperTests\AccessLevelHelperTests.cs" />
     <Compile Include="HelperTests\IndentationHelperTests.cs" />
+    <Compile Include="HelperTests\ObjectPools\ObjectPoolTests.cs" />
+    <Compile Include="HelperTests\ObjectPools\SharedPoolsTests.cs" />
     <Compile Include="HelperTests\RequiresTests.cs" />
     <Compile Include="HelperTests\TokenHelperTests.cs" />
     <Compile Include="HelperTests\TriviaHelperTests.cs" />
