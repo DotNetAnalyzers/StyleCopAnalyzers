@@ -53,19 +53,33 @@ namespace StyleCop.Analyzers.Test.Settings
   ""settings"": {
     ""documentationRules"": {
       ""companyName"": ""TestCompany"",
-      ""copyrightText"": ""Custom copyright text.""
+      ""copyrightText"": ""Custom copyright text."",
+      ""documentationCulture"": ""ru-RU"",
+      ""unrecognizedValue"": 3
     },
     ""namingRules"": {
-        ""allowCommonHungarianPrefixes"": false,
-        ""allowedHungarianPrefixes"": [""a"", ""ab""]
+      ""allowCommonHungarianPrefixes"": false,
+      ""allowedHungarianPrefixes"": [""a"", ""ab"", ""ignoredTooLong""],
+      ""unrecognizedValue"": 3
     },
     ""layoutRules"": {
-        ""newlineAtEndOfFile"": ""require""
+      ""newlineAtEndOfFile"": ""require"",
+      ""unrecognizedValue"": 3
     },
     ""orderingRules"": {
-        ""usingDirectivesPlacement"": ""outsideNamespace"",
-        ""blankLinesBetweenUsingGroups"": ""omit"",
-    }
+      ""usingDirectivesPlacement"": ""outsideNamespace"",
+      ""blankLinesBetweenUsingGroups"": ""omit"",
+      ""unrecognizedValue"": 3
+    },
+    ""maintainabilityRules"": {
+      ""unrecognizedValue"": 3
+    },
+    ""indentation"": {
+      ""unrecognizedValue"": 3
+    },
+    ""readabilityRules"": { },
+    ""spacingRules"": { },
+    ""unrecognizedValue"": 3
   }
 }
 ";
@@ -75,6 +89,7 @@ namespace StyleCop.Analyzers.Test.Settings
 
             Assert.Equal("TestCompany", styleCopSettings.DocumentationRules.CompanyName);
             Assert.Equal("Custom copyright text.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
+            Assert.Equal("ru-RU", styleCopSettings.DocumentationRules.DocumentationCulture);
             Assert.False(styleCopSettings.NamingRules.AllowCommonHungarianPrefixes);
             Assert.Equal(new[] { "a", "ab" }, styleCopSettings.NamingRules.AllowedHungarianPrefixes);
 
@@ -84,6 +99,69 @@ namespace StyleCop.Analyzers.Test.Settings
             Assert.NotNull(styleCopSettings.OrderingRules);
             Assert.Equal(UsingDirectivesPlacement.OutsideNamespace, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
             Assert.Equal(OptionSetting.Omit, styleCopSettings.OrderingRules.BlankLinesBetweenUsingGroups);
+        }
+
+        /// <summary>
+        /// Verifies that the settings are properly read.
+        /// </summary>
+        /// <param name="value">The value for testing the settings.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async Task VerifyBooleanDocumentationSettingsAsync(bool value)
+        {
+            string valueText = value.ToString().ToLowerInvariant();
+            var settings = $@"
+{{
+  ""settings"": {{
+    ""documentationRules"": {{
+      ""documentExposedElements"": {valueText},
+      ""documentInternalElements"": {valueText},
+      ""documentPrivateElements"": {valueText},
+      ""documentInterfaces"": {valueText},
+      ""documentPrivateFields"": {valueText}
+    }}
+  }}
+}}
+";
+            var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
+
+            Assert.Equal(value, styleCopSettings.DocumentationRules.DocumentExposedElements);
+            Assert.Equal(value, styleCopSettings.DocumentationRules.DocumentInternalElements);
+            Assert.Equal(value, styleCopSettings.DocumentationRules.DocumentPrivateElements);
+            Assert.Equal(value, styleCopSettings.DocumentationRules.DocumentInterfaces);
+            Assert.Equal(value, styleCopSettings.DocumentationRules.DocumentPrivateFields);
+        }
+
+        /// <summary>
+        /// Verifies that the settings are properly read.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyDocumentationVariablesAsync()
+        {
+            var settings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""variables"": {
+        ""var"": ""value"",
+        ""no space allowed"": ""value""
+      }
+    }
+  }
+}
+";
+            var context = await CreateAnalysisContextAsync(settings).ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
+
+            Assert.Equal(1, styleCopSettings.DocumentationRules.Variables.Count);
+            Assert.Equal("value", styleCopSettings.DocumentationRules.Variables["var"]);
+            Assert.False(styleCopSettings.DocumentationRules.Variables.ContainsKey("no space allowed"));
         }
 
         /// <summary>
