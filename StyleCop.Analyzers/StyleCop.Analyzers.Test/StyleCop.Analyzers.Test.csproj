@@ -252,6 +252,7 @@
     <Compile Include="Lightup\BaseMethodDeclarationSyntaxExtensionsTests.cs" />
     <Compile Include="Lightup\ConstantPatternSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\ConstructorDeclarationSyntaxExtensionsTests.cs" />
+    <Compile Include="Lightup\DeclarationExpressionSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\DeclarationPatternSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\DestructorDeclarationSyntaxExtensionsTests.cs" />
     <Compile Include="Lightup\DiscardDesignationSyntaxWrapperTests.cs" />
