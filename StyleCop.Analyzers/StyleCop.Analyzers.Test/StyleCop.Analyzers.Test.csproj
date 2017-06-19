@@ -266,6 +266,7 @@
     <Compile Include="Lightup\SingleVariableDesignationSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\SyntaxWrapperTests.cs" />
     <Compile Include="Lightup\ThrowExpressionSyntaxWrapperTests.cs" />
+    <Compile Include="Lightup\TupleElementSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\TupleExpressionSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\TupleTypeSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\UnsupportedSyntaxListTests.cs" />
