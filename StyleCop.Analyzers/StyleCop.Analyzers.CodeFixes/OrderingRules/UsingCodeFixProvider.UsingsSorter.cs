@@ -173,12 +173,14 @@ namespace StyleCop.Analyzers.OrderingRules
 
                     // when there is a directive trivia, add it (and any trivia before it) to the triviaToMove collection.
                     // when there are leading blank lines for the first entry, add them to the triviaToMove collection.
-                    var previousIsEndOfLine = true;
+                    var previousIsEndOfLine = false;
                     for (var m = leadingTrivia.Count - 1; m >= 0; m--)
                     {
                         if (leadingTrivia[m].IsDirective)
                         {
-                            triviaToMove.InsertRange(0, leadingTrivia.Take(m + 1));
+                            // When a directive is followed by a blank line, keep the blank line with the directive.
+                            int takeCount = previousIsEndOfLine ? m + 2 : m + 1;
+                            triviaToMove.InsertRange(0, leadingTrivia.Take(takeCount));
                             break;
                         }
 
