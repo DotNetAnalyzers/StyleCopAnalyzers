@@ -6,8 +6,10 @@ namespace StyleCop.Analyzers.Test.LightJson
     using System;
     using global::LightJson;
     using global::LightJson.Serialization;
+    using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
 
+    [UseCulture("en-US")]
     public class JsonValueTests
     {
         [Fact]
@@ -107,15 +109,32 @@ namespace StyleCop.Analyzers.Test.LightJson
         }
 
         [Fact]
+        [WorkItem(2440, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2440")]
+        [UseCulture("sv-SE")]
+        public void TestAsNumbersUsingCultureWithNonStandardNumberFormat()
+        {
+            Assert.Equal(1.0, new JsonValue("1.0").AsNumber);
+        }
+
+        [Fact]
         public void TestAsString()
         {
             Assert.Equal("false", new JsonValue(false).AsString);
             Assert.Equal("true", new JsonValue(true).AsString);
+            Assert.Equal("0.5", new JsonValue(0.5).AsString);
             Assert.Equal("1", new JsonValue(1.0).AsString);
             Assert.Equal("text", new JsonValue("text").AsString);
             Assert.Null(new JsonValue(new JsonObject()).AsString);
             Assert.Null(new JsonValue(default(JsonObject)).AsString);
             Assert.Null(new JsonValue(new JsonArray()).AsString);
+        }
+
+        [Fact]
+        [WorkItem(2440, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2440")]
+        [UseCulture("sv-SE")]
+        public void TestAsStringUsingCultureWithNonStandardNumberFormat()
+        {
+            Assert.Equal("0.5", new JsonValue(0.5).AsString);
         }
 
         [Fact]
