@@ -260,6 +260,7 @@
     <Compile Include="Lightup\LightupHelpersTests.cs" />
     <Compile Include="Lightup\ParenthesizedVariableDesignationSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\PatternSyntaxWrapperTests.cs" />
+    <Compile Include="Lightup\RefExpressionSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\RefTypeSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\SeparatedSyntaxListWrapperTestBase.cs" />
     <Compile Include="Lightup\SingleVariableDesignationSyntaxWrapperTests.cs" />
