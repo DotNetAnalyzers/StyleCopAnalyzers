@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// A C# statement contains parenthesis which are unnecessary and should be removed.
@@ -106,6 +107,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                     && !node.Expression.IsKind(SyntaxKind.CastExpression)
                     && !node.Expression.IsKind(SyntaxKind.ConditionalExpression)
                     && !node.Expression.IsKind(SyntaxKind.IsExpression)
+                    && !node.Expression.IsKind(SyntaxKindEx.IsPatternExpression)
                     && !node.Expression.IsKind(SyntaxKind.SimpleLambdaExpression)
                     && !node.Expression.IsKind(SyntaxKind.ParenthesizedLambdaExpression)
                     && !node.Expression.IsKind(SyntaxKind.ArrayCreationExpression)

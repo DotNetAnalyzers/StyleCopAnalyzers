@@ -16,7 +16,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         /// <seealso cref="SA1408CSharp7UnitTests.TestPatternMatchingAsync"/>
-        [Fact]
+        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2398")]
         public async Task TestPatternMatchingAsync()
         {
             var testCode = @"public class Foo
@@ -33,7 +33,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
 {
     public void Bar()
     {
-        if ( new object() is bool b && b)
+        if (new object() is bool b && b)
         {
             return;
         }
@@ -50,6 +50,25 @@ namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2372, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2372")]
+        public async Task TestNegatedPatternMatchingAsync()
+        {
+            var testCode = @"public class Foo
+{
+    public void Bar()
+    {
+        object obj = null;
+        if (!(obj is string anythng))
+        {
+            // ...
+        }
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
