@@ -7,6 +7,7 @@ namespace LightJson
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
+    using System.Globalization;
     using LightJson.Serialization;
 
     /// <summary>
@@ -332,7 +333,7 @@ namespace LightJson
 
                     case JsonValueType.String:
                         double number;
-                        if (double.TryParse((string)this.reference, out number))
+                        if (double.TryParse((string)this.reference, NumberStyles.Float, CultureInfo.InvariantCulture, out number))
                         {
                             return number;
                         }
@@ -363,7 +364,7 @@ namespace LightJson
                             : "false";
 
                     case JsonValueType.Number:
-                        return this.value.ToString();
+                        return this.value.ToString(CultureInfo.InvariantCulture);
 
                     case JsonValueType.String:
                         return (string)this.reference;
