@@ -647,6 +647,39 @@ default :
         }
 
         [Fact]
+        [WorkItem(2419, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2419")]
+        public async Task TestVarIdentifierAsync()
+        {
+            string statementWithoutSpace = @"int[] x = null; x.Select(var => var.ToString());";
+
+            string statementWithSpace = @"int[] x = null; x.Select(var => var .ToString());";
+
+            await this.TestKeywordStatementAsync(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace).ConfigureAwait(false);
+
+            // this case is handled by SA1019, so it shouldn't be reported here
+            await this.TestKeywordStatementAsync(statementWithSpace, EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that calls on 'var' are handled properly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        /// <seealso cref="SA1008UnitTests.TestVarIdentifierInvocationAsync"/>
+        [Fact]
+        [WorkItem(2419, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2419")]
+        public async Task TestVarIdentifierInvocationAsync()
+        {
+            string statementWithoutSpace = @"Func<int>[] x = null; x.Select(var => var());";
+
+            string statementWithSpace = @"Func<int>[] x = null; x.Select(var => var ());";
+
+            await this.TestKeywordStatementAsync(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace).ConfigureAwait(false);
+
+            // this case is handled by SA1008, so it shouldn't be reported here
+            await this.TestKeywordStatementAsync(statementWithSpace, EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestNewConstructorContraintStatement_TypeAsync()
         {
             string statementWithSpace = @"public class Foo<T> where T : new ()

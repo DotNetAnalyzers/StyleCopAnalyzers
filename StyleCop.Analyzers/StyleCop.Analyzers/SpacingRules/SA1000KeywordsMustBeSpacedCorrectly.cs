@@ -187,9 +187,33 @@ namespace StyleCop.Analyzers.SpacingRules
 
         private static void HandleIdentifierName(SyntaxNodeAnalysisContext context)
         {
-            IdentifierNameSyntax identifierNameSyntax = (IdentifierNameSyntax)context.Node;
+            var identifierNameSyntax = (IdentifierNameSyntax)context.Node;
             if (identifierNameSyntax.IsVar)
             {
+                var nextToken = identifierNameSyntax.Identifier.GetNextToken();
+                switch (nextToken.Kind())
+                {
+                case SyntaxKind.IdentifierToken:
+                case SyntaxKindEx.UnderscoreToken:
+                    // Always check these
+                    break;
+
+                case SyntaxKind.OpenParenToken:
+                    if (nextToken.Parent.IsKind(SyntaxKindEx.ParenthesizedVariableDesignation))
+                    {
+                        // We have something like this:
+                        //   var (x, i) = (a, b);
+                        break;
+                    }
+
+                    // Could be calling a function named 'var'
+                    return;
+
+                default:
+                    // Not something to check
+                    return;
+                }
+
                 HandleRequiredSpaceToken(ref context, identifierNameSyntax.Identifier);
             }
         }
