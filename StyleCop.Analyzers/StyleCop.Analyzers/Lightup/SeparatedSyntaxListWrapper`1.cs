@@ -66,9 +66,7 @@ namespace StyleCop.Analyzers.Lightup
         //   node:
         //     The node to add.
         public SeparatedSyntaxListWrapper<TNode> Add(TNode node)
-        {
-            throw new NotImplementedException();
-        }
+            => this.Insert(this.Count, node);
 
         // Summary:
         //     Creates a new list with the specified nodes added to the end.
@@ -77,9 +75,7 @@ namespace StyleCop.Analyzers.Lightup
         //   nodes:
         //     The nodes to add.
         public SeparatedSyntaxListWrapper<TNode> AddRange(IEnumerable<TNode> nodes)
-        {
-            throw new NotImplementedException();
-        }
+            => this.InsertRange(this.Count, nodes);
 
         public abstract bool Any();
 

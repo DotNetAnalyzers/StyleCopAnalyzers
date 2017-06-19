@@ -252,6 +252,7 @@
     <Compile Include="Lightup\BaseMethodDeclarationSyntaxExtensionsTests.cs" />
     <Compile Include="Lightup\ConstantPatternSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\ConstructorDeclarationSyntaxExtensionsTests.cs" />
+    <Compile Include="Lightup\DeclarationExpressionSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\DeclarationPatternSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\DestructorDeclarationSyntaxExtensionsTests.cs" />
     <Compile Include="Lightup\DiscardDesignationSyntaxWrapperTests.cs" />
@@ -259,11 +260,15 @@
     <Compile Include="Lightup\LightupHelpersTests.cs" />
     <Compile Include="Lightup\ParenthesizedVariableDesignationSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\PatternSyntaxWrapperTests.cs" />
+    <Compile Include="Lightup\RefExpressionSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\RefTypeSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\SeparatedSyntaxListWrapperTestBase.cs" />
     <Compile Include="Lightup\SingleVariableDesignationSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\SyntaxWrapperTests.cs" />
     <Compile Include="Lightup\ThrowExpressionSyntaxWrapperTests.cs" />
+    <Compile Include="Lightup\TupleElementSyntaxWrapperTests.cs" />
+    <Compile Include="Lightup\TupleExpressionSyntaxWrapperTests.cs" />
+    <Compile Include="Lightup\TupleTypeSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\UnsupportedSyntaxListTests.cs" />
     <Compile Include="Lightup\VariableDesignationSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\WhenClauseSyntaxWrapperTests.cs" />
