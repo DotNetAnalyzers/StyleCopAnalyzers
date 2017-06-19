@@ -27,6 +27,7 @@ namespace StyleCop.Analyzers.Test.Lightup
                 ImmutableArray.Create(
                     SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.TrueLiteralExpression)),
                     SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.FalseLiteralExpression))))));
+            Assert.Throws<NullReferenceException>(() => wrapper.AddArguments());
             Assert.Throws<NullReferenceException>(() => wrapper.WithCloseParenToken(SyntaxFactory.Token(SyntaxKind.CloseParenToken)));
         }
 

@@ -23,6 +23,7 @@ namespace StyleCop.Analyzers.Test.Lightup
             Assert.Throws<NullReferenceException>(() => wrapper.CloseParenToken);
             Assert.Throws<NullReferenceException>(() => wrapper.WithOpenParenToken(SyntaxFactory.Token(SyntaxKind.OpenParenToken)));
             Assert.Throws<NullReferenceException>(() => wrapper.WithElements(SeparatedSyntaxListWrapper<TupleElementSyntaxWrapper>.UnsupportedEmpty));
+            Assert.Throws<NullReferenceException>(() => wrapper.AddElements());
             Assert.Throws<NullReferenceException>(() => wrapper.WithCloseParenToken(SyntaxFactory.Token(SyntaxKind.CloseParenToken)));
         }
 

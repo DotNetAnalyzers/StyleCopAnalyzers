@@ -27,6 +27,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
                 ImmutableArray.Create(
                     SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.TrueLiteralExpression)),
                     SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.FalseLiteralExpression))))));
+            Assert.Throws<NullReferenceException>(() => wrapper.AddArguments());
             Assert.Throws<NullReferenceException>(() => wrapper.WithCloseParenToken(SyntaxFactory.Token(SyntaxKind.CloseParenToken)));
         }
 
@@ -54,6 +55,12 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             Assert.NotNull(wrapperWithModifiedArguments.SyntaxNode);
             Assert.NotSame(syntaxNode.Arguments[0], wrapperWithModifiedArguments.Arguments[0]);
             Assert.Equal(SyntaxKind.NullLiteralExpression, wrapperWithModifiedArguments.Arguments[0].Expression.Kind());
+
+            var wrapperWithAddedArguments = wrapper.AddArguments(SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal(42))));
+            Assert.NotNull(wrapperWithAddedArguments.SyntaxNode);
+            Assert.Equal(wrapper.Arguments.Count + 1, wrapperWithAddedArguments.Arguments.Count);
+            Assert.Equal(SyntaxKind.NumericLiteralExpression, wrapperWithAddedArguments.Arguments.Last().Expression.Kind());
+            Assert.Equal("42", wrapperWithAddedArguments.Arguments.Last().ToString());
 
             var newCloseParenToken = SyntaxFactory.Token(SyntaxKind.CloseParenToken).WithLeadingTrivia(SyntaxFactory.Space);
             var wrapperWithModifiedCloseParenToken = wrapper.WithCloseParenToken(newCloseParenToken);

@@ -24,6 +24,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             Assert.Throws<NullReferenceException>(() => wrapper.CloseParenToken);
             Assert.Throws<NullReferenceException>(() => wrapper.WithOpenParenToken(SyntaxFactory.Token(SyntaxKind.OpenParenToken)));
             Assert.Throws<NullReferenceException>(() => wrapper.WithElements(SeparatedSyntaxListWrapper<TupleElementSyntaxWrapper>.UnsupportedEmpty));
+            Assert.Throws<NullReferenceException>(() => wrapper.AddElements());
             Assert.Throws<NullReferenceException>(() => wrapper.WithCloseParenToken(SyntaxFactory.Token(SyntaxKind.CloseParenToken)));
         }
 
@@ -51,6 +52,12 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             Assert.NotNull(wrapperWithModifiedElements.SyntaxNode);
             Assert.NotSame(syntaxNode.Elements[0], wrapperWithModifiedElements.Elements[0]);
             Assert.Equal(SyntaxKind.StringKeyword, ((PredefinedTypeSyntax)wrapperWithModifiedElements.Elements[0].Type).Keyword.Kind());
+
+            var wrapperWithAddedElements = wrapper.AddElements((TupleElementSyntaxWrapper)SyntaxFactory.TupleElement(SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ShortKeyword))));
+            Assert.NotNull(wrapperWithAddedElements.SyntaxNode);
+            Assert.Equal(wrapper.Elements.Count + 1, wrapperWithAddedElements.Elements.Count);
+            Assert.Equal(SyntaxKind.PredefinedType, wrapperWithAddedElements.Elements.Last().Type.Kind());
+            Assert.Equal(SyntaxKind.ShortKeyword, ((PredefinedTypeSyntax)wrapperWithAddedElements.Elements.Last().Type).Keyword.Kind());
 
             var newCloseParenToken = SyntaxFactory.Token(SyntaxKind.CloseParenToken).WithLeadingTrivia(SyntaxFactory.Space);
             var wrapperWithModifiedCloseParenToken = wrapper.WithCloseParenToken(newCloseParenToken);
