@@ -284,6 +284,7 @@
     <Compile Include="Lightup\RefTypeSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\SingleVariableDesignationSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\SyntaxWrapperTests.cs" />
+    <Compile Include="Lightup\LocalFunctionStatementSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\ThrowExpressionSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\TupleElementSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\TupleExpressionSyntaxWrapperTests.cs" />
