@@ -237,8 +237,19 @@ namespace StyleCop.Analyzers.OrderingRules
                             continue;
                         }
 
-                        triviaToMove.Insert(m, SyntaxFactory.Whitespace(indentation));
-                        m++;
+                        if (string.IsNullOrEmpty(indentation))
+                        {
+                            if (triviaToMove[m].IsKind(SyntaxKind.WhitespaceTrivia))
+                            {
+                                triviaToMove.RemoveAt(m);
+                                m--;
+                            }
+                        }
+                        else
+                        {
+                            triviaToMove.Insert(m, SyntaxFactory.Whitespace(indentation));
+                            m++;
+                        }
                     }
 
                     // strip any leading whitespace on each line (and also blank lines)
