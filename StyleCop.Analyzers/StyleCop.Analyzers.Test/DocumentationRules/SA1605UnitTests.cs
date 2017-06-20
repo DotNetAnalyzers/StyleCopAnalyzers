@@ -347,7 +347,8 @@ public partial class ClassName
 
         protected override string GetSettings()
         {
-            return this.currentTestSettings ?? base.GetSettings();
+            Assert.NotNull(this.currentTestSettings);
+            return this.currentTestSettings;
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
