@@ -51,7 +51,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, IEnumerable<XmlNodeSyntax> syntaxList, params Location[] diagnosticLocations)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, bool needsComment, IEnumerable<XmlNodeSyntax> syntaxList, params Location[] diagnosticLocations)
         {
             foreach (var syntax in syntaxList)
             {
@@ -64,7 +64,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         }
 
         /// <inheritdoc/>
-        protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, XElement completeDocumentation, params Location[] diagnosticLocations)
+        protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, bool needsComment, XElement completeDocumentation, params Location[] diagnosticLocations)
         {
             var returnsNodes = completeDocumentation.Nodes()
                 .OfType<XElement>()

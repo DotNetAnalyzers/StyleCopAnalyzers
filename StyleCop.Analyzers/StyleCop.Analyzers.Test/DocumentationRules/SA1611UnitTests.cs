@@ -154,6 +154,25 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(2444, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2444")]
+        public async Task TestPrivateMethodMissingParametersAsync()
+        {
+            var testCode = @"
+internal class ClassName
+{
+    ///
+    private void Test1(int arg) { }
+
+    /**
+     *
+     */
+    private void Test2(int arg) { }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Verifies that valid operator declarations will not produce diagnostics.
         /// </summary>
