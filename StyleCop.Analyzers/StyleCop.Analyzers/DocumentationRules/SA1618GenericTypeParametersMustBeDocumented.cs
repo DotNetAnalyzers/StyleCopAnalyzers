@@ -12,6 +12,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// A generic C# element is missing documentation for one or more of its generic type parameters.
@@ -41,9 +42,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<SyntaxNodeAnalysisContext> TypeDeclarationAction = HandleTypeDeclaration;
-        private static readonly Action<SyntaxNodeAnalysisContext> MethodDeclarationAction = HandleMethodDeclaration;
-        private static readonly Action<SyntaxNodeAnalysisContext> DelegateDeclarationAction = HandleDelegateDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> TypeDeclarationAction = HandleTypeDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> MethodDeclarationAction = HandleMethodDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> DelegateDeclarationAction = HandleDelegateDeclaration;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -60,7 +61,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             context.RegisterSyntaxNodeAction(DelegateDeclarationAction, SyntaxKind.DelegateDeclaration);
         }
 
-        private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             TypeDeclarationSyntax typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
@@ -70,25 +71,40 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            HandleMemberDeclaration(context, typeDeclaration, typeDeclaration.TypeParameterList);
+            Accessibility declaredAccessibility = typeDeclaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+            Accessibility effectiveAccessibility = typeDeclaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+            bool needsComment = SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, typeDeclaration.Kind(), typeDeclaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility);
+            HandleMemberDeclaration(context, needsComment, typeDeclaration, typeDeclaration.TypeParameterList);
         }
 
-        private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             MethodDeclarationSyntax methodDeclaration = (MethodDeclarationSyntax)context.Node;
 
-            HandleMemberDeclaration(context, methodDeclaration, methodDeclaration.TypeParameterList);
+            Accessibility declaredAccessibility = methodDeclaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+            Accessibility effectiveAccessibility = methodDeclaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+            bool needsComment = SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, methodDeclaration.Kind(), methodDeclaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility);
+            HandleMemberDeclaration(context, needsComment, methodDeclaration, methodDeclaration.TypeParameterList);
         }
 
-        private static void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             DelegateDeclarationSyntax delegateDeclaration = (DelegateDeclarationSyntax)context.Node;
 
-            HandleMemberDeclaration(context, delegateDeclaration, delegateDeclaration.TypeParameterList);
+            Accessibility declaredAccessibility = delegateDeclaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+            Accessibility effectiveAccessibility = delegateDeclaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+            bool needsComment = SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, delegateDeclaration.Kind(), delegateDeclaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility);
+            HandleMemberDeclaration(context, needsComment, delegateDeclaration, delegateDeclaration.TypeParameterList);
         }
 
-        private static void HandleMemberDeclaration(SyntaxNodeAnalysisContext context, SyntaxNode node, TypeParameterListSyntax typeParameterList)
+        private static void HandleMemberDeclaration(SyntaxNodeAnalysisContext context, bool needsComment, SyntaxNode node, TypeParameterListSyntax typeParameterList)
         {
+            if (!needsComment)
+            {
+                // Documentation is not required for this element.
+                return;
+            }
+
             if (typeParameterList == null)
             {
                 // The member does not have a type parameter list

@@ -6,9 +6,9 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Analyzers.DocumentationRules;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Test.Helpers;
     using TestHelper;
     using Xunit;
@@ -18,6 +18,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     /// </summary>
     public class SA1619UnitTests : DiagnosticVerifier
     {
+        private string currentTestSettings;
+
         public static IEnumerable<object[]> Types
         {
             get
@@ -124,6 +126,32 @@ public partial ##";
 
         [Theory]
         [MemberData(nameof(Types))]
+        [WorkItem(2453, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2453")]
+        public async Task TestPartialTypesWithMissingButNotRequiredDocumentationAsync(string p)
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public partial ##";
+
+            // This situation is allowed if 'documentExposedElements' and 'documentInterfaces' is false
+            string interfaceSettingName = p.StartsWith("interface ") ? "documentInterfaces" : "ignoredProperty";
+            this.currentTestSettings = $@"
+{{
+  ""settings"": {{
+    ""documentationRules"": {{
+      ""documentExposedElements"": false,
+      ""{interfaceSettingName}"": false
+    }}
+  }}
+}}
+";
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(Types))]
         public async Task TestNonPartialTypesWithMissingDocumentationAsync(string p)
         {
             var testCode = @"
@@ -200,6 +228,31 @@ public partial class TestClass<T>
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(2453, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2453")]
+        public async Task TestGenericPartialTypeWithoutTypeparamInIncludedButNotRequiredDocumentationAsync()
+        {
+            var testCode = @"
+/// <include file='ClassWithoutTypeparamDoc.xml' path='/TestClass/*'/>
+public partial class TestClass<T>
+{
+}
+";
+
+            // The situation is allowed if 'documentExposedElements' false
+            this.currentTestSettings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""documentExposedElements"": false
+    }
+  }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Verifies that a generic partial type with &lt;inheritdoc&gt; in included documentation will work.
         /// </summary>
@@ -252,6 +305,11 @@ public partial class TestClass<T>
             project = base.ApplyCompilationOptions(project);
             project = project.WithCompilationOptions(project.CompilationOptions.WithXmlReferenceResolver(resolver));
             return project;
+        }
+
+        protected override string GetSettings()
+        {
+            return this.currentTestSettings ?? base.GetSettings();
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

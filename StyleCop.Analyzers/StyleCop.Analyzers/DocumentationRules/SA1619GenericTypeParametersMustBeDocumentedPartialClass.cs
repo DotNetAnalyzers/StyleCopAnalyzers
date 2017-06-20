@@ -12,6 +12,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// A generic, partial C# element is missing documentation for one or more of its generic type parameters, and the
@@ -91,7 +92,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<SyntaxNodeAnalysisContext> TypeDeclarationAction = HandleTypeDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> TypeDeclarationAction = HandleTypeDeclaration;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -106,7 +107,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             context.RegisterSyntaxNodeAction(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
         }
 
-        private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             TypeDeclarationSyntax typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
@@ -126,6 +127,15 @@ namespace StyleCop.Analyzers.DocumentationRules
             if (documentation == null)
             {
                 // Don't report if the documentation is missing
+                return;
+            }
+
+            Accessibility declaredAccessibility = typeDeclaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+            Accessibility effectiveAccessibility = typeDeclaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+            bool needsComment = SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, typeDeclaration.Kind(), typeDeclaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility);
+            if (!needsComment)
+            {
+                // Omitting documentation is allowed for this element.
                 return;
             }
 

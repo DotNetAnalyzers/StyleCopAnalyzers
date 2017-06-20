@@ -395,6 +395,25 @@ public class TestClass
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(2446, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2446")]
+        public async Task TestPrivateMethodMissingGenericParametersAsync()
+        {
+            var testCode = @"
+internal class ClassName
+{
+    ///
+    private void Test1<T>(int arg) { }
+
+    /**
+     *
+     */
+    private void Test2<T>(int arg) { }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override Project ApplyCompilationOptions(Project project)
         {
             var resolver = new TestXmlReferenceResolver();

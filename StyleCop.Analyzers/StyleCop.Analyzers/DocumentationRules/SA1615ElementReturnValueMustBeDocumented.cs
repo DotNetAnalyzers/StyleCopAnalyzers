@@ -12,6 +12,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// A C# element is missing documentation for its return value.
@@ -41,8 +42,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<SyntaxNodeAnalysisContext> MethodDeclarationAction = HandleMethodDeclaration;
-        private static readonly Action<SyntaxNodeAnalysisContext> DelegateDeclarationAction = HandleDelegateDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> MethodDeclarationAction = HandleMethodDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> DelegateDeclarationAction = HandleDelegateDeclaration;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -58,22 +59,34 @@ namespace StyleCop.Analyzers.DocumentationRules
             context.RegisterSyntaxNodeAction(DelegateDeclarationAction, SyntaxKind.DelegateDeclaration);
         }
 
-        private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             var node = (MethodDeclarationSyntax)context.Node;
 
-            HandleDeclaration(context, node.ReturnType);
+            Accessibility declaredAccessibility = node.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+            Accessibility effectiveAccessibility = node.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+            bool needsComment = SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, node.Kind(), node.Parent.Kind(), declaredAccessibility, effectiveAccessibility);
+            HandleDeclaration(context, needsComment, node.ReturnType);
         }
 
-        private static void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             var node = (DelegateDeclarationSyntax)context.Node;
 
-            HandleDeclaration(context, node.ReturnType);
+            Accessibility declaredAccessibility = node.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+            Accessibility effectiveAccessibility = node.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+            bool needsComment = SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, node.Kind(), node.Parent.Kind(), declaredAccessibility, effectiveAccessibility);
+            HandleDeclaration(context, needsComment, node.ReturnType);
         }
 
-        private static void HandleDeclaration(SyntaxNodeAnalysisContext context, TypeSyntax returnType)
+        private static void HandleDeclaration(SyntaxNodeAnalysisContext context, bool needsComment, TypeSyntax returnType)
         {
+            if (!needsComment)
+            {
+                // Documentation is optional for this element.
+                return;
+            }
+
             var predefinedType = returnType as PredefinedTypeSyntax;
 
             if (predefinedType != null && predefinedType.Keyword.IsKind(SyntaxKind.VoidKeyword))

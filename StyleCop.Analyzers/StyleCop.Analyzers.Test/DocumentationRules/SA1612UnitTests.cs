@@ -18,6 +18,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     /// </summary>
     public class SA1612UnitTests : DiagnosticVerifier
     {
+        private string currentTestSettings;
+
         public static IEnumerable<object[]> Declarations
         {
             get
@@ -79,6 +81,68 @@ public class ClassName
 $$
 }";
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(Declarations))]
+        [WorkItem(2452, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2452")]
+        public async Task TestMemberWithMissingNotRequiredParamAsync(string declaration)
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    ///<param name=""foo"">Test</param>
+    ///<param name=""new"">Test</param>
+$$
+}";
+
+            this.currentTestSettings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""documentExposedElements"": false
+    }
+  }
+}
+";
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(Declarations))]
+        [WorkItem(2452, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2452")]
+        public async Task TestMemberWithMissingNotRequiredReorderedParamAsync(string declaration)
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Foo
+    /// </summary>
+    ///<param name=""new"">Test</param>
+    ///<param name=""foo"">Test</param>
+$$
+}";
+
+            var diagnostic = this.CSharpDiagnostic()
+                .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}.");
+
+            var expected = new[]
+            {
+                diagnostic.WithLocation(10, 21).WithArguments("new", 3),
+                diagnostic.WithLocation(11, 21).WithArguments("foo", 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -301,6 +365,27 @@ public class ClassName
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            // This is even reported if the documentation is not required, except that no warning is reported for the
+            // first param element (which is actually the last parameter) since it would otherwise be allowed to skip
+            // the documentation for the first two parameters.
+            this.currentTestSettings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""documentExposedElements"": false
+    }
+  }
+}
+";
+
+            expected = new[]
+            {
+                diagnostic.WithLocation(8, 22).WithArguments("bar", 1),
+                diagnostic.WithLocation(8, 22).WithArguments("new", 2),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -426,6 +511,11 @@ public class ClassName
             project = base.ApplyCompilationOptions(project);
             project = project.WithCompilationOptions(project.CompilationOptions.WithXmlReferenceResolver(resolver));
             return project;
+        }
+
+        protected override string GetSettings()
+        {
+            return this.currentTestSettings ?? base.GetSettings();
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

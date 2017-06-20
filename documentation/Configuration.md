@@ -512,7 +512,7 @@ The following example shows a configuration file which requires developers to do
   "settings": {
     "documentationRules": {
       "documentInterfaces": true,
-      "documentInternalMembers": false
+      "documentInternalElements": false
     }
   }
 }

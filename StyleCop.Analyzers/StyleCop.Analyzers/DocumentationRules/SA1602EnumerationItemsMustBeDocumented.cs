@@ -79,47 +79,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                 EnumMemberDeclarationSyntax declaration = (EnumMemberDeclarationSyntax)context.Node;
                 Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility();
                 Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
-                if (NeedsComment(settings.DocumentationRules, declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
+                if (SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
                 {
                     if (!XmlCommentHelper.HasDocumentation(declaration))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
                     }
-                }
-            }
-
-            private static bool NeedsComment(DocumentationSettings documentationSettings, SyntaxKind syntaxKind, SyntaxKind parentSyntaxKind, Accessibility declaredAccessibility, Accessibility effectiveAccessibility)
-            {
-                if (documentationSettings.DocumentInterfaces
-                    && (syntaxKind == SyntaxKind.InterfaceDeclaration || parentSyntaxKind == SyntaxKind.InterfaceDeclaration))
-                {
-                    // DocumentInterfaces => all interfaces must be documented
-                    return true;
-                }
-
-                if (documentationSettings.DocumentPrivateElements)
-                {
-                    // DocumentPrivateMembers => everything except declared private fields must be documented
-                    return true;
-                }
-
-                switch (effectiveAccessibility)
-                {
-                case Accessibility.Public:
-                case Accessibility.Protected:
-                case Accessibility.ProtectedOrInternal:
-                    // These items are part of the exposed API surface => document if configured
-                    return documentationSettings.DocumentExposedElements;
-
-                case Accessibility.ProtectedAndInternal:
-                case Accessibility.Internal:
-                    // These items are part of the internal API surface => document if configured
-                    return documentationSettings.DocumentInternalElements;
-
-                case Accessibility.NotApplicable:
-                case Accessibility.Private:
-                default:
-                    return false;
                 }
             }
         }

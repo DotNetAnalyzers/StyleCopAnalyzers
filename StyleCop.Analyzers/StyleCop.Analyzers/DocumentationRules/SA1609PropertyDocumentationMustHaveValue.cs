@@ -49,8 +49,14 @@ namespace StyleCop.Analyzers.DocumentationRules
         protected override string XmlTagToHandle => XmlCommentHelper.ValueXmlTag;
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, XElement completeDocumentation, Location diagnosticLocation)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, bool needsComment, XmlNodeSyntax syntax, XElement completeDocumentation, Location diagnosticLocation)
         {
+            if (!needsComment)
+            {
+                // A missing 'value' documentation is allowed for this element.
+                return;
+            }
+
             var properties = ImmutableDictionary.Create<string, string>();
 
             if (completeDocumentation != null)
