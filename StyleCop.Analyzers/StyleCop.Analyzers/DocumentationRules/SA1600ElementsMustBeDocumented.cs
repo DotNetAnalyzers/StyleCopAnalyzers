@@ -59,6 +59,53 @@ namespace StyleCop.Analyzers.DocumentationRules
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(Descriptor);
 
+        public static bool NeedsComment(DocumentationSettings documentationSettings, SyntaxKind syntaxKind, SyntaxKind parentSyntaxKind, Accessibility declaredAccessibility, Accessibility effectiveAccessibility)
+        {
+            if (documentationSettings.DocumentInterfaces
+                && (syntaxKind == SyntaxKind.InterfaceDeclaration || parentSyntaxKind == SyntaxKind.InterfaceDeclaration))
+            {
+                // DocumentInterfaces => all interfaces must be documented
+                return true;
+            }
+
+            if (syntaxKind == SyntaxKind.FieldDeclaration && documentationSettings.DocumentPrivateFields)
+            {
+                // DocumentPrivateFields => all fields must be documented
+                return true;
+            }
+
+            if (documentationSettings.DocumentPrivateElements)
+            {
+                if (syntaxKind == SyntaxKind.FieldDeclaration && declaredAccessibility == Accessibility.Private)
+                {
+                    // Handled by DocumentPrivateFields
+                    return false;
+                }
+
+                // DocumentPrivateMembers => everything except declared private fields must be documented
+                return true;
+            }
+
+            switch (effectiveAccessibility)
+            {
+            case Accessibility.Public:
+            case Accessibility.Protected:
+            case Accessibility.ProtectedOrInternal:
+                // These items are part of the exposed API surface => document if configured
+                return documentationSettings.DocumentExposedElements;
+
+            case Accessibility.ProtectedAndInternal:
+            case Accessibility.Internal:
+                // These items are part of the internal API surface => document if configured
+                return documentationSettings.DocumentInternalElements;
+
+            case Accessibility.NotApplicable:
+            case Accessibility.Private:
+            default:
+                return false;
+            }
+        }
+
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
@@ -291,53 +338,6 @@ namespace StyleCop.Analyzers.DocumentationRules
                             context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
                         }
                     }
-                }
-            }
-
-            public static bool NeedsComment(DocumentationSettings documentationSettings, SyntaxKind syntaxKind, SyntaxKind parentSyntaxKind, Accessibility declaredAccessibility, Accessibility effectiveAccessibility)
-            {
-                if (documentationSettings.DocumentInterfaces
-                    && (syntaxKind == SyntaxKind.InterfaceDeclaration || parentSyntaxKind == SyntaxKind.InterfaceDeclaration))
-                {
-                    // DocumentInterfaces => all interfaces must be documented
-                    return true;
-                }
-
-                if (syntaxKind == SyntaxKind.FieldDeclaration && documentationSettings.DocumentPrivateFields)
-                {
-                    // DocumentPrivateFields => all fields must be documented
-                    return true;
-                }
-
-                if (documentationSettings.DocumentPrivateElements)
-                {
-                    if (syntaxKind == SyntaxKind.FieldDeclaration && declaredAccessibility == Accessibility.Private)
-                    {
-                        // Handled by DocumentPrivateFields
-                        return false;
-                    }
-
-                    // DocumentPrivateMembers => everything except declared private fields must be documented
-                    return true;
-                }
-
-                switch (effectiveAccessibility)
-                {
-                case Accessibility.Public:
-                case Accessibility.Protected:
-                case Accessibility.ProtectedOrInternal:
-                    // These items are part of the exposed API surface => document if configured
-                    return documentationSettings.DocumentExposedElements;
-
-                case Accessibility.ProtectedAndInternal:
-                case Accessibility.Internal:
-                    // These items are part of the internal API surface => document if configured
-                    return documentationSettings.DocumentInternalElements;
-
-                case Accessibility.NotApplicable:
-                case Accessibility.Private:
-                default:
-                    return false;
                 }
             }
         }
