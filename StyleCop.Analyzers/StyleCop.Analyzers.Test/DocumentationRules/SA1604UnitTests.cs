@@ -208,6 +208,28 @@ public class ClassName
         }
 
         [Fact]
+        [WorkItem(2443, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2443")]
+        public async Task TestPrivateMethodWithoutSummaryAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// 
+/// </summary>
+internal class ClassName
+{
+    ///
+    private void Test1() { }
+
+    /**
+     *
+     */
+    private void Test2() { }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestPartialMethodWithoutDocumentationAsync()
         {
             var testCode = @"
@@ -663,10 +685,10 @@ public class ClassName
 public class ClassName
 {
     ///
-    event System.Action Foo { add { } remove { } }
+    public event System.Action Foo { add { } remove { } }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 25);
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 32);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
