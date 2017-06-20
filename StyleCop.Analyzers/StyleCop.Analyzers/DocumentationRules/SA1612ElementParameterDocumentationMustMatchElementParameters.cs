@@ -68,7 +68,6 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            var identifierLocation = identifier.Value.GetLocation();
             var parameterList = GetParameters(node)?.ToImmutableArray();
 
             bool hasNoParameters = !parameterList?.Any() ?? false;
@@ -84,7 +83,6 @@ namespace StyleCop.Analyzers.DocumentationRules
             {
                 var nameAttributeSyntax = XmlCommentHelper.GetFirstAttributeOrDefault<XmlNameAttributeSyntax>(syntax);
                 var nameAttributeText = nameAttributeSyntax?.Identifier?.Identifier.ValueText;
-                var location = nameAttributeSyntax?.Identifier?.Identifier.GetLocation();
 
                 // Make sure we ignore violations that should be reported by SA1613 instead.
                 if (string.IsNullOrWhiteSpace(nameAttributeText))
@@ -92,10 +90,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                     return;
                 }
 
+                var location = nameAttributeSyntax.Identifier.Identifier.GetLocation();
+
                 var parentParameter = parentParameters.FirstOrDefault(s => s.Identifier.ValueText == nameAttributeText);
                 if (parentParameter == null)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(MissingParameterDescriptor, location ?? identifierLocation, nameAttributeText));
+                    context.ReportDiagnostic(Diagnostic.Create(MissingParameterDescriptor, location, nameAttributeText));
                 }
                 else
                 {
@@ -114,7 +114,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                         context.ReportDiagnostic(
                             Diagnostic.Create(
                                 OrderDescriptor,
-                                location ?? identifierLocation,
+                                location,
                                 nameAttributeText,
                                 parentParameters.IndexOf(parentParameter) + 1));
                     }
