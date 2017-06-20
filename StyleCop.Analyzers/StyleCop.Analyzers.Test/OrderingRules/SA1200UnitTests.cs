@@ -196,6 +196,44 @@ namespace TestNamespace
 
         [Fact]
         [WorkItem(2363, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2363")]
+        public async Task TestInvalidUsingStatementsWithSeparatedFileHeaderAndTriviaAsync()
+        {
+            var testCode = @"// File Header
+
+// Leading Comment
+
+using System;
+using System.Threading;
+
+namespace TestNamespace
+{
+}
+";
+
+            var fixedTestCode = @"// File Header
+
+namespace TestNamespace
+{
+    // Leading Comment
+
+    using System;
+    using System.Threading;
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(5, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(6, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2363, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2363")]
         public async Task TestInvalidUsingStatementsWithTriviaAsync()
         {
             var testCode = @"
