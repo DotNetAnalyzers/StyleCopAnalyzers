@@ -23,6 +23,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             get
             {
                 // These method names are chosen so that the position of the parameters are always the same. This makes testing easier
+                yield return new object[] { "         ClassName(string param1, string param2, string param3) { }" };
                 yield return new object[] { "void Foooooooooooo(string param1, string param2, string param3) { }" };
                 yield return new object[] { "delegate void Fooo(string param1, string param2, string param3);" };
                 yield return new object[] { "System.String this[string param1, string param2, string param3] { get { return param1; } }" };
@@ -168,6 +169,20 @@ internal class ClassName
      *
      */
     private void Test2(int arg) { }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2444, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2444")]
+        public async Task TestPrivateMethodMissingParametersInIncludedDocumentationAsync()
+        {
+            var testCode = @"
+internal class ClassName
+{
+    /// <include file='MissingElementDocumentation.xml' path='/TestClass/TestMethod/*' />
+    private void TestMethod(string param1, string param2, string param3) { }
 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);

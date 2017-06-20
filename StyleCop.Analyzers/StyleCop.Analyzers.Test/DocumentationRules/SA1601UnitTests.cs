@@ -27,6 +27,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 }
 ";
 
+        private string currentTestSettings = TestSettings;
+
         [Theory]
         [InlineData("class")]
         [InlineData("struct")]
@@ -58,6 +60,20 @@ TypeName
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 1);
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKeyword), expected, CancellationToken.None).ConfigureAwait(false);
+
+            // The same situation is allowed if 'documentExposedElements' and 'documentInterfaces' is false
+            string interfaceSettingName = typeKeyword == "interface" ? "documentInterfaces" : "ignoredProperty";
+            this.currentTestSettings = $@"
+{{
+  ""settings"": {{
+    ""documentationRules"": {{
+      ""documentExposedElements"": false,
+      ""{interfaceSettingName}"": false
+    }}
+  }}
+}}
+";
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKeyword), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -78,6 +94,20 @@ TypeName
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 1);
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKeyword), expected, CancellationToken.None).ConfigureAwait(false);
+
+            // The same situation is allowed if 'documentExposedElements' and 'documentInterfaces' is false
+            string interfaceSettingName = typeKeyword == "interface" ? "documentInterfaces" : "ignoredProperty";
+            this.currentTestSettings = $@"
+{{
+  ""settings"": {{
+    ""documentationRules"": {{
+      ""documentExposedElements"": false,
+      ""{interfaceSettingName}"": false
+    }}
+  }}
+}}
+";
+            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKeyword), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -112,6 +142,10 @@ public partial class TypeName
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 18);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            // The same situation is allowed if 'documentPrivateElements' is false (the default)
+            this.currentTestSettings = null;
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -132,12 +166,16 @@ public partial class TypeName
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 18);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            // The same situation is allowed if 'documentPrivateElements' is false (the default)
+            this.currentTestSettings = null;
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
         protected override string GetSettings()
         {
-            return TestSettings;
+            return this.currentTestSettings ?? base.GetSettings();
         }
 
         /// <inheritdoc/>
