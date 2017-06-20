@@ -352,7 +352,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
         private static ImmutableArray<SyntaxTrivia> GetFileHeader(SyntaxNode syntaxRoot)
         {
-            var onBlankLine = false;
+            var onBlankLine = true;
             var hasHeader = false;
             var fileHeaderBuilder = ImmutableArray.CreateBuilder<SyntaxTrivia>();
 
@@ -369,7 +369,6 @@ namespace StyleCop.Analyzers.OrderingRules
                 case SyntaxKind.MultiLineCommentTrivia:
                     fileHeaderBuilder.Add(firstTokenLeadingTrivia[i]);
                     onBlankLine = false;
-                    hasHeader = true;
                     break;
 
                 case SyntaxKind.WhitespaceTrivia:
@@ -377,6 +376,7 @@ namespace StyleCop.Analyzers.OrderingRules
                     break;
 
                 case SyntaxKind.EndOfLineTrivia:
+                    hasHeader = true;
                     fileHeaderBuilder.Add(firstTokenLeadingTrivia[i]);
 
                     if (onBlankLine)

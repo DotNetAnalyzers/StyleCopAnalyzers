@@ -128,6 +128,244 @@ namespace TestNamespace
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestInvalidUsingStatementsInCompilationUnitWithPragmaAsync()
+        {
+            var testCode = @"#pragma warning disable 1573 // Comment
+using System;
+using System.Threading;
+
+namespace TestNamespace
+{
+}
+";
+
+            var fixedTestCode = @"namespace TestNamespace
+{
+#pragma warning disable 1573 // Comment
+    using System;
+    using System.Threading;
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(2, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(3, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestInvalidUsingStatementsInCompilationUnitWithRegionBeforeAsync()
+        {
+            var testCode = @"#region Comment
+#endregion Comment
+using System;
+using System.Threading;
+
+namespace TestNamespace
+{
+}
+";
+
+            var fixedTestCode = @"namespace TestNamespace
+{
+    #region Comment
+    #endregion Comment
+    using System;
+    using System.Threading;
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(3, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(4, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2363, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2363")]
+        public async Task TestInvalidUsingStatementsWithFileHeaderTriviaAsync()
+        {
+            var testCode = @"// Some comment
+using System;
+using System.Threading;
+
+namespace TestNamespace
+{
+}
+";
+
+            var fixedTestCode = @"// Some comment
+namespace TestNamespace
+{
+    using System;
+    using System.Threading;
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(2, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(3, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2363, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2363")]
+        public async Task TestInvalidUsingStatementsWithSeparatedFileHeaderTriviaAsync()
+        {
+            var testCode = @"// Some comment
+
+using System;
+using System.Threading;
+
+namespace TestNamespace
+{
+}
+";
+
+            var fixedTestCode = @"// Some comment
+
+namespace TestNamespace
+{
+    using System;
+    using System.Threading;
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(3, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(4, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2363, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2363")]
+        public async Task TestInvalidUsingStatementsWithSeparatedFileHeaderAndTriviaAsync()
+        {
+            var testCode = @"// File Header
+
+// Leading Comment
+
+using System;
+using System.Threading;
+
+namespace TestNamespace
+{
+}
+";
+
+            var fixedTestCode = @"// File Header
+
+namespace TestNamespace
+{
+    // Leading Comment
+
+    using System;
+    using System.Threading;
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(5, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(6, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2363, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2363")]
+        public async Task TestInvalidUsingStatementsWithTriviaAsync()
+        {
+            var testCode = @"
+// Some comment
+using System;
+using System.Threading;
+
+namespace TestNamespace
+{
+}
+";
+
+            var fixedTestCode = @"
+namespace TestNamespace
+{
+    // Some comment
+    using System;
+    using System.Threading;
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(3, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(4, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2363, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2363")]
+        public async Task TestInvalidUsingStatementsWithHeaderAndTriviaAsync()
+        {
+            var testCode = @"// Copyright notice here
+
+// Some comment
+using System;
+using System.Threading;
+
+namespace TestNamespace
+{
+}
+";
+
+            var fixedTestCode = @"// Copyright notice here
+
+namespace TestNamespace
+{
+    // Some comment
+    using System;
+    using System.Threading;
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(4, 1),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(5, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {

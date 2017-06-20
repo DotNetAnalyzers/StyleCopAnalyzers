@@ -129,10 +129,14 @@ namespace System
 {
     using System.Threading;
     using Reflection;
+    using Assembly = Reflection.Assembly;
+    using List = Collections.Generic.IList<int>;
 }
 ";
             var fixedTestCode = @"using System.Reflection;
 using System.Threading;
+using Assembly = System.Reflection.Assembly;
+using List = System.Collections.Generic.IList<int>;
 
 namespace System.MyExtension
 {
@@ -143,6 +147,8 @@ namespace System.MyExtension
             {
                 this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(3, 5),
                 this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(4, 5),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(5, 5),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(6, 5),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
@@ -257,6 +263,46 @@ namespace TestNamespace
             DiagnosticResult[] expectedResults =
             {
                 this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(6, 5),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestFileHeaderIsProperlyPreservedWhenMovingUsingStatementsWithCommentsAsync()
+        {
+            var testCode = @"// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+namespace TestNamespace
+{
+    // Separated Comment
+
+    using System.Collections;
+    // Comment
+    using System;
+}
+";
+            var fixedTestCode = @"// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+
+// Separated Comment
+
+// Comment
+using System;
+using System.Collections;
+
+namespace TestNamespace
+{
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(8, 5),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(10, 5),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);

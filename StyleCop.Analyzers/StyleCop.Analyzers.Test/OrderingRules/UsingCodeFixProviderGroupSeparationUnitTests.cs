@@ -19,6 +19,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     /// </summary>
     public class UsingCodeFixProviderGroupSeparationUnitTests : CodeFixVerifier
     {
+        private bool usingsInsideNamespace = true;
         private bool? systemUsingDirectivesFirst;
 
         /// <summary>
@@ -71,6 +72,53 @@ namespace Foo
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task VerifyUsingReorderingOutsideNamespaceAsync()
+        {
+            this.systemUsingDirectivesFirst = true;
+
+            var testCode = @"namespace Foo
+{
+    using Microsoft.CodeAnalysis;
+    using SystemAction = System.Action;
+    using static System.Math;
+    using System;
+    using static System.String;
+    using MyFunc = System.Func<int,bool>;
+    using System.Collections.Generic;
+    using System.Collections;
+
+    public class Bar
+    {
+    }
+}
+";
+
+            var fixedTestCode = @"using System;
+using System.Collections;
+using System.Collections.Generic;
+
+using Microsoft.CodeAnalysis;
+
+using static System.Math;
+using static System.String;
+
+using MyFunc = System.Func<int, bool>;
+using SystemAction = System.Action;
+
+namespace Foo
+{
+    public class Bar
+    {
+    }
+}
+";
+
+            this.usingsInsideNamespace = false;
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override string GetSettings()
         {
@@ -80,6 +128,7 @@ namespace Foo
 {{
     ""settings"": {{
         ""orderingRules"": {{
+            ""usingDirectivesPlacement"": ""{(this.usingsInsideNamespace ? "insideNamespace" : "outsideNamespace")}"",
             ""systemUsingDirectivesFirst"" : {systemUsingDirectivesFirst.ToString().ToLowerInvariant()},
             ""blankLinesBetweenUsingGroups"": ""require""
         }}
