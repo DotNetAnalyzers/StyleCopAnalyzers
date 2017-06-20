@@ -241,8 +241,10 @@ namespace StyleCop.Analyzers.OrderingRules
                         {
                             if (triviaToMove[m].IsKind(SyntaxKind.WhitespaceTrivia))
                             {
+                                // Remove the trivia and analyze the current position again
                                 triviaToMove.RemoveAt(m);
                                 m--;
+                                atStartOfLine = true;
                             }
                         }
                         else
