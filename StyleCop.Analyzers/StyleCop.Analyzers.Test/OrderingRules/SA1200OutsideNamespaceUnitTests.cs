@@ -129,10 +129,14 @@ namespace System
 {
     using System.Threading;
     using Reflection;
+    using Assembly = Reflection.Assembly;
+    using List = Collections.Generic.IList<int>;
 }
 ";
             var fixedTestCode = @"using System.Reflection;
 using System.Threading;
+using Assembly = System.Reflection.Assembly;
+using List = System.Collections.Generic.IList<int>;
 
 namespace System.MyExtension
 {
@@ -143,6 +147,8 @@ namespace System.MyExtension
             {
                 this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(3, 5),
                 this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(4, 5),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(5, 5),
+                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(6, 5),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
