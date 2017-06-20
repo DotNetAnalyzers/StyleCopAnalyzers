@@ -270,6 +270,7 @@
     <Compile Include="LayoutRules\SA1520CSharp7UnitTests.cs" />
     <Compile Include="Lightup\AccessorDeclarationSyntaxExtensionsTests.cs" />
     <Compile Include="Lightup\BaseMethodDeclarationSyntaxExtensionsTests.cs" />
+    <Compile Include="Lightup\CasePatternSwitchLabelSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\ConstantPatternSyntaxWrapperTests.cs" />
     <Compile Include="Lightup\ConstructorDeclarationSyntaxExtensionsTests.cs" />
     <Compile Include="Lightup\DeclarationExpressionSyntaxWrapperTests.cs" />
