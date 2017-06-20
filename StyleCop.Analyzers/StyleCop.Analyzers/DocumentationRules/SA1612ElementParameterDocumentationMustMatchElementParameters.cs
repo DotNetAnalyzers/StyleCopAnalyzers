@@ -97,14 +97,27 @@ namespace StyleCop.Analyzers.DocumentationRules
                 {
                     context.ReportDiagnostic(Diagnostic.Create(MissingParameterDescriptor, location ?? identifierLocation, nameAttributeText));
                 }
-                else if (parentParameters.Length <= index || parentParameters[index] != parentParameter)
+                else
                 {
-                    context.ReportDiagnostic(
-                        Diagnostic.Create(
-                            OrderDescriptor,
-                            location ?? identifierLocation,
-                            nameAttributeText,
-                            parentParameters.IndexOf(parentParameter) + 1));
+                    if (!needsComment)
+                    {
+                        // Parameter documentation is allowed to be omitted, so skip parameters for which there is no
+                        // documentation.
+                        while (index < parentParameters.Length && parentParameters[index] != parentParameter)
+                        {
+                            index++;
+                        }
+                    }
+
+                    if (parentParameters.Length <= index || parentParameters[index] != parentParameter)
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                OrderDescriptor,
+                                location ?? identifierLocation,
+                                nameAttributeText,
+                                parentParameters.IndexOf(parentParameter) + 1));
+                    }
                 }
 
                 index++;
@@ -155,14 +168,27 @@ namespace StyleCop.Analyzers.DocumentationRules
                 {
                     context.ReportDiagnostic(Diagnostic.Create(MissingParameterDescriptor, identifierLocation, nameAttributeText));
                 }
-                else if (parentParameters.Length <= index || parentParameters[index] != parentParameter)
+                else
                 {
-                    context.ReportDiagnostic(
-                        Diagnostic.Create(
-                            OrderDescriptor,
-                            identifierLocation,
-                            nameAttributeText,
-                            parentParameters.IndexOf(parentParameter) + 1));
+                    if (!needsComment)
+                    {
+                        // Parameter documentation is allowed to be omitted, so skip parameters for which there is no
+                        // documentation.
+                        while (index < parentParameters.Length && parentParameters[index] != parentParameter)
+                        {
+                            index++;
+                        }
+                    }
+
+                    if (parentParameters.Length <= index || parentParameters[index] != parentParameter)
+                    {
+                        context.ReportDiagnostic(
+                            Diagnostic.Create(
+                                OrderDescriptor,
+                                identifierLocation,
+                                nameAttributeText,
+                                parentParameters.IndexOf(parentParameter) + 1));
+                    }
                 }
 
                 index++;
