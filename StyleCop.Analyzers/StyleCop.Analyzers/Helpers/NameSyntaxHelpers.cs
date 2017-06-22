@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Helpers
 {
+    using System.Globalization;
     using System.Text;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -42,6 +43,22 @@ namespace StyleCop.Analyzers.Helpers
             BuildName(nameSyntax, sb, false);
 
             return StringBuilderPool.ReturnAndFree(sb);
+        }
+
+        internal static int Compare(NameSyntax first, NameSyntax second)
+        {
+            string left = first.ToNormalizedString();
+            string right = second.ToNormalizedString();
+
+            // First compare without considering case
+            int result = CultureInfo.InvariantCulture.CompareInfo.Compare(left, right, CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreWidth);
+            if (result == 0)
+            {
+                // Compare case if they matched
+                result = CultureInfo.InvariantCulture.CompareInfo.Compare(left, right, CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreWidth);
+            }
+
+            return result;
         }
 
         private static void BuildName(NameSyntax nameSyntax, StringBuilder builder, bool includeAlias)
