@@ -25,7 +25,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// {
     /// }
     /// </code>
-    /// <para>The parameters must begin on the line after the declaration, whenever the parameter span across multiple
+    /// <para>The parameters should begin on the line after the declaration, whenever the parameter span across multiple
     /// lines:</para>
     /// <code language="csharp">
     /// public string JoinName(

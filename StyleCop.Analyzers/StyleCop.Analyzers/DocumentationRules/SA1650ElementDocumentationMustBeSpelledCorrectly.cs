@@ -61,7 +61,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1650";
-        private const string Title = "Element documentation must be spelled correctly";
+        private const string Title = "Element documentation should be spelled correctly";
         private const string MessageFormat = "TODO: Message format";
         private const string Description = "The element documentation for the element contains one or more spelling mistakes or unrecognized words.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1650.md";

@@ -69,8 +69,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1625";
-        private const string Title = "Element documentation must not be copied and pasted";
-        private const string MessageFormat = "Element documentation must not be copied and pasted";
+        private const string Title = "Element documentation should not be copied and pasted";
+        private const string MessageFormat = "Element documentation should not be copied and pasted";
         private const string Description = "The Xml documentation for a C# element contains two or more identical entries, indicating that the documentation has been copied and pasted. This can sometimes indicate invalid or poorly written documentation.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1625.md";
 

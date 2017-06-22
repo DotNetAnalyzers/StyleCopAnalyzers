@@ -19,7 +19,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// <para>A violation of this rule occurs when the keywords within an element’s declaration do not follow a standard
     /// ordering scheme.</para>
     ///
-    /// <para>Within an element declaration, keywords must appear in the following order:</para>
+    /// <para>Within an element declaration, keywords should appear in the following order:</para>
     ///
     /// <list type="bullet">
     /// <item>Access modifiers</item>
@@ -38,8 +38,8 @@ namespace StyleCop.Analyzers.OrderingRules
         /// The ID for diagnostics produced by the <see cref="SA1206DeclarationKeywordsMustFollowOrder"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1206";
-        private const string Title = "Declaration keywords must follow order";
-        private const string MessageFormat = "The '{0}' modifier must appear before '{1}'";
+        private const string Title = "Declaration keywords should follow order";
+        private const string MessageFormat = "The '{0}' modifier should appear before '{1}'";
         private const string Description = "The keywords within the declaration of an element do not follow a standard ordering scheme.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1206.md";
 

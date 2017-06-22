@@ -213,7 +213,7 @@ public class Foo<T>: object where T: IFormattable
         }
 
         /// <summary>
-        /// Verifies that the analyzer will produce the proper diagnostics when the colons must not preceded by space.
+        /// Verifies that the analyzer will produce the proper diagnostics when the colons should not preceded by space.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]

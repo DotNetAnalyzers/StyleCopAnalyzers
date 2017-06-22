@@ -56,7 +56,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             // regions that are completely inside a body are handled by SA1123.
             if (!SA1123DoNotPlaceRegionsWithinElements.IsCompletelyContainedInBody(regionSyntax))
             {
-                // Regions must not be used.
+                // Regions should not be used.
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, regionSyntax.GetLocation()));
             }
         }

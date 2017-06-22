@@ -44,8 +44,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// The ID for diagnostics produced by the <see cref="SA1602EnumerationItemsMustBeDocumented"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1602";
-        private const string Title = "Enumeration items must be documented";
-        private const string MessageFormat = "Enumeration items must be documented";
+        private const string Title = "Enumeration items should be documented";
+        private const string MessageFormat = "Enumeration items should be documented";
         private const string Description = "An item within a C# enumeration is missing an Xml documentation header.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1602.md";
 

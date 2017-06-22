@@ -29,7 +29,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// The ID for diagnostics produced by the <see cref="SA1603DocumentationMustContainValidXml"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1603";
-        private const string Title = "Documentation must contain valid XML";
+        private const string Title = "Documentation should contain valid XML";
         private const string MessageFormat = "The documentation header is composed of invalid XML: {0}";
         private const string Description = "The XML within a C# element’s document header is badly formed.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1603.md";

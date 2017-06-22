@@ -15,15 +15,15 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// <summary>
     /// Analyzer for all file header related diagnostics.
     /// </summary>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1633.md">SA1633 File must have header</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1634.md">SA1634 File header must show copyright</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1635.md">SA1635 File header must have copyright text</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1636.md">SA1636 File header copyright text must match</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1637.md">SA1637 File header must contain file name</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1638.md">SA1638 File header file name documentation must match file name</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1639.md">SA1639 File header must have summary</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1640.md">SA1640 File header must have valid company text</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1641.md">SA1641 File header company name text must match</seealso>
+    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1633.md">SA1633 File should have header</seealso>
+    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1634.md">SA1634 File header should show copyright</seealso>
+    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1635.md">SA1635 File header should have copyright text</seealso>
+    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1636.md">SA1636 File header copyright text should match</seealso>
+    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1637.md">SA1637 File header should contain file name</seealso>
+    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1638.md">SA1638 File header file name documentation should match file name</seealso>
+    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1639.md">SA1639 File header should have summary</seealso>
+    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1640.md">SA1640 File header should have valid company text</seealso>
+    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1641.md">SA1641 File header company name text should match</seealso>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class FileHeaderAnalyzers : DiagnosticAnalyzer
     {

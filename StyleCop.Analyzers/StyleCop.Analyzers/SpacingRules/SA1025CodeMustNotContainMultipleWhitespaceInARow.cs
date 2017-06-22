@@ -119,7 +119,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 return;
             }
 
-            // Code must not contain multiple whitespace characters in a row.
+            // Code should not contain multiple whitespace characters in a row.
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, trivia.GetLocation()));
         }
     }

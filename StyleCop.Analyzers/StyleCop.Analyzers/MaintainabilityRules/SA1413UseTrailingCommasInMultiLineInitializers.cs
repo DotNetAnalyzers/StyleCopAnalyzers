@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
-    /// A multi-line initializer must use a comma on the last item.
+    /// A multi-line initializer should use a comma on the last item.
     /// </summary>
     /// <remarks>
     /// <para>The last statement in a multi-line C# initializer is missing a trailing comma.</para>

@@ -89,7 +89,7 @@ namespace StyleCop.Analyzers.NamingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Variable &apos;{0}&apos; must begin with lower-case letter.
+        ///   Looks up a localized string similar to Variable &apos;{0}&apos; should begin with lower-case letter.
         /// </summary>
         internal static string SA1312MessageFormat {
             get {
@@ -98,7 +98,7 @@ namespace StyleCop.Analyzers.NamingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Variable names must begin with lower-case letter.
+        ///   Looks up a localized string similar to Variable names should begin with lower-case letter.
         /// </summary>
         internal static string SA1312Title {
             get {
@@ -116,7 +116,7 @@ namespace StyleCop.Analyzers.NamingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Parameter &apos;{0}&apos; must begin with lower-case letter.
+        ///   Looks up a localized string similar to Parameter &apos;{0}&apos; should begin with lower-case letter.
         /// </summary>
         internal static string SA1313MessageFormat {
             get {
@@ -125,7 +125,7 @@ namespace StyleCop.Analyzers.NamingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Parameter names must begin with lower-case letter.
+        ///   Looks up a localized string similar to Parameter names should begin with lower-case letter.
         /// </summary>
         internal static string SA1313Title {
             get {
@@ -152,7 +152,7 @@ namespace StyleCop.Analyzers.NamingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Type parameter names must begin with T.
+        ///   Looks up a localized string similar to Type parameter names should begin with T.
         /// </summary>
         internal static string SA1314MessageFormat {
             get {
@@ -161,7 +161,7 @@ namespace StyleCop.Analyzers.NamingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Type parameter names must begin with T.
+        ///   Looks up a localized string similar to Type parameter names should begin with T.
         /// </summary>
         internal static string SA1314Title {
             get {

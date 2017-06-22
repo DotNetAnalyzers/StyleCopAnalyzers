@@ -27,7 +27,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// {
     /// }
     /// </code>
-    /// <para>The parameter list must begin on the same line as the opening bracket, or on the next line. For
+    /// <para>The parameter list should begin on the same line as the opening bracket, or on the next line. For
     /// example:</para>
     /// <code language="csharp">
     /// public string JoinName(string first, string last)

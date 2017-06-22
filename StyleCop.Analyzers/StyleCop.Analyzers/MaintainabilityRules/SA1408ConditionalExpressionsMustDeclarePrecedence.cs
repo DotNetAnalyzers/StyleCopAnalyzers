@@ -58,8 +58,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1408";
-        private const string Title = "Conditional expressions must declare precedence";
-        private const string MessageFormat = "Conditional expressions must declare precedence";
+        private const string Title = "Conditional expressions should declare precedence";
+        private const string MessageFormat = "Conditional expressions should declare precedence";
         private const string Description = "A C# statement contains a complex conditional expression which omits parenthesis around operators.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1408.md";
 

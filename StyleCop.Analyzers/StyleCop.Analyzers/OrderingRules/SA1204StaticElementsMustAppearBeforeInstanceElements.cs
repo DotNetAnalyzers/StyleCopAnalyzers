@@ -18,7 +18,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// </summary>
     /// <remarks>
     /// <para>A violation of this rule occurs when a static element is positioned beneath an instance element of the
-    /// same type. All static elements must be placed above all instance elements of the same type to make it easier to
+    /// same type. All static elements should be placed above all instance elements of the same type to make it easier to
     /// see the interface exposed from the instance and static version of the class.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]

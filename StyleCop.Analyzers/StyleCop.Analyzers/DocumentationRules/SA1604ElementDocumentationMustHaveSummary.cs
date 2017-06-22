@@ -32,8 +32,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// The ID for diagnostics produced by the <see cref="SA1604ElementDocumentationMustHaveSummary"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1604";
-        private const string Title = "Element documentation must have summary";
-        private const string MessageFormat = "Element documentation must have summary";
+        private const string Title = "Element documentation should have summary";
+        private const string MessageFormat = "Element documentation should have summary";
         private const string Description = "The XML header documentation for a C# element is missing a <summary> tag.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1604.md";
         private static readonly DiagnosticDescriptor Descriptor =

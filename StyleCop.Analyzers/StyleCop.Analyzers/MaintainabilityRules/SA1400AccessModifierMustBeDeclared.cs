@@ -29,8 +29,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// The ID for diagnostics produced by the <see cref="SA1400AccessModifierMustBeDeclared"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1400";
-        private const string Title = "Access modifier must be declared";
-        private const string MessageFormat = "Element '{0}' must declare an access modifier";
+        private const string Title = "Access modifier should be declared";
+        private const string MessageFormat = "Element '{0}' should declare an access modifier";
         private const string Description = "The access modifier for a C# element has not been explicitly defined.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1400.md";
 

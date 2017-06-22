@@ -165,12 +165,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 if (firstParameterLine == previousLine)
                 {
-                    // arguments must be on same line
+                    // arguments should be on same line
                     lineCondition = (param1Line, param2Line) => param1Line == param2Line;
                 }
                 else
                 {
-                    // each argument must be on its own line
+                    // each argument should be on its own line
                     lineCondition = (param1Line, param2Line) => param1Line != param2Line;
                 }
 
@@ -213,12 +213,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             if (firstParameterLine == previousLine)
             {
-                // arguments must be on same line
+                // arguments should be on same line
                 lineCondition = (param1Line, param2Line) => param1Line == param2Line;
             }
             else
             {
-                // each argument must be on its own line
+                // each argument should be on its own line
                 lineCondition = (param1Line, param2Line) => param1Line != param2Line;
             }
 
@@ -314,12 +314,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             if (firstParameterLine == previousLine)
             {
-                // parameters must be on same line
+                // parameters should be on same line
                 lineCondition = (param1Line, param2Line) => param1Line == param2Line;
             }
             else
             {
-                // each parameter must be on its own line
+                // each parameter should be on its own line
                 lineCondition = (param1Line, param2Line) => param1Line != param2Line;
             }
 
@@ -348,12 +348,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             if (firstParameterLine == previousLine)
             {
-                // arguments must be on same line
+                // arguments should be on same line
                 lineCondition = (param1Line, param2Line) => param1Line == param2Line;
             }
             else
             {
-                // each argument must be on its own line
+                // each argument should be on its own line
                 lineCondition = (param1Line, param2Line) => param1Line != param2Line;
             }
 

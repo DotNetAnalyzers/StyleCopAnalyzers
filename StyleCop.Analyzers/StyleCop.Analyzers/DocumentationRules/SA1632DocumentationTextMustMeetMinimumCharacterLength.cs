@@ -44,7 +44,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1632";
-        private const string Title = "Documentation text must meet minimum character length";
+        private const string Title = "Documentation text should meet minimum character length";
         private const string MessageFormat = "TODO: Message format";
         private const string Description = "A section of the Xml header documentation for a C# element is too short.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1632.md";

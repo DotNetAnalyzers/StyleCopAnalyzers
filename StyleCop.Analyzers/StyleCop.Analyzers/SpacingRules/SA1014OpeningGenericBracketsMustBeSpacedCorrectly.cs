@@ -27,8 +27,8 @@ namespace StyleCop.Analyzers.SpacingRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1014";
-        private const string Title = "Opening generic brackets must be spaced correctly";
-        private const string MessageFormat = "Opening generic brackets must not be {0} by a space.";
+        private const string Title = "Opening generic brackets should be spaced correctly";
+        private const string MessageFormat = "Opening generic brackets should not be {0} by a space.";
         private const string Description = "An opening generic bracket within a C# element is not spaced correctly.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1014.md";
 
@@ -86,14 +86,14 @@ namespace StyleCop.Analyzers.SpacingRules
 
             if (!firstInLine && precededBySpace)
             {
-                // Opening generic brackets must not be {preceded} by a space.
+                // Opening generic brackets should not be {preceded} by a space.
                 var properties = TokenSpacingProperties.RemovePreceding;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, "preceded"));
             }
 
             if (followedBySpace)
             {
-                // Opening generic brackets must not be {followed} by a space.
+                // Opening generic brackets should not be {followed} by a space.
                 var properties = TokenSpacingProperties.RemoveFollowing;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, "followed"));
             }

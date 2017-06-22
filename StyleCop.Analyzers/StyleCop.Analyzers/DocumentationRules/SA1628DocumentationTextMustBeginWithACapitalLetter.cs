@@ -45,7 +45,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1628";
-        private const string Title = "Documentation text must begin with a capital letter";
+        private const string Title = "Documentation text should begin with a capital letter";
         private const string MessageFormat = "TODO: Message format";
         private const string Description = "A section of the XML header documentation for a C# element does not begin with a capital letter.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1628.md";

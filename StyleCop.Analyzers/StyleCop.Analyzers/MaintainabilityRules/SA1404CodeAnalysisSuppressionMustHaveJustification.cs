@@ -42,8 +42,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1404";
-        private const string Title = "Code analysis suppression must have justification";
-        private const string MessageFormat = "Code analysis suppression must have justification";
+        private const string Title = "Code analysis suppression should have justification";
+        private const string MessageFormat = "Code analysis suppression should have justification";
         private const string Description = "A Code Analysis SuppressMessage attribute does not include a justification.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1404.md";
 

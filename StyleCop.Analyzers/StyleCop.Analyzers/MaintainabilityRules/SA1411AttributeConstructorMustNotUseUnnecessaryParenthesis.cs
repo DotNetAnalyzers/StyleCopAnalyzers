@@ -35,8 +35,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// <see cref="SA1411AttributeConstructorMustNotUseUnnecessaryParenthesis"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1411";
-        private const string Title = "Attribute constructor must not use unnecessary parenthesis";
-        private const string MessageFormat = "Attribute constructor must not use unnecessary parenthesis";
+        private const string Title = "Attribute constructor should not use unnecessary parenthesis";
+        private const string MessageFormat = "Attribute constructor should not use unnecessary parenthesis";
         private const string Description = "TODO.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1411.md";
 
@@ -66,7 +66,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 return;
             }
 
-            // Attribute constructor must not use unnecessary parenthesis
+            // Attribute constructor should not use unnecessary parenthesis
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.GetLocation()));
         }
     }

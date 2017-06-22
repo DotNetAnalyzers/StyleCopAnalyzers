@@ -79,8 +79,8 @@ namespace StyleCop.Analyzers.LayoutRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1515";
-        private const string Title = "Single-line comment must be preceded by blank line";
-        private const string MessageFormat = "Single-line comment must be preceded by blank line";
+        private const string Title = "Single-line comment should be preceded by blank line";
+        private const string MessageFormat = "Single-line comment should be preceded by blank line";
         private const string Description = "A single-line comment within C# code is not preceded by a blank line.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1515.md";
 

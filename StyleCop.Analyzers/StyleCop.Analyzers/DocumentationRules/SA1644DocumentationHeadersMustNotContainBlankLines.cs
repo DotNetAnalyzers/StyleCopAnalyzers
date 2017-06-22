@@ -63,7 +63,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1644";
-        private const string Title = "Documentation headers must not contain blank lines";
+        private const string Title = "Documentation headers should not contain blank lines";
         private const string MessageFormat = "TODO: Message format";
         private const string Description = "A section within the XML documentation header for a C# element contains blank lines.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1644.md";

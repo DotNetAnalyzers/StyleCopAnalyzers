@@ -80,7 +80,7 @@ namespace Foot
         [Fact]
         public void DiagnosticMessageFormatIsCorrect()
         {
-            Assert.Equal("Elements must be separated by blank line", this.GetCSharpDiagnosticAnalyzers().Single().SupportedDiagnostics.Single().MessageFormat.ToString());
+            Assert.Equal("Elements should be separated by blank line", this.GetCSharpDiagnosticAnalyzers().Single().SupportedDiagnostics.Single().MessageFormat.ToString());
         }
 
         [Fact]

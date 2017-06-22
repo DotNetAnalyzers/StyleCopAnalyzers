@@ -34,8 +34,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// The ID for diagnostics produced by the <see cref="SA1615ElementReturnValueMustBeDocumented"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1615";
-        private const string Title = "Element return value must be documented";
-        private const string MessageFormat = "Element return value must be documented";
+        private const string Title = "Element return value should be documented";
+        private const string MessageFormat = "Element return value should be documented";
         private const string Description = "A C# element is missing documentation for its return value.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1615.md";
 

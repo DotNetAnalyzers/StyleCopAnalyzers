@@ -29,8 +29,8 @@ namespace StyleCop.Analyzers.SpacingRules
         /// The ID for diagnostics produced by the <see cref="SA1021NegativeSignsMustBeSpacedCorrectly"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1021";
-        private const string Title = "Negative signs must be spaced correctly";
-        private const string MessageFormat = "Negative sign must{0} be {1} by a space.";
+        private const string Title = "Negative signs should be spaced correctly";
+        private const string MessageFormat = "Negative sign should{0} be {1} by a space.";
         private const string Description = "A negative sign within a C# element is not spaced correctly.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1021.md";
 
@@ -103,19 +103,19 @@ namespace StyleCop.Analyzers.SpacingRules
             {
                 if (!followsSpecialCharacter && !precededBySpace)
                 {
-                    // Negative sign must{} be {preceded} by a space.
+                    // Negative sign should{} be {preceded} by a space.
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.InsertPreceding, string.Empty, "preceded"));
                 }
                 else if (followsSpecialCharacter && precededBySpace)
                 {
-                    // Negative sign must{ not} be {preceded} by a space.
+                    // Negative sign should{ not} be {preceded} by a space.
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemovePreceding, " not", "preceded"));
                 }
             }
 
             if (lastInLine || followedBySpace)
             {
-                // Negative sign must{ not} be {followed} by a space.
+                // Negative sign should{ not} be {followed} by a space.
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemoveFollowing, " not", "followed"));
             }
         }

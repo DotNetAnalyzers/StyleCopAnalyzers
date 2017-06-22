@@ -46,7 +46,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1631";
-        private const string Title = "Documentation must meet character percentage";
+        private const string Title = "Documentation should meet character percentage";
         private const string MessageFormat = "TODO: Message format";
         private const string Description = "A section of the Xml header documentation for a C# element does not contain enough alphabetic characters.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1631.md";

@@ -42,8 +42,8 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <see cref="SA1506ElementDocumentationHeadersMustNotBeFollowedByBlankLine"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1506";
-        private const string Title = "Element documentation headers must not be followed by blank line";
-        private const string MessageFormat = "Element documentation headers must not be followed by blank line";
+        private const string Title = "Element documentation headers should not be followed by blank line";
+        private const string MessageFormat = "Element documentation headers should not be followed by blank line";
         private const string Description = "An element documentation header above a C# element is followed by a blank line.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1506.md";
 

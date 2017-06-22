@@ -59,8 +59,8 @@ namespace StyleCop.Analyzers.LayoutRules
         /// The ID for diagnostics produced by the <see cref="SA1503BracesMustNotBeOmitted"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1503";
-        private const string Title = "Braces must not be omitted";
-        private const string MessageFormat = "Braces must not be omitted";
+        private const string Title = "Braces should not be omitted";
+        private const string MessageFormat = "Braces should not be omitted";
         private const string Description = "The opening and closing braces for a C# statement have been omitted.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1503.md";
 

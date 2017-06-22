@@ -788,7 +788,7 @@ class Test : IA
         get { return null; }
     }
 
-    // SA1202 (All public properties must come before all private properties) wrongly reported here.
+    // SA1202 (All public properties should come before all private properties) wrongly reported here.
     public int W { get; set; }
 
     protected string S { get; set; }
@@ -846,7 +846,7 @@ class Test : IA
         get { return null; }
     }
 
-    // SA1202 (All public properties must come before all private properties) wrongly reported here.
+    // SA1202 (All public properties should come before all private properties) wrongly reported here.
     public int W { get; set; }
 
     // SA1202 should be reported here (according to legacy StyleCop), but is not.
