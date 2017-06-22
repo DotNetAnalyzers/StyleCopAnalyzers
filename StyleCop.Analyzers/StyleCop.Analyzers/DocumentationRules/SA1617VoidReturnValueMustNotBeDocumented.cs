@@ -40,8 +40,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// </summary>
         internal const string NoCodeFixKey = "NoCodeFix";
 
-        private const string Title = "Void return value must not be documented";
-        private const string MessageFormat = "Void return value must not be documented";
+        private const string Title = "Void return value should not be documented";
+        private const string MessageFormat = "Void return value should not be documented";
         private const string Description = "A C# code element does not contain a return value, or returns void, but the documentation header for the element contains a <returns> tag.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1617.md";
 

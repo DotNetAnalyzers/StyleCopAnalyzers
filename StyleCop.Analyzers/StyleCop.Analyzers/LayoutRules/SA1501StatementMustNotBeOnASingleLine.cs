@@ -49,8 +49,8 @@ namespace StyleCop.Analyzers.LayoutRules
         /// The ID for diagnostics produced by the <see cref="SA1501StatementMustNotBeOnASingleLine"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1501";
-        private const string Title = "Statement must not be on a single line";
-        private const string MessageFormat = "Statement must not be on a single line";
+        private const string Title = "Statement should not be on a single line";
+        private const string MessageFormat = "Statement should not be on a single line";
         private const string Description = "A C# statement containing opening and closing braces is written completely on a single line.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1501.md";
 

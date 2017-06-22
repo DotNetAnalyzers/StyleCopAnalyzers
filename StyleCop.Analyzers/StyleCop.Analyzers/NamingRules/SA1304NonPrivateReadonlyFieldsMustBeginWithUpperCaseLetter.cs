@@ -13,11 +13,11 @@ namespace StyleCop.Analyzers.NamingRules
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// The name of a non-private readonly C# field must begin with an upper-case letter.
+    /// The name of a non-private readonly C# field should begin with an upper-case letter.
     /// </summary>
     /// <remarks>
     /// <para>A violation of this rule occurs when the name of a readonly field which is not private does not begin with
-    /// an upper-case letter. Non-private readonly fields must always start with an upper-case letter.</para>
+    /// an upper-case letter. Non-private readonly fields should always start with an upper-case letter.</para>
     ///
     /// <para>If the field or variable name is intended to match the name of an item associated with Win32 or COM, and
     /// thus needs to begin with a lower-case letter, place the field or variable within a special <c>NativeMethods</c>
@@ -33,10 +33,10 @@ namespace StyleCop.Analyzers.NamingRules
         /// <see cref="SA1304NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1304";
-        private const string Title = "Non-private readonly fields must begin with upper-case letter";
-        private const string MessageFormat = "Non-private readonly fields must begin with upper-case letter";
+        private const string Title = "Non-private readonly fields should begin with upper-case letter";
+        private const string MessageFormat = "Non-private readonly fields should begin with upper-case letter";
 
-        private const string Description = "The name of a non-private readonly C# field must being with an upper-case letter.";
+        private const string Description = "The name of a non-private readonly C# field should being with an upper-case letter.";
 
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1304.md";
 
@@ -116,7 +116,7 @@ namespace StyleCop.Analyzers.NamingRules
                     continue;
                 }
 
-                // Non-private readonly fields must begin with upper-case letter.
+                // Non-private readonly fields should begin with upper-case letter.
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation()));
             }
         }

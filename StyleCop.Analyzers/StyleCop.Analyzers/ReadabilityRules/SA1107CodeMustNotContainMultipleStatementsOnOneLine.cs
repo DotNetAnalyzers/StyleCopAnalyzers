@@ -16,7 +16,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// </summary>
     /// <remarks>
     /// <para>A violation of this rule occurs when the code contain more than one statement on the same line. Each
-    /// statement must begin on a new line.</para>
+    /// statement should begin on a new line.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class SA1107CodeMustNotContainMultipleStatementsOnOneLine : DiagnosticAnalyzer

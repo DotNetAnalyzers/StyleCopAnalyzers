@@ -17,7 +17,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// <remarks>
     /// <para>A violation of this rule occurs when the spacing around an operator symbol is incorrect.</para>
     ///
-    /// <para>The following types of operator symbols must be surrounded by a single space on either side: colons,
+    /// <para>The following types of operator symbols should be surrounded by a single space on either side: colons,
     /// arithmetic operators, assignment operators, conditional operators, logical operators, relational operators,
     /// shift operators, and lambda operators. For example:</para>
     ///
@@ -25,7 +25,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// int x = 4 + y;
     /// </code>
     ///
-    /// <para>In contrast, unary operators must be preceded by a single space, but must never be followed by any space.
+    /// <para>In contrast, unary operators should be preceded by a single space, but should never be followed by any space.
     /// For example:</para>
     ///
     /// <code language="cs">
@@ -57,13 +57,13 @@ namespace StyleCop.Analyzers.SpacingRules
         internal const string RemoveEndOfLineTag = "RemoveEndOfLine";
         internal const string RemoveEndOfLineWithTrailingSpaceTag = "RemoveEndOfLineWithTrailingSpace";
 
-        private const string Title = "Symbols must be spaced correctly";
-        private const string MessageFormatNotFollowedByComment = "Operator '{0}' must not be followed by a comment.";
-        private const string MessageFormatPrecededByWhitespace = "Operator '{0}' must be preceded by whitespace.";
-        private const string MessageFormatNotPrecededByWhitespace = "Operator '{0}' must not be preceded by whitespace.";
-        private const string MessageFormatFollowedByWhitespace = "Operator '{0}' must be followed by whitespace.";
-        private const string MessageFormatNotFollowedByWhitespace = "Operator '{0}' must not be followed by whitespace.";
-        private const string MessageFormatNotAtEndOfLine = "Operator '{0}' must not appear at the end of a line.";
+        private const string Title = "Symbols should be spaced correctly";
+        private const string MessageFormatNotFollowedByComment = "Operator '{0}' should not be followed by a comment.";
+        private const string MessageFormatPrecededByWhitespace = "Operator '{0}' should be preceded by whitespace.";
+        private const string MessageFormatNotPrecededByWhitespace = "Operator '{0}' should not be preceded by whitespace.";
+        private const string MessageFormatFollowedByWhitespace = "Operator '{0}' should be followed by whitespace.";
+        private const string MessageFormatNotFollowedByWhitespace = "Operator '{0}' should not be followed by whitespace.";
+        private const string MessageFormatNotAtEndOfLine = "Operator '{0}' should not appear at the end of a line.";
         private const string Description = "The spacing around an operator symbol is incorrect, within a C# code file.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1003.md";
 
@@ -140,7 +140,7 @@ namespace StyleCop.Analyzers.SpacingRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatNotFollowedByComment, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         /// <summary>
-        /// Gets the descriptor indicating that an operator must be preceded by whitespace.
+        /// Gets the descriptor indicating that an operator should be preceded by whitespace.
         /// </summary>
         /// <value>
         /// A diagnostic descriptor.
@@ -149,7 +149,7 @@ namespace StyleCop.Analyzers.SpacingRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatPrecededByWhitespace, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         /// <summary>
-        /// Gets the descriptor indicating that an operator must be preceded by whitespace.
+        /// Gets the descriptor indicating that an operator should be preceded by whitespace.
         /// </summary>
         /// <value>
         /// A diagnostic descriptor.
@@ -158,7 +158,7 @@ namespace StyleCop.Analyzers.SpacingRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatNotPrecededByWhitespace, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         /// <summary>
-        /// Gets the descriptor indicating that an operator must be followed by whitespace.
+        /// Gets the descriptor indicating that an operator should be followed by whitespace.
         /// </summary>
         /// <value>
         /// A diagnostic descriptor.
@@ -167,7 +167,7 @@ namespace StyleCop.Analyzers.SpacingRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatFollowedByWhitespace, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         /// <summary>
-        /// Gets the descriptor indicating that an operator must be preceded by whitespace.
+        /// Gets the descriptor indicating that an operator should be preceded by whitespace.
         /// </summary>
         /// <value>
         /// A diagnostic descriptor.
@@ -176,7 +176,7 @@ namespace StyleCop.Analyzers.SpacingRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatNotFollowedByWhitespace, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         /// <summary>
-        /// Gets the descriptor indicating that an operator must be appear at the end of a text line.
+        /// Gets the descriptor indicating that an operator should be appear at the end of a text line.
         /// </summary>
         /// <value>
         /// A diagnostic descriptor.

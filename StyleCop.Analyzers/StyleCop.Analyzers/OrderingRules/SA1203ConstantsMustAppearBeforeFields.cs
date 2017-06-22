@@ -17,7 +17,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// </summary>
     /// <remarks>
     /// <para>A violation of this rule occurs when a constant field is placed beneath a non-constant field. Constants
-    /// must be placed above fields to indicate that the two are fundamentally different types of elements with
+    /// should be placed above fields to indicate that the two are fundamentally different types of elements with
     /// different considerations for the compiler, different naming requirements, etc.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]

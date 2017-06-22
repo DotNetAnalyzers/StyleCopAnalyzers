@@ -20,7 +20,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// <para>A violation of this rule occurs when the code elements within a file do not follow a standard ordering
     /// scheme based on access level.</para>
     ///
-    /// <para>To comply with this rule, adjacent elements of the same type must be positioned in the following order by
+    /// <para>To comply with this rule, adjacent elements of the same type should be positioned in the following order by
     /// access level:</para>
     ///
     /// <list type="bullet">

@@ -26,7 +26,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// does not begin with the proper text.</para>
     ///
     /// <para>The rule is intended to standardize the summary text for a constructor based on the access level of the
-    /// constructor. The summary for a non-private instance constructor must begin with "Initializes a new instance of
+    /// constructor. The summary for a non-private instance constructor should begin with "Initializes a new instance of
     /// the {class name} class." For example, the following shows the constructor for the <c>Customer</c> class.</para>
     ///
     /// <code language="csharp">
@@ -80,7 +80,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// }
     /// </code>
     ///
-    /// <para>Private instance constructors must use the summary text "Prevents a default instance of the {class name}
+    /// <para>Private instance constructors should use the summary text "Prevents a default instance of the {class name}
     /// class from being created."</para>
     ///
     /// <code language="csharp">
@@ -100,8 +100,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <see cref="SA1642ConstructorSummaryDocumentationMustBeginWithStandardText"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1642";
-        private const string Title = "Constructor summary documentation must begin with standard text";
-        private const string MessageFormat = "Constructor summary documentation must begin with standard text";
+        private const string Title = "Constructor summary documentation should begin with standard text";
+        private const string MessageFormat = "Constructor summary documentation should begin with standard text";
         private const string Description = "The XML documentation header for a C# constructor does not contain the appropriate summary text.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1642.md";
 

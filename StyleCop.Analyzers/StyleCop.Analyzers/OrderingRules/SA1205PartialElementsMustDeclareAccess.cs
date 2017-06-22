@@ -25,8 +25,8 @@ namespace StyleCop.Analyzers.OrderingRules
         /// The ID for diagnostics produced by the <see cref="SA1205PartialElementsMustDeclareAccess"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1205";
-        private const string Title = "Partial elements must declare access";
-        private const string MessageFormat = "Partial elements must declare an access modifier";
+        private const string Title = "Partial elements should declare access";
+        private const string MessageFormat = "Partial elements should declare an access modifier";
         private const string Description = "The partial element does not have an access modifier defined.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1205.md";
 

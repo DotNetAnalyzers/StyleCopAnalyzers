@@ -66,8 +66,8 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <see cref="SA1514ElementDocumentationHeaderMustBePrecededByBlankLine"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1514";
-        private const string Title = "Element documentation header must be preceded by blank line";
-        private const string MessageFormat = "Element documentation header must be preceded by blank line";
+        private const string Title = "Element documentation header should be preceded by blank line";
+        private const string MessageFormat = "Element documentation header should be preceded by blank line";
         private const string Description = "An element documentation header above a C# element is not preceded by a blank line.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1514.md";
 

@@ -94,7 +94,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             if (IsCompletelyContainedInBody(regionSyntax))
             {
-                // Region must not be located within a code element.
+                // Region should not be located within a code element.
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, regionSyntax.GetLocation()));
             }
         }

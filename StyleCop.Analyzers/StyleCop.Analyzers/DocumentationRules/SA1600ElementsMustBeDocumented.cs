@@ -33,8 +33,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// The ID for diagnostics produced by the <see cref="SA1600ElementsMustBeDocumented"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1600";
-        private const string Title = "Elements must be documented";
-        private const string MessageFormat = "Elements must be documented";
+        private const string Title = "Elements should be documented";
+        private const string MessageFormat = "Elements should be documented";
         private const string Description = "A C# code element is missing a documentation header.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1600.md";
 
@@ -64,13 +64,13 @@ namespace StyleCop.Analyzers.DocumentationRules
             if (documentationSettings.DocumentInterfaces
                 && (syntaxKind == SyntaxKind.InterfaceDeclaration || parentSyntaxKind == SyntaxKind.InterfaceDeclaration))
             {
-                // DocumentInterfaces => all interfaces must be documented
+                // DocumentInterfaces => all interfaces should be documented
                 return true;
             }
 
             if (syntaxKind == SyntaxKind.FieldDeclaration && documentationSettings.DocumentPrivateFields)
             {
-                // DocumentPrivateFields => all fields must be documented
+                // DocumentPrivateFields => all fields should be documented
                 return true;
             }
 
@@ -82,7 +82,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     return false;
                 }
 
-                // DocumentPrivateMembers => everything except declared private fields must be documented
+                // DocumentPrivateMembers => everything except declared private fields should be documented
                 return true;
             }
 

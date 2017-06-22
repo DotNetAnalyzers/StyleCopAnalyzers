@@ -86,7 +86,7 @@ namespace StyleCop.Analyzers.NamingRules
                 return;
             }
 
-            // Parameter names must begin with lower-case letter
+            // Parameter names should begin with lower-case letter
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), name));
         }
 

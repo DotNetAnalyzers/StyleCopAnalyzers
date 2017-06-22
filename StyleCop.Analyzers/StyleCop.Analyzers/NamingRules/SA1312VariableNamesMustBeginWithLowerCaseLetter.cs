@@ -157,7 +157,7 @@ namespace StyleCop.Analyzers.NamingRules
                 return;
             }
 
-            // Variable names must begin with lower-case letter
+            // Variable names should begin with lower-case letter
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), name));
         }
     }

@@ -26,8 +26,8 @@ namespace StyleCop.Analyzers.LayoutRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1517";
-        private const string Title = "Code must not contain blank lines at start of file";
-        private const string MessageFormat = "Code must not contain blank lines at start of file";
+        private const string Title = "Code should not contain blank lines at start of file";
+        private const string MessageFormat = "Code should not contain blank lines at start of file";
         private const string Description = "The code file has blank lines at the start.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1517.md";
 

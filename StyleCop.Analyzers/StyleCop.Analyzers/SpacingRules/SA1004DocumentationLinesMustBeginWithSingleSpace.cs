@@ -171,7 +171,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 break;
             }
 
-            // Documentation line must begin with a space.
+            // Documentation line should begin with a space.
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation()));
         }
     }

@@ -95,7 +95,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 return;
             }
 
-            // Opening attribute brackets must not be followed by a space.
+            // Opening attribute brackets should not be followed by a space.
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemoveFollowing));
         }
     }

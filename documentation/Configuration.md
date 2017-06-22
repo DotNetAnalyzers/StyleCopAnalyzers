@@ -191,7 +191,7 @@ The following properties are used to configure using directives in StyleCop Anal
 The `usingDirectivesPlacement` property affects the behavior of the following rules which report incorrectly placed
 using directives.
 
-* [SA1200 Using directives must be placed correctly](SA1200.md)
+* [SA1200 Using directives should be placed correctly](SA1200.md)
 
 > :warning: Use of certain features, including but not limited to preprocessor directives, may cause the using
 > directives code fix to not relocate using directives automatically. If SA1200 is still reported after applying the Fix
@@ -226,7 +226,7 @@ In this mode, using directives may be placed inside or outside of namespaces.
 The `blankLinesBetweenUsingGroups` property affects the behavior of the following rules which report the presence / absence
 of blanks lines between groups of using directives.
 
-* [SA1516 Elements must be separated by blank line](SA1516.md)
+* [SA1516 Elements should be separated by blank line](SA1516.md)
 
 Using directives can grouped based on the purpose of the using directive.
 StyleCop Analyzers recognizes the following using directive group types:
@@ -315,9 +315,9 @@ The following properties are used to configure maintainability rules in StyleCop
 
 | Property | Default Value | Minimum Version | Summary |
 | --- | --- | --- | --- |
-| `topLevelTypes` | `[ "class" ]` | 1.1.0 | Specifies which kind of types that must be placed in separate files |
+| `topLevelTypes` | `[ "class" ]` | 1.1.0 | Specifies which kind of types that should be placed in separate files |
 
-The `topLevelTypes` property is an array which specifies which kind of types that must be placed in separate files
+The `topLevelTypes` property is an array which specifies which kind of types that should be placed in separate files
 according to rule SA1402. The following types are supported:
 * `class`
 * `interface`
@@ -498,9 +498,9 @@ StyleCop Analyzers includes rules which require developers to document the major
 
 These properties affect the behavior of the following rules which report missing documentation. Rules which report incorrect or incomplete documentation continue to apply to all documentation comments in the code.
 
-* [SA1600 Elements must be documented](SA1600.md)
-* [SA1601 Partial elements must be documented](SA1601.md)
-* [SA1602 Enumeration items must be documented](SA1602.md)
+* [SA1600 Elements should be documented](SA1600.md)
+* [SA1601 Partial elements should be documented](SA1601.md)
+* [SA1602 Enumeration items should be documented](SA1602.md)
 
 The following example shows a configuration file which requires developers to document all publicly-accessible members and all interfaces (regardless of accessibility), but does not require other internal or private members to be documented.
 
@@ -528,10 +528,10 @@ Some documentation rules require summary texts to start with specific strings. T
 
 This property affects the behavior of the following rules which report incorrect documentation.
 
-* [SA1623 Property summary documentation must match accessors](SA1623.md)
-* [SA1624 Property summary documentation must omit set accessor with restricted access](SA1624.md)
-* [SA1642 Constructor summary documentation must begin with standard text](SA1642.md)
-* [SA1643 Destructor summary documentation must begin with standard text](SA1643.md)
+* [SA1623 Property summary documentation should match accessors](SA1623.md)
+* [SA1624 Property summary documentation should omit set accessor with restricted access](SA1624.md)
+* [SA1642 Constructor summary documentation should begin with standard text](SA1642.md)
+* [SA1643 Destructor summary documentation should begin with standard text](SA1643.md)
 
 > :memo: The default value for `documentationCulture` is fixed instead of reflecting the user's system language. This is to ensure that different developers working on the same project always use the same value.
 
@@ -558,7 +558,7 @@ The following values are currently supported. Unsupported values will automatica
 
 ### File naming conventions
 
-The `fileNamingConvention` property will determine how the [SA1649 File name must match type name](SA1649.md) analyzer will check file names.
+The `fileNamingConvention` property will determine how the [SA1649 File name should match type name](SA1649.md) analyzer will check file names.
 Given the following code:
 
 ```csharp

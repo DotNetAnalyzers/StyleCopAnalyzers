@@ -36,8 +36,8 @@ namespace StyleCop.Analyzers.LayoutRules
         /// The ID for diagnostics produced by the <see cref="SA1519BracesMustNotBeOmittedFromMultiLineChildStatement"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1519";
-        private const string Title = "Braces must not be omitted from multi-line child statement";
-        private const string MessageFormat = "Braces must not be omitted from multi-line child statement";
+        private const string Title = "Braces should not be omitted from multi-line child statement";
+        private const string MessageFormat = "Braces should not be omitted from multi-line child statement";
         private const string Description = "The opening and closing braces for a multi-line C# statement have been omitted.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1519.md";
 

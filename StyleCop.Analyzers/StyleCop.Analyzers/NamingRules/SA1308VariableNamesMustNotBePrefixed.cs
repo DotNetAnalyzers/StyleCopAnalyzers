@@ -37,8 +37,8 @@ namespace StyleCop.Analyzers.NamingRules
         /// The ID for diagnostics produced by the <see cref="SA1308VariableNamesMustNotBePrefixed"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1308";
-        private const string Title = "Variable names must not be prefixed";
-        private const string MessageFormat = "Field '{0}' must not begin with the prefix '{1}'";
+        private const string Title = "Variable names should not be prefixed";
+        private const string MessageFormat = "Field '{0}' should not begin with the prefix '{1}'";
         private const string Description = "A field name in C# is prefixed with 'm_', 's_', or 't_'.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1308.md";
 
@@ -94,7 +94,7 @@ namespace StyleCop.Analyzers.NamingRules
                     continue;
                 }
 
-                // Field '{name}' must not begin with the prefix '{prefix}'
+                // Field '{name}' should not begin with the prefix '{prefix}'
                 string name = identifier.ValueText;
                 string prefix = name.Substring(0, 2);
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), name, prefix));

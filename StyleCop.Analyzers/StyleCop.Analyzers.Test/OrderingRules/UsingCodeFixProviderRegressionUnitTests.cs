@@ -45,10 +45,10 @@ using Queue = System.Collections.Queue;
 
 namespace Microsoft.VisualStudio.Shell
 {
-#pragma warning disable SA1200 // Using directives must be placed correctly
+#pragma warning disable SA1200 // Using directives should be placed correctly
     // This is required to work around accessibility issues in documentation comments.
     using NativeMethods = System;
-#pragma warning restore SA1200 // Using directives must be placed correctly
+#pragma warning restore SA1200 // Using directives should be placed correctly
 }
 
 #endif
@@ -73,10 +73,10 @@ using Queue = System.Collections.Queue;
 
 namespace Microsoft.VisualStudio.Shell
 {
-#pragma warning disable SA1200 // Using directives must be placed correctly
+#pragma warning disable SA1200 // Using directives should be placed correctly
     // This is required to work around accessibility issues in documentation comments.
     using NativeMethods = System;
-#pragma warning restore SA1200 // Using directives must be placed correctly
+#pragma warning restore SA1200 // Using directives should be placed correctly
 }
 
 #endif

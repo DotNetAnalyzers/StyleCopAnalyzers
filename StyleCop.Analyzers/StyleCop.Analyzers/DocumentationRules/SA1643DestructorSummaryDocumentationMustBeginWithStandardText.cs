@@ -24,7 +24,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// <para>A violation of this rule occurs when the summary tag within the documentation header for a finalizer does
     /// not begin with the proper text.</para>
     ///
-    /// <para>The rule is intended to standardize the summary text for a finalizer. The summary for a finalizer must
+    /// <para>The rule is intended to standardize the summary text for a finalizer. The summary for a finalizer should
     /// begin with "Finalizes an instance of the {class name} class." For example, the following shows the finalizer for
     /// the <c>Customer</c> class.</para>
     ///
@@ -56,8 +56,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <see cref="SA1643DestructorSummaryDocumentationMustBeginWithStandardText"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1643";
-        private const string Title = "Destructor summary documentation must begin with standard text";
-        private const string MessageFormat = "Destructor summary documentation must begin with standard text";
+        private const string Title = "Destructor summary documentation should begin with standard text";
+        private const string MessageFormat = "Destructor summary documentation should begin with standard text";
         private const string Description = "The XML documentation header for a C# finalizer does not contain the appropriate summary text.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1643.md";
 

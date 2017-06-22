@@ -127,34 +127,34 @@
     <value>A {0} should not follow a {1}</value>
   </data>
   <data name="SA1201Title" xml:space="preserve">
-    <value>Elements must appear in the correct order</value>
+    <value>Elements should appear in the correct order</value>
   </data>
   <data name="SA1202Description" xml:space="preserve">
     <value>An element within a C# code file is out of order in relation to other elements in the code.</value>
   </data>
   <data name="SA1202MessageFormat" xml:space="preserve">
-    <value>'{0}' members must come before '{1}' members</value>
+    <value>'{0}' members should come before '{1}' members</value>
   </data>
   <data name="SA1202Title" xml:space="preserve">
-    <value>Elements must be ordered by access</value>
+    <value>Elements should be ordered by access</value>
   </data>
   <data name="SA1203Description" xml:space="preserve">
     <value>A constant field is placed beneath a non-constant field.</value>
   </data>
   <data name="SA1203MessageFormat" xml:space="preserve">
-    <value>Constant fields must appear before non-constant fields</value>
+    <value>Constant fields should appear before non-constant fields</value>
   </data>
   <data name="SA1203Title" xml:space="preserve">
-    <value>Constants must appear before fields</value>
+    <value>Constants should appear before fields</value>
   </data>
   <data name="SA1204Description" xml:space="preserve">
     <value>A static element is positioned beneath an instance element.</value>
   </data>
   <data name="SA1204MessageFormat" xml:space="preserve">
-    <value>Static members must appear before non-static members</value>
+    <value>Static members should appear before non-static members</value>
   </data>
   <data name="SA1204Title" xml:space="preserve">
-    <value>Static elements must appear before instance elements</value>
+    <value>Static elements should appear before instance elements</value>
   </data>
   <data name="ModifierOrderCodeFix" xml:space="preserve">
     <value>Fix modifier order</value>
@@ -172,10 +172,10 @@
     <value>A readonly field is positioned beneath a non-readonly field.</value>
   </data>
   <data name="SA1214MessageFormat" xml:space="preserve">
-    <value>Readonly fields must appear before non-readonly fields</value>
+    <value>Readonly fields should appear before non-readonly fields</value>
   </data>
   <data name="SA1214Title" xml:space="preserve">
-    <value>Readonly fields must appear before non-readonly fields</value>
+    <value>Readonly fields should appear before non-readonly fields</value>
   </data>
   <data name="UsingCodeFix" xml:space="preserve">
     <value>Reorder using statements</value>

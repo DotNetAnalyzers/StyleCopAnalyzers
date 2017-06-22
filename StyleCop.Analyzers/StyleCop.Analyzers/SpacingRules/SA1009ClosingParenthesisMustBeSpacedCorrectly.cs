@@ -23,7 +23,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// parenthesis is followed by certain types of operator symbols, such as positive signs, negative signs, and
     /// colons.</para>
     ///
-    /// <para>If the closing parenthesis is followed by whitespace, the next non-whitespace character must not be an
+    /// <para>If the closing parenthesis is followed by whitespace, the next non-whitespace character should not be an
     /// opening or closing parenthesis or square bracket, or a semicolon or comma.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
@@ -33,8 +33,8 @@ namespace StyleCop.Analyzers.SpacingRules
         /// The ID for diagnostics produced by the <see cref="SA1009ClosingParenthesisMustBeSpacedCorrectly"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1009";
-        private const string Title = "Closing parenthesis must be spaced correctly";
-        private const string MessageFormat = "Closing parenthesis must{0} be {1} by a space.";
+        private const string Title = "Closing parenthesis should be spaced correctly";
+        private const string MessageFormat = "Closing parenthesis should{0} be {1} by a space.";
         private const string Description = "A closing parenthesis within a C# statement is not spaced correctly.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1009.md";
 
@@ -185,7 +185,7 @@ namespace StyleCop.Analyzers.SpacingRules
 
             if (precededBySpace)
             {
-                // Closing parenthesis must{ not} be {preceded} by a space.
+                // Closing parenthesis should{ not} be {preceded} by a space.
                 var properties = token.IsFirstInLine()
                     ? TokenSpacingProperties.RemovePreceding
                     : TokenSpacingProperties.RemoveImmediatePreceding;
@@ -196,13 +196,13 @@ namespace StyleCop.Analyzers.SpacingRules
             {
                 if (!precedesStickyCharacter && !followedBySpace && !lastInLine)
                 {
-                    // Closing parenthesis must{} be {followed} by a space.
+                    // Closing parenthesis should{} be {followed} by a space.
                     var properties = TokenSpacingProperties.InsertFollowing;
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, string.Empty, "followed"));
                 }
                 else if (precedesStickyCharacter && followedBySpace && (!lastInLine || !allowEndOfLine))
                 {
-                    // Closing parenthesis must{ not} be {followed} by a space.
+                    // Closing parenthesis should{ not} be {followed} by a space.
                     var properties = TokenSpacingProperties.RemoveFollowing;
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, " not", "followed"));
                 }

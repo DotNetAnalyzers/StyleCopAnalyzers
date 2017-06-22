@@ -127,19 +127,19 @@
     <value>The name of a variable in C# does not begin with a lower-case letter.</value>
   </data>
   <data name="SA1312MessageFormat" xml:space="preserve">
-    <value>Variable '{0}' must begin with lower-case letter</value>
+    <value>Variable '{0}' should begin with lower-case letter</value>
   </data>
   <data name="SA1312Title" xml:space="preserve">
-    <value>Variable names must begin with lower-case letter</value>
+    <value>Variable names should begin with lower-case letter</value>
   </data>
   <data name="SA1313Description" xml:space="preserve">
     <value>The name of a parameter in C# does not begin with a lower-case letter.</value>
   </data>
   <data name="SA1313MessageFormat" xml:space="preserve">
-    <value>Parameter '{0}' must begin with lower-case letter</value>
+    <value>Parameter '{0}' should begin with lower-case letter</value>
   </data>
   <data name="SA1313Title" xml:space="preserve">
-    <value>Parameter names must begin with lower-case letter</value>
+    <value>Parameter names should begin with lower-case letter</value>
   </data>
   <data name="SA1314CodeFix" xml:space="preserve">
     <value>Prefix type parameter name with 'T'</value>
@@ -148,9 +148,9 @@
     <value>The name of a C# type parameter does not begin with the capital letter T.</value>
   </data>
   <data name="SA1314MessageFormat" xml:space="preserve">
-    <value>Type parameter names must begin with T</value>
+    <value>Type parameter names should begin with T</value>
   </data>
   <data name="SA1314Title" xml:space="preserve">
-    <value>Type parameter names must begin with T</value>
+    <value>Type parameter names should begin with T</value>
   </data>
 </root>

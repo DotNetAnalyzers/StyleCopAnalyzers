@@ -98,7 +98,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Element must not be on a single line.
+        ///   Looks up a localized string similar to Element should not be on a single line.
         /// </summary>
         internal static string SA1502MessageFormat {
             get {
@@ -107,7 +107,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Element must not be on a single line.
+        ///   Looks up a localized string similar to Element should not be on a single line.
         /// </summary>
         internal static string SA1502Title {
             get {
@@ -278,7 +278,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Adjacent using directives must not be separated by a blank line..
+        ///   Looks up a localized string similar to Adjacent using directives should not be separated by a blank line..
         /// </summary>
         internal static string SA1516DescriptionOmit {
             get {
@@ -287,7 +287,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Adjacent using directives must be separated by a blank line..
+        ///   Looks up a localized string similar to Adjacent using directives should be separated by a blank line..
         /// </summary>
         internal static string SA1516DescriptionRequire {
             get {
@@ -296,7 +296,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Elements must be separated by blank line.
+        ///   Looks up a localized string similar to Elements should be separated by blank line.
         /// </summary>
         internal static string SA1516MessageFormat {
             get {
@@ -305,7 +305,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Using directives must not be separated by blank line.
+        ///   Looks up a localized string similar to Using directives should not be separated by blank line.
         /// </summary>
         internal static string SA1516MessageFormatOmit {
             get {
@@ -314,7 +314,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Using directives myst be separated by blank line.
+        ///   Looks up a localized string similar to Using directives should be separated by blank line.
         /// </summary>
         internal static string SA1516MessageFormatRequire {
             get {
@@ -323,7 +323,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Elements must be separated by blank line.
+        ///   Looks up a localized string similar to Elements should be separated by blank line.
         /// </summary>
         internal static string SA1516Title {
             get {
@@ -350,7 +350,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code must not contain blank lines at the end of the file.
+        ///   Looks up a localized string similar to Code should not contain blank lines at the end of the file.
         /// </summary>
         internal static string SA1518DescriptionAllow {
             get {
@@ -377,7 +377,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code must not contain blank lines at the end of the file.
+        ///   Looks up a localized string similar to Code should not contain blank lines at the end of the file.
         /// </summary>
         internal static string SA1518MessageFormatAllow {
             get {

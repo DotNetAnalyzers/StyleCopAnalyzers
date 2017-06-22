@@ -17,7 +17,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// <remarks>
     /// <para>A violation of this rule occurs when the spacing around a keyword is incorrect.</para>
     ///
-    /// <para>The following C# keywords must always be followed by a single space: <strong>catch</strong>,
+    /// <para>The following C# keywords should always be followed by a single space: <strong>catch</strong>,
     /// <strong>fixed</strong>, <strong>for</strong>, <strong>foreach</strong>, <strong>from</strong>,
     /// <strong>group</strong>, <strong>if</strong>, <strong>in</strong>, <strong>into</strong>, <strong>join</strong>,
     /// <strong>let</strong>, <strong>lock</strong>, <strong>orderby</strong>, <strong>out</strong>,
@@ -25,7 +25,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// <strong>switch</strong>, <strong>throw</strong>, <strong>using</strong>, <strong>var</strong>,
     /// <strong>where</strong>, <strong>while</strong>, <strong>yield</strong>.</para>
     ///
-    /// <para>The following keywords must not be followed by any space: <strong>checked</strong>,
+    /// <para>The following keywords should not be followed by any space: <strong>checked</strong>,
     /// <strong>default</strong>, <strong>sizeof</strong>, <strong>typeof</strong>, <strong>unchecked</strong>.</para>
     ///
     /// <para>The <strong>new</strong> keyword should always be followed by a space, unless it is used to create a new
@@ -38,8 +38,8 @@ namespace StyleCop.Analyzers.SpacingRules
         /// The ID for diagnostics produced by the <see cref="SA1000KeywordsMustBeSpacedCorrectly"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1000";
-        private const string Title = "Keywords must be spaced correctly";
-        private const string MessageFormat = "The keyword '{0}' must{1} be followed by a space.";
+        private const string Title = "Keywords should be spaced correctly";
+        private const string MessageFormat = "The keyword '{0}' should{1} be followed by a space.";
         private const string Description = "The spacing around a C# keyword is incorrect.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1000.md";
 

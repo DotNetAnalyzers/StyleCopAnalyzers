@@ -78,8 +78,8 @@ namespace StyleCop.Analyzers.LayoutRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1512";
-        private const string Title = "Single-line comments must not be followed by blank line";
-        private const string MessageFormat = "Single-line comments must not be followed by blank line";
+        private const string Title = "Single-line comments should not be followed by blank line";
+        private const string MessageFormat = "Single-line comments should not be followed by blank line";
         private const string Description = "A single-line comment within C# code is followed by a blank line.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1512.md";
 

@@ -33,8 +33,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1616";
-        private const string Title = "Element return value documentation must have text";
-        private const string MessageFormat = "Element return value documentation must have text";
+        private const string Title = "Element return value documentation should have text";
+        private const string MessageFormat = "Element return value documentation should have text";
         private const string Description = "The <returns> tag within a C# element's documentation header is empty.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1616.md";
 

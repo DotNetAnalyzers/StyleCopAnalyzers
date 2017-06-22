@@ -33,8 +33,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// The ID for diagnostics produced by the <see cref="SA1609PropertyDocumentationMustHaveValue"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1609";
-        private const string Title = "Property documentation must have value";
-        private const string MessageFormat = "Property documentation must have value";
+        private const string Title = "Property documentation should have value";
+        private const string MessageFormat = "Property documentation should have value";
         private const string Description = "The XML header documentation for a C# property does not contain a <value> tag.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1609.md";
 

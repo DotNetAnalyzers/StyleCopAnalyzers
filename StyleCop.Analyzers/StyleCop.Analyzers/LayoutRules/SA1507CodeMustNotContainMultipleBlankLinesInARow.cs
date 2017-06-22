@@ -46,8 +46,8 @@ namespace StyleCop.Analyzers.LayoutRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1507";
-        private const string Title = "Code must not contain multiple blank lines in a row";
-        private const string MessageFormat = "Code must not contain multiple blank lines in a row";
+        private const string Title = "Code should not contain multiple blank lines in a row";
+        private const string MessageFormat = "Code should not contain multiple blank lines in a row";
         private const string Description = "The C# code contains multiple blank lines in a row.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1507.md";
 

@@ -41,7 +41,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// The ID for diagnostics produced by the <see cref="SA1629DocumentationTextMustEndWithAPeriod"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1629";
-        private const string Title = "Documentation text must end with a period";
+        private const string Title = "Documentation text should end with a period";
         private const string MessageFormat = "TODO: Message format";
         private const string Description = "A section of the XML header documentation for a C# element does not end with a period.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1629.md";

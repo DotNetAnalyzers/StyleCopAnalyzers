@@ -29,9 +29,9 @@ namespace StyleCop.Analyzers.OrderingRules
         /// The ID for diagnostics produced by the <see cref="SA1217UsingStaticDirectivesMustBeOrderedAlphabetically"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1217";
-        private const string Title = "Using static directives must be ordered alphabetically";
-        private const string MessageFormat = "The using static directive for '{0}' must appear after the using static directive for '{1}'";
-        private const string Description = "All using static directives must be ordered alphabetically.";
+        private const string Title = "Using static directives should be ordered alphabetically";
+        private const string MessageFormat = "The using static directive for '{0}' should appear after the using static directive for '{1}'";
+        private const string Description = "All using static directives should be ordered alphabetically.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1217.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
