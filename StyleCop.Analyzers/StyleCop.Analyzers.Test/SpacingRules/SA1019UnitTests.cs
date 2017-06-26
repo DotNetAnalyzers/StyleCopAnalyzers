@@ -209,6 +209,14 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         x++ ?. ToString();
         x++ ?.ToString();
         x++?. ToString();
+
+        y-- -> ToString();
+        y-- ->ToString();
+        y---> ToString();
+
+        y++ -> ToString();
+        y++ ->ToString();
+        y++-> ToString();
     }
 }
 ";
@@ -234,6 +242,14 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         x++?.ToString();
         x++?.ToString();
         x++?.ToString();
+
+        y--->ToString();
+        y--->ToString();
+        y--->ToString();
+
+        y++->ToString();
+        y++->ToString();
+        y++->ToString();
     }
 }
 ";
@@ -258,6 +274,16 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 this.CSharpDiagnostic().WithLocation(20, 14).WithArguments(".", "followed"),
                 this.CSharpDiagnostic().WithLocation(21, 13).WithArguments("?", "preceded"),
                 this.CSharpDiagnostic().WithLocation(22, 13).WithArguments(".", "followed"),
+
+                this.CSharpDiagnostic().WithLocation(24, 13).WithArguments("->", "preceded"),
+                this.CSharpDiagnostic().WithLocation(24, 13).WithArguments("->", "followed"),
+                this.CSharpDiagnostic().WithLocation(25, 13).WithArguments("->", "preceded"),
+                this.CSharpDiagnostic().WithLocation(26, 12).WithArguments("->", "followed"),
+
+                this.CSharpDiagnostic().WithLocation(28, 13).WithArguments("->", "preceded"),
+                this.CSharpDiagnostic().WithLocation(28, 13).WithArguments("->", "followed"),
+                this.CSharpDiagnostic().WithLocation(29, 13).WithArguments("->", "preceded"),
+                this.CSharpDiagnostic().WithLocation(30, 12).WithArguments("->", "followed"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

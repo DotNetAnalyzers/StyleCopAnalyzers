@@ -59,6 +59,10 @@ namespace StyleCop.Analyzers.SpacingRules
                     HandleDotToken(context, token);
                     break;
 
+                case SyntaxKind.MinusGreaterThanToken:
+                    HandleMemberAccessSymbol(context, token);
+                    break;
+
                 // This case handles the new ?. and ?[ operators
                 case SyntaxKind.QuestionToken:
                     HandleQuestionToken(context, token);
