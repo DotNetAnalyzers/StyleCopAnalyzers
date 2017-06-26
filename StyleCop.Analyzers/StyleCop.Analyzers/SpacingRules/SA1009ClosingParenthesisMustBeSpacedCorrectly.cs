@@ -109,7 +109,8 @@ namespace StyleCop.Analyzers.SpacingRules
                 }
                 else
                 {
-                    precedesStickyCharacter = false;
+                    // A space follows unless this is a nullable tuple type
+                    precedesStickyCharacter = nextToken.Parent.IsKind(SyntaxKind.NullableType);
                 }
 
                 break;

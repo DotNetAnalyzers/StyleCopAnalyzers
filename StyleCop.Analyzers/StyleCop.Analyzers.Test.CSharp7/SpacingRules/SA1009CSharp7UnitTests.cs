@@ -453,6 +453,68 @@ public class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(2476, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2476")]
+        public async Task TestNullableAndArrayTupleReturnTypeAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public (int, int ) ? TestMethod1() => default((int, int ) ?);
+        public (int, int )? TestMethod2() => default((int, int )?);
+        public (int, int) ? TestMethod3() => default((int, int) ?);
+
+        public (int, int ) [] TestMethod4() => default((int, int ) []);
+        public (int, int )[] TestMethod5() => default((int, int )[]);
+        public (int, int) [] TestMethod6() => default((int, int) []);
+    }
+}
+";
+
+            var fixedCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public (int, int)? TestMethod1() => default((int, int)?);
+        public (int, int)? TestMethod2() => default((int, int)?);
+        public (int, int)? TestMethod3() => default((int, int)?);
+
+        public (int, int)[] TestMethod4() => default((int, int)[]);
+        public (int, int)[] TestMethod5() => default((int, int)[]);
+        public (int, int)[] TestMethod6() => default((int, int)[]);
+    }
+}
+";
+
+            DiagnosticResult[] expectedDiagnostic =
+            {
+                // TestMethod1, TestMethod2, TestMethod3
+                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(5, 26),
+                this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(5, 26),
+                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(5, 65),
+                this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(5, 65),
+                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(6, 26),
+                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(6, 64),
+                this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 25),
+                this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 63),
+
+                // TestMethod4, TestMethod5, TestMethod6
+                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(9, 26),
+                this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(9, 26),
+                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(9, 66),
+                this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(9, 66),
+                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(10, 26),
+                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(10, 65),
+                this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(11, 25),
+                this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(11, 64),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Verifies that spacing for tuple expressions is handled properly.
         /// </summary>
@@ -789,6 +851,72 @@ namespace TestNamespace
                 this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(11, 43),
                 this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(12, 43),
                 this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(13, 42),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2476, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2476")]
+        public async Task TestNullableAndArrayTupleTypesAsGenericArgumentsAsync()
+        {
+            var testCode = @"using System;
+
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        static Func<(int, int ) ?, (int, int ) ?> Function1;
+        static Func<(int, int )?, (int, int )?> Function2;
+        static Func<(int, int) ?, (int, int) ?> Function3;
+
+        static Func<(int, int ) [], (int, int ) []> Function4;
+        static Func<(int, int )[], (int, int )[]> Function5;
+        static Func<(int, int) [], (int, int) []> Function6;
+    }
+}
+";
+
+            var fixedCode = @"using System;
+
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        static Func<(int, int)?, (int, int)?> Function1;
+        static Func<(int, int)?, (int, int)?> Function2;
+        static Func<(int, int)?, (int, int)?> Function3;
+
+        static Func<(int, int)[], (int, int)[]> Function4;
+        static Func<(int, int)[], (int, int)[]> Function5;
+        static Func<(int, int)[], (int, int)[]> Function6;
+    }
+}
+";
+
+            DiagnosticResult[] expectedDiagnostics =
+            {
+                // Function1, Function2, Function3
+                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 31),
+                this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 31),
+                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 46),
+                this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 46),
+                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(8, 31),
+                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(8, 45),
+                this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(9, 30),
+                this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(9, 44),
+
+                // Function4, Function5, Function6
+                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(11, 31),
+                this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(11, 31),
+                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(11, 47),
+                this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(11, 47),
+                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(12, 31),
+                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(12, 46),
+                this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(13, 30),
+                this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(13, 45),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
