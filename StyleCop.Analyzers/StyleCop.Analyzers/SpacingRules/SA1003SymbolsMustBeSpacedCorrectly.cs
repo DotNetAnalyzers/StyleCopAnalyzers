@@ -292,11 +292,30 @@ namespace StyleCop.Analyzers.SpacingRules
             var unaryExpression = (PostfixUnaryExpressionSyntax)context.Node;
             var followingToken = unaryExpression.OperatorToken.GetNextToken();
 
-            var mustHaveTrailingWhitespace = !followingToken.IsKind(SyntaxKind.CloseParenToken)
-                && !followingToken.IsKind(SyntaxKind.CloseBracketToken)
-                && !followingToken.IsKind(SyntaxKind.SemicolonToken)
-                && !followingToken.IsKind(SyntaxKind.CommaToken)
-                && !(followingToken.IsKind(SyntaxKind.CloseBraceToken) && (followingToken.Parent is InterpolationSyntax));
+            bool mustHaveTrailingWhitespace;
+            switch (followingToken.Kind())
+            {
+            case SyntaxKind.CloseParenToken:
+            case SyntaxKind.CloseBracketToken:
+            case SyntaxKind.SemicolonToken:
+            case SyntaxKind.CommaToken:
+            case SyntaxKind.DotToken:
+            case SyntaxKind.MinusGreaterThanToken:
+                mustHaveTrailingWhitespace = false;
+                break;
+
+            case SyntaxKind.QuestionToken:
+                mustHaveTrailingWhitespace = !(followingToken.Parent is ConditionalAccessExpressionSyntax);
+                break;
+
+            case SyntaxKind.CloseBraceToken:
+                mustHaveTrailingWhitespace = !(followingToken.Parent is InterpolationSyntax);
+                break;
+
+            default:
+                mustHaveTrailingWhitespace = true;
+                break;
+            }
 
             // If the next token is a close brace token we are in an anonymous object creation or an initialization.
             // Then we allow a new line
