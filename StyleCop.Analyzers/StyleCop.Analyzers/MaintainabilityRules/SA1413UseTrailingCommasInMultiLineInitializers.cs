@@ -58,6 +58,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
         private static readonly Action<SyntaxNodeAnalysisContext> HandleObjectInitializerAction = HandleObjectInitializer;
         private static readonly Action<SyntaxNodeAnalysisContext> HandleAnonymousObjectInitializerAction = HandleAnonymousObjectInitializer;
+        private static readonly Action<SyntaxNodeAnalysisContext> HandleEnumDeclarationAction = HandleEnumDeclaration;
 
         private static readonly ImmutableArray<SyntaxKind> ObjectInitializerKinds =
             ImmutableArray.Create(SyntaxKind.ObjectInitializerExpression, SyntaxKind.ArrayInitializerExpression, SyntaxKind.CollectionInitializerExpression);
@@ -74,10 +75,10 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
             context.RegisterSyntaxNodeAction(HandleObjectInitializerAction, ObjectInitializerKinds);
             context.RegisterSyntaxNodeAction(HandleAnonymousObjectInitializerAction, SyntaxKind.AnonymousObjectCreationExpression);
-            context.RegisterSyntaxNodeAction(HandleEnumMemberDeclarationAction, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeAction(HandleEnumDeclarationAction, SyntaxKind.EnumDeclaration);
         }
 
-        private static void HandleEnumMemberDeclarationAction(SyntaxNodeAnalysisContext context)
+        private static void HandleEnumDeclaration(SyntaxNodeAnalysisContext context)
         {
             var initializer = (EnumDeclarationSyntax)context.Node;
             var lastMember = initializer.Members.LastOrDefault();
@@ -86,7 +87,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 return;
             }
 
-            if (initializer.Members.Count() != initializer.Members.SeparatorCount)
+            if (initializer.Members.Count != initializer.Members.SeparatorCount)
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, lastMember.GetLocation()));
             }
