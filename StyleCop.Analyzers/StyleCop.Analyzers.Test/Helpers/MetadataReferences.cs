@@ -26,16 +26,25 @@ namespace StyleCop.Analyzers.Test.Helpers
 
         static MetadataReferences()
         {
-            Assembly systemRuntime = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(x => x.GetName().Name == "System.Runtime");
-            if (systemRuntime != null)
+            if (typeof(string).Assembly.GetType("System.ValueTuple", false) != null)
             {
-                SystemRuntimeReference = MetadataReference.CreateFromFile(systemRuntime.Location);
+                // mscorlib contains ValueTuple, so no need to add a separate reference
+                SystemRuntimeReference = null;
+                SystemValueTupleReference = null;
             }
-
-            Assembly systemValueTuple = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(x => x.GetName().Name == "System.ValueTuple");
-            if (systemValueTuple != null)
+            else
             {
-                SystemValueTupleReference = MetadataReference.CreateFromFile(systemValueTuple.Location);
+                Assembly systemRuntime = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(x => x.GetName().Name == "System.Runtime");
+                if (systemRuntime != null)
+                {
+                    SystemRuntimeReference = MetadataReference.CreateFromFile(systemRuntime.Location);
+                }
+
+                Assembly systemValueTuple = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(x => x.GetName().Name == "System.ValueTuple");
+                if (systemValueTuple != null)
+                {
+                    SystemValueTupleReference = MetadataReference.CreateFromFile(systemValueTuple.Location);
+                }
             }
         }
     }
