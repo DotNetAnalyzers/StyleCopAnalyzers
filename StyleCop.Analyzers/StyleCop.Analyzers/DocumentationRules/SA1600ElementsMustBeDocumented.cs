@@ -18,9 +18,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     /// <remarks>
     /// <para>C# syntax provides a mechanism for inserting documentation for classes and elements directly into the
-    /// code, through the use of Xml documentation headers. For an introduction to these headers and a description of
-    /// the header syntax, see the following article:
-    /// <see href="http://msdn.microsoft.com/en-us/magazine/cc302121.aspx"/>.</para>
+    /// code, through the use of Xml documentation headers.</para>
     ///
     /// <para>A violation of this rule occurs if an element is completely missing a documentation header, or if the
     /// header is empty. In C# the following types of elements can have documentation headers: classes, constructors,
