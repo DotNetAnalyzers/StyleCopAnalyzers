@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.SpacingRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// A closing parenthesis within a C# statement is not spaced correctly.
@@ -90,8 +91,11 @@ namespace StyleCop.Analyzers.SpacingRules
                 // Allow a space between an open and a close paren when:
                 // - they are part of an if statement
                 // - they are on the same line
-                // - the open paren is part of a parenthesized expression
-                precedesStickyCharacter = !(token.Parent.IsKind(SyntaxKind.IfStatement) && nextToken.Parent.IsKind(SyntaxKind.ParenthesizedExpression) && (token.GetLine() == nextToken.GetLine()));
+                // - the open paren is part of a parenthesized expression or a tuple expression.
+                precedesStickyCharacter =
+                        !(token.Parent.IsKind(SyntaxKind.IfStatement)
+                        && (token.GetLine() == nextToken.GetLine())
+                        && (nextToken.Parent.IsKind(SyntaxKind.ParenthesizedExpression) || nextToken.Parent.IsKind(SyntaxKindEx.TupleExpression)));
                 break;
 
             case SyntaxKind.CloseParenToken:
