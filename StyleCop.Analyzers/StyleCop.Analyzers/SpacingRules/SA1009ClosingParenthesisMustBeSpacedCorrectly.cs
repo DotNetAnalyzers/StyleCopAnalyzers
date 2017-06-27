@@ -87,6 +87,13 @@ namespace StyleCop.Analyzers.SpacingRules
             switch (nextToken.Kind())
             {
             case SyntaxKind.OpenParenToken:
+                // Allow a space between an open and a close paren when:
+                // - they are part of an if statement
+                // - they are on the same line
+                // - the open paren is part of a parenthesized expression
+                precedesStickyCharacter = !(token.Parent.IsKind(SyntaxKind.IfStatement) && nextToken.Parent.IsKind(SyntaxKind.ParenthesizedExpression) && (token.GetLine() == nextToken.GetLine()));
+                break;
+
             case SyntaxKind.CloseParenToken:
             case SyntaxKind.OpenBracketToken:
             case SyntaxKind.CloseBracketToken:
