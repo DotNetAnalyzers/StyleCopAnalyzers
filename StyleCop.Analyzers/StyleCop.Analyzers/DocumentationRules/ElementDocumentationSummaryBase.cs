@@ -18,7 +18,6 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     internal abstract class ElementDocumentationSummaryBase : DiagnosticAnalyzer
     {
-        private readonly Action<CompilationStartAnalysisContext> compilationStartAction;
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> typeDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> methodDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> constructorDeclarationAction;
