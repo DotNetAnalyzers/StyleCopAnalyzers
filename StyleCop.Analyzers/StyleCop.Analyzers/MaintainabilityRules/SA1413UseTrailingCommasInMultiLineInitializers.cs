@@ -82,7 +82,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         {
             var initializer = (EnumDeclarationSyntax)context.Node;
             var lastMember = initializer.Members.LastOrDefault();
-            if (lastMember == null)
+            if (lastMember == null || !initializer.SpansMultipleLines())
             {
                 return;
             }

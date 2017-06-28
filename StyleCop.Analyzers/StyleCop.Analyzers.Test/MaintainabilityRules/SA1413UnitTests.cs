@@ -488,6 +488,24 @@ class TestClass
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(2467, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2467")]
+        public async Task VerifySingleLineEnumWithoutCommaAsync()
+        {
+            // SA1413 is not reported whether or not the comma is included for single-line enums
+            var testCode = @"enum TestEnum { One, Two }";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2467, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2467")]
+        public async Task VerifySingleLineEnumWithCommaAsync()
+        {
+            // SA1413 is not reported whether or not the comma is included for single-line enums
+            var testCode = @"enum TestEnum { One, Two, }";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Verifies that the last value of an enum without a trailing comma produces a diagnostic.
         /// </summary>
