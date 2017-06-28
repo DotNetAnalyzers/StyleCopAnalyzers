@@ -5,7 +5,6 @@ namespace StyleCop.Analyzers.Test.Helpers
 {
     using System;
     using System.Collections.Immutable;
-    using System.IO;
     using System.Linq;
     using System.Reflection;
     using Microsoft.CodeAnalysis;
@@ -16,9 +15,9 @@ namespace StyleCop.Analyzers.Test.Helpers
     /// </summary>
     internal static class MetadataReferences
     {
-        internal static readonly MetadataReference CorlibReference = CreateDotNetFrameworkMetadataReference("mscorlib").WithAliases(ImmutableArray.Create("global", "corlib"));
-        internal static readonly MetadataReference SystemReference = CreateDotNetFrameworkMetadataReference("System").WithAliases(ImmutableArray.Create("global", "system"));
-        internal static readonly MetadataReference SystemCoreReference = CreateDotNetFrameworkMetadataReference("System.Core");
+        internal static readonly MetadataReference CorlibReference = MetadataReference.CreateFromFile(typeof(object).Assembly.Location).WithAliases(ImmutableArray.Create("global", "corlib"));
+        internal static readonly MetadataReference SystemReference = MetadataReference.CreateFromFile(typeof(System.Diagnostics.Debug).Assembly.Location).WithAliases(ImmutableArray.Create("global", "system"));
+        internal static readonly MetadataReference SystemCoreReference = MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location);
         internal static readonly MetadataReference CSharpSymbolsReference = MetadataReference.CreateFromFile(typeof(CSharpCompilation).Assembly.Location);
         internal static readonly MetadataReference CodeAnalysisReference = MetadataReference.CreateFromFile(typeof(Compilation).Assembly.Location);
 
@@ -47,14 +46,6 @@ namespace StyleCop.Analyzers.Test.Helpers
                     SystemValueTupleReference = MetadataReference.CreateFromFile(systemValueTuple.Location);
                 }
             }
-        }
-
-        private static MetadataReference CreateDotNetFrameworkMetadataReference(string name)
-        {
-            var referenceAssemblyPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Reference Assemblies", "Microsoft", "Framework", ".NETFramework", "v4.6");
-            var assemblyFilePath = Path.Combine(referenceAssemblyPath, $"{name}.dll");
-
-            return MetadataReference.CreateFromFile(assemblyFilePath);
         }
     }
 }
