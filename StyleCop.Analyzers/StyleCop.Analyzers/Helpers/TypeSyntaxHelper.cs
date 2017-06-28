@@ -9,6 +9,24 @@ namespace StyleCop.Analyzers.Helpers
 
     internal static class TypeSyntaxHelper
     {
+        public static TypeSyntax GetContainingNotEnclosingType(this TypeSyntax syntax)
+        {
+            while (true)
+            {
+                switch (syntax.Parent.Kind())
+                {
+                case SyntaxKind.ArrayType:
+                case SyntaxKind.NullableType:
+                case SyntaxKind.PointerType:
+                    syntax = (TypeSyntax)syntax.Parent;
+                    break;
+
+                default:
+                    return syntax;
+                }
+            }
+        }
+
         public static bool IsReturnType(this TypeSyntax syntax)
         {
             switch (syntax.Parent.Kind())

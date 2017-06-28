@@ -136,6 +136,112 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
             await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(2472, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2472")]
+        public async Task TestTupleArrayParameterTypeAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public int TestMethod1( ( int, int)[] arg) => 0;
+        public int TestMethod2( (int, int)[] arg) => 0;
+        public int TestMethod3(( int, int)[] arg) => 0;
+
+        public int TestMethod4((int, int) arg1, params( int, int)[] arg2) => 0;
+        public int TestMethod5((int, int) arg1, params(int, int)[] arg2) => 0;
+        public int TestMethod6((int, int) arg1, params ( int, int)[] arg2) => 0;
+    }
+}
+";
+
+            var fixedCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public int TestMethod1((int, int)[] arg) => 0;
+        public int TestMethod2((int, int)[] arg) => 0;
+        public int TestMethod3((int, int)[] arg) => 0;
+
+        public int TestMethod4((int, int) arg1, params (int, int)[] arg2) => 0;
+        public int TestMethod5((int, int) arg1, params (int, int)[] arg2) => 0;
+        public int TestMethod6((int, int) arg1, params (int, int)[] arg2) => 0;
+    }
+}
+";
+
+            DiagnosticResult[] expectedDiagnostic =
+            {
+                // TestMethod1
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(5, 31),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(5, 33),
+
+                // TestMethod2
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(6, 31),
+
+                // TestMethod3
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(7, 32),
+
+                // TestMethod4
+                this.CSharpDiagnostic(DescriptorPreceded).WithLocation(9, 55),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(9, 55),
+
+                // TestMethod5
+                this.CSharpDiagnostic(DescriptorPreceded).WithLocation(10, 55),
+
+                // TestMethod6
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(11, 56),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2472, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2472")]
+        public async Task TestTupleOutParametersAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public int TestMethod1(out( int, int)[] arg) => throw null;
+        public int TestMethod2(out(int, int)[] arg) => throw null;
+        public int TestMethod3(out ( int, int)[] arg) => throw null;
+    }
+}
+";
+
+            var fixedCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public int TestMethod1(out (int, int)[] arg) => throw null;
+        public int TestMethod2(out (int, int)[] arg) => throw null;
+        public int TestMethod3(out (int, int)[] arg) => throw null;
+    }
+}
+";
+
+            DiagnosticResult[] expectedDiagnostic =
+            {
+                // TestMethod1
+                this.CSharpDiagnostic(DescriptorPreceded).WithLocation(5, 35),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(5, 35),
+
+                // TestMethod2
+                this.CSharpDiagnostic(DescriptorPreceded).WithLocation(6, 35),
+
+                // TestMethod3
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(7, 36),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Verifies that spacing around tuple return types is handled properly.
         /// </summary>
@@ -266,6 +372,50 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
                 this.CSharpDiagnostic(DescriptorPreceded).WithLocation(26, 72),
                 this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(27, 24),
                 this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(27, 75),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2472, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2472")]
+        public async Task TestNullableTupleReturnTypeAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public( int, int)? TestMethod1() => default( ( int, int)?);
+        public(int, int)? TestMethod2() => default( (int, int)?);
+        public ( int, int)? TestMethod3() => default(( int, int)?);
+    }
+}
+";
+
+            var fixedCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public (int, int)? TestMethod1() => default((int, int)?);
+        public (int, int)? TestMethod2() => default((int, int)?);
+        public (int, int)? TestMethod3() => default((int, int)?);
+    }
+}
+";
+
+            DiagnosticResult[] expectedDiagnostic =
+            {
+                // TestMethod1, TestMethod2, TestMethod3
+                this.CSharpDiagnostic(DescriptorPreceded).WithLocation(5, 15),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(5, 15),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(5, 52),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(5, 54),
+                this.CSharpDiagnostic(DescriptorPreceded).WithLocation(6, 15),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(6, 51),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(7, 16),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(7, 54),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
