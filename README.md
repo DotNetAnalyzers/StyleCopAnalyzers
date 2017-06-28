@@ -14,7 +14,7 @@ The preferable way to use the analyzers is to add the nuget package [StyleCop.An
 to the project where you want to enforce StyleCop rules.
 
 The severity of individual rules may be configured using [rule set files](https://msdn.microsoft.com/en-us/library/dd264996.aspx)
-in Visual Studio 2015. **Settings.StyleCop** is not supported, but a **stylecop.json** file may be used to customize the
+in Visual Studio 2015. **Settings.StyleCop** is not supported (see [Migrate.md](documentation/Migrate.md)), also **stylecop.json** file may be used to customize the
 behavior of certain rules. See [Configuration.md](documentation/Configuration.md) for more information.
 
 For users upgrading from StyleCop Classic, see [KnownChanges.md](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/tree/master/documentation/KnownChanges.md)
