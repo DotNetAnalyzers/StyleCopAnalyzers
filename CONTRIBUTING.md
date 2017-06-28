@@ -26,6 +26,4 @@ You can also help by filing issues, participating in discussions and doing code 
 
 ## Building
 
-Visual Studio 2015 RC is required for building this repository.
-The Visual Studio 2015 RC SDK is required for building the vsix extension project and for
-debugging in an experimental visual studio hive.
+Visual Studio 2017 (Community Edition or higher) is required for building this repository.
