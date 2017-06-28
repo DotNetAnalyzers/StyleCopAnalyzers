@@ -13,7 +13,12 @@ For this add the following to the dependencies section of the project.json file:
       "type": "build"
     }
 ```
-
+For VS2017 / dotnet core 1.1.1 SDK 1.0.1 projects edit the `.csproj` file and mark the `StyleCop.Analyzers` as `PrivateAssets`:
+```xml
+    <ItemGroup>
+        <PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta001" PrivateAssets="All" />
+    </ItemGroup>
+```
 If the project is restored and built right now this will already run the analyzers. A few extra steps are needed if they should be configured.
 
 ## Rulesets and stylecop.json
@@ -25,6 +30,17 @@ To supply a ruleset file and a stylecop.json configuration file to the compiler 
 
 **Note: ** `additionalArguments` is not currently defined in the schema but does exist and is passed during the build
 
+On VS VS2017 / dotnet core 1.1.1 SDK 1.0.1 projects update `.csproj` as follows to apply settings and custom rules:
+```xml
+    <PropertyGroup>
+        ...
+        <CodeAnalysisRuleSet>stylecop.ruleset</CodeAnalysisRuleSet>
+    </PropertyGroup>
+    <ItemGroup>
+        <AdditionalFiles Include="stylecop.json" />
+    </ItemGroup>
+```
+
 ## Enabling xml documentation processing
 
 All analyzers regarding xml documentation can only run if the xml processing is enabled. To do this add
@@ -34,3 +50,11 @@ All analyzers regarding xml documentation can only run if the xml processing is 
 
 to the `buildOptions` node of the project.json file. Note that this might cause additional CS1591 diagnostics to appear by the compiler.
 They can be suppressed in the ruleset file if necessary.
+
+For VS VS2017 / dotnet core 1.1.1 SDK 1.0.1 projects update `.csproj`
+```xml
+    <PropertyGroup>
+        ...
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    </PropertyGroup>
+```
