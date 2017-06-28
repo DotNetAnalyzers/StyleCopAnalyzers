@@ -183,6 +183,114 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             await this.VerifyCSharpDiagnosticAsync(template, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(2471, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2471")]
+        public async Task TestUnaryMemberAccessAsync()
+        {
+            var testCode = @"public class ClassName
+{
+    public unsafe void MethodName()
+    {
+        int? x = 0;
+        int* y = null;
+
+        x-- . ToString();
+        x-- .ToString();
+        x--. ToString();
+
+        x++ . ToString();
+        x++ .ToString();
+        x++. ToString();
+
+        x-- ?. ToString();
+        x-- ?.ToString();
+        x--?. ToString();
+
+        x++ ?. ToString();
+        x++ ?.ToString();
+        x++?. ToString();
+
+        y-- -> ToString();
+        y-- ->ToString();
+        y---> ToString();
+
+        y++ -> ToString();
+        y++ ->ToString();
+        y++-> ToString();
+    }
+}
+";
+            var fixedTestCode = @"public class ClassName
+{
+    public unsafe void MethodName()
+    {
+        int? x = 0;
+        int* y = null;
+
+        x--.ToString();
+        x--.ToString();
+        x--.ToString();
+
+        x++.ToString();
+        x++.ToString();
+        x++.ToString();
+
+        x--?.ToString();
+        x--?.ToString();
+        x--?.ToString();
+
+        x++?.ToString();
+        x++?.ToString();
+        x++?.ToString();
+
+        y--->ToString();
+        y--->ToString();
+        y--->ToString();
+
+        y++->ToString();
+        y++->ToString();
+        y++->ToString();
+    }
+}
+";
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(8, 13).WithArguments(".", "preceded"),
+                this.CSharpDiagnostic().WithLocation(8, 13).WithArguments(".", "followed"),
+                this.CSharpDiagnostic().WithLocation(9, 13).WithArguments(".", "preceded"),
+                this.CSharpDiagnostic().WithLocation(10, 12).WithArguments(".", "followed"),
+
+                this.CSharpDiagnostic().WithLocation(12, 13).WithArguments(".", "preceded"),
+                this.CSharpDiagnostic().WithLocation(12, 13).WithArguments(".", "followed"),
+                this.CSharpDiagnostic().WithLocation(13, 13).WithArguments(".", "preceded"),
+                this.CSharpDiagnostic().WithLocation(14, 12).WithArguments(".", "followed"),
+
+                this.CSharpDiagnostic().WithLocation(16, 13).WithArguments("?", "preceded"),
+                this.CSharpDiagnostic().WithLocation(16, 14).WithArguments(".", "followed"),
+                this.CSharpDiagnostic().WithLocation(17, 13).WithArguments("?", "preceded"),
+                this.CSharpDiagnostic().WithLocation(18, 13).WithArguments(".", "followed"),
+
+                this.CSharpDiagnostic().WithLocation(20, 13).WithArguments("?", "preceded"),
+                this.CSharpDiagnostic().WithLocation(20, 14).WithArguments(".", "followed"),
+                this.CSharpDiagnostic().WithLocation(21, 13).WithArguments("?", "preceded"),
+                this.CSharpDiagnostic().WithLocation(22, 13).WithArguments(".", "followed"),
+
+                this.CSharpDiagnostic().WithLocation(24, 13).WithArguments("->", "preceded"),
+                this.CSharpDiagnostic().WithLocation(24, 13).WithArguments("->", "followed"),
+                this.CSharpDiagnostic().WithLocation(25, 13).WithArguments("->", "preceded"),
+                this.CSharpDiagnostic().WithLocation(26, 12).WithArguments("->", "followed"),
+
+                this.CSharpDiagnostic().WithLocation(28, 13).WithArguments("->", "preceded"),
+                this.CSharpDiagnostic().WithLocation(28, 13).WithArguments("->", "followed"),
+                this.CSharpDiagnostic().WithLocation(29, 13).WithArguments("->", "preceded"),
+                this.CSharpDiagnostic().WithLocation(30, 12).WithArguments("->", "followed"),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Gets the C# analyzers being tested
         /// </summary>
