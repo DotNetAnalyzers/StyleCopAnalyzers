@@ -413,10 +413,10 @@ namespace StyleCop.Analyzers.OrderingRules
             {
                 if ((left.Alias != null) && (right.Alias != null))
                 {
-                    return CultureInfo.InvariantCulture.CompareInfo.Compare(left.Alias.Name.Identifier.ValueText, right.Alias.Name.Identifier.ValueText, CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreWidth);
+                    return NameSyntaxHelpers.Compare(left.Alias.Name, right.Alias.Name);
                 }
 
-                return CultureInfo.InvariantCulture.CompareInfo.Compare(left.Name.ToNormalizedString(), right.Name.ToNormalizedString(), CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreWidth);
+                return NameSyntaxHelpers.Compare(left.Name, right.Name);
             }
 
             private bool IsSeparatedSystemUsing(UsingDirectiveSyntax syntax)
