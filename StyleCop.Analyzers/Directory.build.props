@@ -5,7 +5,7 @@
     <Description>An implementation of StyleCop rules using the .NET Compiler Platform</Description>
     <Product>StyleCop.Analyzers</Product>
     <Company>Tunnel Vision Laboratories, LLC</Company>
-    <Copyright>Copyright © Sam Harwell 2015</Copyright>
+    <Copyright>Copyright © Tunnel Vision Laboratories, LLC 2015</Copyright>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -50,12 +50,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)StyleCop.Analyzers.Internal.ruleset">
-      <Link>StyleCop.Analyzers.Internal.ruleset</Link>
-    </None>
-    <None Include="$(MSBuildThisFileDirectory)StyleCop.Analyzers.ruleset">
-      <Link>StyleCop.Analyzers.ruleset</Link>
-    </None>
+    <None Include="$(MSBuildThisFileDirectory)*.ruleset" Link="%(Filename)%(Extension)" />
+
+    <!-- Show launchSettings.json in the project if it exists. -->
+    <None Include="$(AppDesignerFolder)\launchSettings.json" Condition="Exists('$(AppDesignerFolder)\launchSettings.json')" />
   </ItemGroup>
 
   <ItemGroup>

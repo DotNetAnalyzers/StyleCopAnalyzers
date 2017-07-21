@@ -243,7 +243,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "documentation", "documentat
 		documentation\SX1309S.md = documentation\SX1309S.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StyleCopTester", "StyleCop.Analyzers\StyleCopTester\StyleCopTester.csproj", "{C4B7092C-E1A9-4CF7-AE4C-D6A146392BA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCopTester", "StyleCop.Analyzers\StyleCopTester\StyleCopTester.csproj", "{C4B7092C-E1A9-4CF7-AE4C-D6A146392BA7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StyleCop.Analyzers.CodeFixes", "StyleCop.Analyzers\StyleCop.Analyzers.CodeFixes\StyleCop.Analyzers.CodeFixes.csproj", "{F91F7815-4E63-4698-B053-E57B2D707194}"
 EndProject
