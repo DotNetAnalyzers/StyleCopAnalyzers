@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.Test.LightJson.Serialization
         public void TestKeyMatchesPreviousValue()
         {
             var jsonObject = JsonValue.Parse("{ \"x\": \"value\", \"value\": \"value\" }");
-            Assert.NotNull(jsonObject);
+            Assert.NotEqual(jsonObject, JsonValue.Null);
             Assert.Equal("value", jsonObject["x"].AsString);
             Assert.Equal("value", jsonObject["value"].AsString);
             Assert.Equal(jsonObject["x"], jsonObject["value"]);

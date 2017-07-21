@@ -24,7 +24,7 @@ namespace StyleCop.Analyzers.Test.Lightup
 
             if (list.UnderlyingList != null)
             {
-                Assert.IsAssignableFrom(typeof(SeparatedSyntaxList<SyntaxNode>), list.UnderlyingList);
+                Assert.IsAssignableFrom<SeparatedSyntaxList<SyntaxNode>>(list.UnderlyingList);
                 var underlyingList = (SeparatedSyntaxList<SyntaxNode>)list.UnderlyingList;
                 Assert.Equal(0, list.Count);
             }
