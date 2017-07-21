@@ -66,7 +66,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var newModifiers = SyntaxFactory.TokenList();
             var wrapperWithModifiedModifiers = wrapper.WithModifiers(newModifiers);
             Assert.NotNull(wrapperWithModifiedModifiers.SyntaxNode);
-            Assert.NotSame(syntaxNode.Modifiers, wrapperWithModifiedModifiers.Modifiers);
+            Assert.NotEqual(syntaxNode.Modifiers, wrapperWithModifiedModifiers.Modifiers);
             Assert.Equal(0, wrapperWithModifiedModifiers.Modifiers.Count);
 
             var newReturnType = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.BoolKeyword));
@@ -78,7 +78,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var newIdentifier = SyntaxFactory.Identifier("NewIdentifier");
             var wrapperWithModifiedIdentifier = wrapper.WithIdentifier(newIdentifier);
             Assert.NotNull(wrapperWithModifiedIdentifier.SyntaxNode);
-            Assert.NotSame(syntaxNode.Identifier, wrapperWithModifiedIdentifier.Identifier);
+            Assert.NotEqual(syntaxNode.Identifier, wrapperWithModifiedIdentifier.Identifier);
             Assert.Equal(SyntaxKind.IdentifierToken, wrapperWithModifiedIdentifier.Identifier.Kind());
             Assert.Equal("NewIdentifier", wrapperWithModifiedIdentifier.Identifier.Text);
 
@@ -97,7 +97,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var newConstraintClauses = SyntaxFactory.List<TypeParameterConstraintClauseSyntax>();
             var wrapperWithModifiedConstraintClauses = wrapper.WithConstraintClauses(newConstraintClauses);
             Assert.NotNull(wrapperWithModifiedConstraintClauses.SyntaxNode);
-            Assert.NotSame(syntaxNode.ConstraintClauses, wrapperWithModifiedConstraintClauses.ConstraintClauses);
+            Assert.NotEqual(syntaxNode.ConstraintClauses, wrapperWithModifiedConstraintClauses.ConstraintClauses);
             Assert.Equal(0, wrapperWithModifiedConstraintClauses.ConstraintClauses.Count);
 
             var newBody = SyntaxFactory.Block();
@@ -121,7 +121,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var addedModifiers = new SyntaxToken[] { SyntaxFactory.Token(SyntaxKind.AsyncKeyword) };
             var wrapperWithAddedModifiers = wrapper.AddModifiers(addedModifiers);
             Assert.NotNull(wrapperWithAddedModifiers.SyntaxNode);
-            Assert.NotSame(syntaxNode.Modifiers, wrapperWithAddedModifiers.Modifiers);
+            Assert.NotEqual(syntaxNode.Modifiers, wrapperWithAddedModifiers.Modifiers);
             Assert.Equal(2, wrapperWithAddedModifiers.Modifiers.Count);
             Assert.Equal(SyntaxKind.PrivateKeyword, wrapperWithAddedModifiers.Modifiers[0].Kind());
             Assert.Equal(SyntaxKind.AsyncKeyword, wrapperWithAddedModifiers.Modifiers[1].Kind());
@@ -145,7 +145,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var addedConstraintClauses = new TypeParameterConstraintClauseSyntax[] { SyntaxFactory.TypeParameterConstraintClause(SyntaxFactory.IdentifierName("constraint2")) };
             var wrapperWithAddedConstraintClauses = wrapper.AddConstraintClauses(addedConstraintClauses);
             Assert.NotNull(wrapperWithAddedConstraintClauses.SyntaxNode);
-            Assert.NotSame(syntaxNode.ConstraintClauses, wrapperWithAddedConstraintClauses.ConstraintClauses);
+            Assert.NotEqual(syntaxNode.ConstraintClauses, wrapperWithAddedConstraintClauses.ConstraintClauses);
             Assert.Equal(2, wrapperWithAddedConstraintClauses.ConstraintClauses.Count);
             Assert.Equal("constraint1", wrapperWithAddedConstraintClauses.ConstraintClauses[0].Name.Identifier.Text);
             Assert.Equal("constraint2", wrapperWithAddedConstraintClauses.ConstraintClauses[1].Name.Identifier.Text);

@@ -209,7 +209,7 @@ namespace StyleCop.Analyzers.Test.LightJson
         {
             // (JsonValue)(DateTime?)
             DateTime time = DateTime.Now;
-            Assert.NotNull((JsonValue)time);
+            Assert.NotEqual((JsonValue)time, JsonValue.Null);
             Assert.Equal(time.ToString("o"), ((JsonValue)time).AsString);
             Assert.Equal(JsonValue.Null, (JsonValue)default(DateTime?));
 

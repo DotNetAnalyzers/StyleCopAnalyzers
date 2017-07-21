@@ -6,4 +6,7 @@
     <Rule Id="CS1591" Action="Hidden" />
     <Rule Id="CS2008" Action="None" />
   </Rules>
+  <Rules AnalyzerId="xunit.analyzers" RuleNamespace="xunit.analyzers">
+    <Rule Id="xUnit1004" Action="Info" />
+  </Rules>
 </RuleSet>

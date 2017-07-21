@@ -50,7 +50,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var newElements = wrapper.Elements.Replace(wrapper.Elements[0], (TupleElementSyntaxWrapper)SyntaxFactory.TupleElement(SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.StringKeyword))));
             var wrapperWithModifiedElements = wrapper.WithElements(newElements);
             Assert.NotNull(wrapperWithModifiedElements.SyntaxNode);
-            Assert.NotSame(syntaxNode.Elements[0], wrapperWithModifiedElements.Elements[0]);
+            Assert.NotEqual(syntaxNode.Elements[0], (TupleElementSyntax)wrapperWithModifiedElements.Elements[0]);
             Assert.Equal(SyntaxKind.StringKeyword, ((PredefinedTypeSyntax)wrapperWithModifiedElements.Elements[0].Type).Keyword.Kind());
 
             var wrapperWithAddedElements = wrapper.AddElements((TupleElementSyntaxWrapper)SyntaxFactory.TupleElement(SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ShortKeyword))));
