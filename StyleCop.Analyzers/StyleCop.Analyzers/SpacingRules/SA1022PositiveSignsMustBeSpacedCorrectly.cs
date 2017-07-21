@@ -17,7 +17,8 @@ namespace StyleCop.Analyzers.SpacingRules
     /// <para>A violation of this rule occurs when the spacing around a positive sign is not correct.</para>
     ///
     /// <para>A positive sign should always be preceded by a single space, unless it comes after an opening square
-    /// bracket, a parenthesis, or is the first character on the line.</para>
+    /// bracket, a parenthesis, is the first character on the line, or is part of a string interpolation alignment
+    /// component.</para>
     ///
     /// <para>A positive sign should never be followed by whitespace, and should never be the last character on a
     /// line.</para>
@@ -81,6 +82,14 @@ namespace StyleCop.Analyzers.SpacingRules
                 return;
             }
 
+            var isInInterpolationAlignmentClause = token.Parent.Parent.IsKind(SyntaxKind.InterpolationAlignmentClause);
+            if (isInInterpolationAlignmentClause && !token.IsFollowedByWhitespace())
+            {
+                // SA1001 is already handling the case like: line.Append($"{testResult.DisplayName, +75}");
+                // Where the extra space before the plus sign is undesirable.
+                return;
+            }
+
             bool precededBySpace = true;
             bool firstInLine = token.IsFirstInLine();
             bool followsSpecialCharacter = false;
@@ -99,7 +108,7 @@ namespace StyleCop.Analyzers.SpacingRules
                     || precedingToken.IsKind(SyntaxKind.CloseParenToken);
             }
 
-            if (!firstInLine)
+            if (!firstInLine && !isInInterpolationAlignmentClause)
             {
                 if (!followsSpecialCharacter && !precededBySpace)
                 {
