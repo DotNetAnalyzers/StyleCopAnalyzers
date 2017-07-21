@@ -1041,5 +1041,39 @@ namespace TestNamespace
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(2494, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2494")]
+        public async Task TestNullableVariableDeclarationAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    public void TestMethod()
+    {
+        (int a, string b)? testVar1;
+        (int a, string b) ? testVar2;
+    }
+}
+";
+
+            var fixedCode = @"public class TestClass
+{
+    public void TestMethod()
+    {
+        (int a, string b)? testVar1;
+        (int a, string b)? testVar2;
+    }
+}
+";
+
+            DiagnosticResult[] expectedDiagnostics =
+            {
+                this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(6, 25),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
     }
 }
