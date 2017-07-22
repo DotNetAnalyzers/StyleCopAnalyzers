@@ -8,6 +8,10 @@
     <Version>1.1.0.35</Version>
     <FileVersion>1.1.0.35</FileVersion>
     <InformationalVersion>1.1.0-dev</InformationalVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <NuspecFile>StyleCop.Analyzers.nuspec</NuspecFile>
+    <NuspecProperties>configuration=$(Configuration);version=$(InformationalVersion)</NuspecProperties>
   </PropertyGroup>
 
   <Choose>
@@ -42,11 +46,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <NuGetManifest Include="StyleCop.Analyzers.nuspec">
-      <SubType>Designer</SubType>
-      <Symbols>True</Symbols>
-      <PackageAnalysis>False</PackageAnalysis>
-    </NuGetManifest>
+    <None Include="StyleCop.Analyzers.nuspec" />
     <None Include="tools\install.ps1" />
     <None Include="tools\uninstall.ps1" />
     <None Include="ReadMe.txt" />
