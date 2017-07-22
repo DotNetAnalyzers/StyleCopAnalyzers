@@ -1,18 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.14
+VisualStudioVersion = 15.0.26711.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StyleCop.Analyzers", "StyleCop.Analyzers\StyleCop.Analyzers\StyleCop.Analyzers.csproj", "{3B052737-06CE-4182-AE0F-08EB82DFA73E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers", "StyleCop.Analyzers\StyleCop.Analyzers\StyleCop.Analyzers.csproj", "{3B052737-06CE-4182-AE0F-08EB82DFA73E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{E359E48C-93DA-4C17-AA0E-94D4831BE5AB}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StyleCop.Analyzers.Test", "StyleCop.Analyzers\StyleCop.Analyzers.Test\StyleCop.Analyzers.Test.csproj", "{3EB54B68-A7AA-45E8-A97B-A0746712140B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.Test", "StyleCop.Analyzers\StyleCop.Analyzers.Test\StyleCop.Analyzers.Test.csproj", "{3EB54B68-A7AA-45E8-A97B-A0746712140B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StyleCop.Analyzers.Vsix", "StyleCop.Analyzers\StyleCop.Analyzers.Vsix\StyleCop.Analyzers.Vsix.csproj", "{06BEBB30-AC91-4470-8930-22F7722A25E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.Vsix", "StyleCop.Analyzers\StyleCop.Analyzers.Vsix\StyleCop.Analyzers.Vsix.csproj", "{06BEBB30-AC91-4470-8930-22F7722A25E4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5F9532E9-B126-402A-B338-54431A4882B2}"
 	ProjectSection(SolutionItems) = preProject
@@ -27,6 +27,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{A0840AD0
 	ProjectSection(SolutionItems) = preProject
 		build\build.ps1 = build\build.ps1
 		build\check-key.ps1 = build\check-key.ps1
+		StyleCop.Analyzers\Directory.build.props = StyleCop.Analyzers\Directory.build.props
+		StyleCop.Analyzers\Directory.build.targets = StyleCop.Analyzers\Directory.build.targets
 		build\keys.ps1 = build\keys.ps1
 		build\opencover-report.ps1 = build\opencover-report.ps1
 		build\push.ps1 = build\push.ps1
@@ -243,11 +245,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "documentation", "documentat
 		documentation\SX1309S.md = documentation\SX1309S.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StyleCopTester", "StyleCop.Analyzers\StyleCopTester\StyleCopTester.csproj", "{C4B7092C-E1A9-4CF7-AE4C-D6A146392BA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCopTester", "StyleCop.Analyzers\StyleCopTester\StyleCopTester.csproj", "{C4B7092C-E1A9-4CF7-AE4C-D6A146392BA7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StyleCop.Analyzers.CodeFixes", "StyleCop.Analyzers\StyleCop.Analyzers.CodeFixes\StyleCop.Analyzers.CodeFixes.csproj", "{F91F7815-4E63-4698-B053-E57B2D707194}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.CodeFixes", "StyleCop.Analyzers\StyleCop.Analyzers.CodeFixes\StyleCop.Analyzers.CodeFixes.csproj", "{F91F7815-4E63-4698-B053-E57B2D707194}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StyleCop.Analyzers.Test.CSharp7", "StyleCop.Analyzers\StyleCop.Analyzers.Test.CSharp7\StyleCop.Analyzers.Test.CSharp7.csproj", "{F10E4AEF-86A2-4394-8B6F-1A3468B72F1D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.Test.CSharp7", "StyleCop.Analyzers\StyleCop.Analyzers.Test.CSharp7\StyleCop.Analyzers.Test.CSharp7.csproj", "{F10E4AEF-86A2-4394-8B6F-1A3468B72F1D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -282,5 +284,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {634EBA9E-C7C7-49FA-818A-2B1ED668D4B3}
 	EndGlobalSection
 EndGlobal
