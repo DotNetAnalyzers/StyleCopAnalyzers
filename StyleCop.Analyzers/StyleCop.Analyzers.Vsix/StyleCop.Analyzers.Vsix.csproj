@@ -4,7 +4,7 @@
   <PropertyGroup>
     <TargetFramework>net452</TargetFramework>
     <RootNamespace>StyleCop.Analyzers</RootNamespace>
-    <AssemblyName>StyleCop.Analyzers</AssemblyName>
+    <AssemblyName>StyleCop.Analyzers.Vsix</AssemblyName>
   </PropertyGroup>
 
   <PropertyGroup>
