@@ -5,9 +5,6 @@
     <TargetFrameworks>netstandard1.1;net452</TargetFrameworks>
     <PackageId>StyleCop.Analyzers.NewIdRequiredDueToNuGetBug</PackageId>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <Version>1.1.0.35</Version>
-    <FileVersion>1.1.0.35</FileVersion>
-    <InformationalVersion>1.1.0-dev</InformationalVersion>
   </PropertyGroup>
 
   <Choose>

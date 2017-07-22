@@ -7,8 +7,9 @@
     <Company>Tunnel Vision Laboratories, LLC</Company>
     <Copyright>Copyright © Tunnel Vision Laboratories, LLC 2015</Copyright>
 
-    <!-- Distributed assemblies will override this... -->
-    <InformationalVersion>1.0.0-dev</InformationalVersion>
+    <Version>1.1.0.35</Version>
+    <FileVersion>1.1.0.35</FileVersion>
+    <InformationalVersion>1.1.0-dev</InformationalVersion>
   </PropertyGroup>
 
   <PropertyGroup>

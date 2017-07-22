@@ -5,9 +5,6 @@
     <TargetFrameworks>netstandard1.1;net452</TargetFrameworks>
     <RootNamespace>StyleCop.Analyzers</RootNamespace>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <Version>1.1.0.35</Version>
-    <FileVersion>1.1.0.35</FileVersion>
-    <InformationalVersion>1.1.0-dev</InformationalVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <NuspecFile>StyleCop.Analyzers.nuspec</NuspecFile>
