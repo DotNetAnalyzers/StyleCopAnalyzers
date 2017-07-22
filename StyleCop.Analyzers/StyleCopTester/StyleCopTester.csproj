@@ -6,7 +6,6 @@
     <TargetFrameworks>net452</TargetFrameworks>
 
     <NeutralLanguage>en-US</NeutralLanguage>
-    <InformationalVersion>1.0.0-dev</InformationalVersion>
   </PropertyGroup>
 
   <PropertyGroup>

@@ -3,8 +3,6 @@
 
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
-
-    <InformationalVersion>1.0.0-dev</InformationalVersion>
   </PropertyGroup>
 
   <PropertyGroup>

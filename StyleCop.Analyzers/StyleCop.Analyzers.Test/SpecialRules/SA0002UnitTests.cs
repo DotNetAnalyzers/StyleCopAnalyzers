@@ -3,11 +3,10 @@
 
 namespace StyleCop.Analyzers.Test.SpecialRules
 {
-    extern alias system;
-
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using System.Threading.Tasks;
     using Analyzers.Settings;
@@ -17,8 +16,6 @@ namespace StyleCop.Analyzers.Test.SpecialRules
     using Microsoft.CodeAnalysis.Text;
     using TestHelper;
     using Xunit;
-
-    using ExcludeFromCodeCoverageAttribute = system::System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverageAttribute;
 
     /// <summary>
     /// Unit tests for <see cref="SA0002InvalidSettingsFile"/>.
