@@ -162,12 +162,6 @@ namespace StyleCop.Analyzers.LayoutRules
                 return false;
             }
 
-            private static bool IsQueryClause(SyntaxToken token)
-            {
-                return (token.Parent is FromClauseSyntax) ||
-                       (token.Parent is GroupClauseSyntax);
-            }
-
             private static bool IsPartOf<T>(SyntaxToken token)
             {
                 var result = false;
@@ -241,12 +235,6 @@ namespace StyleCop.Analyzers.LayoutRules
                         }
                     }
 
-                    if (IsPartOf<ArgumentListSyntax>(token))
-                    {
-                        // the close brace is part of an object initializer, anonymous function or lambda expression within an argument list.
-                        return;
-                    }
-
                     if (nextToken.IsKind(SyntaxKind.SemicolonToken) &&
                         (IsPartOf<VariableDeclaratorSyntax>(token) ||
                          IsPartOf<YieldStatementSyntax>(token) ||
@@ -260,10 +248,10 @@ namespace StyleCop.Analyzers.LayoutRules
                         return;
                     }
 
-                    if ((nextToken.IsKind(SyntaxKind.CommaToken) || nextToken.IsKind(SyntaxKind.CloseParenToken)) &&
-                        (IsPartOf<InitializerExpressionSyntax>(token) || IsPartOf<AnonymousObjectCreationExpressionSyntax>(token)))
+                    if (nextToken.IsKind(SyntaxKind.CommaToken) || nextToken.IsKind(SyntaxKind.CloseParenToken))
                     {
-                        // the close brace is part of an initializer statement.
+                        // The close brace is the end of an object initializer, anonymous function, lambda expression, etc.
+                        // Comma and close parenthesis never requires a preceeding blank line.
                         return;
                     }
 
@@ -288,13 +276,6 @@ namespace StyleCop.Analyzers.LayoutRules
                         && (nextToken.Parent is AccessorDeclarationSyntax))
                     {
                         // the close brace is followed by an accessor with an accessibility restriction.
-                        return;
-                    }
-
-                    var parenthesizedExpressionSyntax = nextToken.Parent as ParenthesizedExpressionSyntax;
-                    if (parenthesizedExpressionSyntax?.CloseParenToken == nextToken)
-                    {
-                        // the close brace is followed by the closing paren of a parenthesized expression.
                         return;
                     }
 

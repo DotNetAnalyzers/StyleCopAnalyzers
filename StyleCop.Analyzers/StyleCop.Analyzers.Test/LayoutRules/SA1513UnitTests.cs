@@ -725,6 +725,61 @@ public class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        // This is a regression test for #2062.
+        [Fact]
+        public async Task VerifyThatBlockStatementDirectlyFollowedByReturnInsideLambdaInsideArgumentListWillProduceDiagnosticAsync()
+        {
+            var testCode = @"
+using System;
+public class TestClass
+{
+    public void Func1(Action action)
+    {
+    }
+
+    public void Func2(bool flag)
+    {
+        Func1(() => 
+        {
+            if (flag)
+            {
+                return;
+            }
+            return;
+        });
+    }
+}
+";
+
+            var fixedCode = @"
+using System;
+public class TestClass
+{
+    public void Func1(Action action)
+    {
+    }
+
+    public void Func2(bool flag)
+    {
+        Func1(() => 
+        {
+            if (flag)
+            {
+                return;
+            }
+
+            return;
+        });
+    }
+}
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(16, 14);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Verifies the analyzer will properly handle an object initializer without assignment.
         /// This is a regression test for <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1301">DotNetAnalyzers/StyleCopAnalyzers#1301</see>.
