@@ -225,7 +225,12 @@ namespace StyleCop.Analyzers.SpacingRules
                 case TokenSpacingProperties.ActionInsert:
                     if (!replaceMap.ContainsKey(nextToken))
                     {
-                        replaceMap[token] = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, SyntaxFactory.Space));
+                        // If the token is already present in the map and it has trailing trivia, then it has already been
+                        // processed during an earlier step in the fix all process, so no additional processing is needed.
+                        if (!replaceMap.ContainsKey(token) || (replaceMap[token].TrailingTrivia.Count == 0))
+                        {
+                            replaceMap[token] = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, SyntaxFactory.Space));
+                        }
                     }
 
                     break;
