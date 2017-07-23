@@ -125,7 +125,7 @@ namespace StyleCop.Analyzers.NamingRules
 
         private static void HandleEnumMemberDeclaration(SyntaxNodeAnalysisContext context)
         {
-            CheckElementNameToken(context, ((EnumMemberDeclarationSyntax)context.Node).Identifier);
+            CheckElementNameToken(context, ((EnumMemberDeclarationSyntax)context.Node).Identifier, true);
         }
 
         private static void HandleStructDeclaration(SyntaxNodeAnalysisContext context)
@@ -200,7 +200,7 @@ namespace StyleCop.Analyzers.NamingRules
             CheckElementNameToken(context, propertyDeclaration.Identifier);
         }
 
-        private static void CheckElementNameToken(SyntaxNodeAnalysisContext context, SyntaxToken identifier)
+        private static void CheckElementNameToken(SyntaxNodeAnalysisContext context, SyntaxToken identifier, bool allowUnderscoreDigit = false)
         {
             if (identifier.IsMissing)
             {
@@ -220,6 +220,11 @@ namespace StyleCop.Analyzers.NamingRules
              * https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/369
              */
             if (!char.IsLower(identifier.ValueText[0]) && identifier.ValueText[0] != '_')
+            {
+                return;
+            }
+
+            if (allowUnderscoreDigit && (identifier.ValueText.Length > 1) && (identifier.ValueText[0] == '_') && char.IsDigit(identifier.ValueText[1]))
             {
                 return;
             }
