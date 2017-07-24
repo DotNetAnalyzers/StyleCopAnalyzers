@@ -25,4 +25,10 @@
     <ProjectReference Include="..\StyleCop.Analyzers\StyleCop.Analyzers.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Update="System">
+      <Aliases>global,system</Aliases>
+    </Reference>
+  </ItemGroup>
+
 </Project>
