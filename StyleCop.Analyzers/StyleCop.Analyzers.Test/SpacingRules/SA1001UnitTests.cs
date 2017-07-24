@@ -227,6 +227,55 @@ class ClassName
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(2468, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2468")]
+        public async Task TestCodeFixCommaPlacementAsync()
+        {
+            var testCode = @"using System;
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var test = (new[]
+        {
+            new Tuple<int, int>(1, 2)
+           ,new Tuple<int, int>(3, 4)
+           ,new Tuple<int, int>(5, 6)
+        }).ToString();
+    }
+}
+";
+
+            var fixedCode = @"using System;
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var test = (new[]
+        {
+            new Tuple<int, int>(1, 2),
+           new Tuple<int, int>(3, 4),
+           new Tuple<int, int>(5, 6)
+        }).ToString();
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(10, 12),
+                this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(10, 12),
+                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(11, 12),
+                this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(11, 12),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1001CommasMustBeSpacedCorrectly();
