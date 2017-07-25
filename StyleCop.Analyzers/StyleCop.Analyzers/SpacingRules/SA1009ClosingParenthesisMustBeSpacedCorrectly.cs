@@ -81,6 +81,7 @@ namespace StyleCop.Analyzers.SpacingRules
             bool lastInLine = token.IsLastInLine();
             bool precedesStickyCharacter;
             bool allowEndOfLine = false;
+            bool preserveLayout = false;
 
             bool suppressFollowingSpaceError = false;
 
@@ -141,8 +142,15 @@ namespace StyleCop.Analyzers.SpacingRules
                 break;
 
             case SyntaxKind.DotToken:
+                // allow a space for this case, but only if the ')' character is the last on the line
+                allowEndOfLine = true;
+                precedesStickyCharacter = true;
+
+                preserveLayout = nextToken.Parent.IsKind(SyntaxKind.SimpleMemberAccessExpression);
+                break;
+
             case SyntaxKind.MinusGreaterThanToken:
-                // allow a space for these cases, but only if the ')' character is the last on the line
+                // allow a space for this case, but only if the ')' character is the last on the line
                 allowEndOfLine = true;
                 precedesStickyCharacter = true;
                 break;
@@ -198,9 +206,19 @@ namespace StyleCop.Analyzers.SpacingRules
             if (precededBySpace)
             {
                 // Closing parenthesis should{ not} be {preceded} by a space.
-                var properties = token.IsFirstInLine()
-                    ? TokenSpacingProperties.RemovePreceding
-                    : TokenSpacingProperties.RemoveImmediatePreceding;
+                ImmutableDictionary<string, string> properties;
+
+                if (preserveLayout)
+                {
+                    properties = TokenSpacingProperties.RemovePrecedingPreserveLayout;
+                }
+                else
+                {
+                    properties = token.IsFirstInLine()
+                        ? TokenSpacingProperties.RemovePreceding
+                        : TokenSpacingProperties.RemoveImmediatePreceding;
+                }
+
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, " not", "preceded"));
             }
 

@@ -532,8 +532,7 @@ public class TestClass
         // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1206
         TestMethod3(
             true,
-            (false || true)) // comment
-        ;
+            (false || true)); // comment
 
         // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1206
         if (
@@ -921,6 +920,81 @@ class ClassName
 ";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2473, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2473")]
+        public async Task TestCodefixBehaviorWithCommentAndSemiColonAsync()
+        {
+            var testCode = @"using System.Threading.Tasks;
+
+public class TestClass
+{
+    public async void TestMethod()
+    {
+        await Task.Delay(1000 // Comment
+            );
+    }
+}
+";
+
+            var fixedCode = @"using System.Threading.Tasks;
+
+public class TestClass
+{
+    public async void TestMethod()
+    {
+        await Task.Delay(1000); // Comment
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(8, 13).WithArguments(" not", "preceded"),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2474, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2474")]
+        public async Task TestCodefixBehaviorWithMemberAccessAsync()
+        {
+            var testCode = @"using System.Threading.Tasks;
+
+public class TestClass
+{
+    public async void TestMethod()
+    {
+        await Task.Delay(1000
+            ).ConfigureAwait(false);
+    }
+}
+";
+
+            var fixedCode = @"using System.Threading.Tasks;
+
+public class TestClass
+{
+    public async void TestMethod()
+    {
+        await Task.Delay(1000)
+            .ConfigureAwait(false);
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(8, 13).WithArguments(" not", "preceded"),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
