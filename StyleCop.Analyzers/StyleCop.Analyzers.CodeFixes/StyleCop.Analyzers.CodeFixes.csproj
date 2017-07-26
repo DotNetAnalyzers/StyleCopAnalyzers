@@ -4,7 +4,6 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard1.1;net452</TargetFrameworks>
     <RootNamespace>StyleCop.Analyzers</RootNamespace>
-    <NeutralLanguage>en-US</NeutralLanguage>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
     <NuspecFile>StyleCop.Analyzers.nuspec</NuspecFile>

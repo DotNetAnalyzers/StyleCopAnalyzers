@@ -4,7 +4,6 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard1.1;net452</TargetFrameworks>
     <PackageId>StyleCop.Analyzers.NewIdRequiredDueToNuGetBug</PackageId>
-    <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
 
   <Choose>
