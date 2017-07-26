@@ -34,8 +34,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="**\*.md" />
-    <None Include="**\*.json" />
+    <None Include="**\*.md" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+    <None Include="**\*.json" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
   </ItemGroup>
 
 </Project>
