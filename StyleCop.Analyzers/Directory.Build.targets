@@ -9,16 +9,8 @@
 
   <!-- Special handling for embedded resources and generated files to show as nested in Solution Explorer -->
   <ItemGroup>
-    <!-- Start by removing designer files. Keep track of all the removed ones though. -->
-    <RemovedDesignerFiles Include="@(Compile)" />
-    <Compile Remove="**\*.Designer.cs" />
-
-    <!-- Add back designer files for *.resx files -->
-    <Compile Include="@(CodeGenerationEmbeddedResource->'%(RecursiveDir)%(Filename).Designer.cs')" DependentUpon="$([System.IO.Path]::ChangeExtension($([System.IO.Path]::GetFileNameWithoutExtension(%(Identity))), '.resx'))" />
-
-    <!-- Add back any designer files not already added. These aren't dependent on anything. -->
-    <RemovedDesignerFiles Remove="@(Compile)" />
-    <Compile Include="@(RemovedDesignerFiles)" />
+    <!-- Update designer files for *.resx files -->
+    <Compile Update="@(CodeGenerationEmbeddedResource->'%(RecursiveDir)%(Filename).Designer.cs')" DependentUpon="$([System.IO.Path]::ChangeExtension($([System.IO.Path]::GetFileNameWithoutExtension(%(Identity))), '.resx'))" />
 
     <!-- Localized embedded resources are just dependent on the parent RESX -->
     <EmbeddedResource Update="**\*.??-??.resx" DependentUpon="$([System.IO.Path]::ChangeExtension($([System.IO.Path]::GetFileNameWithoutExtension(%(Identity))), '.resx'))" />
