@@ -4,7 +4,6 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard1.1;net452</TargetFrameworks>
     <PackageId>StyleCop.Analyzers.NewIdRequiredDueToNuGetBug</PackageId>
-    <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
 
   <Choose>
@@ -34,8 +33,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="**\*.md" />
-    <None Include="**\*.json" />
+    <None Include="**\*.md" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
+    <None Include="**\*.json" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
   </ItemGroup>
 
 </Project>

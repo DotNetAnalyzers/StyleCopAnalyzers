@@ -6,6 +6,7 @@
     <Product>StyleCop.Analyzers</Product>
     <Company>Tunnel Vision Laboratories, LLC</Company>
     <Copyright>Copyright © Tunnel Vision Laboratories, LLC 2015</Copyright>
+    <NeutralLanguage>en-US</NeutralLanguage>
 
     <Version>1.1.0.35</Version>
     <FileVersion>1.1.0.35</FileVersion>
