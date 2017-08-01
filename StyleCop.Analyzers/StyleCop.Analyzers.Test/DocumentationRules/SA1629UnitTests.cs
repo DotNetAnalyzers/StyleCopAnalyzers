@@ -284,7 +284,18 @@ public class TestClass
             Assert.Empty(offeredFixes);
         }
 
-        //// TODO: Verify <inheritdoc/> together with additional elements
+        [Fact]
+        public async Task TestInvalidIncludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <include file='InvalidClassInheritDoc.xml' path='/TestClass/*'/>
+public class TestClass
+{
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
 
         protected override Project ApplyCompilationOptions(Project project)
         {
@@ -296,6 +307,13 @@ public class TestClass
 </TestClass>
 ";
             resolver.XmlReferences.Add("ClassInheritDoc.xml", contentClassInheritDoc);
+
+            string contentInvalidClassInheritDoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+  <summary>Test class<summary>
+</TestClass>
+";
+            resolver.XmlReferences.Add("InvalidClassInheritDoc.xml", contentInvalidClassInheritDoc);
 
             string contentPropertyInheritDoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <TestClass>

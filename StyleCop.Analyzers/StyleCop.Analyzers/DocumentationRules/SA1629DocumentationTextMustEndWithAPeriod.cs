@@ -107,25 +107,19 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, bool needsComment, XElement completeDocumentation, params Location[] diagnosticLocations)
         {
-            try
+            foreach (var node in completeDocumentation.Nodes().OfType<XElement>())
             {
-                foreach (var node in completeDocumentation.Nodes().Cast<XElement>())
+                var textWithoutTrailingWhitespace = node.Value.TrimEnd(' ', '\r', '\n');
+                if (!string.IsNullOrEmpty(textWithoutTrailingWhitespace))
                 {
-                    var textWithoutTrailingWhitespace = node.Value.TrimEnd(' ', '\r', '\n');
-                    if (!string.IsNullOrEmpty(textWithoutTrailingWhitespace))
+                    if (!textWithoutTrailingWhitespace.EndsWith(".", StringComparison.Ordinal))
                     {
-                        if (!textWithoutTrailingWhitespace.EndsWith(".", StringComparison.Ordinal))
-                        {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, diagnosticLocations[0], NoCodeFixProperties));
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, diagnosticLocations[0], NoCodeFixProperties));
 
-                            // only report a single instance of the diagnostic, as they will all be reported on the same location anyway.
-                            break;
-                        }
+                        // only report a single instance of the diagnostic, as they will all be reported on the same location anyway.
+                        break;
                     }
                 }
-            }
-            catch (InvalidCastException)
-            {
             }
         }
     }
