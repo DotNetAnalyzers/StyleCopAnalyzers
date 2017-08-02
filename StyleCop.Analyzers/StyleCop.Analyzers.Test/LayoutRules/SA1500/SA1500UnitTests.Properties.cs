@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.LayoutRules;
+    using StyleCop.Analyzers.Lightup;
     using TestHelper;
     using Xunit;
 
@@ -460,6 +461,67 @@ public class TestClass
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a property declaration missing the opening brace will be handled correctly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestAccessorMissingOpeningBraceAsync()
+        {
+            var testCode = @"
+class ClassName
+{
+    int Property
+    {
+        get
+        }
+    }
+}";
+
+            DiagnosticResult accessorError;
+            if (LightupHelpers.SupportsCSharp7)
+            {
+                accessorError = this.CSharpCompilerError("CS8180").WithMessage("{ or ; or => expected");
+            }
+            else
+            {
+                accessorError = this.CSharpCompilerError("CS1043").WithMessage("{ or ; expected");
+            }
+
+            DiagnosticResult[] expected =
+            {
+                accessorError.WithLocation(6, 12),
+                this.CSharpCompilerError("CS1022").WithMessage("Type or namespace definition, or end-of-file expected").WithLocation(9, 1),
+            };
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a property declaration missing the closing brace at the end of the source file will be handled
+        /// correctly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestAccessorMissingClosingBraceAtEndOfFileAsync()
+        {
+            var testCode = @"
+class ClassName
+{
+    int Property
+    {
+        get
+        {";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpCompilerError("CS0161").WithMessage("'ClassName.Property.get': not all code paths return a value").WithLocation(6, 9),
+                this.CSharpCompilerError("CS1513").WithMessage("} expected").WithLocation(7, 10),
+                this.CSharpCompilerError("CS1513").WithMessage("} expected").WithLocation(7, 10),
+                this.CSharpCompilerError("CS1513").WithMessage("} expected").WithLocation(7, 10),
+            };
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

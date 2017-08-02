@@ -186,7 +186,7 @@ namespace StyleCop.Analyzers.LayoutRules
 
             int line = token.GetLineSpan().StartLinePosition.Line;
 
-            SyntaxToken previousToken = token.GetPreviousToken();
+            SyntaxToken previousToken = token.GetPreviousToken(includeZeroWidth: true);
             if (!previousToken.IsMissing)
             {
                 if (previousToken.GetLineSpan().StartLinePosition.Line == line)
@@ -198,7 +198,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 }
             }
 
-            SyntaxToken nextToken = token.GetNextToken();
+            SyntaxToken nextToken = token.GetNextToken(includeZeroWidth: true);
             if (!nextToken.IsMissing)
             {
                 switch (nextToken.Kind())
@@ -210,7 +210,7 @@ namespace StyleCop.Analyzers.LayoutRules
                     // these are allowed to appear on the same line
                     return;
 
-                case SyntaxKind.None:
+                case SyntaxKind.EndOfFileToken:
                     // last token of this file
                     return;
 
