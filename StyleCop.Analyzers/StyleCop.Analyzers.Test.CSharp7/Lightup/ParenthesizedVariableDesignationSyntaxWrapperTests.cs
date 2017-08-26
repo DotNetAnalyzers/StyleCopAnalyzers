@@ -38,6 +38,12 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             Assert.Same(syntaxNode, parenthesizedVariableDesignationSyntax.SyntaxNode);
             Assert.True(syntaxNode.OpenParenToken.IsEquivalentTo(parenthesizedVariableDesignationSyntax.OpenParenToken));
 
+            var variableSyntaxNode = SyntaxFactory.SingleVariableDesignation(SyntaxFactory.Identifier("Anything"));
+            parenthesizedVariableDesignationSyntax = parenthesizedVariableDesignationSyntax.AddVariables((SingleVariableDesignationSyntaxWrapper)variableSyntaxNode);
+            Assert.Same(
+                ((ParenthesizedVariableDesignationSyntax)parenthesizedVariableDesignationSyntax.SyntaxNode).Variables[0],
+                parenthesizedVariableDesignationSyntax.Variables[0].SyntaxNode);
+
             parenthesizedVariableDesignationSyntax = parenthesizedVariableDesignationSyntax.WithOpenParenToken(SpacingExtensions.WithoutTrivia(SyntaxFactory.Token(SyntaxKind.OpenParenToken)));
             Assert.NotNull(parenthesizedVariableDesignationSyntax.SyntaxNode);
             Assert.NotSame(syntaxNode, parenthesizedVariableDesignationSyntax.SyntaxNode);
