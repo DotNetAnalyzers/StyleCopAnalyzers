@@ -22,6 +22,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             Assert.Throws<NullReferenceException>(() => parenthesizedVariableDesignationSyntax.OpenParenToken);
             Assert.Throws<NullReferenceException>(() => parenthesizedVariableDesignationSyntax.Variables);
             Assert.Throws<NullReferenceException>(() => parenthesizedVariableDesignationSyntax.CloseParenToken);
+            Assert.Throws<NullReferenceException>(() => parenthesizedVariableDesignationSyntax.AddVariables((SingleVariableDesignationSyntaxWrapper)SyntaxFactory.SingleVariableDesignation(SyntaxFactory.Identifier("Anything"))));
             Assert.Throws<NullReferenceException>(() => parenthesizedVariableDesignationSyntax.WithOpenParenToken(SyntaxFactory.Token(SyntaxKind.OpenParenToken)));
             Assert.Throws<NullReferenceException>(() => parenthesizedVariableDesignationSyntax.WithVariables(new SeparatedSyntaxListWrapper<VariableDesignationSyntaxWrapper>.AutoWrapSeparatedSyntaxList<VariableDesignationSyntax>(SyntaxFactory.SeparatedList<VariableDesignationSyntax>())));
             Assert.Throws<NullReferenceException>(() => parenthesizedVariableDesignationSyntax.WithCloseParenToken(SyntaxFactory.Token(SyntaxKind.CloseParenToken)));
