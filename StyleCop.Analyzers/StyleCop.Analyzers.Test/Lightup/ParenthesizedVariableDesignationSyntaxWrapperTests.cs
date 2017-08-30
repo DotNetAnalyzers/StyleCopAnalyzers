@@ -20,6 +20,7 @@ namespace StyleCop.Analyzers.Test.Lightup
             Assert.Throws<NullReferenceException>(() => parenthesizedVariableDesignationSyntax.OpenParenToken);
             Assert.Throws<NullReferenceException>(() => parenthesizedVariableDesignationSyntax.Variables);
             Assert.Throws<NullReferenceException>(() => parenthesizedVariableDesignationSyntax.CloseParenToken);
+            Assert.Throws<NullReferenceException>(() => parenthesizedVariableDesignationSyntax.AddVariables((VariableDesignationSyntaxWrapper)null));
             Assert.Throws<NullReferenceException>(() => parenthesizedVariableDesignationSyntax.WithOpenParenToken(SyntaxFactory.Token(SyntaxKind.OpenParenToken)));
             Assert.Throws<NullReferenceException>(() => parenthesizedVariableDesignationSyntax.WithVariables(SeparatedSyntaxListWrapper<VariableDesignationSyntaxWrapper>.UnsupportedEmpty));
             Assert.Throws<NullReferenceException>(() => parenthesizedVariableDesignationSyntax.WithCloseParenToken(SyntaxFactory.Token(SyntaxKind.CloseParenToken)));
