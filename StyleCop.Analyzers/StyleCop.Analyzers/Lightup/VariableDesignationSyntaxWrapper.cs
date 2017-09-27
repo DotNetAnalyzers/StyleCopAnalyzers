@@ -11,19 +11,20 @@ namespace StyleCop.Analyzers.Lightup
     internal struct VariableDesignationSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
         private const string VariableDesignationSyntaxTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.VariableDesignationSyntax";
-        private static readonly Type VariableDesignationSyntaxType;
 
         private readonly CSharpSyntaxNode node;
 
         static VariableDesignationSyntaxWrapper()
         {
-            VariableDesignationSyntaxType = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly.GetType(VariableDesignationSyntaxTypeName);
+            WrappedType = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly.GetType(VariableDesignationSyntaxTypeName);
         }
 
         private VariableDesignationSyntaxWrapper(CSharpSyntaxNode node)
         {
             this.node = node;
         }
+
+        public static Type WrappedType { get; private set; }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
 
@@ -49,7 +50,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public static bool IsInstance(SyntaxNode node)
         {
-            return node != null && LightupHelpers.CanWrapNode(node, VariableDesignationSyntaxType);
+            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         internal static VariableDesignationSyntaxWrapper FromUpcast(CSharpSyntaxNode node)

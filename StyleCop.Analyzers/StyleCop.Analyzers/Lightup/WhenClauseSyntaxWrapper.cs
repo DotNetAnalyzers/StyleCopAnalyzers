@@ -12,7 +12,6 @@ namespace StyleCop.Analyzers.Lightup
     internal struct WhenClauseSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
         private const string WhenClauseSyntaxTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax";
-        private static readonly Type WhenClauseSyntaxType;
 
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> WhenKeywordAccessor;
         private static readonly Func<CSharpSyntaxNode, ExpressionSyntax> ConditionAccessor;
@@ -23,17 +22,19 @@ namespace StyleCop.Analyzers.Lightup
 
         static WhenClauseSyntaxWrapper()
         {
-            WhenClauseSyntaxType = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly.GetType(WhenClauseSyntaxTypeName);
-            WhenKeywordAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WhenClauseSyntaxType, nameof(WhenKeyword));
-            ConditionAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, ExpressionSyntax>(WhenClauseSyntaxType, nameof(Condition));
-            WithWhenKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WhenClauseSyntaxType, nameof(WhenKeyword));
-            WithConditionAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, ExpressionSyntax>(WhenClauseSyntaxType, nameof(Condition));
+            WrappedType = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly.GetType(WhenClauseSyntaxTypeName);
+            WhenKeywordAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(WhenKeyword));
+            ConditionAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, ExpressionSyntax>(WrappedType, nameof(Condition));
+            WithWhenKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(WhenKeyword));
+            WithConditionAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, ExpressionSyntax>(WrappedType, nameof(Condition));
         }
 
         private WhenClauseSyntaxWrapper(CSharpSyntaxNode node)
         {
             this.node = node;
         }
+
+        public static Type WrappedType { get; private set; }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
 
@@ -75,7 +76,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public static bool IsInstance(SyntaxNode node)
         {
-            return node != null && LightupHelpers.CanWrapNode(node, WhenClauseSyntaxType);
+            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public WhenClauseSyntaxWrapper WithWhenKeyword(SyntaxToken whenKeyword)

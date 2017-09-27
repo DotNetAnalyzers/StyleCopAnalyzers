@@ -11,19 +11,20 @@ namespace StyleCop.Analyzers.Lightup
     internal struct PatternSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
         private const string PatternSyntaxTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.PatternSyntax";
-        private static readonly Type PatternSyntaxType;
 
         private readonly CSharpSyntaxNode node;
 
         static PatternSyntaxWrapper()
         {
-            PatternSyntaxType = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly.GetType(PatternSyntaxTypeName);
+            WrappedType = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly.GetType(PatternSyntaxTypeName);
         }
 
         private PatternSyntaxWrapper(CSharpSyntaxNode node)
         {
             this.node = node;
         }
+
+        public static Type WrappedType { get; private set; }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
 
@@ -49,7 +50,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public static bool IsInstance(SyntaxNode node)
         {
-            return node != null && LightupHelpers.CanWrapNode(node, PatternSyntaxType);
+            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         internal static PatternSyntaxWrapper FromUpcast(CSharpSyntaxNode node)

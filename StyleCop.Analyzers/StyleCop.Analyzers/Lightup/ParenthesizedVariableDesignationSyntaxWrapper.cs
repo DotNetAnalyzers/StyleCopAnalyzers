@@ -11,7 +11,6 @@ namespace StyleCop.Analyzers.Lightup
     internal struct ParenthesizedVariableDesignationSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
         private const string ParenthesizedVariableDesignationSyntaxTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.ParenthesizedVariableDesignationSyntax";
-        private static readonly Type ParenthesizedVariableDesignationSyntaxType;
 
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> OpenParenTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, SeparatedSyntaxListWrapper<VariableDesignationSyntaxWrapper>> VariablesAccessor;
@@ -24,19 +23,21 @@ namespace StyleCop.Analyzers.Lightup
 
         static ParenthesizedVariableDesignationSyntaxWrapper()
         {
-            ParenthesizedVariableDesignationSyntaxType = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly.GetType(ParenthesizedVariableDesignationSyntaxTypeName);
-            OpenParenTokenAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(ParenthesizedVariableDesignationSyntaxType, nameof(OpenParenToken));
-            VariablesAccessor = LightupHelpers.CreateSeparatedSyntaxListPropertyAccessor<CSharpSyntaxNode, VariableDesignationSyntaxWrapper>(ParenthesizedVariableDesignationSyntaxType, nameof(Variables));
-            CloseParenTokenAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(ParenthesizedVariableDesignationSyntaxType, nameof(CloseParenToken));
-            WithOpenParenTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(ParenthesizedVariableDesignationSyntaxType, nameof(OpenParenToken));
-            WithVariablesAccessor = LightupHelpers.CreateSeparatedSyntaxListWithPropertyAccessor<CSharpSyntaxNode, VariableDesignationSyntaxWrapper>(ParenthesizedVariableDesignationSyntaxType, nameof(Variables));
-            WithCloseParenTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(ParenthesizedVariableDesignationSyntaxType, nameof(CloseParenToken));
+            WrappedType = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly.GetType(ParenthesizedVariableDesignationSyntaxTypeName);
+            OpenParenTokenAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(OpenParenToken));
+            VariablesAccessor = LightupHelpers.CreateSeparatedSyntaxListPropertyAccessor<CSharpSyntaxNode, VariableDesignationSyntaxWrapper>(WrappedType, nameof(Variables));
+            CloseParenTokenAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(CloseParenToken));
+            WithOpenParenTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(OpenParenToken));
+            WithVariablesAccessor = LightupHelpers.CreateSeparatedSyntaxListWithPropertyAccessor<CSharpSyntaxNode, VariableDesignationSyntaxWrapper>(WrappedType, nameof(Variables));
+            WithCloseParenTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(CloseParenToken));
         }
 
         private ParenthesizedVariableDesignationSyntaxWrapper(CSharpSyntaxNode node)
         {
             this.node = node;
         }
+
+        public static Type WrappedType { get; private set; }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
 
@@ -96,7 +97,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public static bool IsInstance(SyntaxNode node)
         {
-            return node != null && LightupHelpers.CanWrapNode(node, ParenthesizedVariableDesignationSyntaxType);
+            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public ParenthesizedVariableDesignationSyntaxWrapper AddVariables(params VariableDesignationSyntaxWrapper[] items)

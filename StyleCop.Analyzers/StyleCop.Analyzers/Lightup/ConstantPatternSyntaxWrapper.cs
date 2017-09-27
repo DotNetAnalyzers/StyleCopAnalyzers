@@ -12,7 +12,6 @@ namespace StyleCop.Analyzers.Lightup
     internal struct ConstantPatternSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
         private const string ConstantPatternSyntaxTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.ConstantPatternSyntax";
-        private static readonly Type ConstantPatternSyntaxType;
 
         private static readonly Func<CSharpSyntaxNode, ExpressionSyntax> ExpressionAccessor;
         private static readonly Func<CSharpSyntaxNode, ExpressionSyntax, CSharpSyntaxNode> WithExpressionAccessor;
@@ -21,15 +20,17 @@ namespace StyleCop.Analyzers.Lightup
 
         static ConstantPatternSyntaxWrapper()
         {
-            ConstantPatternSyntaxType = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly.GetType(ConstantPatternSyntaxTypeName);
-            ExpressionAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, ExpressionSyntax>(ConstantPatternSyntaxType, nameof(Expression));
-            WithExpressionAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, ExpressionSyntax>(ConstantPatternSyntaxType, nameof(Expression));
+            WrappedType = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly.GetType(ConstantPatternSyntaxTypeName);
+            ExpressionAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, ExpressionSyntax>(WrappedType, nameof(Expression));
+            WithExpressionAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, ExpressionSyntax>(WrappedType, nameof(Expression));
         }
 
         private ConstantPatternSyntaxWrapper(CSharpSyntaxNode node)
         {
             this.node = node;
         }
+
+        public static Type WrappedType { get; private set; }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
 
@@ -73,7 +74,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public static bool IsInstance(SyntaxNode node)
         {
-            return node != null && LightupHelpers.CanWrapNode(node, ConstantPatternSyntaxType);
+            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public ConstantPatternSyntaxWrapper WithExpression(ExpressionSyntax expression)

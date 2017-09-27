@@ -11,7 +11,6 @@ namespace StyleCop.Analyzers.Lightup
     internal struct SingleVariableDesignationSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
         private const string SingleVariableDesignationSyntaxTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.SingleVariableDesignationSyntax";
-        private static readonly Type SingleVariableDesignationSyntaxType;
 
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> IdentifierAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithIdentifierAccessor;
@@ -20,15 +19,17 @@ namespace StyleCop.Analyzers.Lightup
 
         static SingleVariableDesignationSyntaxWrapper()
         {
-            SingleVariableDesignationSyntaxType = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly.GetType(SingleVariableDesignationSyntaxTypeName);
-            IdentifierAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(SingleVariableDesignationSyntaxType, nameof(Identifier));
-            WithIdentifierAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(SingleVariableDesignationSyntaxType, nameof(Identifier));
+            WrappedType = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly.GetType(SingleVariableDesignationSyntaxTypeName);
+            IdentifierAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(Identifier));
+            WithIdentifierAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(Identifier));
         }
 
         private SingleVariableDesignationSyntaxWrapper(CSharpSyntaxNode node)
         {
             this.node = node;
         }
+
+        public static Type WrappedType { get; private set; }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
 
@@ -72,7 +73,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public static bool IsInstance(SyntaxNode node)
         {
-            return node != null && LightupHelpers.CanWrapNode(node, SingleVariableDesignationSyntaxType);
+            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public SingleVariableDesignationSyntaxWrapper WithIdentifier(SyntaxToken identifier)

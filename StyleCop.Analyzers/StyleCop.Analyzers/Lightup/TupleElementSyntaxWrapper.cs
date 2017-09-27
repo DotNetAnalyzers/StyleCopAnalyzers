@@ -12,7 +12,6 @@ namespace StyleCop.Analyzers.Lightup
     internal struct TupleElementSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
         private const string TupleElementSyntaxTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.TupleElementSyntax";
-        private static readonly Type TupleElementSyntaxType;
 
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> IdentifierAccessor;
         private static readonly Func<CSharpSyntaxNode, TypeSyntax> TypeAccessor;
@@ -23,17 +22,19 @@ namespace StyleCop.Analyzers.Lightup
 
         static TupleElementSyntaxWrapper()
         {
-            TupleElementSyntaxType = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly.GetType(TupleElementSyntaxTypeName);
-            IdentifierAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(TupleElementSyntaxType, nameof(Identifier));
-            TypeAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, TypeSyntax>(TupleElementSyntaxType, nameof(Type));
-            WithIdentifierAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(TupleElementSyntaxType, nameof(Identifier));
-            WithTypeAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, TypeSyntax>(TupleElementSyntaxType, nameof(Type));
+            WrappedType = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly.GetType(TupleElementSyntaxTypeName);
+            IdentifierAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(Identifier));
+            TypeAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, TypeSyntax>(WrappedType, nameof(Type));
+            WithIdentifierAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(Identifier));
+            WithTypeAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, TypeSyntax>(WrappedType, nameof(Type));
         }
 
         private TupleElementSyntaxWrapper(CSharpSyntaxNode node)
         {
             this.node = node;
         }
+
+        public static Type WrappedType { get; private set; }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
 
@@ -75,7 +76,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public static bool IsInstance(SyntaxNode node)
         {
-            return node != null && LightupHelpers.CanWrapNode(node, TupleElementSyntaxType);
+            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public TupleElementSyntaxWrapper WithIdentifier(SyntaxToken identifier)

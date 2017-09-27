@@ -12,7 +12,6 @@ namespace StyleCop.Analyzers.Lightup
     internal struct DeclarationPatternSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
         private const string DeclarationPatternSyntaxTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.DeclarationPatternSyntax";
-        private static readonly Type DeclarationPatternSyntaxType;
 
         private static readonly Func<CSharpSyntaxNode, TypeSyntax> TypeAccessor;
         private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode> DesignationAccessor;
@@ -23,17 +22,19 @@ namespace StyleCop.Analyzers.Lightup
 
         static DeclarationPatternSyntaxWrapper()
         {
-            DeclarationPatternSyntaxType = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly.GetType(DeclarationPatternSyntaxTypeName);
-            TypeAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, TypeSyntax>(DeclarationPatternSyntaxType, nameof(Type));
-            DesignationAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, CSharpSyntaxNode>(DeclarationPatternSyntaxType, nameof(Designation));
-            WithTypeAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, TypeSyntax>(DeclarationPatternSyntaxType, nameof(Type));
-            WithDesignationAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, CSharpSyntaxNode>(DeclarationPatternSyntaxType, nameof(Designation));
+            WrappedType = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly.GetType(DeclarationPatternSyntaxTypeName);
+            TypeAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, TypeSyntax>(WrappedType, nameof(Type));
+            DesignationAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, CSharpSyntaxNode>(WrappedType, nameof(Designation));
+            WithTypeAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, TypeSyntax>(WrappedType, nameof(Type));
+            WithDesignationAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, CSharpSyntaxNode>(WrappedType, nameof(Designation));
         }
 
         private DeclarationPatternSyntaxWrapper(CSharpSyntaxNode node)
         {
             this.node = node;
         }
+
+        public static Type WrappedType { get; private set; }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
 
@@ -85,7 +86,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public static bool IsInstance(SyntaxNode node)
         {
-            return node != null && LightupHelpers.CanWrapNode(node, DeclarationPatternSyntaxType);
+            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public DeclarationPatternSyntaxWrapper WithType(TypeSyntax type)
