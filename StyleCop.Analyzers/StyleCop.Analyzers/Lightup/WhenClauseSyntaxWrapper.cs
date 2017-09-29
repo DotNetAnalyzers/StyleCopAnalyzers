@@ -4,14 +4,14 @@
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
-    using System.Reflection;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal struct WhenClauseSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
-        private const string WhenClauseSyntaxTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax";
+        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax";
+        private static readonly Type WrappedType;
 
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> WhenKeywordAccessor;
         private static readonly Func<CSharpSyntaxNode, ExpressionSyntax> ConditionAccessor;
@@ -22,7 +22,7 @@ namespace StyleCop.Analyzers.Lightup
 
         static WhenClauseSyntaxWrapper()
         {
-            WrappedType = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly.GetType(WhenClauseSyntaxTypeName);
+            WrappedType = WrapperHelper.GetWrappedType(typeof(WhenClauseSyntaxWrapper));
             WhenKeywordAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(WhenKeyword));
             ConditionAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, ExpressionSyntax>(WrappedType, nameof(Condition));
             WithWhenKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(WhenKeyword));
@@ -33,8 +33,6 @@ namespace StyleCop.Analyzers.Lightup
         {
             this.node = node;
         }
-
-        public static Type WrappedType { get; private set; }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
 
@@ -63,7 +61,7 @@ namespace StyleCop.Analyzers.Lightup
 
             if (!IsInstance(node))
             {
-                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WhenClauseSyntaxTypeName}'");
+                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
             }
 
             return new WhenClauseSyntaxWrapper((CSharpSyntaxNode)node);

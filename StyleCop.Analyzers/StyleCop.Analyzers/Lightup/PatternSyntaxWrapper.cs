@@ -4,27 +4,25 @@
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
-    using System.Reflection;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
 
     internal struct PatternSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
-        private const string PatternSyntaxTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.PatternSyntax";
+        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.PatternSyntax";
+        private static readonly Type WrappedType;
 
         private readonly CSharpSyntaxNode node;
 
         static PatternSyntaxWrapper()
         {
-            WrappedType = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly.GetType(PatternSyntaxTypeName);
+            WrappedType = WrapperHelper.GetWrappedType(typeof(PatternSyntaxWrapper));
         }
 
         private PatternSyntaxWrapper(CSharpSyntaxNode node)
         {
             this.node = node;
         }
-
-        public static Type WrappedType { get; private set; }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
 
@@ -37,7 +35,7 @@ namespace StyleCop.Analyzers.Lightup
 
             if (!IsInstance(node))
             {
-                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{PatternSyntaxTypeName}'");
+                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
             }
 
             return new PatternSyntaxWrapper((CSharpSyntaxNode)node);

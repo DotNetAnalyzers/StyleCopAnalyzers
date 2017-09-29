@@ -4,14 +4,13 @@
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
-    using System.Reflection;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal struct RefTypeSyntaxWrapper : ISyntaxWrapper<TypeSyntax>
     {
-        private const string RefTypeSyntaxTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.RefTypeSyntax";
+        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.RefTypeSyntax";
+        private static readonly Type WrappedType;
 
         private static readonly Func<TypeSyntax, SyntaxToken> RefKeywordAccessor;
         private static readonly Func<TypeSyntax, TypeSyntax> TypeAccessor;
@@ -22,7 +21,7 @@ namespace StyleCop.Analyzers.Lightup
 
         static RefTypeSyntaxWrapper()
         {
-            WrappedType = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly.GetType(RefTypeSyntaxTypeName);
+            WrappedType = WrapperHelper.GetWrappedType(typeof(RefTypeSyntaxWrapper));
             RefKeywordAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<TypeSyntax, SyntaxToken>(WrappedType, nameof(RefKeyword));
             TypeAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<TypeSyntax, TypeSyntax>(WrappedType, nameof(Type));
             WithRefKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeSyntax, SyntaxToken>(WrappedType, nameof(RefKeyword));
@@ -33,8 +32,6 @@ namespace StyleCop.Analyzers.Lightup
         {
             this.node = node;
         }
-
-        public static Type WrappedType { get; private set; }
 
         public TypeSyntax SyntaxNode => this.node;
 
@@ -63,7 +60,7 @@ namespace StyleCop.Analyzers.Lightup
 
             if (!IsInstance(node))
             {
-                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{RefTypeSyntaxTypeName}'");
+                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
             }
 
             return new RefTypeSyntaxWrapper((TypeSyntax)node);

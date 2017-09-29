@@ -298,9 +298,7 @@ namespace StyleCop.Analyzers.Lightup
             if (returnType.GetTypeInfo().ImplementedInterfaces.Any(t => t.GetGenericTypeDefinition() == typeof(ISyntaxWrapper<>)))
             {
                 // The requested property is a wrapper type, so validate against the wrapped type.
-                var wrappedTypeProperty = returnType.GetTypeInfo().GetDeclaredProperty(WrappedTypePropertyName);
-                var wrappedType = (Type)wrappedTypeProperty?.GetValue(null);
-
+                var wrappedType = WrapperHelper.GetWrappedType(returnType);
                 return wrappedType == actualType;
             }
             else

@@ -4,14 +4,13 @@
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
-    using System.Reflection;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal struct TupleTypeSyntaxWrapper : ISyntaxWrapper<TypeSyntax>
     {
-        private const string TupleTypeSyntaxTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax";
+        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.TupleTypeSyntax";
+        private static readonly Type WrappedType;
 
         private static readonly Func<TypeSyntax, SyntaxToken> OpenParenTokenAccessor;
         private static readonly Func<TypeSyntax, SeparatedSyntaxListWrapper<TupleElementSyntaxWrapper>> ElementsAccessor;
@@ -24,7 +23,7 @@ namespace StyleCop.Analyzers.Lightup
 
         static TupleTypeSyntaxWrapper()
         {
-            WrappedType = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly.GetType(TupleTypeSyntaxTypeName);
+            WrappedType = WrapperHelper.GetWrappedType(typeof(TupleTypeSyntaxWrapper));
             OpenParenTokenAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<TypeSyntax, SyntaxToken>(WrappedType, nameof(OpenParenToken));
             ElementsAccessor = LightupHelpers.CreateSeparatedSyntaxListPropertyAccessor<TypeSyntax, TupleElementSyntaxWrapper>(WrappedType, nameof(Elements));
             CloseParenTokenAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<TypeSyntax, SyntaxToken>(WrappedType, nameof(CloseParenToken));
@@ -37,8 +36,6 @@ namespace StyleCop.Analyzers.Lightup
         {
             this.node = node;
         }
-
-        public static Type WrappedType { get; private set; }
 
         public TypeSyntax SyntaxNode => this.node;
 
@@ -75,7 +72,7 @@ namespace StyleCop.Analyzers.Lightup
 
             if (!IsInstance(node))
             {
-                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{TupleTypeSyntaxTypeName}'");
+                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
             }
 
             return new TupleTypeSyntaxWrapper((TypeSyntax)node);

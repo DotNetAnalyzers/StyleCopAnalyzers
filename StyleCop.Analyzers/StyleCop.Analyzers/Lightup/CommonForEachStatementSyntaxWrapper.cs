@@ -4,21 +4,14 @@
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
-    using System.Reflection;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal struct CommonForEachStatementSyntaxWrapper : ISyntaxWrapper<StatementSyntax>
     {
-        private const string CommonForEachStatementSyntaxTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.CommonForEachStatementSyntax";
-
-        /// <summary>
-        /// Prior to C# 7, <see cref="ForEachStatementSyntax"/> was the base type for all <c>foreach</c> statements. If
-        /// the <c>CommonForEachStatementSyntax</c> type isn't found at runtime, we fall back to using this type
-        /// instead.
-        /// </summary>
-        private const string ForEachStatementSyntaxTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.CommonForEachStatementSyntax";
+        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.CommonForEachStatementSyntax";
+        internal const string FallbackWrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.ForEachStatementSyntax";
+        private static readonly Type WrappedType;
 
         private static readonly Func<StatementSyntax, SyntaxToken> ForEachKeywordAccessor;
         private static readonly Func<StatementSyntax, SyntaxToken> OpenParenTokenAccessor;
@@ -31,8 +24,7 @@ namespace StyleCop.Analyzers.Lightup
 
         static CommonForEachStatementSyntaxWrapper()
         {
-            WrappedType = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly.GetType(CommonForEachStatementSyntaxTypeName)
-                ?? typeof(CSharpSyntaxNode).GetTypeInfo().Assembly.GetType(ForEachStatementSyntaxTypeName);
+            WrappedType = WrapperHelper.GetWrappedType(typeof(CommonForEachStatementSyntaxWrapper));
             ForEachKeywordAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<StatementSyntax, SyntaxToken>(WrappedType, nameof(ForEachKeyword));
             OpenParenTokenAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<StatementSyntax, SyntaxToken>(WrappedType, nameof(OpenParenToken));
             InKeywordAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<StatementSyntax, SyntaxToken>(WrappedType, nameof(InKeyword));
@@ -45,8 +37,6 @@ namespace StyleCop.Analyzers.Lightup
         {
             this.node = node;
         }
-
-        public static Type WrappedType { get; private set; }
 
         public StatementSyntax SyntaxNode => this.node;
 
@@ -112,7 +102,7 @@ namespace StyleCop.Analyzers.Lightup
 
             if (!IsInstance(node))
             {
-                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{CommonForEachStatementSyntaxTypeName}'");
+                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
             }
 
             return new CommonForEachStatementSyntaxWrapper((StatementSyntax)node);
