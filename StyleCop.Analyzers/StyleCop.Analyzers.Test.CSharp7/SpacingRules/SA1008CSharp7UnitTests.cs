@@ -200,6 +200,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 
         [Fact]
         [WorkItem(2472, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2472")]
+        [WorkItem(2532, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2532")]
         public async Task TestTupleOutParametersAsync()
         {
             var testCode = @"namespace TestNamespace
@@ -209,6 +210,13 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
         public int TestMethod1(out( int, int)[] arg) => throw null;
         public int TestMethod2(out(int, int)[] arg) => throw null;
         public int TestMethod3(out ( int, int)[] arg) => throw null;
+        public void TestMethod4()
+        {
+            var x = new System.Collections.Generic.Dictionary<int, (int, bool)>();
+            x.TryGetValue(1, out( int, bool) value1);
+            x.TryGetValue(2, out(int, bool) value2);
+            x.TryGetValue(3, out ( int, bool) value3);
+        }
     }
 }
 ";
@@ -220,6 +228,13 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
         public int TestMethod1(out (int, int)[] arg) => throw null;
         public int TestMethod2(out (int, int)[] arg) => throw null;
         public int TestMethod3(out (int, int)[] arg) => throw null;
+        public void TestMethod4()
+        {
+            var x = new System.Collections.Generic.Dictionary<int, (int, bool)>();
+            x.TryGetValue(1, out (int, bool) value1);
+            x.TryGetValue(2, out (int, bool) value2);
+            x.TryGetValue(3, out (int, bool) value3);
+        }
     }
 }
 ";
@@ -235,6 +250,12 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 
                 // TestMethod3
                 this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(7, 36),
+
+                // TestMethod4
+                this.CSharpDiagnostic(DescriptorPreceded).WithLocation(11, 33),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(11, 33),
+                this.CSharpDiagnostic(DescriptorPreceded).WithLocation(12, 33),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(13, 34),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
