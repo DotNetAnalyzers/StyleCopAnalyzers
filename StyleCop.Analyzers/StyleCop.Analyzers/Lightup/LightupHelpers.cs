@@ -13,8 +13,6 @@ namespace StyleCop.Analyzers.Lightup
 
     internal static class LightupHelpers
     {
-        private const string WrappedTypePropertyName = "WrappedType";
-
         private static readonly ConcurrentDictionary<Type, ConcurrentDictionary<SyntaxKind, bool>> SupportedWrappers
             = new ConcurrentDictionary<Type, ConcurrentDictionary<SyntaxKind, bool>>();
 
@@ -295,16 +293,8 @@ namespace StyleCop.Analyzers.Lightup
 
         private static bool ValidatePropertyType(Type returnType, Type actualType)
         {
-            if (returnType.GetTypeInfo().ImplementedInterfaces.Any(t => t.GetGenericTypeDefinition() == typeof(ISyntaxWrapper<>)))
-            {
-                // The requested property is a wrapper type, so validate against the wrapped type.
-                var wrappedType = WrapperHelper.GetWrappedType(returnType);
-                return wrappedType == actualType;
-            }
-            else
-            {
-                return returnType == actualType;
-            }
+            var requiredType = WrapperHelper.GetWrappedType(returnType) ?? returnType;
+            return requiredType == actualType;
         }
     }
 }
