@@ -53,7 +53,7 @@ namespace NamespaceName
             this.createSettingsFile = false;
 
             var offeredFixes = await this.GetOfferedCSharpFixesAsync(TestCode).ConfigureAwait(false);
-            Assert.Equal(1, offeredFixes.Length);
+            Assert.Single(offeredFixes);
         }
 
         /// <summary>

@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.Lightup
         public void TestBasicProperties()
         {
             var list = this.CreateList();
-            Assert.Equal(0, list.Count);
+            Assert.Empty(list);
             Assert.Equal(0, list.SeparatorCount);
             Assert.Equal(default(SeparatedSyntaxList<SyntaxNode>).FullSpan, list.FullSpan);
             Assert.Equal(default(SeparatedSyntaxList<SyntaxNode>).Span, list.Span);
@@ -26,7 +26,7 @@ namespace StyleCop.Analyzers.Test.Lightup
             {
                 Assert.IsAssignableFrom<SeparatedSyntaxList<SyntaxNode>>(list.UnderlyingList);
                 var underlyingList = (SeparatedSyntaxList<SyntaxNode>)list.UnderlyingList;
-                Assert.Equal(0, list.Count);
+                Assert.Empty(list);
             }
         }
 

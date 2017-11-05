@@ -68,10 +68,10 @@ namespace StyleCop.Analyzers.Test.HelperTests.ObjectPools
 
                 // Keep a copy to verify its length is reset
                 collection = obj.Object;
-                Assert.NotEqual(0, collection.Count);
+                Assert.NotEmpty(collection);
             }
 
-            Assert.Equal(0, collection.Count);
+            Assert.Empty(collection);
         }
 
         [Fact]
@@ -87,10 +87,10 @@ namespace StyleCop.Analyzers.Test.HelperTests.ObjectPools
 
                 // Keep a copy to verify its length is reset
                 collection = obj.Object;
-                Assert.NotEqual(0, collection.Count);
+                Assert.NotEmpty(collection);
             }
 
-            Assert.Equal(0, collection.Count);
+            Assert.Empty(collection);
         }
 
         [Fact]
@@ -106,10 +106,10 @@ namespace StyleCop.Analyzers.Test.HelperTests.ObjectPools
 
                 // Keep a copy to verify its length is reset
                 collection = obj.Object;
-                Assert.NotEqual(0, collection.Count);
+                Assert.NotEmpty(collection);
             }
 
-            Assert.Equal(0, collection.Count);
+            Assert.Empty(collection);
         }
 
         [Fact]
@@ -125,10 +125,10 @@ namespace StyleCop.Analyzers.Test.HelperTests.ObjectPools
 
                 // Keep a copy to verify its length is reset
                 collection = obj.Object;
-                Assert.NotEqual(0, collection.Count);
+                Assert.NotEmpty(collection);
             }
 
-            Assert.Equal(0, collection.Count);
+            Assert.Empty(collection);
         }
 
         [Fact]
@@ -144,10 +144,10 @@ namespace StyleCop.Analyzers.Test.HelperTests.ObjectPools
 
                 // Keep a copy to verify its length is reset
                 collection = obj.Object;
-                Assert.NotEqual(0, collection.Count);
+                Assert.NotEmpty(collection);
             }
 
-            Assert.Equal(0, collection.Count);
+            Assert.Empty(collection);
         }
 
         [Fact]
@@ -182,17 +182,17 @@ namespace StyleCop.Analyzers.Test.HelperTests.ObjectPools
             // HashSet<int>
             var set = new HashSet<int>(Enumerable.Range(0, 1024));
             SharedPools.Default<HashSet<int>>().ClearAndFree(set);
-            Assert.Equal(0, set.Count);
+            Assert.Empty(set);
 
             // Stack<int>
             var stack = new Stack<int>(Enumerable.Range(0, 1024));
             SharedPools.Default<Stack<int>>().ClearAndFree(stack);
-            Assert.Equal(0, stack.Count);
+            Assert.Empty(stack);
 
             // Queue<int>
             var queue = new Queue<int>(Enumerable.Range(0, 1024));
             SharedPools.Default<Queue<int>>().ClearAndFree(queue);
-            Assert.Equal(0, queue.Count);
+            Assert.Empty(queue);
 
             // Dictionary<int, int> **This one doesn't go back in the pool!**
             var dictionary = Enumerable.Range(0, 1024).ToDictionary(i => i);
@@ -203,7 +203,7 @@ namespace StyleCop.Analyzers.Test.HelperTests.ObjectPools
             var list = new List<int>(Enumerable.Range(0, 1024));
             Assert.True(list.Capacity >= 1024);
             SharedPools.Default<List<int>>().ClearAndFree(list);
-            Assert.Equal(0, list.Count);
+            Assert.Empty(list);
             Assert.True(list.Capacity < 1024);
         }
 

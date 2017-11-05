@@ -45,7 +45,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var newWhenKeyword = SyntaxFactory.Token(SyntaxKind.WhenKeyword).WithLeadingTrivia(SyntaxFactory.Space);
             var wrapperWithModifiedWhenKeyword = wrapper.WithWhenKeyword(newWhenKeyword);
             Assert.NotNull(wrapperWithModifiedWhenKeyword.SyntaxNode);
-            Assert.Equal(1, wrapperWithModifiedWhenKeyword.WhenKeyword.LeadingTrivia.Count);
+            Assert.Single(wrapperWithModifiedWhenKeyword.WhenKeyword.LeadingTrivia);
             Assert.Equal(" ", wrapperWithModifiedWhenKeyword.WhenKeyword.LeadingTrivia.ToString());
         }
 

@@ -45,7 +45,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var newThrowKeyword = SyntaxFactory.Token(SyntaxKind.ThrowKeyword).WithLeadingTrivia(SyntaxFactory.Space);
             var modifiedThrowKeyword = throwExpressionSyntax.WithThrowKeyword(newThrowKeyword);
             Assert.NotNull(modifiedThrowKeyword.SyntaxNode);
-            Assert.Equal(1, modifiedThrowKeyword.ThrowKeyword.LeadingTrivia.Count);
+            Assert.Single(modifiedThrowKeyword.ThrowKeyword.LeadingTrivia);
             Assert.Equal(" ", modifiedThrowKeyword.ThrowKeyword.LeadingTrivia.ToString());
         }
 

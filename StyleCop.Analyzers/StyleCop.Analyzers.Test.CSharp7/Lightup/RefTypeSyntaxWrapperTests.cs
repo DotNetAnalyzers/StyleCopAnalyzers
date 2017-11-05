@@ -45,7 +45,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var newRefKeyword = SyntaxFactory.Token(SyntaxKind.RefKeyword).WithLeadingTrivia(SyntaxFactory.Space);
             var wrapperWithModifiedRefKeyword = wrapper.WithRefKeyword(newRefKeyword);
             Assert.NotNull(wrapperWithModifiedRefKeyword.SyntaxNode);
-            Assert.Equal(1, wrapperWithModifiedRefKeyword.RefKeyword.LeadingTrivia.Count);
+            Assert.Single(wrapperWithModifiedRefKeyword.RefKeyword.LeadingTrivia);
             Assert.Equal(" ", wrapperWithModifiedRefKeyword.RefKeyword.LeadingTrivia.ToString());
         }
 

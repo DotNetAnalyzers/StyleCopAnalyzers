@@ -27,7 +27,7 @@ namespace StyleCop.Analyzers.Test.Settings
             Assert.Equal("PlaceholderCompany", styleCopSettings.DocumentationRules.CompanyName);
             Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
             Assert.True(styleCopSettings.NamingRules.AllowCommonHungarianPrefixes);
-            Assert.Equal(0, styleCopSettings.NamingRules.AllowedHungarianPrefixes.Length);
+            Assert.Empty(styleCopSettings.NamingRules.AllowedHungarianPrefixes);
 
             Assert.NotNull(styleCopSettings.OrderingRules);
             Assert.Equal(UsingDirectivesPlacement.InsideNamespace, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
@@ -159,7 +159,7 @@ namespace StyleCop.Analyzers.Test.Settings
 
             var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
 
-            Assert.Equal(1, styleCopSettings.DocumentationRules.Variables.Count);
+            Assert.Single(styleCopSettings.DocumentationRules.Variables);
             Assert.Equal("value", styleCopSettings.DocumentationRules.Variables["var"]);
             Assert.False(styleCopSettings.DocumentationRules.Variables.ContainsKey("no space allowed"));
         }
@@ -304,7 +304,7 @@ namespace StyleCop.Analyzers.Test.Settings
             Assert.Equal("TestCompany", styleCopSettings.DocumentationRules.CompanyName);
             Assert.Equal("Copyright (c) TestCompany. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
 
-            Assert.Equal(1, styleCopSettings.NamingRules.AllowedHungarianPrefixes.Length);
+            Assert.Single(styleCopSettings.NamingRules.AllowedHungarianPrefixes);
             Assert.Equal("a", styleCopSettings.NamingRules.AllowedHungarianPrefixes[0]);
         }
 
