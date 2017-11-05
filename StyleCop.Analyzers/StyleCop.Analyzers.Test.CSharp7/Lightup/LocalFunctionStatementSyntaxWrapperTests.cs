@@ -115,7 +115,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var newSemicolonToken = SyntaxFactory.Token(SyntaxKind.SemicolonToken).WithLeadingTrivia(SyntaxFactory.Space);
             var wrapperWithModifiedSemicolonToken = wrapper.WithSemicolonToken(newSemicolonToken);
             Assert.NotNull(wrapperWithModifiedSemicolonToken.SyntaxNode);
-            Assert.Equal(1, wrapperWithModifiedSemicolonToken.SemicolonToken.LeadingTrivia.Count);
+            Assert.Single(wrapperWithModifiedSemicolonToken.SemicolonToken.LeadingTrivia);
             Assert.Equal(" ", wrapperWithModifiedSemicolonToken.SemicolonToken.LeadingTrivia.ToString());
 
             var addedModifiers = new SyntaxToken[] { SyntaxFactory.Token(SyntaxKind.AsyncKeyword) };

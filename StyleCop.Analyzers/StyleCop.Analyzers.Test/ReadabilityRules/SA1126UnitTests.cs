@@ -22,7 +22,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         public void TestDisabledByDefaultAndNotConfigurable()
         {
             var analyzer = this.GetCSharpDiagnosticAnalyzers().Single();
-            Assert.Equal(1, analyzer.SupportedDiagnostics.Length);
+            Assert.Single(analyzer.SupportedDiagnostics);
             Assert.False(analyzer.SupportedDiagnostics[0].IsEnabledByDefault);
             Assert.Contains(WellKnownDiagnosticTags.NotConfigurable, analyzer.SupportedDiagnostics[0].CustomTags);
         }

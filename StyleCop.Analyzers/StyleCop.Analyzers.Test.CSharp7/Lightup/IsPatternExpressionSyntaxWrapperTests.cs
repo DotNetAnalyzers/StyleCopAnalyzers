@@ -49,7 +49,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
             var newIsKeyword = SyntaxFactory.Token(SyntaxKind.IsKeyword).WithLeadingTrivia(SyntaxFactory.Space);
             var modifiedIsKeyword = isPatternExpressionSyntax.WithIsKeyword(newIsKeyword);
             Assert.NotNull(modifiedIsKeyword.SyntaxNode);
-            Assert.Equal(1, modifiedIsKeyword.IsKeyword.LeadingTrivia.Count);
+            Assert.Single(modifiedIsKeyword.IsKeyword.LeadingTrivia);
             Assert.Equal(" ", modifiedIsKeyword.IsKeyword.LeadingTrivia.ToString());
 
             var newPattern = SyntaxFactory.ConstantPattern(newExpression);
