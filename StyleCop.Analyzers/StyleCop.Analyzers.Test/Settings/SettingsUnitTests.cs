@@ -27,7 +27,7 @@ namespace StyleCop.Analyzers.Test.Settings
             Assert.Equal("PlaceholderCompany", styleCopSettings.DocumentationRules.CompanyName);
             Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
             Assert.True(styleCopSettings.NamingRules.AllowCommonHungarianPrefixes);
-            Assert.Equal(0, styleCopSettings.NamingRules.AllowedHungarianPrefixes.Length);
+            Assert.Empty(styleCopSettings.NamingRules.AllowedHungarianPrefixes);
 
             Assert.NotNull(styleCopSettings.OrderingRules);
             Assert.Equal(UsingDirectivesPlacement.InsideNamespace, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
