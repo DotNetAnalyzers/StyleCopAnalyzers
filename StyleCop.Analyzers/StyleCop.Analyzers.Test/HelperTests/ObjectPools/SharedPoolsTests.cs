@@ -68,7 +68,7 @@ namespace StyleCop.Analyzers.Test.HelperTests.ObjectPools
 
                 // Keep a copy to verify its length is reset
                 collection = obj.Object;
-                Assert.NotEqual(0, collection.Count);
+                Assert.NotEmpty(collection);
             }
 
             Assert.Empty(collection);
@@ -87,7 +87,7 @@ namespace StyleCop.Analyzers.Test.HelperTests.ObjectPools
 
                 // Keep a copy to verify its length is reset
                 collection = obj.Object;
-                Assert.NotEqual(0, collection.Count);
+                Assert.NotEmpty(collection);
             }
 
             Assert.Empty(collection);
@@ -106,7 +106,7 @@ namespace StyleCop.Analyzers.Test.HelperTests.ObjectPools
 
                 // Keep a copy to verify its length is reset
                 collection = obj.Object;
-                Assert.NotEqual(0, collection.Count);
+                Assert.NotEmpty(collection);
             }
 
             Assert.Empty(collection);
@@ -125,7 +125,7 @@ namespace StyleCop.Analyzers.Test.HelperTests.ObjectPools
 
                 // Keep a copy to verify its length is reset
                 collection = obj.Object;
-                Assert.NotEqual(0, collection.Count);
+                Assert.NotEmpty(collection);
             }
 
             Assert.Empty(collection);
@@ -144,7 +144,7 @@ namespace StyleCop.Analyzers.Test.HelperTests.ObjectPools
 
                 // Keep a copy to verify its length is reset
                 collection = obj.Object;
-                Assert.NotEqual(0, collection.Count);
+                Assert.NotEmpty(collection);
             }
 
             Assert.Empty(collection);
