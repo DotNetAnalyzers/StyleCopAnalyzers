@@ -4,15 +4,14 @@
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
-    using System.Reflection;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal struct DeclarationExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
     {
-        private const string DeclarationExpressionSyntaxTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.DeclarationExpressionSyntax";
-        private static readonly Type DeclarationExpressionSyntaxType;
+        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.DeclarationExpressionSyntax";
+        private static readonly Type WrappedType;
 
         private static readonly Func<ExpressionSyntax, TypeSyntax> TypeAccessor;
         private static readonly Func<ExpressionSyntax, CSharpSyntaxNode> DesignationAccessor;
@@ -23,11 +22,11 @@ namespace StyleCop.Analyzers.Lightup
 
         static DeclarationExpressionSyntaxWrapper()
         {
-            DeclarationExpressionSyntaxType = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly.GetType(DeclarationExpressionSyntaxTypeName);
-            TypeAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<ExpressionSyntax, TypeSyntax>(DeclarationExpressionSyntaxType, nameof(Type));
-            DesignationAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<ExpressionSyntax, CSharpSyntaxNode>(DeclarationExpressionSyntaxType, nameof(Designation));
-            WithTypeAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, TypeSyntax>(DeclarationExpressionSyntaxType, nameof(Type));
-            WithDesignationAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, CSharpSyntaxNode>(DeclarationExpressionSyntaxType, nameof(Designation));
+            WrappedType = WrapperHelper.GetWrappedType(typeof(DeclarationExpressionSyntaxWrapper));
+            TypeAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<ExpressionSyntax, TypeSyntax>(WrappedType, nameof(Type));
+            DesignationAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<ExpressionSyntax, CSharpSyntaxNode>(WrappedType, nameof(Designation));
+            WithTypeAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, TypeSyntax>(WrappedType, nameof(Type));
+            WithDesignationAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, CSharpSyntaxNode>(WrappedType, nameof(Designation));
         }
 
         private DeclarationExpressionSyntaxWrapper(ExpressionSyntax node)
@@ -62,7 +61,7 @@ namespace StyleCop.Analyzers.Lightup
 
             if (!IsInstance(node))
             {
-                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{DeclarationExpressionSyntaxTypeName}'");
+                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
             }
 
             return new DeclarationExpressionSyntaxWrapper((ExpressionSyntax)node);
@@ -75,7 +74,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public static bool IsInstance(SyntaxNode node)
         {
-            return node != null && LightupHelpers.CanWrapNode(node, DeclarationExpressionSyntaxType);
+            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public DeclarationExpressionSyntaxWrapper WithType(TypeSyntax type)

@@ -4,14 +4,13 @@
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
-    using System.Reflection;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
 
     internal struct DiscardDesignationSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
-        private const string DiscardDesignationSyntaxTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.DiscardDesignationSyntax";
-        private static readonly Type DiscardDesignationSyntaxType;
+        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.DiscardDesignationSyntax";
+        private static readonly Type WrappedType;
 
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> UnderscoreTokenAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithUnderscoreTokenAccessor;
@@ -20,9 +19,9 @@ namespace StyleCop.Analyzers.Lightup
 
         static DiscardDesignationSyntaxWrapper()
         {
-            DiscardDesignationSyntaxType = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly.GetType(DiscardDesignationSyntaxTypeName);
-            UnderscoreTokenAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(DiscardDesignationSyntaxType, nameof(UnderscoreToken));
-            WithUnderscoreTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(DiscardDesignationSyntaxType, nameof(UnderscoreToken));
+            WrappedType = WrapperHelper.GetWrappedType(typeof(DiscardDesignationSyntaxWrapper));
+            UnderscoreTokenAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(UnderscoreToken));
+            WithUnderscoreTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(UnderscoreToken));
         }
 
         private DiscardDesignationSyntaxWrapper(CSharpSyntaxNode node)
@@ -54,7 +53,7 @@ namespace StyleCop.Analyzers.Lightup
 
             if (!IsInstance(node))
             {
-                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{DiscardDesignationSyntaxTypeName}'");
+                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
             }
 
             return new DiscardDesignationSyntaxWrapper((CSharpSyntaxNode)node);
@@ -72,7 +71,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public static bool IsInstance(SyntaxNode node)
         {
-            return node != null && LightupHelpers.CanWrapNode(node, DiscardDesignationSyntaxType);
+            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public DiscardDesignationSyntaxWrapper WithUnderscoreToken(SyntaxToken identifier)

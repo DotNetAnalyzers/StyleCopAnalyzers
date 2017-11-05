@@ -4,20 +4,19 @@
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
-    using System.Reflection;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
 
     internal struct VariableDesignationSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
-        private const string VariableDesignationSyntaxTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.VariableDesignationSyntax";
-        private static readonly Type VariableDesignationSyntaxType;
+        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.VariableDesignationSyntax";
+        private static readonly Type WrappedType;
 
         private readonly CSharpSyntaxNode node;
 
         static VariableDesignationSyntaxWrapper()
         {
-            VariableDesignationSyntaxType = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly.GetType(VariableDesignationSyntaxTypeName);
+            WrappedType = WrapperHelper.GetWrappedType(typeof(VariableDesignationSyntaxWrapper));
         }
 
         private VariableDesignationSyntaxWrapper(CSharpSyntaxNode node)
@@ -36,7 +35,7 @@ namespace StyleCop.Analyzers.Lightup
 
             if (!IsInstance(node))
             {
-                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{VariableDesignationSyntaxTypeName}'");
+                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
             }
 
             return new VariableDesignationSyntaxWrapper((CSharpSyntaxNode)node);
@@ -49,7 +48,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public static bool IsInstance(SyntaxNode node)
         {
-            return node != null && LightupHelpers.CanWrapNode(node, VariableDesignationSyntaxType);
+            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         internal static VariableDesignationSyntaxWrapper FromUpcast(CSharpSyntaxNode node)

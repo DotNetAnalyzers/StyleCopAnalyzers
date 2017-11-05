@@ -134,6 +134,11 @@ namespace StyleCop.Analyzers.Lightup
 
             var propertySyntaxType = property.PropertyType.GenericTypeArguments[0];
 
+            if (!ValidatePropertyType(typeof(TProperty), propertySyntaxType))
+            {
+                throw new InvalidOperationException();
+            }
+
             var syntaxParameter = Expression.Parameter(typeof(TSyntax), "syntax");
             Expression instance =
                 type.GetTypeInfo().IsAssignableFrom(typeof(TSyntax).GetTypeInfo())
@@ -258,6 +263,11 @@ namespace StyleCop.Analyzers.Lightup
 
             var propertySyntaxType = property.PropertyType.GenericTypeArguments[0];
 
+            if (!ValidatePropertyType(typeof(TProperty), propertySyntaxType))
+            {
+                throw new InvalidOperationException();
+            }
+
             var methodInfo = type.GetTypeInfo().GetDeclaredMethods("With" + propertyName)
                 .Single(m => !m.IsStatic && m.GetParameters().Length == 1 && m.GetParameters()[0].ParameterType.Equals(property.PropertyType));
 
@@ -279,6 +289,12 @@ namespace StyleCop.Analyzers.Lightup
                     syntaxParameter,
                     valueParameter);
             return expression.Compile();
+        }
+
+        private static bool ValidatePropertyType(Type returnType, Type actualType)
+        {
+            var requiredType = WrapperHelper.GetWrappedType(returnType) ?? returnType;
+            return requiredType == actualType;
         }
     }
 }

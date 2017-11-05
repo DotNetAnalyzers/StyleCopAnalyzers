@@ -4,15 +4,13 @@
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
-    using System.Reflection;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal struct ThrowExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
     {
-        private const string ThrowExpressionSyntaxTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.ThrowExpressionSyntax";
-        private static readonly Type ThrowExpressionSyntaxType;
+        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.ThrowExpressionSyntax";
+        private static readonly Type WrappedType;
 
         private static readonly Func<ExpressionSyntax, SyntaxToken> ThrowKeywordAccessor;
         private static readonly Func<ExpressionSyntax, ExpressionSyntax> ExpressionAccessor;
@@ -23,11 +21,11 @@ namespace StyleCop.Analyzers.Lightup
 
         static ThrowExpressionSyntaxWrapper()
         {
-            ThrowExpressionSyntaxType = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly.GetType(ThrowExpressionSyntaxTypeName);
-            ThrowKeywordAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<ExpressionSyntax, SyntaxToken>(ThrowExpressionSyntaxType, nameof(ThrowKeyword));
-            ExpressionAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<ExpressionSyntax, ExpressionSyntax>(ThrowExpressionSyntaxType, nameof(Expression));
-            WithThrowKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, SyntaxToken>(ThrowExpressionSyntaxType, nameof(ThrowKeyword));
-            WithExpressionAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, ExpressionSyntax>(ThrowExpressionSyntaxType, nameof(Expression));
+            WrappedType = WrapperHelper.GetWrappedType(typeof(ThrowExpressionSyntaxWrapper));
+            ThrowKeywordAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<ExpressionSyntax, SyntaxToken>(WrappedType, nameof(ThrowKeyword));
+            ExpressionAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<ExpressionSyntax, ExpressionSyntax>(WrappedType, nameof(Expression));
+            WithThrowKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, SyntaxToken>(WrappedType, nameof(ThrowKeyword));
+            WithExpressionAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, ExpressionSyntax>(WrappedType, nameof(Expression));
         }
 
         private ThrowExpressionSyntaxWrapper(ExpressionSyntax node)
@@ -62,7 +60,7 @@ namespace StyleCop.Analyzers.Lightup
 
             if (!IsInstance(node))
             {
-                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{ThrowExpressionSyntaxTypeName}'");
+                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
             }
 
             return new ThrowExpressionSyntaxWrapper((ExpressionSyntax)node);
@@ -75,7 +73,7 @@ namespace StyleCop.Analyzers.Lightup
 
         public static bool IsInstance(SyntaxNode node)
         {
-            return node != null && LightupHelpers.CanWrapNode(node, ThrowExpressionSyntaxType);
+            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
         }
 
         public ThrowExpressionSyntaxWrapper WithThrowKeyword(SyntaxToken throwKeyword)
