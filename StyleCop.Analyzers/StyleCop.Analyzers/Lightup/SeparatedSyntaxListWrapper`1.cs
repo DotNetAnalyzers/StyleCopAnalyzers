@@ -97,12 +97,12 @@ namespace StyleCop.Analyzers.Lightup
 
         public Enumerator GetEnumerator()
         {
-            throw new NotImplementedException();
+            return new Enumerator(this);
         }
 
         IEnumerator<TNode> IEnumerable<TNode>.GetEnumerator()
         {
-            throw new NotImplementedException();
+            return this.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -148,34 +148,72 @@ namespace StyleCop.Analyzers.Lightup
 
         public override abstract string ToString();
 
-        public struct Enumerator
+        public struct Enumerator : IEnumerator<TNode>
         {
-            public TNode Current
+            private readonly SeparatedSyntaxListWrapper<TNode> wrapper;
+            private int index;
+            private TNode current;
+
+            public Enumerator(SeparatedSyntaxListWrapper<TNode> wrapper)
             {
-                get
-                {
-                    throw new NotImplementedException();
-                }
+                this.wrapper = wrapper;
+                this.index = -1;
+                this.current = default(TNode);
             }
+
+            public TNode Current => this.current;
+
+            object IEnumerator.Current => this.Current;
 
             public override bool Equals(object obj)
             {
-                throw new NotImplementedException();
+                Enumerator? otherOpt = obj as Enumerator?;
+                if (!otherOpt.HasValue)
+                {
+                    return false;
+                }
+
+                Enumerator other = otherOpt.GetValueOrDefault();
+                return other.wrapper == this.wrapper
+                    && other.index == this.index;
             }
 
             public override int GetHashCode()
             {
-                throw new NotImplementedException();
+                if (this.wrapper == null)
+                {
+                    return 0;
+                }
+
+                return this.wrapper.GetHashCode() ^ this.index;
+            }
+
+            public void Dispose()
+            {
             }
 
             public bool MoveNext()
             {
-                throw new NotImplementedException();
+                if (this.index < -1)
+                {
+                    return false;
+                }
+
+                if (this.index == this.wrapper.Count - 1)
+                {
+                    this.index = int.MinValue;
+                    return false;
+                }
+
+                this.index++;
+                this.current = this.wrapper[this.index];
+                return true;
             }
 
             public void Reset()
             {
-                throw new NotImplementedException();
+                this.index = -1;
+                this.current = default(TNode);
             }
         }
 
