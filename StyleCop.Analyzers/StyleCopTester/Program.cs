@@ -139,8 +139,9 @@ namespace StyleCopTester
 
                         foreach (var documentId in project.DocumentIds)
                         {
+                            var document = project.GetDocument(documentId);
                             var currentDocumentPerformance = await TestDocumentPerformanceAsync(analyzers, project, documentId, force, cancellationToken).ConfigureAwait(false);
-                            Console.WriteLine($"{documentId}: {currentDocumentPerformance.EditsPerSecond:0.00}");
+                            Console.WriteLine($"{document.FilePath ?? document.Name}: {currentDocumentPerformance.EditsPerSecond:0.00}");
                             documentPerformance.Add(documentId, currentDocumentPerformance);
                         }
 
@@ -153,6 +154,18 @@ namespace StyleCopTester
                         if (sumOfDocumentAverages != 0)
                         {
                             projectPerformance[project.Id] = sumOfDocumentAverages / project.DocumentIds.Count;
+                        }
+                    }
+
+                    var slowestFiles = documentPerformance.OrderBy(pair => pair.Value.EditsPerSecond).GroupBy(pair => pair.Key.ProjectId);
+                    Console.WriteLine("Slowest files in each project:");
+                    foreach (var projectGroup in slowestFiles)
+                    {
+                        Console.WriteLine($"  {solution.GetProject(projectGroup.Key).Name}");
+                        foreach (var pair in projectGroup.Take(5))
+                        {
+                            var document = solution.GetDocument(pair.Key);
+                            Console.WriteLine($"    {document.FilePath ?? document.Name}: {pair.Value.EditsPerSecond:0.00}");
                         }
                     }
 
