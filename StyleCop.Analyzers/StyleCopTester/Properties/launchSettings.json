@@ -1,8 +1,15 @@
 {
   "profiles": {
     "StyleCopAnalyzers.sln /stats": {
+      "commandName": "Project",
       "commandLineArgs": "..\\..\\StyleCopAnalyzers.sln /stats",
-      "workingDirectory": "$(MSBuildProjectDirectory)"
+      "workingDirectory": "$(MSBuildProjectDirectory)",
+      "environmentVariables": {
+        "MSBuildSDKsPath": "$(MSBuildSDKsPath)",
+        "MSBuildExtensionsPath": "$(MSBuildExtensionsPath)",
+        "VisualStudioVersion": "$(VisualStudioVersion)",
+        "VSINSTALLDIR": "$(VSAPPIDDIR)\\..\\..\\"
+      }
     }
   }
 }
