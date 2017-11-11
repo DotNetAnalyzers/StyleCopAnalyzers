@@ -124,6 +124,51 @@ namespace StyleCopTester
 
                 Console.WriteLine($"Found {allDiagnostics.Length} diagnostics in {stopwatch.ElapsedMilliseconds}ms");
 
+                bool testDocuments = args.Contains("/editperf");
+                if (testDocuments)
+                {
+                    var projectPerformance = new Dictionary<ProjectId, double>();
+                    var documentPerformance = new Dictionary<DocumentId, DocumentAnalyzerPerformance>();
+                    foreach (var projectId in solution.ProjectIds)
+                    {
+                        Project project = solution.GetProject(projectId);
+                        if (project.Language != LanguageNames.CSharp)
+                        {
+                            continue;
+                        }
+
+                        foreach (var documentId in project.DocumentIds)
+                        {
+                            var currentDocumentPerformance = await TestDocumentPerformanceAsync(analyzers, project, documentId, force, cancellationToken).ConfigureAwait(false);
+                            Console.WriteLine($"{documentId}: {currentDocumentPerformance.EditsPerSecond:0.00}");
+                            documentPerformance.Add(documentId, currentDocumentPerformance);
+                        }
+
+                        double sumOfDocumentAverages = 0;
+                        foreach (var documentId in project.DocumentIds)
+                        {
+                            sumOfDocumentAverages += documentPerformance[documentId].EditsPerSecond;
+                        }
+
+                        if (sumOfDocumentAverages != 0)
+                        {
+                            projectPerformance[project.Id] = sumOfDocumentAverages / project.DocumentIds.Count;
+                        }
+                    }
+
+                    foreach (var projectId in solution.ProjectIds)
+                    {
+                        double averageEditsInProject;
+                        if (!projectPerformance.TryGetValue(projectId, out averageEditsInProject))
+                        {
+                            continue;
+                        }
+
+                        Project project = solution.GetProject(projectId);
+                        Console.WriteLine($"{project.Name} ({project.DocumentIds.Count} documents): {averageEditsInProject:0.00} edits per second");
+                    }
+                }
+
                 foreach (var group in allDiagnostics.GroupBy(i => i.Id).OrderBy(i => i.Key, StringComparer.OrdinalIgnoreCase))
                 {
                     Console.WriteLine($"  {group.Key}: {group.Count()} instances");
@@ -155,6 +200,45 @@ namespace StyleCopTester
                     await TestFixAllAsync(stopwatch, solution, diagnostics, applyChanges, cancellationToken).ConfigureAwait(true);
                 }
             }
+        }
+
+        private static async Task<DocumentAnalyzerPerformance> TestDocumentPerformanceAsync(ImmutableArray<DiagnosticAnalyzer> analyzers, Project project, DocumentId documentId, bool force, CancellationToken cancellationToken)
+        {
+            var supportedDiagnosticsSpecificOptions = new Dictionary<string, ReportDiagnostic>();
+            if (force)
+            {
+                foreach (var analyzer in analyzers)
+                {
+                    foreach (var diagnostic in analyzer.SupportedDiagnostics)
+                    {
+                        // make sure the analyzers we are testing are enabled
+                        supportedDiagnosticsSpecificOptions[diagnostic.Id] = ReportDiagnostic.Default;
+                    }
+                }
+            }
+
+            // Report exceptions during the analysis process as errors
+            supportedDiagnosticsSpecificOptions.Add("AD0001", ReportDiagnostic.Error);
+
+            // update the project compilation options
+            var modifiedSpecificDiagnosticOptions = supportedDiagnosticsSpecificOptions.ToImmutableDictionary().SetItems(project.CompilationOptions.SpecificDiagnosticOptions);
+            var modifiedCompilationOptions = project.CompilationOptions.WithSpecificDiagnosticOptions(modifiedSpecificDiagnosticOptions);
+
+            var stopwatch = Stopwatch.StartNew();
+            const int iterations = 10;
+            for (int i = 0; i < iterations; i++)
+            {
+                var processedProject = project.WithCompilationOptions(modifiedCompilationOptions);
+
+                Compilation compilation = await processedProject.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
+                CompilationWithAnalyzers compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, new CompilationWithAnalyzersOptions(new AnalyzerOptions(ImmutableArray.Create<AdditionalText>()), null, true, false));
+
+                SyntaxTree tree = await project.GetDocument(documentId).GetSyntaxTreeAsync(cancellationToken).ConfigureAwait(false);
+                await compilationWithAnalyzers.GetAnalyzerSyntaxDiagnosticsAsync(tree, cancellationToken).ConfigureAwait(false);
+                await compilationWithAnalyzers.GetAnalyzerSemanticDiagnosticsAsync(compilation.GetSemanticModel(tree), null, cancellationToken).ConfigureAwait(false);
+            }
+
+            return new DocumentAnalyzerPerformance(iterations / stopwatch.Elapsed.TotalSeconds);
         }
 
         private static void WriteDiagnosticResults(ImmutableArray<Tuple<ProjectId, Diagnostic>> diagnostics, string fileName)
@@ -497,6 +581,19 @@ namespace StyleCopTester
             Console.WriteLine("/id:<id>   Enable analyzer with diagnostic ID < id > (when this is specified, only this analyzer is enabled)");
             Console.WriteLine("/apply     Write code fix changes back to disk");
             Console.WriteLine("/force     Force an analyzer to be enabled, regardless of the configured rule set(s) for the solution");
+        }
+
+        private struct DocumentAnalyzerPerformance
+        {
+            public DocumentAnalyzerPerformance(double editsPerSecond)
+            {
+                this.EditsPerSecond = editsPerSecond;
+            }
+
+            public double EditsPerSecond
+            {
+                get;
+            }
         }
     }
 }

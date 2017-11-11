@@ -10,6 +10,17 @@
         "VisualStudioVersion": "$(VisualStudioVersion)",
         "VSINSTALLDIR": "$(VSAPPIDDIR)\\..\\..\\"
       }
+    },
+    "StyleCopAnalyzers.sln /stats /editperf": {
+      "commandName": "Project",
+      "commandLineArgs": "..\\..\\StyleCopAnalyzers.sln /stats /editperf",
+      "workingDirectory": "$(MSBuildProjectDirectory)",
+      "environmentVariables": {
+        "MSBuildSDKsPath": "$(MSBuildSDKsPath)",
+        "MSBuildExtensionsPath": "$(MSBuildExtensionsPath)",
+        "VisualStudioVersion": "$(VisualStudioVersion)",
+        "VSINSTALLDIR": "$(VSAPPIDDIR)\\..\\..\\"
+      }
     }
   }
 }
