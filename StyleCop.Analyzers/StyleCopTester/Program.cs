@@ -11,6 +11,7 @@ namespace StyleCopTester
     using System.Linq;
     using System.Reflection;
     using System.Text;
+    using System.Text.RegularExpressions;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Threading;
@@ -124,9 +125,24 @@ namespace StyleCopTester
 
                 Console.WriteLine($"Found {allDiagnostics.Length} diagnostics in {stopwatch.ElapsedMilliseconds}ms");
 
-                bool testDocuments = args.Contains("/editperf");
+                bool testDocuments = args.Contains("/editperf") || args.Any(arg => arg.StartsWith("/editperf:"));
                 if (testDocuments)
                 {
+                    Func<string, bool> documentMatch = _ => true;
+                    string matchArg = args.FirstOrDefault(arg => arg.StartsWith("/editperf:"));
+                    if (matchArg != null)
+                    {
+                        Regex expression = new Regex(matchArg.Substring("/editperf:".Length), RegexOptions.Compiled | RegexOptions.IgnoreCase);
+                        documentMatch = documentPath => expression.IsMatch(documentPath);
+                    }
+
+                    int iterations = 10;
+                    string iterationsArg = args.FirstOrDefault(arg => arg.StartsWith("/edititer:"));
+                    if (iterationsArg != null)
+                    {
+                        iterations = int.Parse(iterationsArg.Substring("/edititer:".Length));
+                    }
+
                     var projectPerformance = new Dictionary<ProjectId, double>();
                     var documentPerformance = new Dictionary<DocumentId, DocumentAnalyzerPerformance>();
                     foreach (var projectId in solution.ProjectIds)
@@ -140,20 +156,21 @@ namespace StyleCopTester
                         foreach (var documentId in project.DocumentIds)
                         {
                             var document = project.GetDocument(documentId);
-                            var currentDocumentPerformance = await TestDocumentPerformanceAsync(analyzers, project, documentId, force, cancellationToken).ConfigureAwait(false);
+                            if (!documentMatch(document.FilePath))
+                            {
+                                continue;
+                            }
+
+                            var currentDocumentPerformance = await TestDocumentPerformanceAsync(analyzers, project, documentId, iterations, force, cancellationToken).ConfigureAwait(false);
                             Console.WriteLine($"{document.FilePath ?? document.Name}: {currentDocumentPerformance.EditsPerSecond:0.00}");
                             documentPerformance.Add(documentId, currentDocumentPerformance);
                         }
 
-                        double sumOfDocumentAverages = 0;
-                        foreach (var documentId in project.DocumentIds)
+                        double sumOfDocumentAverages = documentPerformance.Where(x => x.Key.ProjectId == projectId).Sum(x => x.Value.EditsPerSecond);
+                        double documentCount = documentPerformance.Where(x => x.Key.ProjectId == projectId).Count();
+                        if (documentCount > 0)
                         {
-                            sumOfDocumentAverages += documentPerformance[documentId].EditsPerSecond;
-                        }
-
-                        if (sumOfDocumentAverages != 0)
-                        {
-                            projectPerformance[project.Id] = sumOfDocumentAverages / project.DocumentIds.Count;
+                            projectPerformance[project.Id] = sumOfDocumentAverages / documentCount;
                         }
                     }
 
@@ -215,7 +232,7 @@ namespace StyleCopTester
             }
         }
 
-        private static async Task<DocumentAnalyzerPerformance> TestDocumentPerformanceAsync(ImmutableArray<DiagnosticAnalyzer> analyzers, Project project, DocumentId documentId, bool force, CancellationToken cancellationToken)
+        private static async Task<DocumentAnalyzerPerformance> TestDocumentPerformanceAsync(ImmutableArray<DiagnosticAnalyzer> analyzers, Project project, DocumentId documentId, int iterations, bool force, CancellationToken cancellationToken)
         {
             var supportedDiagnosticsSpecificOptions = new Dictionary<string, ReportDiagnostic>();
             if (force)
@@ -238,7 +255,6 @@ namespace StyleCopTester
             var modifiedCompilationOptions = project.CompilationOptions.WithSpecificDiagnosticOptions(modifiedSpecificDiagnosticOptions);
 
             var stopwatch = Stopwatch.StartNew();
-            const int iterations = 10;
             for (int i = 0; i < iterations; i++)
             {
                 var processedProject = project.WithCompilationOptions(modifiedCompilationOptions);
@@ -594,6 +610,8 @@ namespace StyleCopTester
             Console.WriteLine("/id:<id>   Enable analyzer with diagnostic ID < id > (when this is specified, only this analyzer is enabled)");
             Console.WriteLine("/apply     Write code fix changes back to disk");
             Console.WriteLine("/force     Force an analyzer to be enabled, regardless of the configured rule set(s) for the solution");
+            Console.WriteLine("/editperf[:<match>]     Test the incremental performance of analyzers to simulate the behavior of editing files. If <match> is specified, only files matching this regular expression are evaluated for editor performance.");
+            Console.WriteLine("/edititer:<iterations>  Specifies the number of iterations to use for testing documents with /editperf. When this is not specified, the default value is 10.");
         }
 
         private struct DocumentAnalyzerPerformance
