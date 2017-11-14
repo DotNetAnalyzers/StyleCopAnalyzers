@@ -970,6 +970,11 @@ public class TestClass
 
         protected override string GetSettings()
         {
+            if (this.settings == null)
+            {
+                return base.GetSettings();
+            }
+
             return this.settings;
         }
 
