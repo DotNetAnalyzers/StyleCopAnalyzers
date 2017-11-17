@@ -20,6 +20,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     [UseCulture("en-US")]
     public class SA1642UnitTests : CodeFixVerifier
     {
+        private string settings = null;
+
         [Theory]
         [InlineData("class")]
         [InlineData("struct")]
@@ -861,6 +863,30 @@ public class TestClass
             Assert.Empty(offeredFixes);
         }
 
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [WorkItem(2236, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2236")]
+        public async Task TestDocumentationCultureIsUsedAsync(string typeKind)
+        {
+            this.settings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""documentationCulture"": ""en-GB"",
+    }
+  }
+}
+";
+
+            await this.TestConstructorCorrectDocumentationSimpleAsync(
+                typeKind,
+                "public",
+                "Initialises a new instance of the ",
+                " " + typeKind,
+                false).ConfigureAwait(false);
+        }
+
         protected override Project ApplyCompilationOptions(Project project)
         {
             var resolver = new TestXmlReferenceResolver();
@@ -940,6 +966,16 @@ public class TestClass
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new SA1642SA1643CodeFixProvider();
+        }
+
+        protected override string GetSettings()
+        {
+            if (this.settings == null)
+            {
+                return base.GetSettings();
+            }
+
+            return this.settings;
         }
 
         private async Task TestEmptyConstructorAsync(string typeKind, string modifiers)
