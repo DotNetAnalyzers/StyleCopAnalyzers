@@ -494,7 +494,7 @@ namespace StyleCopTester
             Console.WriteLine("/stats     Display statistics of the solution");
             Console.WriteLine("/codefixes Test single code fixes");
             Console.WriteLine("/fixall    Test fix all providers");
-            Console.WriteLine("/id:<id>   Enable analyzer with diagnostic ID < id > (when this is specified, only this analyzer is enabled)");
+            Console.WriteLine("/id:<id>   Enable analyzer with diagnostic ID <id> (when this is specified, only this analyzer is enabled)");
             Console.WriteLine("/apply     Write code fix changes back to disk");
             Console.WriteLine("/force     Force an analyzer to be enabled, regardless of the configured rule set(s) for the solution");
         }
