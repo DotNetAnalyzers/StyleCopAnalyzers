@@ -119,11 +119,6 @@ namespace StyleCop.Analyzers.Helpers
             return ImmutableDictionary<Project, ImmutableArray<Diagnostic>>.Empty;
         }
 
-        public static async Task<ImmutableArray<Diagnostic>> GetAllDiagnosticsAsync(Compilation compilation, CompilationWithAnalyzers compilationWithAnalyzers, ImmutableArray<DiagnosticAnalyzer> analyzers, IEnumerable<Document> documents, bool includeCompilerDiagnostics, CancellationToken cancellationToken)
-        {
-            return await compilationWithAnalyzers.GetAllDiagnosticsAsync(cancellationToken).ConfigureAwait(false);
-        }
-
         /// <summary>
         /// Gets all <see cref="Diagnostic"/> instances within a specific <see cref="Project"/> which are relevant to a
         /// <see cref="FixAllContext"/>.
