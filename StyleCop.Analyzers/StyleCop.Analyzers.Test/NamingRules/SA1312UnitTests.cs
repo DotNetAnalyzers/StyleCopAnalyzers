@@ -9,9 +9,11 @@ namespace StyleCop.Analyzers.Test.NamingRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.NamingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using TestHelper;
     using Xunit;
 
+    [UseCulture("en-US")]
     public class SA1312UnitTests : CodeFixVerifier
     {
         [Fact]
