@@ -171,6 +171,11 @@ namespace StyleCop.Analyzers.Helpers
             return MultiLineElement(XmlCommentHelper.SummaryXmlTag, newLineText, content);
         }
 
+        public static XmlElementSyntax EmptySummaryElement(string newLineText)
+        {
+            return Element(XmlCommentHelper.SummaryXmlTag, SyntaxFactory.List(new XmlNodeSyntax[] { NewLine(newLineText) }));
+        }
+
         public static XmlElementSyntax RemarksElement(string newLineText, params XmlNodeSyntax[] content)
         {
             return RemarksElement(newLineText, List(content));
@@ -189,6 +194,16 @@ namespace StyleCop.Analyzers.Helpers
         public static XmlElementSyntax ReturnsElement(string newLineText, SyntaxList<XmlNodeSyntax> content)
         {
             return MultiLineElement(XmlCommentHelper.ReturnsXmlTag, newLineText, content);
+        }
+
+        public static XmlElementSyntax CompactReturnsElement(params XmlNodeSyntax[] content)
+        {
+            return CompactReturnsElement(List(content));
+        }
+
+        public static XmlElementSyntax CompactReturnsElement(SyntaxList<XmlNodeSyntax> content)
+        {
+            return Element(XmlCommentHelper.ReturnsXmlTag, content);
         }
 
         public static XmlElementSyntax ValueElement(string newLineText, params XmlNodeSyntax[] content)
@@ -230,6 +245,17 @@ namespace StyleCop.Analyzers.Helpers
         public static XmlElementSyntax ParamElement(string parameterName, SyntaxList<XmlNodeSyntax> content)
         {
             XmlElementSyntax element = Element("param", content);
+            return element.WithStartTag(element.StartTag.AddAttributes(NameAttribute(parameterName)));
+        }
+
+        public static XmlElementSyntax TypeParamElement(string parameterName, params XmlNodeSyntax[] content)
+        {
+            return TypeParamElement(parameterName, List(content));
+        }
+
+        public static XmlElementSyntax TypeParamElement(string parameterName, SyntaxList<XmlNodeSyntax> content)
+        {
+            XmlElementSyntax element = Element("typeparam", content);
             return element.WithStartTag(element.StartTag.AddAttributes(NameAttribute(parameterName)));
         }
 

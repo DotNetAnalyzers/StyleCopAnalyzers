@@ -91,12 +91,12 @@ namespace StyleCop.Analyzers.DocumentationRules
             bool isAsynchronousTestMethod;
             if (methodDeclarationSyntax != null)
             {
-                isTask = IsTaskReturningMethod(semanticModel, methodDeclarationSyntax, cancellationToken);
+                isTask = TaskHelper.IsTaskReturningMethod(semanticModel, methodDeclarationSyntax, cancellationToken);
                 isAsynchronousTestMethod = isTask && IsAsynchronousTestMethod(semanticModel, methodDeclarationSyntax, cancellationToken);
             }
             else
             {
-                isTask = IsTaskReturningMethod(semanticModel, delegateDeclarationSyntax, cancellationToken);
+                isTask = TaskHelper.IsTaskReturningMethod(semanticModel, delegateDeclarationSyntax, cancellationToken);
                 isAsynchronousTestMethod = false;
             }
 
@@ -166,38 +166,6 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             return document.WithSyntaxRoot(newRoot);
-        }
-
-        private static bool IsTaskReturningMethod(SemanticModel semanticModel, MethodDeclarationSyntax methodDeclarationSyntax, CancellationToken cancellationToken)
-        {
-            return IsTaskType(semanticModel, methodDeclarationSyntax.ReturnType, cancellationToken);
-        }
-
-        private static bool IsTaskReturningMethod(SemanticModel semanticModel, DelegateDeclarationSyntax delegateDeclarationSyntax, CancellationToken cancellationToken)
-        {
-            return IsTaskType(semanticModel, delegateDeclarationSyntax.ReturnType, cancellationToken);
-        }
-
-        private static bool IsTaskType(SemanticModel semanticModel, TypeSyntax typeSyntax, CancellationToken cancellationToken)
-        {
-            SymbolInfo symbolInfo = semanticModel.GetSymbolInfo(typeSyntax, cancellationToken);
-            INamedTypeSymbol namedTypeSymbol = symbolInfo.Symbol as INamedTypeSymbol;
-            if (namedTypeSymbol == null)
-            {
-                return false;
-            }
-
-            if (!string.Equals(nameof(Task), namedTypeSymbol.Name, StringComparison.Ordinal))
-            {
-                return false;
-            }
-
-            if (!string.Equals(typeof(Task).Namespace, namedTypeSymbol.ContainingNamespace?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat.WithGlobalNamespaceStyle(SymbolDisplayGlobalNamespaceStyle.Omitted)), StringComparison.Ordinal))
-            {
-                return false;
-            }
-
-            return true;
         }
 
         private static bool IsAsynchronousTestMethod(SemanticModel semanticModel, MethodDeclarationSyntax methodDeclarationSyntax, CancellationToken cancellationToken)
