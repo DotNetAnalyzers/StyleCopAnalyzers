@@ -33,6 +33,10 @@ namespace StyleCop.Analyzers.Test.Helpers
 
         private CultureInfo originalUiCulture;
 
+        private CultureInfo originalDefaultCulture;
+
+        private CultureInfo originalDefaultUiCulture;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="UseCultureAttribute"/>
         /// class with a culture.
@@ -85,9 +89,14 @@ namespace StyleCop.Analyzers.Test.Helpers
         {
             this.originalCulture = Thread.CurrentThread.CurrentCulture;
             this.originalUiCulture = Thread.CurrentThread.CurrentUICulture;
+            this.originalDefaultCulture = CultureInfo.DefaultThreadCurrentCulture;
+            this.originalDefaultUiCulture = CultureInfo.DefaultThreadCurrentUICulture;
 
             Thread.CurrentThread.CurrentCulture = this.Culture;
             Thread.CurrentThread.CurrentUICulture = this.UiCulture;
+
+            CultureInfo.DefaultThreadCurrentCulture = this.Culture;
+            CultureInfo.DefaultThreadCurrentUICulture = this.UiCulture;
         }
 
         /// <summary>
@@ -99,6 +108,9 @@ namespace StyleCop.Analyzers.Test.Helpers
         {
             Thread.CurrentThread.CurrentCulture = this.originalCulture;
             Thread.CurrentThread.CurrentUICulture = this.originalUiCulture;
+
+            CultureInfo.DefaultThreadCurrentCulture = this.originalDefaultCulture;
+            CultureInfo.DefaultThreadCurrentUICulture = this.originalDefaultUiCulture;
         }
     }
 }
