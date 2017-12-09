@@ -94,7 +94,7 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private class AnalyzerContext
         {
-            private List<Diagnostic> reportedDiagnostics = new List<Diagnostic>();
+            private readonly List<Diagnostic> reportedDiagnostics = new List<Diagnostic>();
 
             public void HandleBlock(SyntaxNodeAnalysisContext context)
             {
@@ -230,30 +230,34 @@ namespace StyleCop.Analyzers.LayoutRules
             {
                 Diagnostic newDiagnostic;
 
-                var locationLine = location.GetLineSpan().StartLinePosition.Line;
-                var notFirstDiagnosticOnLine = this.reportedDiagnostics.Any(rd => (rd.Severity != DiagnosticSeverity.Hidden) && (rd.Location.GetLineSpan().StartLinePosition.Line == locationLine));
-
-                if (alwaysReportAsHidden || notFirstDiagnosticOnLine)
+                lock (this.reportedDiagnostics)
                 {
-                    newDiagnostic = Diagnostic.Create(
-                        Descriptor.Id,
-                        Descriptor.Category,
-                        Descriptor.MessageFormat,
-                        DiagnosticSeverity.Hidden,
-                        Descriptor.DefaultSeverity,
-                        Descriptor.IsEnabledByDefault,
-                        1,
-                        Descriptor.Title,
-                        Descriptor.Description,
-                        Descriptor.HelpLinkUri,
-                        location);
-                }
-                else
-                {
-                    newDiagnostic = Diagnostic.Create(Descriptor, location);
+                    var locationLine = location.GetLineSpan().StartLinePosition.Line;
+                    var notFirstDiagnosticOnLine = this.reportedDiagnostics.Any(rd => (rd.Severity != DiagnosticSeverity.Hidden) && (rd.Location.GetLineSpan().StartLinePosition.Line == locationLine));
+
+                    if (alwaysReportAsHidden || notFirstDiagnosticOnLine)
+                    {
+                        newDiagnostic = Diagnostic.Create(
+                            Descriptor.Id,
+                            Descriptor.Category,
+                            Descriptor.MessageFormat,
+                            DiagnosticSeverity.Hidden,
+                            Descriptor.DefaultSeverity,
+                            Descriptor.IsEnabledByDefault,
+                            1,
+                            Descriptor.Title,
+                            Descriptor.Description,
+                            Descriptor.HelpLinkUri,
+                            location);
+                    }
+                    else
+                    {
+                        newDiagnostic = Diagnostic.Create(Descriptor, location);
+                    }
+
+                    this.reportedDiagnostics.Add(newDiagnostic);
                 }
 
-                this.reportedDiagnostics.Add(newDiagnostic);
                 context.ReportDiagnostic(newDiagnostic);
             }
         }
