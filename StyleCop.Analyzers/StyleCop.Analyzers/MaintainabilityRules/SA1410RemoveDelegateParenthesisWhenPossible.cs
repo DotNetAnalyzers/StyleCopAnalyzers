@@ -5,6 +5,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.Linq;
+    using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -81,8 +83,59 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 return;
             }
 
+            // if the delegate is passed as a parameter, verify that there is no ambiguity.
+            if (syntax.Parent.IsKind(SyntaxKind.Argument))
+            {
+                var argumentSyntax = (ArgumentSyntax)syntax.Parent;
+                var argumentListSyntax = (ArgumentListSyntax)argumentSyntax.Parent;
+
+                switch (argumentListSyntax.Parent.Kind())
+                {
+                case SyntaxKind.ObjectCreationExpression:
+                case SyntaxKind.InvocationExpression:
+                    if (HasAmbiguousOverload(context, argumentListSyntax.Arguments.IndexOf(argumentSyntax), argumentListSyntax.Parent))
+                    {
+                        return;
+                    }
+
+                    break;
+                }
+            }
+
             // Remove delegate parenthesis when possible
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.ParameterList.GetLocation()));
+        }
+
+        private static bool HasAmbiguousOverload(SyntaxNodeAnalysisContext context, int parameterIndex, SyntaxNode methodCallSyntax)
+        {
+            var methodSymbol = (IMethodSymbol)context.SemanticModel.GetSymbolInfo(methodCallSyntax, context.CancellationToken).Symbol;
+
+            var nameOverloads = methodSymbol.ContainingType.GetMembers(methodSymbol.Name);
+            var parameterCountMatchingOverloads = nameOverloads.OfType<IMethodSymbol>().Where(symbol => (symbol != methodSymbol) && (symbol.Parameters.Length == methodSymbol.Parameters.Length));
+
+            foreach (var overload in parameterCountMatchingOverloads)
+            {
+                var isAmbiguousOverload = true;
+
+                for (var i = 0; isAmbiguousOverload && (i < methodSymbol.Parameters.Length); i++)
+                {
+                    if (i == parameterIndex)
+                    {
+                        isAmbiguousOverload = overload.Parameters[i].Type.TypeKind == TypeKind.Delegate;
+                    }
+                    else
+                    {
+                        isAmbiguousOverload = methodSymbol.Parameters[i].Type == overload.Parameters[i].Type;
+                    }
+                }
+
+                if (isAmbiguousOverload)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
