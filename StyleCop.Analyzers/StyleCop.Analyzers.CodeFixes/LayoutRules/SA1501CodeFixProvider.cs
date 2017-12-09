@@ -39,6 +39,11 @@ namespace StyleCop.Analyzers.LayoutRules
         {
             foreach (Diagnostic diagnostic in context.Diagnostics)
             {
+                if (diagnostic.Properties.GetValueOrDefault(SA1501StatementMustNotBeOnASingleLine.SuppressCodeFixKey) == SA1501StatementMustNotBeOnASingleLine.SuppressCodeFixValue)
+                {
+                    continue;
+                }
+
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         LayoutResources.SA1501CodeFix,
