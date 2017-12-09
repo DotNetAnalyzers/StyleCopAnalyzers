@@ -20,6 +20,89 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     /// </remarks>
     public partial class SA1500UnitTests : CodeFixVerifier
     {
+        /// <summary>
+        /// Verifies that a complex multiple fix scenario is handled correctly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2566, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2566")]
+        public async Task VerifyFixAllAsync()
+        {
+            var testCode = @"using System;
+public class TestClass
+{
+    public static void Sample()
+    {
+        try {
+            if (false) {
+                return;
+            } else if (false) {
+                return;
+            } else {
+                return;
+            }
+        } catch (Exception) {
+        } catch {
+        } finally {
+        }
+    }
+}
+";
+
+            var fixedTestCode = @"using System;
+public class TestClass
+{
+    public static void Sample()
+    {
+        try
+        {
+            if (false)
+            {
+                return;
+            }
+            else if (false)
+            {
+                return;
+            }
+            else
+            {
+                return;
+            }
+        }
+        catch (Exception)
+        {
+        }
+        catch
+        {
+        }
+        finally
+        {
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expectedDiagnostics =
+            {
+                this.CSharpDiagnostic().WithLocation(6, 13),
+                this.CSharpDiagnostic().WithLocation(7, 24),
+                this.CSharpDiagnostic().WithLocation(9, 13),
+                this.CSharpDiagnostic().WithLocation(9, 31),
+                this.CSharpDiagnostic().WithLocation(11, 13),
+                this.CSharpDiagnostic().WithLocation(11, 20),
+                this.CSharpDiagnostic().WithLocation(14, 9),
+                this.CSharpDiagnostic().WithLocation(14, 29),
+                this.CSharpDiagnostic().WithLocation(15, 9),
+                this.CSharpDiagnostic().WithLocation(15, 17),
+                this.CSharpDiagnostic().WithLocation(16, 9),
+                this.CSharpDiagnostic().WithLocation(16, 19),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
