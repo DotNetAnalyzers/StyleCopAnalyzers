@@ -312,6 +312,26 @@ class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(2564, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2564")]
+        public async Task TestArrayElementPointerDeferenceAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    public unsafe string TestMethod(int[] a)
+    {
+        fixed (int* p = a)
+        {
+            int*[] xx = new[] { p };
+            return xx[0]->ToString(""n2"");
+        }
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
