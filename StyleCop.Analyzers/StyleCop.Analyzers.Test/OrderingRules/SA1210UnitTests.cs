@@ -115,6 +115,65 @@ namespace Bar
         }
 
         [Fact]
+        public async Task TestInvalidOrderedUsingDirectivesWithWindowsUsingDirectiveAsync()
+        {
+            var testCode = @"namespace Windows.Foundation {}
+namespace Windows.Foundation.Collections {}
+namespace Foo
+{
+    using Windows.Foundation.Collections;
+    using Windows.Foundation;
+    using System.Threading;
+    using System;
+}
+
+namespace Bar
+{
+    using Foo;
+    using Bar;
+    using Windows.Foundation.Collections;
+    using Windows.Foundation;
+    using System.Threading;
+    using System;
+}";
+
+            var fixedTestCode = @"namespace Windows.Foundation {}
+namespace Windows.Foundation.Collections {}
+namespace Foo
+{
+    using System;
+    using System.Threading;
+    using Windows.Foundation;
+    using Windows.Foundation.Collections;
+}
+
+namespace Bar
+{
+    using System;
+    using System.Threading;
+    using Windows.Foundation;
+    using Windows.Foundation.Collections;
+    using Bar;
+    using Foo;
+}";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(5, 5),
+                this.CSharpDiagnostic().WithLocation(6, 5),
+                this.CSharpDiagnostic().WithLocation(7, 5),
+                this.CSharpDiagnostic().WithLocation(13, 5),
+                this.CSharpDiagnostic().WithLocation(15, 5),
+                this.CSharpDiagnostic().WithLocation(16, 5),
+                this.CSharpDiagnostic().WithLocation(17, 5),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        [Fact]
         [WorkItem(2336, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2336")]
         public async Task TestUsingDirectivesCaseSensitivityAsync()
         {
