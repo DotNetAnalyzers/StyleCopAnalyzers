@@ -438,7 +438,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 var namespaceTypeName = namespaceSymbol.ToDisplayString(FullNamespaceDisplayFormat);
                 var firstPart = namespaceTypeName.Split('.')[0];
 
-                return string.Equals(SystemUsingDirectiveIdentifier, firstPart, StringComparison.Ordinal);
+                return string.Equals(SystemUsingDirectiveIdentifier, firstPart, StringComparison.Ordinal) || string.Equals(WindowsUsingDirectiveIdentifier, firstPart, StringComparison.Ordinal);
             }
 
             private void ProcessMembers(SyntaxList<MemberDeclarationSyntax> members)
