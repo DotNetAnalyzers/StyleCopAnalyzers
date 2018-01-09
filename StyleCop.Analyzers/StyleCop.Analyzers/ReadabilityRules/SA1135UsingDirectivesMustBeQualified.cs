@@ -44,12 +44,15 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+
             context.RegisterCompilationStartAction(HandleCompilationStart);
         }
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleUsingDeclaration, SyntaxKind.UsingDirective);
+            context.RegisterSyntaxNodeAction(HandleUsingDeclaration, SyntaxKind.UsingDirective);
         }
 
         private static void HandleUsingDeclaration(SyntaxNodeAnalysisContext context)

@@ -33,9 +33,7 @@ namespace System.Threading
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorNamespace).WithLocation(4, 5).WithArguments("System.IO"),
-                this.CSharpDiagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorNamespace).WithLocation(4, 5).WithArguments("System.IO"),
                 this.CSharpDiagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorNamespace).WithLocation(5, 5).WithArguments("System.Threading.Tasks"),
-                this.CSharpDiagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorNamespace).WithLocation(5, 5).WithArguments("System.Threading.Tasks")
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -62,9 +60,7 @@ namespace System.Threading
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorNamespace).WithLocation(4, 5).WithArguments("System.IO"),
-                this.CSharpDiagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorNamespace).WithLocation(4, 5).WithArguments("System.IO"),
                 this.CSharpDiagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorNamespace).WithLocation(5, 5).WithArguments("System.Threading.Tasks"),
-                this.CSharpDiagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorNamespace).WithLocation(5, 5).WithArguments("System.Threading.Tasks")
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -91,9 +87,7 @@ namespace System.Threading
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorType).WithLocation(4, 5).WithArguments("System.IO.Path"),
-                this.CSharpDiagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorType).WithLocation(4, 5).WithArguments("System.IO.Path"),
                 this.CSharpDiagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorType).WithLocation(5, 5).WithArguments("System.Threading.Tasks.Task"),
-                this.CSharpDiagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorType).WithLocation(5, 5).WithArguments("System.Threading.Tasks.Task")
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -145,9 +139,7 @@ namespace System.Threading
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorNamespace).WithLocation(4, 5).WithArguments("System.IO"),
-                this.CSharpDiagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorNamespace).WithLocation(4, 5).WithArguments("System.IO"),
                 this.CSharpDiagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorNamespace).WithLocation(5, 5).WithArguments("System.Threading.Tasks"),
-                this.CSharpDiagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorNamespace).WithLocation(5, 5).WithArguments("System.Threading.Tasks")
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
