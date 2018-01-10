@@ -63,7 +63,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void CheckUsingDeclaration(SyntaxNodeAnalysisContext context, UsingDirectiveSyntax usingDirective)
         {
-            // Usings outside of a namepsace are always qualified.
+            // Usings outside of a namespace are always qualified.
             if (usingDirective.Parent is NamespaceDeclarationSyntax && usingDirective.StaticKeyword.IsKind(SyntaxKind.None))
             {
                 string usingString = usingDirective.Name.ToString();
