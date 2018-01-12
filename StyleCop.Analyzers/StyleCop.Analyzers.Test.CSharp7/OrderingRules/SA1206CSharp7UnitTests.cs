@@ -5,35 +5,66 @@ namespace StyleCop.Analyzers.Test.CSharp7.OrderingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using StyleCop.Analyzers.Test.OrderingRules;
     using TestHelper;
     using Xunit;
 
     public class SA1206CSharp7UnitTests : SA1206UnitTests
     {
-        [Fact(Skip = "The version of the compiler used in these tests does not yet support this feature.")]
+        [Fact]
         public async Task TestRefKeywordInStructDeclarationAsync()
         {
-            var testCode = @"private ref struct BitHelper
+            var testCode = @"class OuterClass
 {
+    private ref struct BitHelper
+    {
+    }
 }
 ";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact(Skip = "The version of the compiler used in these tests does not yet support this feature.")]
-        public async Task TestRefKeywordInStructDeclarationWrongOrderAsync()
+        [Fact]
+        public async Task TestReadonlyKeywordInStructDeclarationAsync()
         {
-            var testCode = @"ref private struct BitHelper
+            var testCode = @"class OuterClass
 {
+    private readonly struct BitHelper
+    {
+    }
+}
+";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestReadonlyKeywordInStructDeclarationWrongOrderAsync()
+        {
+            // Note that we don't need a test for ref with the wrong order, because this would be a compile time error
+            var testCode = @"class OuterClass
+{
+    readonly private struct BitHelper
+    {
+    }
 }
 ";
 
             DiagnosticResult[] expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(1, 13).WithArguments("ref", "private"),
+                this.CSharpDiagnostic().WithLocation(3, 14).WithArguments("private", "readonly"),
             };
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected override Project ApplyCompilationOptions(Project project)
+        {
+            var newProject = base.ApplyCompilationOptions(project);
+
+            var parseOptions = (CSharpParseOptions)newProject.ParseOptions;
+
+            return newProject.WithParseOptions(parseOptions.WithLanguageVersion(LanguageVersion.Latest));
         }
     }
 }
