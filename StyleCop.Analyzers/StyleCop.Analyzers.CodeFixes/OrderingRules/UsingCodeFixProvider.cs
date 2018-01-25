@@ -26,7 +26,6 @@ namespace StyleCop.Analyzers.OrderingRules
     internal sealed partial class UsingCodeFixProvider : CodeFixProvider
     {
         private const string SystemUsingDirectiveIdentifier = nameof(System);
-        private const string WindowsUsingDirectiveIdentifier = "Windows";
 
         private static readonly List<UsingDirectiveSyntax> EmptyUsingsList = new List<UsingDirectiveSyntax>();
         private static readonly SyntaxAnnotation UsingCodeFixAnnotation = new SyntaxAnnotation(nameof(UsingCodeFixAnnotation));
