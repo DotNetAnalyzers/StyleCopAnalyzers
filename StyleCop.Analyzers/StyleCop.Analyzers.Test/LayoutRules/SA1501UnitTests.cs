@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.Test.LayoutRules
 {
     using System.Collections.Generic;
-    using System.Collections.Immutable;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -646,7 +645,7 @@ public class TypeName
     }
 }";
 
-            var fixedCode = @"using System.Diagnostics;
+            var incrementalFixedCode = @"using System.Diagnostics;
 public class TypeName
 {
     public void Bar(int i)
@@ -695,11 +694,72 @@ public class TypeName
             Debug.Assert(true);//21
 
 
-        if (i == 11) if (i == 12) Debug.Assert(false);
+        if (i == 11) if (i == 12)
+            Debug.Assert(false);
             else
-    Debug.Assert(false);
-else if (i == 13)
-    Debug.Assert(true);//24
+            Debug.Assert(false);
+        else if (i == 13)
+            Debug.Assert(true);//24
+
+    }
+}";
+
+            var batchFixedCode = @"using System.Diagnostics;
+public class TypeName
+{
+    public void Bar(int i)
+    {
+        if (i == 0)
+            Debug.Assert(true);
+        else
+            Debug.Assert(false);//8
+
+
+        if (i == 1)
+            Debug.Assert(true);
+        else if (i == 2)
+            Debug.Assert(false);//10
+
+
+        if (i == 3)
+            Debug.Assert(true);
+        else if (i == 4)
+            Debug.Assert(false);//14
+
+
+        if (i == 5)
+            Debug.Assert(true);
+        else if (i == 6)
+            Debug.Assert(false);
+        else
+            Debug.Assert(false);//16
+
+
+        if (i == 7)
+            if (i == 8)
+                Debug.Assert(false);
+            else
+                Debug.Assert(false);
+        else
+            Debug.Assert(true);//18
+
+
+        if (i == 9)
+            if (i == 10)
+                Debug.Assert(false);
+            else
+                Debug.Assert(false);
+            else
+            Debug.Assert(true);//21
+
+
+        if (i == 11)
+            if (i == 12)
+                Debug.Assert(false);
+            else
+                Debug.Assert(false);
+        else if (i == 13)
+            Debug.Assert(true);//24
 
     }
 }";
@@ -708,16 +768,30 @@ else if (i == 13)
             {
                 this.CSharpDiagnostic().WithLocation(8, 14),
                 this.CSharpDiagnostic().WithLocation(10, 21),
+                this.CSharpDiagnostic().WithLocation(10, 58),
                 this.CSharpDiagnostic().WithLocation(14, 26),
                 this.CSharpDiagnostic().WithLocation(16, 21),
+                this.CSharpDiagnostic().WithLocation(16, 58),
+                this.CSharpDiagnostic().WithLocation(16, 84),
                 this.CSharpDiagnostic().WithLocation(18, 21),
+                this.CSharpDiagnostic().WithLocation(18, 33),
+                this.CSharpDiagnostic().WithLocation(18, 59),
+                this.CSharpDiagnostic().WithLocation(18, 85),
                 this.CSharpDiagnostic().WithLocation(21, 26),
+                this.CSharpDiagnostic().WithLocation(21, 52),
+                this.CSharpDiagnostic().WithLocation(21, 78),
+                this.CSharpDiagnostic().WithLocation(23, 22).WithSeverity(DiagnosticSeverity.Hidden),
+                this.CSharpDiagnostic().WithLocation(23, 35),
                 this.CSharpDiagnostic().WithLocation(24, 18),
+                this.CSharpDiagnostic().WithLocation(24, 57),
             };
 
+            DiagnosticResult incrementalFixExpected = this.CSharpDiagnostic().WithLocation(50, 22).WithSeverity(DiagnosticSeverity.Hidden);
+
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 3, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(incrementalFixedCode, incrementalFixExpected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(batchFixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, incrementalFixedCode, batchFixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -765,11 +839,15 @@ public class TypeName
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 21);
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(6, 21),
+                this.CSharpDiagnostic().WithLocation(6, 46),
+            };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -860,10 +938,15 @@ public class TypeName
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 21);
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(6, 21),
+                this.CSharpDiagnostic().WithLocation(6, 33),
+            };
+
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
