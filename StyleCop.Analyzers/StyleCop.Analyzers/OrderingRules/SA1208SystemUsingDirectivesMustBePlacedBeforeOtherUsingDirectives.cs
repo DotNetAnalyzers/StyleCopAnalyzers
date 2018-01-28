@@ -62,7 +62,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 return;
             }
 
-            var compilationUnit = context.Node as CompilationUnitSyntax;
+            var compilationUnit = (CompilationUnitSyntax)context.Node;
 
             var usings = compilationUnit.Usings;
 
@@ -76,7 +76,7 @@ namespace StyleCop.Analyzers.OrderingRules
                 return;
             }
 
-            var namespaceDeclaration = context.Node as NamespaceDeclarationSyntax;
+            var namespaceDeclaration = (NamespaceDeclarationSyntax)context.Node;
 
             var usings = namespaceDeclaration.Usings;
 

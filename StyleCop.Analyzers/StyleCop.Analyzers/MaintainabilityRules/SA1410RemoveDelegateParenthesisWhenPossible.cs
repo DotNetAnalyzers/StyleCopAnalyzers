@@ -63,11 +63,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
         private static void HandleAnonymousMethodExpression(SyntaxNodeAnalysisContext context)
         {
-            AnonymousMethodExpressionSyntax syntax = context.Node as AnonymousMethodExpressionSyntax;
-            if (syntax == null)
-            {
-                return;
-            }
+            var syntax = (AnonymousMethodExpressionSyntax)context.Node;
 
             // ignore if no parameter list exists
             if (syntax.ParameterList == null)

@@ -22,11 +22,11 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// <param name="methodName">The method name that should be detected</param>
         /// <param name="parameterIndex">The index, the string parameter that should be checked, is at</param>
         /// <param name="descriptor">The descriptor of the diagnostic that should be added</param>
-        protected internal static void HandleMethodCall(SyntaxNodeAnalysisContext context, string methodName, int parameterIndex, DiagnosticDescriptor descriptor)
+        protected internal static void HandleInvocationExpression(SyntaxNodeAnalysisContext context, string methodName, int parameterIndex, DiagnosticDescriptor descriptor)
         {
-            var invocationExpressionSyntax = context.Node as InvocationExpressionSyntax;
-            var memberAccessExpressionSyntax = invocationExpressionSyntax?.Expression as MemberAccessExpressionSyntax;
-            var identifierNameSyntax = invocationExpressionSyntax?.Expression as IdentifierNameSyntax;
+            var invocationExpressionSyntax = (InvocationExpressionSyntax)context.Node;
+            var memberAccessExpressionSyntax = invocationExpressionSyntax.Expression as MemberAccessExpressionSyntax;
+            var identifierNameSyntax = invocationExpressionSyntax.Expression as IdentifierNameSyntax;
             var name = memberAccessExpressionSyntax?.Name?.Identifier.ValueText ?? identifierNameSyntax?.Identifier.ValueText;
             if (name == methodName)
             {
