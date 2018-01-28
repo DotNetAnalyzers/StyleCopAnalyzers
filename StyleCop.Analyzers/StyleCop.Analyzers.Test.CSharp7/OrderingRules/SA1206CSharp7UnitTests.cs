@@ -13,28 +13,22 @@ namespace StyleCop.Analyzers.Test.CSharp7.OrderingRules
 
     public class SA1206CSharp7UnitTests : SA1206UnitTests
     {
-        [Fact]
-        public async Task TestRefKeywordInStructDeclarationAsync()
+        [Theory]
+        [InlineData("readonly")]
+        [InlineData("ref")]
+        [InlineData("readonly ref")]
+        [InlineData("readonly partial")]
+        [InlineData("ref partial")]
+        [InlineData("readonly ref partial")]
+        [WorkItem(2578, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2578")]
+        public async Task TestReadonlyRefKeywordInStructDeclarationAsync(string keywords)
         {
-            var testCode = @"class OuterClass
-{
-    private ref struct BitHelper
-    {
-    }
-}
-";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestReadonlyKeywordInStructDeclarationAsync()
-        {
-            var testCode = @"class OuterClass
-{
-    private readonly struct BitHelper
-    {
-    }
-}
+            var testCode = $@"class OuterClass
+{{
+    private {keywords} struct BitHelper
+    {{
+    }}
+}}
 ";
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
