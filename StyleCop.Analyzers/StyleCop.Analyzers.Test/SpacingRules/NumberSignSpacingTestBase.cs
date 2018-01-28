@@ -424,6 +424,113 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Theory]
+        [InlineData("")]
+        [InlineData(" ")]
+        [WorkItem(2289, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2289")]
+        public async Task TestSpaceBeforeUnaryOperatorInInterpolationAlignmentClauseAsync(string spacing)
+        {
+            string test = $@"namespace Namespace
+{{
+    class Type
+    {{
+        void Foo()
+        {{
+            string msg = $""{{5,{spacing}{this.Sign}3}}"";
+        }}
+    }}
+}}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2289, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2289")]
+        public async Task TestSpaceAfterUnaryOperatorInInterpolationAlignmentClauseAsync()
+        {
+            string testFormat = @"namespace Namespace
+{{
+    class Type
+    {{
+        void Foo()
+        {{
+            string msg = $""{{5,{0}}}"";
+        }}
+    }}
+}}
+";
+
+            // in all cases the final output should be the following
+            string fixedTest = @"namespace Namespace
+{
+    class Type
+    {
+        void Foo()
+        {
+            string msg = $""{5," + this.Sign + @"3}"";
+        }
+    }
+}
+";
+
+            string test = string.Format(testFormat, this.Sign + "3");
+            await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+
+            test = string.Format(testFormat, this.Sign + " 3");
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 31),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTest, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2289, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2289")]
+        public async Task TestSpaceBeforeAndAfterUnaryOperatorInInterpolationAlignmentClauseAsync()
+        {
+            string testFormat = @"namespace Namespace
+{{
+    class Type
+    {{
+        void Foo()
+        {{
+            string msg = $""{{5,{0}}}"";
+        }}
+    }}
+}}
+";
+
+            // in all cases the final output should be the following
+            string fixedTest = @"namespace Namespace
+{
+    class Type
+    {
+        void Foo()
+        {
+            string msg = $""{5, " + this.Sign + @"3}"";
+        }
+    }
+}
+";
+
+            string test = string.Format(testFormat, " " + this.Sign + "3");
+            await this.VerifyCSharpDiagnosticAsync(test, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+
+            test = string.Format(testFormat, " " + this.Sign + " 3");
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(7, 32),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(test, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTest, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(test, fixedTest, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override abstract CodeFixProvider GetCSharpCodeFixProvider();
     }
 }

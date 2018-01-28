@@ -7,7 +7,6 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.SpacingRules;
@@ -159,6 +158,86 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             string fixedStatement = @"int[,,] myArray;";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 19);
+
+            await this.TestCommaInStatementOrDeclAsync(statement, expected, fixedStatement).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2289, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2289")]
+        public async Task TestSpaceBeforeCommaWhenPartOfInterpolationAlignmentClauseAsync()
+        {
+            string statement = @"var x = new[] { 1, 2, 3, 4, 5, 6, 7 };
+            var t = $""{x[2] ,3}"";";
+            string fixedStatement = @"var x = new[] { 1, 2, 3, 4, 5, 6, 7 };
+            var t = $""{x[2],3}"";";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(8, 29);
+
+            await this.TestCommaInStatementOrDeclAsync(statement, expected, fixedStatement).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2289, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2289")]
+        public async Task TestSpaceAfterCommaWhenPartOfInterpolationAlignmentClauseAsync()
+        {
+            string statement = @"var x = new[] { 1, 2, 3, 4, 5, 6, 7 };
+            var t = $""{x[2], 3}"";";
+            string fixedStatement = @"var x = new[] { 1, 2, 3, 4, 5, 6, 7 };
+            var t = $""{x[2],3}"";";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(8, 28);
+
+            await this.TestCommaInStatementOrDeclAsync(statement, expected, fixedStatement).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2289, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2289")]
+        public async Task TestSpaceBeforeAndAfterCommaWhenPartOfInterpolationAlignmentClauseAsync()
+        {
+            string statement = @"var x = new[] { 1, 2, 3, 4, 5, 6, 7 };
+            var t = $""{x[2] , 3}"";";
+            string fixedStatement = @"var x = new[] { 1, 2, 3, 4, 5, 6, 7 };
+            var t = $""{x[2],3}"";";
+
+            DiagnosticResult[] expected =
+                {
+                    this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(8, 29),
+                    this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(8, 29),
+                };
+
+            await this.TestCommaInStatementOrDeclAsync(statement, expected, fixedStatement).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2289, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2289")]
+        public async Task TestSpaceAfterCommaWithMinusWhenPartOfInterpolationAlignmentClauseAsync()
+        {
+            string statement = @"var x = new[] { 1, 2, 3, 4, 5, 6, 7 };
+            var t = $""{x[2], -3}"";";
+            string fixedStatement = @"var x = new[] { 1, 2, 3, 4, 5, 6, 7 };
+            var t = $""{x[2],-3}"";";
+
+            DiagnosticResult[] expected =
+                {
+                    this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(8, 28),
+                };
+
+            await this.TestCommaInStatementOrDeclAsync(statement, expected, fixedStatement).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2289, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2289")]
+        public async Task TestSpaceAfterCommaWithPlusWhenPartOfInterpolationAlignmentClauseAsync()
+        {
+            string statement = @"var x = new[] { 1, 2, 3, 4, 5, 6, 7 };
+            var t = $""{x[2], +3}"";";
+            string fixedStatement = @"var x = new[] { 1, 2, 3, 4, 5, 6, 7 };
+            var t = $""{x[2],+3}"";";
+
+            DiagnosticResult[] expected =
+                {
+                    this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(8, 28),
+                };
 
             await this.TestCommaInStatementOrDeclAsync(statement, expected, fixedStatement).ConfigureAwait(false);
         }
