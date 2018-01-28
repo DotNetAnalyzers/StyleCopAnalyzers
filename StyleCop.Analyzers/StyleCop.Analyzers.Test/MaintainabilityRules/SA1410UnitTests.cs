@@ -121,6 +121,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         });
 
         this.TestMethod2(delegate() { return true; });
+        this.TestMethod3(delegate() { return true; });
     }
 
     public void TestMethod2(Delegate1 d)
@@ -128,6 +129,17 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 
     public void TestMethod2(Delegate2 d)
+    {
+    }
+}
+
+public static class TestClassExtensions
+{
+    public static void TestMethod3(this TestClass obj, TestClass.Delegate1 d)
+    {
+    }
+
+    public static void TestMethod3(this TestClass obj, TestClass.Delegate2 d)
     {
     }
 }
@@ -155,6 +167,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         this.TestMethod3(0, delegate() { return true; });
         this.TestMethod4(delegate() { return true; }, 1);
         this.TestMethod5(delegate() { return true; });
+        this.TestMethod6(delegate() { return true; });
     }
 
     public void TestMethod2(Delegate1 d)
@@ -188,6 +201,17 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     public void TestMethod5(Delegate2 d, double x)
     {
     }
+
+    public void TestMethod6(Delegate1 d)
+    {
+    }
+}
+
+public static class TestClassExtensions
+{
+    public static void TestMethod6(this TestClass obj, TestClass.Delegate2 d)
+    {
+    }
 }
 ";
 
@@ -197,6 +221,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 this.CSharpDiagnostic().WithLocation(9, 37),
                 this.CSharpDiagnostic().WithLocation(10, 34),
                 this.CSharpDiagnostic().WithLocation(11, 34),
+                this.CSharpDiagnostic().WithLocation(12, 34),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);

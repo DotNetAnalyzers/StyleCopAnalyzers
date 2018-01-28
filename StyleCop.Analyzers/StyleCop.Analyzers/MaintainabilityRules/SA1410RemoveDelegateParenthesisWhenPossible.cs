@@ -5,8 +5,6 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 {
     using System;
     using System.Collections.Immutable;
-    using System.Linq;
-    using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -93,7 +91,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 {
                 case SyntaxKind.ObjectCreationExpression:
                 case SyntaxKind.InvocationExpression:
-                    if (HasAmbiguousOverload(context, argumentListSyntax.Arguments.IndexOf(argumentSyntax), argumentListSyntax.Parent))
+                    if (HasAmbiguousOverload(context, syntax, argumentListSyntax.Parent))
                     {
                         return;
                     }
@@ -106,36 +104,11 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.ParameterList.GetLocation()));
         }
 
-        private static bool HasAmbiguousOverload(SyntaxNodeAnalysisContext context, int parameterIndex, SyntaxNode methodCallSyntax)
+        private static bool HasAmbiguousOverload(SyntaxNodeAnalysisContext context, AnonymousMethodExpressionSyntax anonymousMethodExpression, SyntaxNode methodCallSyntax)
         {
-            var methodSymbol = (IMethodSymbol)context.SemanticModel.GetSymbolInfo(methodCallSyntax, context.CancellationToken).Symbol;
-
-            var nameOverloads = methodSymbol.ContainingType.GetMembers(methodSymbol.Name);
-            var parameterCountMatchingOverloads = nameOverloads.OfType<IMethodSymbol>().Where(symbol => (symbol != methodSymbol) && (symbol.Parameters.Length == methodSymbol.Parameters.Length));
-
-            foreach (var overload in parameterCountMatchingOverloads)
-            {
-                var isAmbiguousOverload = true;
-
-                for (var i = 0; isAmbiguousOverload && (i < methodSymbol.Parameters.Length); i++)
-                {
-                    if (i == parameterIndex)
-                    {
-                        isAmbiguousOverload = overload.Parameters[i].Type.TypeKind == TypeKind.Delegate;
-                    }
-                    else
-                    {
-                        isAmbiguousOverload = methodSymbol.Parameters[i].Type == overload.Parameters[i].Type;
-                    }
-                }
-
-                if (isAmbiguousOverload)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            var nodeForSpeculation = methodCallSyntax.ReplaceNode(anonymousMethodExpression, anonymousMethodExpression.WithParameterList(null));
+            var speculativeSymbolInfo = context.SemanticModel.GetSpeculativeSymbolInfo(methodCallSyntax.SpanStart, nodeForSpeculation, SpeculativeBindingOption.BindAsExpression);
+            return speculativeSymbolInfo.Symbol == null;
         }
     }
 }
