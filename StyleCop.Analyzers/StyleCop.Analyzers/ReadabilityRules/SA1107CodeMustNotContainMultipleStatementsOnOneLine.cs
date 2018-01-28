@@ -51,9 +51,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleBlock(SyntaxNodeAnalysisContext context)
         {
-            BlockSyntax block = context.Node as BlockSyntax;
+            var block = (BlockSyntax)context.Node;
 
-            if (block != null && block.Statements.Any())
+            if (block.Statements.Any())
             {
                 var previousStatement = block.Statements[0];
                 FileLinePositionSpan previousStatementLocation = previousStatement.GetLineSpan();

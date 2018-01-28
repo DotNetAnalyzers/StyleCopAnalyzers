@@ -96,9 +96,9 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
         private static void HandleParenthesizedExpression(SyntaxNodeAnalysisContext context)
         {
-            var node = context.Node as ParenthesizedExpressionSyntax;
+            var node = (ParenthesizedExpressionSyntax)context.Node;
 
-            if (node != null && node.Expression != null)
+            if (node.Expression != null)
             {
                 if (!(node.Expression is BinaryExpressionSyntax)
                     && !(node.Expression is AssignmentExpressionSyntax)

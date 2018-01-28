@@ -55,14 +55,14 @@ namespace StyleCop.Analyzers.OrderingRules
 
         private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context)
         {
-            var compilationUnit = context.Node as CompilationUnitSyntax;
+            var compilationUnit = (CompilationUnitSyntax)context.Node;
 
             ProcessUsingsAndReportDiagnostic(compilationUnit.Usings, context);
         }
 
         private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var namespaceDeclaration = context.Node as NamespaceDeclarationSyntax;
+            var namespaceDeclaration = (NamespaceDeclarationSyntax)context.Node;
 
             ProcessUsingsAndReportDiagnostic(namespaceDeclaration.Usings, context);
         }

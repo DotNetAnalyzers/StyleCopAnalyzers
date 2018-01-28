@@ -55,20 +55,14 @@ namespace StyleCop.Analyzers.OrderingRules
 
         private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context)
         {
-            var compilationUnit = context.Node as CompilationUnitSyntax;
-            if (compilationUnit != null)
-            {
-                HandleUsingDirectives(context, compilationUnit.Usings);
-            }
+            var compilationUnit = (CompilationUnitSyntax)context.Node;
+            HandleUsingDirectives(context, compilationUnit.Usings);
         }
 
         private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var namespaceDeclaration = context.Node as NamespaceDeclarationSyntax;
-            if (namespaceDeclaration != null)
-            {
-                HandleUsingDirectives(context, namespaceDeclaration.Usings);
-            }
+            var namespaceDeclaration = (NamespaceDeclarationSyntax)context.Node;
+            HandleUsingDirectives(context, namespaceDeclaration.Usings);
         }
 
         private static void HandleUsingDirectives(SyntaxNodeAnalysisContext context, SyntaxList<UsingDirectiveSyntax> usingDirectives)

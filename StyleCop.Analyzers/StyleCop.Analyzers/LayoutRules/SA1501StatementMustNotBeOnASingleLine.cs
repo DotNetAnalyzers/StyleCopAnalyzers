@@ -91,9 +91,8 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static void HandleBlock(SyntaxNodeAnalysisContext context)
         {
-            var block = context.Node as BlockSyntax;
-            if ((block != null) &&
-                !block.OpenBraceToken.IsMissing &&
+            var block = (BlockSyntax)context.Node;
+            if (!block.OpenBraceToken.IsMissing &&
                 !block.CloseBraceToken.IsMissing &&
                 IsPartOfStatement(block))
             {
