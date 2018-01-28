@@ -81,8 +81,34 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 return;
             }
 
+            // if the delegate is passed as a parameter, verify that there is no ambiguity.
+            if (syntax.Parent.IsKind(SyntaxKind.Argument))
+            {
+                var argumentSyntax = (ArgumentSyntax)syntax.Parent;
+                var argumentListSyntax = (ArgumentListSyntax)argumentSyntax.Parent;
+
+                switch (argumentListSyntax.Parent.Kind())
+                {
+                case SyntaxKind.ObjectCreationExpression:
+                case SyntaxKind.InvocationExpression:
+                    if (HasAmbiguousOverload(context, syntax, argumentListSyntax.Parent))
+                    {
+                        return;
+                    }
+
+                    break;
+                }
+            }
+
             // Remove delegate parenthesis when possible
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.ParameterList.GetLocation()));
+        }
+
+        private static bool HasAmbiguousOverload(SyntaxNodeAnalysisContext context, AnonymousMethodExpressionSyntax anonymousMethodExpression, SyntaxNode methodCallSyntax)
+        {
+            var nodeForSpeculation = methodCallSyntax.ReplaceNode(anonymousMethodExpression, anonymousMethodExpression.WithParameterList(null));
+            var speculativeSymbolInfo = context.SemanticModel.GetSpeculativeSymbolInfo(methodCallSyntax.SpanStart, nodeForSpeculation, SpeculativeBindingOption.BindAsExpression);
+            return speculativeSymbolInfo.Symbol == null;
         }
     }
 }
