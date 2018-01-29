@@ -25,6 +25,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         public async Task TestArrayInitializersValidAsync()
         {
             var testCode = @"
+using System;
+
 public class TestClass
 {
     private int[] array1 = { };
@@ -32,6 +34,8 @@ public class TestClass
     private int[] array2 = { 0, 1 };
 
     private int[] array3 = new[] { 0, 1 };
+
+    private int[] array3b = new int[] { 0, 1 };
 
     private int[] array4 =
     {
@@ -70,6 +74,10 @@ public class TestClass
         {
             0,
         };
+
+        Console.WriteLine(new[] { 0, 1 });
+        Console.WriteLine(new int[] { 0, 1 });
+        Console.WriteLine(new int[] { });
     }
 }";
 
