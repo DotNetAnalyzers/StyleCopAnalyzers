@@ -25,6 +25,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         public async Task TestArrayInitializersValidAsync()
         {
             var testCode = @"
+using System;
+
 public class TestClass
 {
     private int[] array1 = { };
@@ -32,6 +34,8 @@ public class TestClass
     private int[] array2 = { 0, 1 };
 
     private int[] array3 = new[] { 0, 1 };
+
+    private int[] array3b = new int[] { 0, 1 };
 
     private int[] array4 =
     {
@@ -70,6 +74,10 @@ public class TestClass
         {
             0,
         };
+
+        Console.WriteLine(new[] { 0, 1 });
+        Console.WriteLine(new int[] { 0, 1 });
+        Console.WriteLine(new int[] { });
     }
 }";
 
@@ -77,11 +85,11 @@ public class TestClass
         }
 
         /// <summary>
-        /// Verifies that diagnostics will be reported for all invalid array initializer definitions.
+        /// Verifies that diagnostics will be reported for all invalid implicit array initializer definitions.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestArrayInitializersInvalidAsync()
+        public async Task TestImplicitArrayInitializersInvalidAsync()
         {
             var testCode = @"
 public class TestClass
@@ -237,6 +245,97 @@ public class TestClass
                 this.CSharpDiagnostic().WithLocation(46, 20),
                 this.CSharpDiagnostic().WithLocation(49, 13),
                 this.CSharpDiagnostic().WithLocation(54, 22),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that diagnostics will be reported for all invalid array initializer definitions.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2607, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2607")]
+        public async Task TestArrayInitializersInvalidAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    private int[] invalidArray5 = new int[]
+        { 0, 1 };
+
+    private int[] invalidArray6 = new int[]
+        { 0, 1
+        };
+
+    private int[] invalidArray7 = new int[]
+        {
+            0, 1 };
+
+    public void TestMethod()
+    {
+        var invalidArray12 = new int[]
+            { 0, 1 };
+
+        var invalidArray13 = new int[]
+            { 0, 1
+            };
+
+        var invalidArray14 = new int[]
+            {
+                0, 1 };
+    }
+}";
+
+            var fixedTestCode = @"
+public class TestClass
+{
+    private int[] invalidArray5 = new int[]
+        {
+            0, 1
+        };
+
+    private int[] invalidArray6 = new int[]
+        {
+            0, 1
+        };
+
+    private int[] invalidArray7 = new int[]
+        {
+            0, 1
+        };
+
+    public void TestMethod()
+    {
+        var invalidArray12 = new int[]
+            {
+                0, 1
+            };
+
+        var invalidArray13 = new int[]
+            {
+                0, 1
+            };
+
+        var invalidArray14 = new int[]
+            {
+                0, 1
+            };
+    }
+}";
+
+            DiagnosticResult[] expectedDiagnostics =
+            {
+                this.CSharpDiagnostic().WithLocation(5, 9),
+                this.CSharpDiagnostic().WithLocation(5, 16),
+                this.CSharpDiagnostic().WithLocation(8, 9),
+                this.CSharpDiagnostic().WithLocation(13, 18),
+                this.CSharpDiagnostic().WithLocation(18, 13),
+                this.CSharpDiagnostic().WithLocation(18, 20),
+                this.CSharpDiagnostic().WithLocation(21, 13),
+                this.CSharpDiagnostic().WithLocation(26, 22),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

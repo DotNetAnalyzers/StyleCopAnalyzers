@@ -155,6 +155,14 @@ namespace StyleCop.Analyzers.LayoutRules
 
                         break;
 
+                    case SyntaxKind.ArrayCreationExpression:
+                        if (GetStartLine(((ArrayCreationExpressionSyntax)context.Node.Parent).NewKeyword) == GetStartLine(openBraceToken))
+                        {
+                            return;
+                        }
+
+                        break;
+
                     case SyntaxKind.ImplicitArrayCreationExpression:
                         if (GetStartLine(((ImplicitArrayCreationExpressionSyntax)context.Node.Parent).NewKeyword) == GetStartLine(openBraceToken))
                         {
