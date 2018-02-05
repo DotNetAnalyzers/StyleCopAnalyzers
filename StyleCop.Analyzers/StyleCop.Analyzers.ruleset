@@ -113,5 +113,9 @@
     <Rule Id="SA1636" Action="Error" />
     <Rule Id="SA1642" Action="Error" />
     <Rule Id="SA1643" Action="Error" />
+    <Rule Id="TS1000" Action="Warning" />
+    <Rule Id="TS1001" Action="Warning" />
+    <Rule Id="TS1002" Action="Warning" />
+    <Rule Id="TS1003" Action="Warning" />
   </Rules>
 </RuleSet>

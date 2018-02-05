@@ -51,7 +51,9 @@ namespace StyleCop.Analyzers.SpacingRules
                 SA1110OpeningParenthesisMustBeOnDeclarationLine.DiagnosticId,
                 SA1111ClosingParenthesisMustBeOnLineOfLastParameter.DiagnosticId,
                 SA1112ClosingParenthesisMustBeOnLineOfOpeningParenthesis.DiagnosticId,
-                SA1113CommaMustBeOnSameLineAsPreviousParameter.DiagnosticId);
+                SA1113CommaMustBeOnSameLineAsPreviousParameter.DiagnosticId,
+                TS1000OpeningParenthesisMustBeFollowedByASpace.DiagnosticId,
+                TS1001ClosingParenthesisMustBePrecededByASpace.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()

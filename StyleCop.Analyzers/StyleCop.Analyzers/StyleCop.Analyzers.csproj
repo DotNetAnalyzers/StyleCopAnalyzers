@@ -193,6 +193,8 @@
     <Compile Include="MaintainabilityRules\SA1411AttributeConstructorMustNotUseUnnecessaryParenthesis.cs" />
     <Compile Include="MaintainabilityRules\SA1412StoreFilesAsUtf8.cs" />
     <Compile Include="MaintainabilityRules\SystemDiagnosticsDebugDiagnosticBase.cs" />
+    <Compile Include="MaintainabilityRules\TS1003UseLinqAnyOverCountGreaterThan0.cs" />
+    <Compile Include="MaintainabilityRules\TS1002NumericLiteralsMustHaveSuffix.cs" />
     <Compile Include="NamingRules\NamingResources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -304,6 +306,8 @@
     <Compile Include="SpacingRules\SA1005SingleLineCommentsMustBeginWithSingleSpace.cs" />
     <Compile Include="SpacingRules\SA1006PreprocessorKeywordsMustNotBePrecededBySpace.cs" />
     <Compile Include="SpacingRules\SA1007OperatorKeywordMustBeFollowedBySpace.cs" />
+    <Compile Include="SpacingRules\TS1000OpeningParenthesisMustBeFollowedByASpace.cs" />
+    <Compile Include="SpacingRules\TS1001ClosingParenthesisMustBePrecededByASpace.cs" />
     <Compile Include="SpacingRules\SA1008OpeningParenthesisMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1009ClosingParenthesisMustBeSpacedCorrectly.cs" />
     <Compile Include="SpacingRules\SA1010OpeningSquareBracketsMustBeSpacedCorrectly.cs" />

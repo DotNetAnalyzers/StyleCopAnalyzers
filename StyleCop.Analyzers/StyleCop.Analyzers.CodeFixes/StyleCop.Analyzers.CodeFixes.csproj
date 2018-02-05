@@ -88,6 +88,8 @@
     <Compile Include="LayoutRules\SA1517CodeFixProvider.cs" />
     <Compile Include="LayoutRules\SA1518CodeFixProvider.cs" />
     <Compile Include="MaintainabilityRules\SA1119CodeFixProvider.cs" />
+    <Compile Include="MaintainabilityRules\TS1003CodeFixProvider.cs" />
+    <Compile Include="MaintainabilityRules\TS1002CodeFixProvider.cs" />
     <Compile Include="MaintainabilityRules\SA1400CodeFixProvider.cs" />
     <Compile Include="MaintainabilityRules\SA1402CodeFixProvider.cs" />
     <Compile Include="MaintainabilityRules\SA1404CodeFixProvider.cs" />

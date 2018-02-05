@@ -234,6 +234,8 @@
     <Compile Include="LinqHelpers\SyntaxTriviaListEnumerableTests.cs" />
     <Compile Include="MaintainabilityRules\DebugMessagesUnitTestsBase.cs" />
     <Compile Include="MaintainabilityRules\FileMayOnlyContainTestBase.cs" />
+    <Compile Include="MaintainabilityRules\TS1003UnitTests.cs" />
+    <Compile Include="MaintainabilityRules\TS1002UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1119UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1400UnitTests.cs" />
     <Compile Include="MaintainabilityRules\SA1401UnitTests.cs" />
@@ -335,6 +337,8 @@
     <Compile Include="SpacingRules\SA1005UnitTests.cs" />
     <Compile Include="SpacingRules\SA1006UnitTests.cs" />
     <Compile Include="SpacingRules\SA1007UnitTests.cs" />
+    <Compile Include="SpacingRules\TS1001UnitTests.cs" />
+    <Compile Include="SpacingRules\TS1000UnitTests.cs" />
     <Compile Include="SpacingRules\SA1008UnitTests.cs" />
     <Compile Include="SpacingRules\SA1009UnitTests.cs" />
     <Compile Include="SpacingRules\SA1010UnitTests.cs" />
