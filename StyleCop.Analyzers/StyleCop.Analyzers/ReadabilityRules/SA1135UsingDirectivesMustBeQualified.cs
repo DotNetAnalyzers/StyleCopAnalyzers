@@ -10,6 +10,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
+    using StyleCop.Analyzers.Helpers;
+
     /// <summary>
     /// A using directive is not qualified.
     /// </summary>
@@ -63,30 +65,49 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void CheckUsingDeclaration(SyntaxNodeAnalysisContext context, UsingDirectiveSyntax usingDirective)
         {
-            // Usings outside of a namespace are always qualified.
-            if (usingDirective.Parent is NamespaceDeclarationSyntax && usingDirective.StaticKeyword.IsKind(SyntaxKind.None))
+            if (!usingDirective.Parent.IsKind(SyntaxKind.NamespaceDeclaration))
             {
-                string usingString = usingDirective.Name.ToString();
+                // Usings outside of a namespace are always qualified.
+                return;
+            }
 
-                // Check for global qualified namespaces.
-                if (usingString.IndexOf("::", StringComparison.Ordinal) < 0)
+            if (!usingDirective.StaticKeyword.IsKind(SyntaxKind.None))
+            {
+                // using static types is not considered.
+                return;
+            }
+
+            string usingString = usingDirective.Name.ToString();
+            if (usingString.IndexOf("::", StringComparison.Ordinal) >= 0)
+            {
+                // global qualified namespaces are OK.
+                return;
+            }
+
+            var symbol = context.SemanticModel.GetSymbolInfo(usingDirective.Name, context.CancellationToken).Symbol;
+            if (symbol == null)
+            {
+                // if there is no symbol, do not proceed.
+                return;
+            }
+
+            string symbolString = symbol.ToString();
+            if ((symbolString != usingString) && !usingDirective.StartsWithAlias(context.SemanticModel, context.CancellationToken))
+            {
+                switch (symbol.Kind)
                 {
-                    SymbolInfo symbolInfo = context.SemanticModel.GetSymbolInfo(usingDirective.Name, context.CancellationToken);
-                    if (symbolInfo.Symbol != null && (symbolInfo.Symbol.Kind == SymbolKind.Namespace || symbolInfo.Symbol.Kind == SymbolKind.NamedType))
+                case SymbolKind.Namespace:
+                    context.ReportDiagnostic(Diagnostic.Create(DescriptorNamespace, usingDirective.GetLocation(), symbolString));
+                    break;
+
+                case SymbolKind.NamedType:
+                    var containingNamespace = ((NamespaceDeclarationSyntax)usingDirective.Parent).Name.ToString();
+                    if (containingNamespace != symbol.ContainingNamespace.ToString())
                     {
-                        string symbolString = symbolInfo.Symbol.ToString();
-                        if (symbolString != usingString)
-                        {
-                            if (symbolInfo.Symbol.Kind == SymbolKind.NamedType)
-                            {
-                                context.ReportDiagnostic(Diagnostic.Create(DescriptorType, usingDirective.GetLocation(), symbolString));
-                            }
-                            else
-                            {
-                                context.ReportDiagnostic(Diagnostic.Create(DescriptorNamespace, usingDirective.GetLocation(), symbolString));
-                            }
-                        }
+                        context.ReportDiagnostic(Diagnostic.Create(DescriptorType, usingDirective.GetLocation(), symbolString));
                     }
+
+                    break;
                 }
             }
         }

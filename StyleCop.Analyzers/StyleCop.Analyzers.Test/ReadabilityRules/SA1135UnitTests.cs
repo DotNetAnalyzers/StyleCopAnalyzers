@@ -148,6 +148,63 @@ namespace System.Threading
             await this.VerifyCSharpFixAllFixAsync(testCode, fixedCode, numberOfIterations: 1, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestNoWarningsForAliasesAsync()
+        {
+            var testCode = @"
+using Tasks = System.Threading.Tasks;
+
+namespace Namespace
+{
+    using Task = Tasks.Task;
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestAliasToGenericTypeAsync()
+        {
+            var testCode = @"
+namespace System.Collections
+{
+    using Dictionary = Generic.Dictionary<int, string>;
+}
+";
+
+            var fixedCode = @"
+namespace System.Collections
+{
+    using Dictionary = System.Collections.Generic.Dictionary<int, string>;
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorType).WithLocation(4, 5).WithArguments("System.Collections.Generic.Dictionary<int, string>"),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestAliasToTypesInSameNamespaceAsync()
+        {
+            var testCode = @"
+namespace Namespace
+{
+    using Class2 = Class;
+
+    class Class { }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new SA1135CodeFixProvider();
