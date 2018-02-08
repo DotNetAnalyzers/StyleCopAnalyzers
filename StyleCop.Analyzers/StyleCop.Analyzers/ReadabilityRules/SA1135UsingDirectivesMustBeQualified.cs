@@ -77,8 +77,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
-            string usingString = usingDirective.Name.ToString();
-            if (usingString.IndexOf("::", StringComparison.Ordinal) >= 0)
+            if (usingDirective.HasNamespaceAliasQualifier())
             {
                 // global qualified namespaces are OK.
                 return;
@@ -92,6 +91,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             string symbolString = symbol.ToString();
+            string usingString = usingDirective.Name.ToString();
             if ((symbolString != usingString) && !usingDirective.StartsWithAlias(context.SemanticModel, context.CancellationToken))
             {
                 switch (symbol.Kind)
