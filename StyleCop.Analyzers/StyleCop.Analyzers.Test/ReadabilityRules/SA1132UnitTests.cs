@@ -170,6 +170,77 @@ class TestAttribute : System.Attribute
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(2594, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2594")]
+        public async Task VerifyThatDirectiveTriviaAreHandledCorrectlyAsync()
+        {
+            var testCode = @"
+namespace StyleCopDemo
+{
+    class Program
+    {
+        #region some members
+
+        string myString;
+
+        #region some fields
+
+        // this line:
+        int myInt, yourInt;
+
+        #endregion
+
+        #region some other fields
+
+        int secondInt, thirdInt;
+
+        #endregion
+
+        #endregion
+    }
+}";
+
+            var fixedCode = @"
+namespace StyleCopDemo
+{
+    class Program
+    {
+        #region some members
+
+        string myString;
+
+        #region some fields
+
+        // this line:
+        int myInt;
+
+        // this line:
+        int yourInt;
+
+        #endregion
+
+        #region some other fields
+
+        int secondInt;
+        int thirdInt;
+
+        #endregion
+
+        #endregion
+    }
+}";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(13, 9),
+                this.CSharpDiagnostic().WithLocation(19, 9),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new SA1132CodeFixProvider();
