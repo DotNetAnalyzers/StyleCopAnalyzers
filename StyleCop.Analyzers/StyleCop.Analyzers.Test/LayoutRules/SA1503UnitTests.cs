@@ -17,6 +17,9 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     /// </summary>
     public class SA1503UnitTests : CodeFixVerifier
     {
+        private bool suppressSA1519;
+        private string consecutiveUsingsSettings;
+
         /// <summary>
         /// Gets the statements that will be used in the theory test cases.
         /// </summary>
@@ -390,6 +393,101 @@ public class Foo
 }";
 
             await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        [WorkItem(2623, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2623")]
+        public async Task TestMultipleUsingStatementsWithDefaultSettingsAsync(bool suppressSA1519)
+        {
+            this.suppressSA1519 = suppressSA1519;
+            var testCode = @"using System;
+public class Foo
+{
+    public void Bar(int i)
+    {
+        using (default(IDisposable))
+        using (default(IDisposable))
+        {
+        }
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData(true, true, false)]
+        [InlineData(true, false, false)]
+        [InlineData(false, true, true)]
+        [InlineData(false, false, false)]
+        [WorkItem(2623, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2623")]
+        public async Task TestMultipleUsingStatementsWithExplicitSettingAsync(bool allowConsecutiveUsings, bool suppressSA1519, bool expectDiagnostic)
+        {
+            this.consecutiveUsingsSettings = $@"
+{{
+  ""settings"": {{
+    ""layoutRules"": {{
+      ""allowConsecutiveUsings"": {(allowConsecutiveUsings ? "true" : "false")}
+    }}
+  }}
+}}
+";
+            this.suppressSA1519 = suppressSA1519;
+
+            var testCode = @"using System;
+public class Foo
+{
+    public void Bar(int i)
+    {
+        using (default(IDisposable))
+        using (default(IDisposable))
+        {
+        }
+    }
+}";
+            var fixedCode = @"using System;
+public class Foo
+{
+    public void Bar(int i)
+    {
+        using (default(IDisposable))
+        {
+            using (default(IDisposable))
+        {
+        }
+        }
+    }
+}";
+
+            if (expectDiagnostic)
+            {
+                var expected = this.CSharpDiagnostic().WithLocation(7, 9);
+                await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            }
+            else
+            {
+                await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            }
+        }
+
+        /// <inheritdoc/>
+        protected override string GetSettings()
+        {
+            return this.consecutiveUsingsSettings ?? base.GetSettings();
+        }
+
+        /// <inheritdoc/>
+        protected override IEnumerable<string> GetDisabledDiagnostics()
+        {
+            if (this.suppressSA1519)
+            {
+                yield return SA1519BracesMustNotBeOmittedFromMultiLineChildStatement.DiagnosticId;
+            }
         }
 
         /// <inheritdoc/>
