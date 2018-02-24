@@ -10,6 +10,7 @@ packages/
 *.user
 TestResults/
 OpenCover.Reports/
+OpenCover.Symbols/
 .nuget/NuGet.exe
 build/nuget/
 *.log
