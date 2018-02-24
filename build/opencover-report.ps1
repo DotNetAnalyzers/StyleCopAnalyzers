@@ -1,17 +1,22 @@
 param (
-	[switch]$Debug
+	[switch]$Debug,
+	[switch]$NoBuild,
+	[switch]$NoReport,
+	[switch]$AppVeyor
 )
 
-# Run a build to ensure everything is up-to-date
-If ($Debug) {
-	.\build.ps1 -Debug -Incremental
-} Else {
-	.\build.ps1 -Incremental
-}
+If (-not $NoBuild) {
+	# Run a build to ensure everything is up-to-date
+	If ($Debug) {
+		.\build.ps1 -Debug -Incremental
+	} Else {
+		.\build.ps1 -Incremental
+	}
 
-If (-not $?) {
-	$host.UI.WriteErrorLine('Build failed; coverage analysis aborted.')
-	Exit $LASTEXITCODE
+	If (-not $?) {
+		$host.UI.WriteErrorLine('Build failed; coverage analysis aborted.')
+		Exit $LASTEXITCODE
+	}
 }
 
 If ($Debug) {
@@ -39,6 +44,10 @@ If (Test-Path $report_folder) {
 
 mkdir $report_folder | Out-Null
 
+If ($AppVeyor) {
+	$AppVeyorArg = '-appveyor'
+}
+
 &$opencover_console `
 	-register:user `
 	-returntargetcode `
@@ -48,7 +57,12 @@ mkdir $report_folder | Out-Null
 	-excludebyfile:*\*Designer.cs `
 	-output:"$report_folder\OpenCover.StyleCopAnalyzers.xml" `
 	-target:"$xunit_runner_console" `
-	-targetargs:"$target_dll -noshadow"
+	-targetargs:"$target_dll -noshadow $AppVeyorArg"
+
+If ($AppVeyor -and -not $?) {
+	$host.UI.WriteErrorLine('Build failed; coverage analysis aborted.')
+	Exit $LASTEXITCODE
+}
 
 &$opencover_console `
 	-register:user `
@@ -60,8 +74,14 @@ mkdir $report_folder | Out-Null
 	-output:"$report_folder\OpenCover.StyleCopAnalyzers.xml" `
 	-mergebyhash -mergeoutput `
 	-target:"$xunit_runner_console" `
-	-targetargs:"$target_dll_csharp7 -noshadow"
+	-targetargs:"$target_dll_csharp7 -noshadow $AppVeyorArg"
 
-&$report_generator -targetdir:$report_folder -reports:$report_folder\OpenCover.*.xml
+If ($AppVeyor -and -not $?) {
+	$host.UI.WriteErrorLine('Build failed; coverage analysis aborted.')
+	Exit $LASTEXITCODE
+}
 
-$host.UI.WriteLine("Open $report_folder\index.htm to see code coverage results.")
+If (-not $NoReport) {
+	&$report_generator -targetdir:$report_folder -reports:$report_folder\OpenCover.*.xml
+	$host.UI.WriteLine("Open $report_folder\index.htm to see code coverage results.")
+}

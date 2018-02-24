@@ -8,9 +8,10 @@ build:
   project: StyleCopAnalyzers.sln
   verbosity: minimal
 test_script:
-- .\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:"%xunit20%\xunit.console.x86.exe" -targetargs:"C:\projects\stylecopanalyzers\StyleCop.Analyzers\StyleCop.Analyzers.Test\bin\Debug\net452\StyleCop.Analyzers.Test.dll -noshadow -appveyor" -returntargetcode -filter:"+[StyleCop*]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -excludebyfile:*\*Designer.cs -hideskipped:All -output:.\StyleCopAnalyzers_coverage.xml
-- .\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:"%xunit20%\xunit.console.x86.exe" -targetargs:"C:\projects\stylecopanalyzers\StyleCop.Analyzers\StyleCop.Analyzers.Test.CSharp7\bin\Debug\net46\StyleCop.Analyzers.Test.CSharp7.dll -noshadow -appveyor" -returntargetcode -filter:"+[StyleCop*]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -excludebyfile:*\*Designer.cs -hideskipped:All -mergebyhash -mergeoutput -output:.\StyleCopAnalyzers_coverage.xml
-- .\packages\Codecov.1.0.1\tools\codecov.exe -f "StyleCopAnalyzers_coverage.xml"
+- cd build
+- ps: .\opencover-report.ps1 -Debug -NoBuild -NoReport -AppVeyor
+- cd ..
+- .\packages\Codecov.1.0.1\tools\codecov.exe -f ".\build\OpenCover.Reports\OpenCover.StyleCopAnalyzers.xml"
 cache:
   - packages -> **\packages.config
   - C:\Users\appveyor\.nuget\packages -> appveyor.yml
