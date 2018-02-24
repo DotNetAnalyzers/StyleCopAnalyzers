@@ -30,7 +30,8 @@ $opencover_console = "$packages_folder\OpenCover.$opencover_version\tools\OpenCo
 $xunit_runner_console = "$packages_folder\xunit.runner.console.$xunitrunner_version\tools\xunit.console.x86.exe"
 $report_generator = "$packages_folder\ReportGenerator.$reportgenerator_version\tools\ReportGenerator.exe"
 $report_folder = '.\OpenCover.Reports'
-$target_dll = "..\StyleCop.Analyzers\StyleCop.Analyzers.Test\bin\$Configuration\StyleCop.Analyzers.Test.dll"
+$target_dll = "..\StyleCop.Analyzers\StyleCop.Analyzers.Test\bin\$Configuration\net452\StyleCop.Analyzers.Test.dll"
+$target_dll_csharp7 = "..\StyleCop.Analyzers\StyleCop.Analyzers.Test.CSharp7\bin\$Configuration\net46\StyleCop.Analyzers.Test.CSharp7.dll"
 
 If (Test-Path $report_folder) {
 	Remove-Item -Recurse -Force $report_folder
@@ -40,7 +41,6 @@ mkdir $report_folder | Out-Null
 
 &$opencover_console `
 	-register:user `
-	-threshold:1 `
 	-returntargetcode `
 	-hideskipped:All `
 	-filter:"+[StyleCop*]*" `
@@ -49,6 +49,18 @@ mkdir $report_folder | Out-Null
 	-output:"$report_folder\OpenCover.StyleCopAnalyzers.xml" `
 	-target:"$xunit_runner_console" `
 	-targetargs:"$target_dll -noshadow"
+
+&$opencover_console `
+	-register:user `
+	-returntargetcode `
+	-hideskipped:All `
+	-filter:"+[StyleCop*]*" `
+	-excludebyattribute:*.ExcludeFromCodeCoverage* `
+	-excludebyfile:*\*Designer.cs `
+	-output:"$report_folder\OpenCover.StyleCopAnalyzers.xml" `
+	-mergebyhash -mergeoutput `
+	-target:"$xunit_runner_console" `
+	-targetargs:"$target_dll_csharp7 -noshadow"
 
 &$report_generator -targetdir:$report_folder -reports:$report_folder\OpenCover.*.xml
 
