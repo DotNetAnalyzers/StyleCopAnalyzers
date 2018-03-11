@@ -79,7 +79,7 @@ namespace NamespaceName
         public async Task TestDotPrefixedSettingsFileAlreadyExistsAsync()
         {
             this.createSettingsFile = true;
-            this.settingsFileName = $".{SettingsHelper.SettingsFileName}";
+            this.settingsFileName = SettingsHelper.AltSettingsFileName;
 
             var offeredFixes = await this.GetOfferedCSharpFixesAsync(TestCode).ConfigureAwait(false);
             Assert.Empty(offeredFixes);

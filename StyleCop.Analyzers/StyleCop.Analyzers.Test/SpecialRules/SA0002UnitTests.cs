@@ -278,7 +278,7 @@ namespace NamespaceName { }
             Assert.Null(additionalFiles[0].Path);
             Assert.Null(additionalFiles[0].GetText(CancellationToken.None));
             var context = new CompilationAnalysisContext(compilation: null, options: new AnalyzerOptions(additionalFiles), reportDiagnostic: null, isSupportedDiagnostic: null, cancellationToken: CancellationToken.None);
-            Assert.Throws<NullReferenceException>(() => analysisContext.CompilationAction(context));
+            Assert.Throws<ArgumentNullException>(() => analysisContext.CompilationAction(context));
         }
 
         /// <inheritdoc/>
