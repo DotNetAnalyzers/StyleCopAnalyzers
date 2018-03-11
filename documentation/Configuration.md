@@ -18,6 +18,8 @@ Code analysis rule sets are the standard way to configure most diagnostic analyz
 
 The easiest way to add a **stylecop.json** configuration file to a new project is using a code fix provided by the project. To invoke the code fix, open any file where SA1633 is reported¹ and press Ctrl+. to bring up the Quick Fix menu. From the menu, select **Add StyleCop settings file to the project**.
 
+The dot file naming convention is also supported, which makes it possible to name the configuration file **.stylecop.json**.
+
 ### JSON Schema for IntelliSense
 
 A JSON schema is available for **stylecop.json**. By including a reference in **stylecop.json** to this schema, Visual Studio will offer IntelliSense functionality (code completion, quick info, etc.) while editing this file. The schema may be configured by adding the following top-level property in **stylecop.json**:
