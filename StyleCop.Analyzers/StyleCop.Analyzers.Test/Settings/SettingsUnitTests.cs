@@ -309,6 +309,25 @@ namespace StyleCop.Analyzers.Test.Settings
         }
 
         [Fact]
+        public async Task VerifySettingsFileNameSupportsDotPrefixAsync()
+        {
+            var settings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""companyName"": ""TestCompany"",
+    },
+  }
+}
+";
+            var context = await CreateAnalysisContextAsync(settings, ".stylecop.json").ConfigureAwait(false);
+
+            var styleCopSettings = context.GetStyleCopSettings(CancellationToken.None);
+
+            Assert.Equal("TestCompany", styleCopSettings.DocumentationRules.CompanyName);
+        }
+
+        [Fact]
         public async Task VerifyInvalidJsonBehaviorAsync()
         {
             var settings = @"This is not a JSON file.";
@@ -334,7 +353,7 @@ namespace StyleCop.Analyzers.Test.Settings
             Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
         }
 
-        private static async Task<SyntaxTreeAnalysisContext> CreateAnalysisContextAsync(string stylecopJSON)
+        private static async Task<SyntaxTreeAnalysisContext> CreateAnalysisContextAsync(string stylecopJSON, string settingsFileName = SettingsHelper.SettingsFileName)
         {
             var projectId = ProjectId.CreateNewId();
             var documentId = DocumentId.CreateNewId(projectId);
@@ -347,7 +366,7 @@ namespace StyleCop.Analyzers.Test.Settings
             var document = solution.GetDocument(documentId);
             var syntaxTree = await document.GetSyntaxTreeAsync().ConfigureAwait(false);
 
-            var stylecopJSONFile = new AdditionalTextHelper(SettingsHelper.SettingsFileName, stylecopJSON);
+            var stylecopJSONFile = new AdditionalTextHelper(settingsFileName, stylecopJSON);
             var additionalFiles = ImmutableArray.Create<AdditionalText>(stylecopJSONFile);
             var analyzerOptions = new AnalyzerOptions(additionalFiles);
 

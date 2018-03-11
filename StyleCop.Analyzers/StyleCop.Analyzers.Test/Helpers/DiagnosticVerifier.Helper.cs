@@ -179,7 +179,7 @@ namespace TestHelper
             if (!string.IsNullOrEmpty(settings))
             {
                 var documentId = DocumentId.CreateNewId(projectId);
-                solution = solution.AddAdditionalDocument(documentId, SettingsHelper.SettingsFileName, settings);
+                solution = solution.AddAdditionalDocument(documentId, this.GetSettingsFileName(), settings);
             }
 
             ParseOptions parseOptions = solution.GetProject(projectId).ParseOptions;
@@ -202,6 +202,15 @@ namespace TestHelper
         protected virtual string GetSettings()
         {
             return null;
+        }
+
+        /// <summary>
+        /// Gets the name of the settings file to use.
+        /// </summary>
+        /// <returns>The name of the settings file to use.</returns>
+        protected virtual string GetSettingsFileName()
+        {
+            return SettingsHelper.SettingsFileName;
         }
 
         protected DiagnosticResult CSharpDiagnostic(string diagnosticId = null)

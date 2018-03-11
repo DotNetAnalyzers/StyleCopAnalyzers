@@ -63,7 +63,7 @@ namespace StyleCop.Analyzers.Settings
             var workspace = project.Solution.Workspace;
 
             // check if the settings file already exists
-            if (project.AdditionalDocuments.Any(IsStyleCopSettingsDocument))
+            if (project.AdditionalDocuments.Any(document => SettingsHelper.IsStyleCopSettingsFile(document.Name)))
             {
                 return SpecializedTasks.CompletedTask;
             }
@@ -92,11 +92,6 @@ namespace StyleCop.Analyzers.Settings
         {
             // Added this to make it explicitly clear that this code fix does not support fix all actions.
             return null;
-        }
-
-        private static bool IsStyleCopSettingsDocument(TextDocument document)
-        {
-            return string.Equals(document.Name, SettingsHelper.SettingsFileName, StringComparison.OrdinalIgnoreCase);
         }
 
         private static Task<Solution> GetTransformedSolutionAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)

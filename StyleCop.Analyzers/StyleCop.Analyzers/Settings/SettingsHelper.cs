@@ -66,6 +66,23 @@ namespace StyleCop.Analyzers
             return GetStyleCopSettings(options != null ? options.AdditionalFiles : ImmutableArray.Create<AdditionalText>(), failureBehavior, cancellationToken);
         }
 
+        /// <summary>
+        /// Gets a value indicating whether the specified path points to a StyleCop settings file (stylecop.json or .stylecop.json).
+        /// </summary>
+        /// <param name="path">The path to test.</param>
+        /// <returns><c>true</c> if <paramref name="path"/> points to a StyleCop settings file; otherwise, <c>false</c>.</returns>
+        internal static bool IsStyleCopSettingsFile(string path)
+        {
+            var fileName = Path.GetFileName(path).ToLowerInvariant();
+
+            if (fileName.StartsWith("."))
+            {
+                fileName = fileName.Substring(1);
+            }
+
+            return fileName == SettingsFileName;
+        }
+
         internal static StyleCopSettings GetStyleCopSettings(this AnalysisContext context, AnalyzerOptions options, CancellationToken cancellationToken)
         {
             return GetStyleCopSettings(context, options, DeserializationFailureBehavior.ReturnDefaultSettings, cancellationToken);
@@ -73,7 +90,8 @@ namespace StyleCop.Analyzers
 
         internal static StyleCopSettings GetStyleCopSettings(this AnalysisContext context, AnalyzerOptions options, DeserializationFailureBehavior failureBehavior, CancellationToken cancellationToken)
         {
-            SourceText text = TryGetStyleCopSettingsText(options, cancellationToken);
+            string settingsFileName;
+            SourceText text = TryGetStyleCopSettingsText(options, cancellationToken, out settingsFileName);
             if (text == null)
             {
                 return new StyleCopSettings();
@@ -90,7 +108,7 @@ namespace StyleCop.Analyzers
                 return settings;
             }
 
-            return GetStyleCopSettings(SettingsFileName, text, failureBehavior);
+            return GetStyleCopSettings(settingsFileName, text, failureBehavior);
         }
 
         internal static StyleCopSettings GetStyleCopSettings(this CompilationStartAnalysisContext context, AnalyzerOptions options, CancellationToken cancellationToken)
@@ -102,7 +120,8 @@ namespace StyleCop.Analyzers
         internal static StyleCopSettings GetStyleCopSettings(this CompilationStartAnalysisContext context, AnalyzerOptions options, DeserializationFailureBehavior failureBehavior, CancellationToken cancellationToken)
 #pragma warning restore RS1012 // Start action has no registered actions.
         {
-            SourceText text = TryGetStyleCopSettingsText(options, cancellationToken);
+            string settingsFileName;
+            SourceText text = TryGetStyleCopSettingsText(options, cancellationToken, out settingsFileName);
             if (text == null)
             {
                 return new StyleCopSettings();
@@ -119,7 +138,7 @@ namespace StyleCop.Analyzers
                 return settings;
             }
 
-            return GetStyleCopSettings(SettingsFileName, text, failureBehavior);
+            return GetStyleCopSettings(settingsFileName, text, failureBehavior);
         }
 
         private static StyleCopSettings GetStyleCopSettings(string path, SourceText text, DeserializationFailureBehavior failureBehavior)
@@ -159,15 +178,19 @@ namespace StyleCop.Analyzers
             return new StyleCopSettings();
         }
 
-        private static SourceText TryGetStyleCopSettingsText(this AnalyzerOptions options, CancellationToken cancellationToken)
+        private static SourceText TryGetStyleCopSettingsText(this AnalyzerOptions options, CancellationToken cancellationToken, out string settingsFileName)
         {
             foreach (var additionalFile in options.AdditionalFiles)
             {
-                if (Path.GetFileName(additionalFile.Path).ToLowerInvariant() == SettingsFileName)
+                if (IsStyleCopSettingsFile(additionalFile.Path))
                 {
+                    settingsFileName = additionalFile.Path;
+
                     return additionalFile.GetText(cancellationToken);
                 }
             }
+
+            settingsFileName = null;
 
             return null;
         }
@@ -176,7 +199,7 @@ namespace StyleCop.Analyzers
         {
             foreach (var additionalFile in additionalFiles)
             {
-                if (Path.GetFileName(additionalFile.Path).ToLowerInvariant() == SettingsFileName)
+                if (IsStyleCopSettingsFile(additionalFile.Path))
                 {
                     SourceText additionalTextContent = additionalFile.GetText(cancellationToken);
                     return GetStyleCopSettings(additionalFile.Path, additionalTextContent, failureBehavior);
