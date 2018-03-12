@@ -26,6 +26,7 @@ namespace NamespaceName
 ";
 
         private bool createSettingsFile;
+        private string settingsFileName = SettingsHelper.SettingsFileName;
 
         /// <summary>
         /// Verifies that a file without a header, but with leading trivia will produce the correct diagnostic message.
@@ -64,6 +65,21 @@ namespace NamespaceName
         public async Task TestSettingsFileAlreadyExistsAsync()
         {
             this.createSettingsFile = true;
+            this.settingsFileName = SettingsHelper.SettingsFileName;
+
+            var offeredFixes = await this.GetOfferedCSharpFixesAsync(TestCode).ConfigureAwait(false);
+            Assert.Empty(offeredFixes);
+        }
+
+        /// <summary>
+        /// Verifies that a code fix will not be offered if the settings file is already present.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestDotPrefixedSettingsFileAlreadyExistsAsync()
+        {
+            this.createSettingsFile = true;
+            this.settingsFileName = SettingsHelper.AltSettingsFileName;
 
             var offeredFixes = await this.GetOfferedCSharpFixesAsync(TestCode).ConfigureAwait(false);
             Assert.Empty(offeredFixes);
@@ -78,6 +94,12 @@ namespace NamespaceName
             }
 
             return null;
+        }
+
+        /// <inheritdoc/>
+        protected override string GetSettingsFileName()
+        {
+            return this.settingsFileName;
         }
 
         /// <inheritdoc/>
