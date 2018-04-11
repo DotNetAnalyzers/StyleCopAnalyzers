@@ -142,6 +142,30 @@ class Foo
         }
 
         [Fact]
+        public async Task TestMethodCallWithTwoParametersSecondSpansMultipleLinesButIsAnonymousObjectCreationExpressionAsync()
+        {
+            var testCode = @"
+class Foo
+{
+    public void FunA(int i, object j)
+    {
+    }
+
+    public void FunB()
+    {
+        FunA(1,
+             new
+             {
+                 Foo = 1,
+                 Bar = 2,
+             });
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestMethodCallWithTwoParametersFirstIsMultilineSecondIsOneLineAsync()
         {
             var testCode = @"
