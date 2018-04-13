@@ -140,15 +140,16 @@ namespace StyleCop.Analyzers.LayoutRules
         private static void CheckBraces(SyntaxNodeAnalysisContext context, SyntaxToken openBraceToken, SyntaxToken closeBraceToken)
         {
             bool checkCloseBrace = true;
+            int openBraceTokenLine = openBraceToken.GetLine();
 
-            if (GetStartLine(openBraceToken) == GetStartLine(closeBraceToken))
+            if (openBraceTokenLine == closeBraceToken.GetLine())
             {
                 if (context.Node.IsKind(SyntaxKind.ArrayInitializerExpression))
                 {
                     switch (context.Node.Parent.Kind())
                     {
                     case SyntaxKind.EqualsValueClause:
-                        if (GetStartLine(((EqualsValueClauseSyntax)context.Node.Parent).EqualsToken) == GetStartLine(openBraceToken))
+                        if (((EqualsValueClauseSyntax)context.Node.Parent).EqualsToken.GetLine() == openBraceTokenLine)
                         {
                             return;
                         }
@@ -156,7 +157,7 @@ namespace StyleCop.Analyzers.LayoutRules
                         break;
 
                     case SyntaxKind.ArrayCreationExpression:
-                        if (GetStartLine(((ArrayCreationExpressionSyntax)context.Node.Parent).NewKeyword) == GetStartLine(openBraceToken))
+                        if (((ArrayCreationExpressionSyntax)context.Node.Parent).NewKeyword.GetLine() == openBraceTokenLine)
                         {
                             return;
                         }
@@ -164,11 +165,20 @@ namespace StyleCop.Analyzers.LayoutRules
                         break;
 
                     case SyntaxKind.ImplicitArrayCreationExpression:
-                        if (GetStartLine(((ImplicitArrayCreationExpressionSyntax)context.Node.Parent).NewKeyword) == GetStartLine(openBraceToken))
+                        if (((ImplicitArrayCreationExpressionSyntax)context.Node.Parent).NewKeyword.GetLine() == openBraceTokenLine)
                         {
                             return;
                         }
 
+                        break;
+
+                    case SyntaxKind.ArrayInitializerExpression:
+                        if (!InitializerExpressionSharesLine((InitializerExpressionSyntax)context.Node))
+                        {
+                            return;
+                        }
+
+                        checkCloseBrace = false;
                         break;
 
                     default:
@@ -184,7 +194,7 @@ namespace StyleCop.Analyzers.LayoutRules
                     case SyntaxKind.AddAccessorDeclaration:
                     case SyntaxKind.RemoveAccessorDeclaration:
                     case SyntaxKind.UnknownAccessorDeclaration:
-                        if (GetStartLine(((AccessorDeclarationSyntax)context.Node.Parent).Keyword) == GetStartLine(openBraceToken))
+                        if (((AccessorDeclarationSyntax)context.Node.Parent).Keyword.GetLine() == openBraceTokenLine)
                         {
                             // reported as SA1504, if at all
                             return;
@@ -207,9 +217,12 @@ namespace StyleCop.Analyzers.LayoutRules
             }
         }
 
-        private static int GetStartLine(SyntaxToken token)
+        private static bool InitializerExpressionSharesLine(InitializerExpressionSyntax node)
         {
-            return token.GetLineSpan().StartLinePosition.Line;
+            var parent = (InitializerExpressionSyntax)node.Parent;
+            var index = parent.Expressions.IndexOf(node);
+
+            return (index > 0) && (parent.Expressions[index - 1].GetEndLine() == parent.Expressions[index].GetLine());
         }
 
         private static void CheckBraceToken(SyntaxNodeAnalysisContext context, SyntaxToken token)

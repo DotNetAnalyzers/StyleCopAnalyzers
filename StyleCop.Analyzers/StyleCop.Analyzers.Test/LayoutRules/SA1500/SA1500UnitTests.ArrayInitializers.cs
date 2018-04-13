@@ -342,5 +342,96 @@ public class TestClass
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that a multi-dimensional array initialization produces the expected diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2632, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2632")]
+        public async Task VerifyMultidimensionalArrayInitializationAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    private static readonly float[,] TestMatrix1 =
+        new float[,]
+        {
+            { 0, 0, 1, 1 },
+            { 1, 1, 1, 0 },
+            { 0, 1, 0, 0 }
+        };
+
+    private static readonly float[,] TestMatrix2 =
+        new float[,]
+        {   { 0, 0, 1, 1 },
+            { 1, 1, 1, 0 },
+            { 0, 1, 0, 0 }
+        };
+
+    private static readonly float[,] TestMatrix3 =
+        new float[,]
+        {
+            { 0, 0, 1, 1 },
+            { 1, 1, 1, 0 },
+            { 0, 1, 0, 0 } };
+
+    private static readonly float[,] TestMatrix4 =
+        new float[,]
+        {
+            { 0, 0, 1, 1 }, { 1, 1, 1, 0 },
+            { 0, 1, 0, 0 }
+        };
+}
+";
+
+            var fixedTestCode = @"
+public class TestClass
+{
+    private static readonly float[,] TestMatrix1 =
+        new float[,]
+        {
+            { 0, 0, 1, 1 },
+            { 1, 1, 1, 0 },
+            { 0, 1, 0, 0 }
+        };
+
+    private static readonly float[,] TestMatrix2 =
+        new float[,]
+        {
+            { 0, 0, 1, 1 },
+            { 1, 1, 1, 0 },
+            { 0, 1, 0, 0 }
+        };
+
+    private static readonly float[,] TestMatrix3 =
+        new float[,]
+        {
+            { 0, 0, 1, 1 },
+            { 1, 1, 1, 0 },
+            { 0, 1, 0, 0 }
+        };
+
+    private static readonly float[,] TestMatrix4 =
+        new float[,]
+        {
+            { 0, 0, 1, 1 },
+            { 1, 1, 1, 0 },
+            { 0, 1, 0, 0 }
+        };
+}
+";
+
+            DiagnosticResult[] expectedDiagnostics =
+            {
+                this.CSharpDiagnostic().WithLocation(14, 9),
+                this.CSharpDiagnostic().WithLocation(24, 28),
+                this.CSharpDiagnostic().WithLocation(29, 29),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
     }
 }
