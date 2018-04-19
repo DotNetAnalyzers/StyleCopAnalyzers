@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
     using StyleCop.Analyzers.DocumentationRules;
+    using TestHelper;
     using Xunit;
 
     /// <summary>
@@ -342,6 +343,43 @@ namespace Foo
 ";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that incomplete multiline comment at the start of the file is handled correctly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2649, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2649")]
+        public async Task TestIncompleteMultilineCommentAsync()
+        {
+            this.useNoXmlSettings = true;
+
+            var testCode = @"/*
+ * copyright (c) FooCorp. All rights reserved.
+";
+
+            var fixedCode = @"// copyright (c) FooCorp. All rights reserved.
+
+/*
+ * copyright (c) FooCorp. All rights reserved.
+";
+
+            DiagnosticResult[] expectedDiagnostics =
+            {
+                this.CSharpCompilerError("CS1035").WithMessage("End-of-file found, '*/' expected").WithLocation(1, 1),
+                this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1),
+            };
+
+            // The fixed code will still have the incomplete comment, as there is no certainty that the incomplete comment was intended as file header.
+            DiagnosticResult[] expectedFixedDiagnostics =
+            {
+                this.CSharpCompilerError("CS1035").WithMessage("End-of-file found, '*/' expected").WithLocation(3, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, expectedFixedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
