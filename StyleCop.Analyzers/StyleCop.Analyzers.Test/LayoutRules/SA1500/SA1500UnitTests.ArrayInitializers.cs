@@ -433,5 +433,94 @@ public class TestClass
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that a jagged array initialization produces the expected diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2632, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2632")]
+        public async Task VerifyJaggedArrayInitializationAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    private static readonly int[][] TestMatrix1 =
+        new int[][]
+        {
+            new[] { 0, 0, 1, 1 },
+            new[] { 1, 1, 1, 0 },
+            new[] { 0, 1, 0, 0 }
+        };
+
+    private static readonly int[][] TestMatrix2 =
+        new int[][]
+        {   new[] { 0, 0, 1, 1 },
+            new[] { 1, 1, 1, 0 },
+            new[] { 0, 1, 0, 0 }
+        };
+
+    private static readonly int[][] TestMatrix3 =
+        new int[][]
+        {
+            new[] { 0, 0, 1, 1 },
+            new[] { 1, 1, 1, 0 },
+            new[] { 0, 1, 0, 0 } };
+
+    private static readonly int[][] TestMatrix4 =
+        new int[][]
+        {
+            new[] { 0, 0, 1, 1 }, new[] { 1, 1, 1, 0 },
+            new[] { 0, 1, 0, 0 }
+        };
+}
+";
+
+            var fixedTestCode = @"
+public class TestClass
+{
+    private static readonly int[][] TestMatrix1 =
+        new int[][]
+        {
+            new[] { 0, 0, 1, 1 },
+            new[] { 1, 1, 1, 0 },
+            new[] { 0, 1, 0, 0 }
+        };
+
+    private static readonly int[][] TestMatrix2 =
+        new int[][]
+        {
+            new[] { 0, 0, 1, 1 },
+            new[] { 1, 1, 1, 0 },
+            new[] { 0, 1, 0, 0 }
+        };
+
+    private static readonly int[][] TestMatrix3 =
+        new int[][]
+        {
+            new[] { 0, 0, 1, 1 },
+            new[] { 1, 1, 1, 0 },
+            new[] { 0, 1, 0, 0 }
+        };
+
+    private static readonly int[][] TestMatrix4 =
+        new int[][]
+        {
+            new[] { 0, 0, 1, 1 }, new[] { 1, 1, 1, 0 },
+            new[] { 0, 1, 0, 0 }
+        };
+}
+";
+
+            DiagnosticResult[] expectedDiagnostics =
+            {
+                this.CSharpDiagnostic().WithLocation(14, 9),
+                this.CSharpDiagnostic().WithLocation(24, 34),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
     }
 }
