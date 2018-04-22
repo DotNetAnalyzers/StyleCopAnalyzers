@@ -220,6 +220,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
             foreach (SwitchSectionSyntax switchSection in switchStatement.Sections)
             {
                 labels.AddRange(switchSection.Labels);
+                if (switchSection.Statements.Count == 1 && switchSection.Statements[0].IsKind(SyntaxKind.Block))
+                {
+                    continue;
+                }
+
                 foreach (var statement in switchSection.Statements)
                 {
                     StatementSyntax statementToAlign = statement;

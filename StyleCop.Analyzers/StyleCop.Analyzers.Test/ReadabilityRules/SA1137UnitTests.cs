@@ -1460,18 +1460,37 @@ class ClassName
 
                 break;
 
-       case 1:
-case 2:
-     label2:
+        case 1:
+       {
+    label2:
+           if (true)
+           {
+           }
+
+               break;
+       }
+       case 2:
+case 3:
+     label3:
            while (true)
             {
             }
 
            break;
 
+      case 4:
+case 5:
+       {
+        label4:
+          while (true)
+            {
+            }
+
+          break;
+       }
 default:
-label3a:
- label3b:
+label5a:
+ label5b:
 break;
         }
     }
@@ -1493,17 +1512,36 @@ class ClassName
             break;
 
         case 1:
+       {
+    label2:
+           if (true)
+           {
+           }
+
+           break;
+       }
         case 2:
-      label2:
+        case 3:
+      label3:
             while (true)
             {
             }
 
             break;
 
+        case 4:
+        case 5:
+       {
+        label4:
+          while (true)
+            {
+            }
+
+          break;
+       }
         default:
-      label3a:
-      label3b:
+      label5a:
+      label5b:
             break;
         }
     }
@@ -1513,15 +1551,18 @@ class ClassName
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(14, 1),
-                this.CSharpDiagnostic().WithLocation(16, 1),
-                this.CSharpDiagnostic().WithLocation(17, 1),
-                this.CSharpDiagnostic().WithLocation(18, 1),
-                this.CSharpDiagnostic().WithLocation(19, 1),
                 this.CSharpDiagnostic().WithLocation(23, 1),
                 this.CSharpDiagnostic().WithLocation(25, 1),
                 this.CSharpDiagnostic().WithLocation(26, 1),
                 this.CSharpDiagnostic().WithLocation(27, 1),
                 this.CSharpDiagnostic().WithLocation(28, 1),
+                this.CSharpDiagnostic().WithLocation(32, 1),
+                this.CSharpDiagnostic().WithLocation(34, 1),
+                this.CSharpDiagnostic().WithLocation(35, 1),
+                this.CSharpDiagnostic().WithLocation(44, 1),
+                this.CSharpDiagnostic().WithLocation(45, 1),
+                this.CSharpDiagnostic().WithLocation(46, 1),
+                this.CSharpDiagnostic().WithLocation(47, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
