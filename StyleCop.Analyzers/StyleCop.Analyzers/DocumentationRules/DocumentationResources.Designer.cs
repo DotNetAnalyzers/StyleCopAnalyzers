@@ -377,6 +377,42 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add period.
+        /// </summary>
+        internal static string SA1629CodeFix {
+            get {
+                return ResourceManager.GetString("SA1629CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A section of the XML header documentation for a C# element does not end with a period..
+        /// </summary>
+        internal static string SA1629Description {
+            get {
+                return ResourceManager.GetString("SA1629Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Documentation text should end with a period.
+        /// </summary>
+        internal static string SA1629MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1629MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Documentation text should end with a period.
+        /// </summary>
+        internal static string SA1629Title {
+            get {
+                return ResourceManager.GetString("SA1629Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add file header.
         /// </summary>
         internal static string SA1633CodeFix {

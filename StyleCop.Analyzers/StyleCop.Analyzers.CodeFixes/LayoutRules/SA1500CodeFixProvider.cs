@@ -122,18 +122,15 @@ namespace StyleCop.Analyzers.LayoutRules
 
                         if (!braceTokens.Contains(nextToken))
                         {
-                            int newIndentationSteps;
+                            int newIndentationSteps = indentationSteps;
                             if (braceToken.IsKind(SyntaxKind.OpenBraceToken))
                             {
-                                newIndentationSteps = indentationSteps + 1;
+                                newIndentationSteps++;
                             }
-                            else if (nextToken.IsKind(SyntaxKind.CloseBraceToken))
+
+                            if (nextToken.IsKind(SyntaxKind.CloseBraceToken))
                             {
-                                newIndentationSteps = Math.Max(0, indentationSteps - 1);
-                            }
-                            else
-                            {
-                                newIndentationSteps = indentationSteps;
+                                newIndentationSteps = Math.Max(0, newIndentationSteps - 1);
                             }
 
                             AddReplacement(tokenReplacements, nextToken, nextToken.WithLeadingTrivia(IndentationHelper.GenerateWhitespaceTrivia(indentationSettings, newIndentationSteps)));
@@ -250,7 +247,15 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static void AddReplacement(Dictionary<SyntaxToken, SyntaxToken> tokenReplacements, SyntaxToken originalToken, SyntaxToken replacementToken)
         {
-            tokenReplacements[originalToken] = replacementToken;
+            if (tokenReplacements.ContainsKey(originalToken))
+            {
+                // This will only happen when a single keyword (like else) has invalid brace tokens before and after it.
+                tokenReplacements[originalToken] = tokenReplacements[originalToken].WithTrailingTrivia(replacementToken.TrailingTrivia);
+            }
+            else
+            {
+                tokenReplacements[originalToken] = replacementToken;
+            }
         }
 
         private class FixAll : DocumentBasedFixAllProvider

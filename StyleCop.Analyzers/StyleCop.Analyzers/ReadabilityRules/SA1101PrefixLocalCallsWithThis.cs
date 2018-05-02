@@ -83,6 +83,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 // this is handled separately
                 return;
 
+            case SyntaxKind.MemberBindingExpression:
+            case SyntaxKind.NameColon:
             case SyntaxKind.PointerMemberAccessExpression:
                 // this doesn't need to be handled
                 return;
@@ -121,10 +123,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
 
                 break;
-
-            case SyntaxKind.MemberBindingExpression:
-                // this doesn't need to be handled
-                return;
 
             default:
                 break;

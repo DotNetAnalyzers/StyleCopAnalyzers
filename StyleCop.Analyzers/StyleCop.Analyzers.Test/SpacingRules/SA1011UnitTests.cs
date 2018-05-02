@@ -6,7 +6,6 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.SpacingRules;
@@ -310,6 +309,62 @@ class ClassName
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2564, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2564")]
+        public async Task TestArrayElementPointerDeferenceAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    public unsafe string TestMethod(int[] a)
+    {
+        fixed (int* p = a)
+        {
+            int*[] xx = new[] { p };
+            return xx[0]->ToString(""n2"");
+        }
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2289, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2289")]
+        public async Task TestColonCanFollowSquareBracketWhenPartOfInterpolationFormatClauseAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    void Method()
+    {
+        var x = new[] { 1, 2, 3, 4, 5, 6, 7 };
+        var t = $""{ x[2]:C}"";
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2289, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2289")]
+        public async Task TestCommaCanFollowSquareBracketWhenPartOfInterpolationFormatClauseAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    void Method()
+    {
+        var x = new[] { 1, 2, 3, 4, 5, 6, 7 };
+        var t = $""{ x[2],3}"";
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

@@ -50,11 +50,7 @@ namespace StyleCop.Analyzers.NamingRules
 
         private static void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var fieldDeclaration = context.Node as FieldDeclarationSyntax;
-            if (fieldDeclaration == null)
-            {
-                return;
-            }
+            var fieldDeclaration = (FieldDeclarationSyntax)context.Node;
 
             if (!fieldDeclaration.Modifiers.Any(SyntaxKind.StaticKeyword) ||
                !fieldDeclaration.Modifiers.Any(SyntaxKind.ReadOnlyKeyword))

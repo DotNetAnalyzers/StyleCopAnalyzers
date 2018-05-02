@@ -16,8 +16,9 @@ namespace StyleCop.Analyzers.SpacingRules
     /// <remarks>
     /// <para>A violation of this rule occurs when the spacing around a comma is incorrect.</para>
     ///
-    /// <para>A comma should always be followed by a single space, unless it is the last character on the line, and a
-    /// comma should never be preceded by any whitespace, unless it is the first character on the line.</para>
+    /// <para>A comma should always be followed by a single space, unless it is the last character on the line or it is
+    /// part of a string interpolation alignment component, and a comma should never be preceded by any whitespace,
+    /// unless it is the first character on the line.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class SA1001CommasMustBeSpacedCorrectly : DiagnosticAnalyzer
@@ -75,6 +76,9 @@ namespace StyleCop.Analyzers.SpacingRules
 
             // check for a following space
             bool missingFollowingSpace = true;
+
+            // check for things like $"{x,5}"
+            var shouldNotHaveFollowingSpace = token.Parent.IsKind(SyntaxKind.InterpolationAlignmentClause);
             if (token.HasTrailingTrivia)
             {
                 if (token.TrailingTrivia.First().IsKind(SyntaxKind.WhitespaceTrivia))
@@ -102,10 +106,16 @@ namespace StyleCop.Analyzers.SpacingRules
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemovePrecedingPreserveLayout, " not", "preceded"));
             }
 
-            if (missingFollowingSpace)
+            if (missingFollowingSpace && !shouldNotHaveFollowingSpace)
             {
                 // comma should{} be {followed} by whitespace
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.InsertFollowing, string.Empty, "followed"));
+            }
+
+            if (!missingFollowingSpace && shouldNotHaveFollowingSpace)
+            {
+                // comma should{ not} be {followed} by whitespace
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemoveFollowing, " not", "followed"));
             }
         }
     }

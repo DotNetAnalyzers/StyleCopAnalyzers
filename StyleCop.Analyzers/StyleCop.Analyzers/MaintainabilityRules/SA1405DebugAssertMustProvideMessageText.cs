@@ -54,7 +54,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
         private static void HandleInvocationExpression(SyntaxNodeAnalysisContext context)
         {
-            HandleMethodCall(context, nameof(Debug.Assert), 1, Descriptor);
+            HandleInvocationExpression(context, nameof(Debug.Assert), 1, Descriptor);
         }
     }
 }

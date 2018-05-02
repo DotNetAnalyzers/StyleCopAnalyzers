@@ -143,25 +143,60 @@ namespace StyleCop.Analyzers.LayoutRules
 
             if (GetStartLine(openBraceToken) == GetStartLine(closeBraceToken))
             {
-                switch (context.Node.Parent.Kind())
+                if (context.Node.IsKind(SyntaxKind.ArrayInitializerExpression))
                 {
-                case SyntaxKind.GetAccessorDeclaration:
-                case SyntaxKind.SetAccessorDeclaration:
-                case SyntaxKind.AddAccessorDeclaration:
-                case SyntaxKind.RemoveAccessorDeclaration:
-                case SyntaxKind.UnknownAccessorDeclaration:
-                    if (GetStartLine(((AccessorDeclarationSyntax)context.Node.Parent).Keyword) == GetStartLine(openBraceToken))
+                    switch (context.Node.Parent.Kind())
                     {
-                        // reported as SA1504, if at all
+                    case SyntaxKind.EqualsValueClause:
+                        if (GetStartLine(((EqualsValueClauseSyntax)context.Node.Parent).EqualsToken) == GetStartLine(openBraceToken))
+                        {
+                            return;
+                        }
+
+                        break;
+
+                    case SyntaxKind.ArrayCreationExpression:
+                        if (GetStartLine(((ArrayCreationExpressionSyntax)context.Node.Parent).NewKeyword) == GetStartLine(openBraceToken))
+                        {
+                            return;
+                        }
+
+                        break;
+
+                    case SyntaxKind.ImplicitArrayCreationExpression:
+                        if (GetStartLine(((ImplicitArrayCreationExpressionSyntax)context.Node.Parent).NewKeyword) == GetStartLine(openBraceToken))
+                        {
+                            return;
+                        }
+
+                        break;
+
+                    default:
+                        break;
+                    }
+                }
+                else
+                {
+                    switch (context.Node.Parent.Kind())
+                    {
+                    case SyntaxKind.GetAccessorDeclaration:
+                    case SyntaxKind.SetAccessorDeclaration:
+                    case SyntaxKind.AddAccessorDeclaration:
+                    case SyntaxKind.RemoveAccessorDeclaration:
+                    case SyntaxKind.UnknownAccessorDeclaration:
+                        if (GetStartLine(((AccessorDeclarationSyntax)context.Node.Parent).Keyword) == GetStartLine(openBraceToken))
+                        {
+                            // reported as SA1504, if at all
+                            return;
+                        }
+
+                        checkCloseBrace = false;
+                        break;
+
+                    default:
+                        // reported by SA1501 or SA1502
                         return;
                     }
-
-                    checkCloseBrace = false;
-                    break;
-
-                default:
-                    // reported by SA1501 or SA1502
-                    return;
                 }
             }
 

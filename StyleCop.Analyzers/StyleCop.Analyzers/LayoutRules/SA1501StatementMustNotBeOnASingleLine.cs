@@ -12,7 +12,6 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using SpacingRules;
 
     /// <summary>
     /// A C# statement containing opening and closing braces is written completely on a single line.
@@ -49,6 +48,10 @@ namespace StyleCop.Analyzers.LayoutRules
         /// The ID for diagnostics produced by the <see cref="SA1501StatementMustNotBeOnASingleLine"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1501";
+
+        internal const string SuppressCodeFixKey = "SuppressCodeFix";
+        internal const string SuppressCodeFixValue = "true";
+
         private const string Title = "Statement should not be on a single line";
         private const string MessageFormat = "Statement should not be on a single line";
         private const string Description = "A C# statement containing opening and closing braces is written completely on a single line.";
@@ -56,6 +59,9 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+
+        private static readonly ImmutableDictionary<string, string> SuppressCodeFixProperties =
+            ImmutableDictionary<string, string>.Empty.Add(SuppressCodeFixKey, SuppressCodeFixValue);
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
 
@@ -91,9 +97,8 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static void HandleBlock(SyntaxNodeAnalysisContext context)
         {
-            var block = context.Node as BlockSyntax;
-            if ((block != null) &&
-                !block.OpenBraceToken.IsMissing &&
+            var block = (BlockSyntax)context.Node;
+            if (!block.OpenBraceToken.IsMissing &&
                 !block.CloseBraceToken.IsMissing &&
                 IsPartOfStatement(block))
             {
@@ -117,7 +122,7 @@ namespace StyleCop.Analyzers.LayoutRules
                         break;
                     }
 
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, block.OpenBraceToken.GetLocation()));
+                    ReportDiagnostic(context, block.OpenBraceToken.GetLocation());
                 }
             }
         }
@@ -164,6 +169,8 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static void CheckChildStatement(SyntaxNodeAnalysisContext context, SyntaxNode node, StatementSyntax childStatement)
         {
+            bool reportAsHidden = false;
+
             if (childStatement == null || childStatement.IsMissing)
             {
                 return;
@@ -172,12 +179,6 @@ namespace StyleCop.Analyzers.LayoutRules
             if (childStatement is BlockSyntax)
             {
                 // BlockSyntax child statements are handled by HandleBlock
-                return;
-            }
-
-            // We are only interested in the first instance of this violation on a line.
-            if (!node.GetFirstToken().IsFirstInLine())
-            {
                 return;
             }
 
@@ -195,11 +196,11 @@ namespace StyleCop.Analyzers.LayoutRules
                 FileLinePositionSpan lineSpan = childStatement.GetLineSpan();
                 if (lineSpan.StartLinePosition.Line != lineSpan.EndLinePosition.Line)
                 {
-                    return;
+                    reportAsHidden = true;
                 }
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, childStatement.GetLocation()));
+            ReportDiagnostic(context, childStatement.GetLocation(), reportAsHidden);
         }
 
         private static bool IsSingleLineExpression(ExpressionSyntax containingExpression)
@@ -221,6 +222,34 @@ namespace StyleCop.Analyzers.LayoutRules
         private static ExpressionSyntax GetContainingExpression(SyntaxNode node)
         {
             return node.FirstAncestorOrSelf<ExpressionSyntax>();
+        }
+
+        private static void ReportDiagnostic(SyntaxNodeAnalysisContext context, Location location, bool reportAsHidden = false)
+        {
+            Diagnostic diagnostic;
+
+            if (reportAsHidden)
+            {
+                diagnostic = Diagnostic.Create(
+                    Descriptor.Id,
+                    Descriptor.Category,
+                    Descriptor.MessageFormat,
+                    DiagnosticSeverity.Hidden,
+                    Descriptor.DefaultSeverity,
+                    Descriptor.IsEnabledByDefault,
+                    1,
+                    Descriptor.Title,
+                    Descriptor.Description,
+                    Descriptor.HelpLinkUri,
+                    location,
+                    properties: SuppressCodeFixProperties);
+            }
+            else
+            {
+                diagnostic = Diagnostic.Create(Descriptor, location);
+            }
+
+            context.ReportDiagnostic(diagnostic);
         }
     }
 }

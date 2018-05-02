@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.SpacingRules
 {
     using System;
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -22,7 +21,8 @@ namespace StyleCop.Analyzers.SpacingRules
     /// line.</para>
     ///
     /// <para>A closing square bracket should be followed by whitespace, unless it is the last character on the line, it
-    /// is followed by a closing bracket or an opening parenthesis, it is followed by a comma or semicolon, or it is
+    /// is followed by a closing bracket or an opening parenthesis, it is followed by a comma or semicolon, it is
+    /// followed by a string interpolation alignment component or string interpolation formatting component, or it is
     /// followed by certain types of operator symbols.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
@@ -103,6 +103,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 case SyntaxKind.DotToken:
                 case SyntaxKind.OpenBracketToken:
                 case SyntaxKind.CloseParenToken:
+                case SyntaxKind.MinusGreaterThanToken:
                     precedesSpecialCharacter = true;
                     break;
                 case SyntaxKind.PlusPlusToken:
@@ -121,6 +122,11 @@ namespace StyleCop.Analyzers.SpacingRules
 
                 case SyntaxKind.CloseBraceToken:
                     precedesSpecialCharacter = nextToken.Parent is InterpolationSyntax;
+                    break;
+
+                case SyntaxKind.ColonToken:
+                    precedesSpecialCharacter = nextToken.Parent.IsKind(SyntaxKind.InterpolationFormatClause);
+                    suppressFollowingSpaceError = false;
                     break;
 
                 default:

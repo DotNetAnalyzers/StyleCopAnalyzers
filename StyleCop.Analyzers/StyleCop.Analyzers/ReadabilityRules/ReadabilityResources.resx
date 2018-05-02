@@ -522,6 +522,21 @@
   <data name="SA1139CodeFix" xml:space="preserve">
     <value>Use literal suffix notation instead of casting</value>
   </data>
+  <data name="SA1135CodeFix" xml:space="preserve">
+    <value>Qualify using directive</value>
+  </data>
+  <data name="SA1135Description" xml:space="preserve">
+    <value>All using directives should be qualified.</value>
+  </data>
+  <data name="SA1135MessageFormatNamespace" xml:space="preserve">
+    <value>Using directive for namespace '{0}' should be qualified</value>
+  </data>
+  <data name="SA1135MessageFormatType" xml:space="preserve">
+    <value>Using directive for type '{0}' should be qualified</value>
+  </data>
+  <data name="SA1135Title" xml:space="preserve">
+    <value>Using directives should be qualified</value>
+  </data>
   <data name="SX1101CodeFix" xml:space="preserve">
     <value>Remove 'this.' prefix</value>
   </data>

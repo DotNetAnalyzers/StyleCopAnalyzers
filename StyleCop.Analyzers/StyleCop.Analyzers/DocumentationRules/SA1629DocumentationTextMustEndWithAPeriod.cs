@@ -3,9 +3,15 @@
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
+    using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Linq;
+    using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Text;
 
     /// <summary>
     /// A section of the XML header documentation for a C# element does not end with a period (also known as a full
@@ -32,28 +38,89 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </code>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class SA1629DocumentationTextMustEndWithAPeriod : DiagnosticAnalyzer
+    internal class SA1629DocumentationTextMustEndWithAPeriod : ElementDocumentationBase
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1629DocumentationTextMustEndWithAPeriod"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1629";
-        private const string Title = "Documentation text should end with a period";
-        private const string MessageFormat = "TODO: Message format";
-        private const string Description = "A section of the XML header documentation for a C# element does not end with a period.";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1629.md";
+
+        /// <summary>
+        /// The key used for signalling that no codefix should be offered.
+        /// </summary>
+        internal const string NoCodeFixKey = "NoCodeFix";
+
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1629Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1629MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1629Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1629.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledNoTests, Description, HelpLink, WellKnownDiagnosticTags.NotConfigurable);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+
+        private static readonly ImmutableDictionary<string, string> NoCodeFixProperties = ImmutableDictionary.Create<string, string>().Add(NoCodeFixKey, string.Empty);
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SA1629DocumentationTextMustEndWithAPeriod"/> class.
+        /// </summary>
+        public SA1629DocumentationTextMustEndWithAPeriod()
+            : base(inheritDocSuppressesWarnings: false)
+        {
+        }
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        public override void Initialize(AnalysisContext context)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, bool needsComment, IEnumerable<XmlNodeSyntax> syntaxList, params Location[] diagnosticLocations)
         {
-            // TODO: Implement analysis
+            foreach (var xmlElement in syntaxList.OfType<XmlElementSyntax>())
+            {
+                var elementDone = false;
+                for (var i = xmlElement.Content.Count - 1; !elementDone && (i >= 0); i--)
+                {
+                    var contentNode = xmlElement.Content[i] as XmlTextSyntax;
+                    if (contentNode != null)
+                    {
+                        for (var j = contentNode.TextTokens.Count - 1; !elementDone && (j >= 0); j--)
+                        {
+                            var textToken = contentNode.TextTokens[j];
+                            var textWithoutTrailingWhitespace = textToken.Text.TrimEnd(' ', '\r', '\n');
+
+                            if (!string.IsNullOrEmpty(textWithoutTrailingWhitespace))
+                            {
+                                if (!textWithoutTrailingWhitespace.EndsWith(".", StringComparison.Ordinal))
+                                {
+                                    var location = Location.Create(xmlElement.SyntaxTree, new TextSpan(textToken.SpanStart + textWithoutTrailingWhitespace.Length, 1));
+                                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                                }
+
+                                elementDone = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <inheritdoc/>
+        protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, bool needsComment, XElement completeDocumentation, params Location[] diagnosticLocations)
+        {
+            foreach (var node in completeDocumentation.Nodes().OfType<XElement>())
+            {
+                var textWithoutTrailingWhitespace = node.Value.TrimEnd(' ', '\r', '\n');
+                if (!string.IsNullOrEmpty(textWithoutTrailingWhitespace))
+                {
+                    if (!textWithoutTrailingWhitespace.EndsWith(".", StringComparison.Ordinal))
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, diagnosticLocations[0], NoCodeFixProperties));
+
+                        // only report a single instance of the diagnostic, as they will all be reported on the same location anyway.
+                        break;
+                    }
+                }
+            }
         }
     }
 }

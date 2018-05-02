@@ -8,8 +8,8 @@
     <Copyright>Copyright © Tunnel Vision Laboratories, LLC 2015</Copyright>
     <NeutralLanguage>en-US</NeutralLanguage>
 
-    <Version>1.1.0.35</Version>
-    <FileVersion>1.1.0.35</FileVersion>
+    <Version>1.1.0.37</Version>
+    <FileVersion>1.1.0.37</FileVersion>
     <InformationalVersion>1.1.0-dev</InformationalVersion>
   </PropertyGroup>
 
@@ -27,13 +27,8 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
-    <DebugType>full</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-    <DebugType>pdbonly</DebugType>
+  <PropertyGroup>
+    <DebugType>portable</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
 
@@ -51,7 +46,7 @@
 
   <ItemGroup>
     <PackageReference Include="AsyncUsageAnalyzers" Version="1.0.0-alpha003" PrivateAssets="all" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta004" PrivateAssets="all" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta006" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

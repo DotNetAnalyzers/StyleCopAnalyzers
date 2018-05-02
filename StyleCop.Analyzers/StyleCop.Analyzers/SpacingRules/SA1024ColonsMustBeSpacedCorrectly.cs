@@ -42,6 +42,13 @@ namespace StyleCop.Analyzers.SpacingRules
     /// }
     /// </code>
     ///
+    /// <para>A colon that appears as part of a string interpolation formatting component should not have leading
+    /// whitespace characters. For example:</para>
+    ///
+    /// <code language="cs">
+    /// var s = $"{x:N}";
+    /// </code>
+    ///
     /// <para>Finally, when a colon is used within a conditional statement, it should always contain a single space on
     /// either side, unless the colon is the first or last character on the line. For example:</para>
     ///
@@ -99,6 +106,7 @@ namespace StyleCop.Analyzers.SpacingRules
             }
 
             bool requireBefore;
+            var checkRequireAfter = true;
             switch (token.Parent.Kind())
             {
             case SyntaxKind.BaseList:
@@ -116,6 +124,11 @@ namespace StyleCop.Analyzers.SpacingRules
             // NameColon is not explicitly listed in the description of this warning, but the behavior is inferred
             case SyntaxKind.NameColon:
                 requireBefore = false;
+                break;
+
+            case SyntaxKind.InterpolationFormatClause:
+                requireBefore = false;
+                checkRequireAfter = false;
                 break;
 
             default:
@@ -155,7 +168,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, requireBefore ? string.Empty : " not", "preceded", string.Empty));
             }
 
-            if (missingFollowingSpace)
+            if (missingFollowingSpace && checkRequireAfter)
             {
                 // colon should{} be {followed}{} by a space
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.InsertFollowing, string.Empty, "followed", string.Empty));

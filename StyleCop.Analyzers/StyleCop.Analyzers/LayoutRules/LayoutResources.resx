@@ -123,6 +123,9 @@
   <data name="SA1501CodeFix" xml:space="preserve">
     <value>Expand single line block</value>
   </data>
+  <data name="SA1501CodeFixAll" xml:space="preserve">
+    <value>Expand all single line blocks</value>
+  </data>
   <data name="SA1502CodeFix" xml:space="preserve">
     <value>Expand element</value>
   </data>

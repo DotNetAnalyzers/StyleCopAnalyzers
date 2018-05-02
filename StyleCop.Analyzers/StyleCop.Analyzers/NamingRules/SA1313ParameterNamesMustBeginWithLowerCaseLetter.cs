@@ -128,7 +128,8 @@ namespace StyleCop.Analyzers.NamingRules
 
             if (methodSymbol.IsOverride)
             {
-                if (methodSymbol.OverriddenMethod.Parameters[index].Name == syntax.Identifier.ValueText)
+                // OverridenMethod can be null in case of an invalid method declaration -> exit because there is no meaningful analysis to be done.
+                if ((methodSymbol.OverriddenMethod == null) || (methodSymbol.OverriddenMethod.Parameters[index].Name == syntax.Identifier.ValueText))
                 {
                     return true;
                 }

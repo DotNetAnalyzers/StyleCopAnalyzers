@@ -55,7 +55,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         private static void HandleInvocationExpression(SyntaxNodeAnalysisContext context)
         {
             // Debug.Fail is not available in a portable library. So no nameof(Debug.Fail) here
-            HandleMethodCall(context, "Fail", 0, Descriptor);
+            HandleInvocationExpression(context, "Fail", 0, Descriptor);
         }
     }
 }

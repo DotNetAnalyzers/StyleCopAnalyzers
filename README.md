@@ -1,5 +1,7 @@
 # StyleCop Analyzers for the .NET Compiler Platform
 
+[![NuGet](https://img.shields.io/nuget/v/StyleCop.Analyzers.svg)](https://www.nuget.org/packages/StyleCop.Analyzers)[![NuGet Beta](https://img.shields.io/nuget/vpre/StyleCop.Analyzers.svg)](https://www.nuget.org/packages/StyleCop.Analyzers)
+
 [![Join the chat at https://gitter.im/DotNetAnalyzers/StyleCopAnalyzers](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/DotNetAnalyzers/StyleCopAnalyzers?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 [![Build status](https://ci.appveyor.com/api/projects/status/8jw2lq431kgg44jl/branch/master?svg=true)](https://ci.appveyor.com/project/sharwell/stylecopanalyzers/branch/master)
@@ -13,7 +15,7 @@ This repository contains an implementation of the StyleCop rules using the .NET 
 The preferable way to use the analyzers is to add the nuget package [StyleCop.Analyzers](http://www.nuget.org/packages/StyleCop.Analyzers/)
 to the project where you want to enforce StyleCop rules.
 
-The severity of individual rules may be configured using [rule set files](https://msdn.microsoft.com/en-us/library/dd264996.aspx)
+The severity of individual rules may be configured using [rule set files](https://docs.microsoft.com/en-us/visualstudio/code-quality/using-rule-sets-to-group-code-analysis-rules)
 in Visual Studio 2015 or newer. **Settings.StyleCop** is not supported, but a **stylecop.json** file may be used to
 customize the behavior of certain rules. See [Configuration.md](documentation/Configuration.md) for more information.
 

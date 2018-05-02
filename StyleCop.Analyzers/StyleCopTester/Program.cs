@@ -21,8 +21,6 @@ namespace StyleCopTester
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.MSBuild;
-    using Microsoft.CodeAnalysis.Text;
-    using StyleCop.Analyzers.Helpers;
     using File = System.IO.File;
     using Path = System.IO.Path;
 
@@ -606,7 +604,7 @@ namespace StyleCopTester
             Compilation compilation = await processedProject.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
             CompilationWithAnalyzers compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, new CompilationWithAnalyzersOptions(new AnalyzerOptions(ImmutableArray.Create<AdditionalText>()), null, true, false));
 
-            var diagnostics = await FixAllContextHelper.GetAllDiagnosticsAsync(compilation, compilationWithAnalyzers, analyzers, project.Documents, true, cancellationToken).ConfigureAwait(false);
+            var diagnostics = await compilationWithAnalyzers.GetAllDiagnosticsAsync(cancellationToken).ConfigureAwait(false);
             return diagnostics;
         }
 
@@ -618,7 +616,7 @@ namespace StyleCopTester
             Console.WriteLine("/stats     Display statistics of the solution");
             Console.WriteLine("/codefixes Test single code fixes");
             Console.WriteLine("/fixall    Test fix all providers");
-            Console.WriteLine("/id:<id>   Enable analyzer with diagnostic ID < id > (when this is specified, only this analyzer is enabled)");
+            Console.WriteLine("/id:<id>   Enable analyzer with diagnostic ID <id> (when this is specified, only this analyzer is enabled)");
             Console.WriteLine("/apply     Write code fix changes back to disk");
             Console.WriteLine("/force     Force an analyzer to be enabled, regardless of the configured rule set(s) for the solution");
             Console.WriteLine("/editperf[:<match>]     Test the incremental performance of analyzers to simulate the behavior of editing files. If <match> is specified, only files matching this regular expression are evaluated for editor performance.");

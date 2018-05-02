@@ -80,6 +80,15 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Expand all single line blocks.
+        /// </summary>
+        internal static string SA1501CodeFixAll {
+            get {
+                return ResourceManager.GetString("SA1501CodeFixAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Expand element.
         /// </summary>
         internal static string SA1502CodeFix {

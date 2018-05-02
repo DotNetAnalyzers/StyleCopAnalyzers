@@ -158,61 +158,52 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var typeDeclaration = context.Node as TypeDeclarationSyntax;
+            var typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
-            if (typeDeclaration != null)
-            {
-                var members = typeDeclaration.Members;
+            var members = typeDeclaration.Members;
 
-                HandleMemberList(context, members);
-            }
+            HandleMemberList(context, members);
         }
 
         private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
-            var compilationUnit = context.Node as CompilationUnitSyntax;
+            var compilationUnit = (CompilationUnitSyntax)context.Node;
 
-            if (compilationUnit != null)
+            var usings = compilationUnit.Usings;
+            var members = compilationUnit.Members;
+
+            HandleUsings(context, usings, settings);
+            HandleMemberList(context, members);
+
+            if (members.Count > 0 && compilationUnit.Usings.Count > 0)
             {
-                var usings = compilationUnit.Usings;
-                var members = compilationUnit.Members;
+                ReportIfThereIsNoBlankLine(context, usings[usings.Count - 1], members[0]);
+            }
 
-                HandleUsings(context, usings, settings);
-                HandleMemberList(context, members);
-
-                if (members.Count > 0 && compilationUnit.Usings.Count > 0)
-                {
-                    ReportIfThereIsNoBlankLine(context, usings[usings.Count - 1], members[0]);
-                }
-
-                if (compilationUnit.Usings.Count > 0 && compilationUnit.Externs.Count > 0)
-                {
-                    ReportIfThereIsNoBlankLine(context, compilationUnit.Externs[compilationUnit.Externs.Count - 1], compilationUnit.Usings[0]);
-                }
+            if (compilationUnit.Usings.Count > 0 && compilationUnit.Externs.Count > 0)
+            {
+                ReportIfThereIsNoBlankLine(context, compilationUnit.Externs[compilationUnit.Externs.Count - 1], compilationUnit.Usings[0]);
             }
         }
 
         private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
-            var namespaceDeclaration = context.Node as NamespaceDeclarationSyntax;
+            var namespaceDeclaration = (NamespaceDeclarationSyntax)context.Node;
 
-            if (namespaceDeclaration != null)
+            var usings = namespaceDeclaration.Usings;
+            var members = namespaceDeclaration.Members;
+
+            HandleUsings(context, usings, settings);
+            HandleMemberList(context, members);
+
+            if (members.Count > 0 && namespaceDeclaration.Usings.Count > 0)
             {
-                var usings = namespaceDeclaration.Usings;
-                var members = namespaceDeclaration.Members;
+                ReportIfThereIsNoBlankLine(context, usings[usings.Count - 1], members[0]);
+            }
 
-                HandleUsings(context, usings, settings);
-                HandleMemberList(context, members);
-
-                if (members.Count > 0 && namespaceDeclaration.Usings.Count > 0)
-                {
-                    ReportIfThereIsNoBlankLine(context, usings[usings.Count - 1], members[0]);
-                }
-
-                if (namespaceDeclaration.Usings.Count > 0 && namespaceDeclaration.Externs.Count > 0)
-                {
-                    ReportIfThereIsNoBlankLine(context, namespaceDeclaration.Externs[namespaceDeclaration.Externs.Count - 1], namespaceDeclaration.Usings[0]);
-                }
+            if (namespaceDeclaration.Usings.Count > 0 && namespaceDeclaration.Externs.Count > 0)
+            {
+                ReportIfThereIsNoBlankLine(context, namespaceDeclaration.Externs[namespaceDeclaration.Externs.Count - 1], namespaceDeclaration.Usings[0]);
             }
         }
 

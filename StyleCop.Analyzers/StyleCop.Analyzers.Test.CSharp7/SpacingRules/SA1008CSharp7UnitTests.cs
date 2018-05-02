@@ -983,5 +983,19 @@ namespace TestNamespace
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(2568, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2568")]
+        public async Task TestTupleExpressionParamsAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    public void TestMethod(params (string name, string value)[] options)
+    {
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
