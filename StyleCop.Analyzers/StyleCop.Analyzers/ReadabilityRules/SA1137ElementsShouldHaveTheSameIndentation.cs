@@ -217,11 +217,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var labels = ImmutableList.CreateBuilder<SwitchLabelSyntax>();
             var statements = ImmutableList.CreateBuilder<StatementSyntax>();
             var labeledStatements = ImmutableList.CreateBuilder<StatementSyntax>();
+            var blockStatements = ImmutableList.CreateBuilder<StatementSyntax>();
             foreach (SwitchSectionSyntax switchSection in switchStatement.Sections)
             {
                 labels.AddRange(switchSection.Labels);
                 if (switchSection.Statements.Count == 1 && switchSection.Statements[0].IsKind(SyntaxKind.Block))
                 {
+                    blockStatements.Add(switchSection.Statements[0]);
                     continue;
                 }
 
@@ -241,6 +243,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             CheckElements(context, labels.ToImmutable());
             CheckElements(context, statements.ToImmutable());
             CheckElements(context, labeledStatements.ToImmutable());
+            CheckElements(context, blockStatements.ToImmutable());
         }
 
         private static void HandleInitializerExpression(SyntaxNodeAnalysisContext context)

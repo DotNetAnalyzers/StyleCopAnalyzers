@@ -1480,14 +1480,14 @@ case 3:
 
       case 4:
 case 5:
-       {
+        {
         label4:
           while (true)
             {
             }
 
           break;
-       }
+        }
 default:
 label5a:
  label5b:
@@ -1538,7 +1538,7 @@ class ClassName
             }
 
           break;
-       }
+        }
         default:
       label5a:
       label5b:
@@ -1559,6 +1559,7 @@ class ClassName
                 this.CSharpDiagnostic().WithLocation(32, 1),
                 this.CSharpDiagnostic().WithLocation(34, 1),
                 this.CSharpDiagnostic().WithLocation(35, 1),
+                this.CSharpDiagnostic().WithLocation(36, 1),
                 this.CSharpDiagnostic().WithLocation(44, 1),
                 this.CSharpDiagnostic().WithLocation(45, 1),
                 this.CSharpDiagnostic().WithLocation(46, 1),
