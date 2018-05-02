@@ -5,10 +5,6 @@
       "commandLineArgs": "..\\..\\StyleCopAnalyzers.sln /stats",
       "workingDirectory": "$(MSBuildProjectDirectory)",
       "environmentVariables": {
-        "MSBuildSDKsPath": "$(MSBuildSDKsPath)",
-        "MSBuildExtensionsPath": "$(MSBuildExtensionsPath)",
-        "VisualStudioVersion": "$(VisualStudioVersion)",
-        "VSINSTALLDIR": "$(VSAPPIDDIR)\\..\\..\\"
       }
     },
     "StyleCopAnalyzers.sln /stats /editperf": {
@@ -16,10 +12,6 @@
       "commandLineArgs": "..\\..\\StyleCopAnalyzers.sln /stats /editperf",
       "workingDirectory": "$(MSBuildProjectDirectory)",
       "environmentVariables": {
-        "MSBuildSDKsPath": "$(MSBuildSDKsPath)",
-        "MSBuildExtensionsPath": "$(MSBuildExtensionsPath)",
-        "VisualStudioVersion": "$(VisualStudioVersion)",
-        "VSINSTALLDIR": "$(VSAPPIDDIR)\\..\\..\\"
       }
     }
   }

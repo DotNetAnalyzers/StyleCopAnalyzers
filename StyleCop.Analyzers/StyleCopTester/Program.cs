@@ -15,6 +15,7 @@ namespace StyleCopTester
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Threading;
+    using Microsoft.Build.Locator;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -85,6 +86,8 @@ namespace StyleCopTester
                     }
                 }
 
+                MSBuildLocator.RegisterDefaults();
+
                 Stopwatch stopwatch = Stopwatch.StartNew();
                 var analyzers = GetAllAnalyzers();
 
@@ -96,9 +99,17 @@ namespace StyleCopTester
                     return;
                 }
 
+                var properties = new Dictionary<string, string>
+                {
+                    // This property ensures that XAML files will be compiled in the current AppDomain
+                    // rather than a separate one. Any tasks isolated in AppDomains or tasks that create
+                    // AppDomains will likely not work due to https://github.com/Microsoft/MSBuildLocator/issues/16.
+                    { "AlwaysCompileMarkupFilesInSeparateDomain", bool.FalseString },
+                };
+
                 MSBuildWorkspace workspace = MSBuildWorkspace.Create();
                 string solutionPath = args.SingleOrDefault(i => !i.StartsWith("/", StringComparison.Ordinal));
-                Solution solution = await workspace.OpenSolutionAsync(solutionPath, cancellationToken).ConfigureAwait(false);
+                Solution solution = await workspace.OpenSolutionAsync(solutionPath, cancellationToken: cancellationToken).ConfigureAwait(false);
 
                 Console.WriteLine($"Loaded solution in {stopwatch.ElapsedMilliseconds}ms");
 
