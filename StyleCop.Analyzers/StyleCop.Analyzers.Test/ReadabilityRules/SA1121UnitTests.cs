@@ -776,23 +776,6 @@ public class Foo
         [Fact]
         public async Task TestMissleadingUsingAsync()
         {
-            string testCode = @"namespace Foo
-{
-  using Int32 = System.UInt32;
-  class Bar
-  {
-    Int32 value = 3;
-  }
-}
-";
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 5);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestMissleadingUsingCodeFixAsync()
-        {
             string oldSource = @"namespace Foo
 {
   using Int32 = System.UInt32;
@@ -812,29 +795,16 @@ public class Foo
 }
 ";
 
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 5);
+
+            await this.VerifyCSharpDiagnosticAsync(oldSource, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(newSource, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(oldSource, newSource, allowNewCompilerDiagnostics: true).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestUsingNameChangeAsync()
         {
-            string testCode = @"namespace Foo
-{
-  using MyInt = System.UInt32;
-  class Bar
-  {
-    MyInt value = 3;
-  }
-}
-";
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 5);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestUsingNameChangeCodeFixAsync()
-        {
             string oldSource = @"namespace Foo
 {
   using MyInt = System.UInt32;
@@ -854,6 +824,10 @@ public class Foo
 }
 ";
 
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 5);
+
+            await this.VerifyCSharpDiagnosticAsync(oldSource, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(newSource, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(oldSource, newSource, allowNewCompilerDiagnostics: true).ConfigureAwait(false);
         }
 
