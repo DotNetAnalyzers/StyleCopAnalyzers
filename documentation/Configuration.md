@@ -100,7 +100,21 @@ This section describes the features of readability rules which can be configured
 }
 ```
 
-> Currently there are no configurable settings for readability rules.
+### Aliases for Built-In Types
+
+| Property | Default Value | Minimum Version | Summary |
+| --- | --- | --- | --- |
+| `allowBuiltInTypeAliases` | **false** | 1.1.0-beta007 | Specifies whether aliases are allowed for built-in types. |
+
+By default, SA1121 reports a diagnostic for the use of named aliases for built-in types:
+
+```csharp
+using HRESULT = System.Int32;
+
+HRESULT hr = SomeNativeOperation(); // SA1121
+```
+
+The `allowBuiltInTypeAliases` configuration property can be set to `true` to allow cases like this while continuing to report diagnostics for direct references to the metadata type name, `Int32`.
 
 ## Ordering Rules
 

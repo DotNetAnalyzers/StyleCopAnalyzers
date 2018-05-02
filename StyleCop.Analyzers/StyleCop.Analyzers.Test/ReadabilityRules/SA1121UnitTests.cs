@@ -23,6 +23,16 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     /// </summary>
     public class SA1121UnitTests : CodeFixVerifier
     {
+        private const string AllowBuiltInTypeAliasesSettings = @"
+{
+  ""settings"": {
+    ""readabilityRules"": {
+      ""allowBuiltInTypeAliases"": true
+    }
+  }
+}
+";
+
         private static readonly Tuple<string, string>[] ReferenceTypesData = new Tuple<string, string>[]
         {
             new Tuple<string, string>("object", nameof(Object)),
@@ -59,6 +69,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         };
 
         private static readonly Tuple<string, string>[] AllTypesData = ReferenceTypesData.Concat(ValueTypesData).ToArray();
+
+        private string currentTestSettings;
 
         public static IEnumerable<object[]> ReferenceTypes
         {
@@ -776,23 +788,6 @@ public class Foo
         [Fact]
         public async Task TestMissleadingUsingAsync()
         {
-            string testCode = @"namespace Foo
-{
-  using Int32 = System.UInt32;
-  class Bar
-  {
-    Int32 value = 3;
-  }
-}
-";
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 5);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestMissleadingUsingCodeFixAsync()
-        {
             string oldSource = @"namespace Foo
 {
   using Int32 = System.UInt32;
@@ -812,29 +807,16 @@ public class Foo
 }
 ";
 
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 5);
+
+            await this.VerifyCSharpDiagnosticAsync(oldSource, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(newSource, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(oldSource, newSource, allowNewCompilerDiagnostics: true).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestUsingNameChangeAsync()
         {
-            string testCode = @"namespace Foo
-{
-  using MyInt = System.UInt32;
-  class Bar
-  {
-    MyInt value = 3;
-  }
-}
-";
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 5);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestUsingNameChangeCodeFixAsync()
-        {
             string oldSource = @"namespace Foo
 {
   using MyInt = System.UInt32;
@@ -854,7 +836,58 @@ public class Foo
 }
 ";
 
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 5);
+
+            await this.VerifyCSharpDiagnosticAsync(oldSource, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(newSource, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(oldSource, newSource, allowNewCompilerDiagnostics: true).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMissleadingUsingAllowAliasesAsync()
+        {
+            string oldSource = @"namespace Foo
+{
+  using Int32 = System.UInt32;
+  class Bar
+  {
+    Int32 value = 3;
+  }
+}
+";
+            string newSource = @"namespace Foo
+{
+  using Int32 = System.UInt32;
+  class Bar
+  {
+    uint value = 3;
+  }
+}
+";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 5);
+
+            this.currentTestSettings = AllowBuiltInTypeAliasesSettings;
+            await this.VerifyCSharpDiagnosticAsync(oldSource, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(newSource, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(oldSource, newSource, allowNewCompilerDiagnostics: true).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestUsingNameChangeAllowAliasesAsync()
+        {
+            string testSource = @"namespace Foo
+{
+  using MyInt = System.UInt32;
+  class Bar
+  {
+    MyInt value = 3;
+  }
+}
+";
+
+            this.currentTestSettings = AllowBuiltInTypeAliasesSettings;
+            await this.VerifyCSharpDiagnosticAsync(testSource, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -959,6 +992,11 @@ namespace System
 ";
 
             await this.VerifyCSharpFixAsync(string.Format(testCode, fullName), string.Format(testCode, predefined), cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected override string GetSettings()
+        {
+            return this.currentTestSettings ?? base.GetSettings();
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

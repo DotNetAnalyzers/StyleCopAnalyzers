@@ -46,6 +46,11 @@
           "description": "Configuration for readability rules (SA1100-)",
           "additionalProperties": false,
           "properties": {
+            "allowBuiltInTypeAliases": {
+              "type": "boolean",
+              "description": "When true, diagnostics will not be reported for using aliases of built-in types.",
+              "default": false
+            }
           }
         },
         "orderingRules": {
