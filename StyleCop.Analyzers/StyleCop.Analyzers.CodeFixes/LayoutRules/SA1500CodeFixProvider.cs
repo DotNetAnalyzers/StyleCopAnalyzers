@@ -110,9 +110,11 @@ namespace StyleCop.Analyzers.LayoutRules
                     // - The closing brace is the last token in the file
                     var nextToken = braceToken.GetNextToken();
                     var nextTokenLine = nextToken.IsKind(SyntaxKind.None) ? -1 : LocationHelpers.GetLineSpan(nextToken).StartLinePosition.Line;
+                    var isMultiDimensionArrayInitializer = braceToken.IsKind(SyntaxKind.OpenBraceToken) && braceToken.Parent.IsKind(SyntaxKind.ArrayInitializerExpression) && braceToken.Parent.Parent.IsKind(SyntaxKind.ArrayInitializerExpression);
 
                     if ((nextTokenLine == braceLine) &&
-                        (!braceToken.IsKind(SyntaxKind.CloseBraceToken) || !IsValidFollowingToken(nextToken)))
+                        (!braceToken.IsKind(SyntaxKind.CloseBraceToken) || !IsValidFollowingToken(nextToken)) &&
+                        !isMultiDimensionArrayInitializer)
                     {
                         var sharedTrivia = nextToken.LeadingTrivia.WithoutTrailingWhitespace();
                         var newTrailingTrivia = braceReplacementToken.TrailingTrivia
