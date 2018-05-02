@@ -363,6 +363,20 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(2656, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2656")]
+        public async Task TestStaticMemberNameOfAsync()
+        {
+            var testCode = @"
+public class Foo
+{
+    public string Array { get; } = nameof(Array);
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1101PrefixLocalCallsWithThis();
