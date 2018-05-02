@@ -1,8 +1,18 @@
 {
   "profiles": {
     "StyleCopAnalyzers.sln /stats": {
+      "commandName": "Project",
       "commandLineArgs": "..\\..\\StyleCopAnalyzers.sln /stats",
-      "workingDirectory": "$(MSBuildProjectDirectory)"
+      "workingDirectory": "$(MSBuildProjectDirectory)",
+      "environmentVariables": {
+      }
+    },
+    "StyleCopAnalyzers.sln /stats /editperf": {
+      "commandName": "Project",
+      "commandLineArgs": "..\\..\\StyleCopAnalyzers.sln /stats /editperf",
+      "workingDirectory": "$(MSBuildProjectDirectory)",
+      "environmentVariables": {
+      }
     }
   }
 }

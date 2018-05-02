@@ -3,7 +3,10 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net452</TargetFrameworks>
+    <TargetFrameworks>net46</TargetFrameworks>
+
+    <!-- Automatically generate the necessary assembly binding redirects -->
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -20,16 +23,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis" Version="1.2.1" />
+    <PackageReference Include="Microsoft.Build.Locator" Version="1.0.13" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="	2.9.0-beta4-62830-01" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="	2.9.0-beta4-62830-01" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="	2.9.0-beta4-62830-01" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="	2.9.0-beta4-62830-01" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\StyleCop.Analyzers.CodeFixes\StyleCop.Analyzers.CodeFixes.csproj" />
     <ProjectReference Include="..\StyleCop.Analyzers\StyleCop.Analyzers.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="App.config" />
   </ItemGroup>
 
 </Project>
