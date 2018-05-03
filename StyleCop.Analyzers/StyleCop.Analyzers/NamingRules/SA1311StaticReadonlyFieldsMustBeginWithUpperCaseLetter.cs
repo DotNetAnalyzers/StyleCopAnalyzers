@@ -25,8 +25,8 @@ namespace StyleCop.Analyzers.NamingRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1311";
-        private const string Title = "Static readonly fields must begin with upper-case letter";
-        private const string MessageFormat = "Static readonly fields must begin with upper-case letter";
+        private const string Title = "Static readonly fields should begin with upper-case letter";
+        private const string MessageFormat = "Static readonly fields should begin with upper-case letter";
         private const string Description = "The name of a static readonly field does not begin with an upper-case letter.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1311.md";
 
@@ -50,11 +50,7 @@ namespace StyleCop.Analyzers.NamingRules
 
         private static void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var fieldDeclaration = context.Node as FieldDeclarationSyntax;
-            if (fieldDeclaration == null)
-            {
-                return;
-            }
+            var fieldDeclaration = (FieldDeclarationSyntax)context.Node;
 
             if (!fieldDeclaration.Modifiers.Any(SyntaxKind.StaticKeyword) ||
                !fieldDeclaration.Modifiers.Any(SyntaxKind.ReadOnlyKeyword))

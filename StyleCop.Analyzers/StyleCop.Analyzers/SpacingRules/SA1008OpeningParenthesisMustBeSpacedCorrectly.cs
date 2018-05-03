@@ -11,6 +11,7 @@ namespace StyleCop.Analyzers.SpacingRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// An opening parenthesis within a C# statement is not spaced correctly.
@@ -31,34 +32,34 @@ namespace StyleCop.Analyzers.SpacingRules
         /// The ID for diagnostics produced by the <see cref="SA1008OpeningParenthesisMustBeSpacedCorrectly"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1008";
-        private const string Title = "Opening parenthesis must be spaced correctly";
+        private const string Title = "Opening parenthesis should be spaced correctly";
         private const string Description = "An opening parenthesis within a C# statement is not spaced correctly.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1008.md";
 
-        private const string MessageNotPreceded = "Opening parenthesis must not be preceded by a space.";
-        private const string MessagePreceded = "Opening parenthesis must be preceded by a space.";
-        private const string MessageNotFollowed = "Opening parenthesis must not be followed by a space.";
+        private const string MessageNotPreceded = "Opening parenthesis should not be preceded by a space.";
+        private const string MessagePreceded = "Opening parenthesis should be preceded by a space.";
+        private const string MessageNotFollowed = "Opening parenthesis should not be followed by a space.";
 
         private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
 
         /// <summary>
-        /// Gets the diagnostic descriptor for an opening parenthesis that must not be preceded by whitespace.
+        /// Gets the diagnostic descriptor for an opening parenthesis that should not be preceded by whitespace.
         /// </summary>
-        /// <value>The diagnostic descriptor for an opening parenthesis that must not be preceded by whitespace.</value>
+        /// <value>The diagnostic descriptor for an opening parenthesis that should not be preceded by whitespace.</value>
         public static DiagnosticDescriptor DescriptorNotPreceded { get; }
             = new DiagnosticDescriptor(DiagnosticId, Title, MessageNotPreceded, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         /// <summary>
-        /// Gets the diagnostic descriptor for an opening parenthesis that must be preceded by whitespace.
+        /// Gets the diagnostic descriptor for an opening parenthesis that should be preceded by whitespace.
         /// </summary>
-        /// <value>The diagnostic descriptor for an opening parenthesis that must be preceded by whitespace.</value>
+        /// <value>The diagnostic descriptor for an opening parenthesis that should be preceded by whitespace.</value>
         public static DiagnosticDescriptor DescriptorPreceded { get; }
             = new DiagnosticDescriptor(DiagnosticId, Title, MessagePreceded, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         /// <summary>
-        /// Gets the diagnostic descriptor for an opening parenthesis that must not be followed by whitespace.
+        /// Gets the diagnostic descriptor for an opening parenthesis that should not be followed by whitespace.
         /// </summary>
-        /// <value>The diagnostic descriptor for an opening parenthesis that must not be followed by whitespace.</value>
+        /// <value>The diagnostic descriptor for an opening parenthesis that should not be followed by whitespace.</value>
         public static DiagnosticDescriptor DescriptorNotFollowed { get; }
             = new DiagnosticDescriptor(DiagnosticId, Title, MessageNotFollowed, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
@@ -201,7 +202,12 @@ namespace StyleCop.Analyzers.SpacingRules
                 haveLeadingSpace = false;
                 break;
 
+            case SyntaxKindEx.ParenthesizedVariableDesignation:
+                haveLeadingSpace = true;
+                break;
+
             case SyntaxKind.ParenthesizedExpression:
+            case SyntaxKindEx.TupleExpression:
                 if (prevToken.Parent.IsKind(SyntaxKind.Interpolation))
                 {
                     haveLeadingSpace = false;
@@ -227,6 +233,15 @@ namespace StyleCop.Analyzers.SpacingRules
             case SyntaxKind.ParameterList:
                 var partOfLambdaExpression = token.Parent.Parent.IsKind(SyntaxKind.ParenthesizedLambdaExpression);
                 haveLeadingSpace = partOfLambdaExpression;
+                break;
+
+            case SyntaxKindEx.TupleType:
+                // Comma covers tuple types in parameters and nested within other tuple types.
+                // 'out', 'ref', 'in', 'params' parameters are covered by IsKeywordKind.
+                // Return types are handled by a helper.
+                haveLeadingSpace = prevToken.IsKind(SyntaxKind.CommaToken)
+                    || SyntaxFacts.IsKeywordKind(prevToken.Kind())
+                    || ((TypeSyntax)token.Parent).GetContainingNotEnclosingType().IsReturnType();
                 break;
             }
 

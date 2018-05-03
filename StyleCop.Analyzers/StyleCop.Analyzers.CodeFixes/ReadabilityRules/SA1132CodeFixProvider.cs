@@ -63,7 +63,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 var editor = new SyntaxEditor(syntaxRoot, document.Project.Solution.Workspace);
                 editor.InsertAfter(baseFieldDeclaration, newFieldDeclarations);
-                editor.RemoveNode(baseFieldDeclaration);
+                editor.RemoveNode(baseFieldDeclaration, SyntaxRemoveOptions.KeepNoTrivia);
                 return document.WithSyntaxRoot(editor.GetChangedRoot().WithoutFormatting());
             }
 
@@ -118,6 +118,27 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     if (variable != first)
                     {
                         var triviaList = previous.GetLeadingTrivia().WithoutDirectiveTrivia();
+
+                        // Remove all leading blank lines
+                        var nonBlankLinetriviaIndex = TriviaHelper.IndexOfFirstNonBlankLineTrivia(triviaList);
+                        if (nonBlankLinetriviaIndex > 0)
+                        {
+                            triviaList = triviaList.RemoveRange(0, nonBlankLinetriviaIndex);
+                        }
+
+                        // Add a blank line if the first line contains a comment.
+                        var nonWhitespaceTriviaIndex = TriviaHelper.IndexOfFirstNonWhitespaceTrivia(triviaList, false);
+                        if (nonWhitespaceTriviaIndex >= 0)
+                        {
+                            switch (triviaList[nonWhitespaceTriviaIndex].Kind())
+                            {
+                            case SyntaxKind.SingleLineCommentTrivia:
+                            case SyntaxKind.MultiLineCommentTrivia:
+                                triviaList = triviaList.Insert(0, SyntaxFactory.CarriageReturnLineFeed);
+                                break;
+                            }
+                        }
+
                         previous = previous.WithLeadingTrivia(triviaList);
                     }
                 }

@@ -1,10 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <RuleSet Name="Rules for StyleCop.Analyzers" Description="Code analysis rules for StyleCop.Analyzers.csproj." ToolsVersion="14.0">
   <Rules AnalyzerId="AsyncUsageAnalyzers" RuleNamespace="AsyncUsageAnalyzers">
-    <Rule Id="AvoidAsyncSuffix" Action="Error" />
-    <Rule Id="AvoidAsyncVoid" Action="Error" />
-    <Rule Id="UseAsyncSuffix" Action="Error" />
-    <Rule Id="UseConfigureAwait" Action="Error" />
+    <Rule Id="UseConfigureAwait" Action="Warning" />
   </Rules>
   <Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
     <Rule Id="CA1001" Action="Warning" />
@@ -74,44 +71,9 @@
     <Rule Id="IDE0003" Action="None" />
   </Rules>
   <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers">
-    <Rule Id="SA1000" Action="Error" />
-    <Rule Id="SA1001" Action="Error" />
-    <Rule Id="SA1021" Action="Error" />
-    <Rule Id="SA1022" Action="Error" />
-    <Rule Id="SA1100" Action="Error" />
-    <Rule Id="SA1101" Action="Error" />
-    <Rule Id="SA1106" Action="Error" />
-    <Rule Id="SA1111" Action="Error" />
-    <Rule Id="SA1112" Action="Error" />
-    <Rule Id="SA1119" Action="Error" />
-    <Rule Id="SA1121" Action="Error" />
-    <Rule Id="SA1122" Action="Error" />
-    <Rule Id="SA1133" Action="Error" />
-    <Rule Id="SA1300" Action="Error" />
-    <Rule Id="SA1302" Action="Error" />
-    <Rule Id="SA1303" Action="Error" />
-    <Rule Id="SA1304" Action="Error" />
     <Rule Id="SA1305" Action="Warning" />
-    <Rule Id="SA1309" Action="Error" />
-    <Rule Id="SA1311" Action="Error" />
-    <Rule Id="SA1400" Action="Error" />
-    <Rule Id="SA1401" Action="Error" />
-    <Rule Id="SA1402" Action="Error" />
-    <Rule Id="SA1403" Action="Error" />
-    <Rule Id="SA1404" Action="Error" />
-    <Rule Id="SA1405" Action="Error" />
-    <Rule Id="SA1406" Action="Error" />
-    <Rule Id="SA1407" Action="Error" />
-    <Rule Id="SA1408" Action="Error" />
-    <Rule Id="SA1410" Action="Error" />
-    <Rule Id="SA1411" Action="Error" />
     <Rule Id="SA1412" Action="Warning" />
     <Rule Id="SA1600" Action="None" />
-    <Rule Id="SA1603" Action="Error" />
     <Rule Id="SA1609" Action="Warning" />
-    <Rule Id="SA1633" Action="Error" />
-    <Rule Id="SA1636" Action="Error" />
-    <Rule Id="SA1642" Action="Error" />
-    <Rule Id="SA1643" Action="Error" />
   </Rules>
 </RuleSet>

@@ -20,7 +20,7 @@ namespace StyleCop.Analyzers.OrderingRules {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class OrderingResources {
@@ -98,7 +98,7 @@ namespace StyleCop.Analyzers.OrderingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Elements must appear in the correct order.
+        ///   Looks up a localized string similar to Elements should appear in the correct order.
         /// </summary>
         internal static string SA1201Title {
             get {
@@ -116,7 +116,7 @@ namespace StyleCop.Analyzers.OrderingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &apos;{0}&apos; members must come before &apos;{1}&apos; members.
+        ///   Looks up a localized string similar to &apos;{0}&apos; members should come before &apos;{1}&apos; members.
         /// </summary>
         internal static string SA1202MessageFormat {
             get {
@@ -125,7 +125,7 @@ namespace StyleCop.Analyzers.OrderingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Elements must be ordered by access.
+        ///   Looks up a localized string similar to Elements should be ordered by access.
         /// </summary>
         internal static string SA1202Title {
             get {
@@ -143,7 +143,7 @@ namespace StyleCop.Analyzers.OrderingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Constant fields must appear before non-constant fields.
+        ///   Looks up a localized string similar to Constant fields should appear before non-constant fields.
         /// </summary>
         internal static string SA1203MessageFormat {
             get {
@@ -152,7 +152,7 @@ namespace StyleCop.Analyzers.OrderingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Constants must appear before fields.
+        ///   Looks up a localized string similar to Constants should appear before fields.
         /// </summary>
         internal static string SA1203Title {
             get {
@@ -170,7 +170,7 @@ namespace StyleCop.Analyzers.OrderingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Static members must appear before non-static members.
+        ///   Looks up a localized string similar to Static members should appear before non-static members.
         /// </summary>
         internal static string SA1204MessageFormat {
             get {
@@ -179,7 +179,7 @@ namespace StyleCop.Analyzers.OrderingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Static elements must appear before instance elements.
+        ///   Looks up a localized string similar to Static elements should appear before instance elements.
         /// </summary>
         internal static string SA1204Title {
             get {
@@ -224,7 +224,7 @@ namespace StyleCop.Analyzers.OrderingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Readonly fields must appear before non-readonly fields.
+        ///   Looks up a localized string similar to Readonly fields should appear before non-readonly fields.
         /// </summary>
         internal static string SA1214MessageFormat {
             get {
@@ -233,7 +233,7 @@ namespace StyleCop.Analyzers.OrderingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Readonly fields must appear before non-readonly fields.
+        ///   Looks up a localized string similar to Readonly fields should appear before non-readonly fields.
         /// </summary>
         internal static string SA1214Title {
             get {

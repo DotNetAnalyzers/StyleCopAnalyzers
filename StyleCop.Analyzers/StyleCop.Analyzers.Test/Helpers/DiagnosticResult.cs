@@ -93,6 +93,13 @@ namespace TestHelper
             }
         }
 
+        public DiagnosticResult WithSeverity(DiagnosticSeverity severity)
+        {
+            DiagnosticResult result = this;
+            result.Severity = severity;
+            return result;
+        }
+
         public DiagnosticResult WithArguments(params object[] arguments)
         {
             DiagnosticResult result = this;

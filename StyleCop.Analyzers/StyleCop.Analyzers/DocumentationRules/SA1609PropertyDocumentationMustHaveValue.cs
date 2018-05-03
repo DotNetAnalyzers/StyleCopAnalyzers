@@ -16,10 +16,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     /// <remarks>
     /// <para>C# syntax provides a mechanism for inserting documentation for classes and elements directly into the
-    /// code, through the use of XML documentation headers. For an introduction to these headers and a description of
-    /// the header syntax, see the following article:
-    /// <see href="http://msdn.microsoft.com/en-us/magazine/cc302121.aspx">XML Comments Let You Build Documentation
-    /// Directly From Your Visual Studio .NET Source Files</see>.</para>
+    /// code, through the use of XML documentation headers.</para>
     ///
     /// <para>The documentation for properties may include a <c>&lt;value&gt;</c> tag, which describes the value held by
     /// the property.</para>
@@ -33,8 +30,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// The ID for diagnostics produced by the <see cref="SA1609PropertyDocumentationMustHaveValue"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1609";
-        private const string Title = "Property documentation must have value";
-        private const string MessageFormat = "Property documentation must have value";
+        private const string Title = "Property documentation should have value";
+        private const string MessageFormat = "Property documentation should have value";
         private const string Description = "The XML header documentation for a C# property does not contain a <value> tag.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1609.md";
 
@@ -49,8 +46,14 @@ namespace StyleCop.Analyzers.DocumentationRules
         protected override string XmlTagToHandle => XmlCommentHelper.ValueXmlTag;
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, XElement completeDocumentation, Location diagnosticLocation)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, bool needsComment, XmlNodeSyntax syntax, XElement completeDocumentation, Location diagnosticLocation)
         {
+            if (!needsComment)
+            {
+                // A missing 'value' documentation is allowed for this element.
+                return;
+            }
+
             var properties = ImmutableDictionary.Create<string, string>();
 
             if (completeDocumentation != null)

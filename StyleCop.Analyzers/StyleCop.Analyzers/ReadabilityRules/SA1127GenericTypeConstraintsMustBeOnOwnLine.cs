@@ -12,7 +12,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
-    /// Generic type constraints must be on their own line.
+    /// Generic type constraints should be on their own line.
     /// </summary>
     /// <remarks>
     /// <para>A violation of this rule occurs when one or more generic type constraints following the <c>where</c>

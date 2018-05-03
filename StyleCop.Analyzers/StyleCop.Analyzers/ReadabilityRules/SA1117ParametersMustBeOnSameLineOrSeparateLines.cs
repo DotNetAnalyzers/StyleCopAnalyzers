@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// The parameters to a C# method or indexer call or declaration are not all on the same line or each on a separate
@@ -65,6 +66,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             ImmutableArray.Create(SyntaxKind.ConstructorDeclaration, SyntaxKind.MethodDeclaration);
 
         private static readonly Action<SyntaxNodeAnalysisContext> BaseMethodDeclarationAction = HandleBaseMethodDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> LocalFunctionStatementAction = HandleLocalFunctionStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> ConstructorInitializerAction = HandleConstructorInitializer;
         private static readonly Action<SyntaxNodeAnalysisContext> DelegateDeclarationAction = HandleDelegateDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> IndexerDeclarationAction = HandleIndexerDeclaration;
@@ -88,6 +90,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.EnableConcurrentExecution();
 
             context.RegisterSyntaxNodeAction(BaseMethodDeclarationAction, BaseMethodDeclarationKinds);
+            context.RegisterSyntaxNodeAction(LocalFunctionStatementAction, SyntaxKindEx.LocalFunctionStatement);
             context.RegisterSyntaxNodeAction(ConstructorInitializerAction, SyntaxKinds.ConstructorInitializer);
             context.RegisterSyntaxNodeAction(DelegateDeclarationAction, SyntaxKind.DelegateDeclaration);
             context.RegisterSyntaxNodeAction(IndexerDeclarationAction, SyntaxKind.IndexerDeclaration);
@@ -105,6 +108,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var declaration = (BaseMethodDeclarationSyntax)context.Node;
             HandleParameterListSyntax(context, declaration.ParameterList);
+        }
+
+        private static void HandleLocalFunctionStatement(SyntaxNodeAnalysisContext context)
+        {
+            var statement = (LocalFunctionStatementSyntaxWrapper)context.Node;
+            HandleParameterListSyntax(context, statement.ParameterList);
         }
 
         private static void HandleInvocationExpression(SyntaxNodeAnalysisContext context)
@@ -156,12 +165,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 if (firstParameterLine == previousLine)
                 {
-                    // arguments must be on same line
+                    // arguments should be on same line
                     lineCondition = (param1Line, param2Line) => param1Line == param2Line;
                 }
                 else
                 {
-                    // each argument must be on its own line
+                    // each argument should be on its own line
                     lineCondition = (param1Line, param2Line) => param1Line != param2Line;
                 }
 
@@ -204,12 +213,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             if (firstParameterLine == previousLine)
             {
-                // arguments must be on same line
+                // arguments should be on same line
                 lineCondition = (param1Line, param2Line) => param1Line == param2Line;
             }
             else
             {
-                // each argument must be on its own line
+                // each argument should be on its own line
                 lineCondition = (param1Line, param2Line) => param1Line != param2Line;
             }
 
@@ -305,12 +314,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             if (firstParameterLine == previousLine)
             {
-                // parameters must be on same line
+                // parameters should be on same line
                 lineCondition = (param1Line, param2Line) => param1Line == param2Line;
             }
             else
             {
-                // each parameter must be on its own line
+                // each parameter should be on its own line
                 lineCondition = (param1Line, param2Line) => param1Line != param2Line;
             }
 
@@ -339,12 +348,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             if (firstParameterLine == previousLine)
             {
-                // arguments must be on same line
+                // arguments should be on same line
                 lineCondition = (param1Line, param2Line) => param1Line == param2Line;
             }
             else
             {
-                // each argument must be on its own line
+                // each argument should be on its own line
                 lineCondition = (param1Line, param2Line) => param1Line != param2Line;
             }
 

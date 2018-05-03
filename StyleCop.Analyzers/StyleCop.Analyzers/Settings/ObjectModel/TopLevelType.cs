@@ -28,6 +28,6 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// <summary>
         /// Enums are considered top-level types
         /// </summary>
-        Enum
+        Enum,
     }
 }

@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Helpers
 {
+    using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Collections.Immutable;
@@ -84,29 +85,38 @@ namespace StyleCop.Analyzers.Helpers
 
                 case FixAllScope.Solution:
                     var projectsAndDiagnostics = new ConcurrentDictionary<Project, ImmutableArray<Diagnostic>>();
-                    var options = new ParallelOptions() { CancellationToken = fixAllContext.CancellationToken };
-                    Parallel.ForEach(project.Solution.Projects, options, proj =>
-                    {
-                        fixAllContext.CancellationToken.ThrowIfCancellationRequested();
-                        var projectDiagnosticsTask = fixAllContext.GetProjectDiagnosticsAsync(proj);
-                        projectDiagnosticsTask.Wait(fixAllContext.CancellationToken);
-                        var projectDiagnostics = projectDiagnosticsTask.Result;
-                        if (projectDiagnostics.Any())
+                    var tasks = new List<Task>(project.Solution.ProjectIds.Count);
+                    Func<Project, Task> projectAction =
+                        async proj =>
                         {
-                            projectsAndDiagnostics.TryAdd(proj, projectDiagnostics);
-                        }
-                    });
+                            if (fixAllContext.CancellationToken.IsCancellationRequested)
+                            {
+                                return;
+                            }
 
+                            var projectDiagnostics = await fixAllContext.GetProjectDiagnosticsAsync(proj).ConfigureAwait(false);
+                            if (projectDiagnostics.Any())
+                            {
+                                projectsAndDiagnostics.TryAdd(proj, projectDiagnostics);
+                            }
+                        };
+
+                    foreach (var proj in project.Solution.Projects)
+                    {
+                        if (fixAllContext.CancellationToken.IsCancellationRequested)
+                        {
+                            break;
+                        }
+
+                        tasks.Add(projectAction(proj));
+                    }
+
+                    await Task.WhenAll(tasks).ConfigureAwait(false);
                     return projectsAndDiagnostics.ToImmutableDictionary();
                 }
             }
 
             return ImmutableDictionary<Project, ImmutableArray<Diagnostic>>.Empty;
-        }
-
-        public static async Task<ImmutableArray<Diagnostic>> GetAllDiagnosticsAsync(Compilation compilation, CompilationWithAnalyzers compilationWithAnalyzers, ImmutableArray<DiagnosticAnalyzer> analyzers, IEnumerable<Document> documents, bool includeCompilerDiagnostics, CancellationToken cancellationToken)
-        {
-            return await compilationWithAnalyzers.GetAllDiagnosticsAsync().ConfigureAwait(false);
         }
 
         /// <summary>

@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Linq;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
@@ -139,8 +140,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             triviaStringParts[0] = commentIndentation + interlinePadding + " " + triviaStringParts[0];
             StringBuilder sb = StringBuilderPool.Allocate();
             string fileName = Path.GetFileName(document.FilePath);
-            var copyrightText = commentIndentation + interlinePadding + " " +
-                GetCopyrightText(commentIndentation + interlinePadding, settings.DocumentationRules.GetCopyrightText(fileName), newLineText);
+            var copyrightText = GetCopyrightText(commentIndentation + interlinePadding, settings.DocumentationRules.GetCopyrightText(fileName), newLineText);
             var newHeader = WrapInXmlComment(commentIndentation + interlinePadding, copyrightText, document.Name, settings, newLineText);
 
             sb.Append(commentIndentation);
@@ -211,7 +211,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             bool onBlankLine = false;
             bool inCopyright = isMalformedHeader;
             int? copyrightTriviaIndex = null;
-            var removalList = new System.Collections.Generic.List<int>();
+            var removalList = new List<int>();
             var leadingSpaces = string.Empty;
             string possibleLeadingSpaces = string.Empty;
 
@@ -351,14 +351,41 @@ namespace StyleCop.Analyzers.DocumentationRules
             string newLineText = document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp);
             var newLineTrivia = SyntaxFactory.EndOfLine(newLineText);
             var newTrivia = CreateNewHeader("//", name, settings, newLineText).Add(newLineTrivia).Add(newLineTrivia);
-            newTrivia = newTrivia.AddRange(root.GetLeadingTrivia());
+
+            // Skip blank lines already at the beginning of the document, since we add our own
+            SyntaxTriviaList leadingTrivia = root.GetLeadingTrivia();
+            int skipCount = 0;
+            for (int i = 0; i < leadingTrivia.Count; i++)
+            {
+                bool done = false;
+                switch (leadingTrivia[i].Kind())
+                {
+                case SyntaxKind.WhitespaceTrivia:
+                    break;
+
+                case SyntaxKind.EndOfLineTrivia:
+                    skipCount = i + 1;
+                    break;
+
+                default:
+                    done = true;
+                    break;
+                }
+
+                if (done)
+                {
+                    break;
+                }
+            }
+
+            newTrivia = newTrivia.AddRange(leadingTrivia.RemoveRange(0, skipCount));
 
             return root.WithLeadingTrivia(newTrivia);
         }
 
         private static SyntaxTriviaList CreateNewHeader(string prefixWithLeadingSpaces, string fileName, StyleCopSettings settings, string newLineText)
         {
-            var copyrightText = prefixWithLeadingSpaces + " " + GetCopyrightText(prefixWithLeadingSpaces, settings.DocumentationRules.GetCopyrightText(fileName), newLineText);
+            var copyrightText = GetCopyrightText(prefixWithLeadingSpaces, settings.DocumentationRules.GetCopyrightText(fileName), newLineText);
             var newHeader = settings.DocumentationRules.XmlHeader
                 ? WrapInXmlComment(prefixWithLeadingSpaces, copyrightText, fileName, settings, newLineText)
                 : copyrightText;
@@ -390,7 +417,18 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static string GetCopyrightText(string prefixWithLeadingSpaces, string copyrightText, string newLineText)
         {
             copyrightText = copyrightText.Replace("\r\n", "\n");
-            return string.Join(newLineText + prefixWithLeadingSpaces + " ", copyrightText.Split('\n')).Replace(prefixWithLeadingSpaces + " " + newLineText, prefixWithLeadingSpaces + newLineText);
+            var lines = copyrightText.Split('\n');
+            return string.Join(newLineText, lines.Select(line =>
+            {
+                if (string.IsNullOrEmpty(line))
+                {
+                    return prefixWithLeadingSpaces;
+                }
+                else
+                {
+                    return prefixWithLeadingSpaces + " " + line;
+                }
+            }));
         }
 
         private static SyntaxTriviaList RemoveHeaderDecorationLines(SyntaxTriviaList trivia, StyleCopSettings settings)

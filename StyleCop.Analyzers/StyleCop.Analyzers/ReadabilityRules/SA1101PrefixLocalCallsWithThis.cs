@@ -83,6 +83,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 // this is handled separately
                 return;
 
+            case SyntaxKind.MemberBindingExpression:
+            case SyntaxKind.NameColon:
             case SyntaxKind.PointerMemberAccessExpression:
                 // this doesn't need to be handled
                 return;
@@ -121,10 +123,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
 
                 break;
-
-            case SyntaxKind.MemberBindingExpression:
-                // this doesn't need to be handled
-                return;
 
             default:
                 break;
@@ -233,16 +231,21 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 case SyntaxKind.FieldDeclaration:
                 case SyntaxKind.EventFieldDeclaration:
+                case SyntaxKind.EventDeclaration:
+                case SyntaxKind.PropertyDeclaration:
+                case SyntaxKind.IndexerDeclaration:
                     return false;
 
                 case SyntaxKind.MultiLineDocumentationCommentTrivia:
                 case SyntaxKind.SingleLineDocumentationCommentTrivia:
                     return false;
 
-                case SyntaxKind.EventDeclaration:
-                case SyntaxKind.PropertyDeclaration:
-                case SyntaxKind.IndexerDeclaration:
-                    BasePropertyDeclarationSyntax basePropertySyntax = (BasePropertyDeclarationSyntax)node;
+                case SyntaxKind.GetAccessorDeclaration:
+                case SyntaxKind.SetAccessorDeclaration:
+                case SyntaxKind.AddAccessorDeclaration:
+                case SyntaxKind.RemoveAccessorDeclaration:
+                case SyntaxKind.UnknownAccessorDeclaration:
+                    BasePropertyDeclarationSyntax basePropertySyntax = (BasePropertyDeclarationSyntax)node.Parent.Parent;
                     return !basePropertySyntax.Modifiers.Any(SyntaxKind.StaticKeyword);
 
                 case SyntaxKind.ConstructorDeclaration:

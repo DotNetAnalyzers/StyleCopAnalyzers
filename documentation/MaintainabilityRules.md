@@ -17,4 +17,4 @@ Identifier | Name | Description
 [SA1410](SA1410.md) | RemoveDelegateParenthesisWhenPossible | A call to a C# anonymous method does not contain any method parameters, yet the statement still includes parenthesis. 
 [SA1411](SA1411.md) | AttributeConstructorMustNotUseUnnecessaryParenthesis | An attribute declaration does not contain any parameters, yet it still includes parenthesis. 
 [SA1412](SA1412.md) | StoreFilesAsUtf8 | The encoding of the file is not UTF-8 with byte order mark. 
-[SA1413](SA1413.md) | UseTrailingCommasInMultiLineInitializers | A multi-line initializer must use a comma on the last item. 
+[SA1413](SA1413.md) | UseTrailingCommasInMultiLineInitializers | A multi-line initializer should use a comma on the last item. 

@@ -6,7 +6,6 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
     using TestHelper;
@@ -17,6 +16,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     /// </summary>
     public class SA1600UnitTests : DiagnosticVerifier
     {
+        private string currentTestSettings;
+
         [Theory]
         [InlineData("public string TestMember;", 15)]
         [InlineData("public string TestMember { get; set; }", 15)]
@@ -189,11 +190,83 @@ using System;
             await this.TestFieldDeclarationDocumentationAsync("internal", true, false).ConfigureAwait(false);
             await this.TestFieldDeclarationDocumentationAsync("protected internal", true, false).ConfigureAwait(false);
             await this.TestFieldDeclarationDocumentationAsync("public", true, false).ConfigureAwait(false);
+
+            // Re-test with the 'documentPrivateElements' setting enabled (doesn't impact fields)
+            this.currentTestSettings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""documentPrivateElements"": true
+    }
+  }
+}
+";
+
+            await this.TestFieldDeclarationDocumentationAsync(string.Empty, false, false).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("private", false, false).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("protected", true, false).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("internal", true, false).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("protected internal", true, false).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("public", true, false).ConfigureAwait(false);
+
+            // Re-test with the 'documentPrivateFields' setting enabled (does impact fields)
+            this.currentTestSettings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""documentPrivateFields"": true
+    }
+  }
+}
+";
+
+            await this.TestFieldDeclarationDocumentationAsync(string.Empty, true, false).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("private", true, false).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("protected", true, false).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("internal", true, false).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("protected internal", true, false).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("public", true, false).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestFieldWithDocumentationAsync()
         {
+            await this.TestFieldDeclarationDocumentationAsync(string.Empty, false, true).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("private", false, true).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("protected", false, true).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("internal", false, true).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("protected internal", false, true).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("public", false, true).ConfigureAwait(false);
+
+            // Re-test with the 'documentPrivateElements' setting enabled (doesn't impact fields)
+            this.currentTestSettings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""documentPrivateElements"": true
+    }
+  }
+}
+";
+
+            await this.TestFieldDeclarationDocumentationAsync(string.Empty, false, true).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("private", false, true).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("protected", false, true).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("internal", false, true).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("protected internal", false, true).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("public", false, true).ConfigureAwait(false);
+
+            // Re-test with the 'documentPrivateFields' setting enabled (does impact fields)
+            this.currentTestSettings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""documentPrivateFields"": true
+    }
+  }
+}
+";
+
             await this.TestFieldDeclarationDocumentationAsync(string.Empty, false, true).ConfigureAwait(false);
             await this.TestFieldDeclarationDocumentationAsync("private", false, true).ConfigureAwait(false);
             await this.TestFieldDeclarationDocumentationAsync("protected", false, true).ConfigureAwait(false);
@@ -428,6 +501,11 @@ public class OuterClass
 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected override string GetSettings()
+        {
+            return this.currentTestSettings ?? base.GetSettings();
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

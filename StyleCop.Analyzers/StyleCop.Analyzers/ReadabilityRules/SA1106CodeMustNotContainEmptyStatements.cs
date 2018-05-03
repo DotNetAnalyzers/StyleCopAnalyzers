@@ -101,7 +101,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
             }
 
-            // Code must not contain empty statements
+            // Code should not contain empty statements
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.GetLocation()));
         }
     }

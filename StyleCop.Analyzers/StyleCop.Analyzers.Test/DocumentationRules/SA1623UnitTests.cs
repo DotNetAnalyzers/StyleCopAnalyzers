@@ -177,47 +177,54 @@ public class TestClass
         }
 
         /// <summary>
-        /// Verifies that an incomplete summary tag (with only get or set, when get and set are needed) will be fixed
-        /// correctly. Regression test for #2098.
+        /// Verifies that an incorrect summary tag with a known prefix will be fixed correctly.
         /// </summary>
+        /// <param name="accessibility">The accessibility of the property.</param>
+        /// <param name="type">The type to use for the property.</param>
+        /// <param name="accessors">The accessors for the property.</param>
+        /// <param name="summaryPrefix">The summary prefix used in the test code.</param>
+        /// <param name="expectedArgument">The expected argument for the diagnostic message.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task IncompleteSummaryTagShouldBeFixedCorrectlyAsync()
+        [Theory]
+        [InlineData("public", "int", "{ get; set; }", "Gets", "Gets or sets")] // Regression test for #2098
+        [InlineData("public", "int", "{ get; set; }", "Sets", "Gets or sets")] // Regression test for #2098
+        [InlineData("public", "int", "{ get; }", "Sets", "Gets")] // Regression test for #2253
+        [InlineData("public", "int", "{ get; }", "Gets or sets", "Gets")] // Regression test for #2253
+        [InlineData("public", "int", "=> 0;", "Sets", "Gets")] // Regression test for #2253
+        [InlineData("public", "int", "=> 0;", "Gets or sets", "Gets")] // Regression test for #2253
+        [InlineData("public", "bool", "=> false;", "Gets or sets a value indicating whether", "Gets a value indicating whether")] // Regression test for #2253
+        [InlineData("protected", "int", "=> 0;", "Gets or sets", "Gets")] // Regression test for #2253
+        [InlineData("protected internal", "int", "=> 0;", "Gets or sets", "Gets")] // Regression test for #2253
+        [InlineData("internal", "int", "=> 0;", "Gets or sets", "Gets")] // Regression test for #2253
+        [InlineData("public", "int", "{ set {} }", "Gets", "Sets")] // Regression test for #2253
+        [InlineData("public", "int", "{ set {} }", "Gets or sets", "Sets")] // Regression test for #2253
+        [InlineData("public", "int", "{ get; private set; }", "Sets", "Gets")] // Regression test for #2253
+        [InlineData("public", "int", "{ private get; set; }", "Gets", "Sets")] // Regression test for #2253
+        public async Task IncorrectSummaryTagWithKnownPrefixShouldBeFixedCorrectlyAsync(string accessibility, string type, string accessors, string summaryPrefix, string expectedArgument)
         {
-            var testCode = @"
+            var testCode = $@"
 public class TestClass
-{
+{{
     /// <summary>
-    /// Gets the first test value.
+    /// {summaryPrefix} the value.
     /// </summary>
-    public int TestProperty1 { get; set; }
-
-    /// <summary>
-    /// Sets the seconds test value.
-    /// </summary>
-    public int TestProperty2 { get; set; }
-}
+    {accessibility} {type} TestProperty {accessors}
+}}
 ";
 
-            var fixedTestCode = @"
+            var fixedTestCode = $@"
 public class TestClass
-{
+{{
     /// <summary>
-    /// Gets or sets the first test value.
+    /// {expectedArgument} the value.
     /// </summary>
-    public int TestProperty1 { get; set; }
-
-    /// <summary>
-    /// Gets or sets the seconds test value.
-    /// </summary>
-    public int TestProperty2 { get; set; }
-}
+    {accessibility} {type} TestProperty {accessors}
+}}
 ";
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(7, 16).WithArguments("Gets or sets"),
-                this.CSharpDiagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(12, 16).WithArguments("Gets or sets"),
+                this.CSharpDiagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(7, 7 + accessibility.Length + type.Length).WithArguments(expectedArgument),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

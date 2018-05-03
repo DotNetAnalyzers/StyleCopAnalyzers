@@ -3,10 +3,10 @@
 
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
-    using Newtonsoft.Json;
+    using LightJson;
 
-    [JsonObject(MemberSerialization.OptIn)]
     internal class OrderingSettings
     {
         private static readonly ImmutableArray<OrderingTrait> DefaultElementOrder =
@@ -20,37 +20,70 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// <summary>
         /// This is the backing field for the <see cref="ElementOrder"/> property.
         /// </summary>
-        [JsonProperty("elementOrder", DefaultValueHandling = DefaultValueHandling.Ignore)]
         private ImmutableArray<OrderingTrait>.Builder elementOrder;
 
         /// <summary>
         /// This is the backing field for the <see cref="SystemUsingDirectivesFirst"/> property.
         /// </summary>
-        [JsonProperty("systemUsingDirectivesFirst", DefaultValueHandling = DefaultValueHandling.Include)]
         private bool systemUsingDirectivesFirst;
 
         /// <summary>
         /// This is the backing field for the <see cref="UsingDirectivesPlacement"/> property.
         /// </summary>
-        [JsonProperty("usingDirectivesPlacement", DefaultValueHandling = DefaultValueHandling.Include)]
         private UsingDirectivesPlacement usingDirectivesPlacement;
 
         /// <summary>
         /// This is the backing field for the <see cref="BlankLinesBetweenUsingGroups"/> property.
         /// </summary>
-        [JsonProperty("blankLinesBetweenUsingGroups", DefaultValueHandling = DefaultValueHandling.Include)]
         private OptionSetting blankLinesBetweenUsingGroups;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="OrderingSettings"/> class during JSON deserialization.
+        /// Initializes a new instance of the <see cref="OrderingSettings"/> class.
         /// </summary>
-        [JsonConstructor]
         protected internal OrderingSettings()
         {
             this.elementOrder = ImmutableArray.CreateBuilder<OrderingTrait>();
             this.systemUsingDirectivesFirst = true;
             this.usingDirectivesPlacement = UsingDirectivesPlacement.InsideNamespace;
             this.blankLinesBetweenUsingGroups = OptionSetting.Allow;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OrderingSettings"/> class.
+        /// </summary>
+        /// <param name="orderingSettingsObject">The JSON object containing the settings.</param>
+        protected internal OrderingSettings(JsonObject orderingSettingsObject)
+            : this()
+        {
+            foreach (var kvp in orderingSettingsObject)
+            {
+                switch (kvp.Key)
+                {
+                case "elementOrder":
+                    kvp.AssertIsArray();
+                    foreach (var value in kvp.Value.AsJsonArray)
+                    {
+                        this.elementOrder.Add(value.ToEnumValue<OrderingTrait>(kvp.Key));
+                    }
+
+                    break;
+
+                case "systemUsingDirectivesFirst":
+                    this.systemUsingDirectivesFirst = kvp.ToBooleanValue();
+                    break;
+
+                case "usingDirectivesPlacement":
+                    this.usingDirectivesPlacement = kvp.ToEnumValue<UsingDirectivesPlacement>();
+                    break;
+
+                case "blankLinesBetweenUsingGroups":
+                    this.blankLinesBetweenUsingGroups = kvp.ToEnumValue<OptionSetting>();
+                    break;
+
+                default:
+                    break;
+                }
+            }
         }
 
         public ImmutableArray<OrderingTrait> ElementOrder

@@ -28,8 +28,8 @@ namespace StyleCop.Analyzers.OrderingRules
         /// The ID for diagnostics produced by the <see cref="SA1216UsingStaticDirectivesMustBePlacedAtTheCorrectLocation"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1216";
-        private const string Title = "Using static directives must be placed at the correct location.";
-        private const string MessageFormat = "Using static directives must be placed at the correct location.";
+        private const string Title = "Using static directives should be placed at the correct location.";
+        private const string MessageFormat = "Using static directives should be placed at the correct location.";
         private const string Description = "A using static directive is positioned before a regular or after an alias using directive.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1216.md";
 

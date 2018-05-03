@@ -34,8 +34,8 @@ namespace StyleCop.Analyzers.NamingRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SX1309S";
-        private const string Title = "Static field names must begin with underscore";
-        private const string MessageFormat = "Static field '{0}' must begin with an underscore";
+        private const string Title = "Static field names should begin with underscore";
+        private const string MessageFormat = "Static field '{0}' should begin with an underscore";
         private const string Description = "A static field name in C# does not begin with an underscore.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SX1309S.md";
 
@@ -119,7 +119,7 @@ namespace StyleCop.Analyzers.NamingRules
                     continue;
                 }
 
-                // Static field '{name}' must begin with an underscore
+                // Static field '{name}' should begin with an underscore
                 string name = identifier.ValueText;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), name));
             }

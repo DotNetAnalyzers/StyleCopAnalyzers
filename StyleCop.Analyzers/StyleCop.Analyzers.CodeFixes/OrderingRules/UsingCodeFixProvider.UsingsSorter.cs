@@ -173,12 +173,15 @@ namespace StyleCop.Analyzers.OrderingRules
 
                     // when there is a directive trivia, add it (and any trivia before it) to the triviaToMove collection.
                     // when there are leading blank lines for the first entry, add them to the triviaToMove collection.
-                    var previousIsEndOfLine = true;
+                    int triviaToMoveCount = triviaToMove.Count;
+                    var previousIsEndOfLine = false;
                     for (var m = leadingTrivia.Count - 1; m >= 0; m--)
                     {
                         if (leadingTrivia[m].IsDirective)
                         {
-                            triviaToMove.InsertRange(0, leadingTrivia.Take(m + 1));
+                            // When a directive is followed by a blank line, keep the blank line with the directive.
+                            int takeCount = previousIsEndOfLine ? m + 2 : m + 1;
+                            triviaToMove.InsertRange(0, leadingTrivia.Take(takeCount));
                             break;
                         }
 
@@ -186,7 +189,8 @@ namespace StyleCop.Analyzers.OrderingRules
                         {
                             if (previousIsEndOfLine)
                             {
-                                triviaToMove.Insert(0, leadingTrivia[m]);
+                                triviaToMove.InsertRange(0, leadingTrivia.Take(m + 2));
+                                break;
                             }
 
                             previousIsEndOfLine = true;
@@ -199,6 +203,56 @@ namespace StyleCop.Analyzers.OrderingRules
 
                     // preserve leading trivia (excluding directive trivia), indenting each line as appropriate
                     var newLeadingTrivia = leadingTrivia.Except(triviaToMove).ToList();
+
+                    // indent the triviaToMove if necessary so it behaves correctly later
+                    bool atStartOfLine = triviaToMoveCount == 0 || triviaToMove.Last().HasBuiltinEndLine();
+                    for (int m = triviaToMoveCount; m < triviaToMove.Count; m++)
+                    {
+                        bool currentAtStartOfLine = atStartOfLine;
+                        atStartOfLine = triviaToMove[m].HasBuiltinEndLine();
+                        if (!currentAtStartOfLine)
+                        {
+                            continue;
+                        }
+
+                        if (triviaToMove[m].IsKind(SyntaxKind.EndOfLineTrivia))
+                        {
+                            // This is a blank line; indenting it would only add trailing whitespace
+                            continue;
+                        }
+
+                        if (triviaToMove[m].IsDirective)
+                        {
+                            // Only #region and #endregion directives get indented
+                            if (!triviaToMove[m].IsKind(SyntaxKind.RegionDirectiveTrivia) && !triviaToMove[m].IsKind(SyntaxKind.EndRegionDirectiveTrivia))
+                            {
+                                // This is a preprocessor line that doesn't need to be indented
+                                continue;
+                            }
+                        }
+
+                        if (triviaToMove[m].IsKind(SyntaxKind.DisabledTextTrivia))
+                        {
+                            // This is text in a '#if false' block; just ignore it
+                            continue;
+                        }
+
+                        if (string.IsNullOrEmpty(indentation))
+                        {
+                            if (triviaToMove[m].IsKind(SyntaxKind.WhitespaceTrivia))
+                            {
+                                // Remove the trivia and analyze the current position again
+                                triviaToMove.RemoveAt(m);
+                                m--;
+                                atStartOfLine = true;
+                            }
+                        }
+                        else
+                        {
+                            triviaToMove.Insert(m, SyntaxFactory.Whitespace(indentation));
+                            m++;
+                        }
+                    }
 
                     // strip any leading whitespace on each line (and also blank lines)
                     var k = 0;
@@ -359,10 +413,10 @@ namespace StyleCop.Analyzers.OrderingRules
             {
                 if ((left.Alias != null) && (right.Alias != null))
                 {
-                    return CultureInfo.InvariantCulture.CompareInfo.Compare(left.Alias.Name.Identifier.ValueText, right.Alias.Name.Identifier.ValueText, CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreWidth);
+                    return NameSyntaxHelpers.Compare(left.Alias.Name, right.Alias.Name);
                 }
 
-                return CultureInfo.InvariantCulture.CompareInfo.Compare(left.Name.ToNormalizedString(), right.Name.ToNormalizedString(), CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreWidth);
+                return NameSyntaxHelpers.Compare(left.Name, right.Name);
             }
 
             private bool IsSeparatedSystemUsing(UsingDirectiveSyntax syntax)

@@ -16,7 +16,7 @@ namespace StyleCop.Analyzers.NamingRules
     /// </summary>
     /// <remarks>
     /// <para>A violation of this rule occurs when the name of a public or internal field begins with a lower-case
-    /// letter. Public or internal fields must being with an upper-case letter.</para>
+    /// letter. Public or internal fields should being with an upper-case letter.</para>
     ///
     /// <para>If the field or variable name is intended to match the name of an item associated with Win32 or COM, and
     /// thus needs to start with a lower-case letter, place the field or variable within a special <c>NativeMethods</c>
@@ -32,8 +32,8 @@ namespace StyleCop.Analyzers.NamingRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1307";
-        private const string Title = "Accessible fields must begin with upper-case letter";
-        private const string MessageFormat = "Field '{0}' must begin with upper-case letter";
+        private const string Title = "Accessible fields should begin with upper-case letter";
+        private const string MessageFormat = "Field '{0}' should begin with upper-case letter";
         private const string Description = "The name of a public or internal field in C# does not begin with an upper-case letter.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1307.md";
 

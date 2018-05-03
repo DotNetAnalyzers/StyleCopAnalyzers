@@ -16,8 +16,8 @@ namespace StyleCop.Analyzers.NamingRules
     /// </summary>
     /// <remarks>
     /// <para>A violation of this rule occurs when the name of a field begins with an upper-case letter. Constants,
-    /// non-private readonly fields and static readonly fields must always start with an uppercase letter, whilst
-    /// private readonly fields must start with a lowercase letter. Also, public or internal fields must always start
+    /// non-private readonly fields and static readonly fields should always start with an uppercase letter, whilst
+    /// private readonly fields should start with a lowercase letter. Also, public or internal fields should always start
     /// with an uppercase letter.</para>
     ///
     /// <para>If the field name is intended to match the name of an item associated with Win32 or COM, and thus needs to
@@ -33,8 +33,8 @@ namespace StyleCop.Analyzers.NamingRules
         /// The ID for diagnostics produced by the <see cref="SA1306FieldNamesMustBeginWithLowerCaseLetter"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1306";
-        private const string Title = "Field names must begin with lower-case letter";
-        private const string MessageFormat = "Field '{0}' must begin with lower-case letter";
+        private const string Title = "Field names should begin with lower-case letter";
+        private const string MessageFormat = "Field '{0}' should begin with lower-case letter";
         private const string Description = "The name of a field in C# does not begin with a lower-case letter.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1306.md";
 
@@ -133,7 +133,7 @@ namespace StyleCop.Analyzers.NamingRules
                     continue;
                 }
 
-                // Field names must begin with lower-case letter
+                // Field names should begin with lower-case letter
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), name));
             }
         }

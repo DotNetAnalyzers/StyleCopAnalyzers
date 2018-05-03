@@ -37,6 +37,9 @@ public class Foo<T> : object where T : IFormattable
             case 2:
             case 3:
                 return value;
+            case 4:
+                return (int)Convert.ToDouble($""{3:N}"");
+                return (int)Convert.ToDouble($""{3: N}"");
             default:
                 goto _label;
         }
@@ -70,6 +73,9 @@ public class Foo<T> : object where T/* test */ : IFormattable
             case 2:
             case 3:
                 return value;
+            case 4:
+                return (int)Convert.ToDouble($""{3:N}"");
+                return (int)Convert.ToDouble($""{3: N}"");
             default:
                 goto _label;
         }
@@ -111,6 +117,9 @@ base()
             case 2:
             case 3:
                 return value;
+            case 4:
+                return (int)Convert.ToDouble($""{3:N}"");
+                return (int)Convert.ToDouble($""{3: N}"");
             default:
                 goto _label;
         }
@@ -147,6 +156,9 @@ public class Foo<T> :object where T :IFormattable
             case 2:
             case 3:
                 return value;
+            case 4:
+                return (int)Convert.ToDouble($""{3:N}"");
+                return (int)Convert.ToDouble($""{3: N}"");
             default:
                 goto _label;
         }
@@ -193,6 +205,9 @@ public class Foo<T>: object where T: IFormattable
             case 2:
             case 3:
                 return value;
+            case 4:
+                return (int)Convert.ToDouble($""{3:N}"");
+                return (int)Convert.ToDouble($""{3: N}"");
             default:
                 goto _label;
         }
@@ -213,7 +228,7 @@ public class Foo<T>: object where T: IFormattable
         }
 
         /// <summary>
-        /// Verifies that the analyzer will produce the proper diagnostics when the colons must not preceded by space.
+        /// Verifies that the analyzer will produce the proper diagnostics when the colons should not preceded by space.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -239,6 +254,9 @@ public class Foo<T> : object where T : IFormattable
             case 2:
             case 3 :
                 return value;
+            case 4:
+                return (int)Convert.ToDouble($""{3 :N}"");
+                return (int)Convert.ToDouble($""{3 : N}"");
             default :
                 goto _label;
         }
@@ -250,7 +268,9 @@ public class Foo<T> : object where T : IFormattable
                 this.CSharpDiagnostic().WithLocation(10, 19).WithArguments(" not", "preceded", string.Empty),
                 this.CSharpDiagnostic().WithLocation(15, 12).WithArguments(" not", "preceded", string.Empty),
                 this.CSharpDiagnostic().WithLocation(19, 20).WithArguments(" not", "preceded", string.Empty),
-                this.CSharpDiagnostic().WithLocation(21, 21).WithArguments(" not", "preceded", string.Empty),
+                this.CSharpDiagnostic().WithLocation(22, 51).WithArguments(" not", "preceded", string.Empty),
+                this.CSharpDiagnostic().WithLocation(23, 51).WithArguments(" not", "preceded", string.Empty),
+                this.CSharpDiagnostic().WithLocation(24, 21).WithArguments(" not", "preceded", string.Empty),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -284,6 +304,9 @@ public class Foo<T>:object where T:IFormattable
             case 2:
             case 3:
                 return value;
+            case 4:
+                return (int)Convert.ToDouble($""{3:N}"");
+                return (int)Convert.ToDouble($""{3: N}"");
             default:
                 goto _label;
         }

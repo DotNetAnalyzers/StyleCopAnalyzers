@@ -25,8 +25,8 @@ namespace StyleCop.Analyzers.SpacingRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1019";
-        private const string Title = "Member access symbols must be spaced correctly";
-        private const string MessageFormat = "Member access symbol '{0}' must not be {1} by a space.";
+        private const string Title = "Member access symbols should be spaced correctly";
+        private const string MessageFormat = "Member access symbol '{0}' should not be {1} by a space.";
         private const string Description = "The spacing around a member access symbol is incorrect, within a C# code file.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1019.md";
 
@@ -57,6 +57,10 @@ namespace StyleCop.Analyzers.SpacingRules
                 {
                 case SyntaxKind.DotToken:
                     HandleDotToken(context, token);
+                    break;
+
+                case SyntaxKind.MinusGreaterThanToken:
+                    HandleMemberAccessSymbol(context, token);
                     break;
 
                 // This case handles the new ?. and ?[ operators
@@ -103,14 +107,14 @@ namespace StyleCop.Analyzers.SpacingRules
 
             if (!firstInLine && precededBySpace)
             {
-                // Member access symbol '{.}' must not be {preceded} by a space.
+                // Member access symbol '{.}' should not be {preceded} by a space.
                 var properties = TokenSpacingProperties.RemovePreceding;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, token.Text, "preceded"));
             }
 
             if (followedBySpace)
             {
-                // Member access symbol '{.}' must not be {followed} by a space.
+                // Member access symbol '{.}' should not be {followed} by a space.
                 var properties = TokenSpacingProperties.RemoveFollowing;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, token.Text, "followed"));
             }

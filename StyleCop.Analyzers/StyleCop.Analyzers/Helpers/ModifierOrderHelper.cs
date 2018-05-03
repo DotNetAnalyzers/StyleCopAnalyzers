@@ -29,9 +29,9 @@ namespace StyleCop.Analyzers.OrderingRules
             Static,
 
             /// <summary>
-            /// Represents other modifiers i.e partial, virtual, abstract, override, extern, unsafe, new, async, const, sealed, readonly, volatile, fixed
+            /// Represents other modifiers i.e partial, virtual, abstract, override, extern, unsafe, new, async, const, sealed, readonly, volatile, fixed, ref
             /// </summary>
-            Other
+            Other,
         }
 
         internal static ModifierType GetModifierType(SyntaxToken modifier)
@@ -64,6 +64,7 @@ namespace StyleCop.Analyzers.OrderingRules
             case SyntaxKind.ConstKeyword:
             case SyntaxKind.AsyncKeyword:
             case SyntaxKind.PartialKeyword:
+            case SyntaxKind.RefKeyword:
                 result = ModifierType.Other;
                 break;
             }

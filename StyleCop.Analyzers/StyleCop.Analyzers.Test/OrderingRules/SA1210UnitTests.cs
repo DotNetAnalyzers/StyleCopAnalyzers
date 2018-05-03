@@ -115,6 +115,35 @@ namespace Bar
         }
 
         [Fact]
+        [WorkItem(2336, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2336")]
+        public async Task TestUsingDirectivesCaseSensitivityAsync()
+        {
+            var testCode = @"namespace First
+{
+    using Second;
+    using second;
+}
+
+namespace Second { }
+namespace second { }";
+
+            var fixedTestCode = @"namespace First
+{
+    using second;
+    using Second;
+}
+
+namespace Second { }
+namespace second { }";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 5);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestInvalidOrderedUsingDirectivesWithInlineCommentsAsync()
         {
             var testCode = @"namespace Foo
@@ -289,7 +318,7 @@ namespace Test
         {
             var testCode = @"
 using System;
-using Microsoft.VisualStudio;
+using Microsoft.Win32;
 using MyList = System.Collections.Generic.List<int>;
 
 #if true
@@ -302,7 +331,7 @@ using Microsoft.CodeAnalysis;
 
             var fixedTestCode = @"
 using System;
-using Microsoft.VisualStudio;
+using Microsoft.Win32;
 using MyList = System.Collections.Generic.List<int>;
 
 #if true

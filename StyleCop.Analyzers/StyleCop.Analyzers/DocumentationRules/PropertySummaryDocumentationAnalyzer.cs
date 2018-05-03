@@ -57,7 +57,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         protected override string XmlTagToHandle => XmlCommentHelper.SummaryXmlTag;
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, XElement completeDocumentation, Location diagnosticLocation)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, bool needsComment, XmlNodeSyntax syntax, XElement completeDocumentation, Location diagnosticLocation)
         {
             var propertyDeclaration = (PropertyDeclarationSyntax)context.Node;
             var propertyType = context.SemanticModel.GetTypeInfo(propertyDeclaration.Type);
@@ -130,25 +130,26 @@ namespace StyleCop.Analyzers.DocumentationRules
             var textElement = summaryElement.Content.FirstOrDefault() as XmlTextSyntax;
             var text = textElement == null ? string.Empty : XmlCommentHelper.GetText(textElement, true).TrimStart();
 
-            bool startsWithGetOrSet = text.StartsWith(startingTextGetsOrSets, StringComparison.OrdinalIgnoreCase);
+            bool prefixIsGetsOrSets = text.StartsWith(startingTextGetsOrSets, StringComparison.OrdinalIgnoreCase);
+            bool prefixIsGets = !prefixIsGetsOrSets && text.StartsWith(startingTextGets, StringComparison.OrdinalIgnoreCase);
+            bool prefixIsSets = text.StartsWith(startingTextSets, StringComparison.OrdinalIgnoreCase);
+
             bool getterVisible, setterVisible;
             if (getter != null && setter != null)
             {
                 if (!getter.Modifiers.Any() && !setter.Modifiers.Any())
                 {
-                    // Case 1: The getter and setter have the same declared accessibility
+                    // The getter and setter have the same declared accessibility
                     getterVisible = true;
                     setterVisible = true;
                 }
                 else if (getter.Modifiers.Any(SyntaxKind.PrivateKeyword))
                 {
-                    // Case 3
                     getterVisible = false;
                     setterVisible = true;
                 }
                 else if (setter.Modifiers.Any(SyntaxKind.PrivateKeyword))
                 {
-                    // Case 3
                     getterVisible = true;
                     setterVisible = false;
                 }
@@ -160,7 +161,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                                                 || propertyAccessibility == Accessibility.Private;
                     if (propertyOnlyInternal)
                     {
-                        // Case 2: Property only internal and no accessor is explicitly private
+                        // Property only internal and no accessor is explicitly private
                         getterVisible = true;
                         setterVisible = true;
                     }
@@ -174,7 +175,6 @@ namespace StyleCop.Analyzers.DocumentationRules
                         case Accessibility.Public:
                         case Accessibility.ProtectedOrInternal:
                         case Accessibility.Protected:
-                            // Case 4
                             getterVisible = true;
                             break;
 
@@ -192,7 +192,6 @@ namespace StyleCop.Analyzers.DocumentationRules
                         case Accessibility.Public:
                         case Accessibility.ProtectedOrInternal:
                         case Accessibility.Protected:
-                            // Case 4
                             setterVisible = true;
                             break;
 
@@ -225,51 +224,85 @@ namespace StyleCop.Analyzers.DocumentationRules
             {
                 if (setterVisible)
                 {
-                    if (!startsWithGetOrSet)
+                    // Both getter and setter are visible.
+                    if (!prefixIsGetsOrSets)
                     {
-                        diagnosticProperties.Add(ExpectedTextKey, startingTextGetsOrSets);
-
-                        if (text.StartsWith(startingTextGets, StringComparison.OrdinalIgnoreCase))
+                        ReportSA1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextGetsOrSets, unexpectedStartingText1: startingTextGets, unexpectedStartingText2: startingTextSets);
+                    }
+                }
+                else if (setter != null)
+                {
+                    // Both getter and setter exist, but only getter is visible.
+                    if (!prefixIsGets)
+                    {
+                        if (prefixIsGetsOrSets)
                         {
-                            diagnosticProperties.Add(TextToRemoveKey, text.Substring(0, startingTextGets.Length));
+                            ReportSA1624(context, diagnosticLocation, diagnosticProperties, accessor: "get", expectedStartingText: startingTextGets, startingTextToRemove: startingTextGetsOrSets);
                         }
-                        else if (text.StartsWith(startingTextSets, StringComparison.OrdinalIgnoreCase))
+                        else
                         {
-                            diagnosticProperties.Add(TextToRemoveKey, text.Substring(0, startingTextSets.Length));
+                            ReportSA1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextGets, unexpectedStartingText1: startingTextSets);
                         }
-
-                        context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextGetsOrSets));
                     }
                 }
                 else
                 {
-                    if (startsWithGetOrSet)
+                    // Getter exists and is visible. Setter does not exist.
+                    if (!prefixIsGets)
                     {
-                        diagnosticProperties.Add(ExpectedTextKey, startingTextGets);
-                        diagnosticProperties.Add(TextToRemoveKey, startingTextGetsOrSets);
-                        context.ReportDiagnostic(Diagnostic.Create(SA1624Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), "get", startingTextGets));
-                    }
-                    else if (!text.StartsWith(startingTextGets, StringComparison.OrdinalIgnoreCase))
-                    {
-                        diagnosticProperties.Add(ExpectedTextKey, startingTextGets);
-                        context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextGets));
+                        ReportSA1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextGets, unexpectedStartingText1: startingTextSets, unexpectedStartingText2: startingTextGetsOrSets);
                     }
                 }
             }
             else if (setterVisible)
             {
-                if (startsWithGetOrSet)
+                if (getter != null)
                 {
-                    diagnosticProperties.Add(ExpectedTextKey, startingTextSets);
-                    diagnosticProperties.Add(TextToRemoveKey, startingTextGetsOrSets);
-                    context.ReportDiagnostic(Diagnostic.Create(SA1624Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), "set", startingTextSets));
+                    // Both getter and setter exist, but only setter is visible.
+                    if (!prefixIsSets)
+                    {
+                        if (prefixIsGetsOrSets)
+                        {
+                            ReportSA1624(context, diagnosticLocation, diagnosticProperties, accessor: "set", expectedStartingText: startingTextSets, startingTextToRemove: startingTextGetsOrSets);
+                        }
+                        else
+                        {
+                            ReportSA1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextSets, unexpectedStartingText1: startingTextGets);
+                        }
+                    }
                 }
-                else if (!text.StartsWith(startingTextSets, StringComparison.OrdinalIgnoreCase))
+                else
                 {
-                    diagnosticProperties.Add(ExpectedTextKey, startingTextSets);
-                    context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), startingTextSets));
+                    // Setter exists and is visible. Getter does not exist.
+                    if (!prefixIsSets)
+                    {
+                        ReportSA1623(context, diagnosticLocation, diagnosticProperties, text, expectedStartingText: startingTextSets, unexpectedStartingText1: startingTextGetsOrSets, unexpectedStartingText2: startingTextGets);
+                    }
                 }
             }
+        }
+
+        private static void ReportSA1623(SyntaxNodeAnalysisContext context, Location diagnosticLocation, ImmutableDictionary<string, string>.Builder diagnosticProperties, string text, string expectedStartingText, string unexpectedStartingText1, string unexpectedStartingText2 = null)
+        {
+            diagnosticProperties.Add(ExpectedTextKey, expectedStartingText);
+
+            if (text.StartsWith(unexpectedStartingText1, StringComparison.OrdinalIgnoreCase))
+            {
+                diagnosticProperties.Add(TextToRemoveKey, text.Substring(0, unexpectedStartingText1.Length));
+            }
+            else if ((unexpectedStartingText2 != null) && text.StartsWith(unexpectedStartingText2, StringComparison.OrdinalIgnoreCase))
+            {
+                diagnosticProperties.Add(TextToRemoveKey, text.Substring(0, unexpectedStartingText2.Length));
+            }
+
+            context.ReportDiagnostic(Diagnostic.Create(SA1623Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), expectedStartingText));
+        }
+
+        private static void ReportSA1624(SyntaxNodeAnalysisContext context, Location diagnosticLocation, ImmutableDictionary<string, string>.Builder diagnosticProperties, string accessor, string expectedStartingText, string startingTextToRemove)
+        {
+            diagnosticProperties.Add(ExpectedTextKey, expectedStartingText);
+            diagnosticProperties.Add(TextToRemoveKey, startingTextToRemove);
+            context.ReportDiagnostic(Diagnostic.Create(SA1624Descriptor, diagnosticLocation, diagnosticProperties.ToImmutable(), accessor, expectedStartingText));
         }
     }
 }

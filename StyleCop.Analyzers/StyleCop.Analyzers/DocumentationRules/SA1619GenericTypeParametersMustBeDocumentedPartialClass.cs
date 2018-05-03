@@ -12,6 +12,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// A generic, partial C# element is missing documentation for one or more of its generic type parameters, and the
@@ -19,10 +20,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     /// <remarks>
     /// <para>C# syntax provides a mechanism for inserting documentation for classes and elements directly into the
-    /// code, through the use of XML documentation headers. For an introduction to these headers and a description of
-    /// the header syntax, see the following article:
-    /// <see href="http://msdn.microsoft.com/en-us/magazine/cc302121.aspx">XML Comments Let You Build Documentation
-    /// Directly From Your Visual Studio .NET Source Files</see>.</para>
+    /// code, through the use of XML documentation headers.</para>
     ///
     /// <para>A violation of this rule occurs when a generic, partial element is missing documentation for one or more
     /// of its generic type parameters, and the documentation for the element contains a <c>&lt;summary&gt;</c> tag
@@ -83,7 +81,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1619";
-        private const string Title = "Generic type parameters must be documented partial class";
+        private const string Title = "Generic type parameters should be documented partial class";
         private const string MessageFormat = "The documentation for type parameter '{0}' is missing";
         private const string Description = "A generic, partial C# element is missing documentation for one or more of its generic type parameters, and the documentation for the element contains a <summary> tag.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1619.md";
@@ -91,7 +89,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<SyntaxNodeAnalysisContext> TypeDeclarationAction = HandleTypeDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> TypeDeclarationAction = HandleTypeDeclaration;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -106,7 +104,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             context.RegisterSyntaxNodeAction(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
         }
 
-        private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             TypeDeclarationSyntax typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
@@ -126,6 +124,15 @@ namespace StyleCop.Analyzers.DocumentationRules
             if (documentation == null)
             {
                 // Don't report if the documentation is missing
+                return;
+            }
+
+            Accessibility declaredAccessibility = typeDeclaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+            Accessibility effectiveAccessibility = typeDeclaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+            bool needsComment = SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, typeDeclaration.Kind(), typeDeclaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility);
+            if (!needsComment)
+            {
+                // Omitting documentation is allowed for this element.
                 return;
             }
 

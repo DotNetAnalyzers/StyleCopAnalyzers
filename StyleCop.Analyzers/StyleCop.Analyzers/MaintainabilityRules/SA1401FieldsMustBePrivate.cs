@@ -27,8 +27,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// The ID for diagnostics produced by the <see cref="SA1401FieldsMustBePrivate"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1401";
-        private const string Title = "Fields must be private";
-        private const string MessageFormat = "Field must be private";
+        private const string Title = "Fields should be private";
+        private const string MessageFormat = "Field should be private";
         private const string Description = "A field within a C# class has an access modifier other than private.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1401.md";
 

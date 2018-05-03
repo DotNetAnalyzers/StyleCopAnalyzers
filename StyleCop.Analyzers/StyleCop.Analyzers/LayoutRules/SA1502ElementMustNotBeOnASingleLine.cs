@@ -11,6 +11,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// A C# element containing opening and closing braces is written completely on a single line.
@@ -54,6 +55,7 @@ namespace StyleCop.Analyzers.LayoutRules
         private static readonly Action<SyntaxNodeAnalysisContext> BaseTypeDeclarationAction = HandleBaseTypeDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> BasePropertyDeclarationAction = HandleBasePropertyDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> BaseMethodDeclarationAction = HandleBaseMethodDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> LocalFunctionStatementAction = HandleLocalFunctionStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> NamespaceDeclarationAction = HandleNamespaceDeclaration;
 
         /// <inheritdoc/>
@@ -69,6 +71,7 @@ namespace StyleCop.Analyzers.LayoutRules
             context.RegisterSyntaxNodeAction(BaseTypeDeclarationAction, SyntaxKinds.BaseTypeDeclaration);
             context.RegisterSyntaxNodeAction(BasePropertyDeclarationAction, SyntaxKinds.BasePropertyDeclaration);
             context.RegisterSyntaxNodeAction(BaseMethodDeclarationAction, SyntaxKinds.BaseMethodDeclaration);
+            context.RegisterSyntaxNodeAction(LocalFunctionStatementAction, SyntaxKindEx.LocalFunctionStatement);
             context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
         }
 
@@ -101,6 +104,17 @@ namespace StyleCop.Analyzers.LayoutRules
             if (baseMethodDeclaration.Body != null)
             {
                 CheckViolation(context, baseMethodDeclaration.Body.OpenBraceToken, baseMethodDeclaration.Body.CloseBraceToken);
+            }
+        }
+
+        private static void HandleLocalFunctionStatement(SyntaxNodeAnalysisContext context)
+        {
+            var localFunctionStatement = (LocalFunctionStatementSyntaxWrapper)context.Node;
+
+            // Expression-bodied local functions do not have a body
+            if (localFunctionStatement.Body != null)
+            {
+                CheckViolation(context, localFunctionStatement.Body.OpenBraceToken, localFunctionStatement.Body.CloseBraceToken);
             }
         }
 

@@ -33,6 +33,22 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 }
 ";
 
+        private const string TestSettingsWithEmptyLines = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""companyName"": ""FooCorp"",
+      ""copyrightText"": ""\nCopyright (c) {companyName}. All rights reserved.\n\nLicensed under the {licenseName} license. See {licenseFile} file in the project root for full license information.\n"",
+      ""variables"": {
+        ""licenseName"": ""???"",
+        ""licenseFile"": ""LICENSE""
+      },
+      ""xmlHeader"": false
+    }
+  }
+}
+";
+
         private string currentTestSettings = TestSettings;
 
         /// <summary>
@@ -49,6 +65,101 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 ";
             var fixedCode = @"// Copyright (c) FooCorp. All rights reserved.
 // Licensed under the ??? license. See LICENSE file in the project root for full license information.
+
+namespace Foo
+{
+}
+";
+
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer will report <see cref="FileHeaderAnalyzers.SA1633DescriptorMissing"/> for
+        /// projects not using XML headers when the file is completely missing a header.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2415, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2415")]
+        public virtual async Task TestNoFileHeaderWithUsingDirectiveAsync()
+        {
+            var testCode = @"using System;
+
+namespace Foo
+{
+}
+";
+            var fixedCode = @"// Copyright (c) FooCorp. All rights reserved.
+// Licensed under the ??? license. See LICENSE file in the project root for full license information.
+
+using System;
+
+namespace Foo
+{
+}
+";
+
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer will report <see cref="FileHeaderAnalyzers.SA1633DescriptorMissing"/> for
+        /// projects not using XML headers when the file is completely missing a header.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2415, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2415")]
+        public virtual async Task TestNoFileHeaderWithBlankLineAndUsingDirectiveAsync()
+        {
+            var testCode = @"
+using System;
+
+namespace Foo
+{
+}
+";
+            var fixedCode = @"// Copyright (c) FooCorp. All rights reserved.
+// Licensed under the ??? license. See LICENSE file in the project root for full license information.
+
+using System;
+
+namespace Foo
+{
+}
+";
+
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer will report <see cref="FileHeaderAnalyzers.SA1633DescriptorMissing"/> for
+        /// projects not using XML headers when the file is completely missing a header.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2415, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2415")]
+        public virtual async Task TestNoFileHeaderWithWhitespaceLineAsync()
+        {
+            var testCode = "    " + @"
+using System;
+
+namespace Foo
+{
+}
+";
+            var fixedCode = @"// Copyright (c) FooCorp. All rights reserved.
+// Licensed under the ??? license. See LICENSE file in the project root for full license information.
+
+using System;
 
 namespace Foo
 {
@@ -267,6 +378,35 @@ namespace Bar
 {
 }
 ";
+            var expected = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(1, 1);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2657, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2657")]
+        public async Task TestHeaderMissingRequiredNewLinesAsync()
+        {
+            var testCode = @"// Copyright (c) FooCorp. All rights reserved.
+// Licensed under the ??? license. See LICENSE file in the project root for full license information.
+
+namespace Bar
+{
+}
+";
+            var fixedCode = @"//
+// Copyright (c) FooCorp. All rights reserved.
+//
+// Licensed under the ??? license. See LICENSE file in the project root for full license information.
+//
+
+namespace Bar
+{
+}
+";
+
+            this.currentTestSettings = TestSettingsWithEmptyLines;
             var expected = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(1, 1);
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);

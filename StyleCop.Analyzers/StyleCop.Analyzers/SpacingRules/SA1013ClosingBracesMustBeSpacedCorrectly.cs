@@ -20,7 +20,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// <para>A closing brace should always be followed by a single space, unless it is the last character on the line,
     /// or unless it is followed by a closing parenthesis, a comma, a semicolon, or a member access operator.</para>
     ///
-    /// <para>A closing brace must always be preceded by a single space, unless it is the first character on the
+    /// <para>A closing brace should always be preceded by a single space, unless it is the first character on the
     /// line.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
@@ -31,8 +31,8 @@ namespace StyleCop.Analyzers.SpacingRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1013";
-        private const string Title = "Closing braces must be spaced correctly";
-        private const string MessageFormat = "Closing brace must{0} be {1} by a space.";
+        private const string Title = "Closing braces should be spaced correctly";
+        private const string MessageFormat = "Closing brace should{0} be {1} by a space.";
         private const string Description = "A closing brace within a C# element is not spaced correctly.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1013.md";
 
@@ -79,7 +79,7 @@ namespace StyleCop.Analyzers.SpacingRules
             {
                 if (precededBySpace)
                 {
-                    // Closing brace must{ not} be {preceded} by a space.
+                    // Closing brace should{ not} be {preceded} by a space.
                     var properties = TokenSpacingProperties.RemovePreceding;
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, " not", "preceded"));
                 }
@@ -109,14 +109,14 @@ namespace StyleCop.Analyzers.SpacingRules
 
             if (!precededBySpace)
             {
-                // Closing brace must{} be {preceded} by a space.
+                // Closing brace should{} be {preceded} by a space.
                 var properties = TokenSpacingProperties.InsertPreceding;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, string.Empty, "preceded"));
             }
 
             if (!lastInLine && !precedesSpecialCharacter && !followedBySpace)
             {
-                // Closing brace must{} be {followed} by a space.
+                // Closing brace should{} be {followed} by a space.
                 var properties = TokenSpacingProperties.InsertFollowing;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, string.Empty, "followed"));
             }

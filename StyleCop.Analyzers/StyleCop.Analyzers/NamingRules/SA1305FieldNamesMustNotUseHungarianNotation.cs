@@ -5,14 +5,14 @@ namespace StyleCop.Analyzers.NamingRules
 {
     using System;
     using System.Collections.Immutable;
-    using System.Linq;
     using System.Text.RegularExpressions;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Settings.ObjectModel;
+    using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// The name of a field or variable in C# uses Hungarian notation.
@@ -54,8 +54,8 @@ namespace StyleCop.Analyzers.NamingRules
         /// The ID for diagnostics produced by the <see cref="SA1305FieldNamesMustNotUseHungarianNotation"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1305";
-        private const string Title = "Field names must not use Hungarian notation";
-        private const string MessageFormat = "{0} '{1}' must not use Hungarian notation";
+        private const string Title = "Field names should not use Hungarian notation";
+        private const string MessageFormat = "{0} '{1}' should not use Hungarian notation";
         private const string Description = "The name of a field or variable in C# uses Hungarian notation.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1305.md";
 
@@ -76,6 +76,7 @@ namespace StyleCop.Analyzers.NamingRules
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> JoinClauseAction = Analyzer.HandleJoinClause;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> JoinIntoClauseAction = Analyzer.HandleJoinIntoClause;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> ForEachStatementAction = Analyzer.HandleForEachStatement;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> SingleVariableDesignationAction = Analyzer.HandleSingleVariableDesignation;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -96,6 +97,7 @@ namespace StyleCop.Analyzers.NamingRules
             context.RegisterSyntaxNodeAction(JoinClauseAction, SyntaxKind.JoinClause);
             context.RegisterSyntaxNodeAction(JoinIntoClauseAction, SyntaxKind.JoinIntoClause);
             context.RegisterSyntaxNodeAction(ForEachStatementAction, SyntaxKind.ForEachStatement);
+            context.RegisterSyntaxNodeAction(SingleVariableDesignationAction, SyntaxKindEx.SingleVariableDesignation);
         }
 
         private static class Analyzer
@@ -189,6 +191,11 @@ namespace StyleCop.Analyzers.NamingRules
                 CheckIdentifier(context, ((ForEachStatementSyntax)context.Node).Identifier, settings);
             }
 
+            public static void HandleSingleVariableDesignation(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+            {
+                CheckIdentifier(context, ((SingleVariableDesignationSyntaxWrapper)context.Node).Identifier, settings);
+            }
+
             private static void CheckIdentifier(SyntaxNodeAnalysisContext context, SyntaxToken identifier, StyleCopSettings settings, string declarationType = "variable")
             {
                 if (identifier.IsMissing)
@@ -219,7 +226,7 @@ namespace StyleCop.Analyzers.NamingRules
                     return;
                 }
 
-                // Variable names must begin with lower-case letter
+                // Variable names should begin with lower-case letter
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), declarationType, name));
             }
         }

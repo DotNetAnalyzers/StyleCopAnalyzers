@@ -6,9 +6,9 @@ namespace StyleCop.Analyzers.SpecialRules
     using System;
     using System.Collections.Immutable;
     using System.Globalization;
+    using LightJson.Serialization;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Newtonsoft.Json;
 
     /// <summary>
     /// The <em>stylecop.json</em> settings file could not be loaded due to a deserialization failure.
@@ -47,7 +47,7 @@ namespace StyleCop.Analyzers.SpecialRules
             {
                 SettingsHelper.GetStyleCopSettings(context.Options, DeserializationFailureBehavior.ThrowException, context.CancellationToken);
             }
-            catch (JsonException ex)
+            catch (Exception ex) when (ex is JsonParseException || ex is InvalidSettingsException)
             {
                 string details = ex.Message;
                 string completeDescription = string.Format(Description.ToString(CultureInfo.CurrentCulture), details);

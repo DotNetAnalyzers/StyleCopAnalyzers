@@ -56,7 +56,11 @@ namespace StyleCop.Analyzers.Helpers
         /// <returns>The number of steps that the token is indented.</returns>
         public static int GetIndentationSteps(IndentationSettings indentationSettings, SyntaxToken token)
         {
-            return GetIndentationSteps(indentationSettings, token.SyntaxTree, token.LeadingTrivia);
+            // If the token does not belong to a syntax tree, it is a modified token and it is assumed that
+            // the caller makes sure that the token is the first token on a line.
+            return token.SyntaxTree != null
+                ? GetIndentationSteps(indentationSettings, token.SyntaxTree, token.LeadingTrivia)
+                : GetIndentationStepsUnchecked(indentationSettings, token.LeadingTrivia);
         }
 
         /// <summary>
@@ -104,6 +108,11 @@ namespace StyleCop.Analyzers.Helpers
                 return 0;
             }
 
+            return GetIndentationStepsUnchecked(indentationSettings, leadingTrivia);
+        }
+
+        private static int GetIndentationStepsUnchecked(IndentationSettings indentationSettings, SyntaxTriviaList leadingTrivia)
+        {
             var builder = StringBuilderPool.Allocate();
 
             foreach (SyntaxTrivia trivia in leadingTrivia.Reverse())

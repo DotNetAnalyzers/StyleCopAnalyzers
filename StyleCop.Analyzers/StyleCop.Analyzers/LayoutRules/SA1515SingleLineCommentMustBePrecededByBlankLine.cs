@@ -12,6 +12,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// A single-line comment within C# code is not preceded by a blank line.
@@ -79,8 +80,8 @@ namespace StyleCop.Analyzers.LayoutRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1515";
-        private const string Title = "Single-line comment must be preceded by blank line";
-        private const string MessageFormat = "Single-line comment must be preceded by blank line";
+        private const string Title = "Single-line comment should be preceded by blank line";
+        private const string MessageFormat = "Single-line comment should be preceded by blank line";
         private const string Description = "A single-line comment within C# code is not preceded by a blank line.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1515.md";
 
@@ -259,6 +260,7 @@ namespace StyleCop.Analyzers.LayoutRules
             var prevToken = token.GetPreviousToken();
             return prevToken.IsKind(SyntaxKind.OpenBraceToken)
                    || prevToken.Parent.IsKind(SyntaxKind.CaseSwitchLabel)
+                   || prevToken.Parent.IsKind(SyntaxKindEx.CasePatternSwitchLabel)
                    || prevToken.Parent.IsKind(SyntaxKind.DefaultSwitchLabel);
         }
 

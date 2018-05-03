@@ -31,6 +31,6 @@ namespace StyleCop.Analyzers.Helpers
         /// <summary>
         /// The using directive is part of the alias usings group.
         /// </summary>
-        Alias
+        Alias,
     }
 }

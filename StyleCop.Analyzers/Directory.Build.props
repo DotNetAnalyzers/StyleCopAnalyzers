@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+
+  <PropertyGroup>
+    <Description>An implementation of StyleCop rules using the .NET Compiler Platform</Description>
+    <Product>StyleCop.Analyzers</Product>
+    <Company>Tunnel Vision Laboratories, LLC</Company>
+    <Copyright>Copyright © Tunnel Vision Laboratories, LLC 2015</Copyright>
+    <NeutralLanguage>en-US</NeutralLanguage>
+
+    <Version>1.1.0.37</Version>
+    <FileVersion>1.1.0.37</FileVersion>
+    <InformationalVersion>1.1.0-dev</InformationalVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <EnableDefaultNoneItems>False</EnableDefaultNoneItems>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <LangVersion>6</LangVersion>
+    <Features>strict</Features>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(BuildingInsideVisualStudio)' != 'true'">
+    <!-- Ideally this is always enabled, but that tends to hurt developer productivity -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!--
+      Make sure any documentation comments which are included in code get checked for syntax during the build, but do
+      not report warnings for missing comments.
+
+      CS1573: Parameter 'parameter' has no matching param tag in the XML comment for 'parameter' (but other parameters do)
+      CS1591: Missing XML comment for publicly visible type or member 'Type_or_Member'
+    -->
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn),1573,1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AsyncUsageAnalyzers" Version="1.0.0-alpha003" PrivateAssets="all" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta006" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)*.ruleset" Link="%(Filename)%(Extension)" />
+
+    <!-- Show launchSettings.json in the project if it exists. -->
+    <None Include="$(AppDesignerFolder)\launchSettings.json" Condition="Exists('$(AppDesignerFolder)\launchSettings.json')" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)stylecop.json">
+      <Link>stylecop.json</Link>
+    </AdditionalFiles>
+  </ItemGroup>
+
+</Project>

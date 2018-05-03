@@ -6,8 +6,8 @@ Identifier | Name | Description
 [SA1300](SA1300.md) | ElementMustBeginWithUpperCaseLetter | The name of a C# element does not begin with an upper-case letter. 
 [SA1301](SA1301.md) | ElementMustBeginWithLowerCaseLetter | There are currently no situations in which this rule will fire. 
 [SA1302](SA1302.md) | InterfaceNamesMustBeginWithI | The name of a C# interface does not begin with the capital letter I. 
-[SA1303](SA1303.md) | ConstFieldNamesMustBeginWithUpperCaseLetter | The name of a constant C# field must begin with an upper-case letter. 
-[SA1304](SA1304.md) | NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter | The name of a non-private readonly C# field must being with an upper-case letter. 
+[SA1303](SA1303.md) | ConstFieldNamesMustBeginWithUpperCaseLetter | The name of a constant C# field should begin with an upper-case letter. 
+[SA1304](SA1304.md) | NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter | The name of a non-private readonly C# field should being with an upper-case letter. 
 [SA1305](SA1305.md) | FieldNamesMustNotUseHungarianNotation | The name of a field or variable in C# uses Hungarian notation. 
 [SA1306](SA1306.md) | FieldNamesMustBeginWithLowerCaseLetter | The name of a field in C# does not begin with a lower-case letter. 
 [SA1307](SA1307.md) | AccessibleFieldsMustBeginWithUpperCaseLetter | The name of a public or internal field in C# does not begin with an upper-case letter. 

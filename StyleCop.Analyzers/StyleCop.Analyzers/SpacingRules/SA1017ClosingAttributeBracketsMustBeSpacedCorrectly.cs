@@ -95,7 +95,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 return;
             }
 
-            // Closing attribute brackets must not be preceded by a space.
+            // Closing attribute brackets should not be preceded by a space.
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemoveImmediatePreceding));
         }
     }

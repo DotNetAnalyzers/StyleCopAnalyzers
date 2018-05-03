@@ -180,7 +180,7 @@ namespace Food
         {
             var testCode = @"
 using System;
-using Microsoft.VisualStudio;
+using Microsoft.Win32;
 using MyList = System.Collections.Generic.List<int>;
 
 #if true
@@ -192,7 +192,7 @@ using Microsoft.CodeAnalysis;
 #endif";
 
             var fixedTestCode = @"
-using Microsoft.VisualStudio;
+using Microsoft.Win32;
 using System;
 using MyList = System.Collections.Generic.List<int>;
 

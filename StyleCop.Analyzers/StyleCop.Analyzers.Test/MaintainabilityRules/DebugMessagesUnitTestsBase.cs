@@ -30,13 +30,13 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         [Fact]
         public async Task TestConstantMessage_Field_PassAsync()
         {
-            await this.TestConstantMessage_Field_PassAsync("\" foo \"").ConfigureAwait(false);
+            await this.TestConstantMessage_Field_PassExecuterAsync("\" foo \"").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestConstantMessage_Field_PassExpressionAsync()
         {
-            await this.TestConstantMessage_Field_PassAsync("\" \" + \"foo\" + \" \"").ConfigureAwait(false);
+            await this.TestConstantMessage_Field_PassExecuterAsync("\" \" + \"foo\" + \" \"").ConfigureAwait(false);
         }
 
         [Fact]
@@ -54,19 +54,19 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 },
             };
 
-            await this.TestConstantMessage_Field_PassAsync("3", expected).ConfigureAwait(false);
+            await this.TestConstantMessage_Field_PassExecuterAsync("3", expected).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestConstantMessage_Local_PassAsync()
         {
-            await this.TestConstantMessage_Local_PassAsync("\" foo \"").ConfigureAwait(false);
+            await this.TestConstantMessage_Local_PassExecuterAsync("\" foo \"").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestConstantMessage_Local_PassExpressionAsync()
         {
-            await this.TestConstantMessage_Local_PassAsync("\" \" + \"foo\" + \" \"").ConfigureAwait(false);
+            await this.TestConstantMessage_Local_PassExecuterAsync("\" \" + \"foo\" + \" \"").ConfigureAwait(false);
         }
 
         [Fact]
@@ -84,19 +84,19 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 },
             };
 
-            await this.TestConstantMessage_Local_PassAsync("3", expected).ConfigureAwait(false);
+            await this.TestConstantMessage_Local_PassExecuterAsync("3", expected).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestConstantMessage_Inline_PassAsync()
         {
-            await this.TestConstantMessage_Inline_PassAsync("\" foo \"").ConfigureAwait(false);
+            await this.TestConstantMessage_Inline_PassExecuterAsync("\" foo \"").ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestConstantMessage_Inline_PassExpressionAsync()
         {
-            await this.TestConstantMessage_Inline_PassAsync("\" \" + \"foo\" + \" \"").ConfigureAwait(false);
+            await this.TestConstantMessage_Inline_PassExecuterAsync("\" \" + \"foo\" + \" \"").ConfigureAwait(false);
         }
 
         [Fact]
@@ -114,7 +114,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 },
             };
 
-            await this.TestConstantMessage_Inline_PassAsync("3", expected).ConfigureAwait(false);
+            await this.TestConstantMessage_Inline_PassExecuterAsync("3", expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -315,7 +315,7 @@ public class Foo
             }
         }
 
-        private async Task TestConstantMessage_Field_PassAsync(string argument, params DiagnosticResult[] expected)
+        private async Task TestConstantMessage_Field_PassExecuterAsync(string argument, params DiagnosticResult[] expected)
         {
             var testCodeFormat = @"using System.Diagnostics;
 public class Foo
@@ -330,7 +330,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestConstantMessage_Local_PassAsync(string argument, params DiagnosticResult[] expected)
+        private async Task TestConstantMessage_Local_PassExecuterAsync(string argument, params DiagnosticResult[] expected)
         {
             var testCodeFormat = @"using System.Diagnostics;
 public class Foo
@@ -345,7 +345,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestConstantMessage_Inline_PassAsync(string argument, params DiagnosticResult[] expected)
+        private async Task TestConstantMessage_Inline_PassExecuterAsync(string argument, params DiagnosticResult[] expected)
         {
             var testCodeFormat = @"using System.Diagnostics;
 public class Foo

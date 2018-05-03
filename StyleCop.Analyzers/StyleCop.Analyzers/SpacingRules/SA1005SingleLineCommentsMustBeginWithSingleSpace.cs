@@ -160,7 +160,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 return;
             }
 
-            // Single line comment must begin with a space.
+            // Single line comment should begin with a space.
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, trivia.GetLocation()));
         }
     }

@@ -17,16 +17,13 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     /// <remarks>
     /// <para>C# syntax provides a mechanism for inserting documentation for classes and elements directly into the
-    /// code, through the use of XML documentation headers. For an introduction to these headers and a description of
-    /// the header syntax, see the following article:
-    /// <see href="http://msdn.microsoft.com/en-us/magazine/cc302121.aspx">XML Comments Let You Build Documentation
-    /// Directly From Your Visual Studio .NET Source Files</see>.</para>
+    /// code, through the use of XML documentation headers.</para>
     ///
     /// <para>A violation of this rule occurs when the summary tag within the documentation header for a constructor
     /// does not begin with the proper text.</para>
     ///
     /// <para>The rule is intended to standardize the summary text for a constructor based on the access level of the
-    /// constructor. The summary for a non-private instance constructor must begin with "Initializes a new instance of
+    /// constructor. The summary for a non-private instance constructor should begin with "Initializes a new instance of
     /// the {class name} class." For example, the following shows the constructor for the <c>Customer</c> class.</para>
     ///
     /// <code language="csharp">
@@ -80,7 +77,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// }
     /// </code>
     ///
-    /// <para>Private instance constructors must use the summary text "Prevents a default instance of the {class name}
+    /// <para>Private instance constructors should use the summary text "Prevents a default instance of the {class name}
     /// class from being created."</para>
     ///
     /// <code language="csharp">
@@ -100,8 +97,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <see cref="SA1642ConstructorSummaryDocumentationMustBeginWithStandardText"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1642";
-        private const string Title = "Constructor summary documentation must begin with standard text";
-        private const string MessageFormat = "Constructor summary documentation must begin with standard text";
+        private const string Title = "Constructor summary documentation should begin with standard text";
+        private const string MessageFormat = "Constructor summary documentation should begin with standard text";
         private const string Description = "The XML documentation header for a C# constructor does not contain the appropriate summary text.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1642.md";
 

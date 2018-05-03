@@ -17,10 +17,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     /// <remarks>
     /// <para>C# syntax provides a mechanism for inserting documentation for classes and elements directly into the
-    /// code, through the use of XML documentation headers. For an introduction to these headers and a description of
-    /// the header syntax, see the following article:
-    /// <see href="http://msdn.microsoft.com/en-us/magazine/cc302121.aspx">XML Comments Let You Build Documentation
-    /// Directly From Your Visual Studio .NET Source Files</see>.</para>
+    /// code, through the use of XML documentation headers.</para>
     ///
     /// <para>A violation of this rule occurs if the documentation for an element contains a <c>&lt;param&gt;</c> tag
     /// which is empty and does not contain a description of the parameter.</para>
@@ -34,8 +31,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1614";
-        private const string Title = "Element parameter documentation must have text";
-        private const string MessageFormat = "Element parameter documentation must have text";
+        private const string Title = "Element parameter documentation should have text";
+        private const string MessageFormat = "Element parameter documentation should have text";
         private const string Description = "A <param> tag within a C# element's documentation header is empty.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1614.md";
 
@@ -52,7 +49,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, IEnumerable<XmlNodeSyntax> syntaxList, params Location[] diagnosticLocations)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, bool needsComment, IEnumerable<XmlNodeSyntax> syntaxList, params Location[] diagnosticLocations)
         {
             foreach (var syntax in syntaxList)
             {
@@ -66,7 +63,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         }
 
         /// <inheritdoc/>
-        protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, XElement completeDocumentation, params Location[] diagnosticLocations)
+        protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, bool needsComment, XElement completeDocumentation, params Location[] diagnosticLocations)
         {
             var xmlParamTags = completeDocumentation.Nodes()
                 .OfType<XElement>()

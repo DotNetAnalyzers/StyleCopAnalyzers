@@ -113,6 +113,7 @@ namespace StyleCop.Analyzers.SpacingRules
             }
 
             SyntaxTriviaList triviaList;
+            SyntaxToken nextToken;
             switch (location)
             {
             case TokenSpacingProperties.LocationPreceding:
@@ -188,7 +189,18 @@ namespace StyleCop.Analyzers.SpacingRules
                     else
                     {
                         SyntaxTriviaList trailingTrivia = triviaList.AddRange(token.TrailingTrivia.WithoutLeadingWhitespace(endOfLineIsWhitespace: false));
-                        replaceMap[token] = token.WithLeadingTrivia().WithTrailingTrivia(trailingTrivia);
+
+                        nextToken = token.GetNextToken();
+                        if (nextToken.IsKind(SyntaxKind.SemicolonToken))
+                        {
+                            // make the semicolon 'sticky'
+                            replaceMap[token] = token.WithLeadingTrivia().WithTrailingTrivia();
+                            replaceMap[nextToken] = nextToken.WithLeadingTrivia().WithTrailingTrivia(trailingTrivia.WithoutTrailingWhitespace());
+                        }
+                        else
+                        {
+                            replaceMap[token] = token.WithLeadingTrivia().WithTrailingTrivia(trailingTrivia);
+                        }
                     }
 
                     break;
@@ -219,13 +231,18 @@ namespace StyleCop.Analyzers.SpacingRules
                 break;
 
             case TokenSpacingProperties.LocationFollowing:
-                var nextToken = token.GetNextToken();
+                nextToken = token.GetNextToken();
                 switch (action)
                 {
                 case TokenSpacingProperties.ActionInsert:
                     if (!replaceMap.ContainsKey(nextToken))
                     {
-                        replaceMap[token] = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, SyntaxFactory.Space));
+                        // If the token is already present in the map and it has trailing trivia, then it has already been
+                        // processed during an earlier step in the fix all process, so no additional processing is needed.
+                        if (!replaceMap.ContainsKey(token) || (replaceMap[token].TrailingTrivia.Count == 0))
+                        {
+                            replaceMap[token] = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, SyntaxFactory.Space));
+                        }
                     }
 
                     break;

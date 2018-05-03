@@ -80,7 +80,7 @@ namespace Foot
         [Fact]
         public void DiagnosticMessageFormatIsCorrect()
         {
-            Assert.Equal("Elements must be separated by blank line", this.GetCSharpDiagnosticAnalyzers().Single().SupportedDiagnostics.Single().MessageFormat.ToString());
+            Assert.Equal("Elements should be separated by blank line", this.GetCSharpDiagnosticAnalyzers().Single().SupportedDiagnostics.Single().MessageFormat.ToString());
         }
 
         [Fact]
@@ -541,6 +541,189 @@ public class TestClass
 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that setters with an accessibility restriction will report a warning.
+        /// This is a regression for #2269
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestSetterWithAccessibilityRestrictionAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public int TestProtected
+    {
+        get
+        {
+            return 1;
+        }
+        protected set
+        {
+        }
+    }
+
+    public int TestInternal
+    {
+        get
+        {
+            return 1;
+        }
+        internal set
+        {
+        }
+    }
+
+    public int TestPrivate
+    {
+        get
+        {
+            return 1;
+        }
+        private set
+        {
+        }
+    }
+
+    public int this[int i]
+    {
+        get
+        {
+            return 1;
+        }
+        protected set
+        {
+        }
+    }
+}
+
+public class TestClass2
+{
+    public int this[int i]
+    {
+        get
+        {
+            return 1;
+        }
+        internal set
+        {
+        }
+    }
+}
+
+public class TestClass3
+{
+    public int this[int i]
+    {
+        get
+        {
+            return 1;
+        }
+        private set
+        {
+        }
+    }
+}
+";
+
+            var fixedTestCode = @"
+public class TestClass
+{
+    public int TestProtected
+    {
+        get
+        {
+            return 1;
+        }
+
+        protected set
+        {
+        }
+    }
+
+    public int TestInternal
+    {
+        get
+        {
+            return 1;
+        }
+
+        internal set
+        {
+        }
+    }
+
+    public int TestPrivate
+    {
+        get
+        {
+            return 1;
+        }
+
+        private set
+        {
+        }
+    }
+
+    public int this[int i]
+    {
+        get
+        {
+            return 1;
+        }
+
+        protected set
+        {
+        }
+    }
+}
+
+public class TestClass2
+{
+    public int this[int i]
+    {
+        get
+        {
+            return 1;
+        }
+
+        internal set
+        {
+        }
+    }
+}
+
+public class TestClass3
+{
+    public int this[int i]
+    {
+        get
+        {
+            return 1;
+        }
+
+        private set
+        {
+        }
+    }
+}
+";
+
+            var expected = new[]
+            {
+                this.CSharpDiagnostic().WithLocation(10, 1),
+                this.CSharpDiagnostic().WithLocation(21, 1),
+                this.CSharpDiagnostic().WithLocation(32, 1),
+                this.CSharpDiagnostic().WithLocation(43, 1),
+                this.CSharpDiagnostic().WithLocation(57, 1),
+                this.CSharpDiagnostic().WithLocation(71, 1),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

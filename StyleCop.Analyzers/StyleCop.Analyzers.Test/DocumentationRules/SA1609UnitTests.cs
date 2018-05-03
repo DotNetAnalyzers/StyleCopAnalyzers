@@ -354,6 +354,31 @@ public class ClassName : ITestInterface
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(2451, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2451")]
+        public async Task TestPropertyWithoutDocumentationRequirementAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// 
+/// </summary>
+public class ClassName
+{
+    /// <include file='PropertyWithoutValue.xml' path='/ClassName/Property/*'/>
+    private int Property
+    {
+        get;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private ClassName PropertyWithSummary { get; set; }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override Project ApplyCompilationOptions(Project project)
         {
             var resolver = new TestXmlReferenceResolver();

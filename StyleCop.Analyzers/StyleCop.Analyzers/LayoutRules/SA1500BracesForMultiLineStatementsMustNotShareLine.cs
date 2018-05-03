@@ -60,8 +60,8 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <see cref="SA1500BracesForMultiLineStatementsMustNotShareLine"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1500";
-        private const string Title = "Braces for multi-line statements must not share line";
-        private const string MessageFormat = "Braces for multi-line statements must not share line";
+        private const string Title = "Braces for multi-line statements should not share line";
+        private const string MessageFormat = "Braces for multi-line statements should not share line";
         private const string Description = "The opening or closing brace within a C# statement, element, or expression is not placed on its own line.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1500.md";
 
@@ -140,28 +140,73 @@ namespace StyleCop.Analyzers.LayoutRules
         private static void CheckBraces(SyntaxNodeAnalysisContext context, SyntaxToken openBraceToken, SyntaxToken closeBraceToken)
         {
             bool checkCloseBrace = true;
+            int openBraceTokenLine = openBraceToken.GetLine();
 
-            if (GetStartLine(openBraceToken) == GetStartLine(closeBraceToken))
+            if (openBraceTokenLine == closeBraceToken.GetLine())
             {
-                switch (context.Node.Parent.Kind())
+                if (context.Node.IsKind(SyntaxKind.ArrayInitializerExpression))
                 {
-                case SyntaxKind.GetAccessorDeclaration:
-                case SyntaxKind.SetAccessorDeclaration:
-                case SyntaxKind.AddAccessorDeclaration:
-                case SyntaxKind.RemoveAccessorDeclaration:
-                case SyntaxKind.UnknownAccessorDeclaration:
-                    if (GetStartLine(((AccessorDeclarationSyntax)context.Node.Parent).Keyword) == GetStartLine(openBraceToken))
+                    switch (context.Node.Parent.Kind())
                     {
-                        // reported as SA1504, if at all
+                    case SyntaxKind.EqualsValueClause:
+                        if (((EqualsValueClauseSyntax)context.Node.Parent).EqualsToken.GetLine() == openBraceTokenLine)
+                        {
+                            return;
+                        }
+
+                        break;
+
+                    case SyntaxKind.ArrayCreationExpression:
+                        if (((ArrayCreationExpressionSyntax)context.Node.Parent).NewKeyword.GetLine() == openBraceTokenLine)
+                        {
+                            return;
+                        }
+
+                        break;
+
+                    case SyntaxKind.ImplicitArrayCreationExpression:
+                        if (((ImplicitArrayCreationExpressionSyntax)context.Node.Parent).NewKeyword.GetLine() == openBraceTokenLine)
+                        {
+                            return;
+                        }
+
+                        break;
+
+                    case SyntaxKind.ArrayInitializerExpression:
+                        if (!InitializerExpressionSharesLine((InitializerExpressionSyntax)context.Node))
+                        {
+                            return;
+                        }
+
+                        checkCloseBrace = false;
+                        break;
+
+                    default:
+                        break;
+                    }
+                }
+                else
+                {
+                    switch (context.Node.Parent.Kind())
+                    {
+                    case SyntaxKind.GetAccessorDeclaration:
+                    case SyntaxKind.SetAccessorDeclaration:
+                    case SyntaxKind.AddAccessorDeclaration:
+                    case SyntaxKind.RemoveAccessorDeclaration:
+                    case SyntaxKind.UnknownAccessorDeclaration:
+                        if (((AccessorDeclarationSyntax)context.Node.Parent).Keyword.GetLine() == openBraceTokenLine)
+                        {
+                            // reported as SA1504, if at all
+                            return;
+                        }
+
+                        checkCloseBrace = false;
+                        break;
+
+                    default:
+                        // reported by SA1501 or SA1502
                         return;
                     }
-
-                    checkCloseBrace = false;
-                    break;
-
-                default:
-                    // reported by SA1501 or SA1502
-                    return;
                 }
             }
 
@@ -172,9 +217,12 @@ namespace StyleCop.Analyzers.LayoutRules
             }
         }
 
-        private static int GetStartLine(SyntaxToken token)
+        private static bool InitializerExpressionSharesLine(InitializerExpressionSyntax node)
         {
-            return token.GetLineSpan().StartLinePosition.Line;
+            var parent = (InitializerExpressionSyntax)node.Parent;
+            var index = parent.Expressions.IndexOf(node);
+
+            return (index > 0) && (parent.Expressions[index - 1].GetEndLine() == parent.Expressions[index].GetLine());
         }
 
         private static void CheckBraceToken(SyntaxNodeAnalysisContext context, SyntaxToken token)
@@ -186,7 +234,7 @@ namespace StyleCop.Analyzers.LayoutRules
 
             int line = token.GetLineSpan().StartLinePosition.Line;
 
-            SyntaxToken previousToken = token.GetPreviousToken();
+            SyntaxToken previousToken = token.GetPreviousToken(includeZeroWidth: true);
             if (!previousToken.IsMissing)
             {
                 if (previousToken.GetLineSpan().StartLinePosition.Line == line)
@@ -198,7 +246,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 }
             }
 
-            SyntaxToken nextToken = token.GetNextToken();
+            SyntaxToken nextToken = token.GetNextToken(includeZeroWidth: true);
             if (!nextToken.IsMissing)
             {
                 switch (nextToken.Kind())
@@ -210,7 +258,7 @@ namespace StyleCop.Analyzers.LayoutRules
                     // these are allowed to appear on the same line
                     return;
 
-                case SyntaxKind.None:
+                case SyntaxKind.EndOfFileToken:
                     // last token of this file
                     return;
 

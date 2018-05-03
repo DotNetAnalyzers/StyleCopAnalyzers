@@ -11,6 +11,7 @@ namespace StyleCop.Analyzers.NamingRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// The name of a C# element does not begin with an upper-case letter.
@@ -21,7 +22,7 @@ namespace StyleCop.Analyzers.NamingRules
     /// element name: namespaces, classes, enums, structs, delegates, events, methods, and properties.</para>
     ///
     /// <para>In addition, any field which is public, internal, or marked with the const attribute should begin with an
-    /// upper-case letter. Non-private readonly fields must also be named using an upper-case letter.</para>
+    /// upper-case letter. Non-private readonly fields should also be named using an upper-case letter.</para>
     ///
     /// <para>If the field or variable name is intended to match the name of an item associated with Win32 or COM, and
     /// thus needs to begin with a lower-case letter, place the field or variable within a special <c>NativeMethods</c>
@@ -36,8 +37,8 @@ namespace StyleCop.Analyzers.NamingRules
         /// The ID for diagnostics produced by the <see cref="SA1300ElementMustBeginWithUpperCaseLetter"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1300";
-        private const string Title = "Element must begin with upper-case letter";
-        private const string MessageFormat = "Element '{0}' must begin with an uppercase letter";
+        private const string Title = "Element should begin with upper-case letter";
+        private const string MessageFormat = "Element '{0}' should begin with an uppercase letter";
         private const string Description = "The name of a C# element does not begin with an upper-case letter.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1300.md";
 
@@ -53,6 +54,7 @@ namespace StyleCop.Analyzers.NamingRules
         private static readonly Action<SyntaxNodeAnalysisContext> EventDeclarationAction = HandleEventDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> EventFieldDeclarationAction = HandleEventFieldDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> MethodDeclarationAction = HandleMethodDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> LocalFunctionStatementAction = HandleLocalFunctionStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> PropertyDeclarationAction = HandlePropertyDeclaration;
 
         /// <inheritdoc/>
@@ -76,6 +78,7 @@ namespace StyleCop.Analyzers.NamingRules
             context.RegisterSyntaxNodeAction(EventDeclarationAction, SyntaxKind.EventDeclaration);
             context.RegisterSyntaxNodeAction(EventFieldDeclarationAction, SyntaxKind.EventFieldDeclaration);
             context.RegisterSyntaxNodeAction(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(LocalFunctionStatementAction, SyntaxKindEx.LocalFunctionStatement);
             context.RegisterSyntaxNodeAction(PropertyDeclarationAction, SyntaxKind.PropertyDeclaration);
         }
 
@@ -177,6 +180,12 @@ namespace StyleCop.Analyzers.NamingRules
             }
 
             CheckElementNameToken(context, methodDeclaration.Identifier);
+        }
+
+        private static void HandleLocalFunctionStatement(SyntaxNodeAnalysisContext context)
+        {
+            var localFunctionStatement = (LocalFunctionStatementSyntaxWrapper)context.Node;
+            CheckElementNameToken(context, localFunctionStatement.Identifier);
         }
 
         private static void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)

@@ -9,13 +9,13 @@ namespace TestHelper
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using LightJson;
+    using LightJson.Serialization;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Formatting;
     using Microsoft.CodeAnalysis.Text;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Linq;
     using StyleCop.Analyzers;
     using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.Test.Helpers;
@@ -125,6 +125,16 @@ namespace TestHelper
                 .AddMetadataReference(projectId, MetadataReferences.CSharpSymbolsReference)
                 .AddMetadataReference(projectId, MetadataReferences.CodeAnalysisReference);
 
+            if (MetadataReferences.SystemRuntimeReference != null)
+            {
+                solution = solution.AddMetadataReference(projectId, MetadataReferences.SystemRuntimeReference);
+            }
+
+            if (MetadataReferences.SystemValueTupleReference != null)
+            {
+                solution = solution.AddMetadataReference(projectId, MetadataReferences.SystemValueTupleReference);
+            }
+
             solution.Workspace.Options =
                 solution.Workspace.Options
                 .WithChangedOption(FormattingOptions.IndentationSize, language, this.IndentationSize)
@@ -156,16 +166,20 @@ namespace TestHelper
                 }
                 else
                 {
-                    JObject mergedSettings = JsonConvert.DeserializeObject<JObject>(settings);
-                    mergedSettings.Merge(JsonConvert.DeserializeObject<JObject>(indentationSettings));
-                    settings = JsonConvert.SerializeObject(mergedSettings);
+                    JsonObject indentationObject = JsonReader.Parse(indentationSettings).AsJsonObject;
+                    JsonObject settingsObject = JsonReader.Parse(settings).AsJsonObject;
+                    JsonObject mergedSettings = MergeJsonObjects(settingsObject, indentationObject);
+                    using (var writer = new JsonWriter(pretty: true))
+                    {
+                        settings = writer.Serialize(mergedSettings);
+                    }
                 }
             }
 
             if (!string.IsNullOrEmpty(settings))
             {
                 var documentId = DocumentId.CreateNewId(projectId);
-                solution = solution.AddAdditionalDocument(documentId, SettingsHelper.SettingsFileName, settings);
+                solution = solution.AddAdditionalDocument(documentId, this.GetSettingsFileName(), settings);
             }
 
             ParseOptions parseOptions = solution.GetProject(projectId).ParseOptions;
@@ -188,6 +202,15 @@ namespace TestHelper
         protected virtual string GetSettings()
         {
             return null;
+        }
+
+        /// <summary>
+        /// Gets the name of the settings file to use.
+        /// </summary>
+        /// <returns>The name of the settings file to use.</returns>
+        protected virtual string GetSettingsFileName()
+        {
+            return SettingsHelper.SettingsFileName;
         }
 
         protected DiagnosticResult CSharpDiagnostic(string diagnosticId = null)
@@ -306,6 +329,35 @@ namespace TestHelper
 
             Solution solution = project.Solution.WithProjectCompilationOptions(project.Id, modifiedCompilationOptions);
             return solution.GetProject(project.Id);
+        }
+
+        private static JsonObject MergeJsonObjects(JsonObject priority, JsonObject fallback)
+        {
+            foreach (var pair in priority)
+            {
+                if (pair.Value.IsJsonObject)
+                {
+                    switch (fallback[pair.Key].Type)
+                    {
+                    case JsonValueType.Null:
+                        fallback[pair.Key] = pair.Value;
+                        break;
+
+                    case JsonValueType.Object:
+                        fallback[pair.Key] = MergeJsonObjects(pair.Value.AsJsonObject, fallback[pair.Key].AsJsonObject);
+                        break;
+
+                    default:
+                        throw new InvalidOperationException($"Cannot merge objects of type '{pair.Value.Type}' and '{fallback[pair.Key].Type}'.");
+                    }
+                }
+                else
+                {
+                    fallback[pair.Key] = pair.Value;
+                }
+            }
+
+            return fallback;
         }
 
         /// <summary>

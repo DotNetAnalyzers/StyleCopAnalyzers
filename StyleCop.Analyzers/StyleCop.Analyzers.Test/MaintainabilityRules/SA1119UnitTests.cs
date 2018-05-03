@@ -16,10 +16,10 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
     public class SA1119UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1119StatementMustNotUseUnnecessaryParenthesis.DiagnosticId;
-        private const string ParenthesesDiagnosticId = SA1119StatementMustNotUseUnnecessaryParenthesis.ParenthesesDiagnosticId;
+        protected const string DiagnosticId = SA1119StatementMustNotUseUnnecessaryParenthesis.DiagnosticId;
+        protected const string ParenthesesDiagnosticId = SA1119StatementMustNotUseUnnecessaryParenthesis.ParenthesesDiagnosticId;
 
-        private bool mainDiagnosticShouldBeDisabled = false;
+        protected bool MainDiagnosticShouldBeDisabled { get; set; }
 
         [Fact]
         public async Task TestLiteralAsync()
@@ -1137,7 +1137,7 @@ public class Foo
         [Fact]
         public async Task TestParenthesisDiagnosticIsNotTriggeredIfParentDiagnosticIsDisabledAsync()
         {
-            this.mainDiagnosticShouldBeDisabled = true;
+            this.MainDiagnosticShouldBeDisabled = true;
 
             string testCode = @"class Foo
 {
@@ -1470,7 +1470,7 @@ public class Program
         /// <inheritdoc/>
         protected override IEnumerable<string> GetDisabledDiagnostics()
         {
-            if (this.mainDiagnosticShouldBeDisabled)
+            if (this.MainDiagnosticShouldBeDisabled)
             {
                 yield return DiagnosticId;
             }

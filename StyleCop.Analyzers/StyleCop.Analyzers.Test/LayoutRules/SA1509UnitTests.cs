@@ -860,9 +860,9 @@ class Foo
 namespace TestNamespace
 {
 
-#pragma warning disable SA1302 // Interface names must begin with I
+#pragma warning disable SA1302 // Interface names should begin with I
     public interface ActiveConfiguredProject<out T>
-#pragma warning restore SA1302 // Interface names must begin with I
+#pragma warning restore SA1302 // Interface names should begin with I
     {
         /// <summary>
         /// Gets the ConfiguredProject exported value.

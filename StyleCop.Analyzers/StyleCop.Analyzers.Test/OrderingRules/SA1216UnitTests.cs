@@ -136,7 +136,7 @@ namespace Bar
         {
             var testCode = @"
 using System;
-using Microsoft.VisualStudio;
+using Microsoft.Win32;
 using static System.String;
 using MyList = System.Collections.Generic.List<int>;
 
@@ -152,7 +152,7 @@ using System.Threading.Tasks;
 
             var fixedTestCode = @"
 using System;
-using Microsoft.VisualStudio;
+using Microsoft.Win32;
 using static System.String;
 using MyList = System.Collections.Generic.List<int>;
 

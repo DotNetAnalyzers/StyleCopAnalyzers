@@ -1,36 +1,65 @@
+# Using StyleCop Analyzers with .NET Core
 
-# Using StyleCop Analyzers with dotnet cli
+StyleCop Analyzers can be used with the **dotnet** tooling, including ASP.NET Core.
 
-StyleCop Analyzers can be used in dotnet cli projects, including asp.net core.
-The tooling support is currently not great and the analyzers only run when the project is compiled and there is currently no way to invoke the code fixes. What does work however is running Stylecop Analyzers in ubuntu on coreclr and OSX (probably) works too.
-To set this up a few steps are required:
+## .NET SDK Projects (*.csproj)
 
-First the StyleCopAnalyzers nuget package has to be added to the project. Optimally the package should be marked as `build` type so it is not included as a package by other projects consuming it.
-For this add the following to the dependencies section of the project.json file:
-```json
-    "StyleCop.Analyzers": {
-      "version": "1.0.0",
-      "type": "build"
-    }
+Edit the project file and add a package reference to **StyleCop.Analyzers**. Make sure to set **PrivateAssets** so the
+reference is not included when transitive dependencies are calculated across project references:
+
+```xml
+<ItemGroup>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.0-beta004" PrivateAssets="All" />
+</ItemGroup>
 ```
 
 If the project is restored and built right now this will already run the analyzers. A few extra steps are needed if they should be configured.
 
-## Rulesets and stylecop.json
+### Rulesets and stylecop.json
 
-To supply a ruleset file and a stylecop.json configuration file to the compiler they have to be manually added as arguments to the compiler. For this add the following under the `buildOptions` node in the project.json file:
-```json
-    "additionalArguments": [ "/ruleset:path/to/ruleset.ruleset", "/additionalfile:path/to/stylecop.json" ]
+Update the project file as follows to apply settings and custom rules:
+
+```xml
+<PropertyGroup>
+    ...
+    <CodeAnalysisRuleSet>stylecop.ruleset</CodeAnalysisRuleSet>
+</PropertyGroup>
+<ItemGroup>
+    <AdditionalFiles Include="stylecop.json" />
+</ItemGroup>
 ```
 
-**Note: ** `additionalArguments` is not currently defined in the schema but does exist and is passed during the build
+### Enabling XML documentation processing
 
-## Enabling xml documentation processing
+Analyzers for XML documentation can only run if the XML documentation comment processing is enabled. See [SA0001](SA0001.md) for more information.
 
-All analyzers regarding xml documentation can only run if the xml processing is enabled. To do this add
+Update the project file to include the following:
+
+```xml
+<PropertyGroup>
+    ...
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+</PropertyGroup>
+```
+
+## Legacy Projects (*.xproj)
+
+Legacy projects use **project.json** to configure analyzers and other build options. Start by adding the following to
+the `dependencies` section of **project.json**:
+
 ```json
+"StyleCop.Analyzers": {
+  "version": "1.0.2",
+  "type": "build"
+}
+```
+
+The rule set and configuration file can be configured by adding the following to the `buildOptions` section:
+
+```json
+"additionalArguments": [
+  "/ruleset:path/to/ruleset.ruleset",
+  "/additionalfile:path/to/stylecop.json"
+],
 "xmlDoc": "true"
 ```
-
-to the `buildOptions` node of the project.json file. Note that this might cause additional CS1591 diagnostics to appear by the compiler.
-They can be suppressed in the ruleset file if necessary.

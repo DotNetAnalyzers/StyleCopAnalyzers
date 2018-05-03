@@ -17,8 +17,8 @@ namespace StyleCop.Analyzers.SpacingRules
     /// <para>A violation of this rule occurs when an opening square bracket within a statement is preceded or followed
     /// by whitespace.</para>
     ///
-    /// <para>An opening square bracket must never be preceded by whitespace, unless it is the first character on the
-    /// line, and an opening square must never be followed by whitespace, unless it is the last character on the
+    /// <para>An opening square bracket should never be preceded by whitespace, unless it is the first character on the
+    /// line, and an opening square should never be followed by whitespace, unless it is the last character on the
     /// line.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
@@ -29,8 +29,8 @@ namespace StyleCop.Analyzers.SpacingRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1010";
-        private const string Title = "Opening square brackets must be spaced correctly";
-        private const string MessageFormat = "Opening square brackets must {0} by a space.";
+        private const string Title = "Opening square brackets should be spaced correctly";
+        private const string MessageFormat = "Opening square brackets should {0} by a space.";
         private const string Description = "An opening square bracket within a C# statement is not spaced correctly.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1010.md";
 
@@ -87,13 +87,13 @@ namespace StyleCop.Analyzers.SpacingRules
 
             if (!firstInLine && precededBySpace && !ignorePrecedingSpaceProblem && !IsPartOfIndexInitializer(token))
             {
-                // Opening square bracket must {not be preceded} by a space.
+                // Opening square bracket should {not be preceded} by a space.
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemovePreceding, "not be preceded"));
             }
 
             if (!lastInLine && followedBySpace)
             {
-                // Opening square bracket must {not be followed} by a space.
+                // Opening square bracket should {not be followed} by a space.
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemoveFollowing, "not be followed"));
             }
         }

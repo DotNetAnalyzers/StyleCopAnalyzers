@@ -2011,6 +2011,62 @@ public class TestClass
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that calls on 'var' are handled properly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        /// <seealso cref="SA1000UnitTests.TestVarIdentifierInvocationAsync"/>
+        [Fact]
+        [WorkItem(2419, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2419")]
+        public async Task TestVarIdentifierInvocationAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    using System;
+    using System.Linq;
+
+    public class TestClass
+    {
+        public void TestMethod()
+        {
+            Func<int>[] x = null;
+            x.Select(var => var ( ));
+            x.Select(var => var ());
+            x.Select(var => var( ));
+        }
+    }
+}";
+
+            var fixedTestCode = @"namespace TestNamespace
+{
+    using System;
+    using System.Linq;
+
+    public class TestClass
+    {
+        public void TestMethod()
+        {
+            Func<int>[] x = null;
+            x.Select(var => var());
+            x.Select(var => var());
+            x.Select(var => var());
+        }
+    }
+}";
+
+            DiagnosticResult[] expectedDiagnostics =
+            {
+                this.CSharpDiagnostic(DescriptorNotPreceded).WithLocation(11, 33),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(11, 33),
+                this.CSharpDiagnostic(DescriptorNotPreceded).WithLocation(12, 33),
+                this.CSharpDiagnostic(DescriptorNotFollowed).WithLocation(13, 32),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestMissingTokenAsync()
         {
@@ -2030,6 +2086,22 @@ class ClassName
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2475, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2475")]
+        public async Task TestSingleLineIfStatementAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    public void TestMethod()
+    {
+        if (true) (true ? 1 : 0).ToString();
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

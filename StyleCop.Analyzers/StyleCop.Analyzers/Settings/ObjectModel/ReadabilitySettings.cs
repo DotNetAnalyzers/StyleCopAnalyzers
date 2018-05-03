@@ -3,17 +3,45 @@
 
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
-    using Newtonsoft.Json;
+    using LightJson;
 
-    [JsonObject(MemberSerialization.OptIn)]
     internal class ReadabilitySettings
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ReadabilitySettings"/> class during JSON deserialization.
+        /// This is the backing field for the <see cref="AllowBuiltInTypeAliases"/> property.
         /// </summary>
-        [JsonConstructor]
+        private bool allowBuiltInTypeAliases;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ReadabilitySettings"/> class.
+        /// </summary>
         protected internal ReadabilitySettings()
         {
+            this.allowBuiltInTypeAliases = false;
         }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ReadabilitySettings"/> class.
+        /// </summary>
+        /// <param name="readabilitySettingsObject">The JSON object containing the settings.</param>
+        protected internal ReadabilitySettings(JsonObject readabilitySettingsObject)
+            : this()
+        {
+            foreach (var kvp in readabilitySettingsObject)
+            {
+                switch (kvp.Key)
+                {
+                case "allowBuiltInTypeAliases":
+                    this.allowBuiltInTypeAliases = kvp.ToBooleanValue();
+                    break;
+
+                default:
+                    break;
+                }
+            }
+        }
+
+        public bool AllowBuiltInTypeAliases =>
+            this.allowBuiltInTypeAliases;
     }
 }

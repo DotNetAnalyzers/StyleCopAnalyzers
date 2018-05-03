@@ -20,7 +20,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// <para>A violation of this rule occurs when the code elements within a file do not follow a standard ordering
     /// scheme.</para>
     ///
-    /// <para>To comply with this rule, elements at the file root level or within a namespace must be positioned in the
+    /// <para>To comply with this rule, elements at the file root level or within a namespace should be positioned in the
     /// following order:</para>
     ///
     /// <list type="bullet">
@@ -34,7 +34,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// <item>Classes</item>
     /// </list>
     ///
-    /// <para>Within a class, struct, or interface, elements must be positioned in the following order:</para>
+    /// <para>Within a class, struct, or interface, elements should be positioned in the following order:</para>
     ///
     /// <list type="bullet">
     /// <item>Fields</item>

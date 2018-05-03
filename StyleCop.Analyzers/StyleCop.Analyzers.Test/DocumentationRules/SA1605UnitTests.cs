@@ -18,6 +18,18 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     /// </summary>
     public class SA1605UnitTests : DiagnosticVerifier
     {
+        private const string TestSettings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""documentPrivateElements"": true
+    }
+  }
+}
+";
+
+        private string currentTestSettings = TestSettings;
+
         [Theory]
         [InlineData("class")]
         [InlineData("struct")]
@@ -225,6 +237,32 @@ public partial class ClassName
         }
 
         [Fact]
+        [WorkItem(2450, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2450")]
+        public async Task TestIncludedNotRequiredDocumentationWithoutSummaryAsync()
+        {
+            var testCode = @"
+/// <include file='ClassWithoutSummary.xml' path='/ClassName/*'/>
+public partial class ClassName
+{
+    ///
+    public void Test() { }
+}";
+
+            // The situation is allowed if 'documentExposedElements' false
+            this.currentTestSettings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""documentExposedElements"": false
+    }
+  }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestIncludedDocumentationWithInheritdocAsync()
         {
             var testCode = @"
@@ -305,6 +343,12 @@ public partial class ClassName
             project = base.ApplyCompilationOptions(project);
             project = project.WithCompilationOptions(project.CompilationOptions.WithXmlReferenceResolver(resolver));
             return project;
+        }
+
+        protected override string GetSettings()
+        {
+            Assert.NotNull(this.currentTestSettings);
+            return this.currentTestSettings;
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

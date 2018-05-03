@@ -194,6 +194,114 @@ v1;
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(2471, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2471")]
+        public async Task TestUnaryMemberAccessAsync()
+        {
+            var testCode = @"public class ClassName
+{
+    public unsafe void MethodName()
+    {
+        int? x = 0;
+        int* y = null;
+
+        x -- .ToString();
+        x --.ToString();
+        x-- .ToString();
+
+        x ++ .ToString();
+        x ++.ToString();
+        x++ .ToString();
+
+        x -- ?.ToString();
+        x --?.ToString();
+        x-- ?.ToString();
+
+        x ++ ?.ToString();
+        x ++?.ToString();
+        x++ ?.ToString();
+
+        y -- ->ToString();
+        y --->ToString();
+        y-- ->ToString();
+
+        y ++ ->ToString();
+        y ++->ToString();
+        y++ ->ToString();
+    }
+}
+";
+            var fixedTestCode = @"public class ClassName
+{
+    public unsafe void MethodName()
+    {
+        int? x = 0;
+        int* y = null;
+
+        x--.ToString();
+        x--.ToString();
+        x--.ToString();
+
+        x++.ToString();
+        x++.ToString();
+        x++.ToString();
+
+        x--?.ToString();
+        x--?.ToString();
+        x--?.ToString();
+
+        x++?.ToString();
+        x++?.ToString();
+        x++?.ToString();
+
+        y--->ToString();
+        y--->ToString();
+        y--->ToString();
+
+        y++->ToString();
+        y++->ToString();
+        y++->ToString();
+    }
+}
+";
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(DescriptorNotPrecededByWhitespace).WithLocation(8, 11).WithArguments("--"),
+                this.CSharpDiagnostic(DescriptorNotFollowedByWhitespace).WithLocation(8, 11).WithArguments("--"),
+                this.CSharpDiagnostic(DescriptorNotPrecededByWhitespace).WithLocation(9, 11).WithArguments("--"),
+                this.CSharpDiagnostic(DescriptorNotFollowedByWhitespace).WithLocation(10, 10).WithArguments("--"),
+
+                this.CSharpDiagnostic(DescriptorNotPrecededByWhitespace).WithLocation(12, 11).WithArguments("++"),
+                this.CSharpDiagnostic(DescriptorNotFollowedByWhitespace).WithLocation(12, 11).WithArguments("++"),
+                this.CSharpDiagnostic(DescriptorNotPrecededByWhitespace).WithLocation(13, 11).WithArguments("++"),
+                this.CSharpDiagnostic(DescriptorNotFollowedByWhitespace).WithLocation(14, 10).WithArguments("++"),
+
+                this.CSharpDiagnostic(DescriptorNotPrecededByWhitespace).WithLocation(16, 11).WithArguments("--"),
+                this.CSharpDiagnostic(DescriptorNotFollowedByWhitespace).WithLocation(16, 11).WithArguments("--"),
+                this.CSharpDiagnostic(DescriptorNotPrecededByWhitespace).WithLocation(17, 11).WithArguments("--"),
+                this.CSharpDiagnostic(DescriptorNotFollowedByWhitespace).WithLocation(18, 10).WithArguments("--"),
+
+                this.CSharpDiagnostic(DescriptorNotPrecededByWhitespace).WithLocation(20, 11).WithArguments("++"),
+                this.CSharpDiagnostic(DescriptorNotFollowedByWhitespace).WithLocation(20, 11).WithArguments("++"),
+                this.CSharpDiagnostic(DescriptorNotPrecededByWhitespace).WithLocation(21, 11).WithArguments("++"),
+                this.CSharpDiagnostic(DescriptorNotFollowedByWhitespace).WithLocation(22, 10).WithArguments("++"),
+
+                this.CSharpDiagnostic(DescriptorNotPrecededByWhitespace).WithLocation(24, 11).WithArguments("--"),
+                this.CSharpDiagnostic(DescriptorNotFollowedByWhitespace).WithLocation(24, 11).WithArguments("--"),
+                this.CSharpDiagnostic(DescriptorNotPrecededByWhitespace).WithLocation(25, 11).WithArguments("--"),
+                this.CSharpDiagnostic(DescriptorNotFollowedByWhitespace).WithLocation(26, 10).WithArguments("--"),
+
+                this.CSharpDiagnostic(DescriptorNotPrecededByWhitespace).WithLocation(28, 11).WithArguments("++"),
+                this.CSharpDiagnostic(DescriptorNotFollowedByWhitespace).WithLocation(28, 11).WithArguments("++"),
+                this.CSharpDiagnostic(DescriptorNotPrecededByWhitespace).WithLocation(29, 11).WithArguments("++"),
+                this.CSharpDiagnostic(DescriptorNotFollowedByWhitespace).WithLocation(30, 10).WithArguments("++"),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Verifies that valid binary expressions do not produce diagnostics.
         /// </summary>
@@ -801,7 +909,7 @@ public class Foo : Exception
         }
 
         /// <summary>
-        /// Verifies that unary plus expression will not trigger any diagnostics.
+        /// Verifies that the <c>=&gt;</c> operator for expression-bodied members triggers diagnostics as expected.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]

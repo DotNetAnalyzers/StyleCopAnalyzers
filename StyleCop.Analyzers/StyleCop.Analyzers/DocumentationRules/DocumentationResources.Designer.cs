@@ -20,7 +20,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class DocumentationResources {
@@ -170,7 +170,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Element parameters must be documented.
+        ///   Looks up a localized string similar to Element parameters should be documented.
         /// </summary>
         internal static string SA1611Title {
             get {
@@ -215,7 +215,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Generic type parameter documentation must match type parameters.
+        ///   Looks up a localized string similar to Generic type parameter documentation should match type parameters.
         /// </summary>
         internal static string SA1620Title {
             get {
@@ -242,7 +242,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Generic type parameter documentation must declare parameter name..
+        ///   Looks up a localized string similar to Generic type parameter documentation should declare parameter name..
         /// </summary>
         internal static string SA1621MessageFormat {
             get {
@@ -251,7 +251,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Generic type parameter documentation must declare parameter name.
+        ///   Looks up a localized string similar to Generic type parameter documentation should declare parameter name.
         /// </summary>
         internal static string SA1621Title {
             get {
@@ -269,7 +269,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Generic type parameter documentation must have text..
+        ///   Looks up a localized string similar to Generic type parameter documentation should have text..
         /// </summary>
         internal static string SA1622MessageFormat {
             get {
@@ -278,7 +278,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Generic type parameter documentation must have text.
+        ///   Looks up a localized string similar to Generic type parameter documentation should have text.
         /// </summary>
         internal static string SA1622Title {
             get {
@@ -296,7 +296,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The property&apos;s documentation summary text must begin with: &apos;{0}&apos;.
+        ///   Looks up a localized string similar to The property&apos;s documentation summary text should begin with: &apos;{0}&apos;.
         /// </summary>
         internal static string SA1623MessageFormat {
             get {
@@ -305,7 +305,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Property summary documentation must match accessors.
+        ///   Looks up a localized string similar to Property summary documentation should match accessors.
         /// </summary>
         internal static string SA1623Title {
             get {
@@ -323,7 +323,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Because the property only contains a visible {0} accessor, the documentation summary text must begin with &apos;{1}&apos;..
+        ///   Looks up a localized string similar to Because the property only contains a visible {0} accessor, the documentation summary text should begin with &apos;{1}&apos;..
         /// </summary>
         internal static string SA1624MessageFormat {
             get {
@@ -332,7 +332,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Property summary documentation must omit accessor with restricted access.
+        ///   Looks up a localized string similar to Property summary documentation should omit accessor with restricted access.
         /// </summary>
         internal static string SA1624Title {
             get {
@@ -359,7 +359,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The documentation text within the \&apos;{0}\&apos; tag must not be empty..
+        ///   Looks up a localized string similar to The documentation text within the \&apos;{0}\&apos; tag should not be empty..
         /// </summary>
         internal static string SA1627MessageFormat {
             get {
@@ -368,11 +368,47 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Documentation text must not be empty.
+        ///   Looks up a localized string similar to Documentation text should not be empty.
         /// </summary>
         internal static string SA1627Title {
             get {
                 return ResourceManager.GetString("SA1627Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add period.
+        /// </summary>
+        internal static string SA1629CodeFix {
+            get {
+                return ResourceManager.GetString("SA1629CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A section of the XML header documentation for a C# element does not end with a period..
+        /// </summary>
+        internal static string SA1629Description {
+            get {
+                return ResourceManager.GetString("SA1629Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Documentation text should end with a period.
+        /// </summary>
+        internal static string SA1629MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1629MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Documentation text should end with a period.
+        /// </summary>
+        internal static string SA1629Title {
+            get {
+                return ResourceManager.GetString("SA1629Title", resourceCulture);
             }
         }
         
@@ -413,7 +449,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File must have header.
+        ///   Looks up a localized string similar to File should have header.
         /// </summary>
         internal static string SA1633Title {
             get {
@@ -431,7 +467,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The file header must contain a copyright tag..
+        ///   Looks up a localized string similar to The file header should contain a copyright tag..
         /// </summary>
         internal static string SA1634MessageFormat {
             get {
@@ -440,7 +476,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File header must show copyright.
+        ///   Looks up a localized string similar to File header should show copyright.
         /// </summary>
         internal static string SA1634Title {
             get {
@@ -458,7 +494,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File header must have copyright text.
+        ///   Looks up a localized string similar to File header should have copyright text.
         /// </summary>
         internal static string SA1635MessageFormat {
             get {
@@ -467,7 +503,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File header must have copyright text.
+        ///   Looks up a localized string similar to File header should have copyright text.
         /// </summary>
         internal static string SA1635Title {
             get {
@@ -485,7 +521,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The file header copyright text must match the copyright text from the settings..
+        ///   Looks up a localized string similar to The file header copyright text should match the copyright text from the settings..
         /// </summary>
         internal static string SA1636MessageFormat {
             get {
@@ -494,7 +530,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File header copyright text must match.
+        ///   Looks up a localized string similar to File header copyright text should match.
         /// </summary>
         internal static string SA1636Title {
             get {
@@ -512,7 +548,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File header must contain file name..
+        ///   Looks up a localized string similar to File header should contain file name..
         /// </summary>
         internal static string SA1637MessageFormat {
             get {
@@ -521,7 +557,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File header must contain file name.
+        ///   Looks up a localized string similar to File header should contain file name.
         /// </summary>
         internal static string SA1637Title {
             get {
@@ -539,7 +575,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File header file name documentation must match file name..
+        ///   Looks up a localized string similar to File header file name documentation should match file name..
         /// </summary>
         internal static string SA1638MessageFormat {
             get {
@@ -548,7 +584,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File header file name documentation must match file name.
+        ///   Looks up a localized string similar to File header file name documentation should match file name.
         /// </summary>
         internal static string SA1638Title {
             get {
@@ -566,7 +602,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File header must have summary.
+        ///   Looks up a localized string similar to File header should have summary.
         /// </summary>
         internal static string SA1639MessageFormat {
             get {
@@ -575,7 +611,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File header must have summary.
+        ///   Looks up a localized string similar to File header should have summary.
         /// </summary>
         internal static string SA1639Title {
             get {
@@ -593,7 +629,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The copyright tag must contain a non-empty company attribute..
+        ///   Looks up a localized string similar to The copyright tag should contain a non-empty company attribute..
         /// </summary>
         internal static string SA1640MessageFormat {
             get {
@@ -602,7 +638,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File header must have valid company text.
+        ///   Looks up a localized string similar to File header should have valid company text.
         /// </summary>
         internal static string SA1640Title {
             get {
@@ -620,7 +656,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The file header company name must match the company name from the settings..
+        ///   Looks up a localized string similar to The file header company name should match the company name from the settings..
         /// </summary>
         internal static string SA1641MessageFormat {
             get {
@@ -629,7 +665,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File header company name text must match.
+        ///   Looks up a localized string similar to File header company name text should match.
         /// </summary>
         internal static string SA1641Title {
             get {
@@ -656,7 +692,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to inheritdoc must be used with inheriting class.
+        ///   Looks up a localized string similar to inheritdoc should be used with inheriting class.
         /// </summary>
         internal static string SA1648MessageFormat {
             get {
@@ -665,7 +701,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to inheritdoc must be used with inheriting class.
+        ///   Looks up a localized string similar to inheritdoc should be used with inheriting class.
         /// </summary>
         internal static string SA1648Title {
             get {
@@ -692,7 +728,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File name must match first type name..
+        ///   Looks up a localized string similar to File name should match first type name..
         /// </summary>
         internal static string SA1649MessageFormat {
             get {
@@ -701,7 +737,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File name must match first type name.
+        ///   Looks up a localized string similar to File name should match first type name.
         /// </summary>
         internal static string SA1649Title {
             get {

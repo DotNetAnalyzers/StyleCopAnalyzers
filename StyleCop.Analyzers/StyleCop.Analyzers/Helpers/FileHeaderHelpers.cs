@@ -65,6 +65,12 @@ namespace StyleCop.Analyzers.Helpers
 
                         var startIndex = triviaString.IndexOf("/*", StringComparison.Ordinal) + 2;
                         var endIndex = triviaString.LastIndexOf("*/", StringComparison.Ordinal);
+                        if (endIndex == -1)
+                        {
+                            // While editing, it is possible to have a multiline comment trivia that does not contain the closing '*/' yet.
+                            return FileHeader.MissingFileHeader;
+                        }
+
                         var commentContext = triviaString.Substring(startIndex, endIndex - startIndex).Trim();
 
                         var triviaStringParts = commentContext.Replace("\r\n", "\n").Split('\n');

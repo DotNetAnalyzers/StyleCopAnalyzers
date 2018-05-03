@@ -3,12 +3,12 @@
 
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Text.RegularExpressions;
-    using Newtonsoft.Json;
+    using LightJson;
 
-    [JsonObject(MemberSerialization.OptIn)]
     internal class DocumentationSettings
     {
         /// <summary>
@@ -29,13 +29,11 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// <summary>
         /// This is the backing field for the <see cref="CompanyName"/> property.
         /// </summary>
-        [JsonProperty("companyName", DefaultValueHandling = DefaultValueHandling.Ignore)]
         private string companyName;
 
         /// <summary>
         /// This is the backing field for the <see cref="GetCopyrightText(string)"/> method.
         /// </summary>
-        [JsonProperty("copyrightText", DefaultValueHandling = DefaultValueHandling.Ignore)]
         private string copyrightText;
 
         /// <summary>
@@ -46,67 +44,56 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// <summary>
         /// This is the backing field for the <see cref="HeaderDecoration"/> property.
         /// </summary>
-        [JsonProperty("headerDecoration", DefaultValueHandling = DefaultValueHandling.Ignore)]
         private string headerDecoration;
 
         /// <summary>
         /// This is the backing field for the <see cref="Variables"/> property.
         /// </summary>
-        [JsonProperty("variables", DefaultValueHandling = DefaultValueHandling.Ignore)]
         private ImmutableDictionary<string, string>.Builder variables;
 
         /// <summary>
         /// This is the backing field for the <see cref="XmlHeader"/> property.
         /// </summary>
-        [JsonProperty("xmlHeader", DefaultValueHandling = DefaultValueHandling.Include)]
         private bool xmlHeader;
 
         /// <summary>
         /// This is the backing field for the <see cref="DocumentExposedElements"/> property.
         /// </summary>
-        [JsonProperty("documentExposedElements", DefaultValueHandling = DefaultValueHandling.Include)]
         private bool documentExposedElements;
 
         /// <summary>
         /// This is the backing field for the <see cref="DocumentInternalElements"/> property.
         /// </summary>
-        [JsonProperty("documentInternalElements", DefaultValueHandling = DefaultValueHandling.Include)]
         private bool documentInternalElements;
 
         /// <summary>
         /// This is the backing field for the <see cref="DocumentPrivateElements"/> property.
         /// </summary>
-        [JsonProperty("documentPrivateElements", DefaultValueHandling = DefaultValueHandling.Include)]
         private bool documentPrivateElements;
 
         /// <summary>
         /// This is the backing field for the <see cref="DocumentInterfaces"/> property.
         /// </summary>
-        [JsonProperty("documentInterfaces", DefaultValueHandling = DefaultValueHandling.Include)]
         private bool documentInterfaces;
 
         /// <summary>
         /// This is the backing field for the <see cref="DocumentPrivateFields"/> property.
         /// </summary>
-        [JsonProperty("documentPrivateFields", DefaultValueHandling = DefaultValueHandling.Include)]
         private bool documentPrivateFields;
 
         /// <summary>
         /// This is the backing field for the <see cref="FileNamingConvention"/> property.
         /// </summary>
-        [JsonProperty("fileNamingConvention", DefaultValueHandling = DefaultValueHandling.Include)]
         private FileNamingConvention fileNamingConvention;
 
         /// <summary>
         /// This is the backing field for the <see cref="DocumentationCulture"/> property.
         /// </summary>
-        [JsonProperty("documentationCulture", DefaultValueHandling = DefaultValueHandling.Ignore)]
         private string documentationCulture;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DocumentationSettings"/> class during JSON deserialization.
         /// </summary>
-        [JsonConstructor]
         protected internal DocumentationSettings()
         {
             this.companyName = DefaultCompanyName;
@@ -124,6 +111,84 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.fileNamingConvention = FileNamingConvention.StyleCop;
 
             this.documentationCulture = DefaultDocumentationCulture;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DocumentationSettings"/> class.
+        /// </summary>
+        /// <param name="documentationSettingsObject">The JSON object containing the settings.</param>
+        protected internal DocumentationSettings(JsonObject documentationSettingsObject)
+            : this()
+        {
+            foreach (var kvp in documentationSettingsObject)
+            {
+                switch (kvp.Key)
+                {
+                case "documentExposedElements":
+                    this.documentExposedElements = kvp.ToBooleanValue();
+                    break;
+
+                case "documentInternalElements":
+                    this.documentInternalElements = kvp.ToBooleanValue();
+                    break;
+
+                case "documentPrivateElements":
+                    this.documentPrivateElements = kvp.ToBooleanValue();
+                    break;
+
+                case "documentInterfaces":
+                    this.documentInterfaces = kvp.ToBooleanValue();
+                    break;
+
+                case "documentPrivateFields":
+                    this.documentPrivateFields = kvp.ToBooleanValue();
+                    break;
+
+                case "companyName":
+                    this.companyName = kvp.ToStringValue();
+                    break;
+                case "copyrightText":
+                    this.copyrightText = kvp.ToStringValue();
+                    break;
+
+                case "headerDecoration":
+                    this.headerDecoration = kvp.ToStringValue();
+                    break;
+
+                case "variables":
+                    kvp.AssertIsObject();
+                    foreach (var child in kvp.Value.AsJsonObject)
+                    {
+                        string name = child.Key;
+
+                        if (!Regex.IsMatch(name, "^[a-zA-Z0-9]+$"))
+                        {
+                            continue;
+                        }
+
+                        string value = child.ToStringValue();
+
+                        this.variables.Add(name, value);
+                    }
+
+                    break;
+
+                case "xmlHeader":
+                    this.xmlHeader = kvp.ToBooleanValue();
+                    break;
+
+                case "fileNamingConvention":
+                    this.fileNamingConvention = kvp.ToEnumValue<FileNamingConvention>();
+                    break;
+
+                case "documentationCulture":
+                    this.documentationCulture = kvp.ToStringValue();
+                    break;
+
+                default:
+                    break;
+                }
+            }
         }
 
         public string CompanyName

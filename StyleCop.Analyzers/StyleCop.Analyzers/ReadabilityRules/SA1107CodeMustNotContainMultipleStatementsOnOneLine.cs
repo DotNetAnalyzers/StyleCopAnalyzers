@@ -16,7 +16,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// </summary>
     /// <remarks>
     /// <para>A violation of this rule occurs when the code contain more than one statement on the same line. Each
-    /// statement must begin on a new line.</para>
+    /// statement should begin on a new line.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class SA1107CodeMustNotContainMultipleStatementsOnOneLine : DiagnosticAnalyzer
@@ -51,9 +51,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleBlock(SyntaxNodeAnalysisContext context)
         {
-            BlockSyntax block = context.Node as BlockSyntax;
+            var block = (BlockSyntax)context.Node;
 
-            if (block != null && block.Statements.Any())
+            if (block.Statements.Any())
             {
                 var previousStatement = block.Statements[0];
                 FileLinePositionSpan previousStatementLocation = previousStatement.GetLineSpan();

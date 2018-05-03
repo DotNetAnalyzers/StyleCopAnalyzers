@@ -26,8 +26,8 @@ namespace StyleCop.Analyzers.SpacingRules
         /// The ID for diagnostics produced by the <see cref="SA1002SemicolonsMustBeSpacedCorrectly"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1002";
-        private const string Title = "Semicolons must be spaced correctly";
-        private const string MessageFormat = "Semicolons must{0} be {1} by a space.";
+        private const string Title = "Semicolons should be spaced correctly";
+        private const string MessageFormat = "Semicolons should{0} be {1} by a space.";
         private const string Description = "The spacing around a semicolon is incorrect, within a C# code file.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1002.md";
 
@@ -134,13 +134,13 @@ namespace StyleCop.Analyzers.SpacingRules
 
             if (missingFollowingSpace)
             {
-                // semicolon must{} be {followed} by a space
+                // semicolon should{} be {followed} by a space
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.InsertFollowing, string.Empty, "followed"));
             }
 
             if (hasPrecedingSpace && !ignorePrecedingSpace)
             {
-                // semicolon must{ not} be {preceded} by a space
+                // semicolon should{ not} be {preceded} by a space
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemoveImmediatePreceding, " not", "preceded"));
             }
         }

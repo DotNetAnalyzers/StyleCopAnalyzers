@@ -33,8 +33,8 @@ namespace StyleCop.Analyzers.NamingRules
         /// The ID for diagnostics produced by the <see cref="SA1310FieldNamesMustNotContainUnderscore"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1310";
-        private const string Title = "Field names must not contain underscore";
-        private const string MessageFormat = "Field '{0}' must not contain an underscore";
+        private const string Title = "Field names should not contain underscore";
+        private const string MessageFormat = "Field '{0}' should not contain an underscore";
         private const string Description = "A field name in C# contains an underscore.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1310.md";
 
@@ -112,7 +112,7 @@ namespace StyleCop.Analyzers.NamingRules
                     break;
                 }
 
-                // Field '{name}' must not contain an underscore
+                // Field '{name}' should not contain an underscore
                 string name = identifier.ValueText;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), name));
             }

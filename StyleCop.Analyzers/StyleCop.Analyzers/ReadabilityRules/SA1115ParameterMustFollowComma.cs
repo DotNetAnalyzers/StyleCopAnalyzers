@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// A parameter within a C# method or indexer call or declaration does not begin on the same line as the previous
@@ -26,7 +27,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// {
     /// }
     /// </code>
-    /// <para>The parameter must begin on the same line as the previous comma, or on the next line. For example:</para>
+    /// <para>The parameter should begin on the same line as the previous comma, or on the next line. For example:</para>
     /// <code language="csharp">
     /// public string JoinName(string first, string last)
     /// {
@@ -58,6 +59,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             ImmutableArray.Create(SyntaxKind.ConstructorDeclaration, SyntaxKind.MethodDeclaration, SyntaxKind.OperatorDeclaration);
 
         private static readonly Action<SyntaxNodeAnalysisContext> BaseMethodDeclarationAction = HandleBaseMethodDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> LocalFunctionStatementAction = HandleLocalFunctionStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> InvocationExpressionAction = HandleInvocationExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> ObjectCreationExpressionAction = HandleObjectCreationExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> IndexerDeclarationAction = HandleIndexerDeclaration;
@@ -83,6 +85,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.EnableConcurrentExecution();
 
             context.RegisterSyntaxNodeAction(BaseMethodDeclarationAction, BaseMethodDeclarationKinds);
+            context.RegisterSyntaxNodeAction(LocalFunctionStatementAction, SyntaxKindEx.LocalFunctionStatement);
             context.RegisterSyntaxNodeAction(InvocationExpressionAction, SyntaxKind.InvocationExpression);
             context.RegisterSyntaxNodeAction(ObjectCreationExpressionAction, SyntaxKind.ObjectCreationExpression);
             context.RegisterSyntaxNodeAction(IndexerDeclarationAction, SyntaxKind.IndexerDeclaration);
@@ -211,6 +214,16 @@ namespace StyleCop.Analyzers.ReadabilityRules
             if (constructorDeclaration.ParameterList != null)
             {
                 AnalyzeSyntaxList(context, constructorDeclaration.ParameterList.Parameters);
+            }
+        }
+
+        private static void HandleLocalFunctionStatement(SyntaxNodeAnalysisContext context)
+        {
+            var localFunctionStatement = (LocalFunctionStatementSyntaxWrapper)context.Node;
+
+            if (localFunctionStatement.ParameterList != null)
+            {
+                AnalyzeSyntaxList(context, localFunctionStatement.ParameterList.Parameters);
             }
         }
 

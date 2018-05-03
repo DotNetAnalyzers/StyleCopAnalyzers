@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.NamingRules
 {
     using System;
-    using System.Collections.Concurrent;
     using System.Collections.Immutable;
     using System.Linq;
     using Microsoft.CodeAnalysis;
@@ -12,7 +11,7 @@ namespace StyleCop.Analyzers.NamingRules
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// The name of a constant C# field must begin with an upper-case letter.
+    /// The name of a constant C# field should begin with an upper-case letter.
     /// </summary>
     /// <remarks>
     /// <para>A violation of this rule occurs when the name of a field marked with the <c>const</c> attribute does not
@@ -32,9 +31,9 @@ namespace StyleCop.Analyzers.NamingRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1303";
-        private const string Title = "Const field names must begin with upper-case letter";
-        private const string MessageFormat = "Const field names must begin with upper-case letter.";
-        private const string Description = "The name of a constant C# field must begin with an upper-case letter.";
+        private const string Title = "Const field names should begin with upper-case letter";
+        private const string MessageFormat = "Const field names should begin with upper-case letter.";
+        private const string Description = "The name of a constant C# field should begin with an upper-case letter.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1303.md";
 
         private static readonly DiagnosticDescriptor Descriptor =

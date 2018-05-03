@@ -46,8 +46,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1407";
-        private const string Title = "Arithmetic expressions must declare precedence";
-        private const string MessageFormat = "Arithmetic expressions must declare precedence";
+        private const string Title = "Arithmetic expressions should declare precedence";
+        private const string MessageFormat = "Arithmetic expressions should declare precedence";
         private const string Description = "A C# statement contains a complex arithmetic expression which omits parenthesis around operators.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1407.md";
 

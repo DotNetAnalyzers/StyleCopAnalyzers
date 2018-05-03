@@ -11,6 +11,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// This is the base class for analyzers which examine the <c>&lt;value&gt;</c> text of a documentation comment on a property declaration.
@@ -22,7 +23,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// </summary>
         internal const string NoCodeFixKey = "NoCodeFix";
 
-        private readonly Action<SyntaxNodeAnalysisContext> propertyDeclarationAction;
+        private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> propertyDeclarationAction;
 
         protected PropertyDocumentationBase()
         {
@@ -48,6 +49,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// Analyzes the top-level <c>&lt;summary&gt;</c> element of a documentation comment.
         /// </summary>
         /// <param name="context">The current analysis context.</param>
+        /// <param name="needsComment"><see langword="true"/> if the current documentation settings indicate that the
+        /// element should be documented; otherwise, <see langword="false"/>.</param>
         /// <param name="syntax">The <see cref="XmlElementSyntax"/> or <see cref="XmlEmptyElementSyntax"/> of the node
         /// to examine.</param>
         /// <param name="completeDocumentation">The complete documentation for the declared symbol, with any
@@ -55,9 +58,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// element, this value will be <see langword="null"/>, even if the XML documentation comment also included an
         /// <c>&lt;include&gt;</c> element.</param>
         /// <param name="diagnosticLocation">The location where diagnostics, if any, should be reported.</param>
-        protected abstract void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, XElement completeDocumentation, Location diagnosticLocation);
+        protected abstract void HandleXmlElement(SyntaxNodeAnalysisContext context, bool needsComment, XmlNodeSyntax syntax, XElement completeDocumentation, Location diagnosticLocation);
 
-        private void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
+        private void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             var node = (PropertyDeclarationSyntax)context.Node;
             if (node.Identifier.IsMissing)
@@ -65,10 +68,13 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            this.HandleDeclaration(context, node, node.Identifier.GetLocation());
+            Accessibility declaredAccessibility = node.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+            Accessibility effectiveAccessibility = node.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+            bool needsComment = SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, node.Kind(), node.Parent.Kind(), declaredAccessibility, effectiveAccessibility);
+            this.HandleDeclaration(context, needsComment, node, node.Identifier.GetLocation());
         }
 
-        private void HandleDeclaration(SyntaxNodeAnalysisContext context, SyntaxNode node, Location location)
+        private void HandleDeclaration(SyntaxNodeAnalysisContext context, bool needsComment, SyntaxNode node, Location location)
         {
             var documentation = node.GetDocumentationCommentTriviaSyntax();
             if (documentation == null)
@@ -102,7 +108,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
             }
 
-            this.HandleXmlElement(context, relevantXmlElement, completeDocumentation, location);
+            this.HandleXmlElement(context, needsComment, relevantXmlElement, completeDocumentation, location);
         }
     }
 }

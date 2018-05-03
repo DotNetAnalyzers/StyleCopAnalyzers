@@ -110,9 +110,11 @@ namespace StyleCop.Analyzers.LayoutRules
                     // - The closing brace is the last token in the file
                     var nextToken = braceToken.GetNextToken();
                     var nextTokenLine = nextToken.IsKind(SyntaxKind.None) ? -1 : LocationHelpers.GetLineSpan(nextToken).StartLinePosition.Line;
+                    var isMultiDimensionArrayInitializer = braceToken.IsKind(SyntaxKind.OpenBraceToken) && braceToken.Parent.IsKind(SyntaxKind.ArrayInitializerExpression) && braceToken.Parent.Parent.IsKind(SyntaxKind.ArrayInitializerExpression);
 
                     if ((nextTokenLine == braceLine) &&
-                        (!braceToken.IsKind(SyntaxKind.CloseBraceToken) || !IsValidFollowingToken(nextToken)))
+                        (!braceToken.IsKind(SyntaxKind.CloseBraceToken) || !IsValidFollowingToken(nextToken)) &&
+                        !isMultiDimensionArrayInitializer)
                     {
                         var sharedTrivia = nextToken.LeadingTrivia.WithoutTrailingWhitespace();
                         var newTrailingTrivia = braceReplacementToken.TrailingTrivia
@@ -122,18 +124,15 @@ namespace StyleCop.Analyzers.LayoutRules
 
                         if (!braceTokens.Contains(nextToken))
                         {
-                            int newIndentationSteps;
+                            int newIndentationSteps = indentationSteps;
                             if (braceToken.IsKind(SyntaxKind.OpenBraceToken))
                             {
-                                newIndentationSteps = indentationSteps + 1;
+                                newIndentationSteps++;
                             }
-                            else if (nextToken.IsKind(SyntaxKind.CloseBraceToken))
+
+                            if (nextToken.IsKind(SyntaxKind.CloseBraceToken))
                             {
-                                newIndentationSteps = Math.Max(0, indentationSteps - 1);
-                            }
-                            else
-                            {
-                                newIndentationSteps = indentationSteps;
+                                newIndentationSteps = Math.Max(0, newIndentationSteps - 1);
                             }
 
                             AddReplacement(tokenReplacements, nextToken, nextToken.WithLeadingTrivia(IndentationHelper.GenerateWhitespaceTrivia(indentationSettings, newIndentationSteps)));
@@ -250,7 +249,15 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static void AddReplacement(Dictionary<SyntaxToken, SyntaxToken> tokenReplacements, SyntaxToken originalToken, SyntaxToken replacementToken)
         {
-            tokenReplacements[originalToken] = replacementToken;
+            if (tokenReplacements.ContainsKey(originalToken))
+            {
+                // This will only happen when a single keyword (like else) has invalid brace tokens before and after it.
+                tokenReplacements[originalToken] = tokenReplacements[originalToken].WithTrailingTrivia(replacementToken.TrailingTrivia);
+            }
+            else
+            {
+                tokenReplacements[originalToken] = replacementToken;
+            }
         }
 
         private class FixAll : DocumentBasedFixAllProvider

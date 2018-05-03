@@ -154,7 +154,7 @@
     <value>The documentation for parameter '{0}' is missing</value>
   </data>
   <data name="SA1611Title" xml:space="preserve">
-    <value>Element parameters must be documented</value>
+    <value>Element parameters should be documented</value>
   </data>
   <data name="SA1615SA1616CodeFix" xml:space="preserve">
     <value>Document return value</value>
@@ -169,7 +169,7 @@
     <value>The type parameter '{0}' does not exist.</value>
   </data>
   <data name="SA1620Title" xml:space="preserve">
-    <value>Generic type parameter documentation must match type parameters</value>
+    <value>Generic type parameter documentation should match type parameters</value>
   </data>
   <data name="SA1620WrongOrderMessageFormat" xml:space="preserve">
     <value>The type parameter documentation for '{0}' should be at position {1}.</value>
@@ -178,37 +178,37 @@
     <value>A &lt;typeparam&gt; tag within the XML header documentation for a generic C# element is missing a name attribute, or contains an empty name attribute.</value>
   </data>
   <data name="SA1621MessageFormat" xml:space="preserve">
-    <value>Generic type parameter documentation must declare parameter name.</value>
+    <value>Generic type parameter documentation should declare parameter name.</value>
   </data>
   <data name="SA1621Title" xml:space="preserve">
-    <value>Generic type parameter documentation must declare parameter name</value>
+    <value>Generic type parameter documentation should declare parameter name</value>
   </data>
   <data name="SA1622Description" xml:space="preserve">
     <value>A &lt;typeparam&gt; tag within the Xml header documentation for a generic C# element is empty.</value>
   </data>
   <data name="SA1622MessageFormat" xml:space="preserve">
-    <value>Generic type parameter documentation must have text.</value>
+    <value>Generic type parameter documentation should have text.</value>
   </data>
   <data name="SA1622Title" xml:space="preserve">
-    <value>Generic type parameter documentation must have text</value>
+    <value>Generic type parameter documentation should have text</value>
   </data>
   <data name="SA1623Description" xml:space="preserve">
     <value>The documentation text within a C# property’s &lt;summary&gt; tag does not match the accessors within the property.</value>
   </data>
   <data name="SA1623MessageFormat" xml:space="preserve">
-    <value>The property's documentation summary text must begin with: '{0}'</value>
+    <value>The property's documentation summary text should begin with: '{0}'</value>
   </data>
   <data name="SA1623Title" xml:space="preserve">
-    <value>Property summary documentation must match accessors</value>
+    <value>Property summary documentation should match accessors</value>
   </data>
   <data name="SA1624Description" xml:space="preserve">
     <value>The documentation text within a C# property’s &lt;summary&gt; tag takes into account all of the accessors within the property, but one of the accessors has limited access.</value>
   </data>
   <data name="SA1624MessageFormat" xml:space="preserve">
-    <value>Because the property only contains a visible {0} accessor, the documentation summary text must begin with '{1}'.</value>
+    <value>Because the property only contains a visible {0} accessor, the documentation summary text should begin with '{1}'.</value>
   </data>
   <data name="SA1624Title" xml:space="preserve">
-    <value>Property summary documentation must omit accessor with restricted access</value>
+    <value>Property summary documentation should omit accessor with restricted access</value>
   </data>
   <data name="SA1626CodeFix" xml:space="preserve">
     <value>Convert to line comment</value>
@@ -217,10 +217,22 @@
     <value>The XML header documentation for a C# code element contains an empty tag.</value>
   </data>
   <data name="SA1627MessageFormat" xml:space="preserve">
-    <value>The documentation text within the \'{0}\' tag must not be empty.</value>
+    <value>The documentation text within the \'{0}\' tag should not be empty.</value>
   </data>
   <data name="SA1627Title" xml:space="preserve">
-    <value>Documentation text must not be empty</value>
+    <value>Documentation text should not be empty</value>
+  </data>
+  <data name="SA1629CodeFix" xml:space="preserve">
+    <value>Add period</value>
+  </data>
+  <data name="SA1629Description" xml:space="preserve">
+    <value>A section of the XML header documentation for a C# element does not end with a period.</value>
+  </data>
+  <data name="SA1629MessageFormat" xml:space="preserve">
+    <value>Documentation text should end with a period</value>
+  </data>
+  <data name="SA1629Title" xml:space="preserve">
+    <value>Documentation text should end with a period</value>
   </data>
   <data name="SA1633CodeFix" xml:space="preserve">
     <value>Add file header</value>
@@ -235,79 +247,79 @@
     <value>The file header is missing or not located at the top of the file.</value>
   </data>
   <data name="SA1633Title" xml:space="preserve">
-    <value>File must have header</value>
+    <value>File should have header</value>
   </data>
   <data name="SA1634Description" xml:space="preserve">
     <value>The file header at the top of a C# code file is missing a copyright tag.</value>
   </data>
   <data name="SA1634MessageFormat" xml:space="preserve">
-    <value>The file header must contain a copyright tag.</value>
+    <value>The file header should contain a copyright tag.</value>
   </data>
   <data name="SA1634Title" xml:space="preserve">
-    <value>File header must show copyright</value>
+    <value>File header should show copyright</value>
   </data>
   <data name="SA1635Description" xml:space="preserve">
     <value>The file header at the top of a C# code file is missing copyright text.</value>
   </data>
   <data name="SA1635MessageFormat" xml:space="preserve">
-    <value>File header must have copyright text</value>
+    <value>File header should have copyright text</value>
   </data>
   <data name="SA1635Title" xml:space="preserve">
-    <value>File header must have copyright text</value>
+    <value>File header should have copyright text</value>
   </data>
   <data name="SA1636Description" xml:space="preserve">
     <value>The file header at the top of a C# code file does not contain the appropriate copyright text.</value>
   </data>
   <data name="SA1636MessageFormat" xml:space="preserve">
-    <value>The file header copyright text must match the copyright text from the settings.</value>
+    <value>The file header copyright text should match the copyright text from the settings.</value>
   </data>
   <data name="SA1636Title" xml:space="preserve">
-    <value>File header copyright text must match</value>
+    <value>File header copyright text should match</value>
   </data>
   <data name="SA1637Description" xml:space="preserve">
     <value>The file header at the top of a C# code file is missing the file name.</value>
   </data>
   <data name="SA1637MessageFormat" xml:space="preserve">
-    <value>File header must contain file name.</value>
+    <value>File header should contain file name.</value>
   </data>
   <data name="SA1637Title" xml:space="preserve">
-    <value>File header must contain file name</value>
+    <value>File header should contain file name</value>
   </data>
   <data name="SA1638Description" xml:space="preserve">
     <value>The file attribute within copyright tag of the file header at the top of a C# code file does not contain the name of the file.</value>
   </data>
   <data name="SA1638MessageFormat" xml:space="preserve">
-    <value>File header file name documentation must match file name.</value>
+    <value>File header file name documentation should match file name.</value>
   </data>
   <data name="SA1638Title" xml:space="preserve">
-    <value>File header file name documentation must match file name</value>
+    <value>File header file name documentation should match file name</value>
   </data>
   <data name="SA1639Description" xml:space="preserve">
     <value>The file header at the top of a C# code file does not contain a filled-in summary tag.</value>
   </data>
   <data name="SA1639MessageFormat" xml:space="preserve">
-    <value>File header must have summary</value>
+    <value>File header should have summary</value>
   </data>
   <data name="SA1639Title" xml:space="preserve">
-    <value>File header must have summary</value>
+    <value>File header should have summary</value>
   </data>
   <data name="SA1640Description" xml:space="preserve">
     <value>The file header at the top of a C# code file does not contain company name text.</value>
   </data>
   <data name="SA1640MessageFormat" xml:space="preserve">
-    <value>The copyright tag must contain a non-empty company attribute.</value>
+    <value>The copyright tag should contain a non-empty company attribute.</value>
   </data>
   <data name="SA1640Title" xml:space="preserve">
-    <value>File header must have valid company text</value>
+    <value>File header should have valid company text</value>
   </data>
   <data name="SA1641Description" xml:space="preserve">
     <value>The file header at the top of a C# code file does not contain the appropriate company name text.</value>
   </data>
   <data name="SA1641MessageFormat" xml:space="preserve">
-    <value>The file header company name must match the company name from the settings.</value>
+    <value>The file header company name should match the company name from the settings.</value>
   </data>
   <data name="SA1641Title" xml:space="preserve">
-    <value>File header company name text must match</value>
+    <value>File header company name text should match</value>
   </data>
   <data name="SA1642SA1643CodeFix" xml:space="preserve">
     <value>Add standard text</value>
@@ -316,10 +328,10 @@
     <value>&lt;inheritdoc&gt; has been used on an element that doesn't inherit from a base class or implement an interface.</value>
   </data>
   <data name="SA1648MessageFormat" xml:space="preserve">
-    <value>inheritdoc must be used with inheriting class</value>
+    <value>inheritdoc should be used with inheriting class</value>
   </data>
   <data name="SA1648Title" xml:space="preserve">
-    <value>inheritdoc must be used with inheriting class</value>
+    <value>inheritdoc should be used with inheriting class</value>
   </data>
   <data name="SA1649CodeFix" xml:space="preserve">
     <value>Rename file to match first type name</value>
@@ -328,10 +340,10 @@
     <value>The file name of a C# code file does not match the first type declared in the file.</value>
   </data>
   <data name="SA1649MessageFormat" xml:space="preserve">
-    <value>File name must match first type name.</value>
+    <value>File name should match first type name.</value>
   </data>
   <data name="SA1649Title" xml:space="preserve">
-    <value>File name must match first type name</value>
+    <value>File name should match first type name</value>
   </data>
   <data name="SA1651CodeFix" xml:space="preserve">
     <value>Finalize placeholder text</value>

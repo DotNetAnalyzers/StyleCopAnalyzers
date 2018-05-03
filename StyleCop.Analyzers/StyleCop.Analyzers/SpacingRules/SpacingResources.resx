@@ -127,10 +127,10 @@
     <value>A line within a documentation header above a C# element does not begin with a single space.</value>
   </data>
   <data name="SA1004MessageFormat" xml:space="preserve">
-    <value>Documentation line must begin with a space.</value>
+    <value>Documentation line should begin with a space.</value>
   </data>
   <data name="SA1004Title" xml:space="preserve">
-    <value>Documentation lines must begin with single space</value>
+    <value>Documentation lines should begin with single space</value>
   </data>
   <data name="SA1005CodeFix" xml:space="preserve">
     <value>Fix spacing</value>
@@ -139,28 +139,28 @@
     <value>A single-line comment within a C# code file does not begin with a single space.</value>
   </data>
   <data name="SA1005MessageFormat" xml:space="preserve">
-    <value>Single line comment must begin with a space.</value>
+    <value>Single line comment should begin with a space.</value>
   </data>
   <data name="SA1005Title" xml:space="preserve">
-    <value>Single line comments must begin with single space</value>
+    <value>Single line comments should begin with single space</value>
   </data>
   <data name="SA1006Description" xml:space="preserve">
     <value>A C# preprocessor-type keyword is preceded by space.</value>
   </data>
   <data name="SA1006MessageFormat" xml:space="preserve">
-    <value>Preprocessor keyword '{0}' must not be preceded by a space.</value>
+    <value>Preprocessor keyword '{0}' should not be preceded by a space.</value>
   </data>
   <data name="SA1006Title" xml:space="preserve">
-    <value>Preprocessor keywords must not be preceded by space</value>
+    <value>Preprocessor keywords should not be preceded by space</value>
   </data>
   <data name="SA1007Description" xml:space="preserve">
     <value>The operator keyword within a C# operator overload method is not followed by any whitespace.</value>
   </data>
   <data name="SA1007MessageFormat" xml:space="preserve">
-    <value>Operator keyword must be followed by a space.</value>
+    <value>Operator keyword should be followed by a space.</value>
   </data>
   <data name="SA1007Title" xml:space="preserve">
-    <value>Operator keyword must be followed by space</value>
+    <value>Operator keyword should be followed by space</value>
   </data>
   <data name="SA1008CodeFix" xml:space="preserve">
     <value>Fix spacing</value>
@@ -169,19 +169,19 @@
     <value>An opening attribute bracket within a C# element is not spaced correctly.</value>
   </data>
   <data name="SA1016MessageFormat" xml:space="preserve">
-    <value>Opening attribute brackets must not be followed by a space.</value>
+    <value>Opening attribute brackets should not be followed by a space.</value>
   </data>
   <data name="SA1016Title" xml:space="preserve">
-    <value>Opening attribute brackets must be spaced correctly</value>
+    <value>Opening attribute brackets should be spaced correctly</value>
   </data>
   <data name="SA1017Description" xml:space="preserve">
     <value>A closing attribute bracket within a C# element is not spaced correctly.</value>
   </data>
   <data name="SA1017MessageFormat" xml:space="preserve">
-    <value>Closing attribute brackets must not be preceded by a space.</value>
+    <value>Closing attribute brackets should not be preceded by a space.</value>
   </data>
   <data name="SA1017Title" xml:space="preserve">
-    <value>Closing attribute brackets must be spaced correctly</value>
+    <value>Closing attribute brackets should be spaced correctly</value>
   </data>
   <data name="SA1018CodeFix" xml:space="preserve">
     <value>Fix spacing</value>
@@ -190,10 +190,10 @@
     <value>A nullable type symbol within a C# element is not spaced correctly.</value>
   </data>
   <data name="SA1018MessageFormat" xml:space="preserve">
-    <value>Nullable type symbol must not be preceded by a space.</value>
+    <value>Nullable type symbol should not be preceded by a space.</value>
   </data>
   <data name="SA1018Title" xml:space="preserve">
-    <value>Nullable type symbols must be spaced correctly</value>
+    <value>Nullable type symbols should be spaced correctly</value>
   </data>
   <data name="SA1025CodeFix" xml:space="preserve">
     <value>Fix spacing</value>
@@ -202,19 +202,19 @@
     <value>The code contains multiple whitespace characters in a row.</value>
   </data>
   <data name="SA1025MessageFormat" xml:space="preserve">
-    <value>Code must not contain multiple whitespace characters in a row.</value>
+    <value>Code should not contain multiple whitespace characters in a row.</value>
   </data>
   <data name="SA1025Title" xml:space="preserve">
-    <value>Code must not contain multiple whitespace in a row</value>
+    <value>Code should not contain multiple whitespace in a row</value>
   </data>
   <data name="SA1026Description" xml:space="preserve">
     <value>An implicitly typed new array allocation within a C# code file is not spaced correctly.</value>
   </data>
   <data name="SA1026MessageFormat" xml:space="preserve">
-    <value>The keyword 'new' must not be followed by a space or a blank line.</value>
+    <value>The keyword 'new' should not be followed by a space or a blank line.</value>
   </data>
   <data name="SA1026Title" xml:space="preserve">
-    <value>Code must not contain space after new keyword in implicitly typed array allocation</value>
+    <value>Code should not contain space after new keyword in implicitly typed array allocation</value>
   </data>
   <data name="SA1027CodeFix" xml:space="preserve">
     <value>Replace tabs with spaces</value>
@@ -235,10 +235,10 @@
     <value>There should not be any whitespace at the end of a line of code.</value>
   </data>
   <data name="SA1028MessageFormat" xml:space="preserve">
-    <value>Code must not contain trailing whitespace</value>
+    <value>Code should not contain trailing whitespace</value>
   </data>
   <data name="SA1028Title" xml:space="preserve">
-    <value>Code must not contain trailing whitespace</value>
+    <value>Code should not contain trailing whitespace</value>
   </data>
   <data name="TokenSpacingCodeFix" xml:space="preserve">
     <value>Fix spacing</value>

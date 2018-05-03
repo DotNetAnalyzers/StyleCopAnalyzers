@@ -142,7 +142,7 @@
     <value>Add trailing comma</value>
   </data>
   <data name="SA1413Description" xml:space="preserve">
-    <value>A multi-line initializer in a C# code file must use a comma on the last line.</value>
+    <value>A multi-line initializer in a C# code file should use a comma on the last line.</value>
   </data>
   <data name="SA1413MessageFormat" xml:space="preserve">
     <value>Use trailing comma in multi-line initializers</value>

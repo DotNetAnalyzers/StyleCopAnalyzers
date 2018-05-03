@@ -20,7 +20,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class MaintainabilityResources {
@@ -134,7 +134,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A multi-line initializer in a C# code file must use a comma on the last line..
+        ///   Looks up a localized string similar to A multi-line initializer in a C# code file should use a comma on the last line..
         /// </summary>
         internal static string SA1413Description {
             get {

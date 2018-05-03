@@ -24,23 +24,23 @@ lists each of these issues, along with a link to the issue where the decision wa
 
 | ID | Title | Issue |
 | --- | --- | --- |
-| SA1109 | Block statements must not contain embedded regions | [#998](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/998) |
+| SA1109 | Block statements should not contain embedded regions | [#998](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/998) |
 | SA1126 | Prefix calls correctly | [#59](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/59) |
-| SA1215 | Instance readonly elements must appear before instance non-readonly elements | [#1812](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/pull/1812) |
+| SA1215 | Instance readonly elements should appear before instance non-readonly elements | [#1812](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/pull/1812) |
 | SA1409 | Remove unnecessary code | [#1058](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1058) |
-| SA1603 | Documentation must contain valid XML | [#1291](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1291) |
-| SA1628 | Documentation text must begin with a capital letter | [#1057](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1057) |
-| SA1630 | Documentation text must contain whitespace | [#1057](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1057) |
-| SA1631 | Documentation must meet character percentage | [#1057](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1057) |
-| SA1632 | Documentation text must meet minimum character length | [#1057](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1057) |
+| SA1603 | Documentation should contain valid XML | [#1291](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1291) |
+| SA1628 | Documentation text should begin with a capital letter | [#1057](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1057) |
+| SA1630 | Documentation text should contain whitespace | [#1057](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1057) |
+| SA1631 | Documentation should meet character percentage | [#1057](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1057) |
+| SA1632 | Documentation text should meet minimum character length | [#1057](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1057) |
 | SA1645 | Included documentation file does not exist | [#165](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/165) |
 | SA1646 | Included documentation XPath does not exist | [#166](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/166) |
 | SA1647 | Include node does not contain valid file and path | [#167](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/167) |
-| SA1650 | Element documentation must be spelled correctly | [#1057](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1057) |
+| SA1650 | Element documentation should be spelled correctly | [#1057](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1057) |
 
 ## Spacing Rules
 
-### SA1000: Keywords must be spaced correctly
+### SA1000: Keywords should be spaced correctly
 
 The following changes were made to SA1000:
 
@@ -188,7 +188,7 @@ involving members of a type.
 
 ### SA1300
 
-StyleCop Analyzers adds enum members to the list of elements which must start with an upper-case letter, and reports
+StyleCop Analyzers adds enum members to the list of elements which should start with an upper-case letter, and reports
 SA1300 for violations. StyleCop Classic did not report any messages for enum members that did not start with an
 upper-case letter.
 

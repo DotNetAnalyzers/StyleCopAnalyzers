@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
-    /// A multi-line initializer must use a comma on the last item.
+    /// A multi-line initializer should use a comma on the last item.
     /// </summary>
     /// <remarks>
     /// <para>The last statement in a multi-line C# initializer is missing a trailing comma.</para>
@@ -58,6 +58,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
         private static readonly Action<SyntaxNodeAnalysisContext> HandleObjectInitializerAction = HandleObjectInitializer;
         private static readonly Action<SyntaxNodeAnalysisContext> HandleAnonymousObjectInitializerAction = HandleAnonymousObjectInitializer;
+        private static readonly Action<SyntaxNodeAnalysisContext> HandleEnumDeclarationAction = HandleEnumDeclaration;
 
         private static readonly ImmutableArray<SyntaxKind> ObjectInitializerKinds =
             ImmutableArray.Create(SyntaxKind.ObjectInitializerExpression, SyntaxKind.ArrayInitializerExpression, SyntaxKind.CollectionInitializerExpression);
@@ -74,19 +75,19 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
             context.RegisterSyntaxNodeAction(HandleObjectInitializerAction, ObjectInitializerKinds);
             context.RegisterSyntaxNodeAction(HandleAnonymousObjectInitializerAction, SyntaxKind.AnonymousObjectCreationExpression);
-            context.RegisterSyntaxNodeAction(HandleEnumMemberDeclarationAction, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeAction(HandleEnumDeclarationAction, SyntaxKind.EnumDeclaration);
         }
 
-        private static void HandleEnumMemberDeclarationAction(SyntaxNodeAnalysisContext context)
+        private static void HandleEnumDeclaration(SyntaxNodeAnalysisContext context)
         {
             var initializer = (EnumDeclarationSyntax)context.Node;
             var lastMember = initializer.Members.LastOrDefault();
-            if (lastMember == null)
+            if (lastMember == null || !initializer.SpansMultipleLines())
             {
                 return;
             }
 
-            if (initializer.Members.Count() != initializer.Members.SeparatorCount)
+            if (initializer.Members.Count != initializer.Members.SeparatorCount)
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, lastMember.GetLocation()));
             }

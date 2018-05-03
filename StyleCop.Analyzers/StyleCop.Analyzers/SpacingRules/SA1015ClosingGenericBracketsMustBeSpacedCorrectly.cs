@@ -29,8 +29,8 @@ namespace StyleCop.Analyzers.SpacingRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1015";
-        private const string Title = "Closing generic brackets must be spaced correctly";
-        private const string MessageFormat = "Closing generic bracket must{0} be {1} by a space.";
+        private const string Title = "Closing generic brackets should be spaced correctly";
+        private const string MessageFormat = "Closing generic bracket should{0} be {1} by a space.";
         private const string Description = "A closing generic bracket within a C# element is not spaced correctly.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1015.md";
 
@@ -132,7 +132,7 @@ namespace StyleCop.Analyzers.SpacingRules
 
             if (!firstInLine && precededBySpace)
             {
-                // Closing generic bracket must{ not} be {preceded} by a space.
+                // Closing generic bracket should{ not} be {preceded} by a space.
                 var properties = TokenSpacingProperties.RemovePreceding;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, " not", "preceded"));
             }
@@ -141,13 +141,13 @@ namespace StyleCop.Analyzers.SpacingRules
             {
                 if (!allowTrailingNoSpace && !followedBySpace)
                 {
-                    // Closing generic bracket must{} be {followed} by a space.
+                    // Closing generic bracket should{} be {followed} by a space.
                     var properties = TokenSpacingProperties.InsertFollowing;
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, string.Empty, "followed"));
                 }
                 else if (!allowTrailingSpace && followedBySpace)
                 {
-                    // Closing generic bracket must{ not} be {followed} by a space.
+                    // Closing generic bracket should{ not} be {followed} by a space.
                     var properties = TokenSpacingProperties.RemoveFollowing;
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, " not", "followed"));
                 }

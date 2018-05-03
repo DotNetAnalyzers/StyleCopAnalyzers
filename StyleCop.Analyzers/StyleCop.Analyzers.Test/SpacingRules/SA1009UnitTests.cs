@@ -232,49 +232,23 @@ public class Foo
             await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, validStatement, expected).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#255 and
+        /// DotNetAnalyzers/StyleCopAnalyzers#256.
+        /// </summary>
+        /// <param name="operatorToken">The operator to test.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [Theory]
         [InlineData("+")]
         [InlineData("-")]
-        [InlineData("*")]
-        [InlineData("/")]
-        public async Task TestSpaceAfterParenthisisInArithmeticOperationAsync(string operatorValue)
+        public async Task TestNotReportedWhenFollowedByUnaryPlusOrMinusAsync(string operatorToken)
         {
-            // e.g. var i = (1 + 1) + 2
-            var validStatement = string.Format(@"var i = (1 + 1) {0} 2;", operatorValue);
+            // This will be reported as SA1021 or SA1022
+            var ignoredStatement = $"var i = (int) {operatorToken}2;";
+            var correctStatement = $"var i = (int){operatorToken}2;";
 
-            await this.TestWhitespaceInStatementOrDeclAsync(validStatement, string.Empty, EmptyDiagnosticResults).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestNoSpaceAfterParenthisisInAddOperationAsync()
-        {
-            // Note - this looks wrong but according to comments in the implementation "this will be reported as SA1022"
-            var invalidStatement = @"var i = (1 + 1)+ 2;";
-
-            await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, string.Empty, EmptyDiagnosticResults).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestNoSpaceAfterParenthisisInSubtractOperationAsync()
-        {
-            // Note - this looks wrong but according to comments in the implementation "this will be reported as SA1021"
-            var invalidStatement = @"var i = (1 + 1)- 2;";
-
-            await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, string.Empty, EmptyDiagnosticResults).ConfigureAwait(false);
-        }
-
-        [Theory]
-        [InlineData("*")]
-        [InlineData("/")]
-        public async Task TestNoSpaceAfterParenthisisInArithmeticOperationAsync(string operatorValue)
-        {
-            // e.g. var i = (1 + 1)* 2;
-            var invalidStatement = string.Format(@"var i = (1 + 1){0} 2;", operatorValue);
-            var validStatement = string.Format(@"var i = (1 + 1) {0} 2;", operatorValue);
-
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 27);
-
-            await this.TestWhitespaceInStatementOrDeclAsync(invalidStatement, validStatement, expected).ConfigureAwait(false);
+            await this.TestWhitespaceInStatementOrDeclAsync(ignoredStatement, string.Empty, EmptyDiagnosticResults).ConfigureAwait(false);
+            await this.TestWhitespaceInStatementOrDeclAsync(correctStatement, string.Empty, EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -558,8 +532,7 @@ public class TestClass
         // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1206
         TestMethod3(
             true,
-            (false || true)) // comment
-        ;
+            (false || true)); // comment
 
         // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1206
         if (
@@ -835,6 +808,83 @@ class ClassName
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#2409.
+        /// </summary>
+        /// <param name="operatorToken">The operator to test.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        [Theory]
+        [InlineData("*")]
+        [InlineData("/")]
+        [InlineData("%")]
+        [InlineData("+")]
+        [InlineData("-")]
+        [InlineData("<<")]
+        [InlineData(">>")]
+        [InlineData("<")]
+        [InlineData(">")]
+        [InlineData("<=")]
+        [InlineData(">=")]
+        [InlineData("==")]
+        [InlineData("!=")]
+        [InlineData("&")]
+        [InlineData("^")]
+        [InlineData("|")]
+        public async Task TestFollowedByBinaryOperatorAsync(string operatorToken)
+        {
+            string testCode = $"var x = (3 + 2){operatorToken} 4;";
+            string fixedCode = $"var x = (3 + 2) {operatorToken} 4;";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 27).WithArguments(string.Empty, "followed");
+
+            await this.TestWhitespaceInStatementOrDeclAsync(testCode, fixedCode, expected).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#2409.
+        /// </summary>
+        /// <param name="operatorToken">The operator to test.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        [Theory]
+        [InlineData("&&")]
+        [InlineData("||")]
+        public async Task TestFollowedByConditionalOperatorAsync(string operatorToken)
+        {
+            string testCode = $"var x = (true){operatorToken} false;";
+            string fixedCode = $"var x = (true) {operatorToken} false;";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 26).WithArguments(string.Empty, "followed");
+
+            await this.TestWhitespaceInStatementOrDeclAsync(testCode, fixedCode, expected).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#2409.
+        /// </summary>
+        /// <param name="operatorToken">The operator to test.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        [Theory]
+        [InlineData("=")]
+        [InlineData("+=")]
+        [InlineData("-=")]
+        [InlineData("*=")]
+        [InlineData("/=")]
+        [InlineData("%=")]
+        [InlineData("&=")]
+        [InlineData("|=")]
+        [InlineData("^=")]
+        [InlineData("<<=")]
+        [InlineData(">>=")]
+        public async Task TestFollowedByAssignmentOperatorAsync(string operatorToken)
+        {
+            string testCode = $"var x = 0; (x){operatorToken} 4;";
+            string fixedCode = $"var x = 0; (x) {operatorToken} 4;";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 26).WithArguments(string.Empty, "followed");
+
+            await this.TestWhitespaceInStatementOrDeclAsync(testCode, fixedCode, expected).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestMissingTokenAsync()
         {
@@ -854,6 +904,97 @@ class ClassName
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2475, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2475")]
+        public async Task TestSingleLineIfStatementAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    public void TestMethod()
+    {
+        if (true) (true ? 1 : 0).ToString();
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2473, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2473")]
+        public async Task TestCodefixBehaviorWithCommentAndSemiColonAsync()
+        {
+            var testCode = @"using System.Threading.Tasks;
+
+public class TestClass
+{
+    public async void TestMethod()
+    {
+        await Task.Delay(1000 // Comment
+            );
+    }
+}
+";
+
+            var fixedCode = @"using System.Threading.Tasks;
+
+public class TestClass
+{
+    public async void TestMethod()
+    {
+        await Task.Delay(1000); // Comment
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(8, 13).WithArguments(" not", "preceded"),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2474, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2474")]
+        public async Task TestCodefixBehaviorWithMemberAccessAsync()
+        {
+            var testCode = @"using System.Threading.Tasks;
+
+public class TestClass
+{
+    public async void TestMethod()
+    {
+        await Task.Delay(1000
+            ).ConfigureAwait(false);
+    }
+}
+";
+
+            var fixedCode = @"using System.Threading.Tasks;
+
+public class TestClass
+{
+    public async void TestMethod()
+    {
+        await Task.Delay(1000)
+            .ConfigureAwait(false);
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(8, 13).WithArguments(" not", "preceded"),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

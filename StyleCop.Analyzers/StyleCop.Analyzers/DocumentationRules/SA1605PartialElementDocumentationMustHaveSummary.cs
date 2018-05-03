@@ -17,10 +17,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     /// <remarks>
     /// <para>C# syntax provides a mechanism for inserting documentation for classes and elements directly into the
-    /// code, through the use of XML documentation headers. For an introduction to these headers and a description of
-    /// the header syntax, see the following article:
-    /// <see href="http://msdn.microsoft.com/en-us/magazine/cc302121.aspx">XML Comments Let You Build Documentation
-    /// Directly From Your Visual Studio .NET Source Files</see>.</para>
+    /// code, through the use of XML documentation headers.</para>
     ///
     /// <para>A violation of this rule occurs when the documentation header for a partial element (an element with the
     /// partial attribute) is missing a <c>&lt;summary&gt;</c> or <c>&lt;content&gt;</c> tag, or contains an empty
@@ -75,8 +72,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1605";
-        private const string Title = "Partial element documentation must have summary";
-        private const string MessageFormat = "Partial element documentation must have summary";
+        private const string Title = "Partial element documentation should have summary";
+        private const string MessageFormat = "Partial element documentation should have summary";
         private const string Description = "The <summary> or <content> tag within the documentation header for a C# code element is missing or empty.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1605.md";
 
@@ -88,8 +85,14 @@ namespace StyleCop.Analyzers.DocumentationRules
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, XElement completeDocumentation, Location[] diagnosticLocations)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, bool needsComment, XmlNodeSyntax syntax, XElement completeDocumentation, Location[] diagnosticLocations)
         {
+            if (!needsComment)
+            {
+                // A missing summary is allowed for this element.
+                return;
+            }
+
             if (completeDocumentation != null)
             {
                 var hasSummaryTag = completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.SummaryXmlTag);

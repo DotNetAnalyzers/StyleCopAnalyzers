@@ -25,13 +25,17 @@ namespace StyleCop.Analyzers.Test.Helpers
     {
         private readonly Lazy<CultureInfo> culture;
 
-#pragma warning disable SA1305 // Field names must not use Hungarian notation
+#pragma warning disable SA1305 // Field names should not use Hungarian notation
         private readonly Lazy<CultureInfo> uiCulture;
-#pragma warning restore SA1305 // Field names must not use Hungarian notation
+#pragma warning restore SA1305 // Field names should not use Hungarian notation
 
         private CultureInfo originalCulture;
 
         private CultureInfo originalUiCulture;
+
+        private CultureInfo originalDefaultCulture;
+
+        private CultureInfo originalDefaultUiCulture;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UseCultureAttribute"/>
@@ -49,7 +53,7 @@ namespace StyleCop.Analyzers.Test.Helpers
         {
         }
 
-#pragma warning disable SA1305 // Field names must not use Hungarian notation
+#pragma warning disable SA1305 // Field names should not use Hungarian notation
         /// <summary>
         /// Initializes a new instance of the <see cref="UseCultureAttribute"/>
         /// class with a culture and a UI culture.
@@ -57,7 +61,7 @@ namespace StyleCop.Analyzers.Test.Helpers
         /// <param name="culture">The name of the culture.</param>
         /// <param name="uiCulture">The name of the UI culture.</param>
         public UseCultureAttribute(string culture, string uiCulture)
-#pragma warning restore SA1305 // Field names must not use Hungarian notation
+#pragma warning restore SA1305 // Field names should not use Hungarian notation
         {
             this.culture = new Lazy<CultureInfo>(() => new CultureInfo(culture));
             this.uiCulture = new Lazy<CultureInfo>(() => new CultureInfo(uiCulture));
@@ -85,9 +89,14 @@ namespace StyleCop.Analyzers.Test.Helpers
         {
             this.originalCulture = Thread.CurrentThread.CurrentCulture;
             this.originalUiCulture = Thread.CurrentThread.CurrentUICulture;
+            this.originalDefaultCulture = CultureInfo.DefaultThreadCurrentCulture;
+            this.originalDefaultUiCulture = CultureInfo.DefaultThreadCurrentUICulture;
 
             Thread.CurrentThread.CurrentCulture = this.Culture;
             Thread.CurrentThread.CurrentUICulture = this.UiCulture;
+
+            CultureInfo.DefaultThreadCurrentCulture = this.Culture;
+            CultureInfo.DefaultThreadCurrentUICulture = this.UiCulture;
         }
 
         /// <summary>
@@ -99,6 +108,9 @@ namespace StyleCop.Analyzers.Test.Helpers
         {
             Thread.CurrentThread.CurrentCulture = this.originalCulture;
             Thread.CurrentThread.CurrentUICulture = this.originalUiCulture;
+
+            CultureInfo.DefaultThreadCurrentCulture = this.originalDefaultCulture;
+            CultureInfo.DefaultThreadCurrentUICulture = this.originalDefaultUiCulture;
         }
     }
 }
