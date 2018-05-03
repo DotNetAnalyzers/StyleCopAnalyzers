@@ -532,6 +532,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         }
 
         [Fact]
+        [WorkItem(2300, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2300")]
         public async Task TestPrefixUnaryOperatorInInterpolationBracesAsync()
         {
             string testFormat = @"namespace Namespace
