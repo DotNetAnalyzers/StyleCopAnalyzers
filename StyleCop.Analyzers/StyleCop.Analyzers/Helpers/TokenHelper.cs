@@ -57,6 +57,30 @@ namespace StyleCop.Analyzers.Helpers
         }
 
         /// <summary>
+        /// Gets a value indicating whether the <paramref name="token"/> is an interpolated
+        /// unary expression.
+        /// </summary>
+        /// <param name="token">The token to process.</param>
+        /// <returns>
+        /// <see langword="true"/> if <paramref name="token"/> is an interpolated unary expression;
+        /// otherwise, <see langword="false"/>.
+        /// </returns>
+        internal static bool IsInterpolatedUnaryExpression(this SyntaxToken token)
+        {
+            SyntaxNode parentNode = (token.Parent.IsKind(SyntaxKind.UnaryMinusExpression)
+                    || token.Parent.IsKind(SyntaxKind.UnaryPlusExpression))
+                ? token.Parent.Parent
+                : token.Parent;
+
+            if (parentNode.IsKind(SyntaxKind.Interpolation))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Gets a value indicating whether the <paramref name="token"/> is last in line.
         /// </summary>
         /// <param name="token">The token to process.</param>

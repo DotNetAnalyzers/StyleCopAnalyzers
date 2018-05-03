@@ -95,6 +95,7 @@ namespace StyleCop.Analyzers.SpacingRules
             bool followsSpecialCharacter = false;
 
             bool followedBySpace = token.IsFollowedByWhitespace();
+            bool interpolatedUnaryExpression = token.IsInterpolatedUnaryExpression();
             bool lastInLine = token.IsLastInLine();
 
             if (!firstInLine)
@@ -105,7 +106,8 @@ namespace StyleCop.Analyzers.SpacingRules
                 followsSpecialCharacter =
                     precedingToken.IsKind(SyntaxKind.OpenBracketToken)
                     || precedingToken.IsKind(SyntaxKind.OpenParenToken)
-                    || precedingToken.IsKind(SyntaxKind.CloseParenToken);
+                    || precedingToken.IsKind(SyntaxKind.CloseParenToken)
+                    || (precedingToken.IsKind(SyntaxKind.OpenBraceToken) && interpolatedUnaryExpression);
             }
 
             if (!firstInLine && !isInInterpolationAlignmentClause)
