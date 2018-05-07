@@ -54,8 +54,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static SyntaxNode ComputeReplacement(SemanticModel semanticModel, SyntaxNode node, CancellationToken cancellationToken)
         {
-            var memberAccess = node.Parent as MemberAccessExpressionSyntax;
-            if (memberAccess != null)
+            if (node.Parent is MemberAccessExpressionSyntax memberAccess)
             {
                 if (node == memberAccess.Name)
                 {

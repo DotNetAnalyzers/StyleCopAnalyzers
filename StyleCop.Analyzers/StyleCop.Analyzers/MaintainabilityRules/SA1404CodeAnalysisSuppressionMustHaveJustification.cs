@@ -96,8 +96,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 // Return fast if the name doesn't match and the file doesn't contain any using alias directives
                 if (!attribute.SyntaxTree.ContainsUsingAlias(this.usingAliasCache))
                 {
-                    SimpleNameSyntax simpleNameSyntax = attribute.Name as SimpleNameSyntax;
-                    if (simpleNameSyntax == null)
+                    if (!(attribute.Name is SimpleNameSyntax simpleNameSyntax))
                     {
                         QualifiedNameSyntax qualifiedNameSyntax = attribute.Name as QualifiedNameSyntax;
                         simpleNameSyntax = qualifiedNameSyntax.Right;

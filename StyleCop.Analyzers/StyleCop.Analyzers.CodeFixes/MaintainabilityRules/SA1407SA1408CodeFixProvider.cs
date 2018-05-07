@@ -48,8 +48,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                     continue;
                 }
 
-                BinaryExpressionSyntax syntax = node as BinaryExpressionSyntax;
-                if (syntax != null)
+                if (node is BinaryExpressionSyntax syntax)
                 {
                     context.RegisterCodeFix(
                         CodeAction.Create(

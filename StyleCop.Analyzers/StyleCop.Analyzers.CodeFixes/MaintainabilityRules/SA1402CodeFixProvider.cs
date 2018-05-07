@@ -56,8 +56,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             SyntaxNode node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
-            var memberDeclarationSyntax = node as MemberDeclarationSyntax;
-            if (memberDeclarationSyntax == null)
+            if (!(node is MemberDeclarationSyntax memberDeclarationSyntax))
             {
                 return document.Project.Solution;
             }

@@ -119,8 +119,7 @@ namespace StyleCop.Analyzers.Helpers
 
         internal static bool IsPartialDeclaration(MemberDeclarationSyntax declaration)
         {
-            var typeDeclaration = declaration as TypeDeclarationSyntax;
-            if (typeDeclaration != null)
+            if (declaration is TypeDeclarationSyntax typeDeclaration)
             {
                 return typeDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword);
             }
@@ -145,23 +144,20 @@ namespace StyleCop.Analyzers.Helpers
                 return false;
             }
 
-            IMethodSymbol methodSymbol;
-            IPropertySymbol propertySymbol;
-            IEventSymbol eventSymbol;
             bool isImplementingExplicitly;
 
             // Only methods, properties and events can implement an interface member
-            if ((methodSymbol = memberSymbol as IMethodSymbol) != null)
+            if (memberSymbol is IMethodSymbol methodSymbol)
             {
                 // Check if the member is implementing an interface explicitly
                 isImplementingExplicitly = methodSymbol.ExplicitInterfaceImplementations.Any();
             }
-            else if ((propertySymbol = memberSymbol as IPropertySymbol) != null)
+            else if (memberSymbol is IPropertySymbol propertySymbol)
             {
                 // Check if the member is implementing an interface explicitly
                 isImplementingExplicitly = propertySymbol.ExplicitInterfaceImplementations.Any();
             }
-            else if ((eventSymbol = memberSymbol as IEventSymbol) != null)
+            else if (memberSymbol is IEventSymbol eventSymbol)
             {
                 // Check if the member is implementing an interface explicitly
                 isImplementingExplicitly = eventSymbol.ExplicitInterfaceImplementations.Any();

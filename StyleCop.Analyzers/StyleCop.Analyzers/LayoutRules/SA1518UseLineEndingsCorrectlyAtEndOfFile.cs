@@ -121,8 +121,7 @@ namespace StyleCop.Analyzers.LayoutRules
 
             if (precedingTrivia.IsDirective)
             {
-                DirectiveTriviaSyntax directiveTriviaSyntax = precedingTrivia.GetStructure() as DirectiveTriviaSyntax;
-                if (directiveTriviaSyntax != null && directiveTriviaSyntax.EndOfDirectiveToken.HasTrailingTrivia)
+                if (precedingTrivia.GetStructure() is DirectiveTriviaSyntax directiveTriviaSyntax && directiveTriviaSyntax.EndOfDirectiveToken.HasTrailingTrivia)
                 {
                     var trailingWhitespaceIndex = TriviaHelper.IndexOfTrailingWhitespace(directiveTriviaSyntax.EndOfDirectiveToken.TrailingTrivia);
                     if (trailingWhitespaceIndex >= 0)

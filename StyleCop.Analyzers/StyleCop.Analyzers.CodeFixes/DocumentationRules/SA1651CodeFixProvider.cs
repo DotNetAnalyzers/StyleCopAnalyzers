@@ -57,8 +57,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     continue;
                 }
 
-                XmlElementSyntax xmlElementSyntax = syntax as XmlElementSyntax;
-                if (xmlElementSyntax == null)
+                if (!(syntax is XmlElementSyntax xmlElementSyntax))
                 {
                     // We continue even for placeholders if they are empty elements (XmlEmptyElementSyntax)
                     continue;
@@ -121,9 +120,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 foreach (var diagnostic in diagnostics)
                 {
-                    var xmlElement = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true) as XmlElementSyntax;
-
-                    if ((xmlElement != null)
+                    if ((syntaxRoot.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true) is XmlElementSyntax xmlElement)
                         && (xmlElement.Content.Count > 0)
                         && !string.IsNullOrWhiteSpace(xmlElement.Content.ToString()))
                     {

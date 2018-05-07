@@ -79,9 +79,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return true;
             }
 
-            IFieldSymbol fieldSymbol = semanticModel.GetSymbolInfo(expression).Symbol as IFieldSymbol;
-
-            if (fieldSymbol != null)
+            if (semanticModel.GetSymbolInfo(expression).Symbol is IFieldSymbol fieldSymbol)
             {
                 return fieldSymbol.IsStatic && fieldSymbol.IsReadOnly;
             }

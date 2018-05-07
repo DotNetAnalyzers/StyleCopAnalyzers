@@ -125,8 +125,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             if (returnsElement != null)
             {
-                XmlEmptyElementSyntax emptyElement = returnsElement as XmlEmptyElementSyntax;
-                if (emptyElement != null)
+                if (returnsElement is XmlEmptyElementSyntax emptyElement)
                 {
                     XmlElementSyntax updatedReturns = XmlSyntaxFactory.Element(XmlCommentHelper.ReturnsXmlTag, content)
                         .WithLeadingTrivia(returnsElement.GetLeadingTrivia())
@@ -179,8 +178,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 foreach (AttributeSyntax attribute in attributeList.Attributes)
                 {
-                    IMethodSymbol methodSymbol = semanticModel.GetSymbolInfo(attribute.Name, cancellationToken).Symbol as IMethodSymbol;
-                    if (methodSymbol == null)
+                    if (!(semanticModel.GetSymbolInfo(attribute.Name, cancellationToken).Symbol is IMethodSymbol methodSymbol))
                     {
                         continue;
                     }

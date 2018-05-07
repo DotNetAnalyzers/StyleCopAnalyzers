@@ -95,16 +95,14 @@ namespace StyleCop.Analyzers.NamingRules
                 return;
             }
 
-            QualifiedNameSyntax qualifiedNameSyntax = nameSyntax as QualifiedNameSyntax;
-            if (qualifiedNameSyntax != null)
+            if (nameSyntax is QualifiedNameSyntax qualifiedNameSyntax)
             {
                 CheckNameSyntax(context, qualifiedNameSyntax.Left);
                 CheckNameSyntax(context, qualifiedNameSyntax.Right);
                 return;
             }
 
-            SimpleNameSyntax simpleNameSyntax = nameSyntax as SimpleNameSyntax;
-            if (simpleNameSyntax != null)
+            if (nameSyntax is SimpleNameSyntax simpleNameSyntax)
             {
                 CheckElementNameToken(context, simpleNameSyntax.Identifier);
                 return;

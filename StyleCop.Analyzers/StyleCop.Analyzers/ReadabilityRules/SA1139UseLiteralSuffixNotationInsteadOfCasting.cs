@@ -53,8 +53,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var castExpressionSyntax = (CastExpressionSyntax)context.Node;
 
-            var castingToTypeSyntax = castExpressionSyntax.Type as PredefinedTypeSyntax;
-            if (castingToTypeSyntax == null)
+            if (!(castExpressionSyntax.Type is PredefinedTypeSyntax castingToTypeSyntax))
             {
                 return;
             }

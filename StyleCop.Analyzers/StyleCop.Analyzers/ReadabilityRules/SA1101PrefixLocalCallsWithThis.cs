@@ -177,8 +177,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     return;
                 }
 
-                IMethodSymbol methodSymbol = symbol as IMethodSymbol;
-                if (methodSymbol != null && methodSymbol.MethodKind == MethodKind.Constructor)
+                if (symbol is IMethodSymbol methodSymbol && methodSymbol.MethodKind == MethodKind.Constructor)
                 {
                     return;
                 }

@@ -139,8 +139,7 @@ namespace StyleCop.Analyzers.NamingRules
                 }
 
                 // Only parameters from method declarations can be exempt from this rule
-                var memberDeclaration = parameter?.Parent?.Parent as MemberDeclarationSyntax;
-                if (memberDeclaration != null)
+                if (parameter?.Parent?.Parent is MemberDeclarationSyntax memberDeclaration)
                 {
                     var semanticModel = context.SemanticModel;
                     var symbol = semanticModel.GetDeclaredSymbol(memberDeclaration);

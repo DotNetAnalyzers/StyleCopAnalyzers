@@ -48,8 +48,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
-            var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) as ThisExpressionSyntax;
-            if (node == null)
+            if (!(syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) is ThisExpressionSyntax node))
             {
                 return document;
             }
@@ -86,8 +85,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 foreach (Diagnostic diagnostic in diagnostics)
                 {
-                    var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, false, true) as ThisExpressionSyntax;
-                    if (node == null || node.IsMissing)
+                    if (!(syntaxRoot.FindNode(diagnostic.Location.SourceSpan, false, true) is ThisExpressionSyntax node) || node.IsMissing)
                     {
                         continue;
                     }

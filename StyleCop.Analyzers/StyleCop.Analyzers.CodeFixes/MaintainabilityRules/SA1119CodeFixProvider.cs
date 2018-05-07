@@ -48,9 +48,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                     continue;
                 }
 
-                ParenthesizedExpressionSyntax syntax = node as ParenthesizedExpressionSyntax;
-
-                if (syntax != null)
+                if (node is ParenthesizedExpressionSyntax syntax)
                 {
                     context.RegisterCodeFix(
                         CodeAction.Create(

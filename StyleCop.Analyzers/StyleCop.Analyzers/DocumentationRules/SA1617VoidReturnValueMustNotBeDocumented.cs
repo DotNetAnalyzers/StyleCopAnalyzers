@@ -85,8 +85,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             // Check if the return type is void.
-            var returnType = returnValue as PredefinedTypeSyntax;
-            if ((returnType == null) || !returnType.Keyword.IsKind(SyntaxKind.VoidKeyword))
+            if (!(returnValue is PredefinedTypeSyntax returnType) || !returnType.Keyword.IsKind(SyntaxKind.VoidKeyword))
             {
                 return;
             }

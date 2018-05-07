@@ -30,9 +30,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             var name = memberAccessExpressionSyntax?.Name?.Identifier.ValueText ?? identifierNameSyntax?.Identifier.ValueText;
             if (name == methodName)
             {
-                IMethodSymbol symbolInfo = context.SemanticModel.GetSymbolInfo(invocationExpressionSyntax).Symbol as IMethodSymbol;
-
-                if (symbolInfo != null)
+                if (context.SemanticModel.GetSymbolInfo(invocationExpressionSyntax).Symbol is IMethodSymbol symbolInfo)
                 {
                     var debugType = context.SemanticModel.Compilation.GetTypeByMetadataName(typeof(Debug).FullName);
 

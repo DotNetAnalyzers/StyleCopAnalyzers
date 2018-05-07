@@ -44,8 +44,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                var node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) as SimpleNameSyntax;
-                if (node == null)
+                if (!(root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) is SimpleNameSyntax node))
                 {
                     return;
                 }
@@ -91,8 +90,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 foreach (Diagnostic diagnostic in diagnostics)
                 {
-                    var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, false, true) as SimpleNameSyntax;
-                    if (node == null || node.IsMissing)
+                    if (!(syntaxRoot.FindNode(diagnostic.Location.SourceSpan, false, true) is SimpleNameSyntax node) || node.IsMissing)
                     {
                         continue;
                     }

@@ -101,8 +101,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return document;
             }
 
-            XmlElementSyntax summaryElement = documentationComment.Content.GetFirstXmlElement(XmlCommentHelper.SummaryXmlTag) as XmlElementSyntax;
-            if (summaryElement == null)
+            if (!(documentationComment.Content.GetFirstXmlElement(XmlCommentHelper.SummaryXmlTag) is XmlElementSyntax summaryElement))
             {
                 return document;
             }
@@ -163,8 +162,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         private bool TryRemoveSummaryPrefix(ref SyntaxList<XmlNodeSyntax> summaryContent, string prefix)
         {
             XmlNodeSyntax firstContent = summaryContent.FirstOrDefault(IsContentElement);
-            XmlTextSyntax firstText = firstContent as XmlTextSyntax;
-            if (firstText == null)
+            if (!(firstContent is XmlTextSyntax firstText))
             {
                 return false;
             }

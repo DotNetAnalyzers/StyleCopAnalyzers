@@ -161,8 +161,7 @@ namespace StyleCop.Analyzers.SpacingRules
         private static void HandleInvocationExpression(SyntaxNodeAnalysisContext context)
         {
             InvocationExpressionSyntax invocationExpressionSyntax = (InvocationExpressionSyntax)context.Node;
-            IdentifierNameSyntax identifierNameSyntax = invocationExpressionSyntax.Expression as IdentifierNameSyntax;
-            if (identifierNameSyntax == null)
+            if (!(invocationExpressionSyntax.Expression is IdentifierNameSyntax identifierNameSyntax))
             {
                 return;
             }

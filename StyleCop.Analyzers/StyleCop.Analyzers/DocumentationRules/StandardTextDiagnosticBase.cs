@@ -72,8 +72,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             Location diagnosticLocation;
             ImmutableDictionary<string, string> diagnosticProperties;
 
-            var includeElement = documentationStructure.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag) as XmlEmptyElementSyntax;
-            if (includeElement != null)
+            if (documentationStructure.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag) is XmlEmptyElementSyntax includeElement)
             {
                 diagnosticLocation = includeElement.GetLocation();
                 diagnosticProperties = NoCodeFixProperties;
@@ -96,11 +95,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 var summaryNodes = summaryElement.Nodes().ToList();
                 if (summaryNodes.Count >= 3)
                 {
-                    var firstTextPartNode = summaryNodes[0] as XText;
-                    var classReferencePart = summaryNodes[1] as XElement;
-                    var secondTextPartNode = summaryNodes[2] as XText;
-
-                    if (firstTextPartNode != null && classReferencePart != null && secondTextPartNode != null)
+                    if (summaryNodes[0] is XText firstTextPartNode && summaryNodes[1] is XElement classReferencePart && summaryNodes[2] is XText secondTextPartNode)
                     {
                         if (TextPartsMatch(firstTextPart, secondTextPart, firstTextPartNode, secondTextPartNode))
                         {
@@ -115,8 +110,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
             else
             {
-                var summaryElement = documentationStructure.Content.GetFirstXmlElement(XmlCommentHelper.SummaryXmlTag) as XmlElementSyntax;
-                if (summaryElement == null)
+                if (!(documentationStructure.Content.GetFirstXmlElement(XmlCommentHelper.SummaryXmlTag) is XmlElementSyntax summaryElement))
                 {
                     return MatchResult.Unknown;
                 }
@@ -128,11 +122,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 if (summaryElement.Content.Count >= 3)
                 {
                     // Standard text has the form <part1><see><part2>
-                    var firstTextPartSyntax = summaryElement.Content[0] as XmlTextSyntax;
-                    var classReferencePart = summaryElement.Content[1] as XmlEmptyElementSyntax;
-                    var secondTextPartSyntax = summaryElement.Content[2] as XmlTextSyntax;
-
-                    if (firstTextPartSyntax != null && classReferencePart != null && secondTextPartSyntax != null)
+                    if (summaryElement.Content[0] is XmlTextSyntax firstTextPartSyntax && summaryElement.Content[1] is XmlEmptyElementSyntax classReferencePart && summaryElement.Content[2] is XmlTextSyntax secondTextPartSyntax)
                     {
                         if (TextPartsMatch(firstTextPart, secondTextPart, firstTextPartSyntax, secondTextPartSyntax))
                         {
@@ -167,8 +157,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             SemanticModel semanticModel = context.SemanticModel;
-            INamedTypeSymbol actualSymbol = semanticModel.GetSymbolInfo(crefSyntax, context.CancellationToken).Symbol as INamedTypeSymbol;
-            if (actualSymbol == null)
+            if (!(semanticModel.GetSymbolInfo(crefSyntax, context.CancellationToken).Symbol is INamedTypeSymbol actualSymbol))
             {
                 return false;
             }
@@ -194,8 +183,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return false;
             }
 
-            var actualSymbol = foundSymbols[0] as INamedTypeSymbol;
-            if (actualSymbol == null)
+            if (!(foundSymbols[0] is INamedTypeSymbol actualSymbol))
             {
                 return false;
             }

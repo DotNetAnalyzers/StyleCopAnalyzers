@@ -139,8 +139,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                         || node.Parent is CheckedExpressionSyntax
                         || node.Parent is MemberAccessExpressionSyntax)
                     {
-                        var memberAccess = node.Parent as MemberAccessExpressionSyntax;
-                        if (memberAccess != null)
+                        if (node.Parent is MemberAccessExpressionSyntax memberAccess)
                         {
                             if (memberAccess.Expression != node)
                             {
@@ -154,15 +153,13 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                     }
                     else
                     {
-                        EqualsValueClauseSyntax equalsValue = node.Parent as EqualsValueClauseSyntax;
-                        if (equalsValue != null && equalsValue.Value == node)
+                        if (node.Parent is EqualsValueClauseSyntax equalsValue && equalsValue.Value == node)
                         {
                             ReportDiagnostic(context, node);
                         }
                         else
                         {
-                            AssignmentExpressionSyntax assignValue = node.Parent as AssignmentExpressionSyntax;
-                            if (assignValue != null)
+                            if (node.Parent is AssignmentExpressionSyntax assignValue)
                             {
                                 ReportDiagnostic(context, node);
                             }

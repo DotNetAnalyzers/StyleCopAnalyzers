@@ -429,8 +429,7 @@ namespace StyleCop.Analyzers.OrderingRules
                     return false;
                 }
 
-                var namespaceSymbol = this.semanticModel.GetSymbolInfo(syntax.Name).Symbol as INamespaceSymbol;
-                if (namespaceSymbol == null)
+                if (!(this.semanticModel.GetSymbolInfo(syntax.Name).Symbol is INamespaceSymbol namespaceSymbol))
                 {
                     return false;
                 }

@@ -104,9 +104,7 @@ namespace StyleCop.Analyzers.Helpers
         {
             foreach (var identifier in usingDirective.DescendantNodes())
             {
-                IdentifierNameSyntax identifierName = identifier as IdentifierNameSyntax;
-
-                if (identifierName != null && ExcludeGlobalKeyword(identifierName))
+                if (identifier is IdentifierNameSyntax identifierName && ExcludeGlobalKeyword(identifierName))
                 {
                     return identifierName.Identifier;
                 }
