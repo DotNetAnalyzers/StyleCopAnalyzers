@@ -134,7 +134,7 @@ namespace StyleCop.Analyzers.Helpers
 
             if (!syntax.Modifiers.Any(SyntaxKind.PartialKeyword))
             {
-                return !(syntax.Parent is BaseTypeDeclarationSyntax enclosingType) ? Accessibility.Internal : Accessibility.Private;
+                return !(syntax.Parent is BaseTypeDeclarationSyntax) ? Accessibility.Internal : Accessibility.Private;
             }
 
             INamedTypeSymbol declaredSymbol = semanticModel.GetDeclaredSymbol(syntax, cancellationToken);
@@ -286,7 +286,7 @@ namespace StyleCop.Analyzers.Helpers
                 return accessLevel.ToAccessibility();
             }
 
-            return !(syntax.Parent is BaseTypeDeclarationSyntax enclosingType) ? Accessibility.Internal : Accessibility.Private;
+            return !(syntax.Parent is BaseTypeDeclarationSyntax) ? Accessibility.Internal : Accessibility.Private;
         }
 
         internal static Accessibility GetEffectiveAccessibility(this BaseTypeDeclarationSyntax syntax, SemanticModel semanticModel, CancellationToken cancellationToken)
