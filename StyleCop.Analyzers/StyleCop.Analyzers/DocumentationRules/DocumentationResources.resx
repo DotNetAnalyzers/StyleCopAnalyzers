@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ConstructorDocumentationCodeFix" xml:space="preserve">
+    <value>Generate constructor documentation</value>
+  </data>
+  <data name="DestructorDocumentationCodeFix" xml:space="preserve">
+    <value>Generate destructor documentation</value>
+  </data>
   <data name="DestructorStandardTextFirstPart" xml:space="preserve">
     <value>Finalizes an instance of the </value>
   </data>
@@ -125,6 +131,9 @@
   </data>
   <data name="InheritdocCodeFix" xml:space="preserve">
     <value>Inherit documentation</value>
+  </data>
+  <data name="MethodDocumentationCodeFix" xml:space="preserve">
+    <value>Generate method documentation</value>
   </data>
   <data name="NonPrivateConstructorStandardTextFirstPart" xml:space="preserve">
     <value>Initializes a new instance of the </value>
@@ -371,6 +380,12 @@
   </data>
   <data name="StaticConstructorStandardTextSecondPart" xml:space="preserve">
     <value> {0}.</value>
+  </data>
+  <data name="TaskReturnElementFirstPart" xml:space="preserve">
+    <value>A </value>
+  </data>
+  <data name="TaskReturnElementSecondPart" xml:space="preserve">
+    <value> representing the result of the asynchronous operation.</value>
   </data>
   <data name="TypeTextClass" xml:space="preserve">
     <value>class</value>

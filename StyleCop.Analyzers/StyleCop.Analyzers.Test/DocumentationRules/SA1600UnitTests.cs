@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
     using TestHelper;
@@ -14,7 +15,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     /// <summary>
     /// This class contains unit tests for <see cref="SA1600ElementsMustBeDocumented"/>.
     /// </summary>
-    public class SA1600UnitTests : DiagnosticVerifier
+    public class SA1600UnitTests : CodeFixVerifier
     {
         private string currentTestSettings;
 
@@ -503,6 +504,306 @@ public class OuterClass
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that a code fix is offered for a constructor without documentation.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestConstructorCodeFixAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Test type #1.
+/// </summary>
+public class Test1
+{
+    public Test1()
+    {
+    }
+
+    public Test1(int param1, bool param2)
+    {
+    }
+}
+
+/// <summary>
+/// Test type #2.
+/// </summary>
+public struct Test2
+{
+    public Test2(int param1, bool param2)
+    {
+    }
+}
+";
+
+            var fixedTestCode = @"
+/// <summary>
+/// Test type #1.
+/// </summary>
+public class Test1
+{
+    /// <summary>
+    /// Initializes a new instance of the <see cref=""Test1""/> class.
+    /// </summary>
+    public Test1()
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref=""Test1""/> class.
+    /// </summary>
+    /// <param name=""param1""></param>
+    /// <param name=""param2""></param>
+    public Test1(int param1, bool param2)
+    {
+    }
+}
+
+/// <summary>
+/// Test type #2.
+/// </summary>
+public struct Test2
+{
+    /// <summary>
+    /// Initializes a new instance of the <see cref=""Test2""/> struct.
+    /// </summary>
+    /// <param name=""param1""></param>
+    /// <param name=""param2""></param>
+    public Test2(int param1, bool param2)
+    {
+    }
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                this.CSharpDiagnostic().WithLocation(7, 12),
+                this.CSharpDiagnostic().WithLocation(11, 12),
+                this.CSharpDiagnostic().WithLocation(21, 12),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a code fix is offered for a destructor without documentation.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestDestructorCodeFixAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Test class.
+/// </summary>
+public class TestClass
+{
+    ~TestClass()
+    {
+    }
+}
+";
+
+            var fixedTestCode = @"
+/// <summary>
+/// Test class.
+/// </summary>
+public class TestClass
+{
+    /// <summary>
+    /// Finalizes an instance of the <see cref=""TestClass""/> class.
+    /// </summary>
+    ~TestClass()
+    {
+    }
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                this.CSharpDiagnostic().WithLocation(7, 6),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a code fix is not offered for normal methods without documentation.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestNoFixForNormalMethodsAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Test class.
+/// </summary>
+public class TestClass
+{
+    public void DoSomething()
+    {
+    }
+
+    public int DoSomething2()
+    {
+        return 0;
+    }
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                this.CSharpDiagnostic().WithLocation(7, 17),
+                this.CSharpDiagnostic().WithLocation(11, 16),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+            var fixes = await this.GetOfferedCSharpFixesAsync(testCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            Assert.Empty(fixes);
+        }
+
+        /// <summary>
+        /// Verifies that a code fix is offered for methods returning a task.
+        /// </summary>
+        /// <param name="typeKeyword">The type keyword to use.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        public async Task TestMethodReturningTaskCodeFixAsync(string typeKeyword)
+        {
+            var testCode = $@"
+using System.Threading.Tasks;
+
+/// <summary>
+/// Test type.
+/// </summary>
+public {typeKeyword} Test
+{{
+    public Task TestMethod1()
+    {{
+        return Task.Delay(0);
+    }}
+
+    public Task<int> TestMethod2()
+    {{
+        return Task.FromResult(0);
+    }}
+
+    public Task<T> TestMethod3<T>()
+    {{
+        return Task.FromResult(default(T));
+    }}
+
+    public Task TestMethod4(int param1, int param2)
+    {{
+        return Task.Delay(0);
+    }}
+
+    public Task<int> TestMethod5(int param1, int param2)
+    {{
+        return Task.FromResult(param1);
+    }}
+
+    public Task<T> TestMethod6<T>(T param1, int param2)
+    {{
+        return Task.FromResult(param1);
+    }}
+}}
+";
+
+            var fixedTestCode = $@"
+using System.Threading.Tasks;
+
+/// <summary>
+/// Test type.
+/// </summary>
+public {typeKeyword} Test
+{{
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns>A <see cref=""Task""/> representing the result of the asynchronous operation.</returns>
+    public Task TestMethod1()
+    {{
+        return Task.Delay(0);
+    }}
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns>A <see cref=""Task{{TResult}}""/> representing the result of the asynchronous operation.</returns>
+    public Task<int> TestMethod2()
+    {{
+        return Task.FromResult(0);
+    }}
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name=""T""></typeparam>
+    /// <returns>A <see cref=""Task{{TResult}}""/> representing the result of the asynchronous operation.</returns>
+    public Task<T> TestMethod3<T>()
+    {{
+        return Task.FromResult(default(T));
+    }}
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name=""param1""></param>
+    /// <param name=""param2""></param>
+    /// <returns>A <see cref=""Task""/> representing the result of the asynchronous operation.</returns>
+    public Task TestMethod4(int param1, int param2)
+    {{
+        return Task.Delay(0);
+    }}
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name=""param1""></param>
+    /// <param name=""param2""></param>
+    /// <returns>A <see cref=""Task{{TResult}}""/> representing the result of the asynchronous operation.</returns>
+    public Task<int> TestMethod5(int param1, int param2)
+    {{
+        return Task.FromResult(param1);
+    }}
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name=""T""></typeparam>
+    /// <param name=""param1""></param>
+    /// <param name=""param2""></param>
+    /// <returns>A <see cref=""Task{{TResult}}""/> representing the result of the asynchronous operation.</returns>
+    public Task<T> TestMethod6<T>(T param1, int param2)
+    {{
+        return Task.FromResult(param1);
+    }}
+}}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                this.CSharpDiagnostic().WithLocation(9, 17),
+                this.CSharpDiagnostic().WithLocation(14, 22),
+                this.CSharpDiagnostic().WithLocation(19, 20),
+                this.CSharpDiagnostic().WithLocation(24, 17),
+                this.CSharpDiagnostic().WithLocation(29, 22),
+                this.CSharpDiagnostic().WithLocation(34, 20),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override string GetSettings()
         {
             return this.currentTestSettings ?? base.GetSettings();
@@ -511,6 +812,11 @@ public class OuterClass
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1600ElementsMustBeDocumented();
+        }
+
+        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        {
+            return new SA1600CodeFixProvider();
         }
 
         private async Task TestTypeDeclarationDocumentationAsync(string type, string modifiers, bool requiresDiagnostic, bool hasDocumentation)

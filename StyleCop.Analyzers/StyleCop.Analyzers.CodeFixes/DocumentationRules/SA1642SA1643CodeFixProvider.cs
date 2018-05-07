@@ -80,15 +80,46 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
         }
 
-        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, XmlElementSyntax node, CancellationToken cancellationToken)
+        internal static ImmutableArray<string> GenerateStandardText(Document document, BaseMethodDeclarationSyntax methodDeclaration, BaseTypeDeclarationSyntax typeDeclaration, CancellationToken cancellationToken)
         {
-            var typeDeclaration = node.FirstAncestorOrSelf<BaseTypeDeclarationSyntax>();
-            var declarationSyntax = node.FirstAncestorOrSelf<BaseMethodDeclarationSyntax>();
             bool isStruct = typeDeclaration.IsKind(SyntaxKind.StructDeclaration);
             var settings = document.Project.AnalyzerOptions.GetStyleCopSettings(cancellationToken);
             var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
             var resourceManager = DocumentationResources.ResourceManager;
 
+            if (methodDeclaration is ConstructorDeclarationSyntax)
+            {
+                var typeKindText = resourceManager.GetString(isStruct ? nameof(DocumentationResources.TypeTextStruct) : nameof(DocumentationResources.TypeTextClass), culture);
+                if (methodDeclaration.Modifiers.Any(SyntaxKind.StaticKeyword))
+                {
+                    return ImmutableArray.Create(
+                        string.Format(resourceManager.GetString(nameof(DocumentationResources.StaticConstructorStandardTextFirstPart), culture), typeKindText),
+                        string.Format(resourceManager.GetString(nameof(DocumentationResources.StaticConstructorStandardTextSecondPart), culture), typeKindText));
+                }
+                else
+                {
+                    // Prefer to insert the "non-private" wording for all constructors, even though both are considered
+                    // acceptable for private constructors by the diagnostic.
+                    // https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/413
+                    return ImmutableArray.Create(
+                        string.Format(resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextFirstPart), culture), typeKindText),
+                        string.Format(resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextSecondPart), culture), typeKindText));
+                }
+            }
+            else if (methodDeclaration is DestructorDeclarationSyntax)
+            {
+                return ImmutableArray.Create(
+                    resourceManager.GetString(nameof(DocumentationResources.DestructorStandardTextFirstPart), culture),
+                    resourceManager.GetString(nameof(DocumentationResources.DestructorStandardTextSecondPart), culture));
+            }
+            else
+            {
+                throw new InvalidOperationException("XmlElementSyntax has invalid method as its parent");
+            }
+        }
+
+        internal static SyntaxList<XmlNodeSyntax> BuildStandardTextSyntaxList(BaseTypeDeclarationSyntax typeDeclaration, string newLineText, string preText, string postText)
+        {
             TypeParameterListSyntax typeParameterList;
             ClassDeclarationSyntax classDeclaration = typeDeclaration as ClassDeclarationSyntax;
             if (classDeclaration != null)
@@ -100,37 +131,19 @@ namespace StyleCop.Analyzers.DocumentationRules
                 typeParameterList = (typeDeclaration as StructDeclarationSyntax)?.TypeParameterList;
             }
 
-            ImmutableArray<string> standardText;
-            if (declarationSyntax is ConstructorDeclarationSyntax)
-            {
-                var typeKindText = resourceManager.GetString(isStruct ? nameof(DocumentationResources.TypeTextStruct) : nameof(DocumentationResources.TypeTextClass), culture);
-                if (declarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword))
-                {
-                    standardText = ImmutableArray.Create(
-                        string.Format(resourceManager.GetString(nameof(DocumentationResources.StaticConstructorStandardTextFirstPart), culture), typeKindText),
-                        string.Format(resourceManager.GetString(nameof(DocumentationResources.StaticConstructorStandardTextSecondPart), culture), typeKindText));
-                }
-                else
-                {
-                    // Prefer to insert the "non-private" wording for all constructors, even though both are considered
-                    // acceptable for private constructors by the diagnostic.
-                    // https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/413
-                    standardText = ImmutableArray.Create(
-                        string.Format(resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextFirstPart), culture), typeKindText),
-                        string.Format(resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextSecondPart), culture), typeKindText));
-                }
-            }
-            else if (declarationSyntax is DestructorDeclarationSyntax)
-            {
-                standardText =
-                    ImmutableArray.Create(
-                        resourceManager.GetString(nameof(DocumentationResources.DestructorStandardTextFirstPart), culture),
-                        resourceManager.GetString(nameof(DocumentationResources.DestructorStandardTextSecondPart), culture));
-            }
-            else
-            {
-                throw new InvalidOperationException("XmlElementSyntax has invalid method as its parent");
-            }
+            return XmlSyntaxFactory.List(
+                XmlSyntaxFactory.NewLine(newLineText),
+                XmlSyntaxFactory.Text(preText),
+                BuildSeeElement(typeDeclaration.Identifier, typeParameterList),
+                XmlSyntaxFactory.Text(postText.EndsWith(".") ? postText : (postText + ".")));
+        }
+
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, XmlElementSyntax node, CancellationToken cancellationToken)
+        {
+            var typeDeclaration = node.FirstAncestorOrSelf<BaseTypeDeclarationSyntax>();
+            var declarationSyntax = node.FirstAncestorOrSelf<BaseMethodDeclarationSyntax>();
+
+            var standardText = GenerateStandardText(document, declarationSyntax, typeDeclaration, cancellationToken);
 
             string newLineText = document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp);
 
@@ -138,7 +151,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             var newContent = RemoveMalformattedStandardText(node.Content, typeDeclaration.Identifier, standardText[0], standardText[1], ref trailingString);
 
-            var list = BuildStandardText(typeDeclaration.Identifier, typeParameterList, newLineText, standardText[0], standardText[1] + trailingString);
+            var list = BuildStandardTextSyntaxList(typeDeclaration, newLineText, standardText[0], standardText[1] + trailingString);
             newContent = newContent.InsertRange(0, list);
 
             newContent = RemoveTrailingEmptyLines(newContent);
@@ -245,15 +258,6 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             return content;
-        }
-
-        private static SyntaxList<XmlNodeSyntax> BuildStandardText(SyntaxToken identifier, TypeParameterListSyntax typeParameters, string newLineText, string preText, string postText)
-        {
-            return XmlSyntaxFactory.List(
-                XmlSyntaxFactory.NewLine(newLineText),
-                XmlSyntaxFactory.Text(preText),
-                BuildSeeElement(identifier, typeParameters),
-                XmlSyntaxFactory.Text(postText.EndsWith(".") ? postText : (postText + ".")));
         }
 
         private static XmlEmptyElementSyntax BuildSeeElement(SyntaxToken identifier, TypeParameterListSyntax typeParameters)

@@ -62,6 +62,24 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Generate constructor documentation.
+        /// </summary>
+        internal static string ConstructorDocumentationCodeFix {
+            get {
+                return ResourceManager.GetString("ConstructorDocumentationCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generate destructor documentation.
+        /// </summary>
+        internal static string DestructorDocumentationCodeFix {
+            get {
+                return ResourceManager.GetString("DestructorDocumentationCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Finalizes an instance of the .
         /// </summary>
         internal static string DestructorStandardTextFirstPart {
@@ -85,6 +103,15 @@ namespace StyleCop.Analyzers.DocumentationRules {
         internal static string InheritdocCodeFix {
             get {
                 return ResourceManager.GetString("InheritdocCodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generate method documentation.
+        /// </summary>
+        internal static string MethodDocumentationCodeFix {
+            get {
+                return ResourceManager.GetString("MethodDocumentationCodeFix", resourceCulture);
             }
         }
         
@@ -823,6 +850,24 @@ namespace StyleCop.Analyzers.DocumentationRules {
         internal static string StaticConstructorStandardTextSecondPart {
             get {
                 return ResourceManager.GetString("StaticConstructorStandardTextSecondPart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A .
+        /// </summary>
+        internal static string TaskReturnElementFirstPart {
+            get {
+                return ResourceManager.GetString("TaskReturnElementFirstPart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  representing the result of the asynchronous operation..
+        /// </summary>
+        internal static string TaskReturnElementSecondPart {
+            get {
+                return ResourceManager.GetString("TaskReturnElementSecondPart", resourceCulture);
             }
         }
         

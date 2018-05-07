@@ -181,14 +181,14 @@ namespace StyleCop.Analyzers.Helpers
             return MultiLineElement("remarks", newLineText, content);
         }
 
-        public static XmlElementSyntax ReturnsElement(string newLineText, params XmlNodeSyntax[] content)
+        public static XmlElementSyntax ReturnsElement(params XmlNodeSyntax[] content)
         {
-            return ReturnsElement(newLineText, List(content));
+            return ReturnsElement(List(content));
         }
 
-        public static XmlElementSyntax ReturnsElement(string newLineText, SyntaxList<XmlNodeSyntax> content)
+        public static XmlElementSyntax ReturnsElement(SyntaxList<XmlNodeSyntax> content)
         {
-            return MultiLineElement(XmlCommentHelper.ReturnsXmlTag, newLineText, content);
+            return Element(XmlCommentHelper.ReturnsXmlTag, content);
         }
 
         public static XmlElementSyntax ValueElement(string newLineText, params XmlNodeSyntax[] content)
@@ -230,6 +230,17 @@ namespace StyleCop.Analyzers.Helpers
         public static XmlElementSyntax ParamElement(string parameterName, SyntaxList<XmlNodeSyntax> content)
         {
             XmlElementSyntax element = Element("param", content);
+            return element.WithStartTag(element.StartTag.AddAttributes(NameAttribute(parameterName)));
+        }
+
+        public static XmlElementSyntax TypeParamElement(string parameterName, params XmlNodeSyntax[] content)
+        {
+            return TypeParamElement(parameterName, List(content));
+        }
+
+        public static XmlElementSyntax TypeParamElement(string parameterName, SyntaxList<XmlNodeSyntax> content)
+        {
+            XmlElementSyntax element = Element(XmlCommentHelper.TypeParamXmlTag, content);
             return element.WithStartTag(element.StartTag.AddAttributes(NameAttribute(parameterName)));
         }
 

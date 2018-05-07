@@ -57,6 +57,17 @@ namespace StyleCop.Analyzers.Test.HelperTests
             Assert.Equal(expected, XmlSyntaxFactory.SummaryElement("\r\n", XmlSyntaxFactory.Text("Summary.")).ToFullString());
         }
 
+        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2672")]
+        [WorkItem(2672, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2672")]
+        public void TestEmptySummaryElement()
+        {
+            string expected =
+                "<summary>\r\n"
+                + "///\r\n"
+                + "/// </summary>";
+            Assert.Equal(expected, XmlSyntaxFactory.SummaryElement("\r\n").ToFullString());
+        }
+
         [Fact]
         public void TestRemarksElement()
         {
@@ -70,11 +81,8 @@ namespace StyleCop.Analyzers.Test.HelperTests
         [Fact]
         public void TestReturnsElement()
         {
-            string expected =
-                "<returns>\r\n"
-                + "/// Returns.\r\n"
-                + "/// </returns>";
-            Assert.Equal(expected, XmlSyntaxFactory.ReturnsElement("\r\n", XmlSyntaxFactory.Text("Returns.")).ToFullString());
+            string expected = "<returns>Returns.</returns>";
+            Assert.Equal(expected, XmlSyntaxFactory.ReturnsElement(XmlSyntaxFactory.Text("Returns.")).ToFullString());
         }
 
         [Fact]
