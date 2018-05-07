@@ -887,6 +887,76 @@ public class TestClass
                 false).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verify that the codefix will work properly with Visual Studio generated documentation headers.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestWithDefaultVisualStudioGenerationDocumentationAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    /// <summary>
+    /// 
+    /// </summary>
+    public TestClass() { }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    /// <summary>
+    /// Initializes a new instance of the <see cref=""TestClass""/> class.
+    /// </summary>
+    public TestClass() { }
+}
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(4, 9);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verify that the codefix will work properly when there are multiple empty lines.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestWithMultipleEmptyLinesAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    /// <summary>
+    /// 
+    /// 
+    /// 
+    /// </summary>
+    public TestClass() { }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    /// <summary>
+    /// Initializes a new instance of the <see cref=""TestClass""/> class.
+    /// </summary>
+    public TestClass() { }
+}
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(4, 9);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override Project ApplyCompilationOptions(Project project)
         {
             var resolver = new TestXmlReferenceResolver();

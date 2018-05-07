@@ -140,6 +140,9 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             var list = BuildStandardText(typeDeclaration.Identifier, typeParameterList, newLineText, standardText[0], standardText[1] + trailingString);
             newContent = newContent.InsertRange(0, list);
+
+            newContent = RemoveTrailingEmptyLines(newContent);
+
             var newNode = node.WithContent(newContent).AdjustDocumentationCommentNewLineTrivia();
 
             var newRoot = root.ReplaceNode(node, newNode);
@@ -283,6 +286,40 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             return SyntaxFactory.TypeArgumentList(list);
+        }
+
+        private static SyntaxList<XmlNodeSyntax> RemoveTrailingEmptyLines(SyntaxList<XmlNodeSyntax> content)
+        {
+            var xmlText = content[content.Count - 1] as XmlTextSyntax;
+            if (xmlText == null)
+            {
+                return content;
+            }
+
+            // skip the last token, as it contains the documentation comment for the closing tag, which needs to remain.
+            var firstEmptyToken = -1;
+            for (var j = xmlText.TextTokens.Count - 2; j >= 0; j--)
+            {
+                var textToken = xmlText.TextTokens[j];
+
+                if (textToken.IsXmlWhitespace())
+                {
+                    firstEmptyToken = j;
+                }
+                else if (textToken.IsKind(SyntaxKind.XmlTextLiteralToken) && !string.IsNullOrWhiteSpace(textToken.Text))
+                {
+                    break;
+                }
+            }
+
+            if (firstEmptyToken > -1)
+            {
+                var newContent = SyntaxFactory.List(content.Take(firstEmptyToken));
+                newContent.Add(newContent.Last());
+                return newContent;
+            }
+
+            return content;
         }
     }
 }
