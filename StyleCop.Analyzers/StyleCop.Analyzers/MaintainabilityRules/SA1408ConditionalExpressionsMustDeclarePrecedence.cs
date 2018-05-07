@@ -88,10 +88,9 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         {
             BinaryExpressionSyntax binSyntax = (BinaryExpressionSyntax)context.Node;
 
-            if (binSyntax.Left is BinaryExpressionSyntax)
+            if (binSyntax.Left is BinaryExpressionSyntax left)
             {
                 // Check if the operations are of the same kind
-                var left = (BinaryExpressionSyntax)binSyntax.Left;
                 if (left.OperatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken) || left.OperatorToken.IsKind(SyntaxKind.BarBarToken))
                 {
                     if (!IsSameFamily(binSyntax.OperatorToken, left.OperatorToken))
@@ -101,10 +100,9 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 }
             }
 
-            if (binSyntax.Right is BinaryExpressionSyntax)
+            if (binSyntax.Right is BinaryExpressionSyntax right)
             {
                 // Check if the operations are of the same kind
-                var right = (BinaryExpressionSyntax)binSyntax.Right;
                 if (right.OperatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken) || right.OperatorToken.IsKind(SyntaxKind.BarBarToken))
                 {
                     if (!IsSameFamily(binSyntax.OperatorToken, right.OperatorToken))
