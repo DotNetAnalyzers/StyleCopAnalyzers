@@ -29,67 +29,67 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// <summary>
         /// This is the backing field for the <see cref="CompanyName"/> property.
         /// </summary>
-        private string companyName;
+        private readonly string companyName;
 
         /// <summary>
         /// This is the backing field for the <see cref="GetCopyrightText(string)"/> method.
         /// </summary>
-        private string copyrightText;
+        private readonly string copyrightText;
+
+        /// <summary>
+        /// This is the backing field for the <see cref="HeaderDecoration"/> property.
+        /// </summary>
+        private readonly string headerDecoration;
+
+        /// <summary>
+        /// This is the backing field for the <see cref="Variables"/> property.
+        /// </summary>
+        private readonly ImmutableDictionary<string, string>.Builder variables;
+
+        /// <summary>
+        /// This is the backing field for the <see cref="XmlHeader"/> property.
+        /// </summary>
+        private readonly bool xmlHeader;
+
+        /// <summary>
+        /// This is the backing field for the <see cref="DocumentExposedElements"/> property.
+        /// </summary>
+        private readonly bool documentExposedElements;
+
+        /// <summary>
+        /// This is the backing field for the <see cref="DocumentInternalElements"/> property.
+        /// </summary>
+        private readonly bool documentInternalElements;
+
+        /// <summary>
+        /// This is the backing field for the <see cref="DocumentPrivateElements"/> property.
+        /// </summary>
+        private readonly bool documentPrivateElements;
+
+        /// <summary>
+        /// This is the backing field for the <see cref="DocumentInterfaces"/> property.
+        /// </summary>
+        private readonly bool documentInterfaces;
+
+        /// <summary>
+        /// This is the backing field for the <see cref="DocumentPrivateFields"/> property.
+        /// </summary>
+        private readonly bool documentPrivateFields;
+
+        /// <summary>
+        /// This is the backing field for the <see cref="FileNamingConvention"/> property.
+        /// </summary>
+        private readonly FileNamingConvention fileNamingConvention;
+
+        /// <summary>
+        /// This is the backing field for the <see cref="DocumentationCulture"/> property.
+        /// </summary>
+        private readonly string documentationCulture;
 
         /// <summary>
         /// This is the cache for the <see cref="GetCopyrightText(string)"/> method.
         /// </summary>
         private string copyrightTextCache;
-
-        /// <summary>
-        /// This is the backing field for the <see cref="HeaderDecoration"/> property.
-        /// </summary>
-        private string headerDecoration;
-
-        /// <summary>
-        /// This is the backing field for the <see cref="Variables"/> property.
-        /// </summary>
-        private ImmutableDictionary<string, string>.Builder variables;
-
-        /// <summary>
-        /// This is the backing field for the <see cref="XmlHeader"/> property.
-        /// </summary>
-        private bool xmlHeader;
-
-        /// <summary>
-        /// This is the backing field for the <see cref="DocumentExposedElements"/> property.
-        /// </summary>
-        private bool documentExposedElements;
-
-        /// <summary>
-        /// This is the backing field for the <see cref="DocumentInternalElements"/> property.
-        /// </summary>
-        private bool documentInternalElements;
-
-        /// <summary>
-        /// This is the backing field for the <see cref="DocumentPrivateElements"/> property.
-        /// </summary>
-        private bool documentPrivateElements;
-
-        /// <summary>
-        /// This is the backing field for the <see cref="DocumentInterfaces"/> property.
-        /// </summary>
-        private bool documentInterfaces;
-
-        /// <summary>
-        /// This is the backing field for the <see cref="DocumentPrivateFields"/> property.
-        /// </summary>
-        private bool documentPrivateFields;
-
-        /// <summary>
-        /// This is the backing field for the <see cref="FileNamingConvention"/> property.
-        /// </summary>
-        private FileNamingConvention fileNamingConvention;
-
-        /// <summary>
-        /// This is the backing field for the <see cref="DocumentationCulture"/> property.
-        /// </summary>
-        private string documentationCulture;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DocumentationSettings"/> class during JSON deserialization.

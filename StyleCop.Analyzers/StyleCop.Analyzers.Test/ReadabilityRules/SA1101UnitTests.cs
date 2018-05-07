@@ -130,7 +130,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         }
         ";
 
-        private static string fixedCode = @"
+        private static readonly string FixedCode = @"
         using System;
         public class BaseTypeName
         {
@@ -303,7 +303,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         [Fact]
         public async Task TestPrefixLocalCallsWithThisCodeFixAsync()
         {
-            await this.VerifyCSharpFixAsync(ReferenceCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(ReferenceCode, FixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>

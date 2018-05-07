@@ -10,42 +10,42 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// <summary>
         /// This is the backing field for the <see cref="Indentation"/> property.
         /// </summary>
-        private IndentationSettings indentation;
+        private readonly IndentationSettings indentation;
 
         /// <summary>
         /// This is the backing field for the <see cref="SpacingRules"/> property.
         /// </summary>
-        private SpacingSettings spacingRules;
+        private readonly SpacingSettings spacingRules;
 
         /// <summary>
         /// This is the backing field for the <see cref="ReadabilityRules"/> property.
         /// </summary>
-        private ReadabilitySettings readabilityRules;
+        private readonly ReadabilitySettings readabilityRules;
 
         /// <summary>
         /// This is the backing field for the <see cref="OrderingRules"/> property.
         /// </summary>
-        private OrderingSettings orderingRules;
+        private readonly OrderingSettings orderingRules;
 
         /// <summary>
         /// This is the backing field for the <see cref="NamingRules"/> property.
         /// </summary>
-        private NamingSettings namingRules;
+        private readonly NamingSettings namingRules;
 
         /// <summary>
         /// This is the backing field for the <see cref="MaintainabilityRules"/> property.
         /// </summary>
-        private MaintainabilitySettings maintainabilityRules;
+        private readonly MaintainabilitySettings maintainabilityRules;
 
         /// <summary>
         /// This is the backing field for the <see cref="LayoutRules"/> property.
         /// </summary>
-        private LayoutSettings layoutRules;
+        private readonly LayoutSettings layoutRules;
 
         /// <summary>
         /// This is the backing field for the <see cref="DocumentationRules"/> property.
         /// </summary>
-        private DocumentationSettings documentationRules;
+        private readonly DocumentationSettings documentationRules;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StyleCopSettings"/> class.
