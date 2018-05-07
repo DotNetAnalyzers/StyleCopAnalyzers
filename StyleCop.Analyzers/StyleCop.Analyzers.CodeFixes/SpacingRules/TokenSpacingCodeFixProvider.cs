@@ -124,7 +124,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 case TokenSpacingProperties.ActionInsert:
                     if (!replaceMap.ContainsKey(prevToken))
                     {
-                        UpdateReplaceMap(replaceMap, token, t => t.WithLeadingTrivia(token.LeadingTrivia.Add(SyntaxFactory.Space)));
+                        UpdateReplaceMap(replaceMap, token, t => t.WithLeadingTrivia(t.LeadingTrivia.Add(SyntaxFactory.Space)));
                     }
 
                     break;
@@ -143,7 +143,7 @@ namespace StyleCop.Analyzers.SpacingRules
                     if ((!preserveLayout || !tokenIsFirstInLine)
                         && triviaList.All(i => i.IsKind(SyntaxKind.WhitespaceTrivia) || i.IsKind(SyntaxKind.EndOfLineTrivia)))
                     {
-                        UpdateReplaceMap(replaceMap, token, t => token.WithLeadingTrivia());
+                        UpdateReplaceMap(replaceMap, token, t => t.WithLeadingTrivia());
                     }
                     else if (tokenIsFirstInLine && token.IsLastInLine())
                     {
@@ -208,7 +208,7 @@ namespace StyleCop.Analyzers.SpacingRules
                     break;
 
                 case TokenSpacingProperties.ActionRemoveImmediate:
-                    UpdateReplaceMap(replaceMap, token, t => t.WithLeadingTrivia(token.LeadingTrivia.WithoutTrailingWhitespace(endOfLineIsWhitespace: false)));
+                    UpdateReplaceMap(replaceMap, token, t => t.WithLeadingTrivia(t.LeadingTrivia.WithoutTrailingWhitespace(endOfLineIsWhitespace: false)));
 
                     if (!replaceMap[token].LeadingTrivia.Any())
                     {
