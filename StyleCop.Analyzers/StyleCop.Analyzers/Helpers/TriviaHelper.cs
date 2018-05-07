@@ -80,8 +80,10 @@ namespace StyleCop.Analyzers.Helpers
         /// </summary>
         /// <param name="triviaList">The trivia list to process.</param>
         /// <typeparam name="T">The type of the trivia list.</typeparam>
+        /// <param name="endOfLineIsWhitespace"><see langword="true"/> to treat <see cref="SyntaxKind.EndOfLineTrivia"/>
+        /// as whitespace; otherwise, <see langword="false"/>.</param>
         /// <returns>The index where the trailing whitespace starts, or -1 if there is no trailing whitespace.</returns>
-        internal static int IndexOfTrailingWhitespace<T>(T triviaList)
+        internal static int IndexOfTrailingWhitespace<T>(T triviaList, bool endOfLineIsWhitespace = true)
             where T : IReadOnlyList<SyntaxTrivia>
         {
             var done = false;
@@ -94,6 +96,12 @@ namespace StyleCop.Analyzers.Helpers
                 switch (currentTrivia.Kind())
                 {
                 case SyntaxKind.EndOfLineTrivia:
+                    if (!endOfLineIsWhitespace)
+                    {
+                        done = true;
+                        break;
+                    }
+
                     whiteSpaceStartIndex = index;
                     previousTriviaWasEndOfLine = true;
                     break;
@@ -206,10 +214,12 @@ namespace StyleCop.Analyzers.Helpers
         /// Strips all trailing whitespace trivia from the trivia list until a non-whitespace trivia is encountered.
         /// </summary>
         /// <param name="triviaList">The trivia list to strip of its trailing whitespace.</param>
+        /// <param name="endOfLineIsWhitespace"><see langword="true"/> to treat <see cref="SyntaxKind.EndOfLineTrivia"/>
+        /// as whitespace; otherwise, <see langword="false"/>.</param>
         /// <returns>The modified triviaList.</returns>
-        internal static SyntaxTriviaList WithoutTrailingWhitespace(this SyntaxTriviaList triviaList)
+        internal static SyntaxTriviaList WithoutTrailingWhitespace(this SyntaxTriviaList triviaList, bool endOfLineIsWhitespace = true)
         {
-            var trailingWhitespaceIndex = IndexOfTrailingWhitespace(triviaList);
+            var trailingWhitespaceIndex = IndexOfTrailingWhitespace(triviaList, endOfLineIsWhitespace);
             return (trailingWhitespaceIndex >= 0) ? SyntaxFactory.TriviaList(triviaList.Take(trailingWhitespaceIndex)) : triviaList;
         }
 

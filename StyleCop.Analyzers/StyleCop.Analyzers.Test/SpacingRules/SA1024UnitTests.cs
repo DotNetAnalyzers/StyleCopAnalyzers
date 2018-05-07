@@ -329,7 +329,7 @@ public class Foo<T>:object where T:IFormattable
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(ExpectedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, ExpectedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, ExpectedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
