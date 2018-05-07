@@ -70,11 +70,8 @@ namespace StyleCop.Analyzers.Test.HelperTests
         [Fact]
         public void TestReturnsElement()
         {
-            string expected =
-                "<returns>\r\n"
-                + "/// Returns.\r\n"
-                + "/// </returns>";
-            Assert.Equal(expected, XmlSyntaxFactory.ReturnsElement("\r\n", XmlSyntaxFactory.Text("Returns.")).ToFullString());
+            string expected = "<returns>Returns.</returns>";
+            Assert.Equal(expected, XmlSyntaxFactory.ReturnsElement(XmlSyntaxFactory.Text("Returns.")).ToFullString());
         }
 
         [Fact]

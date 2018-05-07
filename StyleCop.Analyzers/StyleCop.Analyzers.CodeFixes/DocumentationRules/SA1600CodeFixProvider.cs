@@ -145,7 +145,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             var documentationNodes = new List<XmlNodeSyntax>();
 
-            documentationNodes.Add(XmlSyntaxFactory.EmptySummaryElement(newLineText));
+            documentationNodes.Add(XmlSyntaxFactory.SummaryElement(newLineText));
 
             if (methodDeclaration.TypeParameterList != null)
             {
@@ -185,7 +185,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             };
 
             documentationNodes.Add(XmlSyntaxFactory.NewLine(newLineText));
-            documentationNodes.Add(XmlSyntaxFactory.CompactReturnsElement(returnContent));
+            documentationNodes.Add(XmlSyntaxFactory.ReturnsElement(returnContent));
 
             var documentationComment =
                 XmlSyntaxFactory.DocumentationComment(

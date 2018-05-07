@@ -37,19 +37,4 @@
     <None Include="**\*.json" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="DocumentationRules\DocumentationResources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>DocumentationResources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="DocumentationRules\DocumentationResources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>DocumentationResources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-
 </Project>
