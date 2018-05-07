@@ -7,6 +7,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Threading;
     using System.Threading.Tasks;
     using Analyzers.DocumentationRules;
+    using Helpers;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using TestHelper;
@@ -447,6 +449,193 @@ internal sealed class ##Attribute : System.Attribute { }
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration).Replace("##", testAttribute), expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode.Replace("$$", declaration).Replace("##", testAttribute), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode.Replace("$$", declaration).Replace("##", testAttribute), fixedCode.Replace("$$", declaration).Replace("##", testAttribute), cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task VerifyMemberIncludedDocumentationNoDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <include file='NoDocumentation.xml' path='/ClassName/Method/*' />
+    public ClassName Method(string foo, string bar) { return null; }
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task VerifyMemberIncludedDocumentationWithoutReturnsAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <include file='WithoutReturns.xml' path='/ClassName/Method/*' />
+    public ClassName Method(string foo, string bar) { return null; }
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task VerifyMemberIncludedDocumentationWithValidReturnsAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <include file='WithReturns.xml' path='/ClassName/Method/*' />
+    public ClassName Method(string foo, string bar) { return null; }
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task VerifyMemberIncludedDocumentationWithEmptyReturnsAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <include file='WithEmptyReturns.xml' path='/ClassName/Method/*' />
+    public ClassName Method(string foo, string bar) { return null; }
+}";
+
+            var expected = this.CSharpDiagnostic().WithLocation(8, 22);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            // The code fix does not alter this case.
+            await this.VerifyCSharpFixAsync(testCode, testCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task VerifyMemberIncludedDocumentationWithEmptyReturns2Async()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <include file='WithEmptyReturns2.xml' path='/ClassName/Method/*' />
+    public ClassName Method(string foo, string bar) { return null; }
+}";
+
+            var expected = this.CSharpDiagnostic().WithLocation(8, 22);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            // The code fix does not alter this case.
+            await this.VerifyCSharpFixAsync(testCode, testCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task VerifyMemberIncludedDocumentationWithEmptyReturns3Async()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <include file='WithEmptyReturns3.xml' path='/ClassName/Method/*' />
+    public ClassName Method(string foo, string bar) { return null; }
+}";
+
+            var expected = this.CSharpDiagnostic().WithLocation(8, 22);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            // The code fix does not alter this case.
+            await this.VerifyCSharpFixAsync(testCode, testCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
+        protected override Project ApplyCompilationOptions(Project project)
+        {
+            var resolver = new TestXmlReferenceResolver();
+
+            string contentWithoutDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<ClassName>
+    <Method>
+    </Method>
+</ClassName>
+";
+            resolver.XmlReferences.Add("NoDocumentation.xml", contentWithoutDocumentation);
+
+            string contentWithoutReturns = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<ClassName>
+    <Method>
+        <summary>
+            Foo
+        </summary>
+    </Method>
+</ClassName>
+";
+            resolver.XmlReferences.Add("WithoutReturns.xml", contentWithoutReturns);
+
+            string contentWithReturns = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<ClassName>
+    <Method>
+        <summary>
+            Foo
+        </summary>
+        <returns>Test</returns>
+    </Method>
+</ClassName>
+";
+            resolver.XmlReferences.Add("WithReturns.xml", contentWithReturns);
+
+            string contentWithEmptyReturns = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<ClassName>
+    <Method>
+        <summary>
+            Foo
+        </summary>
+        <returns>
+        
+                              </returns>
+    </Method>
+</ClassName>
+";
+            resolver.XmlReferences.Add("WithEmptyReturns.xml", contentWithEmptyReturns);
+
+            string contentWithEmptyReturns2 = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<ClassName>
+    <Method>
+        <summary>
+            Foo
+        </summary>
+        <returns />
+    </Method>
+</ClassName>
+";
+            resolver.XmlReferences.Add("WithEmptyReturns2.xml", contentWithEmptyReturns2);
+
+            string contentWithEmptyReturns3 = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<ClassName>
+    <Method>
+        <summary>
+            Foo
+        </summary>
+        <returns></returns>
+    </Method>
+</ClassName>
+";
+            resolver.XmlReferences.Add("WithEmptyReturns3.xml", contentWithEmptyReturns3);
+
+            project = base.ApplyCompilationOptions(project);
+            project = project.WithCompilationOptions(project.CompilationOptions.WithXmlReferenceResolver(resolver));
+            return project;
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

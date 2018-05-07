@@ -5,11 +5,12 @@ namespace StyleCop.Analyzers.NamingRules
 {
     using System;
     using System.Collections.Immutable;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// The name of a variable in C# does not begin with a lower-case letter.
@@ -38,7 +39,6 @@ namespace StyleCop.Analyzers.NamingRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> VariableDeclarationAction = HandleVariableDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> CatchDeclarationAction = HandleCatchDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> QueryContinuationAction = HandleQueryContinuation;
@@ -47,6 +47,7 @@ namespace StyleCop.Analyzers.NamingRules
         private static readonly Action<SyntaxNodeAnalysisContext> JoinClauseAction = HandleJoinClause;
         private static readonly Action<SyntaxNodeAnalysisContext> JoinIntoClauseAction = HandleJoinIntoClause;
         private static readonly Action<SyntaxNodeAnalysisContext> ForEachStatementAction = HandleForEachStatement;
+        private static readonly Action<SyntaxNodeAnalysisContext> SingleVariableDesignationAction = HandleSingleVariableDesignation;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -55,19 +56,18 @@ namespace StyleCop.Analyzers.NamingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(VariableDeclarationAction, SyntaxKind.VariableDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(CatchDeclarationAction, SyntaxKind.CatchDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(QueryContinuationAction, SyntaxKind.QueryContinuation);
-            context.RegisterSyntaxNodeActionHonorExclusions(FromClauseAction, SyntaxKind.FromClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(LetClauseAction, SyntaxKind.LetClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(JoinClauseAction, SyntaxKind.JoinClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(JoinIntoClauseAction, SyntaxKind.JoinIntoClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(ForEachStatementAction, SyntaxKind.ForEachStatement);
+            context.RegisterSyntaxNodeAction(VariableDeclarationAction, SyntaxKind.VariableDeclaration);
+            context.RegisterSyntaxNodeAction(CatchDeclarationAction, SyntaxKind.CatchDeclaration);
+            context.RegisterSyntaxNodeAction(QueryContinuationAction, SyntaxKind.QueryContinuation);
+            context.RegisterSyntaxNodeAction(FromClauseAction, SyntaxKind.FromClause);
+            context.RegisterSyntaxNodeAction(LetClauseAction, SyntaxKind.LetClause);
+            context.RegisterSyntaxNodeAction(JoinClauseAction, SyntaxKind.JoinClause);
+            context.RegisterSyntaxNodeAction(JoinIntoClauseAction, SyntaxKind.JoinIntoClause);
+            context.RegisterSyntaxNodeAction(ForEachStatementAction, SyntaxKind.ForEachStatement);
+            context.RegisterSyntaxNodeAction(SingleVariableDesignationAction, SyntaxKindEx.SingleVariableDesignation);
         }
 
         private static void HandleVariableDeclaration(SyntaxNodeAnalysisContext context)
@@ -77,11 +77,6 @@ namespace StyleCop.Analyzers.NamingRules
                 || syntax.Parent.IsKind(SyntaxKind.EventFieldDeclaration))
             {
                 // This diagnostic is only for local variables.
-                return;
-            }
-
-            if (NamedTypeHelpers.IsContainedInNativeMethodsClass(syntax))
-            {
                 return;
             }
 
@@ -139,6 +134,11 @@ namespace StyleCop.Analyzers.NamingRules
             CheckIdentifier(context, ((ForEachStatementSyntax)context.Node).Identifier);
         }
 
+        private static void HandleSingleVariableDesignation(SyntaxNodeAnalysisContext context)
+        {
+            CheckIdentifier(context, ((SingleVariableDesignationSyntaxWrapper)context.Node).Identifier);
+        }
+
         private static void CheckIdentifier(SyntaxNodeAnalysisContext context, SyntaxToken identifier)
         {
             if (identifier.IsMissing)
@@ -152,7 +152,12 @@ namespace StyleCop.Analyzers.NamingRules
                 return;
             }
 
-            // Variable names must begin with lower-case letter
+            if (NamedTypeHelpers.IsContainedInNativeMethodsClass(identifier.Parent))
+            {
+                return;
+            }
+
+            // Variable names should begin with lower-case letter
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), name));
         }
     }

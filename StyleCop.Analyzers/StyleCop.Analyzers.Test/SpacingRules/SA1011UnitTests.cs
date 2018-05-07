@@ -6,7 +6,6 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.SpacingRules;
@@ -101,7 +100,7 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(12, 27).WithArguments(" not",  "preceded"),
                 this.CSharpDiagnostic().WithLocation(13, 4).WithArguments(" not",  "preceded"),
                 this.CSharpDiagnostic().WithLocation(15, 27).WithArguments(" not",  "preceded"),
-                this.CSharpDiagnostic().WithLocation(15, 31).WithArguments(" not",  "preceded")
+                this.CSharpDiagnostic().WithLocation(15, 31).WithArguments(" not",  "preceded"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -216,7 +215,7 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(5, 16).WithArguments(string.Empty, "followed"),
                 this.CSharpDiagnostic().WithLocation(5, 32).WithArguments(string.Empty, "followed"),
                 this.CSharpDiagnostic().WithLocation(7, 13).WithArguments(string.Empty, "followed"),
-                this.CSharpDiagnostic().WithLocation(7, 30).WithArguments(string.Empty, "followed")
+                this.CSharpDiagnostic().WithLocation(7, 30).WithArguments(string.Empty, "followed"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -304,30 +303,68 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                new DiagnosticResult
-                {
-                    Id = "CS0443",
-                    Severity = DiagnosticSeverity.Error,
-                    Message = "Syntax error; value expected",
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 28) }
-                },
-                new DiagnosticResult
-                {
-                    Id = "CS1003",
-                    Severity = DiagnosticSeverity.Error,
-                    Message = "Syntax error, ',' expected",
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 28) }
-                },
-                new DiagnosticResult
-                {
-                    Id = "CS1003",
-                    Severity = DiagnosticSeverity.Error,
-                    Message = "Syntax error, ']' expected",
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 28) }
-                }
+                this.CSharpCompilerError("CS0443").WithMessage("Syntax error; value expected").WithLocation(6, 28),
+                this.CSharpCompilerError("CS1003").WithMessage("Syntax error, ',' expected").WithLocation(6, 28),
+                this.CSharpCompilerError("CS1003").WithMessage("Syntax error, ']' expected").WithLocation(6, 28),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2564, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2564")]
+        public async Task TestArrayElementPointerDeferenceAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    public unsafe string TestMethod(int[] a)
+    {
+        fixed (int* p = a)
+        {
+            int*[] xx = new[] { p };
+            return xx[0]->ToString(""n2"");
+        }
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2289, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2289")]
+        public async Task TestColonCanFollowSquareBracketWhenPartOfInterpolationFormatClauseAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    void Method()
+    {
+        var x = new[] { 1, 2, 3, 4, 5, 6, 7 };
+        var t = $""{ x[2]:C}"";
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2289, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2289")]
+        public async Task TestCommaCanFollowSquareBracketWhenPartOfInterpolationFormatClauseAsync()
+        {
+            string testCode = @"
+class ClassName
+{
+    void Method()
+    {
+        var x = new[] { 1, 2, 3, 4, 5, 6, 7 };
+        var t = $""{ x[2],3}"";
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

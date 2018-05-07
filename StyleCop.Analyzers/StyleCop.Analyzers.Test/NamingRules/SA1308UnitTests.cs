@@ -14,7 +14,25 @@ namespace StyleCop.Analyzers.Test.NamingRules
 
     public class SA1308UnitTests : CodeFixVerifier
     {
+        private const string UnderscoreEscapeSequence = @"\u005F";
+
         private readonly string[] modifiers = new[] { "public", "private", "protected", "public readonly", "internal readonly", "public static", "private static" };
+
+        public static IEnumerable<object[]> PrefixesData()
+        {
+            yield return new object[] { "m_" };
+            yield return new object[] { "s_" };
+            yield return new object[] { "t_" };
+            yield return new object[] { $"m{UnderscoreEscapeSequence}" };
+            yield return new object[] { $"s{UnderscoreEscapeSequence}" };
+            yield return new object[] { $"t{UnderscoreEscapeSequence}" };
+        }
+
+        public static IEnumerable<object[]> MultipleDistinctPrefixesData()
+        {
+            yield return new object[] { "m_t_s_", "m_" };
+            yield return new object[] { $"s{UnderscoreEscapeSequence}m{UnderscoreEscapeSequence}t{UnderscoreEscapeSequence}", "s_" };
+        }
 
         [Fact]
         public async Task TestFieldStartingWithPrefixesToTriggerDiagnosticAsync()
@@ -24,9 +42,9 @@ namespace StyleCop.Analyzers.Test.NamingRules
                 await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "m_", "m_").ConfigureAwait(false);
                 await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "s_", "s_").ConfigureAwait(false);
                 await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "t_", "t_").ConfigureAwait(false);
-                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "m\\u005F", "m_").ConfigureAwait(false);
-                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "s\\u005F", "s_").ConfigureAwait(false);
-                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, "t\\u005F", "t_").ConfigureAwait(false);
+                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, $"m{UnderscoreEscapeSequence}", "m_").ConfigureAwait(false);
+                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, $"s{UnderscoreEscapeSequence}", "s_").ConfigureAwait(false);
+                await this.TestFieldSpecifyingModifierAndPrefixAsync(modifier, $"t{UnderscoreEscapeSequence}", "t_").ConfigureAwait(false);
             }
         }
 
@@ -71,54 +89,100 @@ string m_bar = ""baz"";
         /// <summary>
         /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#627.
         /// </summary>
+        /// <param name="prefix">The prefix to repeat in the variable name.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/627">#627: Code Fixes For Naming
         /// Rules SA1308 and SA1309 Do Not Always Fix The Name Entirely</seealso>
-        [Fact]
-        public async Task TestFixingMultipleIdenticalPrefixesAsync()
+        [Theory]
+        [MemberData(nameof(PrefixesData))]
+        public async Task TestFixingMultipleIdenticalPrefixesAsync(string prefix)
         {
-            var testCode = @"public class Foo
-{
-    private string m_m_bar = ""baz"";
-}";
+            var testCode = $@"public class Foo
+{{
+    private string {prefix}{prefix}bar = ""baz"";
+}}";
 
+            string diagnosticPrefix = UnescapeUnderscores(prefix);
             DiagnosticResult expected =
                 this.CSharpDiagnostic()
-                .WithArguments("m_m_bar", "m_")
+                .WithArguments($"{diagnosticPrefix}{diagnosticPrefix}bar", diagnosticPrefix)
                 .WithLocation(3, 20);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
-            var fixedCode = testCode.Replace("m_", string.Empty);
+            var fixedCode = testCode.Replace(prefix, string.Empty);
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(PrefixesData))]
+        public async Task TestMultipleIdenticalPrefixesOnlyAsync(string prefix)
+        {
+            var testCode = $@"public class Foo
+{{
+    private string {prefix}{prefix} = ""baz"";
+}}";
+
+            string diagnosticPrefix = UnescapeUnderscores(prefix);
+            DiagnosticResult expected =
+                this.CSharpDiagnostic()
+                .WithArguments($"{diagnosticPrefix}{diagnosticPrefix}", diagnosticPrefix)
+                .WithLocation(3, 20);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            // A code fix is not offered as removing the prefixes would create an empty identifier.
+            await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
         }
 
         /// <summary>
         /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#627.
         /// </summary>
+        /// <param name="prefixes">The prefixes to prepend to the variable name.</param>
+        /// <param name="diagnosticPrefix">The prefix that should be reported in the diagnostic.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/627">#627: Code Fixes For Naming
         /// Rules SA1308 and SA1309 Do Not Always Fix The Name Entirely</seealso>
-        [Fact]
-        public async Task TestFixingMultipleIndependentPrefixesAsync()
+        [Theory]
+        [MemberData(nameof(MultipleDistinctPrefixesData))]
+        public async Task TestFixingMultipleDistinctPrefixesAsync(string prefixes, string diagnosticPrefix)
         {
-            var testCode = @"public class Foo
-{
-    private string m_t_s_bar = ""baz"";
-}";
+            var testCode = $@"public class Foo
+{{
+    private string {prefixes}bar = ""baz"";
+}}";
 
+            string diagnosticPrefixes = UnescapeUnderscores(prefixes);
             DiagnosticResult expected =
                 this.CSharpDiagnostic()
-                .WithArguments("m_t_s_bar", "m_")
+                .WithArguments($"{diagnosticPrefixes}bar", diagnosticPrefix)
                 .WithLocation(3, 20);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
-            var fixedCode = testCode.Replace("m_", string.Empty);
-            fixedCode = fixedCode.Replace("s_", string.Empty);
-            fixedCode = fixedCode.Replace("t_", string.Empty);
-
+            var fixedCode = testCode.Replace(prefixes, string.Empty);
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(MultipleDistinctPrefixesData))]
+        public async Task TestMultipleDistinctPrefixesOnlyAsync(string prefixes, string diagnosticPrefix)
+        {
+            var testCode = $@"public class Foo
+{{
+    private string {prefixes} = ""baz"";
+}}";
+
+            string diagnosticPrefixes = UnescapeUnderscores(prefixes);
+            DiagnosticResult expected =
+                this.CSharpDiagnostic()
+                .WithArguments(diagnosticPrefixes, diagnosticPrefix)
+                .WithLocation(3, 20);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+
+            // A code fix is not offered as removing the prefixes would create an empty identifier.
+            await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
@@ -130,6 +194,8 @@ string m_bar = ""baz"";
         {
             return new SA1308CodeFixProvider();
         }
+
+        private static string UnescapeUnderscores(string identifier) => identifier.Replace(UnderscoreEscapeSequence, "_");
 
         private async Task TestFieldSpecifyingModifierAndPrefixAsync(string modifier, string codePrefix, string diagnosticPrefix)
         {

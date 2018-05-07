@@ -109,7 +109,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(12, 19).WithArguments(" not", "followed"),
-                this.CSharpDiagnostic().WithLocation(13, 20).WithArguments(" not", "followed")
+                this.CSharpDiagnostic().WithLocation(13, 20).WithArguments(" not", "followed"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -213,7 +213,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 this.CSharpDiagnostic().WithLocation(13, 37).WithArguments(string.Empty, "preceded"),
                 this.CSharpDiagnostic().WithLocation(13, 37).WithArguments(string.Empty, "followed"),
                 this.CSharpDiagnostic().WithLocation(13, 38).WithArguments(string.Empty, "preceded"),
-                this.CSharpDiagnostic().WithLocation(13, 38).WithArguments(string.Empty, "followed")
+                this.CSharpDiagnostic().WithLocation(13, 38).WithArguments(string.Empty, "followed"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -236,13 +236,7 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                new DiagnosticResult
-                {
-                    Id = "CS1514",
-                    Severity = DiagnosticSeverity.Error,
-                    Message = "{ expected",
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 25) }
-                }
+                this.CSharpCompilerError("CS1514").WithMessage("{ expected").WithLocation(6, 25),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

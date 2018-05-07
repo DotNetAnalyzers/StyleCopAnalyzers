@@ -423,7 +423,7 @@ public class Foo
 
                 // Invalid object initializer #9
                 this.CSharpDiagnostic().WithLocation(90, 29),
-                this.CSharpDiagnostic().WithLocation(92, 34)
+                this.CSharpDiagnostic().WithLocation(92, 34),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -493,7 +493,7 @@ public class TestClass
 
                 // Invalid object initializer #3
                 this.CSharpDiagnostic().WithLocation(16, 67),
-                this.CSharpDiagnostic().WithLocation(17, 18)
+                this.CSharpDiagnostic().WithLocation(17, 18),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

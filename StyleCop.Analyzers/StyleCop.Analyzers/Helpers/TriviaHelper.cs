@@ -402,6 +402,93 @@ namespace StyleCop.Analyzers.Helpers
                 || trivia.IsKind(SyntaxKind.EndOfLineTrivia);
         }
 
+        /// <summary>
+        /// Checks whether the given trivia list contains one or more blank lines.
+        /// </summary>
+        /// <param name="triviaList">The trivia list to check.</param>
+        /// <param name="startsOnNewLine">Indicates if the trivia list starts on a new line.</param>
+        /// <returns>True if the given trivia list contains one or more blank lines.</returns>
+        internal static bool ContainsBlankLines(this IReadOnlyList<SyntaxTrivia> triviaList, bool startsOnNewLine = true)
+        {
+            bool onBlankLine = startsOnNewLine;
+
+            foreach (var trivia in triviaList)
+            {
+                switch (trivia.Kind())
+                {
+                case SyntaxKind.WhitespaceTrivia:
+                    // ignore whitespace
+                    break;
+
+                case SyntaxKind.EndOfLineTrivia:
+                    if (onBlankLine)
+                    {
+                        return true;
+                    }
+
+                    onBlankLine = true;
+                    break;
+
+                default:
+                    // directive trivia have a builtin end-of-line.
+                    onBlankLine = trivia.IsDirective;
+                    break;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Removes all blank lines from the given trivia list.
+        /// </summary>
+        /// <param name="triviaList">The trivia list to process.</param>
+        /// <param name="startsOnNewLine">Indicates if the trivia list starts on a new line.</param>
+        /// <returns>A new <see cref="SyntaxTriviaList"/> that is a copy of the passed <paramref name="triviaList"/> without blank lines.</returns>
+        internal static SyntaxTriviaList WithoutBlankLines(this SyntaxTriviaList triviaList, bool startsOnNewLine = true)
+        {
+            bool onBlankLine = startsOnNewLine;
+            var newTriviaList = new List<SyntaxTrivia>();
+
+            for (var i = 0; i < triviaList.Count; i++)
+            {
+                var trivia = triviaList[i];
+
+                switch (trivia.Kind())
+                {
+                case SyntaxKind.WhitespaceTrivia:
+                    newTriviaList.Add(trivia);
+                    break;
+
+                case SyntaxKind.EndOfLineTrivia:
+                    if (onBlankLine)
+                    {
+                        // strip all preceding white space in the blank line.
+                        while ((newTriviaList.Count > 0) && newTriviaList[newTriviaList.Count - 1].IsKind(SyntaxKind.WhitespaceTrivia))
+                        {
+                            newTriviaList.RemoveAt(newTriviaList.Count - 1);
+                        }
+                    }
+                    else
+                    {
+                        newTriviaList.Add(trivia);
+                        onBlankLine = true;
+                    }
+
+                    break;
+
+                default:
+                    newTriviaList.Add(trivia);
+
+                    // directive trivia have a builtin end-of-line.
+                    onBlankLine = trivia.IsDirective;
+                    break;
+                }
+            }
+
+            return SyntaxFactory.TriviaList(newTriviaList);
+        }
+
         private static int BinarySearch(SyntaxTriviaList leadingTrivia, SyntaxTrivia trivia)
         {
             int low = 0;

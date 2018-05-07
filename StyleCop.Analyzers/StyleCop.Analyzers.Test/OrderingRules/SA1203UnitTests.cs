@@ -241,7 +241,7 @@ public class Foo
             var diagnosticResults = new[]
             {
                 this.CSharpDiagnostic().WithLocation(10, 25),
-                this.CSharpDiagnostic().WithLocation(14, 25)
+                this.CSharpDiagnostic().WithLocation(14, 25),
             };
             await this.VerifyCSharpDiagnosticAsync(testCode, diagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -290,7 +290,7 @@ public class Foo
             var diagnosticResults = new[]
             {
                 this.CSharpDiagnostic().WithLocation(9, 26),
-                this.CSharpDiagnostic().WithLocation(13, 25)
+                this.CSharpDiagnostic().WithLocation(13, 25),
             };
             await this.VerifyCSharpDiagnosticAsync(testCode, diagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -341,7 +341,7 @@ public class Foo
             var diagnosticResults = new[]
             {
                 this.CSharpDiagnostic().WithLocation(10, 26),
-                this.CSharpDiagnostic().WithLocation(14, 25)
+                this.CSharpDiagnostic().WithLocation(14, 25),
             };
             await this.VerifyCSharpDiagnosticAsync(testCode, diagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -429,7 +429,7 @@ const string foo = ""a"";
             var diagnosticResults = new[]
             {
                 this.CSharpDiagnostic().WithLocation(9, 26),
-                this.CSharpDiagnostic().WithLocation(13, 25)
+                this.CSharpDiagnostic().WithLocation(13, 25),
             };
             await this.VerifyCSharpDiagnosticAsync(testCode, diagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);

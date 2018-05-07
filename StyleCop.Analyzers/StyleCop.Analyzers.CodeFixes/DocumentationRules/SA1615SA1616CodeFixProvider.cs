@@ -75,7 +75,13 @@ namespace StyleCop.Analyzers.DocumentationRules
             DocumentationCommentTriviaSyntax documentationComment =
                 methodDeclarationSyntax?.GetDocumentationCommentTriviaSyntax()
                 ?? delegateDeclarationSyntax?.GetDocumentationCommentTriviaSyntax();
-            if (documentationComment == null)
+            bool canIgnoreDocumentation =
+                documentationComment == null
+                || documentationComment.Content
+                    .Where(x => x is XmlElementSyntax || x is XmlEmptyElementSyntax)
+                    .All(x => string.Equals(x.GetName()?.ToString(), XmlCommentHelper.IncludeXmlTag));
+
+            if (canIgnoreDocumentation)
             {
                 return document;
             }

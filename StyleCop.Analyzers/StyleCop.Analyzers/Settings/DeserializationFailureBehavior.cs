@@ -3,7 +3,7 @@
 
 namespace StyleCop.Analyzers
 {
-    using Newtonsoft.Json;
+    using LightJson.Serialization;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -17,8 +17,9 @@ namespace StyleCop.Analyzers
         ReturnDefaultSettings,
 
         /// <summary>
-        /// When deserialization fails, throw a <see cref="JsonException"/> containing details about the error.
+        /// When deserialization fails, throw a <see cref="JsonParseException"/> or
+        /// <see cref="InvalidSettingsException"/> containing details about the error.
         /// </summary>
-        ThrowException
+        ThrowException,
     }
 }

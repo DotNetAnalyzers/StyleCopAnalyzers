@@ -88,7 +88,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
                 this.CSharpDiagnostic().WithLocation(3, 12).WithArguments("field", "baR"),
                 this.CSharpDiagnostic().WithLocation(3, 17).WithArguments("field", "caRe"),
                 this.CSharpDiagnostic().WithLocation(3, 23).WithArguments("field", "daRE"),
-                this.CSharpDiagnostic().WithLocation(3, 29).WithArguments("field", "fAre")
+                this.CSharpDiagnostic().WithLocation(3, 29).WithArguments("field", "fAre"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -111,7 +111,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
                 this.CSharpDiagnostic().WithLocation(5, 16).WithArguments("variable", "baR"),
                 this.CSharpDiagnostic().WithLocation(5, 21).WithArguments("variable", "caRe"),
                 this.CSharpDiagnostic().WithLocation(5, 27).WithArguments("variable", "daRE"),
-                this.CSharpDiagnostic().WithLocation(5, 33).WithArguments("variable", "fAre")
+                this.CSharpDiagnostic().WithLocation(5, 33).WithArguments("variable", "fAre"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -189,6 +189,278 @@ namespace StyleCop.Analyzers.Test.NamingRules
 ";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestParameterInInterfaceMethodParameterDeclarationAsync()
+        {
+            var testCode = @"
+public interface TypeName
+{
+    void MethodName(bool abX);
+}";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithArguments("parameter", "abX").WithLocation(4, 26),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestParameterInClassMethodAsync()
+        {
+            var testCode = @"
+public class TypeName
+{
+    public void MethodName(bool abX)
+    {
+    }
+}";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithArguments("parameter", "abX").WithLocation(4, 33),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestParameterInNativeClassMethodAsync()
+        {
+            var testCode = @"
+public class TypeNameNativeMethods
+{
+    public void MethodName(bool abX)
+    {
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestParameterInImplementedInterfaceMethodDeclarationAsync()
+        {
+            var testCode = @"
+public interface Interface
+{
+    void MethodName(bool x);
+}
+
+public class Class : Interface
+{
+    public void MethodName(bool abX)
+    {
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestParameterInIndirectlyImplementedInterfaceMethodDeclarationAsync()
+        {
+            var testCode = @"
+public interface Interface1
+{
+    void MethodName(bool x);
+}
+
+public interface Interface2 : Interface1
+{
+}
+
+public class Class : Interface2
+{
+    public void MethodName(bool abX)
+    {
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestParameterInOverriddenMethodDeclarationAsync()
+        {
+            var testCode = @"
+public class BaseClass
+{
+    public virtual void MethodName(bool x)
+    {
+    }
+}
+
+public class SubClass : BaseClass
+{
+    public override void MethodName(bool abX)
+    {
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestParameterInConstructorDeclarationAsync()
+        {
+            var testCode = @"
+public class TypeName
+{
+    public TypeName(string abX)
+    {
+    }
+}";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithArguments("parameter", "abX").WithLocation(4, 28),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestParameterInIndexerDeclarationAsync()
+        {
+            var testCode = @"
+public class TypeName
+{
+    public int this[int abX]
+    {
+        get { return 0; }
+    }
+}";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithArguments("parameter", "abX").WithLocation(4, 25),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestParameterInImplementedInterfaceIndexerMethodDeclarationAsync()
+        {
+            var testCode = @"
+public interface Interface
+{
+    int this[int x] { get; }
+}
+
+public class Class : Interface
+{
+    public int this[int abX]
+    {
+        get { return 0; }
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestParameterInIndirectlyImplementedInterfaceIndexerDeclarationAsync()
+        {
+            var testCode = @"
+public interface Interface1
+{
+    int this[int x] { get; }
+}
+
+public interface Interface2 : Interface1
+{
+}
+
+public class Class : Interface2
+{
+    public int this[int abX]
+    {
+        get { return 0; }
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestParameterInOverriddenIndexerDeclarationAsync()
+        {
+            var testCode = @"
+public class BaseClass
+{
+    public virtual int this[int x]
+    {
+        get { return 0; }
+    }
+}
+
+public class SubClass : BaseClass
+{
+    public override int this[int abX]
+    {
+        get { return 0; }
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestParameterInLambdaDeclarationAsync()
+        {
+            var testCode = @"
+using System;
+public class TypeName
+{
+    public void Method()
+    {
+        Func<float, float> y = (float abX) => abX;
+    }
+}";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithArguments("parameter", "abX").WithLocation(7, 39),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestParameterInGlobalDelegateDeclarationAsync()
+        {
+            var testCode = @"
+public delegate void Delegate(double abX);
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithArguments("parameter", "abX").WithLocation(2, 38),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestParameterInInnerDelegateDeclarationAsync()
+        {
+            var testCode = @"
+public class TypeName
+{
+    public delegate void Delegate(double abX);
+}";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithArguments("parameter", "abX").WithLocation(4, 42),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]

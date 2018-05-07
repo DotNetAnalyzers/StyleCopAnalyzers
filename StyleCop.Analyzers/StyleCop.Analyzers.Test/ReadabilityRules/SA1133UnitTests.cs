@@ -94,7 +94,7 @@ public class TestClass
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(3, 47),
-                this.CSharpDiagnostic().WithLocation(9, 51)
+                this.CSharpDiagnostic().WithLocation(9, 51),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -157,7 +157,7 @@ public class TestClass
             {
                 this.CSharpDiagnostic().WithLocation(3, 47),
                 this.CSharpDiagnostic().WithLocation(7, 20),
-                this.CSharpDiagnostic().WithLocation(14, 51)
+                this.CSharpDiagnostic().WithLocation(14, 51),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -205,7 +205,7 @@ public class Ear : Attribute
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(line, column)
+                this.CSharpDiagnostic().WithLocation(line, column),
             };
 
             await this.VerifyCSharpDiagnosticAsync(codeBefore, expected, CancellationToken.None).ConfigureAwait(false);
@@ -268,7 +268,7 @@ public class Ear : Attribute
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(7, 15)
+                this.CSharpDiagnostic().WithLocation(7, 15),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -412,7 +412,7 @@ public enum ImplicitUseKindFlags { Assign }
                 this.CSharpDiagnostic().WithLocation(18, 21),
                 this.CSharpDiagnostic().WithLocation(21, 21),
                 this.CSharpDiagnostic().WithLocation(24, 21),
-                this.CSharpDiagnostic().WithLocation(27, 21)
+                this.CSharpDiagnostic().WithLocation(27, 21),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -458,7 +458,7 @@ namespace SA1133CodeFix
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(8, 5)
+                this.CSharpDiagnostic().WithLocation(8, 5),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

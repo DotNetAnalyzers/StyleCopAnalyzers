@@ -142,7 +142,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             DiagnosticResult[] expected =
                 {
                     this.CSharpDiagnostic().WithLocation(5, 17),
-                    this.CSharpDiagnostic().WithLocation(5, 25)
+                    this.CSharpDiagnostic().WithLocation(5, 25),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -171,7 +171,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             DiagnosticResult[] expected =
                 {
                     this.CSharpDiagnostic().WithLocation(5, 22),
-                    this.CSharpDiagnostic().WithLocation(5, 26)
+                    this.CSharpDiagnostic().WithLocation(5, 26),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

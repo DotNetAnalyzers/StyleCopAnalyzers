@@ -5,6 +5,8 @@ namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.Linq;
+    using System.Xml.Linq;
     using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -47,7 +49,6 @@ namespace StyleCop.Analyzers.DocumentationRules
                 SyntaxKind.OperatorDeclaration,
                 SyntaxKind.ConversionOperatorDeclaration);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> BaseTypeLikeDeclarationAction = HandleBaseTypeLikeDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> MemberDeclarationAction = HandleMemberDeclaration;
 
@@ -58,13 +59,11 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(BaseTypeLikeDeclarationAction, HandledTypeLikeDeclarationKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(MemberDeclarationAction, MemberDeclarationKinds);
+            context.RegisterSyntaxNodeAction(BaseTypeLikeDeclarationAction, HandledTypeLikeDeclarationKinds);
+            context.RegisterSyntaxNodeAction(MemberDeclarationAction, MemberDeclarationKinds);
         }
 
         private static void HandleBaseTypeLikeDeclaration(SyntaxNodeAnalysisContext context)
@@ -78,19 +77,55 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             DocumentationCommentTriviaSyntax documentation = context.Node.GetDocumentationCommentTriviaSyntax();
-
-            XmlNodeSyntax inheritDocElement = documentation?.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag);
-            if (inheritDocElement == null)
+            if (documentation == null)
             {
                 return;
             }
 
-            if (HasXmlCrefAttribute(inheritDocElement))
+            Location location;
+
+            var includeElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag) as XmlEmptyElementSyntax;
+            if (includeElement != null)
             {
-                return;
+                var declaration = context.SemanticModel.GetDeclaredSymbol(baseType, context.CancellationToken);
+                if (declaration == null)
+                {
+                    return;
+                }
+
+                var rawDocumentation = declaration.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
+                var completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
+
+                var inheritDocElement = completeDocumentation.Nodes().OfType<XElement>().FirstOrDefault(element => element.Name == XmlCommentHelper.InheritdocXmlTag);
+                if (inheritDocElement == null)
+                {
+                    return;
+                }
+
+                if (HasXmlCrefAttribute(inheritDocElement))
+                {
+                    return;
+                }
+
+                location = includeElement.GetLocation();
+            }
+            else
+            {
+                XmlNodeSyntax inheritDocElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag);
+                if (inheritDocElement == null)
+                {
+                    return;
+                }
+
+                if (HasXmlCrefAttribute(inheritDocElement))
+                {
+                    return;
+                }
+
+                location = inheritDocElement.GetLocation();
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, inheritDocElement.GetLocation()));
+            context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
         }
 
         private static void HandleMemberDeclaration(SyntaxNodeAnalysisContext context)
@@ -105,17 +140,12 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             DocumentationCommentTriviaSyntax documentation = memberSyntax.GetDocumentationCommentTriviaSyntax();
-
-            XmlNodeSyntax inheritDocElement = documentation?.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag);
-            if (inheritDocElement == null)
+            if (documentation == null)
             {
                 return;
             }
 
-            if (HasXmlCrefAttribute(inheritDocElement))
-            {
-                return;
-            }
+            Location location;
 
             ISymbol declaredSymbol = context.SemanticModel.GetDeclaredSymbol(memberSyntax, context.CancellationToken);
             if (declaredSymbol == null && memberSyntax.IsKind(SyntaxKind.EventFieldDeclaration))
@@ -128,11 +158,51 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
             }
 
+            var includeElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag) as XmlEmptyElementSyntax;
+            if (includeElement != null)
+            {
+                if (declaredSymbol == null)
+                {
+                    return;
+                }
+
+                var rawDocumentation = declaredSymbol.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
+                var completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
+
+                var inheritDocElement = completeDocumentation.Nodes().OfType<XElement>().FirstOrDefault(element => element.Name == XmlCommentHelper.InheritdocXmlTag);
+                if (inheritDocElement == null)
+                {
+                    return;
+                }
+
+                if (HasXmlCrefAttribute(inheritDocElement))
+                {
+                    return;
+                }
+
+                location = includeElement.GetLocation();
+            }
+            else
+            {
+                XmlNodeSyntax inheritDocElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag);
+                if (inheritDocElement == null)
+                {
+                    return;
+                }
+
+                if (HasXmlCrefAttribute(inheritDocElement))
+                {
+                    return;
+                }
+
+                location = inheritDocElement.GetLocation();
+            }
+
             // If we don't have a declared symbol we have some kind of field declaration. A field can not override or
             // implement anything so we want to report a diagnostic.
             if (declaredSymbol == null || !NamedTypeHelpers.IsImplementingAnInterfaceMember(declaredSymbol))
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, inheritDocElement.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
             }
         }
 
@@ -151,6 +221,11 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             return false;
+        }
+
+        private static bool HasXmlCrefAttribute(XElement inheritDocElement)
+        {
+            return inheritDocElement.Attribute(XmlCommentHelper.CrefArgumentName) != null;
         }
     }
 }

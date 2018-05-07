@@ -28,7 +28,7 @@ namespace StyleCop.Analyzers.Helpers
                 [SpecialType.System_String] = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.StringKeyword)),
                 [SpecialType.System_UInt16] = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.UShortKeyword)),
                 [SpecialType.System_UInt32] = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.UIntKeyword)),
-                [SpecialType.System_UInt64] = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ULongKeyword))
+                [SpecialType.System_UInt64] = SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.ULongKeyword)),
             }.ToImmutableDictionary();
 
         public static bool IsPredefinedType(SpecialType specialType)

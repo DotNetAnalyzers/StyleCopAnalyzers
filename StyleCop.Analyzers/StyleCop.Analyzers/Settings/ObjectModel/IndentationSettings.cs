@@ -3,38 +3,62 @@
 
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
-    using Newtonsoft.Json;
+    using LightJson;
 
-    [JsonObject(MemberSerialization.OptIn)]
     internal class IndentationSettings
     {
         /// <summary>
         /// This is the backing field for the <see cref="IndentationSize"/> property.
         /// </summary>
-        [JsonProperty("indentationSize", DefaultValueHandling = DefaultValueHandling.Include)]
         private int indentationSize;
 
         /// <summary>
         /// This is the backing field for the <see cref="TabSize"/> property.
         /// </summary>
-        [JsonProperty("tabSize", DefaultValueHandling = DefaultValueHandling.Include)]
         private int tabSize;
 
         /// <summary>
         /// This is the backing field for the <see cref="UseTabs"/> property.
         /// </summary>
-        [JsonProperty("useTabs", DefaultValueHandling = DefaultValueHandling.Include)]
         private bool useTabs;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="IndentationSettings"/> class during JSON deserialization.
+        /// Initializes a new instance of the <see cref="IndentationSettings"/> class.
         /// </summary>
-        [JsonConstructor]
         protected internal IndentationSettings()
         {
             this.indentationSize = 4;
             this.tabSize = 4;
             this.useTabs = false;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IndentationSettings"/> class.
+        /// </summary>
+        /// <param name="indentationSettingsObject">The JSON object containing the settings.</param>
+        protected internal IndentationSettings(JsonObject indentationSettingsObject)
+            : this()
+        {
+            foreach (var kvp in indentationSettingsObject)
+            {
+                switch (kvp.Key)
+                {
+                case "indentationSize":
+                    this.indentationSize = kvp.ToInt32Value();
+                    break;
+
+                case "tabSize":
+                    this.tabSize = kvp.ToInt32Value();
+                    break;
+
+                case "useTabs":
+                    this.useTabs = kvp.ToBooleanValue();
+                    break;
+
+                default:
+                    break;
+                }
+            }
         }
 
         public int IndentationSize =>

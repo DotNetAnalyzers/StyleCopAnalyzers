@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="IndentationCodeFix" xml:space="preserve">
+    <value>Fix indentation</value>
+  </data>
   <data name="RemoveRegionCodeFix" xml:space="preserve">
     <value>Remove region</value>
   </data>
@@ -151,10 +154,10 @@
     <value>A C# query clause does not begin on the same line as the previous clause, or on the next line.</value>
   </data>
   <data name="SA1102MessageFormat" xml:space="preserve">
-    <value>Query clause must follow previous clause.</value>
+    <value>Query clause should follow previous clause.</value>
   </data>
   <data name="SA1102Title" xml:space="preserve">
-    <value>Query clause must follow previous clause</value>
+    <value>Query clause should follow previous clause</value>
   </data>
   <data name="SA1103CodeFixMultipleLines" xml:space="preserve">
     <value>Place on multiple lines</value>
@@ -166,31 +169,31 @@
     <value>The clauses within a C# query expression are not all placed on the same line, and each clause is not placed on its own line.</value>
   </data>
   <data name="SA1103MessageFormat" xml:space="preserve">
-    <value>Query clauses must be on separate lines or all on one line</value>
+    <value>Query clauses should be on separate lines or all on one line</value>
   </data>
   <data name="SA1103Title" xml:space="preserve">
-    <value>Query clauses must be on separate lines or all on one line</value>
+    <value>Query clauses should be on separate lines or all on one line</value>
   </data>
   <data name="SA1104Description" xml:space="preserve">
     <value>A clause within a C# query expression begins on the same line as the previous clause, when the previous clause spans across multiple lines.</value>
   </data>
   <data name="SA1104MessageFormat" xml:space="preserve">
-    <value>Query clause must begin on new line when previous clause spans multiple lines</value>
+    <value>Query clause should begin on new line when previous clause spans multiple lines</value>
   </data>
   <data name="SA1104SA1105CodeFix" xml:space="preserve">
     <value>Insert new line</value>
   </data>
   <data name="SA1104Title" xml:space="preserve">
-    <value>Query clause must begin on new line when previous clause spans multiple lines</value>
+    <value>Query clause should begin on new line when previous clause spans multiple lines</value>
   </data>
   <data name="SA1105Description" xml:space="preserve">
     <value>A clause within a C# query expression spans across multiple lines, and does not begin on its own line.</value>
   </data>
   <data name="SA1105MessageFormat" xml:space="preserve">
-    <value>Query clauses spanning multiple lines must begin on own line</value>
+    <value>Query clauses spanning multiple lines should begin on own line</value>
   </data>
   <data name="SA1105Title" xml:space="preserve">
-    <value>Query clauses spanning multiple lines must begin on own line</value>
+    <value>Query clauses spanning multiple lines should begin on own line</value>
   </data>
   <data name="SA1106CodeFix" xml:space="preserve">
     <value>Remove empty statement</value>
@@ -199,10 +202,10 @@
     <value>The C# code contains an extra semicolon.</value>
   </data>
   <data name="SA1106MessageFormat" xml:space="preserve">
-    <value>Code must not contain empty statements</value>
+    <value>Code should not contain empty statements</value>
   </data>
   <data name="SA1106Title" xml:space="preserve">
-    <value>Code must not contain empty statements</value>
+    <value>Code should not contain empty statements</value>
   </data>
   <data name="SA1107CodeFix" xml:space="preserve">
     <value>Enter new line</value>
@@ -211,19 +214,19 @@
     <value>The C# code contains more than one statement on a single line.</value>
   </data>
   <data name="SA1107MessageFormat" xml:space="preserve">
-    <value>Code must not contain multiple statements on one line</value>
+    <value>Code should not contain multiple statements on one line</value>
   </data>
   <data name="SA1107Title" xml:space="preserve">
-    <value>Code must not contain multiple statements on one line</value>
+    <value>Code should not contain multiple statements on one line</value>
   </data>
   <data name="SA1108Description" xml:space="preserve">
     <value>A C# statement contains a comment between the declaration of the statement and the opening brace of the statement.</value>
   </data>
   <data name="SA1108MessageFormat" xml:space="preserve">
-    <value>Block statements must not contain embedded comments</value>
+    <value>Block statements should not contain embedded comments</value>
   </data>
   <data name="SA1108Title" xml:space="preserve">
-    <value>Block statements must not contain embedded comments</value>
+    <value>Block statements should not contain embedded comments</value>
   </data>
   <data name="SA1109Description" xml:space="preserve">
     <value>A C# statement contains a region tag between the declaration of the statement and the opening brace of the statement.</value>
@@ -232,61 +235,61 @@
     <value />
   </data>
   <data name="SA1109Title" xml:space="preserve">
-    <value>Block statements must not contain embedded regions</value>
+    <value>Block statements should not contain embedded regions</value>
   </data>
   <data name="SA1110Description" xml:space="preserve">
     <value>The opening parenthesis or bracket is not placed on the same line as the method/indexer/attribute/array name.</value>
   </data>
   <data name="SA1110MessageFormat" xml:space="preserve">
-    <value>Opening parenthesis or bracket must be on declaration line.</value>
+    <value>Opening parenthesis or bracket should be on declaration line.</value>
   </data>
   <data name="SA1110Title" xml:space="preserve">
-    <value>Opening parenthesis or bracket must be on declaration line</value>
+    <value>Opening parenthesis or bracket should be on declaration line</value>
   </data>
   <data name="SA1111Description" xml:space="preserve">
     <value>The closing parenthesis or bracket in a call to or declaration of a C# method/indexer/attribute/array/constructor/delegate is not placed on the same line as the last parameter.</value>
   </data>
   <data name="SA1111MessageFormat" xml:space="preserve">
-    <value>Closing parenthesis must be on line of last parameter</value>
+    <value>Closing parenthesis should be on line of last parameter</value>
   </data>
   <data name="SA1111Title" xml:space="preserve">
-    <value>Closing parenthesis must be on line of last parameter</value>
+    <value>Closing parenthesis should be on line of last parameter</value>
   </data>
   <data name="SA1112Description" xml:space="preserve">
     <value>The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or indexer, is not placed on the same line as the opening bracket when the element does not take any parameters.</value>
   </data>
   <data name="SA1112MessageFormat" xml:space="preserve">
-    <value>Closing parenthesis must be on line of opening parenthesis</value>
+    <value>Closing parenthesis should be on line of opening parenthesis</value>
   </data>
   <data name="SA1112Title" xml:space="preserve">
-    <value>Closing parenthesis must be on line of opening parenthesis</value>
+    <value>Closing parenthesis should be on line of opening parenthesis</value>
   </data>
   <data name="SA1113Description" xml:space="preserve">
     <value>A comma between two parameters in a call to a C# method or indexer, or in the declaration of a method or indexer, is not placed on the same line as the previous parameter.</value>
   </data>
   <data name="SA1113MessageFormat" xml:space="preserve">
-    <value>Comma must be on the same line as previous parameter.</value>
+    <value>Comma should be on the same line as previous parameter.</value>
   </data>
   <data name="SA1113Title" xml:space="preserve">
-    <value>Comma must be on the same line as previous parameter</value>
+    <value>Comma should be on the same line as previous parameter</value>
   </data>
   <data name="SA1114Description" xml:space="preserve">
     <value>The start of the parameter list for a method/constructor/indexer/array/operator call or declaration does not begin on the same line as the opening bracket, or on the line after the opening bracket.</value>
   </data>
   <data name="SA1114MessageFormat" xml:space="preserve">
-    <value>Parameter list must follow declaration</value>
+    <value>Parameter list should follow declaration</value>
   </data>
   <data name="SA1114Title" xml:space="preserve">
-    <value>Parameter list must follow declaration</value>
+    <value>Parameter list should follow declaration</value>
   </data>
   <data name="SA1115Description" xml:space="preserve">
     <value>A parameter within a C# method or indexer call or declaration does not begin on the same line as the previous parameter, or on the next line.</value>
   </data>
   <data name="SA1115MessageFormat" xml:space="preserve">
-    <value>The parameter must begin on the line after the previous parameter.</value>
+    <value>The parameter should begin on the line after the previous parameter.</value>
   </data>
   <data name="SA1115Title" xml:space="preserve">
-    <value>Parameter must follow comma</value>
+    <value>Parameter should follow comma</value>
   </data>
   <data name="SA1116CodeFix" xml:space="preserve">
     <value>Move first argument to next line</value>
@@ -295,19 +298,19 @@
     <value>The parameters to a C# method or indexer call or declaration span across multiple lines, but the first parameter does not start on the line after the opening bracket.</value>
   </data>
   <data name="SA1116MessageFormat" xml:space="preserve">
-    <value>The parameters must begin on the line after the declaration, whenever the parameter span across multiple lines</value>
+    <value>The parameters should begin on the line after the declaration, whenever the parameter span across multiple lines</value>
   </data>
   <data name="SA1116Title" xml:space="preserve">
-    <value>Split parameters must start on line after declaration</value>
+    <value>Split parameters should start on line after declaration</value>
   </data>
   <data name="SA1117Description" xml:space="preserve">
     <value>The parameters to a C# method or indexer call or declaration are not all on the same line or each on a separate line.</value>
   </data>
   <data name="SA1117MessageFormat" xml:space="preserve">
-    <value>The parameters must all be placed on the same line or each parameter must be placed on its own line.</value>
+    <value>The parameters should all be placed on the same line or each parameter should be placed on its own line.</value>
   </data>
   <data name="SA1117Title" xml:space="preserve">
-    <value>Parameters must be on same line or separate lines</value>
+    <value>Parameters should be on same line or separate lines</value>
   </data>
   <data name="SA1118Description" xml:space="preserve">
     <value>A parameter to a C# method/indexer/attribute/array, other than the first parameter, spans across multiple lines. If the parameter is short, place the entire parameter on a single line. Otherwise, save the contents of the parameter in a temporary variable and pass the temporary variable as a parameter.</value>
@@ -316,7 +319,7 @@
     <value>The parameter spans multiple lines</value>
   </data>
   <data name="SA1118Title" xml:space="preserve">
-    <value>Parameter must not span multiple lines</value>
+    <value>Parameter should not span multiple lines</value>
   </data>
   <data name="SA1120CodeFix" xml:space="preserve">
     <value>Remove empty comment</value>
@@ -325,10 +328,10 @@
     <value>The C# comment does not contain any comment text.</value>
   </data>
   <data name="SA1120MessageFormat" xml:space="preserve">
-    <value>Comments must contain text</value>
+    <value>Comments should contain text</value>
   </data>
   <data name="SA1120Title" xml:space="preserve">
-    <value>Comments must contain text</value>
+    <value>Comments should contain text</value>
   </data>
   <data name="SA1121CodeFix" xml:space="preserve">
     <value>Replace with built-in type</value>
@@ -358,7 +361,7 @@
     <value>The C# code contains a region within the body of a code element.</value>
   </data>
   <data name="SA1123MessageFormat" xml:space="preserve">
-    <value>Region must not be located within a code element.</value>
+    <value>Region should not be located within a code element.</value>
   </data>
   <data name="SA1123Title" xml:space="preserve">
     <value>Do not place regions within elements</value>
@@ -397,10 +400,10 @@
     <value>Each type constraint clause for a generic type parameter should be listed on a line of code by itself.</value>
   </data>
   <data name="SA1127MessageFormat" xml:space="preserve">
-    <value>Generic type constraints must be on their own line</value>
+    <value>Generic type constraints should be on their own line</value>
   </data>
   <data name="SA1127Title" xml:space="preserve">
-    <value>Generic type constraints must be on their own line</value>
+    <value>Generic type constraints should be on their own line</value>
   </data>
   <data name="SA1128CodeFix" xml:space="preserve">
     <value>Place constructor initializer on own line</value>
@@ -425,6 +428,9 @@
   </data>
   <data name="SA1129Title" xml:space="preserve">
     <value>Do not use default value type constructor</value>
+  </data>
+  <data name="SA1130CodeFix" xml:space="preserve">
+    <value>Replace with lambda.</value>
   </data>
   <data name="SA1130Description" xml:space="preserve">
     <value>Lambda expressions are more succinct and easier to read than anonymous methods, so they should are preferred whenever the two are functionally equivalent.</value>
@@ -481,7 +487,55 @@
     <value>Each attribute should be placed on its own line of code.</value>
   </data>
   <data name="SA1134Title" xml:space="preserve">
-    <value>Attributes must not share line</value>
+    <value>Attributes should not share line</value>
+  </data>
+  <data name="SA1136CodeFix" xml:space="preserve">
+    <value>Place enum values own their own lines</value>
+  </data>
+  <data name="SA1136Description" xml:space="preserve">
+    <value>Enum values should be placed on their own lines for maximum readability.</value>
+  </data>
+  <data name="SA1136MessageFormat" xml:space="preserve">
+    <value>Enum values should be on separate lines</value>
+  </data>
+  <data name="SA1136Title" xml:space="preserve">
+    <value>Enum values should be on separate lines</value>
+  </data>
+  <data name="SA1137Description" xml:space="preserve">
+    <value>Elements at the same level in the syntax tree should have the same indentation.</value>
+  </data>
+  <data name="SA1137MessageFormat" xml:space="preserve">
+    <value>Elements should have the same indentation</value>
+  </data>
+  <data name="SA1137Title" xml:space="preserve">
+    <value>Elements should have the same indentation</value>
+  </data>
+  <data name="SA1139Description" xml:space="preserve">
+    <value>Use literal suffix notation instead of casting, in order to improve readability, avoid bugs related to illegal casts and ensure that optimal IL is produced.</value>
+  </data>
+  <data name="SA1139MessageFormat" xml:space="preserve">
+    <value>Use literal suffix notation instead of casting</value>
+  </data>
+  <data name="SA1139Title" xml:space="preserve">
+    <value>Use literal suffix notation instead of casting</value>
+  </data>
+  <data name="SA1139CodeFix" xml:space="preserve">
+    <value>Use literal suffix notation instead of casting</value>
+  </data>
+  <data name="SA1135CodeFix" xml:space="preserve">
+    <value>Qualify using directive</value>
+  </data>
+  <data name="SA1135Description" xml:space="preserve">
+    <value>All using directives should be qualified.</value>
+  </data>
+  <data name="SA1135MessageFormatNamespace" xml:space="preserve">
+    <value>Using directive for namespace '{0}' should be qualified</value>
+  </data>
+  <data name="SA1135MessageFormatType" xml:space="preserve">
+    <value>Using directive for type '{0}' should be qualified</value>
+  </data>
+  <data name="SA1135Title" xml:space="preserve">
+    <value>Using directives should be qualified</value>
   </data>
   <data name="SX1101CodeFix" xml:space="preserve">
     <value>Remove 'this.' prefix</value>

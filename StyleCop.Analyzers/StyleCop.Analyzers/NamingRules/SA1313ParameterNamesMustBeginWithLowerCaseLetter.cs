@@ -41,7 +41,6 @@ namespace StyleCop.Analyzers.NamingRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> ParameterAction = HandleParameter;
 
         /// <inheritdoc/>
@@ -51,12 +50,10 @@ namespace StyleCop.Analyzers.NamingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(ParameterAction, SyntaxKind.Parameter);
+            context.RegisterSyntaxNodeAction(ParameterAction, SyntaxKind.Parameter);
         }
 
         private static void HandleParameter(SyntaxNodeAnalysisContext context)
@@ -89,7 +86,7 @@ namespace StyleCop.Analyzers.NamingRules
                 return;
             }
 
-            // Parameter names must begin with lower-case letter
+            // Parameter names should begin with lower-case letter
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), name));
         }
 
@@ -131,7 +128,8 @@ namespace StyleCop.Analyzers.NamingRules
 
             if (methodSymbol.IsOverride)
             {
-                if (methodSymbol.OverriddenMethod.Parameters[index].Name == syntax.Identifier.ValueText)
+                // OverridenMethod can be null in case of an invalid method declaration -> exit because there is no meaningful analysis to be done.
+                if ((methodSymbol.OverriddenMethod == null) || (methodSymbol.OverriddenMethod.Parameters[index].Name == syntax.Identifier.ValueText))
                 {
                     return true;
                 }

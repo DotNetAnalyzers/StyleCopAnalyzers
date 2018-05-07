@@ -73,7 +73,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                this.CSharpDiagnostic(SA110xQueryClauses.SA1105Descriptor).WithLocation(15, 51)
+                this.CSharpDiagnostic(SA110xQueryClauses.SA1105Descriptor).WithLocation(15, 51),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -137,7 +137,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                this.CSharpDiagnostic(SA110xQueryClauses.SA1105Descriptor).WithLocation(15, 51)
+                this.CSharpDiagnostic(SA110xQueryClauses.SA1105Descriptor).WithLocation(15, 51),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -213,7 +213,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                this.CSharpDiagnostic(SA110xQueryClauses.SA1105Descriptor).WithLocation(14, 24)
+                this.CSharpDiagnostic(SA110xQueryClauses.SA1105Descriptor).WithLocation(14, 24),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -277,7 +277,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                this.CSharpDiagnostic(SA110xQueryClauses.SA1105Descriptor).WithLocation(15, 62)
+                this.CSharpDiagnostic(SA110xQueryClauses.SA1105Descriptor).WithLocation(15, 62),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

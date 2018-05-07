@@ -37,15 +37,14 @@ namespace StyleCop.Analyzers.NamingRules
         /// The ID for diagnostics produced by the <see cref="SA1308VariableNamesMustNotBePrefixed"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1308";
-        private const string Title = "Variable names must not be prefixed";
-        private const string MessageFormat = "Field '{0}' must not begin with the prefix '{1}'";
+        private const string Title = "Variable names should not be prefixed";
+        private const string MessageFormat = "Field '{0}' should not begin with the prefix '{1}'";
         private const string Description = "A field name in C# is prefixed with 'm_', 's_', or 't_'.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1308.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> FieldDeclarationAction = HandleFieldDeclaration;
 
         /// <inheritdoc/>
@@ -55,12 +54,10 @@ namespace StyleCop.Analyzers.NamingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(FieldDeclarationAction, SyntaxKind.FieldDeclaration);
+            context.RegisterSyntaxNodeAction(FieldDeclarationAction, SyntaxKind.FieldDeclaration);
         }
 
         private static void HandleFieldDeclaration(SyntaxNodeAnalysisContext context)
@@ -97,7 +94,7 @@ namespace StyleCop.Analyzers.NamingRules
                     continue;
                 }
 
-                // Field '{name}' must not begin with the prefix '{prefix}'
+                // Field '{name}' should not begin with the prefix '{prefix}'
                 string name = identifier.ValueText;
                 string prefix = name.Substring(0, 2);
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), name, prefix));

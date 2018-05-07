@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using TestHelper;
@@ -12,7 +13,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     {
         public abstract string Keyword { get; }
 
-        public virtual bool SupportsCodeFix => false;
+        public abstract bool SupportsCodeFix { get; }
 
         [Fact]
         public async Task TestOneElementAsync()
@@ -20,7 +21,10 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             var testCode = @"%1 Foo
 {
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("%1", this.Keyword), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+
+            testCode = testCode.Replace("%1", this.Keyword);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -32,18 +36,29 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 %1 Bar
 {
 }";
-            var fixedCode = @"%1 Foo
+
+            var fixedCode = new[]
+            {
+                @"%1 Foo
 {
 }
-";
+",
+                @"%1 Bar
+{
+}",
+            };
+
+            testCode = testCode.Replace("%1", this.Keyword);
+            fixedCode = fixedCode.Select(c => c.Replace("%1", this.Keyword)).ToArray();
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, this.Keyword.Length + 2);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("%1", this.Keyword), expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode.Replace("%1", this.Keyword), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+
             if (this.SupportsCodeFix)
             {
-                await this.VerifyCSharpFixAsync(testCode.Replace("%1", this.Keyword), fixedCode.Replace("%1", this.Keyword), cancellationToken: CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpFixAsync(new[] { testCode }, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
             }
         }
 
@@ -59,22 +74,37 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 %1 FooBar
 {
 }";
-            var fixedCode = @"%1 Foo
+
+            var fixedCode = new[]
+            {
+                @"%1 Foo
 {
 }
-";
+",
+                @"%1 Bar
+{
+}
+",
+                @"%1 FooBar
+{
+}",
+            };
+
+            testCode = testCode.Replace("%1", this.Keyword);
+            fixedCode = fixedCode.Select(code => code.Replace("%1", this.Keyword)).ToArray();
 
             DiagnosticResult[] expected =
-                {
-                    this.CSharpDiagnostic().WithLocation(4, this.Keyword.Length + 2),
-                    this.CSharpDiagnostic().WithLocation(7, this.Keyword.Length + 2)
-                };
+            {
+                this.CSharpDiagnostic().WithLocation(4, this.Keyword.Length + 2),
+                this.CSharpDiagnostic().WithLocation(7, this.Keyword.Length + 2),
+            };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("%1", this.Keyword), expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode.Replace("%1", this.Keyword), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+
             if (this.SupportsCodeFix)
             {
-                await this.VerifyCSharpFixAsync(testCode.Replace("%1", this.Keyword), fixedCode.Replace("%1", this.Keyword), cancellationToken: CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpFixAsync(new[] { testCode }, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
             }
         }
 
@@ -89,18 +119,31 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 #pragma warning disable SomeWarning
 #pragma warning restore SomeWarning
 }";
-            var fixedCode = @"%1 Foo
+
+            var fixedCode = new[]
+            {
+                @"%1 Foo
 {
 }
-";
+",
+                @"%1 Bar
+{
+#pragma warning disable SomeWarning
+#pragma warning restore SomeWarning
+}",
+            };
+
+            testCode = testCode.Replace("%1", this.Keyword);
+            fixedCode = fixedCode.Select(code => code.Replace("%1", this.Keyword)).ToArray();
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, this.Keyword.Length + 2);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("%1", this.Keyword), expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode.Replace("%1", this.Keyword), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+
             if (this.SupportsCodeFix)
             {
-                await this.VerifyCSharpFixAsync(testCode.Replace("%1", this.Keyword), fixedCode.Replace("%1", this.Keyword), cancellationToken: CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpFixAsync(new[] { testCode }, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
             }
         }
 
@@ -116,18 +159,30 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 }";
 
             // See https://github.com/dotnet/roslyn/issues/3999
-            var fixedCode = @"%1 Foo
+            var fixedCode = new[]
+            {
+                @"%1 Foo
 {
 }
-";
+",
+                @"%1 Bar
+{
+#pragma warning disable SomeWarning
+}",
+            };
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, this.Keyword.Length + 2);
 
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("%1", this.Keyword), expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode.Replace("%1", this.Keyword), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+
+            foreach (var code in fixedCode)
+            {
+                await this.VerifyCSharpDiagnosticAsync(code.Replace("%1", this.Keyword), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            }
+
             if (this.SupportsCodeFix)
             {
-                await this.VerifyCSharpFixAsync(testCode.Replace("%1", this.Keyword), fixedCode.Replace("%1", this.Keyword), cancellationToken: CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpFixAsync(new[] { testCode.Replace("%1", this.Keyword) }, fixedCode.Select(c => c.Replace("%1", this.Keyword)).ToArray(), cancellationToken: CancellationToken.None).ConfigureAwait(false);
             }
         }
 
@@ -142,18 +197,31 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 #if true
 #endif
 }";
-            var fixedCode = @"%1 Foo
+
+            var fixedCode = new[]
+            {
+                @"%1 Foo
 {
 }
-";
+",
+                @"%1 Bar
+{
+#if true
+#endif
+}",
+            };
+
+            testCode = testCode.Replace("%1", this.Keyword);
+            fixedCode = fixedCode.Select(code => code.Replace("%1", this.Keyword)).ToArray();
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, this.Keyword.Length + 2);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("%1", this.Keyword), expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode.Replace("%1", this.Keyword), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+
             if (this.SupportsCodeFix)
             {
-                await this.VerifyCSharpFixAsync(testCode.Replace("%1", this.Keyword), fixedCode.Replace("%1", this.Keyword), cancellationToken: CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpFixAsync(new[] { testCode }, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
             }
         }
 
@@ -170,21 +238,34 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 }";
 
             // See https://github.com/dotnet/roslyn/issues/3999
-            var fixedCode = @"%1 Foo
+            var fixedCode = new[]
+            {
+                @"%1 Foo
 {
 #if true
 }
 
 #endif
-";
+",
+                @"
+#if true
+%1 Bar
+{
+#endif
+}",
+            };
+
+            testCode = testCode.Replace("%1", this.Keyword);
+            fixedCode = fixedCode.Select(code => code.Replace("%1", this.Keyword)).ToArray();
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, this.Keyword.Length + 2);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("%1", this.Keyword), expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode.Replace("%1", this.Keyword), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+
             if (this.SupportsCodeFix)
             {
-                await this.VerifyCSharpFixAsync(testCode.Replace("%1", this.Keyword), fixedCode.Replace("%1", this.Keyword), cancellationToken: CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpFixAsync(new[] { testCode }, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
             }
         }
     }

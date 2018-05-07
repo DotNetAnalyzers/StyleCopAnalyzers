@@ -4,6 +4,8 @@
 namespace StyleCop.Analyzers.DocumentationRules
 {
     using System.Collections.Immutable;
+    using System.Linq;
+    using System.Xml.Linq;
     using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -15,10 +17,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     /// <remarks>
     /// <para>C# syntax provides a mechanism for inserting documentation for classes and elements directly into the
-    /// code, through the use of XML documentation headers. For an introduction to these headers and a description of
-    /// the header syntax, see the following article:
-    /// <see href="http://msdn.microsoft.com/en-us/magazine/cc302121.aspx">XML Comments Let You Build Documentation
-    /// Directly From Your Visual Studio .NET Source Files</see>.</para>
+    /// code, through the use of XML documentation headers.</para>
     ///
     /// <para>A violation of this rule occurs when the documentation header for a partial element (an element with the
     /// partial attribute) contains an empty <c>&lt;summary&gt;</c> tag or <c>&lt;content&gt;</c> tag which does not
@@ -74,8 +73,8 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1607";
-        private const string Title = "Partial element documentation must have summary text";
-        private const string MessageFormat = "Partial element documentation must have summary text";
+        private const string Title = "Partial element documentation should have summary text";
+        private const string MessageFormat = "Partial element documentation should have summary text";
         private const string Description = "The <summary> or <content> tag within the documentation header for a C# code element is empty.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1607.md";
 
@@ -87,17 +86,41 @@ namespace StyleCop.Analyzers.DocumentationRules
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, XmlNodeSyntax syntax, Location[] diagnosticLocations)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, bool needsComment, XmlNodeSyntax syntax, XElement completeDocumentation, Location[] diagnosticLocations)
         {
-            if (syntax != null)
+            if (completeDocumentation != null)
             {
-                if (XmlCommentHelper.IsConsideredEmpty(syntax))
+                var summaryTag = completeDocumentation.Nodes().OfType<XElement>().FirstOrDefault(element => element.Name == XmlCommentHelper.SummaryXmlTag);
+                var contentTag = completeDocumentation.Nodes().OfType<XElement>().FirstOrDefault(element => element.Name == XmlCommentHelper.ContentXmlTag);
+
+                if ((summaryTag == null) && (contentTag == null))
                 {
-                    foreach (var location in diagnosticLocations)
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
-                    }
+                    // handled by SA1605
+                    return;
                 }
+
+                if (!XmlCommentHelper.IsConsideredEmpty(summaryTag) || !XmlCommentHelper.IsConsideredEmpty(contentTag))
+                {
+                    return;
+                }
+            }
+            else
+            {
+                if (syntax == null)
+                {
+                    // handled by SA1605
+                    return;
+                }
+
+                if (!XmlCommentHelper.IsConsideredEmpty(syntax))
+                {
+                    return;
+                }
+            }
+
+            foreach (var location in diagnosticLocations)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
             }
         }
     }

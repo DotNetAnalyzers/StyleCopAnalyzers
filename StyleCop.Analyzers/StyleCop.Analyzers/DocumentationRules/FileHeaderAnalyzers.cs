@@ -15,15 +15,15 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// <summary>
     /// Analyzer for all file header related diagnostics.
     /// </summary>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1633.md">SA1633 File must have header</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1634.md">SA1634 File header must show copyright</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1635.md">SA1635 File header must have copyright text</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1636.md">SA1636 File header copyright text must match</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1637.md">SA1637 File header must contain file name</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1638.md">SA1638 File header file name documentation must match file name</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1639.md">SA1639 File header must have summary</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1640.md">SA1640 File header must have valid company text</seealso>
-    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1641.md">SA1641 File header company name text must match</seealso>
+    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1633.md">SA1633 File should have header</seealso>
+    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1634.md">SA1634 File header should show copyright</seealso>
+    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1635.md">SA1635 File header should have copyright text</seealso>
+    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1636.md">SA1636 File header copyright text should match</seealso>
+    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1637.md">SA1637 File header should contain file name</seealso>
+    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1638.md">SA1638 File header file name documentation should match file name</seealso>
+    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1639.md">SA1639 File header should have summary</seealso>
+    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1640.md">SA1640 File header should have valid company text</seealso>
+    /// <seealso href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1641.md">SA1641 File header company name text should match</seealso>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class FileHeaderAnalyzers : DiagnosticAnalyzer
     {
@@ -171,6 +171,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+
             context.RegisterCompilationStartAction(CompilationStartAction);
         }
 
@@ -181,7 +184,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             // Disabling SA1633 will disable all other header related diagnostics.
             if (!compilation.IsAnalyzerSuppressed(SA1633Identifier))
             {
-                context.RegisterSyntaxTreeActionHonorExclusions((ctx, settings) => Analyzer.HandleSyntaxTree(ctx, settings, compilation));
+                context.RegisterSyntaxTreeAction((ctx, settings) => Analyzer.HandleSyntaxTree(ctx, settings, compilation));
             }
         }
 
@@ -244,7 +247,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                             return;
                         }
 
-                        if (!CompareCopyrightText(settings.DocumentationRules, fileHeader.CopyrightText))
+                        if (!CompareCopyrightText(context, settings.DocumentationRules, fileHeader.CopyrightText))
                         {
                             context.ReportDiagnostic(Diagnostic.Create(SA1636Descriptor, fileHeader.GetLocation(context.Tree)));
                             return;
@@ -316,7 +319,8 @@ namespace StyleCop.Analyzers.DocumentationRules
                     return;
                 }
 
-                var settingsCopyrightText = documentationSettings.CopyrightText;
+                string fileName = Path.GetFileName(context.Tree.FilePath);
+                var settingsCopyrightText = documentationSettings.GetCopyrightText(fileName);
                 if (string.Equals(settingsCopyrightText, DocumentationSettings.DefaultCopyrightText, StringComparison.OrdinalIgnoreCase))
                 {
                     // The copyright text is meaningless until the company name is configured by the user.
@@ -324,7 +328,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
 
                 // trim any leading / trailing new line or whitespace characters (those are a result of the XML formatting)
-                if (!CompareCopyrightText(documentationSettings, copyrightText.Trim('\r', '\n', ' ', '\t')))
+                if (!CompareCopyrightText(context, documentationSettings, copyrightText.Trim('\r', '\n', ' ', '\t')))
                 {
                     var location = fileHeader.GetElementLocation(context.Tree, copyrightElement);
                     context.ReportDiagnostic(Diagnostic.Create(SA1636Descriptor, location));
@@ -375,10 +379,11 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
             }
 
-            private static bool CompareCopyrightText(DocumentationSettings documentationSettings, string copyrightText)
+            private static bool CompareCopyrightText(SyntaxTreeAnalysisContext context, DocumentationSettings documentationSettings, string copyrightText)
             {
                 // make sure that both \n and \r\n are accepted from the settings.
-                var reformattedCopyrightTextParts = documentationSettings.CopyrightText.Replace("\r\n", "\n").Split('\n');
+                string fileName = Path.GetFileName(context.Tree.FilePath);
+                var reformattedCopyrightTextParts = documentationSettings.GetCopyrightText(fileName).Replace("\r\n", "\n").Split('\n');
                 var fileHeaderCopyrightTextParts = copyrightText.Replace("\r\n", "\n").Split('\n');
 
                 if (reformattedCopyrightTextParts.Length != fileHeaderCopyrightTextParts.Length)

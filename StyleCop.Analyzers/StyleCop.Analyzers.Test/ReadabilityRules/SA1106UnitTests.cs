@@ -378,7 +378,7 @@ class TestClass
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(6, 53),
-                this.CSharpDiagnostic().WithLocation(11, 62)
+                this.CSharpDiagnostic().WithLocation(11, 62),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

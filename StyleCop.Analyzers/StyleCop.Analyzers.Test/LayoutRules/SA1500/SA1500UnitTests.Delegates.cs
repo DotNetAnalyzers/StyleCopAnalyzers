@@ -280,7 +280,7 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(60, 29),
 
                 // Invalid delegate #12
-                this.CSharpDiagnostic().WithLocation(64, 9)
+                this.CSharpDiagnostic().WithLocation(64, 9),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

@@ -20,7 +20,7 @@ namespace StyleCop.Analyzers.SpecialRules {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class SpecialResources {
@@ -58,35 +58,6 @@ namespace StyleCop.Analyzers.SpecialRules {
             }
             set {
                 resourceCulture = value;
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Visual Studio 2015 Update 1 contains a bug which can cause diagnostics to occasionally not display in the Errors window. When this occurs, it is impossible to use the code fixes to address style violations reported during a build. This analyzer works around the bug (dotnet/roslyn#7446).
-        ///
-        ///When this analyzer is enabled, all diagnostics will eventually be reported in the Error window, but the performance of the analyzers is reduced. The rule is disabled for maximum performance, but can be enabled if users no [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string SA0000Description {
-            get {
-                return ResourceManager.GetString("SA0000Description", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to n/a.
-        /// </summary>
-        internal static string SA0000MessageFormat {
-            get {
-                return ResourceManager.GetString("SA0000MessageFormat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Workaround incomplete diagnostics in Visual Studio 2015 Update 1.
-        /// </summary>
-        internal static string SA0000Title {
-            get {
-                return ResourceManager.GetString("SA0000Title", resourceCulture);
             }
         }
         

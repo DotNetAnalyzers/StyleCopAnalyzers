@@ -7,7 +7,9 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Threading;
     using System.Threading.Tasks;
     using Analyzers.DocumentationRules;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Test.Helpers;
     using TestHelper;
     using Xunit;
 
@@ -86,7 +88,7 @@ public class ClassName
             var expectedDiagnostics = new[]
             {
                 this.CSharpDiagnostic().WithLocation(13, 9).WithArguments("example"),
-                this.CSharpDiagnostic().WithLocation(14, 9).WithArguments("exception")
+                this.CSharpDiagnostic().WithLocation(14, 9).WithArguments("exception"),
             };
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
         }
@@ -142,6 +144,187 @@ public class ClassName
     public string JoinStrings(string first, string second) { return first + second; }
 }";
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", element), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Checks an element with a custom (unsupported) empty element does not give an error.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestMemberWithCustomElementAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Class name.
+/// </summary>
+public class ClassName
+{
+    /// <summary>
+    /// Join together two strings.
+    /// </summary>
+    /// <param name=""first"">First string.</param>
+    /// <param name=""second"">Second string.</param>
+    /// <custom1/>
+    public string JoinStrings(string first, string second) { return first + second; }
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that an orphaned include documentation statement does not produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestOrphanedIncludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <include file='AllFilled.xml' path='/TestClass/TestMethod/*'/>
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that member with valid elements in the included documentation does not produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestMemberWithValidElementsInIncludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>Test class</summary>
+public class TestClass
+{
+    /// <include file='AllFilled.xml' path='/TestClass/TestMethod/*'/>
+    public void TestMethod(int first) { }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that member with an &lt;inheritdoc&gt; tag in the included documentation does not produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestMemberWithInheritDocInIncludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>Test class</summary>
+public class TestClass
+{
+    /// <include file='InheritDoc.xml' path='/TestClass/TestMethod/*'/>
+    public void TestMethod(int first) { }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that member with a single invalid elements in the included documentation does produce the expected diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestMemberWithOneInvalidElementsInIncludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>Test class</summary>
+public class TestClass
+{
+    /// <include file='AllButOneFilled.xml' path='/TestClass/TestMethod/*'/>
+    public void TestMethod(int first) { }
+}
+";
+            var expected = this.CSharpDiagnostic().WithLocation(5, 9).WithArguments("permission");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that member with multiple invalid elements in the included documentation does produce the expected diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestMemberWithMultipleInvalidElementsInIncludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>Test class</summary>
+public class TestClass
+{
+    /// <include file='NoneFilled.xml' path='/TestClass/TestMethod/*'/>
+    public void TestMethod(int first) { }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(5, 9).WithArguments("remarks"),
+                this.CSharpDiagnostic().WithLocation(5, 9).WithArguments("example"),
+                this.CSharpDiagnostic().WithLocation(5, 9).WithArguments("permission"),
+                this.CSharpDiagnostic().WithLocation(5, 9).WithArguments("exception"),
+            };
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected override Project ApplyCompilationOptions(Project project)
+        {
+            var resolver = new TestXmlReferenceResolver();
+
+            string contentAllFilled = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+  <TestMethod>
+    <summary>This is a test method.</summary>
+    <param name=""first"">The first parameter.</param>
+    <remarks>Test remarks</remarks>
+    <example>Test example</example>
+    <permission>Test permission</permission>
+    <exception>Test exception</exception>
+  </TestMethod>
+</TestClass>
+";
+            resolver.XmlReferences.Add("AllFilled.xml", contentAllFilled);
+
+            string contentInheritDoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+  <TestMethod>
+    <inheritdoc/>
+  </TestMethod>
+</TestClass>
+";
+            resolver.XmlReferences.Add("InheritDoc.xml", contentInheritDoc);
+
+            string contentAllButOneFilled = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+  <TestMethod>
+    <summary>This is a test method.</summary>
+    <param name=""first"">The first parameter.</param>
+    <remarks>Test remarks</remarks>
+    <example>Test example</example>
+    <permission></permission>
+    <exception>Test exception</exception>
+  </TestMethod>
+</TestClass>
+";
+            resolver.XmlReferences.Add("AllButOneFilled.xml", contentAllButOneFilled);
+
+            string contentNoneFilled = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+  <TestMethod>
+    <summary>This is a test method.</summary>
+    <param name=""first"">The first parameter.</param>
+    <remarks></remarks>
+    <example></example>
+    <permission></permission>
+    <exception></exception>
+  </TestMethod>
+</TestClass>
+";
+            resolver.XmlReferences.Add("NoneFilled.xml", contentNoneFilled);
+
+            project = base.ApplyCompilationOptions(project);
+            project = project.WithCompilationOptions(project.CompilationOptions.WithXmlReferenceResolver(resolver));
+            return project;
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

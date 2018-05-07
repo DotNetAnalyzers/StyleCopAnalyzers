@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
-    using System;
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
@@ -152,7 +151,7 @@ namespace Spam
             {
                 this.CSharpDiagnostic().WithLocation(5, 5).WithArguments("character", "int"),
                 this.CSharpDiagnostic().WithLocation(14, 5).WithArguments("MemoryStream", "Stream"),
-                this.CSharpDiagnostic().WithLocation(21, 5).WithArguments("Character", "int")
+                this.CSharpDiagnostic().WithLocation(21, 5).WithArguments("Character", "int"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -165,7 +164,7 @@ namespace Spam
         {
             var testCode = @"
 using System;
-using Microsoft.VisualStudio;
+using Microsoft.Win32;
 using MyList = System.Collections.Generic.List<int>;
 
 #if true
@@ -176,8 +175,9 @@ using BThing = System.Threading.Tasks;
 using AThing = System.Threading;
 #endif";
 
-            var fixedTestCode = @"using System;
-using Microsoft.VisualStudio;
+            var fixedTestCode = @"
+using System;
+using Microsoft.Win32;
 using MyList = System.Collections.Generic.List<int>;
 
 #if true

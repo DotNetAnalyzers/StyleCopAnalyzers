@@ -22,7 +22,7 @@ namespace StyleCop.Analyzers.Helpers
             [AccessLevel.Internal] = "internal",
             [AccessLevel.ProtectedInternal] = "protected internal",
             [AccessLevel.Protected] = "protected",
-            [AccessLevel.Private] = "private"
+            [AccessLevel.Private] = "private",
         };
 
         /// <summary>Determines the access level for the given <paramref name="modifiers"/>.</summary>

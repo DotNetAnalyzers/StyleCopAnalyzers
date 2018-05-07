@@ -6,9 +6,12 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Text;
+
     using StyleCop.Analyzers.OrderingRules;
     using TestHelper;
     using Xunit;
@@ -143,7 +146,7 @@ public struct FooStruct { }
                 this.CSharpDiagnostic().WithLocation(11, 5).WithArguments("conversion", "operator"),
                 this.CSharpDiagnostic().WithLocation(12, 19).WithArguments("property", "conversion"),
                 this.CSharpDiagnostic().WithLocation(14, 17).WithArguments("method", "struct"),
-                this.CSharpDiagnostic().WithLocation(16, 19).WithArguments("indexer", "class")
+                this.CSharpDiagnostic().WithLocation(16, 19).WithArguments("indexer", "class"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -197,7 +200,7 @@ public struct FooStruct { }
                 this.CSharpDiagnostic().WithLocation(10, 5).WithArguments("conversion", "operator"),
                 this.CSharpDiagnostic().WithLocation(11, 19).WithArguments("property", "conversion"),
                 this.CSharpDiagnostic().WithLocation(13, 17).WithArguments("method", "struct"),
-                this.CSharpDiagnostic().WithLocation(15, 19).WithArguments("indexer", "class")
+                this.CSharpDiagnostic().WithLocation(15, 19).WithArguments("indexer", "class"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -239,7 +242,7 @@ public struct FooStruct { }
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(4, 5).WithArguments("event", "property"),
-                this.CSharpDiagnostic().WithLocation(6, 12).WithArguments("indexer", "method")
+                this.CSharpDiagnostic().WithLocation(6, 12).WithArguments("indexer", "method"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -270,22 +273,24 @@ public struct FooStruct { }
 ";
 
             // We don't care about the syntax errors.
+            var expectedLinePosition1 = new LinePosition(5, 5);
+            var expectedLinePosition2 = new LinePosition(6, 1);
             var expected = new[]
             {
-                 new DiagnosticResult
-                 {
-                     Id = "CS1585",
-                     Message = "Member modifier 'public' must precede the member type and name",
-                     Severity = DiagnosticSeverity.Error,
-                     Locations = new[] { new DiagnosticResultLocation("Test0.cs", 5, 5) }
-                 },
-                 new DiagnosticResult
-                 {
-                     Id = "CS1519",
-                     Message = "Invalid token '}' in class, struct, or interface member declaration",
-                     Severity = DiagnosticSeverity.Error,
-                     Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 1) }
-                 }
+                new DiagnosticResult
+                {
+                    Id = "CS1585",
+                    Message = "Member modifier 'public' must precede the member type and name",
+                    Severity = DiagnosticSeverity.Error,
+                    Spans = new[] { new FileLinePositionSpan("Test0.cs", expectedLinePosition1, expectedLinePosition1) },
+                },
+                new DiagnosticResult
+                {
+                    Id = "CS1519",
+                    Message = "Invalid token '}' in class, struct, or interface member declaration",
+                    Severity = DiagnosticSeverity.Error,
+                    Spans = new[] { new FileLinePositionSpan("Test0.cs", expectedLinePosition2, expectedLinePosition2) },
+                },
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

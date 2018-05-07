@@ -21,7 +21,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// line, or unless it is preceded by an opening parenthesis, in which case there should be no space between the
     /// parenthesis and the brace.</para>
     ///
-    /// <para>An opening brace must always be followed by a single space, unless it is the last character on the
+    /// <para>An opening brace should always be followed by a single space, unless it is the last character on the
     /// line.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
@@ -32,15 +32,14 @@ namespace StyleCop.Analyzers.SpacingRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1012";
-        private const string Title = "Opening braces must be spaced correctly";
-        private const string MessageFormat = "Opening brace must{0} be {1} by a space.";
+        private const string Title = "Opening braces should be spaced correctly";
+        private const string MessageFormat = "Opening brace should{0} be {1} by a space.";
         private const string Description = "An opening brace within a C# element is not spaced correctly.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1012.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
 
         /// <inheritdoc/>
@@ -50,12 +49,10 @@ namespace StyleCop.Analyzers.SpacingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxTreeActionHonorExclusions(SyntaxTreeAction);
+            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
         }
 
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -83,7 +80,7 @@ namespace StyleCop.Analyzers.SpacingRules
             {
                 if (followedBySpace)
                 {
-                    // Opening brace must{} be {followed} by a space.
+                    // Opening brace should{} be {followed} by a space.
                     var properties = TokenSpacingProperties.RemoveFollowing;
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, " not", "followed"));
                 }
@@ -91,18 +88,18 @@ namespace StyleCop.Analyzers.SpacingRules
                 return;
             }
 
-            bool precededBySpace = token.IsFirstInLine() || token.IsPrecededByWhitespace();
+            bool precededBySpace = token.IsFirstInLine() || token.IsPrecededByWhitespace(context.CancellationToken);
 
             if (!precededBySpace)
             {
-                // Opening brace must{} be {preceded} by a space.
+                // Opening brace should{} be {preceded} by a space.
                 var properties = TokenSpacingProperties.InsertPreceding;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, string.Empty, "preceded"));
             }
 
             if (!token.IsLastInLine() && !followedBySpace)
             {
-                // Opening brace must{} be {followed} by a space.
+                // Opening brace should{} be {followed} by a space.
                 var properties = TokenSpacingProperties.InsertFollowing;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, string.Empty, "followed"));
             }

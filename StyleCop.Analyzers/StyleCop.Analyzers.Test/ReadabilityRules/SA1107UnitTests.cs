@@ -75,7 +75,7 @@ class ClassName
                 this.CSharpDiagnostic().WithLocation(7, 20),
                 this.CSharpDiagnostic().WithLocation(7, 38),
                 this.CSharpDiagnostic().WithLocation(14, 11),
-                this.CSharpDiagnostic().WithLocation(16, 50)
+                this.CSharpDiagnostic().WithLocation(16, 50),
             };
 
             string fixedCode = @"

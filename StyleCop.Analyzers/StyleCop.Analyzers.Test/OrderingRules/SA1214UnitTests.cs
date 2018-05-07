@@ -95,7 +95,7 @@ public class Foo
 
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(5, 33)
+                this.CSharpDiagnostic().WithLocation(5, 33),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -135,7 +135,7 @@ public class Foo
 
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(4, 58)
+                this.CSharpDiagnostic().WithLocation(4, 58),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -198,7 +198,7 @@ public struct Foo
 
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(5, 33)
+                this.CSharpDiagnostic().WithLocation(5, 33),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -243,7 +243,7 @@ public class Foo
             var expected = new[]
             {
                 this.CSharpDiagnostic().WithLocation(11, 33),
-                this.CSharpDiagnostic().WithLocation(18, 37)
+                this.CSharpDiagnostic().WithLocation(18, 37),
 
                 // line 21 should be reported by SA1201
             };

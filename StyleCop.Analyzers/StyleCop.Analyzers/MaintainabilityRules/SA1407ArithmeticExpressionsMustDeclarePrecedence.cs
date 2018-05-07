@@ -46,8 +46,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1407";
-        private const string Title = "Arithmetic expressions must declare precedence";
-        private const string MessageFormat = "Arithmetic expressions must declare precedence";
+        private const string Title = "Arithmetic expressions should declare precedence";
+        private const string MessageFormat = "Arithmetic expressions should declare precedence";
         private const string Description = "A C# statement contains a complex arithmetic expression which omits parenthesis around operators.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1407.md";
 
@@ -64,7 +64,6 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 SyntaxKind.LeftShiftExpression,
                 SyntaxKind.RightShiftExpression);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> BinaryExpressionAction = HandleBinaryExpression;
 
         /// <inheritdoc/>
@@ -74,12 +73,10 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(BinaryExpressionAction, HandledBinaryExpressionKinds);
+            context.RegisterSyntaxNodeAction(BinaryExpressionAction, HandledBinaryExpressionKinds);
         }
 
         private static void HandleBinaryExpression(SyntaxNodeAnalysisContext context)

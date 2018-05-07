@@ -20,7 +20,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// <para>A violation of this rule occurs when the code elements within a file do not follow a standard ordering
     /// scheme.</para>
     ///
-    /// <para>To comply with this rule, elements at the file root level or within a namespace must be positioned in the
+    /// <para>To comply with this rule, elements at the file root level or within a namespace should be positioned in the
     /// following order:</para>
     ///
     /// <list type="bullet">
@@ -34,7 +34,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// <item>Classes</item>
     /// </list>
     ///
-    /// <para>Within a class, struct, or interface, elements must be positioned in the following order:</para>
+    /// <para>Within a class, struct, or interface, elements should be positioned in the following order:</para>
     ///
     /// <list type="bullet">
     /// <item>Fields</item>
@@ -166,10 +166,9 @@ namespace StyleCop.Analyzers.OrderingRules
             [SyntaxKind.IndexerDeclaration] = "indexer",
             [SyntaxKind.MethodDeclaration] = "method",
             [SyntaxKind.ConversionOperatorDeclaration] = "conversion",
-            [SyntaxKind.OperatorDeclaration] = "operator"
+            [SyntaxKind.OperatorDeclaration] = "operator",
         };
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CompilationUnitAction = HandleCompilationUnit;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> NamespaceDeclarationAction = HandleNamespaceDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> TypeDeclarationAction = HandleTypeDeclaration;
@@ -181,14 +180,12 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(CompilationUnitAction, SyntaxKind.CompilationUnit);
-            context.RegisterSyntaxNodeActionHonorExclusions(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(TypeDeclarationAction, TypeDeclarationKinds);
+            context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
+            context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeAction(TypeDeclarationAction, TypeDeclarationKinds);
         }
 
         private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)

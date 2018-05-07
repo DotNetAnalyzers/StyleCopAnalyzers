@@ -73,7 +73,7 @@ namespace Bar
             {
                 this.CSharpDiagnostic().WithLocation(3, 5),
                 this.CSharpDiagnostic().WithLocation(9, 5),
-                this.CSharpDiagnostic().WithLocation(11, 5)
+                this.CSharpDiagnostic().WithLocation(11, 5),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -96,15 +96,16 @@ namespace Food
     using System;
 }";
 
-            var fixedTestCode = @"namespace Food
+            var fixedTestCode = @"using global::System;
+using global::System.IO;
+using global::System.Linq;
+using System.Threading;
+using XYZ = System.IO;
+
+namespace Food
 {
     using global::Food;
-    using global::System;
-    using global::System.IO;
-    using global::System.Linq;
     using System;
-    using System.Threading;
-    using XYZ = System.IO;
 }";
 
             DiagnosticResult[] expected =
@@ -134,16 +135,17 @@ namespace Food
     using System;
 }";
 
-            var fixedTestCode = @"namespace Food
+            var fixedTestCode = @"using Food;
+using global::Food;
+using global::System;
+using global::System.IO;
+using global::System.Linq;
+using System.Threading;
+
+namespace Food
 {
-    using Food;
     using global::Food;
-    using global::Food;
-    using global::System;
-    using global::System.IO;
-    using global::System.Linq;
     using System;
-    using System.Threading;
 }";
 
             DiagnosticResult[] expected =
@@ -151,7 +153,7 @@ namespace Food
                 this.CSharpDiagnostic().WithLocation(1, 1),
                 this.CSharpDiagnostic().WithLocation(3, 1),
                 this.CSharpDiagnostic().WithLocation(4, 1),
-                this.CSharpDiagnostic().WithLocation(5, 1)
+                this.CSharpDiagnostic().WithLocation(5, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -178,7 +180,7 @@ namespace Food
         {
             var testCode = @"
 using System;
-using Microsoft.VisualStudio;
+using Microsoft.Win32;
 using MyList = System.Collections.Generic.List<int>;
 
 #if true
@@ -189,7 +191,8 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis;
 #endif";
 
-            var fixedTestCode = @"using Microsoft.VisualStudio;
+            var fixedTestCode = @"
+using Microsoft.Win32;
 using System;
 using MyList = System.Collections.Generic.List<int>;
 

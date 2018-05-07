@@ -14,6 +14,20 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     /// </summary>
     public class SA1638UnitTests : FileHeaderTestBase
     {
+        private const string DecoratedXmlMultiLineHeaderTestSettings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""companyName"": ""FooCorp"",
+      ""copyrightText"": ""  Copyright (c) {companyName}. All rights reserved."",
+      ""headerDecoration"": ""-----------------------------------------------------------------------"",
+    }
+  }
+}
+";
+
+        private bool useDecoratedXmlMultiLineHeaderTestSettings;
+
         /// <summary>
         /// Verifies that a file header with a mismatching file attribute in the copyright element will produce the expected diagnostic message.
         /// </summary>
@@ -44,9 +58,56 @@ namespace Bar
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that a file header with a mismatching file attribute in the copyright element will produce the expected diagnostic message.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestCopyrightElementWithMismatchingFileAttributeAndDecorationAsync()
+        {
+            var testCode = @"// -----------------------------------------------------------------------
+// <copyright file=""wrongfile.cs"" company=""FooCorp"">
+//   Copyright (c) FooCorp. All rights reserved.
+// </copyright>
+// -----------------------------------------------------------------------
+
+namespace Bar
+{
+}
+";
+            var fixedCode = @"// -----------------------------------------------------------------------
+// <copyright file=""Test0.cs"" company=""FooCorp"">
+//   Copyright (c) FooCorp. All rights reserved.
+// </copyright>
+// -----------------------------------------------------------------------
+
+namespace Bar
+{
+}
+";
+
+            this.useDecoratedXmlMultiLineHeaderTestSettings = true;
+
+            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1638Descriptor).WithLocation(2, 4);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new FileHeaderCodeFixProvider();
+        }
+
+        /// <inheritdoc/>
+        protected override string GetSettings()
+        {
+            if (this.useDecoratedXmlMultiLineHeaderTestSettings)
+            {
+                return DecoratedXmlMultiLineHeaderTestSettings;
+            }
+
+            return base.GetSettings();
         }
     }
 }

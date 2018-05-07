@@ -3,11 +3,12 @@
 
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
+    using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Text.RegularExpressions;
-    using Newtonsoft.Json;
+    using LightJson;
 
-    [JsonObject(MemberSerialization.OptIn)]
     internal class DocumentationSettings
     {
         /// <summary>
@@ -16,83 +17,88 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         internal const string DefaultCompanyName = "PlaceholderCompany";
 
         /// <summary>
-        /// The default value for the <see cref="CopyrightText"/> property.
+        /// The default value for the <see cref="GetCopyrightText(string)"/> method.
         /// </summary>
         internal const string DefaultCopyrightText = "Copyright (c) {companyName}. All rights reserved.";
 
         /// <summary>
+        /// The default value for the <see cref="DocumentationCulture"/> property.
+        /// </summary>
+        internal const string DefaultDocumentationCulture = "en-US";
+
+        /// <summary>
         /// This is the backing field for the <see cref="CompanyName"/> property.
         /// </summary>
-        [JsonProperty("companyName", DefaultValueHandling = DefaultValueHandling.Ignore)]
         private string companyName;
 
         /// <summary>
-        /// This is the backing field for the <see cref="CopyrightText"/> property.
+        /// This is the backing field for the <see cref="GetCopyrightText(string)"/> method.
         /// </summary>
-        [JsonProperty("copyrightText", DefaultValueHandling = DefaultValueHandling.Ignore)]
         private string copyrightText;
 
         /// <summary>
-        /// This is the cache for the <see cref="CopyrightText"/> property.
+        /// This is the cache for the <see cref="GetCopyrightText(string)"/> method.
         /// </summary>
         private string copyrightTextCache;
 
         /// <summary>
+        /// This is the backing field for the <see cref="HeaderDecoration"/> property.
+        /// </summary>
+        private string headerDecoration;
+
+        /// <summary>
         /// This is the backing field for the <see cref="Variables"/> property.
         /// </summary>
-        [JsonProperty("variables", DefaultValueHandling = DefaultValueHandling.Ignore)]
         private ImmutableDictionary<string, string>.Builder variables;
 
         /// <summary>
         /// This is the backing field for the <see cref="XmlHeader"/> property.
         /// </summary>
-        [JsonProperty("xmlHeader", DefaultValueHandling = DefaultValueHandling.Include)]
         private bool xmlHeader;
 
         /// <summary>
         /// This is the backing field for the <see cref="DocumentExposedElements"/> property.
         /// </summary>
-        [JsonProperty("documentExposedElements", DefaultValueHandling = DefaultValueHandling.Include)]
         private bool documentExposedElements;
 
         /// <summary>
         /// This is the backing field for the <see cref="DocumentInternalElements"/> property.
         /// </summary>
-        [JsonProperty("documentInternalElements", DefaultValueHandling = DefaultValueHandling.Include)]
         private bool documentInternalElements;
 
         /// <summary>
         /// This is the backing field for the <see cref="DocumentPrivateElements"/> property.
         /// </summary>
-        [JsonProperty("documentPrivateElements", DefaultValueHandling = DefaultValueHandling.Include)]
         private bool documentPrivateElements;
 
         /// <summary>
         /// This is the backing field for the <see cref="DocumentInterfaces"/> property.
         /// </summary>
-        [JsonProperty("documentInterfaces", DefaultValueHandling = DefaultValueHandling.Include)]
         private bool documentInterfaces;
 
         /// <summary>
         /// This is the backing field for the <see cref="DocumentPrivateFields"/> property.
         /// </summary>
-        [JsonProperty("documentPrivateFields", DefaultValueHandling = DefaultValueHandling.Include)]
         private bool documentPrivateFields;
 
         /// <summary>
         /// This is the backing field for the <see cref="FileNamingConvention"/> property.
         /// </summary>
-        [JsonProperty("fileNamingConvention", DefaultValueHandling = DefaultValueHandling.Include)]
         private FileNamingConvention fileNamingConvention;
+
+        /// <summary>
+        /// This is the backing field for the <see cref="DocumentationCulture"/> property.
+        /// </summary>
+        private string documentationCulture;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DocumentationSettings"/> class during JSON deserialization.
         /// </summary>
-        [JsonConstructor]
         protected internal DocumentationSettings()
         {
             this.companyName = DefaultCompanyName;
             this.copyrightText = DefaultCopyrightText;
+            this.headerDecoration = null;
             this.variables = ImmutableDictionary<string, string>.Empty.ToBuilder();
             this.xmlHeader = true;
 
@@ -103,6 +109,86 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.documentPrivateFields = false;
 
             this.fileNamingConvention = FileNamingConvention.StyleCop;
+
+            this.documentationCulture = DefaultDocumentationCulture;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DocumentationSettings"/> class.
+        /// </summary>
+        /// <param name="documentationSettingsObject">The JSON object containing the settings.</param>
+        protected internal DocumentationSettings(JsonObject documentationSettingsObject)
+            : this()
+        {
+            foreach (var kvp in documentationSettingsObject)
+            {
+                switch (kvp.Key)
+                {
+                case "documentExposedElements":
+                    this.documentExposedElements = kvp.ToBooleanValue();
+                    break;
+
+                case "documentInternalElements":
+                    this.documentInternalElements = kvp.ToBooleanValue();
+                    break;
+
+                case "documentPrivateElements":
+                    this.documentPrivateElements = kvp.ToBooleanValue();
+                    break;
+
+                case "documentInterfaces":
+                    this.documentInterfaces = kvp.ToBooleanValue();
+                    break;
+
+                case "documentPrivateFields":
+                    this.documentPrivateFields = kvp.ToBooleanValue();
+                    break;
+
+                case "companyName":
+                    this.companyName = kvp.ToStringValue();
+                    break;
+                case "copyrightText":
+                    this.copyrightText = kvp.ToStringValue();
+                    break;
+
+                case "headerDecoration":
+                    this.headerDecoration = kvp.ToStringValue();
+                    break;
+
+                case "variables":
+                    kvp.AssertIsObject();
+                    foreach (var child in kvp.Value.AsJsonObject)
+                    {
+                        string name = child.Key;
+
+                        if (!Regex.IsMatch(name, "^[a-zA-Z0-9]+$"))
+                        {
+                            continue;
+                        }
+
+                        string value = child.ToStringValue();
+
+                        this.variables.Add(name, value);
+                    }
+
+                    break;
+
+                case "xmlHeader":
+                    this.xmlHeader = kvp.ToBooleanValue();
+                    break;
+
+                case "fileNamingConvention":
+                    this.fileNamingConvention = kvp.ToEnumValue<FileNamingConvention>();
+                    break;
+
+                case "documentationCulture":
+                    this.documentationCulture = kvp.ToStringValue();
+                    break;
+
+                default:
+                    break;
+                }
+            }
         }
 
         public string CompanyName
@@ -113,16 +199,11 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             }
         }
 
-        public string CopyrightText
+        public string HeaderDecoration
         {
             get
             {
-                if (this.copyrightTextCache == null)
-                {
-                    this.copyrightTextCache = this.BuildCopyrightText();
-                }
-
-                return this.copyrightTextCache;
+                return this.headerDecoration;
             }
         }
 
@@ -160,8 +241,31 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         public FileNamingConvention FileNamingConvention =>
             this.fileNamingConvention;
 
-        private string BuildCopyrightText()
+        public string DocumentationCulture =>
+            this.documentationCulture;
+
+        public string GetCopyrightText(string fileName)
         {
+            string copyrightText = this.copyrightTextCache;
+            if (copyrightText != null)
+            {
+                return copyrightText;
+            }
+
+            var expandedCopyrightText = this.BuildCopyrightText(fileName);
+            if (!expandedCopyrightText.Value)
+            {
+                // Unable to cache the copyright text due to use of a {fileName} variable.
+                return expandedCopyrightText.Key;
+            }
+
+            this.copyrightTextCache = expandedCopyrightText.Key;
+            return this.copyrightTextCache;
+        }
+
+        private KeyValuePair<string, bool> BuildCopyrightText(string fileName)
+        {
+            bool canCache = true;
             string pattern = Regex.Escape("{") + "(?<Property>[a-zA-Z0-9]+)" + Regex.Escape("}");
             MatchEvaluator evaluator =
                 match =>
@@ -182,13 +286,22 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                             return value;
                         }
 
+                        if (key == "fileName")
+                        {
+                            // The 'fileName' built-in variable is only applied when the user did not include an
+                            // explicit value for a custom 'fileName' variable.
+                            canCache = false;
+                            return fileName;
+                        }
+
                         break;
                     }
 
                     return "[InvalidReference]";
                 };
 
-            return Regex.Replace(this.copyrightText, pattern, evaluator);
+            string expanded = Regex.Replace(this.copyrightText, pattern, evaluator);
+            return new KeyValuePair<string, bool>(expanded, canCache);
         }
     }
 }

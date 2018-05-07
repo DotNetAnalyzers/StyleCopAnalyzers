@@ -330,6 +330,25 @@ class Class1
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(2445, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2445")]
+        public async Task TestPrivateMethodMissingReturnsAsync()
+        {
+            var testCode = @"
+internal class ClassName
+{
+    ///
+    private int Test1(int arg) { throw new System.NotImplementedException(); }
+
+    /**
+     *
+     */
+    private int Test2(int arg) { throw new System.NotImplementedException(); }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override Project ApplyCompilationOptions(Project project)
         {

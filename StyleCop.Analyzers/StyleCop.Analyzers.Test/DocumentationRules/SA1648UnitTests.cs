@@ -6,6 +6,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Helpers;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
     using TestHelper;
@@ -212,6 +214,122 @@ class Test : TestBase
 }}";
 
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, type), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a class that includes the inheritdoc will not produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestCorrectClassInheritDocAsync()
+        {
+            var testCode = @"
+/// <summary>Base class</summary>
+public class BaseClass { }
+
+/// <include file='ClassInheritDoc.xml' path='/TestClass/*'/>
+public class TestClass : BaseClass
+{
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a class that includes an invalid inheritdoc will produce the expected diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestIncorrectClassInheritDocAsync()
+        {
+            var testCode = @"
+/// <include file='ClassInheritDoc.xml' path='/TestClass/*'/>
+public class TestClass
+{
+}
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(2, 5);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a method that includes the inheritdoc will not produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestCorrectMethodInheritDocAsync()
+        {
+            var testCode = @"
+/// <summary>Base class</summary>
+public interface ITest 
+{
+  /// <summary>My test method,</summary>
+  void TestMethod();
+}
+
+/// <summary>Test class</summary>
+public class TestClass : ITest
+{
+  /// <include file='MethodInheritDoc.xml' path='/TestClass/TestMethod/*'/>
+  public void TestMethod()
+  {
+  }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a method that includes an invalid inheritdoc will produce the expected diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestIncorrectMethodInheritDocAsync()
+        {
+            var testCode = @"
+/// <summary>Base class</summary>
+public interface ITest 
+{
+}
+
+/// <summary>Test class</summary>
+public class TestClass : ITest
+{
+  /// <include file='MethodInheritDoc.xml' path='/TestClass/TestMethod/*'/>
+  public void TestMethod() { }
+}
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(10, 7);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected override Project ApplyCompilationOptions(Project project)
+        {
+            var resolver = new TestXmlReferenceResolver();
+
+            string contentClassInheritDoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+  <inheritdoc/>
+</TestClass>
+";
+            resolver.XmlReferences.Add("ClassInheritDoc.xml", contentClassInheritDoc);
+
+            string contentMethodInheritDoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+  <TestMethod>
+    <inheritdoc/>
+  </TestMethod>
+</TestClass>
+";
+            resolver.XmlReferences.Add("MethodInheritDoc.xml", contentMethodInheritDoc);
+
+            project = base.ApplyCompilationOptions(project);
+            project = project.WithCompilationOptions(project.CompilationOptions.WithXmlReferenceResolver(resolver));
+            return project;
         }
 
         /// <inheritdoc/>

@@ -131,7 +131,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
                 this.CSharpDiagnostic().WithLocation(18, 27),
 
                 // InvalidClass6
-                this.CSharpDiagnostic().WithLocation(21, 5)
+                this.CSharpDiagnostic().WithLocation(21, 5),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

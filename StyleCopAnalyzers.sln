@@ -1,21 +1,23 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26711.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StyleCop.Analyzers", "StyleCop.Analyzers\StyleCop.Analyzers\StyleCop.Analyzers.csproj", "{3B052737-06CE-4182-AE0F-08EB82DFA73E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers", "StyleCop.Analyzers\StyleCop.Analyzers\StyleCop.Analyzers.csproj", "{3B052737-06CE-4182-AE0F-08EB82DFA73E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{E359E48C-93DA-4C17-AA0E-94D4831BE5AB}"
 	ProjectSection(SolutionItems) = preProject
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StyleCop.Analyzers.Test", "StyleCop.Analyzers\StyleCop.Analyzers.Test\StyleCop.Analyzers.Test.csproj", "{3EB54B68-A7AA-45E8-A97B-A0746712140B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.Test", "StyleCop.Analyzers\StyleCop.Analyzers.Test\StyleCop.Analyzers.Test.csproj", "{3EB54B68-A7AA-45E8-A97B-A0746712140B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StyleCop.Analyzers.Vsix", "StyleCop.Analyzers\StyleCop.Analyzers.Vsix\StyleCop.Analyzers.Vsix.csproj", "{06BEBB30-AC91-4470-8930-22F7722A25E4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.Vsix", "StyleCop.Analyzers\StyleCop.Analyzers.Vsix\StyleCop.Analyzers.Vsix.csproj", "{06BEBB30-AC91-4470-8930-22F7722A25E4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5F9532E9-B126-402A-B338-54431A4882B2}"
 	ProjectSection(SolutionItems) = preProject
+		.codecov.yml = .codecov.yml
+		.editorconfig = .editorconfig
 		appveyor.yml = appveyor.yml
 		CONTRIBUTING.md = CONTRIBUTING.md
 		LICENSE = LICENSE
@@ -26,6 +28,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{A0840AD0
 	ProjectSection(SolutionItems) = preProject
 		build\build.ps1 = build\build.ps1
 		build\check-key.ps1 = build\check-key.ps1
+		StyleCop.Analyzers\Directory.Build.props = StyleCop.Analyzers\Directory.Build.props
+		StyleCop.Analyzers\Directory.Build.targets = StyleCop.Analyzers\Directory.Build.targets
 		build\keys.ps1 = build\keys.ps1
 		build\opencover-report.ps1 = build\opencover-report.ps1
 		build\push.ps1 = build\push.ps1
@@ -34,10 +38,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{A0840AD0
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "documentation", "documentation", "{19DD9E9D-877A-4492-9B7F-2E681DD58308}"
 	ProjectSection(SolutionItems) = preProject
+		documentation\AlternativeRules.md = documentation\AlternativeRules.md
 		documentation\Configuration.md = documentation\Configuration.md
+		documentation\DocumentationRules.md = documentation\DocumentationRules.md
+		documentation\DotNetCli.md = documentation\DotNetCli.md
 		documentation\EnableConfiguration.md = documentation\EnableConfiguration.md
 		documentation\KnownChanges.md = documentation\KnownChanges.md
-		documentation\SA0000Roslyn7446Workaround.md = documentation\SA0000Roslyn7446Workaround.md
+		documentation\LayoutRules.md = documentation\LayoutRules.md
+		documentation\MaintainabilityRules.md = documentation\MaintainabilityRules.md
+		documentation\NamingRules.md = documentation\NamingRules.md
+		documentation\OrderingRules.md = documentation\OrderingRules.md
+		documentation\ReadabilityRules.md = documentation\ReadabilityRules.md
 		documentation\SA0001.md = documentation\SA0001.md
 		documentation\SA0002.md = documentation\SA0002.md
 		documentation\SA1000.md = documentation\SA1000.md
@@ -104,6 +115,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "documentation", "documentat
 		documentation\SA1132.md = documentation\SA1132.md
 		documentation\SA1133.md = documentation\SA1133.md
 		documentation\SA1134.md = documentation\SA1134.md
+		documentation\SA1135.md = documentation\SA1135.md
+		documentation\SA1136.md = documentation\SA1136.md
+		documentation\SA1137.md = documentation\SA1137.md
+		documentation\SA1139.md = documentation\SA1139.md
 		documentation\SA1200.md = documentation\SA1200.md
 		documentation\SA1201.md = documentation\SA1201.md
 		documentation\SA1202.md = documentation\SA1202.md
@@ -136,6 +151,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "documentation", "documentat
 		documentation\SA1311.md = documentation\SA1311.md
 		documentation\SA1312.md = documentation\SA1312.md
 		documentation\SA1313.md = documentation\SA1313.md
+		documentation\SA1314.md = documentation\SA1314.md
 		documentation\SA1400.md = documentation\SA1400.md
 		documentation\SA1401.md = documentation\SA1401.md
 		documentation\SA1402.md = documentation\SA1402.md
@@ -149,6 +165,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "documentation", "documentat
 		documentation\SA1410.md = documentation\SA1410.md
 		documentation\SA1411.md = documentation\SA1411.md
 		documentation\SA1412.md = documentation\SA1412.md
+		documentation\SA1413.md = documentation\SA1413.md
 		documentation\SA1500.md = documentation\SA1500.md
 		documentation\SA1501.md = documentation\SA1501.md
 		documentation\SA1502.md = documentation\SA1502.md
@@ -223,14 +240,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "documentation", "documentat
 		documentation\SA1650.md = documentation\SA1650.md
 		documentation\SA1651.md = documentation\SA1651.md
 		documentation\SA1652.md = documentation\SA1652.md
+		documentation\SpacingRules.md = documentation\SpacingRules.md
+		documentation\SpecialRules.md = documentation\SpecialRules.md
 		documentation\SX1101.md = documentation\SX1101.md
 		documentation\SX1309.md = documentation\SX1309.md
 		documentation\SX1309S.md = documentation\SX1309S.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StyleCopTester", "StyleCop.Analyzers\StyleCopTester\StyleCopTester.csproj", "{C4B7092C-E1A9-4CF7-AE4C-D6A146392BA7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCopTester", "StyleCop.Analyzers\StyleCopTester\StyleCopTester.csproj", "{C4B7092C-E1A9-4CF7-AE4C-D6A146392BA7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StyleCop.Analyzers.CodeFixes", "StyleCop.Analyzers\StyleCop.Analyzers.CodeFixes\StyleCop.Analyzers.CodeFixes.csproj", "{F91F7815-4E63-4698-B053-E57B2D707194}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.CodeFixes", "StyleCop.Analyzers\StyleCop.Analyzers.CodeFixes\StyleCop.Analyzers.CodeFixes.csproj", "{F91F7815-4E63-4698-B053-E57B2D707194}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.Test.CSharp7", "StyleCop.Analyzers\StyleCop.Analyzers.Test.CSharp7\StyleCop.Analyzers.Test.CSharp7.csproj", "{F10E4AEF-86A2-4394-8B6F-1A3468B72F1D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -258,8 +279,15 @@ Global
 		{F91F7815-4E63-4698-B053-E57B2D707194}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F91F7815-4E63-4698-B053-E57B2D707194}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F91F7815-4E63-4698-B053-E57B2D707194}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F10E4AEF-86A2-4394-8B6F-1A3468B72F1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F10E4AEF-86A2-4394-8B6F-1A3468B72F1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F10E4AEF-86A2-4394-8B6F-1A3468B72F1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F10E4AEF-86A2-4394-8B6F-1A3468B72F1D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {634EBA9E-C7C7-49FA-818A-2B1ED668D4B3}
 	EndGlobalSection
 EndGlobal

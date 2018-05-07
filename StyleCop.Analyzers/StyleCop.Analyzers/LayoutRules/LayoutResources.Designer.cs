@@ -20,7 +20,7 @@ namespace StyleCop.Analyzers.LayoutRules {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class LayoutResources {
@@ -80,6 +80,15 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Expand all single line blocks.
+        /// </summary>
+        internal static string SA1501CodeFixAll {
+            get {
+                return ResourceManager.GetString("SA1501CodeFixAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Expand element.
         /// </summary>
         internal static string SA1502CodeFix {
@@ -98,7 +107,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Element must not be on a single line.
+        ///   Looks up a localized string similar to Element should not be on a single line.
         /// </summary>
         internal static string SA1502MessageFormat {
             get {
@@ -107,7 +116,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Element must not be on a single line.
+        ///   Looks up a localized string similar to Element should not be on a single line.
         /// </summary>
         internal static string SA1502Title {
             get {
@@ -242,11 +251,92 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fix blank lines.
+        /// </summary>
+        internal static string SA1516CodeFixAll {
+            get {
+                return ResourceManager.GetString("SA1516CodeFixAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Insert new line.
         /// </summary>
-        internal static string SA1516CodeFix {
+        internal static string SA1516CodeFixInsert {
             get {
-                return ResourceManager.GetString("SA1516CodeFix", resourceCulture);
+                return ResourceManager.GetString("SA1516CodeFixInsert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove blank line.
+        /// </summary>
+        internal static string SA1516CodeFixRemove {
+            get {
+                return ResourceManager.GetString("SA1516CodeFixRemove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjacent C# elements are not separated by a blank line..
+        /// </summary>
+        internal static string SA1516Description {
+            get {
+                return ResourceManager.GetString("SA1516Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjacent using directives should not be separated by a blank line..
+        /// </summary>
+        internal static string SA1516DescriptionOmit {
+            get {
+                return ResourceManager.GetString("SA1516DescriptionOmit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjacent using directives should be separated by a blank line..
+        /// </summary>
+        internal static string SA1516DescriptionRequire {
+            get {
+                return ResourceManager.GetString("SA1516DescriptionRequire", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Elements should be separated by blank line.
+        /// </summary>
+        internal static string SA1516MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1516MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Using directives should not be separated by blank line.
+        /// </summary>
+        internal static string SA1516MessageFormatOmit {
+            get {
+                return ResourceManager.GetString("SA1516MessageFormatOmit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Using directives should be separated by blank line.
+        /// </summary>
+        internal static string SA1516MessageFormatRequire {
+            get {
+                return ResourceManager.GetString("SA1516MessageFormatRequire", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Elements should be separated by blank line.
+        /// </summary>
+        internal static string SA1516Title {
+            get {
+                return ResourceManager.GetString("SA1516Title", resourceCulture);
             }
         }
         
@@ -269,7 +359,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code must not contain blank lines at the end of the file.
+        ///   Looks up a localized string similar to Code should not contain blank lines at the end of the file.
         /// </summary>
         internal static string SA1518DescriptionAllow {
             get {
@@ -296,7 +386,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code must not contain blank lines at the end of the file.
+        ///   Looks up a localized string similar to Code should not contain blank lines at the end of the file.
         /// </summary>
         internal static string SA1518MessageFormatAllow {
             get {

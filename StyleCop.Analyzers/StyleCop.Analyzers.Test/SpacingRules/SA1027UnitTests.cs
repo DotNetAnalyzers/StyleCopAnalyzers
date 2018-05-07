@@ -89,7 +89,7 @@ public  class   Foo
                 this.CSharpDiagnostic().WithLocation(6, 1),
                 this.CSharpDiagnostic().WithLocation(7, 1),
                 this.CSharpDiagnostic().WithLocation(8, 1),
-                this.CSharpDiagnostic().WithLocation(9, 1)
+                this.CSharpDiagnostic().WithLocation(9, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

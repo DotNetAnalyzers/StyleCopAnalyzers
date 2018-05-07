@@ -87,7 +87,7 @@ namespace TestNamespace
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(8, 50),
-                this.CSharpDiagnostic().WithLocation(13, 5)
+                this.CSharpDiagnostic().WithLocation(13, 5),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -125,7 +125,7 @@ using System.Runtime.InteropServices;
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(7, 31)
+                this.CSharpDiagnostic().WithLocation(7, 31),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -161,7 +161,7 @@ namespace TestNamespace
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(4, 31)
+                this.CSharpDiagnostic().WithLocation(4, 31),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -198,7 +198,7 @@ public class TestClass
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(3, 47),
-                this.CSharpDiagnostic().WithLocation(3, 93)
+                this.CSharpDiagnostic().WithLocation(3, 93),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -241,7 +241,7 @@ namespace TestNamespace
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(5, 50),
-                this.CSharpDiagnostic().WithLocation(8, 50)
+                this.CSharpDiagnostic().WithLocation(8, 50),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -325,7 +325,7 @@ namespace TestNamespace
                 this.CSharpDiagnostic().WithLocation(14, 54),
                 this.CSharpDiagnostic().WithLocation(17, 54),
                 this.CSharpDiagnostic().WithLocation(20, 54),
-                this.CSharpDiagnostic().WithLocation(23, 54)
+                this.CSharpDiagnostic().WithLocation(23, 54),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -389,7 +389,7 @@ namespace TestNamespace
             {
                 this.CSharpDiagnostic().WithLocation(8, 70),
                 this.CSharpDiagnostic().WithLocation(8, 104),
-                this.CSharpDiagnostic().WithLocation(14, 9)
+                this.CSharpDiagnostic().WithLocation(14, 9),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

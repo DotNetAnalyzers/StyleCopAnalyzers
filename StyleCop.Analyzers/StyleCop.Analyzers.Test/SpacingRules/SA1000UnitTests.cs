@@ -647,6 +647,39 @@ default :
         }
 
         [Fact]
+        [WorkItem(2419, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2419")]
+        public async Task TestVarIdentifierAsync()
+        {
+            string statementWithoutSpace = @"int[] x = null; x.Select(var => var.ToString());";
+
+            string statementWithSpace = @"int[] x = null; x.Select(var => var .ToString());";
+
+            await this.TestKeywordStatementAsync(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace).ConfigureAwait(false);
+
+            // this case is handled by SA1019, so it shouldn't be reported here
+            await this.TestKeywordStatementAsync(statementWithSpace, EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that calls on 'var' are handled properly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        /// <seealso cref="SA1008UnitTests.TestVarIdentifierInvocationAsync"/>
+        [Fact]
+        [WorkItem(2419, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2419")]
+        public async Task TestVarIdentifierInvocationAsync()
+        {
+            string statementWithoutSpace = @"Func<int>[] x = null; x.Select(var => var());";
+
+            string statementWithSpace = @"Func<int>[] x = null; x.Select(var => var ());";
+
+            await this.TestKeywordStatementAsync(statementWithoutSpace, EmptyDiagnosticResults, statementWithoutSpace).ConfigureAwait(false);
+
+            // this case is handled by SA1008, so it shouldn't be reported here
+            await this.TestKeywordStatementAsync(statementWithSpace, EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestNewConstructorContraintStatement_TypeAsync()
         {
             string statementWithSpace = @"public class Foo<T> where T : new ()
@@ -838,6 +871,20 @@ default:
         }
 
         [Fact]
+        public async Task TestVarKeywordAsync()
+        {
+            string statementWithoutSpace = @"var@x = ""test"";";
+
+            string statementWithSpace = @"var @x = ""test"";";
+
+            await this.TestKeywordStatementAsync(statementWithSpace, EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("var", string.Empty, "followed").WithLocation(12, 13);
+
+            await this.TestKeywordStatementAsync(statementWithoutSpace, expected, statementWithSpace).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestMissingSelectTokenAsync()
         {
             string testCode = @"
@@ -852,13 +899,7 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                new DiagnosticResult
-                {
-                    Id = "CS0742",
-                    Severity = DiagnosticSeverity.Error,
-                    Message = "A query body must end with a select clause or a group clause",
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 42) }
-                }
+                this.CSharpCompilerError("CS0742").WithMessage("A query body must end with a select clause or a group clause").WithLocation(6, 42),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -906,12 +947,12 @@ class ClassName
             return new TokenSpacingCodeFixProvider();
         }
 
-        private Task TestKeywordStatementAsync(string statement, DiagnosticResult expected, string fixedStatement, string returnType = "void", bool asyncMethod = false)
+        protected Task TestKeywordStatementAsync(string statement, DiagnosticResult expected, string fixedStatement, string returnType = "void", bool asyncMethod = false)
         {
             return this.TestKeywordStatementAsync(statement, new[] { expected }, fixedStatement, returnType, asyncMethod);
         }
 
-        private async Task TestKeywordStatementAsync(string statement, DiagnosticResult[] expected, string fixedStatement, string returnType = "void", bool asyncMethod = false)
+        protected async Task TestKeywordStatementAsync(string statement, DiagnosticResult[] expected, string fixedStatement, string returnType = "void", bool asyncMethod = false)
         {
             string testCodeFormat = @"
 using System;

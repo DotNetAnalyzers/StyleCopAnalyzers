@@ -160,7 +160,7 @@ public class TestClass2 { }
                 this.CSharpDiagnostic().WithLocation(4, 22).WithArguments("protected", "private"),
                 this.CSharpDiagnostic().WithLocation(5, 31).WithArguments("protected internal", "protected"),
                 this.CSharpDiagnostic().WithLocation(6, 21).WithArguments("internal", "protected internal"),
-                this.CSharpDiagnostic().WithLocation(7, 19).WithArguments("public", "internal")
+                this.CSharpDiagnostic().WithLocation(7, 19).WithArguments("public", "internal"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -201,7 +201,7 @@ public class TestClass2 { }
                 this.CSharpDiagnostic().WithLocation(4, 20).WithArguments("protected", "private"),
                 this.CSharpDiagnostic().WithLocation(5, 29).WithArguments("protected internal", "protected"),
                 this.CSharpDiagnostic().WithLocation(6, 19).WithArguments("internal", "protected internal"),
-                this.CSharpDiagnostic().WithLocation(7, 17).WithArguments("public", "internal")
+                this.CSharpDiagnostic().WithLocation(7, 17).WithArguments("public", "internal"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -568,7 +568,7 @@ class TestClass1 { }
                 this.CSharpDiagnostic().WithLocation(4, 27).WithArguments("protected", "private"),
                 this.CSharpDiagnostic().WithLocation(5, 36).WithArguments("protected internal", "protected"),
                 this.CSharpDiagnostic().WithLocation(6, 26).WithArguments("internal", "protected internal"),
-                this.CSharpDiagnostic().WithLocation(7, 24).WithArguments("public", "internal")
+                this.CSharpDiagnostic().WithLocation(7, 24).WithArguments("public", "internal"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -605,7 +605,7 @@ class TestClass1 { }
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(4, 25).WithArguments("protected", "private"),
-                this.CSharpDiagnostic().WithLocation(5, 16).WithArguments("public", "protected")
+                this.CSharpDiagnostic().WithLocation(5, 16).WithArguments("public", "protected"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -672,7 +672,7 @@ class TestClass1 { }
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(4, 17).WithArguments("public", "internal"),
-                this.CSharpDiagnostic().WithLocation(6, 18).WithArguments("public", "internal")
+                this.CSharpDiagnostic().WithLocation(6, 18).WithArguments("public", "internal"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -788,7 +788,7 @@ class Test : IA
         get { return null; }
     }
 
-    // SA1202 (All public properties must come before all private properties) wrongly reported here.
+    // SA1202 (All public properties should come before all private properties) wrongly reported here.
     public int W { get; set; }
 
     protected string S { get; set; }
@@ -814,7 +814,7 @@ class Test : IA
                 // explicit interface events are considered private by StyleCop
                 this.CSharpDiagnostic().WithLocation(34, 12).WithArguments("public", "protected"),
                 this.CSharpDiagnostic().WithLocation(41, 15).WithArguments("public", "protected"),
-                this.CSharpDiagnostic().WithLocation(45, 13).WithArguments("public", "protected")
+                this.CSharpDiagnostic().WithLocation(45, 13).WithArguments("public", "protected"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -846,7 +846,7 @@ class Test : IA
         get { return null; }
     }
 
-    // SA1202 (All public properties must come before all private properties) wrongly reported here.
+    // SA1202 (All public properties should come before all private properties) wrongly reported here.
     public int W { get; set; }
 
     // SA1202 should be reported here (according to legacy StyleCop), but is not.
@@ -936,20 +936,8 @@ public class TestClass : TestInterface
             // We don't care about the syntax errors.
             var expected = new[]
             {
-                 new DiagnosticResult
-                 {
-                     Id = "CS1585",
-                     Message = "Member modifier 'public' must precede the member type and name",
-                     Severity = DiagnosticSeverity.Error,
-                     Locations = new[] { new DiagnosticResultLocation("Test0.cs", 5, 5) }
-                 },
-                 new DiagnosticResult
-                 {
-                     Id = "CS1519",
-                     Message = "Invalid token '}' in class, struct, or interface member declaration",
-                     Severity = DiagnosticSeverity.Error,
-                     Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 1) }
-                 }
+                this.CSharpCompilerError("CS1585").WithMessage("Member modifier 'public' must precede the member type and name").WithLocation(5, 5),
+                this.CSharpCompilerError("CS1519").WithMessage("Invalid token '}' in class, struct, or interface member declaration").WithLocation(6, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -971,22 +959,10 @@ public class TestClass : TestInterface
 ";
 
             // We don't care about the syntax errors.
-            var expected = new[]
+            DiagnosticResult[] expected =
             {
-                 new DiagnosticResult
-                 {
-                     Id = "CS1585",
-                     Message = "Member modifier 'public' must precede the member type and name",
-                     Severity = DiagnosticSeverity.Error,
-                     Locations = new[] { new DiagnosticResultLocation("Test0.cs", 5, 5) }
-                 },
-                 new DiagnosticResult
-                 {
-                     Id = "CS1519",
-                     Message = "Invalid token '}' in class, struct, or interface member declaration",
-                     Severity = DiagnosticSeverity.Error,
-                     Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 1) }
-                 }
+                this.CSharpCompilerError("CS1585").WithMessage("Member modifier 'public' must precede the member type and name").WithLocation(5, 5),
+                this.CSharpCompilerError("CS1519").WithMessage("Invalid token '}' in class, struct, or interface member declaration").WithLocation(6, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

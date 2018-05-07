@@ -111,7 +111,7 @@ public class Foo4
                     this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(15, 13),
                     this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(18, 13),
                     this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(21, 13),
-                    this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(23, 13)
+                    this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(23, 13),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -182,7 +182,7 @@ public class Foo4
                     this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(10, 13),
                     this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(12, 13),
                     this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(14, 13),
-                    this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(16, 13)
+                    this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(16, 13),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

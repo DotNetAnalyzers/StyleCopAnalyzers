@@ -52,7 +52,7 @@ class Foo
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(4, 5),
-                this.CSharpDiagnostic().WithLocation(5, 5)
+                this.CSharpDiagnostic().WithLocation(5, 5),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -124,12 +124,9 @@ class Foo
     {declaration}
 }}";
 
-            DiagnosticResult expected = new DiagnosticResult
+            DiagnosticResult[] expected =
             {
-                Id = id,
-                Severity = DiagnosticSeverity.Error,
-                Locations = new[] { new DiagnosticResultLocation("Test0.cs", 4, column) },
-                Message = message
+                this.CSharpCompilerError(id).WithMessage(message).WithLocation(4, column),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -168,6 +165,77 @@ class TestAttribute : System.Attribute
 }";
 
             var expected = this.CSharpDiagnostic().WithLocation(5, 5);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2594, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2594")]
+        public async Task VerifyThatDirectiveTriviaAreHandledCorrectlyAsync()
+        {
+            var testCode = @"
+namespace StyleCopDemo
+{
+    class Program
+    {
+        #region some members
+
+        string myString;
+
+        #region some fields
+
+        // this line:
+        int myInt, yourInt;
+
+        #endregion
+
+        #region some other fields
+
+        int secondInt, thirdInt;
+
+        #endregion
+
+        #endregion
+    }
+}";
+
+            var fixedCode = @"
+namespace StyleCopDemo
+{
+    class Program
+    {
+        #region some members
+
+        string myString;
+
+        #region some fields
+
+        // this line:
+        int myInt;
+
+        // this line:
+        int yourInt;
+
+        #endregion
+
+        #region some other fields
+
+        int secondInt;
+        int thirdInt;
+
+        #endregion
+
+        #endregion
+    }
+}";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(13, 9),
+                this.CSharpDiagnostic().WithLocation(19, 9),
+            };
+
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);

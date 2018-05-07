@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.SpecialRules
     using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The project is configured to not parse XML documentation comments.
@@ -37,13 +38,16 @@ namespace StyleCop.Analyzers.SpecialRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+
             context.RegisterCompilationStartAction(CompilationStartAction);
         }
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
             Analyzer analyzer = new Analyzer();
-            context.RegisterSyntaxTreeActionHonorExclusions(analyzer.HandleSyntaxTree);
+            context.RegisterSyntaxTreeAction(analyzer.HandleSyntaxTree);
             context.RegisterCompilationEndAction(analyzer.HandleCompilation);
         }
 
@@ -63,6 +67,12 @@ namespace StyleCop.Analyzers.SpecialRules
             {
                 if (context.Tree.Options.DocumentationMode == DocumentationMode.None)
                 {
+                    if (context.Tree.IsWhitespaceOnly(context.CancellationToken))
+                    {
+                        // Handling of empty documents is now the responsibility of the analyzers
+                        return;
+                    }
+
                     Volatile.Write(ref this.documentationAnalysisDisabled, true);
                 }
             }

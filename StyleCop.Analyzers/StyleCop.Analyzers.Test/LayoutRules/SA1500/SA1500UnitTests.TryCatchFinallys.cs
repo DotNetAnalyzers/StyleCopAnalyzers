@@ -286,7 +286,7 @@ public class Foo
                 // Invalid try ... catch ... finally #6
                 this.CSharpDiagnostic().WithLocation(57, 9),
                 this.CSharpDiagnostic().WithLocation(60, 9),
-                this.CSharpDiagnostic().WithLocation(63, 9)
+                this.CSharpDiagnostic().WithLocation(63, 9),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

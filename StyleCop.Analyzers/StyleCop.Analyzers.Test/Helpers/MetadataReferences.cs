@@ -3,8 +3,10 @@
 
 namespace StyleCop.Analyzers.Test.Helpers
 {
+    using System;
     using System.Collections.Immutable;
     using System.Linq;
+    using System.Reflection;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
 
@@ -18,5 +20,32 @@ namespace StyleCop.Analyzers.Test.Helpers
         internal static readonly MetadataReference SystemCoreReference = MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location);
         internal static readonly MetadataReference CSharpSymbolsReference = MetadataReference.CreateFromFile(typeof(CSharpCompilation).Assembly.Location);
         internal static readonly MetadataReference CodeAnalysisReference = MetadataReference.CreateFromFile(typeof(Compilation).Assembly.Location);
+
+        internal static readonly MetadataReference SystemRuntimeReference;
+        internal static readonly MetadataReference SystemValueTupleReference;
+
+        static MetadataReferences()
+        {
+            if (typeof(string).Assembly.GetType("System.ValueTuple", false) != null)
+            {
+                // mscorlib contains ValueTuple, so no need to add a separate reference
+                SystemRuntimeReference = null;
+                SystemValueTupleReference = null;
+            }
+            else
+            {
+                Assembly systemRuntime = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(x => x.GetName().Name == "System.Runtime");
+                if (systemRuntime != null)
+                {
+                    SystemRuntimeReference = MetadataReference.CreateFromFile(systemRuntime.Location);
+                }
+
+                Assembly systemValueTuple = AppDomain.CurrentDomain.GetAssemblies().SingleOrDefault(x => x.GetName().Name == "System.ValueTuple");
+                if (systemValueTuple != null)
+                {
+                    SystemValueTupleReference = MetadataReference.CreateFromFile(systemValueTuple.Location);
+                }
+            }
+        }
     }
 }

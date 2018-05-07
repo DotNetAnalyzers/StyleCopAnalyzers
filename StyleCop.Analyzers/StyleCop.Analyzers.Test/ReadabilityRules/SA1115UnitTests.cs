@@ -1244,6 +1244,32 @@ public class TestClass
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestMethodArgumentsWithAttributeAsync()
+        {
+            var testCode = @"
+[System.AttributeUsage(System.AttributeTargets.Parameter, AllowMultiple = true)]
+public class MyAttribute : System.Attribute
+{
+}
+
+class Foo
+{
+        public static void DoWork(
+            [MyAttribute]
+            string param1,
+            [MyAttribute]
+            string param2,
+            [MyAttribute]
+            string param3,
+            [MyAttribute]
+            string param4)
+    {
+    }
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1115ParameterMustFollowComma();

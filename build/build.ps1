@@ -1,6 +1,6 @@
 param (
 	[switch]$Debug,
-	[string]$VisualStudioVersion = '14.0',
+	[string]$VisualStudioVersion = '15.0',
 	[switch]$SkipKeyCheck,
 	[string]$Verbosity = 'minimal',
 	[string]$Logger,
@@ -30,14 +30,14 @@ If ($Version.Contains('-')) {
 	$KeyConfiguration = 'Final'
 }
 
-# download NuGet.exe if necessary
-$nuget = '..\.nuget\NuGet.exe'
+# download nuget.exe if necessary
+$nuget = '..\.nuget\nuget.exe'
 If (-not (Test-Path $nuget)) {
 	If (-not (Test-Path '..\.nuget')) {
 		mkdir '..\.nuget'
 	}
 
-	$nugetSource = 'http://nuget.org/nuget.exe'
+	$nugetSource = 'https://dist.nuget.org/win-x86-commandline/latest/nuget.exe'
 	Invoke-WebRequest $nugetSource -OutFile $nuget
 	If (-not $?) {
 		$host.ui.WriteErrorLine('Unable to download NuGet executable, aborting!')
@@ -46,7 +46,8 @@ If (-not (Test-Path $nuget)) {
 }
 
 # build the main project
-$msbuild = "${env:ProgramFiles(x86)}\MSBuild\$VisualStudioVersion\Bin\MSBuild.exe"
+$visualStudio = (Get-ItemProperty 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\VisualStudio\SxS\VS7')."$VisualStudioVersion"
+$msbuild = "$visualStudio\MSBuild\$VisualStudioVersion\Bin\MSBuild.exe"
 If (-not (Test-Path $msbuild)) {
 	$host.UI.WriteErrorLine("Couldn't find MSBuild.exe")
 	exit 1
@@ -90,7 +91,7 @@ if (-not $SkipKeyCheck) {
 	. .\keys.ps1
 
 	foreach ($pair in $Keys.GetEnumerator()) {
-		$assembly = Resolve-FullPath -Path "..\StyleCop.Analyzers\StyleCop.Analyzers.CodeFixes\bin\$BuildConfig\StyleCop.Analyzers.dll"
+		$assembly = Resolve-FullPath -Path "..\StyleCop.Analyzers\StyleCop.Analyzers.CodeFixes\bin\$BuildConfig\$($pair.Key)\StyleCop.Analyzers.dll"
 		# Run the actual check in a separate process or the current process will keep the assembly file locked
 		powershell -Command ".\check-key.ps1 -Assembly '$assembly' -ExpectedKey '$($pair.Value)' -Build '$($pair.Key)'"
 		If (-not $?) {
@@ -98,7 +99,7 @@ if (-not $SkipKeyCheck) {
 			exit $LASTEXITCODE
 		}
 
-		$assembly = Resolve-FullPath -Path "..\StyleCop.Analyzers\StyleCop.Analyzers.CodeFixes\bin\$BuildConfig\StyleCop.Analyzers.CodeFixes.dll"
+		$assembly = Resolve-FullPath -Path "..\StyleCop.Analyzers\StyleCop.Analyzers.CodeFixes\bin\$BuildConfig\$($pair.Key)\StyleCop.Analyzers.CodeFixes.dll"
 		# Run the actual check in a separate process or the current process will keep the assembly file locked
 		powershell -Command ".\check-key.ps1 -Assembly '$assembly' -ExpectedKey '$($pair.Value)' -Build '$($pair.Key)'"
 		If (-not $?) {

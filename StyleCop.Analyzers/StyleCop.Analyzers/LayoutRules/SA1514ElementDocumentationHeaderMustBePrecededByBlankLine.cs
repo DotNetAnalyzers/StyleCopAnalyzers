@@ -66,8 +66,8 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <see cref="SA1514ElementDocumentationHeaderMustBePrecededByBlankLine"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1514";
-        private const string Title = "Element documentation header must be preceded by blank line";
-        private const string MessageFormat = "Element documentation header must be preceded by blank line";
+        private const string Title = "Element documentation header should be preceded by blank line";
+        private const string MessageFormat = "Element documentation header should be preceded by blank line";
         private const string Description = "An element documentation header above a C# element is not preceded by a blank line.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1514.md";
 
@@ -93,7 +93,6 @@ namespace StyleCop.Analyzers.LayoutRules
                 SyntaxKind.OperatorDeclaration,
                 SyntaxKind.ConversionOperatorDeclaration);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> DeclarationAction = HandleDeclaration;
 
         /// <inheritdoc/>
@@ -103,12 +102,10 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(DeclarationAction, HandledSyntaxKinds);
+            context.RegisterSyntaxNodeAction(DeclarationAction, HandledSyntaxKinds);
         }
 
         private static void HandleDeclaration(SyntaxNodeAnalysisContext context)

@@ -27,26 +27,33 @@ namespace StyleCop.Analyzers.Helpers
             return fileName;
         }
 
-        internal static string GetConventionalFileName(TypeDeclarationSyntax typeDeclaration, FileNamingConvention convention)
+        internal static string GetConventionalFileName(MemberDeclarationSyntax declaration, FileNamingConvention convention)
         {
-            if (typeDeclaration.TypeParameterList == null)
+            var typeDeclaration = declaration as TypeDeclarationSyntax;
+            if (typeDeclaration != null)
             {
-                return GetSimpleFileName(typeDeclaration);
+                if (typeDeclaration.TypeParameterList == null)
+                {
+                    return GetSimpleFileName(typeDeclaration);
+                }
+
+                switch (convention)
+                {
+                case FileNamingConvention.Metadata:
+                    return GetMetadataFileName(typeDeclaration);
+
+                default:
+                    return GetStyleCopFileName(typeDeclaration);
+                }
             }
 
-            switch (convention)
-            {
-            case FileNamingConvention.Metadata:
-                return GetMetadataFileName(typeDeclaration);
-
-            default:
-                return GetStyleCopFileName(typeDeclaration);
-            }
+            return GetSimpleFileName(declaration);
         }
 
-        internal static string GetSimpleFileName(TypeDeclarationSyntax typeDeclaration)
+        internal static string GetSimpleFileName(MemberDeclarationSyntax memberDeclaration)
         {
-            return $"{typeDeclaration.Identifier.ValueText}";
+            var nameOrIdentifier = NamedTypeHelpers.GetNameOrIdentifier(memberDeclaration);
+            return nameOrIdentifier;
         }
 
         private static string GetMetadataFileName(TypeDeclarationSyntax typeDeclaration)

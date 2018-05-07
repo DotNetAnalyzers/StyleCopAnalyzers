@@ -6,8 +6,10 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System;
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Globalization;
     using System.Linq;
     using System.Text.RegularExpressions;
+    using System.Threading;
     using System.Threading.Tasks;
     using Helpers;
     using Microsoft.CodeAnalysis;
@@ -48,8 +50,12 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                var node = root.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
+                if (diagnostic.Properties.ContainsKey(StandardTextDiagnosticBase.NoCodeFixKey))
+                {
+                    continue;
+                }
 
+                var node = root.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
                 var xmlElementSyntax = node as XmlElementSyntax;
 
                 if (xmlElementSyntax != null)
@@ -57,7 +63,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     context.RegisterCodeFix(
                         CodeAction.Create(
                             DocumentationResources.SA1642SA1643CodeFix,
-                            cancellationToken => GetTransformedDocumentAsync(context.Document, root, xmlElementSyntax),
+                            cancellationToken => GetTransformedDocumentAsync(context.Document, root, xmlElementSyntax, cancellationToken),
                             nameof(SA1642SA1643CodeFixProvider)),
                         diagnostic);
                 }
@@ -74,11 +80,14 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
         }
 
-        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, XmlElementSyntax node)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, XmlElementSyntax node, CancellationToken cancellationToken)
         {
             var typeDeclaration = node.FirstAncestorOrSelf<BaseTypeDeclarationSyntax>();
             var declarationSyntax = node.FirstAncestorOrSelf<BaseMethodDeclarationSyntax>();
             bool isStruct = typeDeclaration.IsKind(SyntaxKind.StructDeclaration);
+            var settings = document.Project.AnalyzerOptions.GetStyleCopSettings(cancellationToken);
+            var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
+            var resourceManager = DocumentationResources.ResourceManager;
 
             TypeParameterListSyntax typeParameterList;
             ClassDeclarationSyntax classDeclaration = typeDeclaration as ClassDeclarationSyntax;
@@ -94,35 +103,29 @@ namespace StyleCop.Analyzers.DocumentationRules
             ImmutableArray<string> standardText;
             if (declarationSyntax is ConstructorDeclarationSyntax)
             {
+                var typeKindText = resourceManager.GetString(isStruct ? nameof(DocumentationResources.TypeTextStruct) : nameof(DocumentationResources.TypeTextClass), culture);
                 if (declarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword))
                 {
-                    if (isStruct)
-                    {
-                        standardText = ImmutableArray.Create(SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.StaticConstructorStandardText, " struct.");
-                    }
-                    else
-                    {
-                        standardText = ImmutableArray.Create(SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.StaticConstructorStandardText, " class.");
-                    }
+                    standardText = ImmutableArray.Create(
+                        string.Format(resourceManager.GetString(nameof(DocumentationResources.StaticConstructorStandardTextFirstPart), culture), typeKindText),
+                        string.Format(resourceManager.GetString(nameof(DocumentationResources.StaticConstructorStandardTextSecondPart), culture), typeKindText));
                 }
                 else
                 {
                     // Prefer to insert the "non-private" wording for all constructors, even though both are considered
                     // acceptable for private constructors by the diagnostic.
                     // https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/413
-                    if (isStruct)
-                    {
-                        standardText = ImmutableArray.Create(SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.NonPrivateConstructorStandardText, " struct.");
-                    }
-                    else
-                    {
-                        standardText = ImmutableArray.Create(SA1642ConstructorSummaryDocumentationMustBeginWithStandardText.NonPrivateConstructorStandardText, " class.");
-                    }
+                    standardText = ImmutableArray.Create(
+                        string.Format(resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextFirstPart), culture), typeKindText),
+                        string.Format(resourceManager.GetString(nameof(DocumentationResources.NonPrivateConstructorStandardTextSecondPart), culture), typeKindText));
                 }
             }
             else if (declarationSyntax is DestructorDeclarationSyntax)
             {
-                standardText = SA1643DestructorSummaryDocumentationMustBeginWithStandardText.DestructorStandardText;
+                standardText =
+                    ImmutableArray.Create(
+                        resourceManager.GetString(nameof(DocumentationResources.DestructorStandardTextFirstPart), culture),
+                        resourceManager.GetString(nameof(DocumentationResources.DestructorStandardTextSecondPart), culture));
             }
             else
             {
@@ -137,6 +140,9 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             var list = BuildStandardText(typeDeclaration.Identifier, typeParameterList, newLineText, standardText[0], standardText[1] + trailingString);
             newContent = newContent.InsertRange(0, list);
+
+            newContent = RemoveTrailingEmptyLines(newContent);
+
             var newNode = node.WithContent(newContent).AdjustDocumentationCommentNewLineTrivia();
 
             var newRoot = root.ReplaceNode(node, newNode);
@@ -280,6 +286,40 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             return SyntaxFactory.TypeArgumentList(list);
+        }
+
+        private static SyntaxList<XmlNodeSyntax> RemoveTrailingEmptyLines(SyntaxList<XmlNodeSyntax> content)
+        {
+            var xmlText = content[content.Count - 1] as XmlTextSyntax;
+            if (xmlText == null)
+            {
+                return content;
+            }
+
+            // skip the last token, as it contains the documentation comment for the closing tag, which needs to remain.
+            var firstEmptyToken = -1;
+            for (var j = xmlText.TextTokens.Count - 2; j >= 0; j--)
+            {
+                var textToken = xmlText.TextTokens[j];
+
+                if (textToken.IsXmlWhitespace())
+                {
+                    firstEmptyToken = j;
+                }
+                else if (textToken.IsKind(SyntaxKind.XmlTextLiteralToken) && !string.IsNullOrWhiteSpace(textToken.Text))
+                {
+                    break;
+                }
+            }
+
+            if (firstEmptyToken > -1)
+            {
+                var newContent = SyntaxFactory.List(content.Take(firstEmptyToken));
+                newContent.Add(newContent.Last());
+                return newContent;
+            }
+
+            return content;
         }
     }
 }

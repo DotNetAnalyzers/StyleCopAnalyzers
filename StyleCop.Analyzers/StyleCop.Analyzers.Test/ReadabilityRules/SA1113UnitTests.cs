@@ -63,7 +63,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             DiagnosticResult[] expected =
                 {
                     this.CSharpDiagnostic().WithLocation(4, 21),
-                    this.CSharpDiagnostic().WithLocation(5, 21)
+                    this.CSharpDiagnostic().WithLocation(5, 21),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -137,7 +137,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             DiagnosticResult[] expected =
                 {
                     this.CSharpDiagnostic().WithLocation(6, 37),
-                    this.CSharpDiagnostic().WithLocation(7, 37)
+                    this.CSharpDiagnostic().WithLocation(7, 37),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -224,7 +224,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             DiagnosticResult[] expected =
                 {
                     this.CSharpDiagnostic().WithLocation(9, 30),
-                    this.CSharpDiagnostic().WithLocation(10, 30)
+                    this.CSharpDiagnostic().WithLocation(10, 30),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -298,7 +298,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             DiagnosticResult[] expected =
                 {
                     this.CSharpDiagnostic().WithLocation(4, 16),
-                    this.CSharpDiagnostic().WithLocation(5, 16)
+                    this.CSharpDiagnostic().WithLocation(5, 16),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -384,7 +384,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             DiagnosticResult[] expected =
                 {
                     this.CSharpDiagnostic().WithLocation(4, 21),
-                    this.CSharpDiagnostic().WithLocation(5, 21)
+                    this.CSharpDiagnostic().WithLocation(5, 21),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -490,7 +490,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             DiagnosticResult[] expected =
                 {
                     this.CSharpDiagnostic().WithLocation(13, 1),
-                    this.CSharpDiagnostic().WithLocation(14, 5)
+                    this.CSharpDiagnostic().WithLocation(14, 5),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -613,7 +613,7 @@ long l);
             DiagnosticResult[] expected =
                 {
                     this.CSharpDiagnostic().WithLocation(4, 1),
-                    this.CSharpDiagnostic().WithLocation(5, 1)
+                    this.CSharpDiagnostic().WithLocation(5, 1),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -657,7 +657,7 @@ long l);
             DiagnosticResult[] expected =
                 {
                     this.CSharpDiagnostic().WithLocation(6, 17),
-                    this.CSharpDiagnostic().WithLocation(7, 17)
+                    this.CSharpDiagnostic().WithLocation(7, 17),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -761,7 +761,7 @@ Conditional(""C"")]
             DiagnosticResult[] expected =
                 {
                     this.CSharpDiagnostic().WithLocation(5, 1),
-                    this.CSharpDiagnostic().WithLocation(6, 1)
+                    this.CSharpDiagnostic().WithLocation(6, 1),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -1121,7 +1121,7 @@ public class TestClass
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(6, 9),
-                this.CSharpDiagnostic().WithLocation(15, 13)
+                this.CSharpDiagnostic().WithLocation(15, 13),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

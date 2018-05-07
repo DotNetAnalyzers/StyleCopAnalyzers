@@ -18,11 +18,12 @@
   <files>
 
     <!-- Binaries and symbols -->
-    <file src="bin\$Configuration$\StyleCop.Analyzers.dll" target="analyzers\dotnet\cs" />
-    <file src="bin\$Configuration$\StyleCop.Analyzers.pdb" target="analyzers\dotnet\cs" />
-    <file src="bin\$Configuration$\StyleCop.Analyzers.CodeFixes.dll" target="analyzers\dotnet\cs" />
-    <file src="bin\$Configuration$\StyleCop.Analyzers.CodeFixes.pdb" target="analyzers\dotnet\cs" />
-    <file src="..\..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll" target="analyzers\dotnet\cs" />
+    <file src="bin\$Configuration$\netstandard1.1\StyleCop.Analyzers.dll" target="analyzers\dotnet\cs" />
+    <file src="bin\$Configuration$\netstandard1.1\**\StyleCop.Analyzers.resources.dll" target="analyzers\dotnet\cs" />
+    <file src="bin\$Configuration$\netstandard1.1\StyleCop.Analyzers.pdb" target="analyzers\dotnet\cs" />
+    <file src="bin\$Configuration$\netstandard1.1\StyleCop.Analyzers.CodeFixes.dll" target="analyzers\dotnet\cs" />
+    <file src="bin\$Configuration$\netstandard1.1\**\StyleCop.Analyzers.CodeFixes.resources.dll" target="analyzers\dotnet\cs" />
+    <file src="bin\$Configuration$\netstandard1.1\StyleCop.Analyzers.CodeFixes.pdb" target="analyzers\dotnet\cs" />
 
     <!-- Scripts -->
     <file src="tools\install.ps1" target="tools\" />

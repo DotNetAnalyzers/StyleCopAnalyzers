@@ -3,11 +3,12 @@
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
-    using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Linq;
+    using System.Xml.Linq;
     using Helpers;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -16,70 +17,62 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     /// <remarks>
     /// <para>C# syntax provides a mechanism for inserting documentation for classes and elements directly into the
-    /// code, through the use of XML documentation headers. For an introduction to these headers and a description of
-    /// the header syntax, see the following article:
-    /// <see href="http://msdn.microsoft.com/en-us/magazine/cc302121.aspx">XML Comments Let You Build Documentation
-    /// Directly From Your Visual Studio .NET Source Files</see>.</para>
+    /// code, through the use of XML documentation headers.</para>
     ///
     /// <para>A violation of this rule occurs if an element contains an empty <c>&lt;returns&gt;</c> tag.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     [NoCodeFix("Cannot generate documentation")]
-    internal class SA1616ElementReturnValueDocumentationMustHaveText : DiagnosticAnalyzer
+    internal class SA1616ElementReturnValueDocumentationMustHaveText : ElementDocumentationBase
     {
         /// <summary>
         /// The ID for diagnostics produced by the <see cref="SA1616ElementReturnValueDocumentationMustHaveText"/>
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1616";
-        private const string Title = "Element return value documentation must have text";
-        private const string MessageFormat = "Element return value documentation must have text";
+        private const string Title = "Element return value documentation should have text";
+        private const string MessageFormat = "Element return value documentation should have text";
         private const string Description = "The <returns> tag within a C# element's documentation header is empty.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1616.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
-        private static readonly Action<SyntaxNodeAnalysisContext> XmlElementAction = HandleXmlElement;
-        private static readonly Action<SyntaxNodeAnalysisContext> XmlEmptyElementAction = HandleXmlEmptyElement;
+        public SA1616ElementReturnValueDocumentationMustHaveText()
+            : base(matchElementName: XmlCommentHelper.ReturnsXmlTag, inheritDocSuppressesWarnings: true)
+        {
+        }
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        public override void Initialize(AnalysisContext context)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, bool needsComment, IEnumerable<XmlNodeSyntax> syntaxList, params Location[] diagnosticLocations)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
-
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(XmlElementAction, SyntaxKind.XmlElement);
-            context.RegisterSyntaxNodeActionHonorExclusions(XmlEmptyElementAction, SyntaxKind.XmlEmptyElement);
-        }
-
-        private static void HandleXmlElement(SyntaxNodeAnalysisContext context)
-        {
-            XmlElementSyntax emptyElement = context.Node as XmlElementSyntax;
-
-            var name = emptyElement?.StartTag?.Name;
-
-            if (string.Equals(name.ToString(), XmlCommentHelper.ReturnsXmlTag) && XmlCommentHelper.IsConsideredEmpty(emptyElement))
+            foreach (var syntax in syntaxList)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, emptyElement.GetLocation()));
+                bool isEmpty = syntax is XmlEmptyElementSyntax || XmlCommentHelper.IsConsideredEmpty(syntax);
+                if (isEmpty)
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.GetLocation()));
+                }
             }
         }
 
-        private static void HandleXmlEmptyElement(SyntaxNodeAnalysisContext context)
+        /// <inheritdoc/>
+        protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, bool needsComment, XElement completeDocumentation, params Location[] diagnosticLocations)
         {
-            XmlEmptyElementSyntax emptyElement = context.Node as XmlEmptyElementSyntax;
+            var returnsNodes = completeDocumentation.Nodes()
+                .OfType<XElement>()
+                .Where(n => n.Name == XmlCommentHelper.ReturnsXmlTag);
 
-            if (string.Equals(emptyElement?.Name.ToString(), XmlCommentHelper.ReturnsXmlTag))
+            foreach (var node in returnsNodes)
             {
-                // <returns .../> is empty.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, emptyElement.GetLocation()));
+                if (XmlCommentHelper.IsConsideredEmpty(node))
+                {
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, diagnosticLocations.First()));
+                }
             }
         }
     }

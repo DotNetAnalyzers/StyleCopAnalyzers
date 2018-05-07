@@ -395,7 +395,7 @@ var a = new int[
             DiagnosticResult[] expected =
                 {
                     this.CSharpDiagnostic().WithLocation(8, 1),
-                    this.CSharpDiagnostic().WithLocation(14, 1)
+                    this.CSharpDiagnostic().WithLocation(14, 1),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -510,7 +510,7 @@ class Foo
             DiagnosticResult[] expected =
                 {
                     this.CSharpDiagnostic().WithLocation(14, 1),
-                    this.CSharpDiagnostic().WithLocation(16, 1)
+                    this.CSharpDiagnostic().WithLocation(16, 1),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

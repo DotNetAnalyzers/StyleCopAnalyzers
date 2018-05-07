@@ -48,6 +48,21 @@ enum TypeName
         }
 
         [Fact]
+        public async Task TestNestedPrivateEnumWithoutDocumentationAsync()
+        {
+            var testCode = @"
+class ClassName
+{
+    private enum TypeName
+    {
+        Bar
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestEnumWithEmptyDocumentationAsync()
         {
             var testCode = @"

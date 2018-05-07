@@ -123,6 +123,9 @@
   <data name="SA1501CodeFix" xml:space="preserve">
     <value>Expand single line block</value>
   </data>
+  <data name="SA1501CodeFixAll" xml:space="preserve">
+    <value>Expand all single line blocks</value>
+  </data>
   <data name="SA1502CodeFix" xml:space="preserve">
     <value>Expand element</value>
   </data>
@@ -130,10 +133,10 @@
     <value>A C# element containing opening and closing braces is written completely on a single line.</value>
   </data>
   <data name="SA1502MessageFormat" xml:space="preserve">
-    <value>Element must not be on a single line</value>
+    <value>Element should not be on a single line</value>
   </data>
   <data name="SA1502Title" xml:space="preserve">
-    <value>Element must not be on a single line</value>
+    <value>Element should not be on a single line</value>
   </data>
   <data name="SA1503CodeFix" xml:space="preserve">
     <value>Wrap with braces</value>
@@ -177,8 +180,35 @@
   <data name="SA1515CodeFix" xml:space="preserve">
     <value>Insert blank line before comment</value>
   </data>
-  <data name="SA1516CodeFix" xml:space="preserve">
+  <data name="SA1516CodeFixAll" xml:space="preserve">
+    <value>Fix blank lines</value>
+  </data>
+  <data name="SA1516CodeFixInsert" xml:space="preserve">
     <value>Insert new line</value>
+  </data>
+  <data name="SA1516CodeFixRemove" xml:space="preserve">
+    <value>Remove blank line</value>
+  </data>
+  <data name="SA1516Description" xml:space="preserve">
+    <value>Adjacent C# elements are not separated by a blank line.</value>
+  </data>
+  <data name="SA1516DescriptionOmit" xml:space="preserve">
+    <value>Adjacent using directives should not be separated by a blank line.</value>
+  </data>
+  <data name="SA1516DescriptionRequire" xml:space="preserve">
+    <value>Adjacent using directives should be separated by a blank line.</value>
+  </data>
+  <data name="SA1516MessageFormat" xml:space="preserve">
+    <value>Elements should be separated by blank line</value>
+  </data>
+  <data name="SA1516MessageFormatOmit" xml:space="preserve">
+    <value>Using directives should not be separated by blank line</value>
+  </data>
+  <data name="SA1516MessageFormatRequire" xml:space="preserve">
+    <value>Using directives should be separated by blank line</value>
+  </data>
+  <data name="SA1516Title" xml:space="preserve">
+    <value>Elements should be separated by blank line</value>
   </data>
   <data name="SA1517CodeFix" xml:space="preserve">
     <value>Remove blank lines at the start of the file</value>
@@ -187,7 +217,7 @@
     <value>Fix whitespace at the end of the file</value>
   </data>
   <data name="SA1518DescriptionAllow" xml:space="preserve">
-    <value>Code must not contain blank lines at the end of the file</value>
+    <value>Code should not contain blank lines at the end of the file</value>
   </data>
   <data name="SA1518DescriptionOmit" xml:space="preserve">
     <value>File may not end with a newline character</value>
@@ -196,7 +226,7 @@
     <value>File is required to end with a single newline character</value>
   </data>
   <data name="SA1518MessageFormatAllow" xml:space="preserve">
-    <value>Code must not contain blank lines at the end of the file</value>
+    <value>Code should not contain blank lines at the end of the file</value>
   </data>
   <data name="SA1518MessageFormatOmit" xml:space="preserve">
     <value>File may not end with a newline character</value>

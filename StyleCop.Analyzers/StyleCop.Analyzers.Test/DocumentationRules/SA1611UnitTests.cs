@@ -7,6 +7,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Threading;
     using System.Threading.Tasks;
     using Analyzers.DocumentationRules;
+    using Helpers;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using TestHelper;
     using Xunit;
@@ -21,6 +23,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             get
             {
                 // These method names are chosen so that the position of the parameters are always the same. This makes testing easier
+                yield return new object[] { "         ClassName(string param1, string param2, string param3) { }" };
                 yield return new object[] { "void Foooooooooooo(string param1, string param2, string param3) { }" };
                 yield return new object[] { "delegate void Fooo(string param1, string param2, string param3);" };
                 yield return new object[] { "System.String this[string param1, string param2, string param3] { get { return param1; } }" };
@@ -152,6 +155,39 @@ public class ClassName
             await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(2444, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2444")]
+        public async Task TestPrivateMethodMissingParametersAsync()
+        {
+            var testCode = @"
+internal class ClassName
+{
+    ///
+    private void Test1(int arg) { }
+
+    /**
+     *
+     */
+    private void Test2(int arg) { }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2444, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2444")]
+        public async Task TestPrivateMethodMissingParametersInIncludedDocumentationAsync()
+        {
+            var testCode = @"
+internal class ClassName
+{
+    /// <include file='MissingElementDocumentation.xml' path='/TestClass/TestMethod/*' />
+    private void TestMethod(string param1, string param2, string param3) { }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Verifies that valid operator declarations will not produce diagnostics.
         /// </summary>
@@ -222,10 +258,124 @@ public class TestClass
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(10, 50).WithArguments("value"),
-                this.CSharpDiagnostic().WithLocation(18, 51).WithArguments("value")
+                this.CSharpDiagnostic().WithLocation(18, 51).WithArguments("value"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that included documentation with valid documentation does not produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyIncludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <include file='WithElementDocumentation.xml' path='/TestClass/TestMethod/*' />
+    public void TestMethod(string param1, string param2, string param3)
+    {
+    }
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that included documentation with missing elements produces the expected diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyIncludedDocumentationMissingElementsAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <include file='MissingElementDocumentation.xml' path='/TestClass/TestMethod/*' />
+    public void TestMethod(string param1, string param2, string param3)
+    {
+    }
+}";
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(8, 35).WithArguments("param1"),
+                this.CSharpDiagnostic().WithLocation(8, 50).WithArguments("param2"),
+                this.CSharpDiagnostic().WithLocation(8, 65).WithArguments("param3"),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that included documentation with an <c>&lt;inheritdoc&gt;</c> tag is ignored.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyIncludedInheritedDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <include file='InheritedDocumentation.xml' path='/TestClass/TestMethod/*' />
+    public void TestMethod(string param1, string param2, string param3)
+    {
+    }
+}";
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
+        protected override Project ApplyCompilationOptions(Project project)
+        {
+            var resolver = new TestXmlReferenceResolver();
+
+            string contentWithoutElementDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+    <TestMethod>
+        <summary>
+            Foo
+        </summary>
+    </TestMethod>
+</TestClass>
+";
+            resolver.XmlReferences.Add("MissingElementDocumentation.xml", contentWithoutElementDocumentation);
+
+            string contentWithElementDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+    <TestMethod>
+        <summary>
+            Foo
+        </summary>
+        <param name=""param1"">Param 1</param>
+        <param name=""param2"">Param 2</param>
+        <param name=""param3"">Param 3</param>
+    </TestMethod>
+</TestClass>
+";
+            resolver.XmlReferences.Add("WithElementDocumentation.xml", contentWithElementDocumentation);
+
+            string contentWithInheritedDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+ <TestClass>
+    <TestMethod>
+        <inheritdoc />
+    </TestMethod>
+ </TestClass>
+ ";
+            resolver.XmlReferences.Add("InheritedDocumentation.xml", contentWithInheritedDocumentation);
+
+            project = base.ApplyCompilationOptions(project);
+            project = project.WithCompilationOptions(project.CompilationOptions.WithXmlReferenceResolver(resolver));
+            return project;
         }
 
         /// <inheritdoc/>

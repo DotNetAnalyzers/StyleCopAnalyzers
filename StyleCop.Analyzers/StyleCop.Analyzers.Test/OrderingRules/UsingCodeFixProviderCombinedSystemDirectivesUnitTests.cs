@@ -118,7 +118,7 @@ using static System.Math;
 using System;
 
 using static System.String;
-using MyFunc = System.Func<int,bool>;
+using MyFunc = System.Func<int, bool>;
 
 using System.Collections.Generic;
 using System.Collections;

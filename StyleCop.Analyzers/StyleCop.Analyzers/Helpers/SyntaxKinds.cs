@@ -203,5 +203,30 @@ namespace StyleCop.Analyzers.Helpers
             ImmutableArray.Create(
                 SyntaxKind.ArgumentList,
                 SyntaxKind.BracketedArgumentList);
+
+        /// <summary>
+        /// Gets a collection of <see cref="SyntaxKind"/> values which represent keywords of integer literals.
+        /// </summary>
+        /// <value>
+        /// A collection of <see cref="SyntaxKind"/> values which represent keywords of integer literals.
+        /// </value>
+        public static ImmutableArray<SyntaxKind> IntegerLiteralKeyword { get; } =
+            ImmutableArray.Create(
+                SyntaxKind.IntKeyword,
+                SyntaxKind.LongKeyword,
+                SyntaxKind.ULongKeyword,
+                SyntaxKind.UIntKeyword);
+
+        /// <summary>
+        /// Gets a collection of <see cref="SyntaxKind"/> values which represent keywords of real literals.
+        /// </summary>
+        /// <value>
+        /// A collection of <see cref="SyntaxKind"/> values which represent keywords of real literals.
+        /// </value>
+        public static ImmutableArray<SyntaxKind> RealLiteralKeyword { get; } =
+            ImmutableArray.Create(
+                SyntaxKind.FloatKeyword,
+                SyntaxKind.DoubleKeyword,
+                SyntaxKind.DecimalKeyword);
     }
 }

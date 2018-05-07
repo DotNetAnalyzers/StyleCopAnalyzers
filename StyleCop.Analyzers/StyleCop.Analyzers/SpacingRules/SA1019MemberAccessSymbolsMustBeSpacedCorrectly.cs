@@ -25,15 +25,14 @@ namespace StyleCop.Analyzers.SpacingRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1019";
-        private const string Title = "Member access symbols must be spaced correctly";
-        private const string MessageFormat = "Member access symbol '{0}' must not be {1} by a space.";
+        private const string Title = "Member access symbols should be spaced correctly";
+        private const string MessageFormat = "Member access symbol '{0}' should not be {1} by a space.";
         private const string Description = "The spacing around a member access symbol is incorrect, within a C# code file.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1019.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
 
         /// <inheritdoc/>
@@ -43,12 +42,10 @@ namespace StyleCop.Analyzers.SpacingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxTreeActionHonorExclusions(SyntaxTreeAction);
+            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
         }
 
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -60,6 +57,10 @@ namespace StyleCop.Analyzers.SpacingRules
                 {
                 case SyntaxKind.DotToken:
                     HandleDotToken(context, token);
+                    break;
+
+                case SyntaxKind.MinusGreaterThanToken:
+                    HandleMemberAccessSymbol(context, token);
                     break;
 
                 // This case handles the new ?. and ?[ operators
@@ -101,19 +102,19 @@ namespace StyleCop.Analyzers.SpacingRules
         private static void HandleMemberAccessSymbol(SyntaxTreeAnalysisContext context, SyntaxToken token)
         {
             bool firstInLine = token.IsFirstInLine();
-            bool precededBySpace = firstInLine || token.IsPrecededByWhitespace();
+            bool precededBySpace = firstInLine || token.IsPrecededByWhitespace(context.CancellationToken);
             bool followedBySpace = token.IsFollowedByWhitespace();
 
             if (!firstInLine && precededBySpace)
             {
-                // Member access symbol '{.}' must not be {preceded} by a space.
+                // Member access symbol '{.}' should not be {preceded} by a space.
                 var properties = TokenSpacingProperties.RemovePreceding;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, token.Text, "preceded"));
             }
 
             if (followedBySpace)
             {
-                // Member access symbol '{.}' must not be {followed} by a space.
+                // Member access symbol '{.}' should not be {followed} by a space.
                 var properties = TokenSpacingProperties.RemoveFollowing;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, token.Text, "followed"));
             }

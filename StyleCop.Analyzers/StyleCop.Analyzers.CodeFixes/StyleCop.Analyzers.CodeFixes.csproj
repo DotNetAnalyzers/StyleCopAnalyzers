@@ -1,243 +1,51 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\packages\Tvl.NuGet.BuildTasks.1.0.0-alpha002\build\Tvl.NuGet.BuildTasks.props" Condition="Exists('..\..\packages\Tvl.NuGet.BuildTasks.1.0.0-alpha002\build\Tvl.NuGet.BuildTasks.props')" />
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F91F7815-4E63-4698-B053-E57B2D707194}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFrameworks>netstandard1.1;net452</TargetFrameworks>
     <RootNamespace>StyleCop.Analyzers</RootNamespace>
-    <AssemblyName>StyleCop.Analyzers.CodeFixes</AssemblyName>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IncludeSymbols>true</IncludeSymbols>
+    <NuspecFile>StyleCop.Analyzers.nuspec</NuspecFile>
+    <NuspecProperties>configuration=$(Configuration);version=$(InformationalVersion)</NuspecProperties>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
+  <Choose>
+    <When Condition="'$(TargetFramework)' == 'netstandard1.1'">
+      <PropertyGroup>
+        <PackageTargetFallback>portable-net45+win8</PackageTargetFallback>
+      </PropertyGroup>
+    </When>
+  </Choose>
+
   <PropertyGroup>
-    <DocumentationFile>$(OutputPath)$(AssemblyName).xml</DocumentationFile>
     <CodeAnalysisRuleSet>..\StyleCop.Analyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
     <AssemblyOriginatorKeyFile Condition="'$(KeyConfiguration)' == 'Final'">..\..\build\keys\StyleCopAnalyzers.snk</AssemblyOriginatorKeyFile>
     <AssemblyOriginatorKeyFile Condition="'$(KeyConfiguration)' != 'Final'">..\..\build\keys\StyleCopAnalyzers.dev.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+
   <PropertyGroup Condition="'$(KeyConfiguration)' != 'Final'">
     <DefineConstants>$(DefineConstants);DEVELOPMENT_KEY</DefineConstants>
   </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="DocumentationRules\FileHeaderCodeFixProvider.cs" />
-    <Compile Include="DocumentationRules\InheritdocCodeFixProvider.cs" />
-    <Compile Include="DocumentationRules\PropertySummaryDocumentationCodeFixProvider.cs" />
-    <Compile Include="DocumentationRules\SA1609SA1610CodeFixProvider.cs" />
-    <Compile Include="DocumentationRules\SA1615SA1616CodeFixProvider.cs" />
-    <Compile Include="DocumentationRules\SA1617CodeFixProvider.cs" />
-    <Compile Include="DocumentationRules\SA1626CodeFixProvider.cs" />
-    <Compile Include="DocumentationRules\SA1642SA1643CodeFixProvider.cs" />
-    <Compile Include="DocumentationRules\SA1649CodeFixProvider.cs" />
-    <Compile Include="DocumentationRules\SA1651CodeFixProvider.cs" />
-    <Compile Include="Helpers\CustomBatchFixAllProvider.cs" />
-    <Compile Include="Helpers\CustomFixAllProviders.cs" />
-    <Compile Include="Helpers\DocumentBasedFixAllProvider.cs" />
-    <Compile Include="Helpers\FixAllContextHelper.cs" />
-    <Compile Include="Helpers\FormattingHelper.cs" />
-    <Compile Include="Helpers\IndentationHelper.cs" />
-    <Compile Include="Helpers\QueryIndentationHelpers.cs" />
-    <Compile Include="Helpers\RenameHelper.cs" />
-    <Compile Include="Helpers\SpecialTypeHelper.cs" />
-    <Compile Include="LayoutRules\SA1500CodeFixProvider.cs" />
-    <Compile Include="LayoutRules\SA1501CodeFixProvider.cs" />
-    <Compile Include="LayoutRules\SA1502CodeFixProvider.cs" />
-    <Compile Include="LayoutRules\SA1503CodeFixProvider.cs" />
-    <Compile Include="LayoutRules\SA1504CodeFixProvider.cs" />
-    <Compile Include="LayoutRules\SA1505CodeFixProvider.cs" />
-    <Compile Include="LayoutRules\SA1506CodeFixProvider.cs" />
-    <Compile Include="LayoutRules\SA1507CodeFixProvider.cs" />
-    <Compile Include="LayoutRules\SA1508CodeFixProvider.cs" />
-    <Compile Include="LayoutRules\SA1509CodeFixProvider.cs" />
-    <Compile Include="LayoutRules\SA1510CodeFixProvider.cs" />
-    <Compile Include="LayoutRules\SA1511CodeFixProvider.cs" />
-    <Compile Include="LayoutRules\SA1512CodeFixProvider.cs" />
-    <Compile Include="LayoutRules\SA1513CodeFixProvider.cs" />
-    <Compile Include="LayoutRules\SA1514CodeFixProvider.cs" />
-    <Compile Include="LayoutRules\SA1515CodeFixProvider.cs" />
-    <Compile Include="LayoutRules\SA1516CodeFixProvider.cs" />
-    <Compile Include="LayoutRules\SA1517CodeFixProvider.cs" />
-    <Compile Include="LayoutRules\SA1518CodeFixProvider.cs" />
-    <Compile Include="MaintainabilityRules\SA1119CodeFixProvider.cs" />
-    <Compile Include="MaintainabilityRules\SA1400CodeFixProvider.cs" />
-    <Compile Include="MaintainabilityRules\SA1402CodeFixProvider.cs" />
-    <Compile Include="MaintainabilityRules\SA1404CodeFixProvider.cs" />
-    <Compile Include="MaintainabilityRules\SA1407SA1408CodeFixProvider.cs" />
-    <Compile Include="MaintainabilityRules\SA1407SA1408FixAllProvider.cs" />
-    <Compile Include="MaintainabilityRules\SA1410SA1411CodeFixProvider.cs" />
-    <Compile Include="MaintainabilityRules\SA1412CodeFixProvider.cs" />
-    <Compile Include="MaintainabilityRules\SA1412FixAllProvider.cs" />
-    <Compile Include="NamingRules\RenameToLowerCaseCodeFixProvider.cs" />
-    <Compile Include="NamingRules\RenameToUpperCaseCodeFixProvider.cs" />
-    <Compile Include="NamingRules\SA1302CodeFixProvider.cs" />
-    <Compile Include="NamingRules\SA1308CodeFixProvider.cs" />
-    <Compile Include="NamingRules\SA1309CodeFixProvider.cs" />
-    <Compile Include="NamingRules\SA1310CodeFixProvider.cs" />
-    <Compile Include="NamingRules\SX1309CodeFixProvider.cs" />
-    <Compile Include="OrderingRules\ElementOrderCodeFixProvider.cs" />
-    <Compile Include="OrderingRules\SA1205CodeFixProvider.cs" />
-    <Compile Include="OrderingRules\SA1207CodeFixProvider.cs" />
-    <Compile Include="OrderingRules\SA1212SA1213CodeFixProvider.cs" />
-    <Compile Include="OrderingRules\UsingCodeFixProvider.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReadabilityRules\RemoveRegionCodeFixProvider.cs" />
-    <Compile Include="ReadabilityRules\RemoveRegionFixAllProvider.cs" />
-    <Compile Include="ReadabilityRules\SA1100CodeFixProvider.cs" />
-    <Compile Include="ReadabilityRules\SA1101CodeFixProvider.cs" />
-    <Compile Include="ReadabilityRules\SA1102CodeFixProvider.cs" />
-    <Compile Include="ReadabilityRules\SA1103CodeFixProvider.cs" />
-    <Compile Include="ReadabilityRules\SA1104SA1105CodeFixProvider.cs" />
-    <Compile Include="ReadabilityRules\SA1106CodeFixProvider.cs" />
-    <Compile Include="ReadabilityRules\SA1107CodeFixProvider.cs" />
-    <Compile Include="ReadabilityRules\SA1107FixAllProvider.cs" />
-    <Compile Include="ReadabilityRules\SA1116CodeFixProvider.cs" />
-    <Compile Include="ReadabilityRules\SA1120CodeFixProvider.cs" />
-    <Compile Include="ReadabilityRules\SA1121CodeFixProvider.cs" />
-    <Compile Include="ReadabilityRules\SA1122CodeFixProvider.cs" />
-    <Compile Include="ReadabilityRules\SA1127CodeFixProvider.cs" />
-    <Compile Include="ReadabilityRules\SA1128CodeFixProvider.cs" />
-    <Compile Include="ReadabilityRules\SA1129CodeFixProvider.cs" />
-    <Compile Include="ReadabilityRules\SA1131CodeFixProvider.cs" />
-    <Compile Include="ReadabilityRules\SA1132CodeFixProvider.cs" />
-    <Compile Include="ReadabilityRules\SA1133CodeFixProvider.cs" />
-    <Compile Include="ReadabilityRules\SA1134CodeFixProvider.cs" />
-    <Compile Include="ReadabilityRules\SX1101CodeFixProvider.cs" />
-    <Compile Include="Settings\SettingsFileCodeFixProvider.cs" />
-    <Compile Include="SpacingRules\SA1003CodeFixProvider.cs" />
-    <Compile Include="SpacingRules\SA1004CodeFixProvider.cs" />
-    <Compile Include="SpacingRules\SA1005CodeFixProvider.cs" />
-    <Compile Include="SpacingRules\SA1018CodeFixProvider.cs" />
-    <Compile Include="SpacingRules\SA1025CodeFixProvider.cs" />
-    <Compile Include="SpacingRules\SA1027CodeFixProvider.cs" />
-    <Compile Include="SpacingRules\SA1028CodeFixProvider.cs" />
-    <Compile Include="SpacingRules\TokenSpacingCodeFixProvider.cs" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="1.2.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="1.2.1" />
   </ItemGroup>
+
   <ItemGroup>
-    <None Include="..\..\build\keys\StyleCopAnalyzers.dev.snk">
-      <Link>StyleCopAnalyzers.dev.snk</Link>
-    </None>
-    <None Include="..\..\build\keys\StyleCopAnalyzers.snk">
-      <Link>StyleCopAnalyzers.snk</Link>
-    </None>
-    <None Include="..\StyleCop.Analyzers.ruleset">
-      <Link>StyleCop.Analyzers.ruleset</Link>
-    </None>
-    <None Include="packages.config" />
-    <NuGetManifest Include="StyleCop.Analyzers.nuspec">
-      <SubType>Designer</SubType>
-      <Symbols>True</Symbols>
-      <PackageAnalysis>False</PackageAnalysis>
-    </NuGetManifest>
+    <ProjectReference Include="..\StyleCop.Analyzers\StyleCop.Analyzers.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="StyleCop.Analyzers.nuspec" />
     <None Include="tools\install.ps1" />
     <None Include="tools\uninstall.ps1" />
     <None Include="ReadMe.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <AdditionalFiles Include="..\stylecop.json">
-      <Link>stylecop.json</Link>
-    </AdditionalFiles>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Microsoft.CodeAnalysis, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.CodeAnalysis.Common.1.0.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.CodeAnalysis.CSharp.1.0.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp.Workspaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.CodeAnalysis.CSharp.Workspaces.1.0.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.CSharp.Workspaces.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.Workspaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.CodeAnalysis.Workspaces.Common.1.0.0\lib\portable-net45+win8\Microsoft.CodeAnalysis.Workspaces.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.7.0.1\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Collections.Immutable, Version=1.1.36.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Collections.Immutable.1.1.36\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Composition.AttributedModel">
-      <HintPath>..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.AttributedModel.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Composition.Convention">
-      <HintPath>..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Convention.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Composition.Hosting">
-      <HintPath>..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Hosting.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Composition.Runtime">
-      <HintPath>..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Composition.TypedParts">
-      <HintPath>..\..\packages\Microsoft.Composition.1.0.27\lib\portable-net45+win8+wp8+wpa81\System.Composition.TypedParts.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Reflection.Metadata, Version=1.0.21.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Reflection.Metadata.1.0.21\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Analyzer Include="..\..\packages\AsyncUsageAnalyzers.1.0.0-alpha003\analyzers\dotnet\AsyncUsageAnalyzers.dll" />
-    <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
-    <Analyzer Include="..\..\packages\Microsoft.CodeAnalysis.Analyzers.1.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
-    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\Newtonsoft.Json.dll" />
-    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
-    <Analyzer Include="..\..\packages\StyleCop.Analyzers.1.0.0\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\StyleCop.Analyzers\StyleCop.Analyzers.csproj">
-      <Project>{3b052737-06ce-4182-ae0f-08eb82dfa73e}</Project>
-      <Name>StyleCop.Analyzers</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\..\packages\Tvl.NuGet.BuildTasks.1.0.0-alpha002\build\Tvl.NuGet.BuildTasks.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Tvl.NuGet.BuildTasks.1.0.0-alpha002\build\Tvl.NuGet.BuildTasks.props'))" />
-    <Error Condition="!Exists('..\..\packages\Tvl.NuGet.BuildTasks.1.0.0-alpha002\build\Tvl.NuGet.BuildTasks.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Tvl.NuGet.BuildTasks.1.0.0-alpha002\build\Tvl.NuGet.BuildTasks.targets'))" />
-  </Target>
-  <Import Project="..\..\packages\Tvl.NuGet.BuildTasks.1.0.0-alpha002\build\Tvl.NuGet.BuildTasks.targets" Condition="Exists('..\..\packages\Tvl.NuGet.BuildTasks.1.0.0-alpha002\build\Tvl.NuGet.BuildTasks.targets')" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

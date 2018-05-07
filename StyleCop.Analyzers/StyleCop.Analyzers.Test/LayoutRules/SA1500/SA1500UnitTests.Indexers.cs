@@ -338,7 +338,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
                 this.CSharpDiagnostic().WithLocation(87, 35),
 
                 // Invalid indexer #11
-                this.CSharpDiagnostic().WithLocation(91, 5)
+                this.CSharpDiagnostic().WithLocation(91, 5),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

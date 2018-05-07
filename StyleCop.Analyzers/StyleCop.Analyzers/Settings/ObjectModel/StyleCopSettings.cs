@@ -3,63 +3,53 @@
 
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
-    using Newtonsoft.Json;
+    using LightJson;
 
-    [JsonObject(MemberSerialization.OptIn)]
     internal class StyleCopSettings
     {
         /// <summary>
         /// This is the backing field for the <see cref="Indentation"/> property.
         /// </summary>
-        [JsonProperty("indentation", DefaultValueHandling = DefaultValueHandling.Ignore)]
         private IndentationSettings indentation;
 
         /// <summary>
         /// This is the backing field for the <see cref="SpacingRules"/> property.
         /// </summary>
-        [JsonProperty("spacingRules", DefaultValueHandling = DefaultValueHandling.Ignore)]
         private SpacingSettings spacingRules;
 
         /// <summary>
         /// This is the backing field for the <see cref="ReadabilityRules"/> property.
         /// </summary>
-        [JsonProperty("readabilityRules", DefaultValueHandling = DefaultValueHandling.Ignore)]
         private ReadabilitySettings readabilityRules;
 
         /// <summary>
         /// This is the backing field for the <see cref="OrderingRules"/> property.
         /// </summary>
-        [JsonProperty("orderingRules", DefaultValueHandling = DefaultValueHandling.Ignore)]
         private OrderingSettings orderingRules;
 
         /// <summary>
         /// This is the backing field for the <see cref="NamingRules"/> property.
         /// </summary>
-        [JsonProperty("namingRules", DefaultValueHandling = DefaultValueHandling.Ignore)]
         private NamingSettings namingRules;
 
         /// <summary>
         /// This is the backing field for the <see cref="MaintainabilityRules"/> property.
         /// </summary>
-        [JsonProperty("maintainabilityRules", DefaultValueHandling = DefaultValueHandling.Ignore)]
         private MaintainabilitySettings maintainabilityRules;
 
         /// <summary>
         /// This is the backing field for the <see cref="LayoutRules"/> property.
         /// </summary>
-        [JsonProperty("layoutRules", DefaultValueHandling = DefaultValueHandling.Ignore)]
         private LayoutSettings layoutRules;
 
         /// <summary>
         /// This is the backing field for the <see cref="DocumentationRules"/> property.
         /// </summary>
-        [JsonProperty("documentationRules", DefaultValueHandling = DefaultValueHandling.Ignore)]
         private DocumentationSettings documentationRules;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="StyleCopSettings"/> class during JSON deserialization.
+        /// Initializes a new instance of the <see cref="StyleCopSettings"/> class.
         /// </summary>
-        [JsonConstructor]
         protected internal StyleCopSettings()
         {
             this.indentation = new IndentationSettings();
@@ -71,6 +61,60 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.maintainabilityRules = new MaintainabilitySettings();
             this.layoutRules = new LayoutSettings();
             this.documentationRules = new DocumentationSettings();
+        }
+
+        protected internal StyleCopSettings(JsonObject settingsObject)
+            : this()
+        {
+            foreach (var kvp in settingsObject)
+            {
+                var childSettingsObject = kvp.Value.AsJsonObject;
+                switch (kvp.Key)
+                {
+                case "indentation":
+                    kvp.AssertIsObject();
+                    this.indentation = new IndentationSettings(childSettingsObject);
+                    break;
+
+                case "spacingRules":
+                    kvp.AssertIsObject();
+                    this.spacingRules = new SpacingSettings(childSettingsObject);
+                    break;
+
+                case "readabilityRules":
+                    kvp.AssertIsObject();
+                    this.readabilityRules = new ReadabilitySettings(childSettingsObject);
+                    break;
+
+                case "orderingRules":
+                    kvp.AssertIsObject();
+                    this.orderingRules = new OrderingSettings(childSettingsObject);
+                    break;
+
+                case "namingRules":
+                    kvp.AssertIsObject();
+                    this.namingRules = new NamingSettings(childSettingsObject);
+                    break;
+
+                case "maintainabilityRules":
+                    kvp.AssertIsObject();
+                    this.maintainabilityRules = new MaintainabilitySettings(childSettingsObject);
+                    break;
+
+                case "layoutRules":
+                    kvp.AssertIsObject();
+                    this.layoutRules = new LayoutSettings(childSettingsObject);
+                    break;
+
+                case "documentationRules":
+                    kvp.AssertIsObject();
+                    this.documentationRules = new DocumentationSettings(childSettingsObject);
+                    break;
+
+                default:
+                    break;
+                }
+            }
         }
 
         public IndentationSettings Indentation =>

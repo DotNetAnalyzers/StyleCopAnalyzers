@@ -210,7 +210,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
             {
                 this.CSharpDiagnostic().WithLocation(8, 1),
                 this.CSharpDiagnostic().WithLocation(16, 1),
-                this.CSharpDiagnostic().WithLocation(24, 1)
+                this.CSharpDiagnostic().WithLocation(24, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -319,7 +319,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
             DiagnosticResult[] expectedDiagnostics =
             {
                 this.CSharpDiagnostic().WithLocation(8, 1),
-                this.CSharpDiagnostic().WithLocation(17, 1)
+                this.CSharpDiagnostic().WithLocation(17, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
@@ -543,7 +543,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
             DiagnosticResult[] expectedDiagnostics =
             {
                 this.CSharpDiagnostic().WithLocation(10, 1),
-                this.CSharpDiagnostic().WithLocation(16, 1)
+                this.CSharpDiagnostic().WithLocation(16, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

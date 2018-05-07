@@ -6,6 +6,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Helpers;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
     using TestHelper;
@@ -16,6 +18,18 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     /// </summary>
     public class SA1605UnitTests : DiagnosticVerifier
     {
+        private const string TestSettings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""documentPrivateElements"": true
+    }
+  }
+}
+";
+
+        private string currentTestSettings = TestSettings;
+
         [Theory]
         [InlineData("class")]
         [InlineData("struct")]
@@ -205,6 +219,136 @@ public partial class ClassName
 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestIncludedDocumentationWithoutSummaryAsync()
+        {
+            var testCode = @"
+/// <include file='ClassWithoutSummary.xml' path='/ClassName/*'/>
+public partial class ClassName
+{
+    ///
+    public void Test() { }
+}";
+            var expected = this.CSharpDiagnostic().WithLocation(3, 22);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2450, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2450")]
+        public async Task TestIncludedNotRequiredDocumentationWithoutSummaryAsync()
+        {
+            var testCode = @"
+/// <include file='ClassWithoutSummary.xml' path='/ClassName/*'/>
+public partial class ClassName
+{
+    ///
+    public void Test() { }
+}";
+
+            // The situation is allowed if 'documentExposedElements' false
+            this.currentTestSettings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""documentExposedElements"": false
+    }
+  }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestIncludedDocumentationWithInheritdocAsync()
+        {
+            var testCode = @"
+/// <include file='ClassWithInheritdoc.xml' path='/ClassName/*'/>
+public partial class ClassName
+{
+    ///
+    public void Test() { }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestIncludedDocumentationWithSummaryAsync()
+        {
+            var testCode = @"
+/// <include file='ClassWithSummary.xml' path='/ClassName/*'/>
+public partial class ClassName
+{
+    ///
+    public void Test() { }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestIncludedDocumentationWithContentAsync()
+        {
+            var testCode = @"
+/// <include file='ClassWithContent.xml' path='/ClassName/*'/>
+public partial class ClassName
+{
+    ///
+    public void Test() { }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
+        protected override Project ApplyCompilationOptions(Project project)
+        {
+            var resolver = new TestXmlReferenceResolver();
+
+            string contentWithoutSummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<ClassName>
+</ClassName>
+";
+            resolver.XmlReferences.Add("ClassWithoutSummary.xml", contentWithoutSummary);
+
+            string contentWithInheritdoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<ClassName>
+  <inheritdoc/>
+</ClassName>
+";
+            resolver.XmlReferences.Add("ClassWithInheritdoc.xml", contentWithInheritdoc);
+
+            string contentWithSummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<ClassName>
+  <summary>
+    Foo
+  </summary>
+</ClassName>
+";
+            resolver.XmlReferences.Add("ClassWithSummary.xml", contentWithSummary);
+
+            string contentWithContent = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<ClassName>
+  <content>
+    Foo
+  </content>
+</ClassName>
+";
+            resolver.XmlReferences.Add("ClassWithContent.xml", contentWithContent);
+
+            project = base.ApplyCompilationOptions(project);
+            project = project.WithCompilationOptions(project.CompilationOptions.WithXmlReferenceResolver(resolver));
+            return project;
+        }
+
+        protected override string GetSettings()
+        {
+            Assert.NotNull(this.currentTestSettings);
+            return this.currentTestSettings;
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

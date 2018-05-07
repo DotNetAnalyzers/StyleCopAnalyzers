@@ -267,7 +267,7 @@ public class Foo
 
                 // Invalid event #6 (Only report once for accessor statement on a single line)
                 this.CSharpDiagnostic().WithLocation(67, 9),
-                this.CSharpDiagnostic().WithLocation(70, 9)
+                this.CSharpDiagnostic().WithLocation(70, 9),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

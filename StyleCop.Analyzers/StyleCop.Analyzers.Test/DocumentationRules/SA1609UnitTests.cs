@@ -7,6 +7,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Threading;
     using System.Threading.Tasks;
     using Analyzers.DocumentationRules;
+    using Helpers;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using TestHelper;
@@ -279,6 +281,139 @@ public class ClassName
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 16);
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that included property documentation will be accepted.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestPropertyWithValidIncludeAsync()
+        {
+            var testCode = @"
+public class ClassName
+{
+    /// <include file='PropertyWithValue.xml' path='/ClassName/Property/*'/>
+    public int Property
+    {
+        get;
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that included property documentation without a value tag will be flagged.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestPropertyWithoutValueInIncludeAsync()
+        {
+            var testCode = @"
+public class ClassName
+{
+    /// <include file='PropertyWithoutValue.xml' path='/ClassName/Property/*'/>
+    public int Property
+    {
+        get;
+    }
+}";
+            var expected = this.CSharpDiagnostic().WithLocation(5, 16);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            var offeredFixes = await this.GetOfferedCSharpFixesAsync(testCode).ConfigureAwait(false);
+            Assert.Empty(offeredFixes);
+        }
+
+        /// <summary>
+        /// Verifies that included property documentation containing &gt;inheritdoc/&lt; will be accepted.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestPropertyWithInheritdocInIncludeAsync()
+        {
+            var testCode = @"
+public interface ITestInterface
+{
+  /// <summary>
+  /// Gets the test property value.
+  /// </summary>
+  /// <value>Test number.</value>
+  int Property { get; }
+}
+
+public class ClassName : ITestInterface
+{
+    /// <include file='PropertyWithInheritdoc.xml' path='/ClassName/Property/*'/>
+    public int Property
+    {
+        get;
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2451, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2451")]
+        public async Task TestPropertyWithoutDocumentationRequirementAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// 
+/// </summary>
+public class ClassName
+{
+    /// <include file='PropertyWithoutValue.xml' path='/ClassName/Property/*'/>
+    private int Property
+    {
+        get;
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private ClassName PropertyWithSummary { get; set; }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected override Project ApplyCompilationOptions(Project project)
+        {
+            var resolver = new TestXmlReferenceResolver();
+
+            string contentWithValue = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<ClassName>
+  <Property>
+    <summary>Foo</summary>
+    <value>Bar</value>
+  </Property>
+</ClassName>
+";
+            resolver.XmlReferences.Add("PropertyWithValue.xml", contentWithValue);
+
+            string contentWithoutValue = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<ClassName>
+  <Property>
+    <summary>Foo</summary>
+  </Property>
+</ClassName>
+";
+            resolver.XmlReferences.Add("PropertyWithoutValue.xml", contentWithoutValue);
+
+            string contentWithInheritdocValue = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<ClassName>
+  <Property>
+    <inheritdoc/>
+  </Property>
+</ClassName>
+";
+            resolver.XmlReferences.Add("PropertyWithInheritdoc.xml", contentWithInheritdocValue);
+
+            project = base.ApplyCompilationOptions(project);
+            project = project.WithCompilationOptions(project.CompilationOptions.WithXmlReferenceResolver(resolver));
+            return project;
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

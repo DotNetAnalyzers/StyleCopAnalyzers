@@ -13,6 +13,6 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// <summary>
         /// Files are named using the metadata convention (e.g. TypeName`2)
         /// </summary>
-        Metadata
+        Metadata,
     }
 }

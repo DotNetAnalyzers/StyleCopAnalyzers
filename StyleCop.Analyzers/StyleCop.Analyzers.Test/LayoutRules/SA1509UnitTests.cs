@@ -398,7 +398,7 @@ class Foo
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(8, 9)
+                this.CSharpDiagnostic().WithLocation(8, 9),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -821,7 +821,7 @@ class Foo
                 this.CSharpDiagnostic().WithLocation(3, 5),
                 this.CSharpDiagnostic().WithLocation(6, 5),
                 this.CSharpDiagnostic().WithLocation(15, 9),
-                this.CSharpDiagnostic().WithLocation(19, 1)
+                this.CSharpDiagnostic().WithLocation(19, 1),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -860,9 +860,9 @@ class Foo
 namespace TestNamespace
 {
 
-#pragma warning disable SA1302 // Interface names must begin with I
+#pragma warning disable SA1302 // Interface names should begin with I
     public interface ActiveConfiguredProject<out T>
-#pragma warning restore SA1302 // Interface names must begin with I
+#pragma warning restore SA1302 // Interface names should begin with I
     {
         /// <summary>
         /// Gets the ConfiguredProject exported value.

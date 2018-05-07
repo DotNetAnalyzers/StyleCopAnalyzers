@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Helpers
     using System;
     using System.Linq;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class NamedTypeHelpers
@@ -76,6 +77,26 @@ namespace StyleCop.Analyzers.Helpers
             return false;
         }
 
+        internal static string GetNameOrIdentifier(MemberDeclarationSyntax member)
+        {
+            switch (member.Kind())
+            {
+            case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.InterfaceDeclaration:
+            case SyntaxKind.StructDeclaration:
+                return ((TypeDeclarationSyntax)member).Identifier.Text;
+
+            case SyntaxKind.EnumDeclaration:
+                return ((EnumDeclarationSyntax)member).Identifier.Text;
+
+            case SyntaxKind.DelegateDeclaration:
+                return ((DelegateDeclarationSyntax)member).Identifier.Text;
+
+            default:
+                throw new ArgumentException("Unhandled declaration kind: " + member.Kind());
+            }
+        }
+
         internal static Location GetNameOrIdentifierLocation(SyntaxNode member)
         {
             Location location = null;
@@ -94,6 +115,17 @@ namespace StyleCop.Analyzers.Helpers
             location = location ?? (member as IndexerDeclarationSyntax)?.ThisKeyword.GetLocation();
             location = location ?? member.GetLocation();
             return location;
+        }
+
+        internal static bool IsPartialDeclaration(MemberDeclarationSyntax declaration)
+        {
+            var typeDeclaration = declaration as TypeDeclarationSyntax;
+            if (typeDeclaration != null)
+            {
+                return typeDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword);
+            }
+
+            return false;
         }
 
         /// <summary>

@@ -3,27 +3,58 @@
 
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
-    using Newtonsoft.Json;
+    using LightJson;
 
-    [JsonObject(MemberSerialization.OptIn)]
     internal class LayoutSettings
     {
         /// <summary>
         /// This is the backing field for the <see cref="NewlineAtEndOfFile"/> property.
         /// </summary>
-        [JsonProperty("newlineAtEndOfFile", DefaultValueHandling = DefaultValueHandling.Include)]
-        private EndOfFileHandling newlineAtEndOfFile;
+        private OptionSetting newlineAtEndOfFile;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LayoutSettings"/> class during JSON deserialization.
+        /// This is the backing field for the <see cref="AllowConsecutiveUsings"/> property.
         /// </summary>
-        [JsonConstructor]
+        private bool allowConsecutiveUsings;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LayoutSettings"/> class.
+        /// </summary>
         protected internal LayoutSettings()
         {
-            this.newlineAtEndOfFile = EndOfFileHandling.Allow;
+            this.newlineAtEndOfFile = OptionSetting.Allow;
+            this.allowConsecutiveUsings = true;
         }
 
-        public EndOfFileHandling NewlineAtEndOfFile =>
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LayoutSettings"/> class.
+        /// </summary>
+        /// <param name="layoutSettingsObject">The JSON object containing the settings.</param>
+        protected internal LayoutSettings(JsonObject layoutSettingsObject)
+            : this()
+        {
+            foreach (var kvp in layoutSettingsObject)
+            {
+                switch (kvp.Key)
+                {
+                case "newlineAtEndOfFile":
+                    this.newlineAtEndOfFile = kvp.ToEnumValue<OptionSetting>();
+                    break;
+
+                case "allowConsecutiveUsings":
+                    this.allowConsecutiveUsings = kvp.ToBooleanValue();
+                    break;
+
+                default:
+                    break;
+                }
+            }
+        }
+
+        public OptionSetting NewlineAtEndOfFile =>
             this.newlineAtEndOfFile;
+
+        public bool AllowConsecutiveUsings =>
+            this.allowConsecutiveUsings;
     }
 }

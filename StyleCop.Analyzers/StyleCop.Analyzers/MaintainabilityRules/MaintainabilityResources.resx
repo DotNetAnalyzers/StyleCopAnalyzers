@@ -138,4 +138,16 @@
   <data name="SA1412CodeFix" xml:space="preserve">
     <value>Change encoding from '{0}' to UTF-8 with byte order mark</value>
   </data>
+  <data name="SA1413CodeFix" xml:space="preserve">
+    <value>Add trailing comma</value>
+  </data>
+  <data name="SA1413Description" xml:space="preserve">
+    <value>A multi-line initializer in a C# code file should use a comma on the last line.</value>
+  </data>
+  <data name="SA1413MessageFormat" xml:space="preserve">
+    <value>Use trailing comma in multi-line initializers</value>
+  </data>
+  <data name="SA1413Title" xml:space="preserve">
+    <value>Use trailing comma in multi-line initializers</value>
+  </data>
 </root>

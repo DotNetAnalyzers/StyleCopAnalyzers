@@ -117,8 +117,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         [MemberData(nameof(NonUtf8Encodings))]
         public async Task TestFixAllAsync(int codepage)
         {
-            await this.TestFixAllAsync(codepage, FixAllScope.Project).ConfigureAwait(false);
-            await this.TestFixAllAsync(codepage, FixAllScope.Solution).ConfigureAwait(false);
+            await this.TestFixAllExecuterAsync(codepage, FixAllScope.Project).ConfigureAwait(false);
+            await this.TestFixAllExecuterAsync(codepage, FixAllScope.Solution).ConfigureAwait(false);
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
@@ -152,7 +152,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             return solution.GetProject(projectId);
         }
 
-        private async Task TestFixAllAsync(int codepage, FixAllScope scope)
+        private async Task TestFixAllExecuterAsync(int codepage, FixAllScope scope)
         {
             string[] testCode = new[] { "class Foo { }", "class Bar { }" };
 

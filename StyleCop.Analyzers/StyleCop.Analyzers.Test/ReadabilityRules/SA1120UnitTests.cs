@@ -302,7 +302,7 @@ class TestClass
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(8, 9),
-                this.CSharpDiagnostic().WithLocation(11, 9)
+                this.CSharpDiagnostic().WithLocation(11, 9),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -346,7 +346,7 @@ public class SomeException : Exception
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(4, 5),
-                this.CSharpDiagnostic().WithLocation(9, 5)
+                this.CSharpDiagnostic().WithLocation(9, 5),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -398,6 +398,35 @@ public class TestClass
 ";
 
             var expected = this.CSharpDiagnostic().WithLocation(4, 1);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that an unclosed multi-line comment at the end of a source file will be handled correctly.
+        /// This is a regression test for #2056
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyThatUnclosedCommentAtFileEndWillBeHandledProperlyAsync()
+        {
+            var testCode = @"public class TestClass
+{
+}
+/*";
+
+            var fixedTestCode = @"public class TestClass
+{
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpCompilerError("CS1035").WithMessage("End-of-file found, '*/' expected").WithLocation(4, 1),
+                this.CSharpDiagnostic().WithLocation(4, 1),
+            };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);

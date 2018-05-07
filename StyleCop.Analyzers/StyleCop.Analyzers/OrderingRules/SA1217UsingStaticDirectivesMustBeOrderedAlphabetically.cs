@@ -29,15 +29,14 @@ namespace StyleCop.Analyzers.OrderingRules
         /// The ID for diagnostics produced by the <see cref="SA1217UsingStaticDirectivesMustBeOrderedAlphabetically"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1217";
-        private const string Title = "Using static directives must be ordered alphabetically";
-        private const string MessageFormat = "The using static directive for '{0}' must appear after the using static directive for '{1}'";
-        private const string Description = "All using static directives must be ordered alphabetically.";
+        private const string Title = "Using static directives should be ordered alphabetically";
+        private const string MessageFormat = "The using static directive for '{0}' should appear after the using static directive for '{1}'";
+        private const string Description = "All using static directives should be ordered alphabetically.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1217.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> CompilationUnitAction = HandleCompilationUnit;
         private static readonly Action<SyntaxNodeAnalysisContext> NamespaceDeclarationAction = HandleNamespaceDeclaration;
 
@@ -48,13 +47,11 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(CompilationUnitAction, SyntaxKind.CompilationUnit);
-            context.RegisterSyntaxNodeActionHonorExclusions(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
+            context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
         }
 
         private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context)
@@ -84,12 +81,15 @@ namespace StyleCop.Analyzers.OrderingRules
                 {
                     if (lastStaticUsingDirective != null)
                     {
-                        var firstName = lastStaticUsingDirective.Name.ToNormalizedString();
-                        var secondName = usingDirective.Name.ToNormalizedString();
+                        var firstName = lastStaticUsingDirective.Name;
+                        var secondName = usingDirective.Name;
 
-                        if (CultureInfo.InvariantCulture.CompareInfo.Compare(firstName, secondName, CompareOptions.IgnoreCase | CompareOptions.IgnoreNonSpace | CompareOptions.IgnoreWidth) > 0)
+                        if (NameSyntaxHelpers.Compare(firstName, secondName) > 0)
                         {
-                            context.ReportDiagnostic(Diagnostic.Create(Descriptor, lastStaticUsingDirective.GetLocation(), new[] { firstName, secondName }));
+                            context.ReportDiagnostic(Diagnostic.Create(
+                                Descriptor,
+                                lastStaticUsingDirective.GetLocation(),
+                                new[] { firstName.ToNormalizedString(), secondName.ToNormalizedString() }));
                             return;
                         }
                     }

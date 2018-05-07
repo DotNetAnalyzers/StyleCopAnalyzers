@@ -7,7 +7,6 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.SpacingRules;
@@ -164,6 +163,86 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         }
 
         [Fact]
+        [WorkItem(2289, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2289")]
+        public async Task TestSpaceBeforeCommaWhenPartOfInterpolationAlignmentClauseAsync()
+        {
+            string statement = @"var x = new[] { 1, 2, 3, 4, 5, 6, 7 };
+            var t = $""{x[2] ,3}"";";
+            string fixedStatement = @"var x = new[] { 1, 2, 3, 4, 5, 6, 7 };
+            var t = $""{x[2],3}"";";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(8, 29);
+
+            await this.TestCommaInStatementOrDeclAsync(statement, expected, fixedStatement).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2289, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2289")]
+        public async Task TestSpaceAfterCommaWhenPartOfInterpolationAlignmentClauseAsync()
+        {
+            string statement = @"var x = new[] { 1, 2, 3, 4, 5, 6, 7 };
+            var t = $""{x[2], 3}"";";
+            string fixedStatement = @"var x = new[] { 1, 2, 3, 4, 5, 6, 7 };
+            var t = $""{x[2],3}"";";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(8, 28);
+
+            await this.TestCommaInStatementOrDeclAsync(statement, expected, fixedStatement).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2289, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2289")]
+        public async Task TestSpaceBeforeAndAfterCommaWhenPartOfInterpolationAlignmentClauseAsync()
+        {
+            string statement = @"var x = new[] { 1, 2, 3, 4, 5, 6, 7 };
+            var t = $""{x[2] , 3}"";";
+            string fixedStatement = @"var x = new[] { 1, 2, 3, 4, 5, 6, 7 };
+            var t = $""{x[2],3}"";";
+
+            DiagnosticResult[] expected =
+                {
+                    this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(8, 29),
+                    this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(8, 29),
+                };
+
+            await this.TestCommaInStatementOrDeclAsync(statement, expected, fixedStatement).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2289, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2289")]
+        public async Task TestSpaceAfterCommaWithMinusWhenPartOfInterpolationAlignmentClauseAsync()
+        {
+            string statement = @"var x = new[] { 1, 2, 3, 4, 5, 6, 7 };
+            var t = $""{x[2], -3}"";";
+            string fixedStatement = @"var x = new[] { 1, 2, 3, 4, 5, 6, 7 };
+            var t = $""{x[2],-3}"";";
+
+            DiagnosticResult[] expected =
+                {
+                    this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(8, 28),
+                };
+
+            await this.TestCommaInStatementOrDeclAsync(statement, expected, fixedStatement).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2289, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2289")]
+        public async Task TestSpaceAfterCommaWithPlusWhenPartOfInterpolationAlignmentClauseAsync()
+        {
+            string statement = @"var x = new[] { 1, 2, 3, 4, 5, 6, 7 };
+            var t = $""{x[2], +3}"";";
+            string fixedStatement = @"var x = new[] { 1, 2, 3, 4, 5, 6, 7 };
+            var t = $""{x[2],+3}"";";
+
+            DiagnosticResult[] expected =
+                {
+                    this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(8, 28),
+                };
+
+            await this.TestCommaInStatementOrDeclAsync(statement, expected, fixedStatement).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestSpaceOnlyBeforeCommaAsync()
         {
             string spaceOnlyBeforeComma = @"f(a ,b);";
@@ -172,7 +251,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 17),
-                this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 17)
+                this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 17),
             };
 
             await this.TestCommaInStatementOrDeclAsync(spaceOnlyBeforeComma, expected, spaceOnlyAfterComma).ConfigureAwait(false);
@@ -193,13 +272,7 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                new DiagnosticResult
-                {
-                    Id = "CS1003",
-                    Severity = DiagnosticSeverity.Error,
-                    Message = "Syntax error, ',' expected",
-                    Locations = new[] { new DiagnosticResultLocation("Test0.cs", 6, 25) }
-                }
+                this.CSharpCompilerError("CS1003").WithMessage("Syntax error, ',' expected").WithLocation(6, 25),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -228,6 +301,55 @@ class ClassName
 ";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(6, 24);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2468, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2468")]
+        public async Task TestCodeFixCommaPlacementAsync()
+        {
+            var testCode = @"using System;
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var test = (new[]
+        {
+            new Tuple<int, int>(1, 2)
+           ,new Tuple<int, int>(3, 4)
+           ,new Tuple<int, int>(5, 6)
+        }).ToString();
+    }
+}
+";
+
+            var fixedCode = @"using System;
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var test = (new[]
+        {
+            new Tuple<int, int>(1, 2),
+           new Tuple<int, int>(3, 4),
+           new Tuple<int, int>(5, 6)
+        }).ToString();
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(10, 12),
+                this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(10, 12),
+                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(11, 12),
+                this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(11, 12),
+            };
+
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);

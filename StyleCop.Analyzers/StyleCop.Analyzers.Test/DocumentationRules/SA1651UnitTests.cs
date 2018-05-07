@@ -6,6 +6,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Helpers;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
@@ -221,12 +223,76 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithLocation(3, 9),
-                this.CSharpDiagnostic().WithLocation(4, 18)
+                this.CSharpDiagnostic().WithLocation(4, 18),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that included documentation without place holders will not produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestNoPlaceHolderInIncludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <include file='SummaryWithoutPlaceHolder.xml' path='/TestClass/*'/>
+public class TestClass
+{
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that included documentation with place holders will not produce the expected diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestPlaceHolderInIncludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <include file='SummaryWithPlaceHolder.xml' path='/TestClass/*'/>
+public class TestClass
+{
+}
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(2, 5);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            var offeredFixes = await this.GetOfferedCSharpFixesAsync(testCode).ConfigureAwait(false);
+            Assert.Empty(offeredFixes);
+        }
+
+        protected override Project ApplyCompilationOptions(Project project)
+        {
+            var resolver = new TestXmlReferenceResolver();
+
+            string contentSummaryWithoutPlaceHolder = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+  <summary>
+  This is a test class.
+  </summary>
+</TestClass>
+";
+            resolver.XmlReferences.Add("SummaryWithoutPlaceHolder.xml", contentSummaryWithoutPlaceHolder);
+
+            string contentSummaryWithPlaceHolder = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+  <summary>
+  <placeholder>This is a test class.</placeholder>
+  </summary>
+</TestClass>
+";
+            resolver.XmlReferences.Add("SummaryWithPlaceHolder.xml", contentSummaryWithPlaceHolder);
+
+            project = base.ApplyCompilationOptions(project);
+            project = project.WithCompilationOptions(project.CompilationOptions.WithXmlReferenceResolver(resolver));
+            return project;
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

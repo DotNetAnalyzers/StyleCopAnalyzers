@@ -358,6 +358,23 @@ public class Foo
                               }).ToList();
     }
 
+    // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2306
+    public void MultiLineGroupByLinqQuery()
+    {
+        var someQuery = from f in Enumerable.Empty<int>()
+                        group f by new
+                        {
+                            f,
+                        }
+                        into a
+                        select a;
+
+        var someOtherQuery = from f in Enumerable.Empty<int>()
+                             group f by new { f }
+                             into a
+                             select a;
+    }
+
     // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1049
     public object[] ExpressionBodiedProperty =>
         new[]
@@ -534,7 +551,7 @@ public class Foo
                 this.CSharpDiagnostic().WithLocation(73, 14),
 
                 // Invalid #8
-                this.CSharpDiagnostic().WithLocation(87, 18)
+                this.CSharpDiagnostic().WithLocation(87, 18),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -708,6 +725,61 @@ public class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        // This is a regression test for #2062.
+        [Fact]
+        public async Task VerifyThatBlockStatementDirectlyFollowedByReturnInsideLambdaInsideArgumentListWillProduceDiagnosticAsync()
+        {
+            var testCode = @"
+using System;
+public class TestClass
+{
+    public void Func1(Action action)
+    {
+    }
+
+    public void Func2(bool flag)
+    {
+        Func1(() => 
+        {
+            if (flag)
+            {
+                return;
+            }
+            return;
+        });
+    }
+}
+";
+
+            var fixedCode = @"
+using System;
+public class TestClass
+{
+    public void Func1(Action action)
+    {
+    }
+
+    public void Func2(bool flag)
+    {
+        Func1(() => 
+        {
+            if (flag)
+            {
+                return;
+            }
+
+            return;
+        });
+    }
+}
+";
+
+            var expected = this.CSharpDiagnostic().WithLocation(16, 14);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Verifies the analyzer will properly handle an object initializer without assignment.
         /// This is a regression test for <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1301">DotNetAnalyzers/StyleCopAnalyzers#1301</see>.
@@ -819,6 +891,93 @@ public class TestClass
         //// }
 
         return 0;
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that setters with an accessibility restriction should not report a warning.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestSetterWithAccessibilityRestrictionAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public int TestProtected
+    {
+        get
+        {
+            return 1;
+        }
+        protected set
+        {
+        }
+    }
+
+    public int TestInternal
+    {
+        get
+        {
+            return 1;
+        }
+        internal set
+        {
+        }
+    }
+
+    public int TestPrivate
+    {
+        get
+        {
+            return 1;
+        }
+        private set
+        {
+        }
+    }
+
+    public int this[int i]
+    {
+        get
+        {
+            return 1;
+        }
+        protected set
+        {
+        }
+    }
+}
+
+public class TestClass2
+{
+    public int this[int i]
+    {
+        get
+        {
+            return 1;
+        }
+        internal set
+        {
+        }
+    }
+}
+
+public class TestClass3
+{
+    public int this[int i]
+    {
+        get
+        {
+            return 1;
+        }
+        private set
+        {
+        }
     }
 }
 ";

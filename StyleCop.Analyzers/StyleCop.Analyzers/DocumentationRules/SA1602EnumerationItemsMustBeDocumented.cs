@@ -17,10 +17,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     /// <remarks>
     /// <para>C# syntax provides a mechanism for inserting documentation for classes and elements directly into the
-    /// code, through the use of XML documentation headers. For an introduction to these headers and a description of
-    /// the header syntax, see the following article:
-    /// <see href="http://msdn.microsoft.com/en-us/magazine/cc302121.aspx">XML Comments Let You Build Documentation
-    /// Directly From Your Visual Studio .NET Source Files</see>.</para>
+    /// code, through the use of XML documentation headers.</para>
     ///
     /// <para>A violation of this rule occurs when an item within an enumeration is missing a header. For
     /// example:</para>
@@ -44,15 +41,14 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// The ID for diagnostics produced by the <see cref="SA1602EnumerationItemsMustBeDocumented"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1602";
-        private const string Title = "Enumeration items must be documented";
-        private const string MessageFormat = "Enumeration items must be documented";
+        private const string Title = "Enumeration items should be documented";
+        private const string MessageFormat = "Enumeration items should be documented";
         private const string Description = "An item within a C# enumeration is missing an Xml documentation header.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1602.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> EnumMemberDeclarationAction = Analyzer.HandleEnumMemberDeclaration;
 
         /// <inheritdoc/>
@@ -62,12 +58,10 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(EnumMemberDeclarationAction, SyntaxKind.EnumMemberDeclaration);
+            context.RegisterSyntaxNodeAction(EnumMemberDeclarationAction, SyntaxKind.EnumMemberDeclaration);
         }
 
         private static class Analyzer
@@ -82,47 +76,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                 EnumMemberDeclarationSyntax declaration = (EnumMemberDeclarationSyntax)context.Node;
                 Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility();
                 Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
-                if (NeedsComment(settings.DocumentationRules, declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
+                if (SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
                 {
                     if (!XmlCommentHelper.HasDocumentation(declaration))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, declaration.Identifier.GetLocation()));
                     }
-                }
-            }
-
-            private static bool NeedsComment(DocumentationSettings documentationSettings, SyntaxKind syntaxKind, SyntaxKind parentSyntaxKind, Accessibility declaredAccessibility, Accessibility effectiveAccessibility)
-            {
-                if (documentationSettings.DocumentInterfaces
-                    && (syntaxKind == SyntaxKind.InterfaceDeclaration || parentSyntaxKind == SyntaxKind.InterfaceDeclaration))
-                {
-                    // DocumentInterfaces => all interfaces must be documented
-                    return true;
-                }
-
-                if (documentationSettings.DocumentPrivateElements)
-                {
-                    // DocumentPrivateMembers => everything except declared private fields must be documented
-                    return true;
-                }
-
-                switch (effectiveAccessibility)
-                {
-                case Accessibility.Public:
-                case Accessibility.Protected:
-                case Accessibility.ProtectedOrInternal:
-                    // These items are part of the exposed API surface => document if configured
-                    return documentationSettings.DocumentExposedElements;
-
-                case Accessibility.ProtectedAndInternal:
-                case Accessibility.Internal:
-                    // These items are part of the internal API surface => document if configured
-                    return documentationSettings.DocumentInternalElements;
-
-                case Accessibility.NotApplicable:
-                case Accessibility.Private:
-                default:
-                    return false;
                 }
             }
         }

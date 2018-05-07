@@ -19,7 +19,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// correct.</para>
     ///
     /// <para>The spacing around the symbol depends upon whether the symbol is used within a type declaration. If so,
-    /// the symbol must always be followed by a single space, unless it is the last character on the line, or is
+    /// the symbol should always be followed by a single space, unless it is the last character on the line, or is
     /// followed by an opening square bracket or a parenthesis. In addition, the symbol should not be preceded by
     /// whitespace, and should not be the first character on the line. An example of a properly spaced dereference
     /// symbol used within a type declaration is:</para>
@@ -29,7 +29,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// </code>
     ///
     /// <para>When a dereference or access-of symbol is used outside of a type declaration, the opposite rule applies.
-    /// In this case, the symbol must always be preceded by a single space, unless it is the first character on the
+    /// In this case, the symbol should always be preceded by a single space, unless it is the first character on the
     /// line, or is preceded by an opening square bracket, a parenthesis or a symbol of the same type i.e. an equals.
     /// The symbol should not be followed by whitespace, and should not be the last character on the line. For
     /// example:</para>
@@ -46,15 +46,14 @@ namespace StyleCop.Analyzers.SpacingRules
         /// <see cref="SA1023DereferenceAndAccessOfSymbolsMustBeSpacedCorrectly"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1023";
-        private const string Title = "Dereference and access of symbols must be spaced correctly";
-        private const string MessageFormat = "Dereference symbol '*' must {0}.";
+        private const string Title = "Dereference and access of symbols should be spaced correctly";
+        private const string MessageFormat = "Dereference symbol '*' should {0}.";
         private const string Description = "A dereference symbol or an access-of symbol within a C# element is not spaced correctly.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1023.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
 
         /// <inheritdoc/>
@@ -64,12 +63,10 @@ namespace StyleCop.Analyzers.SpacingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxTreeActionHonorExclusions(SyntaxTreeAction);
+            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
         }
 
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -142,39 +139,39 @@ namespace StyleCop.Analyzers.SpacingRules
             }
 
             bool firstInLine = token.IsFirstInLine();
-            bool precededBySpace = firstInLine || token.IsPrecededByWhitespace();
+            bool precededBySpace = firstInLine || token.IsPrecededByWhitespace(context.CancellationToken);
             bool followedBySpace = token.IsFollowedByWhitespace();
             bool lastInLine = token.IsLastInLine();
 
             if (!allowAtLineStart && firstInLine)
             {
-                // Dereference symbol '*' must {not appear at the beginning of a line}.
+                // Dereference symbol '*' should {not appear at the beginning of a line}.
                 var properties = TokenSpacingProperties.RemovePreceding;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, "not appear at the beginning of a line"));
             }
             else if (!allowPrecedingSpace && precededBySpace)
             {
-                // Dereference symbol '*' must {not be preceded by a space}.
+                // Dereference symbol '*' should {not be preceded by a space}.
                 var properties = TokenSpacingProperties.RemovePreceding;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, "not be preceded by a space"));
             }
 
             if (!allowAtLineEnd && lastInLine)
             {
-                // Dereference symbol '*' must {not appear at the end of a line}.
+                // Dereference symbol '*' should {not appear at the end of a line}.
                 var properties = TokenSpacingProperties.RemoveFollowing;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, "not appear at the end of a line"));
             }
             else if (!allowTrailingSpace && followedBySpace)
             {
-                // Dereference symbol '*' must {not be followed by a space}.
+                // Dereference symbol '*' should {not be followed by a space}.
                 var properties = TokenSpacingProperties.RemoveFollowing;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, "not be followed by a space"));
             }
 
             if (!followedBySpace && allowTrailingSpace)
             {
-                // Dereference symbol '*' must {be followed by a space}.
+                // Dereference symbol '*' should {be followed by a space}.
                 var properties = TokenSpacingProperties.InsertFollowing;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, "be followed by a space"));
             }

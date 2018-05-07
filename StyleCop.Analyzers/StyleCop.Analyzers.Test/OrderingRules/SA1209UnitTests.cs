@@ -51,6 +51,7 @@ using System.Net;
 using System;
 using System.IO;
 using System.Linq;
+
 class A
 {
 }";
@@ -81,6 +82,7 @@ class A
     using L = System.Linq;
     using System.IO;
     using P = System.Threading.Tasks;
+
     class A
     {
     }
@@ -111,24 +113,27 @@ class A
             var testCode = @"using global::System.Threading.Tasks;
 using Name = global::System.Threading;
 using global::System.IO;
+
 namespace Test
 {
     using System.Text;
     using System.Threading;
     using global::System;
+
     class A
     {
     }
 }";
 
-            var fixedTestCode = @"namespace Test
+            var fixedTestCode = @"using global::System.IO;
+using global::System.Threading.Tasks;
+using Name = global::System.Threading;
+
+namespace Test
 {
     using System.Text;
     using System.Threading;
     using global::System;
-    using global::System.IO;
-    using global::System.Threading.Tasks;
-    using Name = global::System.Threading;
 
     class A
     {
@@ -171,6 +176,7 @@ namespace Test
     using Threads = /* inline comment */ System.Threading;
     using System.IO;
     using /* comment */ System.Text;
+
     class A
     {
     }
@@ -205,6 +211,7 @@ namespace Test
     using System.Net;
     using Threads = System.Threading;
     using static System.Math;
+
     class A
     {
     }
@@ -235,7 +242,7 @@ namespace Test
         {
             var testCode = @"
 using System;
-using Microsoft.VisualStudio;
+using Microsoft.Win32;
 using MyList = System.Collections.Generic.List<int>;
 
 #if true
@@ -246,8 +253,9 @@ using Threads = System.Threading;
 using Microsoft.CodeAnalysis;
 #endif";
 
-            var fixedTestCode = @"using System;
-using Microsoft.VisualStudio;
+            var fixedTestCode = @"
+using System;
+using Microsoft.Win32;
 using MyList = System.Collections.Generic.List<int>;
 
 #if true

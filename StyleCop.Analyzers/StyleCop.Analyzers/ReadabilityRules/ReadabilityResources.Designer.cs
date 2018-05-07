@@ -20,7 +20,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class ReadabilityResources {
@@ -58,6 +58,15 @@ namespace StyleCop.Analyzers.ReadabilityRules {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fix indentation.
+        /// </summary>
+        internal static string IndentationCodeFix {
+            get {
+                return ResourceManager.GetString("IndentationCodeFix", resourceCulture);
             }
         }
         
@@ -161,7 +170,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Query clause must follow previous clause..
+        ///   Looks up a localized string similar to Query clause should follow previous clause..
         /// </summary>
         internal static string SA1102MessageFormat {
             get {
@@ -170,7 +179,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Query clause must follow previous clause.
+        ///   Looks up a localized string similar to Query clause should follow previous clause.
         /// </summary>
         internal static string SA1102Title {
             get {
@@ -206,7 +215,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Query clauses must be on separate lines or all on one line.
+        ///   Looks up a localized string similar to Query clauses should be on separate lines or all on one line.
         /// </summary>
         internal static string SA1103MessageFormat {
             get {
@@ -215,7 +224,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Query clauses must be on separate lines or all on one line.
+        ///   Looks up a localized string similar to Query clauses should be on separate lines or all on one line.
         /// </summary>
         internal static string SA1103Title {
             get {
@@ -233,7 +242,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Query clause must begin on new line when previous clause spans multiple lines.
+        ///   Looks up a localized string similar to Query clause should begin on new line when previous clause spans multiple lines.
         /// </summary>
         internal static string SA1104MessageFormat {
             get {
@@ -251,7 +260,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Query clause must begin on new line when previous clause spans multiple lines.
+        ///   Looks up a localized string similar to Query clause should begin on new line when previous clause spans multiple lines.
         /// </summary>
         internal static string SA1104Title {
             get {
@@ -269,7 +278,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Query clauses spanning multiple lines must begin on own line.
+        ///   Looks up a localized string similar to Query clauses spanning multiple lines should begin on own line.
         /// </summary>
         internal static string SA1105MessageFormat {
             get {
@@ -278,7 +287,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Query clauses spanning multiple lines must begin on own line.
+        ///   Looks up a localized string similar to Query clauses spanning multiple lines should begin on own line.
         /// </summary>
         internal static string SA1105Title {
             get {
@@ -305,7 +314,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code must not contain empty statements.
+        ///   Looks up a localized string similar to Code should not contain empty statements.
         /// </summary>
         internal static string SA1106MessageFormat {
             get {
@@ -314,7 +323,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code must not contain empty statements.
+        ///   Looks up a localized string similar to Code should not contain empty statements.
         /// </summary>
         internal static string SA1106Title {
             get {
@@ -341,7 +350,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code must not contain multiple statements on one line.
+        ///   Looks up a localized string similar to Code should not contain multiple statements on one line.
         /// </summary>
         internal static string SA1107MessageFormat {
             get {
@@ -350,7 +359,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code must not contain multiple statements on one line.
+        ///   Looks up a localized string similar to Code should not contain multiple statements on one line.
         /// </summary>
         internal static string SA1107Title {
             get {
@@ -368,7 +377,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Block statements must not contain embedded comments.
+        ///   Looks up a localized string similar to Block statements should not contain embedded comments.
         /// </summary>
         internal static string SA1108MessageFormat {
             get {
@@ -377,7 +386,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Block statements must not contain embedded comments.
+        ///   Looks up a localized string similar to Block statements should not contain embedded comments.
         /// </summary>
         internal static string SA1108Title {
             get {
@@ -404,7 +413,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Block statements must not contain embedded regions.
+        ///   Looks up a localized string similar to Block statements should not contain embedded regions.
         /// </summary>
         internal static string SA1109Title {
             get {
@@ -422,7 +431,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Opening parenthesis or bracket must be on declaration line..
+        ///   Looks up a localized string similar to Opening parenthesis or bracket should be on declaration line..
         /// </summary>
         internal static string SA1110MessageFormat {
             get {
@@ -431,7 +440,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Opening parenthesis or bracket must be on declaration line.
+        ///   Looks up a localized string similar to Opening parenthesis or bracket should be on declaration line.
         /// </summary>
         internal static string SA1110Title {
             get {
@@ -449,7 +458,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Closing parenthesis must be on line of last parameter.
+        ///   Looks up a localized string similar to Closing parenthesis should be on line of last parameter.
         /// </summary>
         internal static string SA1111MessageFormat {
             get {
@@ -458,7 +467,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Closing parenthesis must be on line of last parameter.
+        ///   Looks up a localized string similar to Closing parenthesis should be on line of last parameter.
         /// </summary>
         internal static string SA1111Title {
             get {
@@ -476,7 +485,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Closing parenthesis must be on line of opening parenthesis.
+        ///   Looks up a localized string similar to Closing parenthesis should be on line of opening parenthesis.
         /// </summary>
         internal static string SA1112MessageFormat {
             get {
@@ -485,7 +494,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Closing parenthesis must be on line of opening parenthesis.
+        ///   Looks up a localized string similar to Closing parenthesis should be on line of opening parenthesis.
         /// </summary>
         internal static string SA1112Title {
             get {
@@ -503,7 +512,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Comma must be on the same line as previous parameter..
+        ///   Looks up a localized string similar to Comma should be on the same line as previous parameter..
         /// </summary>
         internal static string SA1113MessageFormat {
             get {
@@ -512,7 +521,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Comma must be on the same line as previous parameter.
+        ///   Looks up a localized string similar to Comma should be on the same line as previous parameter.
         /// </summary>
         internal static string SA1113Title {
             get {
@@ -530,7 +539,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Parameter list must follow declaration.
+        ///   Looks up a localized string similar to Parameter list should follow declaration.
         /// </summary>
         internal static string SA1114MessageFormat {
             get {
@@ -539,7 +548,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Parameter list must follow declaration.
+        ///   Looks up a localized string similar to Parameter list should follow declaration.
         /// </summary>
         internal static string SA1114Title {
             get {
@@ -557,7 +566,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The parameter must begin on the line after the previous parameter..
+        ///   Looks up a localized string similar to The parameter should begin on the line after the previous parameter..
         /// </summary>
         internal static string SA1115MessageFormat {
             get {
@@ -566,7 +575,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Parameter must follow comma.
+        ///   Looks up a localized string similar to Parameter should follow comma.
         /// </summary>
         internal static string SA1115Title {
             get {
@@ -593,7 +602,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The parameters must begin on the line after the declaration, whenever the parameter span across multiple lines.
+        ///   Looks up a localized string similar to The parameters should begin on the line after the declaration, whenever the parameter span across multiple lines.
         /// </summary>
         internal static string SA1116MessageFormat {
             get {
@@ -602,7 +611,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Split parameters must start on line after declaration.
+        ///   Looks up a localized string similar to Split parameters should start on line after declaration.
         /// </summary>
         internal static string SA1116Title {
             get {
@@ -620,7 +629,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The parameters must all be placed on the same line or each parameter must be placed on its own line..
+        ///   Looks up a localized string similar to The parameters should all be placed on the same line or each parameter should be placed on its own line..
         /// </summary>
         internal static string SA1117MessageFormat {
             get {
@@ -629,7 +638,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Parameters must be on same line or separate lines.
+        ///   Looks up a localized string similar to Parameters should be on same line or separate lines.
         /// </summary>
         internal static string SA1117Title {
             get {
@@ -656,7 +665,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Parameter must not span multiple lines.
+        ///   Looks up a localized string similar to Parameter should not span multiple lines.
         /// </summary>
         internal static string SA1118Title {
             get {
@@ -683,7 +692,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Comments must contain text.
+        ///   Looks up a localized string similar to Comments should contain text.
         /// </summary>
         internal static string SA1120MessageFormat {
             get {
@@ -692,7 +701,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Comments must contain text.
+        ///   Looks up a localized string similar to Comments should contain text.
         /// </summary>
         internal static string SA1120Title {
             get {
@@ -782,7 +791,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Region must not be located within a code element..
+        ///   Looks up a localized string similar to Region should not be located within a code element..
         /// </summary>
         internal static string SA1123MessageFormat {
             get {
@@ -899,7 +908,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Generic type constraints must be on their own line.
+        ///   Looks up a localized string similar to Generic type constraints should be on their own line.
         /// </summary>
         internal static string SA1127MessageFormat {
             get {
@@ -908,7 +917,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Generic type constraints must be on their own line.
+        ///   Looks up a localized string similar to Generic type constraints should be on their own line.
         /// </summary>
         internal static string SA1127Title {
             get {
@@ -985,6 +994,15 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         internal static string SA1129Title {
             get {
                 return ResourceManager.GetString("SA1129Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Replace with lambda..
+        /// </summary>
+        internal static string SA1130CodeFix {
+            get {
+                return ResourceManager.GetString("SA1130CodeFix", resourceCulture);
             }
         }
         
@@ -1151,11 +1169,155 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Attributes must not share line.
+        ///   Looks up a localized string similar to Attributes should not share line.
         /// </summary>
         internal static string SA1134Title {
             get {
                 return ResourceManager.GetString("SA1134Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Qualify using directive.
+        /// </summary>
+        internal static string SA1135CodeFix {
+            get {
+                return ResourceManager.GetString("SA1135CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All using directives should be qualified..
+        /// </summary>
+        internal static string SA1135Description {
+            get {
+                return ResourceManager.GetString("SA1135Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Using directive for namespace &apos;{0}&apos; should be qualified.
+        /// </summary>
+        internal static string SA1135MessageFormatNamespace {
+            get {
+                return ResourceManager.GetString("SA1135MessageFormatNamespace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Using directive for type &apos;{0}&apos; should be qualified.
+        /// </summary>
+        internal static string SA1135MessageFormatType {
+            get {
+                return ResourceManager.GetString("SA1135MessageFormatType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Using directives should be qualified.
+        /// </summary>
+        internal static string SA1135Title {
+            get {
+                return ResourceManager.GetString("SA1135Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Place enum values own their own lines.
+        /// </summary>
+        internal static string SA1136CodeFix {
+            get {
+                return ResourceManager.GetString("SA1136CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enum values should be placed on their own lines for maximum readability..
+        /// </summary>
+        internal static string SA1136Description {
+            get {
+                return ResourceManager.GetString("SA1136Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enum values should be on separate lines.
+        /// </summary>
+        internal static string SA1136MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1136MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enum values should be on separate lines.
+        /// </summary>
+        internal static string SA1136Title {
+            get {
+                return ResourceManager.GetString("SA1136Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Elements at the same level in the syntax tree should have the same indentation..
+        /// </summary>
+        internal static string SA1137Description {
+            get {
+                return ResourceManager.GetString("SA1137Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Elements should have the same indentation.
+        /// </summary>
+        internal static string SA1137MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1137MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Elements should have the same indentation.
+        /// </summary>
+        internal static string SA1137Title {
+            get {
+                return ResourceManager.GetString("SA1137Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use literal suffix notation instead of casting.
+        /// </summary>
+        internal static string SA1139CodeFix {
+            get {
+                return ResourceManager.GetString("SA1139CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use literal suffix notation instead of casting, in order to improve readability, avoid bugs related to illegal casts and ensure that optimal IL is produced..
+        /// </summary>
+        internal static string SA1139Description {
+            get {
+                return ResourceManager.GetString("SA1139Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use literal suffix notation instead of casting.
+        /// </summary>
+        internal static string SA1139MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1139MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use literal suffix notation instead of casting.
+        /// </summary>
+        internal static string SA1139Title {
+            get {
+                return ResourceManager.GetString("SA1139Title", resourceCulture);
             }
         }
         

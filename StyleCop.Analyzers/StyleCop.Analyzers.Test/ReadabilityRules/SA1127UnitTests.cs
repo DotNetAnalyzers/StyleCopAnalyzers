@@ -275,7 +275,7 @@ interface Foo
             var expected = new DiagnosticResult[]
             {
                 this.CSharpDiagnostic().WithLocation(4, 29),
-                this.CSharpDiagnostic().WithLocation(4, 45)
+                this.CSharpDiagnostic().WithLocation(4, 45),
             };
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);

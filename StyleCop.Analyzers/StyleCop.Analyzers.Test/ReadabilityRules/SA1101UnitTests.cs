@@ -292,7 +292,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             var expected = new[]
             {
                 this.CSharpDiagnostic().WithLocation(5, 9),
-                this.CSharpDiagnostic().WithLocation(7, 9)
+                this.CSharpDiagnostic().WithLocation(7, 9),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -304,6 +304,77 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         public async Task TestPrefixLocalCallsWithThisCodeFixAsync()
         {
             await this.VerifyCSharpFixAsync(ReferenceCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a collision between a member and a static member is handled properly.
+        /// This is a regression test for #2093
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestNameCollisionForStaticMethodAsync()
+        {
+            var testCode = @"
+using System;
+
+public class TestClass
+{
+    public DateTime DateTime => DateTime.FromFileTime(0);
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a collision between a member and a static property is handled properly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestNameCollisionForStaticPropertyAsync()
+        {
+            var testCode = @"
+using System;
+
+public class TestClass
+{
+    public DateTime DateTime => DateTime.UtcNow;
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2211, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2211")]
+        public async Task TestStaticMemberAliasesPropertyAsync()
+        {
+            var testCode = @"
+using System;
+
+public class Foo
+{
+    public Array Array { get; } = new int[0];
+
+    public int IndexOf(object value) => Array.IndexOf(this.Array, value);
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2656, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2656")]
+        public async Task TestStaticMemberNameOfAsync()
+        {
+            var testCode = @"
+public class Foo
+{
+    public string Array { get; } = nameof(Array);
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

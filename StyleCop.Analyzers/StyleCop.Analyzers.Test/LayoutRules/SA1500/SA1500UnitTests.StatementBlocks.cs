@@ -180,7 +180,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
                 this.CSharpDiagnostic().WithLocation(23, 25),
 
                 // invalid #5
-                this.CSharpDiagnostic().WithLocation(27, 9)
+                this.CSharpDiagnostic().WithLocation(27, 9),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

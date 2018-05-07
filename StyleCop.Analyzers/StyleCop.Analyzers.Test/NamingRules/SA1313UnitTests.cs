@@ -9,9 +9,11 @@ namespace StyleCop.Analyzers.Test.NamingRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.NamingRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using TestHelper;
     using Xunit;
 
+    [UseCulture("en-US")]
     public class SA1313UnitTests : CodeFixVerifier
     {
         [Fact]
@@ -98,7 +100,7 @@ public class TypeName
             DiagnosticResult[] expected =
             {
                 this.CSharpDiagnostic().WithArguments("Bar").WithLocation(3, 35),
-                this.CSharpDiagnostic().WithArguments("Par").WithLocation(3, 59)
+                this.CSharpDiagnostic().WithArguments("Par").WithLocation(3, 59),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -286,7 +288,7 @@ public class Test : ITest
             {
                 this.CSharpDiagnostic().WithLocation(4, 21).WithArguments("Param1"),
                 this.CSharpDiagnostic().WithLocation(4, 45).WithArguments("Param3"),
-                this.CSharpDiagnostic().WithLocation(9, 52).WithArguments("Other")
+                this.CSharpDiagnostic().WithLocation(9, 52).WithArguments("Other"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -337,7 +339,7 @@ public class Test : Testbase
             {
                 this.CSharpDiagnostic().WithLocation(4, 37).WithArguments("Param1"),
                 this.CSharpDiagnostic().WithLocation(4, 61).WithArguments("Param3"),
-                this.CSharpDiagnostic().WithLocation(9, 61).WithArguments("Other")
+                this.CSharpDiagnostic().WithLocation(9, 61).WithArguments("Other"),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -431,7 +433,7 @@ public class Test : Testbase
             {
                 this.CSharpDiagnostic().WithArguments("__").WithLocation(5, 38),
                 this.CSharpDiagnostic().WithArguments("__").WithLocation(6, 39),
-                this.CSharpDiagnostic().WithArguments("__").WithLocation(7, 51)
+                this.CSharpDiagnostic().WithArguments("__").WithLocation(7, 51),
             };
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
@@ -527,6 +529,42 @@ public class TestClass
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verify that an invalid method override will not produce a diagnostic nor crash the analyzer.
+        /// This is a regression test for #2189
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task InvalidMethodOverrideShouldNotProduceDiagnosticAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    public abstract class BaseClass
+    {
+        public abstract void TestMethod(int p1, int p2);
+    }
+
+    public class TestClass : BaseClass
+    {
+        public override void TestMethod(int p1, X int P2)
+        {
+        }
+    }
+}
+";
+            DiagnosticResult[] expected =
+            {
+                this.CSharpCompilerError("CS0534").WithLocation(9, 18).WithMessage("'TestClass' does not implement inherited abstract member 'BaseClass.TestMethod(int, int)'"),
+                this.CSharpCompilerError("CS0115").WithLocation(11, 30).WithMessage("'TestClass.TestMethod(int, X, int)': no suitable method found to override"),
+                this.CSharpCompilerError("CS0246").WithLocation(11, 49).WithMessage("The type or namespace name 'X' could not be found (are you missing a using directive or an assembly reference?)"),
+                this.CSharpCompilerError("CS1001").WithLocation(11, 51).WithMessage("Identifier expected"),
+                this.CSharpCompilerError("CS1003").WithLocation(11, 51).WithMessage("Syntax error, ',' expected"),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()

@@ -1,6 +1,10 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
+// Several test methods in this file use the same member data, but in some cases the test does not use all of the
+// supported parameters. See https://github.com/xunit/xunit/issues/1556.
+#pragma warning disable xUnit1026 // Theory methods should use all of their parameters
+
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     using System.Collections.Generic;
@@ -52,14 +56,14 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             yield return new object[]
             {
                 $@"public Foo(
-    int a, int b, string s) {{ }}"
+    int a, int b, string s) {{ }}",
             };
             yield return new object[]
             {
                 $@"public Foo(
     int a,
     int b,
-    string s) {{ }}"
+    string s) {{ }}",
             };
         }
 

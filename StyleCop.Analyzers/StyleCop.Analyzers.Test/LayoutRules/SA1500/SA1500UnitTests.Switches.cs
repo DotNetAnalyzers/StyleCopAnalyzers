@@ -151,7 +151,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
                 this.CSharpDiagnostic().WithLocation(27, 24),
 
                 // invalid switch #5
-                this.CSharpDiagnostic().WithLocation(31, 9)
+                this.CSharpDiagnostic().WithLocation(31, 9),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);

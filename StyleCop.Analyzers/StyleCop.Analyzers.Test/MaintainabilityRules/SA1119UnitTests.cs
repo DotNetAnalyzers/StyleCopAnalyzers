@@ -16,10 +16,10 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
     public class SA1119UnitTests : CodeFixVerifier
     {
-        private const string DiagnosticId = SA1119StatementMustNotUseUnnecessaryParenthesis.DiagnosticId;
-        private const string ParenthesesDiagnosticId = SA1119StatementMustNotUseUnnecessaryParenthesis.ParenthesesDiagnosticId;
+        protected const string DiagnosticId = SA1119StatementMustNotUseUnnecessaryParenthesis.DiagnosticId;
+        protected const string ParenthesesDiagnosticId = SA1119StatementMustNotUseUnnecessaryParenthesis.ParenthesesDiagnosticId;
 
-        private bool mainDiagnosticShouldBeDisabled = false;
+        protected bool MainDiagnosticShouldBeDisabled { get; set; }
 
         [Fact]
         public async Task TestLiteralAsync()
@@ -49,7 +49,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 {
                     this.CSharpDiagnostic(DiagnosticId).WithLocation(5, 17),
                     this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 17),
-                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 19)
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 19),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -125,7 +125,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 {
                     this.CSharpDiagnostic(DiagnosticId).WithLocation(5, 20),
                     this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 20),
-                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 31)
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 31),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -218,7 +218,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 {
                     this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 9),
                     this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 9),
-                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 20)
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 20),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -249,7 +249,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 {
                     this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 17),
                     this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 17),
-                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 23)
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 23),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -293,7 +293,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 {
                     this.CSharpDiagnostic(DiagnosticId).WithLocation(5, 17),
                     this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 17),
-                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 24)
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 24),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -337,7 +337,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 {
                     this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 13),
                     this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 13),
-                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 20)
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 20),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -531,7 +531,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 {
                     this.CSharpDiagnostic(DiagnosticId).WithLocation(5, 20),
                     this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 20),
-                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 32)
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 32),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -635,7 +635,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 {
                     this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 20),
                     this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 20),
-                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 30)
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 30),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -693,7 +693,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 {
                     this.CSharpDiagnostic(DiagnosticId).WithLocation(5, 20),
                     this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 20),
-                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 41)
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 41),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -749,7 +749,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 {
                     this.CSharpDiagnostic(DiagnosticId).WithLocation(5, 20),
                     this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 20),
-                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 35)
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 35),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -867,7 +867,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 {
                     this.CSharpDiagnostic(DiagnosticId).WithLocation(5, 19),
                     this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 19),
-                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 31)
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(5, 31),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -924,7 +924,7 @@ public class Foo
                 {
                     this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 17),
                     this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 17),
-                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 52)
+                    this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 52),
                 };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -1039,7 +1039,7 @@ public class Foo
             {
                 this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 15),
                 this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 15),
-                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 19)
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 19),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -1071,7 +1071,7 @@ public class Foo
             {
                 this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 26),
                 this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 26),
-                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 31)
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 31),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -1137,7 +1137,7 @@ public class Foo
         [Fact]
         public async Task TestParenthesisDiagnosticIsNotTriggeredIfParentDiagnosticIsDisabledAsync()
         {
-            this.mainDiagnosticShouldBeDisabled = true;
+            this.MainDiagnosticShouldBeDisabled = true;
 
             string testCode = @"class Foo
 {
@@ -1207,7 +1207,7 @@ public class Foo
             {
                 this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 23),
                 this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 23),
-                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 42)
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 42),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -1269,7 +1269,7 @@ public class Foo
             {
                 this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 22),
                 this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 22),
-                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 35)
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 35),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -1331,7 +1331,7 @@ public class Foo
             {
                 this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 22),
                 this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 22),
-                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 30)
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 30),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -1393,7 +1393,61 @@ public class Foo
             {
                 this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 22),
                 this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 22),
-                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 29)
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 29),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a preprocessor statement with unnecessary parenthesis is handled correctly.
+        /// Regression test for #2069
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyThatPreprocessorStatementIsHandledCorrectlyAsync()
+        {
+            string testCode = @"
+public class Program
+{
+    public static void Main(string[] args)
+    {
+#if(DEBUG)
+
+#endif
+
+#if (DEBUG)
+
+#endif
+    }
+}
+";
+
+            string fixedCode = @"
+public class Program
+{
+    public static void Main(string[] args)
+    {
+#if DEBUG
+
+#endif
+
+#if DEBUG
+
+#endif
+    }
+}
+";
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic(DiagnosticId).WithLocation(6, 4),
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 4),
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(6, 10),
+                this.CSharpDiagnostic(DiagnosticId).WithLocation(10, 5),
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(10, 5),
+                this.CSharpDiagnostic(ParenthesesDiagnosticId).WithLocation(10, 11),
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
@@ -1416,7 +1470,7 @@ public class Foo
         /// <inheritdoc/>
         protected override IEnumerable<string> GetDisabledDiagnostics()
         {
-            if (this.mainDiagnosticShouldBeDisabled)
+            if (this.MainDiagnosticShouldBeDisabled)
             {
                 yield return DiagnosticId;
             }
