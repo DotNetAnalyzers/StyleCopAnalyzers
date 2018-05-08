@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// A comparison was made between a variable and a literal or constant value, and the variable appeared on the
@@ -68,7 +69,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static bool IsLiteral(ExpressionSyntax expression, SemanticModel semanticModel)
         {
             // Default expressions are most of the time constants, but not for default(MyStruct).
-            if (expression.IsKind(SyntaxKind.DefaultExpression))
+            if (expression.IsKind(SyntaxKind.DefaultExpression) || expression.IsKind(SyntaxKindEx.DefaultLiteralExpression))
             {
                 return true;
             }
