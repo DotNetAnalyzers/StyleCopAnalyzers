@@ -17,7 +17,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// <summary>
         /// This is the backing field for the <see cref="TopLevelTypes"/> property.
         /// </summary>
-        private ImmutableArray<TopLevelType>.Builder topLevelTypes;
+        private readonly ImmutableArray<TopLevelType>.Builder topLevelTypes;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MaintainabilitySettings"/> class.

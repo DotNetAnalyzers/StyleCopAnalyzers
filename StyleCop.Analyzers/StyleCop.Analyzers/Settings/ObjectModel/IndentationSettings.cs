@@ -10,17 +10,17 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// <summary>
         /// This is the backing field for the <see cref="IndentationSize"/> property.
         /// </summary>
-        private int indentationSize;
+        private readonly int indentationSize;
 
         /// <summary>
         /// This is the backing field for the <see cref="TabSize"/> property.
         /// </summary>
-        private int tabSize;
+        private readonly int tabSize;
 
         /// <summary>
         /// This is the backing field for the <see cref="UseTabs"/> property.
         /// </summary>
-        private bool useTabs;
+        private readonly bool useTabs;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IndentationSettings"/> class.

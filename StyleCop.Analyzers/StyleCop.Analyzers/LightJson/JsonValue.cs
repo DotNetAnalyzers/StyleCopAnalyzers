@@ -839,7 +839,7 @@ namespace LightJson
         [ExcludeFromCodeCoverage]
         private class JsonValueDebugView
         {
-            private JsonValue jsonValue;
+            private readonly JsonValue jsonValue;
 
             public JsonValueDebugView(JsonValue jsonValue)
             {

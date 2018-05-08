@@ -10,7 +10,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// <summary>
         /// This is the backing field for the <see cref="AllowBuiltInTypeAliases"/> property.
         /// </summary>
-        private bool allowBuiltInTypeAliases;
+        private readonly bool allowBuiltInTypeAliases;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ReadabilitySettings"/> class.

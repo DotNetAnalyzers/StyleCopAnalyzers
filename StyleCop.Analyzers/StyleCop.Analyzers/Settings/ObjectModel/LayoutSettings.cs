@@ -10,12 +10,12 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// <summary>
         /// This is the backing field for the <see cref="NewlineAtEndOfFile"/> property.
         /// </summary>
-        private OptionSetting newlineAtEndOfFile;
+        private readonly OptionSetting newlineAtEndOfFile;
 
         /// <summary>
         /// This is the backing field for the <see cref="AllowConsecutiveUsings"/> property.
         /// </summary>
-        private bool allowConsecutiveUsings;
+        private readonly bool allowConsecutiveUsings;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LayoutSettings"/> class.

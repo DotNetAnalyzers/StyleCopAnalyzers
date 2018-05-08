@@ -157,9 +157,9 @@ namespace StyleCop.Analyzers.OrderingRules
             /// </summary>
             internal class Builder
             {
+                private readonly List<Builder> children = new List<Builder>();
                 private int start;
                 private int end = int.MaxValue;
-                private List<Builder> children = new List<Builder>();
 
                 /// <summary>
                 /// Initializes a new instance of the <see cref="Builder"/> class.

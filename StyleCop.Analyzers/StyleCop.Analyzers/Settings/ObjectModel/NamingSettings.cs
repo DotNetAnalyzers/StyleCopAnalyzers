@@ -12,12 +12,12 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// <summary>
         /// This is the backing field for the <see cref="AllowCommonHungarianPrefixes"/> property.
         /// </summary>
-        private bool allowCommonHungarianPrefixes;
+        private readonly bool allowCommonHungarianPrefixes;
 
         /// <summary>
         /// This is the backing field for the <see cref="AllowedHungarianPrefixes"/> property.
         /// </summary>
-        private ImmutableArray<string>.Builder allowedHungarianPrefixes;
+        private readonly ImmutableArray<string>.Builder allowedHungarianPrefixes;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NamingSettings"/> class.

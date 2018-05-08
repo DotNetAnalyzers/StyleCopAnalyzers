@@ -422,7 +422,7 @@ namespace StyleCop.Analyzers.OrderingRules
             private readonly List<UsingDirectiveSyntax> stripList;
             private readonly Dictionary<UsingDirectiveSyntax, UsingDirectiveSyntax> replaceMap;
             private readonly ImmutableArray<SyntaxTrivia> fileHeader;
-            private LinkedList<SyntaxToken> tokensToStrip = new LinkedList<SyntaxToken>();
+            private readonly LinkedList<SyntaxToken> tokensToStrip = new LinkedList<SyntaxToken>();
 
             public UsingSyntaxRewriter(List<UsingDirectiveSyntax> stripList, Dictionary<UsingDirectiveSyntax, UsingDirectiveSyntax> replaceMap, ImmutableArray<SyntaxTrivia> fileHeader)
             {

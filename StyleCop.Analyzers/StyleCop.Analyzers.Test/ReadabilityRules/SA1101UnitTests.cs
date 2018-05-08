@@ -14,7 +14,10 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
     public class SA1101UnitTests : CodeFixVerifier
     {
-        private const string ReferenceCode = @"
+        [Fact]
+        public async Task TestPrefixLocalCallsWithThisAsync()
+        {
+            string testCode = @"
         using System;
         public class BaseTypeName
         {
@@ -130,7 +133,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         }
         ";
 
-        private static string fixedCode = @"
+            string fixedCode = @"
         using System;
         public class BaseTypeName
         {
@@ -246,9 +249,6 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         }
         ";
 
-        [Fact]
-        public async Task TestPrefixLocalCallsWithThisDiagnosticsAsync()
-        {
             var expected = new[]
             {
                 this.CSharpDiagnostic().WithLocation(91, 36),
@@ -260,7 +260,9 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                 this.CSharpDiagnostic().WithLocation(107, 48),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(ReferenceCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -298,12 +300,6 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestPrefixLocalCallsWithThisCodeFixAsync()
-        {
-            await this.VerifyCSharpFixAsync(ReferenceCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>

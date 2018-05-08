@@ -375,7 +375,7 @@ namespace StyleCop.Analyzers.Test.Settings
 
         private class AdditionalTextHelper : AdditionalText
         {
-            private SourceText sourceText;
+            private readonly SourceText sourceText;
 
             public AdditionalTextHelper(string path, string text)
             {
