@@ -84,7 +84,8 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            if (returnType is PredefinedTypeSyntax predefinedType && predefinedType.Keyword.IsKind(SyntaxKind.VoidKeyword))
+            if (returnType is PredefinedTypeSyntax predefinedType
+                && predefinedType.Keyword.IsKind(SyntaxKind.VoidKeyword))
             {
                 // There is no return value
                 return;

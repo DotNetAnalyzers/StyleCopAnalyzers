@@ -100,12 +100,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     return false;
                 }
 
-                if (variableDeclarationSyntax.Parent is FieldDeclarationSyntax fieldDeclarationSyntax && fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.ConstKeyword))
+                if (variableDeclarationSyntax.Parent is FieldDeclarationSyntax fieldDeclarationSyntax
+                    && fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.ConstKeyword))
                 {
                     return true;
                 }
 
-                if (variableDeclarationSyntax.Parent is LocalDeclarationStatementSyntax localDeclarationStatementSyntax && localDeclarationStatementSyntax.Modifiers.Any(SyntaxKind.ConstKeyword))
+                if (variableDeclarationSyntax.Parent is LocalDeclarationStatementSyntax localDeclarationStatementSyntax
+                    && localDeclarationStatementSyntax.Modifiers.Any(SyntaxKind.ConstKeyword))
                 {
                     return true;
                 }

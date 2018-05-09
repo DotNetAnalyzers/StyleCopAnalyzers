@@ -153,7 +153,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                     }
                     else
                     {
-                        if (node.Parent is EqualsValueClauseSyntax equalsValue && equalsValue.Value == node)
+                        if (node.Parent is EqualsValueClauseSyntax equalsValue
+                            && equalsValue.Value == node)
                         {
                             ReportDiagnostic(context, node);
                         }

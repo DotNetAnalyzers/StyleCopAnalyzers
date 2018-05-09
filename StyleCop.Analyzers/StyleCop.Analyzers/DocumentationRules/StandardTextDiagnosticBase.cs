@@ -95,7 +95,9 @@ namespace StyleCop.Analyzers.DocumentationRules
                 var summaryNodes = summaryElement.Nodes().ToList();
                 if (summaryNodes.Count >= 3)
                 {
-                    if (summaryNodes[0] is XText firstTextPartNode && summaryNodes[1] is XElement classReferencePart && summaryNodes[2] is XText secondTextPartNode)
+                    if (summaryNodes[0] is XText firstTextPartNode
+                        && summaryNodes[1] is XElement classReferencePart
+                        && summaryNodes[2] is XText secondTextPartNode)
                     {
                         if (TextPartsMatch(firstTextPart, secondTextPart, firstTextPartNode, secondTextPartNode))
                         {
@@ -122,7 +124,9 @@ namespace StyleCop.Analyzers.DocumentationRules
                 if (summaryElement.Content.Count >= 3)
                 {
                     // Standard text has the form <part1><see><part2>
-                    if (summaryElement.Content[0] is XmlTextSyntax firstTextPartSyntax && summaryElement.Content[1] is XmlEmptyElementSyntax classReferencePart && summaryElement.Content[2] is XmlTextSyntax secondTextPartSyntax)
+                    if (summaryElement.Content[0] is XmlTextSyntax firstTextPartSyntax
+                        && summaryElement.Content[1] is XmlEmptyElementSyntax classReferencePart
+                        && summaryElement.Content[2] is XmlTextSyntax secondTextPartSyntax)
                     {
                         if (TextPartsMatch(firstTextPart, secondTextPart, firstTextPartSyntax, secondTextPartSyntax))
                         {
