@@ -9,13 +9,13 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.MaintainabilityRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using TestHelper;
     using Xunit;
 

@@ -9,11 +9,11 @@ namespace StyleCop.Analyzers.Test.SpecialRules
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using System.Threading.Tasks;
-    using Analyzers.Settings;
-    using Analyzers.SpecialRules;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
+    using StyleCop.Analyzers.Settings;
+    using StyleCop.Analyzers.SpecialRules;
     using TestHelper;
     using Xunit;
 

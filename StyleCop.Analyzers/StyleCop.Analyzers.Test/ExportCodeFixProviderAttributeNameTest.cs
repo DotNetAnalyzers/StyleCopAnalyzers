@@ -7,9 +7,9 @@ namespace StyleCop.Analyzers.Test
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-    using Analyzers.SpacingRules;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using StyleCop.Analyzers.SpacingRules;
     using Xunit;
 
     public class ExportCodeFixProviderAttributeNameTest

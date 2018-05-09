@@ -6,11 +6,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using System;
     using System.Collections.Immutable;
     using System.Linq;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A constructor initializer is on the same line as the constructor declaration, within a C# code file.

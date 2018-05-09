@@ -5,8 +5,8 @@ namespace StyleCop.Analyzers.Helpers
 {
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
-    using Settings.ObjectModel;
     using StyleCop.Analyzers.Helpers.ObjectPools;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// Provides helper methods to work with indentation.

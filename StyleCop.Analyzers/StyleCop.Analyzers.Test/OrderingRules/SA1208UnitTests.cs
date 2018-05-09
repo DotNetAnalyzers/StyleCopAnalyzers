@@ -7,9 +7,9 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Analyzers.OrderingRules;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.OrderingRules;
     using TestHelper;
     using Xunit;
 

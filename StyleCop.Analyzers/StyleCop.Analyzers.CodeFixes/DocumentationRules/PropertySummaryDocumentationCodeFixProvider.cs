@@ -8,13 +8,13 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Helpers.ObjectPools;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Helpers.ObjectPools;
 
     /// <summary>
     /// Implements the code fix for property summary documentation.

@@ -4,10 +4,10 @@
 namespace StyleCop.Analyzers.Test.HelperTests
 {
     using System.Linq;
-    using Analyzers.Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Helpers;
     using Xunit;
 
     public class TriviaHelperTests

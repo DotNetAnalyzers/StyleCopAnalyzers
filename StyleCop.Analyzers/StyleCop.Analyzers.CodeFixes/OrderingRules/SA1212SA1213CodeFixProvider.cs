@@ -8,12 +8,12 @@ namespace StyleCop.Analyzers.OrderingRules
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements code fixes for <see cref="SA1212PropertyAccessorsMustFollowOrder"/> and <see cref="SA1213EventAccessorsMustFollowOrder"/>.

@@ -7,10 +7,10 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
-    using Analyzers.Settings.ObjectModel;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.LayoutRules;
+    using StyleCop.Analyzers.Settings.ObjectModel;
     using TestHelper;
     using Xunit;
 

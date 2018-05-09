@@ -7,11 +7,11 @@ namespace StyleCop.Analyzers.LayoutRules
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A C# statement containing opening and closing braces is written completely on a single line.

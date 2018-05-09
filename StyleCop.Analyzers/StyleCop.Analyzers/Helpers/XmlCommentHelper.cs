@@ -9,7 +9,7 @@ namespace StyleCop.Analyzers.Helpers
     using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using ObjectPools;
+    using StyleCop.Analyzers.Helpers.ObjectPools;
 
     /// <summary>
     /// Provides helper methods to work with XML comments

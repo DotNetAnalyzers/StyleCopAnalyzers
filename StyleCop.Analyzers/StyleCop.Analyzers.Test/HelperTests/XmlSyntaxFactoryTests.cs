@@ -4,9 +4,9 @@
 namespace StyleCop.Analyzers.Test.HelperTests
 {
     using System;
-    using Analyzers.Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using StyleCop.Analyzers.Helpers;
     using Xunit;
 
     public class XmlSyntaxFactoryTests

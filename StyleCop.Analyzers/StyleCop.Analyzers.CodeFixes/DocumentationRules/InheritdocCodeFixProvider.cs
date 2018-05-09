@@ -7,13 +7,13 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System.Composition;
     using System.Threading;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Formatting;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix that will generate a documentation comment comprised of an empty
