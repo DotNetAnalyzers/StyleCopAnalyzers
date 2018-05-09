@@ -306,10 +306,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     return true;
                 }
 
-                MemberAccessExpressionSyntax simpleMemberAccess = identifierNameSyntax.Parent as MemberAccessExpressionSyntax;
-
                 // This covers the case nameof(System.Int32)
-                if (simpleMemberAccess != null)
+                if (identifierNameSyntax.Parent is MemberAccessExpressionSyntax simpleMemberAccess)
                 {
                     // This final check ensures that we don't consider nameof(System.Int32.ToString) the same as
                     // nameof(System.Int32)

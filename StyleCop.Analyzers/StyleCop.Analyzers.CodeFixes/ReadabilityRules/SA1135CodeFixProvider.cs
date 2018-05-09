@@ -49,8 +49,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
 
-            var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan) as UsingDirectiveSyntax;
-            if (node == null)
+            if (!(syntaxRoot.FindNode(diagnostic.Location.SourceSpan) is UsingDirectiveSyntax node))
             {
                 return document;
             }

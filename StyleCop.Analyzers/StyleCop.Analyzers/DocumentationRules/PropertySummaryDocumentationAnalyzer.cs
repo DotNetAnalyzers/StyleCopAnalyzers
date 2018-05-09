@@ -113,8 +113,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
             }
 
-            XmlElementSyntax summaryElement = syntax as XmlElementSyntax;
-            if (summaryElement == null)
+            if (!(syntax is XmlElementSyntax summaryElement))
             {
                 // This is reported by SA1604 or SA1606.
                 return;
@@ -127,8 +126,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 diagnosticProperties.Add(NoCodeFixKey, string.Empty);
             }
 
-            var textElement = summaryElement.Content.FirstOrDefault() as XmlTextSyntax;
-            var text = textElement == null ? string.Empty : XmlCommentHelper.GetText(textElement, true).TrimStart();
+            var text = !(summaryElement.Content.FirstOrDefault() is XmlTextSyntax textElement) ? string.Empty : XmlCommentHelper.GetText(textElement, true).TrimStart();
 
             bool prefixIsGetsOrSets = text.StartsWith(startingTextGetsOrSets, StringComparison.OrdinalIgnoreCase);
             bool prefixIsGets = !prefixIsGetsOrSets && text.StartsWith(startingTextGets, StringComparison.OrdinalIgnoreCase);

@@ -43,8 +43,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             {
                 var node = root.FindNode(diagnostic.Location.SourceSpan);
 
-                var attribute = node as AttributeSyntax;
-                if (attribute != null)
+                if (node is AttributeSyntax attribute)
                 {
                     // In this case there is no justification at all
                     context.RegisterCodeFix(
@@ -55,8 +54,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                     return;
                 }
 
-                var argument = node as AttributeArgumentSyntax;
-                if (argument != null)
+                if (node is AttributeArgumentSyntax argument)
                 {
                     context.RegisterCodeFix(
                         CodeAction.Create(

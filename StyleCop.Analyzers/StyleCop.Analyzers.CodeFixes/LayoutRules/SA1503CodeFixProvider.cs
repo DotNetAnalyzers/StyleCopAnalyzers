@@ -42,8 +42,7 @@ namespace StyleCop.Analyzers.LayoutRules
 
             foreach (Diagnostic diagnostic in context.Diagnostics)
             {
-                var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, false, true) as StatementSyntax;
-                if (node == null || node.IsMissing)
+                if (!(syntaxRoot.FindNode(diagnostic.Location.SourceSpan, false, true) is StatementSyntax node) || node.IsMissing)
                 {
                     continue;
                 }
@@ -106,8 +105,7 @@ namespace StyleCop.Analyzers.LayoutRules
 
                 foreach (Diagnostic diagnostic in diagnostics)
                 {
-                    var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, false, true) as StatementSyntax;
-                    if (node == null || node.IsMissing)
+                    if (!(syntaxRoot.FindNode(diagnostic.Location.SourceSpan, false, true) is StatementSyntax node) || node.IsMissing)
                     {
                         continue;
                     }

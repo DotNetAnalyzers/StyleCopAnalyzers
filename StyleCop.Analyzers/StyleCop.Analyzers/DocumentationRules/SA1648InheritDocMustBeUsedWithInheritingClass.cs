@@ -84,8 +84,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             Location location;
 
-            var includeElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag) as XmlEmptyElementSyntax;
-            if (includeElement != null)
+            if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag) is XmlEmptyElementSyntax includeElement)
             {
                 var declaration = context.SemanticModel.GetDeclaredSymbol(baseType, context.CancellationToken);
                 if (declaration == null)
@@ -158,8 +157,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
             }
 
-            var includeElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag) as XmlEmptyElementSyntax;
-            if (includeElement != null)
+            if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag) is XmlEmptyElementSyntax includeElement)
             {
                 if (declaredSymbol == null)
                 {

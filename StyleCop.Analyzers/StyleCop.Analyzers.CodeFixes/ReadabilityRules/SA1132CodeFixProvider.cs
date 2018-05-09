@@ -72,8 +72,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static List<BaseFieldDeclarationSyntax> SplitDeclaration(Document document, BaseFieldDeclarationSyntax baseFieldDeclaration)
         {
-            var fieldDeclaration = baseFieldDeclaration as FieldDeclarationSyntax;
-            if (fieldDeclaration != null)
+            if (baseFieldDeclaration is FieldDeclarationSyntax fieldDeclaration)
             {
                 return DeclarationSplitter(
                     document,
@@ -82,8 +81,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     fieldDeclaration.SemicolonToken.TrailingTrivia);
             }
 
-            var eventFieldDeclaration = baseFieldDeclaration as EventFieldDeclarationSyntax;
-            if (eventFieldDeclaration != null)
+            if (baseFieldDeclaration is EventFieldDeclarationSyntax eventFieldDeclaration)
             {
                 return DeclarationSplitter(
                     document,

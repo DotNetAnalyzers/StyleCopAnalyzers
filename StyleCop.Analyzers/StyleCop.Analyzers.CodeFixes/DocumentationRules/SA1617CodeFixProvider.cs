@@ -83,8 +83,8 @@ namespace StyleCop.Analyzers.DocumentationRules
             List<SyntaxNode> nodesToFix = new List<SyntaxNode>();
             nodesToFix.Add(returnsElement);
 
-            var previousAsTextSyntax = previous as XmlTextSyntax;
-            if (previousAsTextSyntax != null && XmlCommentHelper.IsConsideredEmpty(previousAsTextSyntax))
+            if (previous is XmlTextSyntax previousAsTextSyntax
+                && XmlCommentHelper.IsConsideredEmpty(previousAsTextSyntax))
             {
                 nodesToFix.Add(previous);
             }

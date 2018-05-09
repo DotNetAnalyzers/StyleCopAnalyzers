@@ -80,8 +80,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 var elementDone = false;
                 for (var i = xmlElement.Content.Count - 1; !elementDone && (i >= 0); i--)
                 {
-                    var contentNode = xmlElement.Content[i] as XmlTextSyntax;
-                    if (contentNode != null)
+                    if (xmlElement.Content[i] is XmlTextSyntax contentNode)
                     {
                         for (var j = contentNode.TextTokens.Count - 1; !elementDone && (j >= 0); j--)
                         {

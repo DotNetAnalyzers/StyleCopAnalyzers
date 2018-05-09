@@ -232,7 +232,7 @@ namespace StyleCop.Analyzers.Lightup
                         throw new NullReferenceException();
                     }
 
-                    if (ReferenceEquals(newValue, null))
+                    if (newValue is null)
                     {
                         return syntax;
                     }

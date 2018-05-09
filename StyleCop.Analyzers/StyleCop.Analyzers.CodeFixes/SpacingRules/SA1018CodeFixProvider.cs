@@ -44,8 +44,7 @@ namespace StyleCop.Analyzers.SpacingRules
 
             foreach (var diagnostic in context.Diagnostics)
             {
-                var nullableType = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) as NullableTypeSyntax;
-                if (nullableType == null)
+                if (!(syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) is NullableTypeSyntax nullableType))
                 {
                     continue;
                 }

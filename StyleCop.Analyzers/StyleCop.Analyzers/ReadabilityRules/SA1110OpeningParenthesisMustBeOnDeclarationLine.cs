@@ -182,9 +182,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var attribute = (AttributeSyntax)context.Node;
 
-            var qualifiedNameSyntax = attribute.Name as QualifiedNameSyntax;
             IdentifierNameSyntax identifierNameSyntax = null;
-            if (qualifiedNameSyntax != null)
+            if (attribute.Name is QualifiedNameSyntax qualifiedNameSyntax)
             {
                 identifierNameSyntax = qualifiedNameSyntax.DescendantNodes().OfType<IdentifierNameSyntax>().LastOrDefault();
             }

@@ -72,8 +72,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
             foreach (var member in members)
             {
-                var field = member as FieldDeclarationSyntax;
-                if (field == null)
+                if (!(member is FieldDeclarationSyntax field))
                 {
                     continue;
                 }

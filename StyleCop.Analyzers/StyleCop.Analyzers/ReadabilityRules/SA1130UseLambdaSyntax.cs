@@ -52,9 +52,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             if (anonymousMethod.Parent.IsKind(SyntaxKind.Argument))
             {
                 // invocation -> argument list -> argument -> anonymous method
-                var originalInvocationExpression = anonymousMethod?.Parent?.Parent?.Parent as InvocationExpressionSyntax;
-
-                if (originalInvocationExpression != null)
+                if (anonymousMethod?.Parent?.Parent?.Parent is InvocationExpressionSyntax originalInvocationExpression)
                 {
                     // In some cases passing a delegate as an argument to a method is required to call the right overload
                     // When there is an other overload that takes an expression.

@@ -76,11 +76,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             EmptyStatementSyntax syntax = (EmptyStatementSyntax)context.Node;
 
-            LabeledStatementSyntax labeledStatementSyntax = syntax.Parent as LabeledStatementSyntax;
-            if (labeledStatementSyntax != null)
+            if (syntax.Parent is LabeledStatementSyntax labeledStatementSyntax)
             {
-                BlockSyntax blockSyntax = labeledStatementSyntax.Parent as BlockSyntax;
-                if (blockSyntax != null)
+                if (labeledStatementSyntax.Parent is BlockSyntax blockSyntax)
                 {
                     for (int i = blockSyntax.Statements.Count - 1; i >= 0; i--)
                     {

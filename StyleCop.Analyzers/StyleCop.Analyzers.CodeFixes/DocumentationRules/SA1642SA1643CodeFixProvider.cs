@@ -56,9 +56,8 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
 
                 var node = root.FindNode(diagnostic.Location.SourceSpan, findInsideTrivia: true, getInnermostNodeForTie: true);
-                var xmlElementSyntax = node as XmlElementSyntax;
 
-                if (xmlElementSyntax != null)
+                if (node is XmlElementSyntax xmlElementSyntax)
                 {
                     context.RegisterCodeFix(
                         CodeAction.Create(
@@ -121,8 +120,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         internal static SyntaxList<XmlNodeSyntax> BuildStandardTextSyntaxList(BaseTypeDeclarationSyntax typeDeclaration, string newLineText, string preText, string postText)
         {
             TypeParameterListSyntax typeParameterList;
-            ClassDeclarationSyntax classDeclaration = typeDeclaration as ClassDeclarationSyntax;
-            if (classDeclaration != null)
+            if (typeDeclaration is ClassDeclarationSyntax classDeclaration)
             {
                 typeParameterList = classDeclaration.TypeParameterList;
             }
@@ -172,8 +170,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             bool isStruct = typeDeclaration.IsKind(SyntaxKind.StructDeclaration);
 
             TypeParameterListSyntax typeParameterList;
-            ClassDeclarationSyntax classDeclaration = typeDeclaration as ClassDeclarationSyntax;
-            if (classDeclaration != null)
+            if (typeDeclaration is ClassDeclarationSyntax classDeclaration)
             {
                 typeParameterList = classDeclaration.TypeParameterList;
             }
@@ -294,8 +291,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static SyntaxList<XmlNodeSyntax> RemoveTrailingEmptyLines(SyntaxList<XmlNodeSyntax> content)
         {
-            var xmlText = content[content.Count - 1] as XmlTextSyntax;
-            if (xmlText == null)
+            if (!(content[content.Count - 1] is XmlTextSyntax xmlText))
             {
                 return content;
             }

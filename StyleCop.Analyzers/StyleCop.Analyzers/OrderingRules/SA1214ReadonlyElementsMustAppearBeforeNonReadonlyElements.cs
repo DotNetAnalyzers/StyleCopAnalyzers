@@ -68,8 +68,7 @@ namespace StyleCop.Analyzers.OrderingRules
             var previousAccessLevel = AccessLevel.NotSpecified;
             foreach (var member in typeDeclaration.Members)
             {
-                FieldDeclarationSyntax field = member as FieldDeclarationSyntax;
-                if (field == null)
+                if (!(member is FieldDeclarationSyntax field))
                 {
                     previousField = null;
                     continue;

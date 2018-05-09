@@ -86,11 +86,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return true;
             }
 
-            EqualsValueClauseSyntax equalsValueClause = outermostExpression.Parent as EqualsValueClauseSyntax;
-            if (equalsValueClause != null)
+            if (outermostExpression.Parent is EqualsValueClauseSyntax equalsValueClause)
             {
-                ParameterSyntax parameterSyntax = equalsValueClause.Parent as ParameterSyntax;
-                if (parameterSyntax != null)
+                if (equalsValueClause.Parent is ParameterSyntax parameterSyntax)
                 {
                     return true;
                 }
@@ -102,14 +100,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     return false;
                 }
 
-                FieldDeclarationSyntax fieldDeclarationSyntax = variableDeclarationSyntax.Parent as FieldDeclarationSyntax;
-                if (fieldDeclarationSyntax != null && fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.ConstKeyword))
+                if (variableDeclarationSyntax.Parent is FieldDeclarationSyntax fieldDeclarationSyntax
+                    && fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.ConstKeyword))
                 {
                     return true;
                 }
 
-                LocalDeclarationStatementSyntax localDeclarationStatementSyntax = variableDeclarationSyntax.Parent as LocalDeclarationStatementSyntax;
-                if (localDeclarationStatementSyntax != null && localDeclarationStatementSyntax.Modifiers.Any(SyntaxKind.ConstKeyword))
+                if (variableDeclarationSyntax.Parent is LocalDeclarationStatementSyntax localDeclarationStatementSyntax
+                    && localDeclarationStatementSyntax.Modifiers.Any(SyntaxKind.ConstKeyword))
                 {
                     return true;
                 }
@@ -122,8 +120,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             while (true)
             {
-                ExpressionSyntax parent = node.Parent as ExpressionSyntax;
-                if (parent == null)
+                if (!(node.Parent is ExpressionSyntax parent))
                 {
                     break;
                 }

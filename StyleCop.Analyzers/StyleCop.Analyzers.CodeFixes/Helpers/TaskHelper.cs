@@ -24,8 +24,7 @@ namespace StyleCop.Analyzers.Helpers
         public static bool IsTaskType(SemanticModel semanticModel, TypeSyntax typeSyntax, CancellationToken cancellationToken)
         {
             SymbolInfo symbolInfo = semanticModel.GetSymbolInfo(typeSyntax, cancellationToken);
-            INamedTypeSymbol namedTypeSymbol = symbolInfo.Symbol as INamedTypeSymbol;
-            if (namedTypeSymbol == null)
+            if (!(symbolInfo.Symbol is INamedTypeSymbol namedTypeSymbol))
             {
                 return false;
             }

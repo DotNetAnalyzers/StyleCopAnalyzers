@@ -83,22 +83,18 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         {
             BinaryExpressionSyntax binSyntax = (BinaryExpressionSyntax)context.Node;
 
-            if (binSyntax.Left is BinaryExpressionSyntax)
+            if (binSyntax.Left is BinaryExpressionSyntax left)
             {
                 // Check if the operations are of the same kind
-                var left = (BinaryExpressionSyntax)binSyntax.Left;
-
                 if (!IsSameFamily(binSyntax.OperatorToken, left.OperatorToken))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, left.GetLocation()));
                 }
             }
 
-            if (binSyntax.Right is BinaryExpressionSyntax)
+            if (binSyntax.Right is BinaryExpressionSyntax right)
             {
                 // Check if the operations are of the same kind
-                var right = (BinaryExpressionSyntax)binSyntax.Right;
-
                 if (!IsSameFamily(binSyntax.OperatorToken, right.OperatorToken))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, right.GetLocation()));

@@ -58,9 +58,7 @@ namespace StyleCop.Analyzers.NamingRules
         {
             public static void HandleFieldDeclaration(SymbolAnalysisContext context)
             {
-                var symbol = context.Symbol as IFieldSymbol;
-
-                if (symbol == null || !symbol.IsConst || symbol.ContainingType?.TypeKind == TypeKind.Enum)
+                if (!(context.Symbol is IFieldSymbol symbol) || !symbol.IsConst || symbol.ContainingType?.TypeKind == TypeKind.Enum)
                 {
                     return;
                 }

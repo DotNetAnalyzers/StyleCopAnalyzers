@@ -42,8 +42,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
         private static SyntaxNode AddParentheses(SyntaxNode originalNode, SyntaxNode rewrittenNode)
         {
-            BinaryExpressionSyntax syntax = rewrittenNode as BinaryExpressionSyntax;
-            if (syntax == null)
+            if (!(rewrittenNode is BinaryExpressionSyntax syntax))
             {
                 return rewrittenNode;
             }

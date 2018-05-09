@@ -75,8 +75,7 @@ namespace StyleCop.Analyzers.Helpers
         /// <returns>true, if the comment should be considered empty, false otherwise.</returns>
         internal static bool IsConsideredEmpty(XmlNodeSyntax xmlSyntax, bool considerEmptyElements = false)
         {
-            var text = xmlSyntax as XmlTextSyntax;
-            if (text != null)
+            if (xmlSyntax is XmlTextSyntax text)
             {
                 foreach (SyntaxToken token in text.TextTokens)
                 {
@@ -89,8 +88,7 @@ namespace StyleCop.Analyzers.Helpers
                 return true;
             }
 
-            var element = xmlSyntax as XmlElementSyntax;
-            if (element != null)
+            if (xmlSyntax is XmlElementSyntax element)
             {
                 foreach (XmlNodeSyntax syntax in element.Content)
                 {
@@ -103,8 +101,7 @@ namespace StyleCop.Analyzers.Helpers
                 return true;
             }
 
-            var cdataElement = xmlSyntax as XmlCDataSectionSyntax;
-            if (cdataElement != null)
+            if (xmlSyntax is XmlCDataSectionSyntax cdataElement)
             {
                 foreach (SyntaxToken token in cdataElement.TextTokens)
                 {
@@ -117,15 +114,13 @@ namespace StyleCop.Analyzers.Helpers
                 return true;
             }
 
-            var emptyElement = xmlSyntax as XmlEmptyElementSyntax;
-            if (emptyElement != null)
+            if (xmlSyntax is XmlEmptyElementSyntax emptyElement)
             {
                 // This includes <inheritdoc/>
                 return considerEmptyElements;
             }
 
-            var processingElement = xmlSyntax as XmlProcessingInstructionSyntax;
-            if (processingElement != null)
+            if (xmlSyntax is XmlProcessingInstructionSyntax processingElement)
             {
                 return false;
             }
@@ -141,14 +136,12 @@ namespace StyleCop.Analyzers.Helpers
         /// <returns>true, if the comment should be considered empty, false otherwise.</returns>
         internal static bool IsConsideredEmpty(XNode node)
         {
-            var text = node as XText;
-            if (text != null)
+            if (node is XText text)
             {
                 return string.IsNullOrWhiteSpace(text.Value);
             }
 
-            var element = node as XElement;
-            if (element != null)
+            if (node is XElement element)
             {
                 foreach (XNode syntax in element.Nodes())
                 {
@@ -161,8 +154,7 @@ namespace StyleCop.Analyzers.Helpers
                 return true;
             }
 
-            var processingElement = node as XProcessingInstruction;
-            if (processingElement != null)
+            if (node is XProcessingInstruction processingElement)
             {
                 return false;
             }
@@ -182,8 +174,7 @@ namespace StyleCop.Analyzers.Helpers
                 return true;
             }
 
-            var structuredTrivia = commentTrivia.GetStructure() as DocumentationCommentTriviaSyntax;
-            if (structuredTrivia != null)
+            if (commentTrivia.GetStructure() is DocumentationCommentTriviaSyntax structuredTrivia)
             {
                 return IsConsideredEmpty(structuredTrivia);
             }
@@ -205,16 +196,12 @@ namespace StyleCop.Analyzers.Helpers
 
         internal static string GetText(XmlNodeSyntax nodeSyntax, bool normalizeWhitespace = false)
         {
-            var xmlTextSyntax = nodeSyntax as XmlTextSyntax;
-
-            if (xmlTextSyntax != null)
+            if (nodeSyntax is XmlTextSyntax xmlTextSyntax)
             {
                 return GetText(xmlTextSyntax, normalizeWhitespace);
             }
 
-            var xmlElementSyntax = nodeSyntax as XmlElementSyntax;
-
-            if (xmlElementSyntax != null)
+            if (nodeSyntax is XmlElementSyntax xmlElementSyntax)
             {
                 var stringBuilder = StringBuilderPool.Allocate();
 
@@ -226,9 +213,7 @@ namespace StyleCop.Analyzers.Helpers
                 return StringBuilderPool.ReturnAndFree(stringBuilder);
             }
 
-            var emptyXmlElement = nodeSyntax as XmlEmptyElementSyntax;
-
-            if (emptyXmlElement != null)
+            if (nodeSyntax is XmlEmptyElementSyntax emptyXmlElement)
             {
                 return emptyXmlElement.NormalizeWhitespace(string.Empty).ToString();
             }
@@ -267,16 +252,12 @@ namespace StyleCop.Analyzers.Helpers
         internal static T GetFirstAttributeOrDefault<T>(XmlNodeSyntax nodeSyntax)
             where T : XmlAttributeSyntax
         {
-            var emptyElementSyntax = nodeSyntax as XmlEmptyElementSyntax;
-
-            if (emptyElementSyntax != null)
+            if (nodeSyntax is XmlEmptyElementSyntax emptyElementSyntax)
             {
                 return emptyElementSyntax.Attributes.OfType<T>().FirstOrDefault();
             }
 
-            var elementSyntax = nodeSyntax as XmlElementSyntax;
-
-            if (elementSyntax != null)
+            if (nodeSyntax is XmlElementSyntax elementSyntax)
             {
                 return elementSyntax.StartTag?.Attributes.OfType<T>().FirstOrDefault();
             }

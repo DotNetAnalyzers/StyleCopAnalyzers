@@ -29,8 +29,7 @@ namespace StyleCop.Analyzers.Helpers
 
         internal static string GetConventionalFileName(MemberDeclarationSyntax declaration, FileNamingConvention convention)
         {
-            var typeDeclaration = declaration as TypeDeclarationSyntax;
-            if (typeDeclaration != null)
+            if (declaration is TypeDeclarationSyntax typeDeclaration)
             {
                 if (typeDeclaration.TypeParameterList == null)
                 {

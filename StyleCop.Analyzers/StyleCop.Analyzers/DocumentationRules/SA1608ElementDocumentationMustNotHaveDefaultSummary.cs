@@ -61,8 +61,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             foreach (var syntax in syntaxList)
             {
                 var summaryElement = syntax as XmlElementSyntax;
-                var textElement = summaryElement?.Content.FirstOrDefault() as XmlTextSyntax;
-                if (textElement != null)
+                if (summaryElement?.Content.FirstOrDefault() is XmlTextSyntax textElement)
                 {
                     string text = XmlCommentHelper.GetText(textElement, true);
 

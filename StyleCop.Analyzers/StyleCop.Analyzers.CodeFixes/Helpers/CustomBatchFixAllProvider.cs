@@ -249,8 +249,7 @@ namespace StyleCop.Analyzers.Helpers
                 ApplyChangesOperation singleApplyChangesOperation = null;
                 foreach (var operation in operations)
                 {
-                    ApplyChangesOperation applyChangesOperation = operation as ApplyChangesOperation;
-                    if (applyChangesOperation == null)
+                    if (!(operation is ApplyChangesOperation applyChangesOperation))
                     {
                         continue;
                     }

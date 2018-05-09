@@ -59,8 +59,7 @@ namespace StyleCop.Analyzers.OrderingRules
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
-            var typeDeclarationNode = syntaxRoot.FindNode(diagnostic.Location.SourceSpan) as TypeDeclarationSyntax;
-            if (typeDeclarationNode == null)
+            if (!(syntaxRoot.FindNode(diagnostic.Location.SourceSpan) is TypeDeclarationSyntax typeDeclarationNode))
             {
                 return document;
             }
