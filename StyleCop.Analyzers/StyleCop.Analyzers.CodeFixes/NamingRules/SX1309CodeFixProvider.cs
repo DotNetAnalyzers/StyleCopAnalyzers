@@ -6,10 +6,10 @@ namespace StyleCop.Analyzers.NamingRules
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
-    using StyleCop.Analyzers.Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SX1309FieldNamesMustBeginWithUnderscore"/> and

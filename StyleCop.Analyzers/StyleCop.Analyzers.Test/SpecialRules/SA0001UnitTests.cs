@@ -6,9 +6,9 @@ namespace StyleCop.Analyzers.Test.SpecialRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using StyleCop.Analyzers.SpecialRules;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.SpecialRules;
     using TestHelper;
     using Xunit;
 

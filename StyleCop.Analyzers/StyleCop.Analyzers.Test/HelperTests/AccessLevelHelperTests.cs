@@ -4,8 +4,8 @@
 namespace StyleCop.Analyzers.Test.HelperTests
 {
     using System;
-    using StyleCop.Analyzers.Helpers;
     using Microsoft.CodeAnalysis;
+    using StyleCop.Analyzers.Helpers;
     using Xunit;
 
     public class AccessLevelHelperTests

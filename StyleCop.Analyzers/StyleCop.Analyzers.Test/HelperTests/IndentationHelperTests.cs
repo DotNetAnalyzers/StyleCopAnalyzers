@@ -6,12 +6,12 @@ namespace StyleCop.Analyzers.Test.HelperTests
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using StyleCop.Analyzers.Settings.ObjectModel;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Formatting;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.Test.Helpers;
     using Xunit;
 

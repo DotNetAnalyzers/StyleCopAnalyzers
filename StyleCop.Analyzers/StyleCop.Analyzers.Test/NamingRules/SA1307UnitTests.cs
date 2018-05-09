@@ -6,9 +6,9 @@ namespace StyleCop.Analyzers.Test.NamingRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using StyleCop.Analyzers.NamingRules;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.NamingRules;
     using TestHelper;
     using Xunit;
 

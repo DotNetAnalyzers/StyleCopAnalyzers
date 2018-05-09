@@ -7,11 +7,11 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System.Collections.Immutable;
     using System.Linq;
     using System.Xml.Linq;
-    using StyleCop.Analyzers.Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A base class for diagnostics <see cref="SA1642ConstructorSummaryDocumentationMustBeginWithStandardText"/> and <see cref="SA1643DestructorSummaryDocumentationMustBeginWithStandardText"/> to share common code.

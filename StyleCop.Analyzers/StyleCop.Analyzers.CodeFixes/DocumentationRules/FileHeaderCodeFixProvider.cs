@@ -12,13 +12,13 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System.Threading;
     using System.Threading.Tasks;
     using System.Xml.Linq;
-    using StyleCop.Analyzers.Helpers.ObjectPools;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Formatting;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Helpers.ObjectPools;
     using StyleCop.Analyzers.Settings.ObjectModel;
     using Path = System.IO.Path;
 

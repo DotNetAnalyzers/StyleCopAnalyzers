@@ -6,10 +6,10 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using StyleCop.Analyzers.Settings.ObjectModel;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.OrderingRules;
+    using StyleCop.Analyzers.Settings.ObjectModel;
     using TestHelper;
     using Xunit;
 

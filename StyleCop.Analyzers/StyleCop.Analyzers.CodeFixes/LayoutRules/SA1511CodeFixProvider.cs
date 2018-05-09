@@ -7,10 +7,10 @@ namespace StyleCop.Analyzers.LayoutRules
     using System.Composition;
     using System.Threading;
     using System.Threading.Tasks;
-    using StyleCop.Analyzers.Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1511WhileDoFooterMustNotBePrecededByBlankLine"/>.

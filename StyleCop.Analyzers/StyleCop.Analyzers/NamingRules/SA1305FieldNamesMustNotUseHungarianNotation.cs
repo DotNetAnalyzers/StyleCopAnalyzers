@@ -10,9 +10,9 @@ namespace StyleCop.Analyzers.NamingRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Lightup;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// The name of a field or variable in C# uses Hungarian notation.

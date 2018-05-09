@@ -9,11 +9,11 @@ namespace StyleCop.Analyzers.LayoutRules
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using StyleCop.Analyzers.Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1509OpeningBracesMustNotBePrecededByBlankLine"/>.

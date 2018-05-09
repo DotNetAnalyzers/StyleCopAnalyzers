@@ -6,11 +6,11 @@ namespace StyleCop.Analyzers.OrderingRules
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
-    using StyleCop.Analyzers.Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>

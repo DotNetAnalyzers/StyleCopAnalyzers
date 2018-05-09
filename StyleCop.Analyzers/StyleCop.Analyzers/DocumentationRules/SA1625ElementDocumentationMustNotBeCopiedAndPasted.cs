@@ -10,11 +10,11 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System.Linq;
     using System.Resources;
     using System.Xml.Linq;
-    using StyleCop.Analyzers.Helpers;
-    using StyleCop.Analyzers.Helpers.ObjectPools;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Helpers.ObjectPools;
 
     /// <summary>
     /// The XML documentation for a C# element contains two or more identical entries, indicating that the documentation

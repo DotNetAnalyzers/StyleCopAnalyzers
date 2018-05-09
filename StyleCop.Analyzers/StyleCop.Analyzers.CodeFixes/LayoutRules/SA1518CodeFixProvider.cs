@@ -7,11 +7,11 @@ namespace StyleCop.Analyzers.LayoutRules
     using System.Composition;
     using System.Threading;
     using System.Threading.Tasks;
-    using StyleCop.Analyzers.Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Text;
+    using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>

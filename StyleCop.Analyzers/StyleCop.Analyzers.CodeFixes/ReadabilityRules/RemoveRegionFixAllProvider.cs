@@ -6,10 +6,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using System.Collections.Immutable;
     using System.Linq;
     using System.Threading.Tasks;
-    using StyleCop.Analyzers.Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Helpers;
 
     internal sealed class RemoveRegionFixAllProvider : DocumentBasedFixAllProvider
     {

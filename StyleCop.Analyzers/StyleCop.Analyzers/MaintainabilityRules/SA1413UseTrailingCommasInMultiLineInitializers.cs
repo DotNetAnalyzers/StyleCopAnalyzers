@@ -6,11 +6,11 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using System;
     using System.Collections.Immutable;
     using System.Linq;
-    using StyleCop.Analyzers.Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A multi-line initializer should use a comma on the last item.
