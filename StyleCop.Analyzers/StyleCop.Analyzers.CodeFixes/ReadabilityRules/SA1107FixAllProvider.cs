@@ -5,7 +5,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System.Collections.Immutable;
     using System.Threading.Tasks;
-    using Helpers;
+    using StyleCop.Analyzers.Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;

@@ -5,7 +5,7 @@ namespace StyleCop.Analyzers.Helpers
 {
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
-    using Settings.ObjectModel;
+    using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.Helpers.ObjectPools;
 
     /// <summary>

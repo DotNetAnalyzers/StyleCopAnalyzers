@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System.Linq;
     using System.Resources;
     using System.Xml.Linq;
-    using Helpers;
-    using Helpers.ObjectPools;
+    using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Helpers.ObjectPools;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;

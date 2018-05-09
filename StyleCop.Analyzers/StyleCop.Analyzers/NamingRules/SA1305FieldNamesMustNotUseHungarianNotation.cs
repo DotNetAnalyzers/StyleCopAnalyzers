@@ -10,7 +10,7 @@ namespace StyleCop.Analyzers.NamingRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Settings.ObjectModel;
+    using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Lightup;
 

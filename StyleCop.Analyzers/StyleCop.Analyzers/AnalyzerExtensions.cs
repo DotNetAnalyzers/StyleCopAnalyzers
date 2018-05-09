@@ -8,7 +8,7 @@ namespace StyleCop.Analyzers
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Settings.ObjectModel;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// Provides extension methods to deal for analyzers.

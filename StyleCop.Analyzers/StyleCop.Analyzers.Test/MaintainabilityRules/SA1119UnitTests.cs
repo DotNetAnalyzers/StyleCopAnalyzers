@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using System.Collections.Immutable;
     using System.Threading;
     using System.Threading.Tasks;
-    using Analyzers.MaintainabilityRules;
+    using StyleCop.Analyzers.MaintainabilityRules;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;

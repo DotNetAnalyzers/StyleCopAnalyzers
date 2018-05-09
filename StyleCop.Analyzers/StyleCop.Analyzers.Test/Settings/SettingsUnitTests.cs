@@ -6,7 +6,7 @@ namespace StyleCop.Analyzers.Test.Settings
     using System.Collections.Immutable;
     using System.Threading;
     using System.Threading.Tasks;
-    using Analyzers.Settings.ObjectModel;
+    using StyleCop.Analyzers.Settings.ObjectModel;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;

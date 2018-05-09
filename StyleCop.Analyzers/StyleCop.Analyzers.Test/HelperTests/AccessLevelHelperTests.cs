@@ -4,7 +4,7 @@
 namespace StyleCop.Analyzers.Test.HelperTests
 {
     using System;
-    using Analyzers.Helpers;
+    using StyleCop.Analyzers.Helpers;
     using Microsoft.CodeAnalysis;
     using Xunit;
 

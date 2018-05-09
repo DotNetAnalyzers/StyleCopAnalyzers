@@ -8,7 +8,7 @@ namespace StyleCop.Analyzers.Helpers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using ObjectPools;
+    using StyleCop.Analyzers.Helpers.ObjectPools;
 
     /// <summary>
     /// Class containing the extension methods for the <see cref="NameSyntax"/> class.

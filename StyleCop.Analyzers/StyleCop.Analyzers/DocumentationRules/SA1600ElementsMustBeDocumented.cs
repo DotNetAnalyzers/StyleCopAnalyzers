@@ -6,12 +6,12 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System;
     using System.Collections.Immutable;
     using System.Linq;
-    using Helpers;
+    using StyleCop.Analyzers.Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Settings.ObjectModel;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// A C# code element is missing a documentation header.

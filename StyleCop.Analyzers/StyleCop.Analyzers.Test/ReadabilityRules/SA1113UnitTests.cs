@@ -6,7 +6,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Analyzers.SpacingRules;
+    using StyleCop.Analyzers.SpacingRules;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.ReadabilityRules;

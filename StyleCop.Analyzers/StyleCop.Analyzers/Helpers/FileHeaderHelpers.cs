@@ -10,7 +10,7 @@ namespace StyleCop.Analyzers.Helpers
     using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
-    using ObjectPools;
+    using StyleCop.Analyzers.Helpers.ObjectPools;
 
     /// <summary>
     /// Helper class used for working with file headers

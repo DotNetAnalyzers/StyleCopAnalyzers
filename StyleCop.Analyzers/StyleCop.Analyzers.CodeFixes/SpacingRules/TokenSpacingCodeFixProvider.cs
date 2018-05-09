@@ -10,12 +10,12 @@ namespace StyleCop.Analyzers.SpacingRules
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Helpers;
+    using StyleCop.Analyzers.Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
-    using ReadabilityRules;
+    using StyleCop.Analyzers.ReadabilityRules;
 
     /// <summary>
     /// Implements a code fix for the opening and closing spacing diagnostics.

@@ -5,7 +5,7 @@ namespace StyleCop.Analyzers.NamingRules
 {
     using System;
     using System.Collections.Immutable;
-    using Helpers;
+    using StyleCop.Analyzers.Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;

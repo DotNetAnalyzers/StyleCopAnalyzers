@@ -6,7 +6,7 @@ namespace StyleCop.Analyzers.Test.HelperTests
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Analyzers.Settings.ObjectModel;
+    using StyleCop.Analyzers.Settings.ObjectModel;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Formatting;

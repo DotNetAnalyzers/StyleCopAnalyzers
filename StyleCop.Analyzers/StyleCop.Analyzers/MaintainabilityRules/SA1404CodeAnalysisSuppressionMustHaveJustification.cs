@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using System.Collections.Concurrent;
     using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
-    using Helpers;
+    using StyleCop.Analyzers.Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;

@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System.Collections.Immutable;
     using System.IO;
     using System.Linq;
-    using Helpers;
+    using StyleCop.Analyzers.Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;

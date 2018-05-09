@@ -12,7 +12,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System.Threading;
     using System.Threading.Tasks;
     using System.Xml.Linq;
-    using Helpers.ObjectPools;
+    using StyleCop.Analyzers.Helpers.ObjectPools;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;

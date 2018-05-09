@@ -9,7 +9,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
-    using Helpers;
+    using StyleCop.Analyzers.Test.Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;

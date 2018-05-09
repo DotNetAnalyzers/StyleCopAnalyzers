@@ -5,7 +5,7 @@ namespace StyleCop.Analyzers.Helpers
 {
     using System.Linq;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Settings.ObjectModel;
+    using StyleCop.Analyzers.Settings.ObjectModel;
     using Path = System.IO.Path;
 
     internal static class FileNameHelpers

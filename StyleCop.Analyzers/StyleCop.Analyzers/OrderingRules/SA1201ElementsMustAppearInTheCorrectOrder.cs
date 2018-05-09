@@ -6,12 +6,12 @@ namespace StyleCop.Analyzers.OrderingRules
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
-    using Helpers;
+    using StyleCop.Analyzers.Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Settings.ObjectModel;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// An element within a C# code file is out of order in relation to the other elements in the code.

@@ -4,7 +4,7 @@
 namespace StyleCop.Analyzers.Test.HelperTests.ObjectPools
 {
     using System;
-    using Analyzers.Helpers.ObjectPools;
+    using StyleCop.Analyzers.Helpers.ObjectPools;
     using Xunit;
 
     public class ObjectPoolTests

@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Settings.ObjectModel;
+    using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>

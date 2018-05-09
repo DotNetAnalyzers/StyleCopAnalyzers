@@ -5,12 +5,12 @@ namespace StyleCop.Analyzers.OrderingRules
 {
     using System;
     using System.Collections.Immutable;
-    using Helpers;
+    using StyleCop.Analyzers.Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Settings.ObjectModel;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// A constant field is placed beneath a non-constant field.

@@ -6,7 +6,7 @@ namespace StyleCop.Analyzers.NamingRules
     using System.Collections.Immutable;
     using System.Composition;
     using System.Threading.Tasks;
-    using Helpers;
+    using StyleCop.Analyzers.Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;

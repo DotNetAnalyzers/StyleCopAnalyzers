@@ -6,7 +6,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Analyzers.Settings.ObjectModel;
+    using StyleCop.Analyzers.Settings.ObjectModel;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.OrderingRules;
