@@ -918,7 +918,7 @@ public class TestClass
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -954,7 +954,82 @@ public class TestClass
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [WorkItem(2686, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2686")]
+        [InlineData("")]
+        [InlineData(" ")]
+        public async Task TestConstructorEmptyDocumentationSingleLineAsync(string emptyContent)
+        {
+            var testCode = $@"namespace FooNamespace
+{{
+    public class ClassName
+    {{
+        /// <summary>{emptyContent}</summary>
+        public ClassName()
+        {{
+        }}
+    }}
+}}";
+
+            var fixedCode = $@"namespace FooNamespace
+{{
+    public class ClassName
+    {{
+        /// <summary>
+        /// Initializes a new instance of the <see cref=""ClassName""/> class.{emptyContent}</summary>
+        public ClassName()
+        {{
+        }}
+    }}
+}}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 13);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [WorkItem(2686, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2686")]
+        [InlineData("")]
+        [InlineData(" ")]
+        public async Task TestConstructorEmptyDocumentationAsync(string emptyContent)
+        {
+            var testCode = $@"namespace FooNamespace
+{{
+    public class ClassName
+    {{
+        /// <summary>
+        ///{emptyContent}
+        /// </summary>
+        public ClassName()
+        {{
+        }}
+    }}
+}}";
+
+            var fixedCode = $@"namespace FooNamespace
+{{
+    public class ClassName
+    {{
+        /// <summary>
+        /// Initializes a new instance of the <see cref=""ClassName""/> class.
+        /// </summary>
+        public ClassName()
+        {{
+        }}
+    }}
+}}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 13);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override Project ApplyCompilationOptions(Project project)
