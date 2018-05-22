@@ -27,7 +27,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             var testCode = @"
 /// <summary>
 /// Test class
-/// <summary>
+/// </summary>
 public class TestClass
 {
     /// <summary>
@@ -89,7 +89,7 @@ public class TestClass
             var fixedTestCode = @"
 /// <summary>
 /// Test class.
-/// <summary>
+/// </summary>
 public class TestClass
 {
     /// <summary>
@@ -184,7 +184,7 @@ public class TestClass
             var testCode = @"
 /// <summary>
 /// Test interface.
-/// <summary>
+/// </summary>
 public interface ITest
 {
     /// <summary>Test method.</summary>
@@ -196,7 +196,7 @@ public interface ITest
 
 /// <summary>
 /// Test class.
-/// <summary>
+/// </summary>
 public class TestClass : ITest
 {
     /// <inheritdoc/>
@@ -214,7 +214,7 @@ public class TestClass : ITest
             var fixedTestCode = @"
 /// <summary>
 /// Test interface.
-/// <summary>
+/// </summary>
 public interface ITest
 {
     /// <summary>Test method.</summary>
@@ -226,7 +226,7 @@ public interface ITest
 
 /// <summary>
 /// Test class.
-/// <summary>
+/// </summary>
 public class TestClass : ITest
 {
     /// <inheritdoc/>
