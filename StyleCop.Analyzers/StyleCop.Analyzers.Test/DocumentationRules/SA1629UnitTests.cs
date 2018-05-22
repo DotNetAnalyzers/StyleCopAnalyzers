@@ -3,9 +3,7 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -295,6 +293,43 @@ public class TestClass
 ";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2680, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2680")]
+        public async Task TestReportingAfterEmptyElementAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Test interface <see cref=""ITest""/>
+/// </summary>
+public interface ITest
+{
+    /// <summary>
+    /// Test method <see cref=""Method""/>
+    /// </summary>
+    void Method();
+}
+";
+
+            var fixedTestCode = @"
+/// <summary>
+/// Test interface <see cref=""ITest""/>
+/// </summary>
+public interface ITest
+{
+    /// <summary>
+    /// Test method <see cref=""Method""/>.
+    /// </summary>
+    void Method();
+}
+";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 41);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         protected override Project ApplyCompilationOptions(Project project)
