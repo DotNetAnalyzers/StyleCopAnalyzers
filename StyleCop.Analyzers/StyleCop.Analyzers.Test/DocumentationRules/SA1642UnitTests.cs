@@ -1138,44 +1138,44 @@ public class TestClass
 
         private async Task TestConstructorMissingDocumentationAsync(string typeKind, string modifiers, string part1, string part2, bool generic)
         {
-            var testCode = @"namespace FooNamespace
+            string typeParameters = generic ? "<T1, T2>" : string.Empty;
+            string arguments = typeKind == "struct" && modifiers != "static" ? "int argument" : null;
+            var testCode = $@"namespace FooNamespace
 {{
-    public {0} Foo{1}
+    public {typeKind} Foo{typeParameters}
     {{
         /// <summary>
         /// </summary>
-        {2}
-        Foo({3})
+        {modifiers}
+        Foo({arguments})
         {{
 
         }}
     }}
 }}";
-            string arguments = typeKind == "struct" && modifiers != "static" ? "int argument" : null;
-            testCode = string.Format(testCode, typeKind, generic ? "<T1, T2>" : string.Empty, modifiers, arguments);
+
+            string crefTypeParameters = generic ? "{T1, T2}" : string.Empty;
+            string part3 = part2.EndsWith(".") ? string.Empty : ".";
+            var fixedCode = $@"namespace FooNamespace
+{{
+    public {typeKind} Foo{typeParameters}
+    {{
+        /// <summary>
+        /// {part1}<see cref=""Foo{crefTypeParameters}""/>{part2}{part3}
+        /// </summary>
+        {modifiers}
+        Foo({arguments})
+        {{
+
+        }}
+    }}
+}}";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 13);
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-
-            var fixedCode = @"namespace FooNamespace
-{{
-    public {0} Foo{1}
-    {{
-        /// <summary>
-        /// {3}<see cref=""Foo{2}""/>{4}{5}
-        /// </summary>
-        {6}
-        Foo({7})
-        {{
-
-        }}
-    }}
-}}";
-
-            string part3 = part2.EndsWith(".") ? string.Empty : ".";
-            fixedCode = string.Format(fixedCode, typeKind, generic ? "<T1, T2>" : string.Empty, generic ? "{T1, T2}" : string.Empty, part1, part2, part3, modifiers, arguments);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
         private async Task TestConstructorSimpleDocumentationAsync(string typeKind, string modifiers, string part1, string part2, bool generic)
