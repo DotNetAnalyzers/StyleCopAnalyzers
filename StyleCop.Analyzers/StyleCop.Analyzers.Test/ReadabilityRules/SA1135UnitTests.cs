@@ -205,6 +205,29 @@ namespace Namespace
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(2690, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2690")]
+        public async Task TestFullyQualifiedAliasAsync()
+        {
+            var testCode = @"
+using Example = System.ValueTuple<System.Collections.IList, int>;
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2690, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2690")]
+        public async Task TestFullyQualifiedAliasWithUnresolvedTypeParameterAsync()
+        {
+            var testCode = @"
+using Example = System.ValueTuple<System.Collections.List, int>;
+";
+
+            var expected = this.CSharpCompilerError("CS0234").WithLocation(2, 54).WithMessage("The type or namespace name 'List' does not exist in the namespace 'System.Collections' (are you missing an assembly reference?)");
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new SA1135CodeFixProvider();
