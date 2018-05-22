@@ -306,6 +306,11 @@ namespace StyleCop.Analyzers.DocumentationRules
                 {
                     firstEmptyToken = j;
                 }
+                else if (textToken.IsXmlNewLine() && textToken.LeadingTrivia.Any(SyntaxKind.DocumentationCommentExteriorTrivia))
+                {
+                    // Skip completely blank lines
+                    firstEmptyToken = j;
+                }
                 else if (textToken.IsKind(SyntaxKind.XmlTextLiteralToken) && !string.IsNullOrWhiteSpace(textToken.Text))
                 {
                     break;
@@ -314,8 +319,10 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             if (firstEmptyToken > -1)
             {
-                var newContent = SyntaxFactory.List(content.Take(firstEmptyToken));
-                newContent.Add(newContent.Last());
+                var newContent = content.RemoveAt(content.Count - 1);
+                newContent = newContent
+                    .Add(XmlSyntaxFactory.Text(xmlText.TextTokens.Take(firstEmptyToken).ToArray()))
+                    .Add(XmlSyntaxFactory.Text(xmlText.TextTokens.Last()));
                 return newContent;
             }
 
