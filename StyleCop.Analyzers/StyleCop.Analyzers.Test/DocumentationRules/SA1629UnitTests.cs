@@ -314,7 +314,7 @@ public interface ITest
 
             var fixedTestCode = @"
 /// <summary>
-/// Test interface <see cref=""ITest""/>
+/// Test interface <see cref=""ITest""/>.
 /// </summary>
 public interface ITest
 {
@@ -325,7 +325,11 @@ public interface ITest
 }
 ";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 41);
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(3, 39),
+                this.CSharpDiagnostic().WithLocation(8, 41),
+            };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);

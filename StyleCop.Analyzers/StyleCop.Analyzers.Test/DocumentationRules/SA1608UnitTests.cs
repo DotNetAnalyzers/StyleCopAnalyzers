@@ -111,16 +111,19 @@ TypeName
             await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestClassWithDefaultDocumentationAsync()
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
+        public async Task TestTypeWithDefaultDocumentationAsync(string typeName)
         {
-            var testCode = @"
+            var testCode = $@"
 /// <summary>
 /// Summary description for the ClassName class.
 /// </summary>
-public class ClassName
-{
-}";
+public {typeName} ClassName
+{{
+}}";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 5);
 

@@ -30,6 +30,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> conversionOperatorDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> classDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> structDeclarationAction;
+        private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> interfaceDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> enumDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> fieldDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> propertyDeclarationAction;
@@ -47,6 +48,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             this.conversionOperatorDeclarationAction = this.HandleConversionOperatorDeclaration;
             this.classDeclarationAction = this.HandleClassDeclaration;
             this.structDeclarationAction = this.HandleStructDeclaration;
+            this.interfaceDeclarationAction = this.HandleInterfaceDeclaration;
             this.enumDeclarationAction = this.HandleEnumDeclaration;
             this.fieldDeclarationAction = this.HandleFieldDeclaration;
             this.propertyDeclarationAction = this.HandlePropertyDeclaration;
@@ -66,6 +68,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             context.RegisterSyntaxNodeAction(this.conversionOperatorDeclarationAction, SyntaxKind.ConversionOperatorDeclaration);
             context.RegisterSyntaxNodeAction(this.classDeclarationAction, SyntaxKind.ClassDeclaration);
             context.RegisterSyntaxNodeAction(this.structDeclarationAction, SyntaxKind.StructDeclaration);
+            context.RegisterSyntaxNodeAction(this.interfaceDeclarationAction, SyntaxKind.InterfaceDeclaration);
             context.RegisterSyntaxNodeAction(this.enumDeclarationAction, SyntaxKind.EnumDeclaration);
             context.RegisterSyntaxNodeAction(this.fieldDeclarationAction, SyntaxKind.FieldDeclaration);
             context.RegisterSyntaxNodeAction(this.propertyDeclarationAction, SyntaxKind.PropertyDeclaration);
@@ -188,6 +191,16 @@ namespace StyleCop.Analyzers.DocumentationRules
         private void HandleStructDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             var node = (StructDeclarationSyntax)context.Node;
+
+            Accessibility declaredAccessibility = node.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+            Accessibility effectiveAccessibility = node.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+            bool needsComment = SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, node.Kind(), node.Parent.Kind(), declaredAccessibility, effectiveAccessibility);
+            this.HandleDeclaration(context, needsComment, node, node.Identifier.GetLocation());
+        }
+
+        private void HandleInterfaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+        {
+            var node = (InterfaceDeclarationSyntax)context.Node;
 
             Accessibility declaredAccessibility = node.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
             Accessibility effectiveAccessibility = node.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
