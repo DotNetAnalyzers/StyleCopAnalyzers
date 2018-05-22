@@ -12,6 +12,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A section of the XML header documentation for a C# element does not end with a period (also known as a full
@@ -77,6 +78,11 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             foreach (var xmlElement in syntaxList.OfType<XmlElementSyntax>())
             {
+                if (xmlElement.StartTag?.Name?.LocalName.ValueText == XmlCommentHelper.SeeAlsoXmlTag)
+                {
+                    continue;
+                }
+
                 var elementDone = false;
                 int? reportingLocation = null;
                 for (var i = xmlElement.Content.Count - 1; !elementDone && (i >= 0); i--)
@@ -100,11 +106,11 @@ namespace StyleCop.Analyzers.DocumentationRules
                             }
                         }
                     }
-                    else if (xmlElement.Content[i] is XmlEmptyElementSyntax emptyElement)
+                    else if (xmlElement.Content[i].IsInlineElement())
                     {
-                        // If a diagnostic gets reported for the element, place the diagnostic after the last empty
+                        // If a diagnostic gets reported for the element, place the diagnostic after the last inline
                         // element.
-                        reportingLocation = emptyElement.Span.End;
+                        reportingLocation = xmlElement.Content[i].Span.End;
                     }
                 }
             }

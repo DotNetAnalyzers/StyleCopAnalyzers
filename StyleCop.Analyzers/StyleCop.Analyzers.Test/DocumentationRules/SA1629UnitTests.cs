@@ -336,6 +336,37 @@ public interface ITest
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(2679, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2679")]
+        public async Task TestElementsThatDoNotRequirePeriodsAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Test interface <see cref=""ITest"">a see element</see>
+/// </summary>
+/// <seealso href=""https://docs.microsoft.com/en-us/dotnet/framework/wpf/index"">Windows Presentation Foundation</seealso>
+public interface ITest
+{
+}
+";
+
+            var fixedTestCode = @"
+/// <summary>
+/// Test interface <see cref=""ITest"">a see element</see>.
+/// </summary>
+/// <seealso href=""https://docs.microsoft.com/en-us/dotnet/framework/wpf/index"">Windows Presentation Foundation</seealso>
+public interface ITest
+{
+}
+";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 57);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
         protected override Project ApplyCompilationOptions(Project project)
         {
             var resolver = new TestXmlReferenceResolver();
