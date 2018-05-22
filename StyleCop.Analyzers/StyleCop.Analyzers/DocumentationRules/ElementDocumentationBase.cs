@@ -28,10 +28,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> indexerDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> operatorDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> conversionOperatorDeclarationAction;
-        private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> classDeclarationAction;
-        private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> structDeclarationAction;
-        private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> interfaceDeclarationAction;
-        private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> enumDeclarationAction;
+        private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> baseTypeDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> fieldDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> propertyDeclarationAction;
 
@@ -46,10 +43,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             this.indexerDeclarationAction = this.HandleIndexerDeclaration;
             this.operatorDeclarationAction = this.HandleOperatorDeclaration;
             this.conversionOperatorDeclarationAction = this.HandleConversionOperatorDeclaration;
-            this.classDeclarationAction = this.HandleClassDeclaration;
-            this.structDeclarationAction = this.HandleStructDeclaration;
-            this.interfaceDeclarationAction = this.HandleInterfaceDeclaration;
-            this.enumDeclarationAction = this.HandleEnumDeclaration;
+            this.baseTypeDeclarationAction = this.HandleBaseTypeDeclaration;
             this.fieldDeclarationAction = this.HandleFieldDeclaration;
             this.propertyDeclarationAction = this.HandlePropertyDeclaration;
         }
@@ -66,10 +60,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             context.RegisterSyntaxNodeAction(this.indexerDeclarationAction, SyntaxKind.IndexerDeclaration);
             context.RegisterSyntaxNodeAction(this.operatorDeclarationAction, SyntaxKind.OperatorDeclaration);
             context.RegisterSyntaxNodeAction(this.conversionOperatorDeclarationAction, SyntaxKind.ConversionOperatorDeclaration);
-            context.RegisterSyntaxNodeAction(this.classDeclarationAction, SyntaxKind.ClassDeclaration);
-            context.RegisterSyntaxNodeAction(this.structDeclarationAction, SyntaxKind.StructDeclaration);
-            context.RegisterSyntaxNodeAction(this.interfaceDeclarationAction, SyntaxKind.InterfaceDeclaration);
-            context.RegisterSyntaxNodeAction(this.enumDeclarationAction, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeAction(this.baseTypeDeclarationAction, SyntaxKinds.BaseTypeDeclaration);
             context.RegisterSyntaxNodeAction(this.fieldDeclarationAction, SyntaxKind.FieldDeclaration);
             context.RegisterSyntaxNodeAction(this.propertyDeclarationAction, SyntaxKind.PropertyDeclaration);
         }
@@ -178,39 +169,9 @@ namespace StyleCop.Analyzers.DocumentationRules
             this.HandleDeclaration(context, needsComment, node, node.GetLocation());
         }
 
-        private void HandleClassDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+        private void HandleBaseTypeDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
-            var node = (ClassDeclarationSyntax)context.Node;
-
-            Accessibility declaredAccessibility = node.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
-            Accessibility effectiveAccessibility = node.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
-            bool needsComment = SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, node.Kind(), node.Parent.Kind(), declaredAccessibility, effectiveAccessibility);
-            this.HandleDeclaration(context, needsComment, node, node.Identifier.GetLocation());
-        }
-
-        private void HandleStructDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
-        {
-            var node = (StructDeclarationSyntax)context.Node;
-
-            Accessibility declaredAccessibility = node.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
-            Accessibility effectiveAccessibility = node.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
-            bool needsComment = SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, node.Kind(), node.Parent.Kind(), declaredAccessibility, effectiveAccessibility);
-            this.HandleDeclaration(context, needsComment, node, node.Identifier.GetLocation());
-        }
-
-        private void HandleInterfaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
-        {
-            var node = (InterfaceDeclarationSyntax)context.Node;
-
-            Accessibility declaredAccessibility = node.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
-            Accessibility effectiveAccessibility = node.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
-            bool needsComment = SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, node.Kind(), node.Parent.Kind(), declaredAccessibility, effectiveAccessibility);
-            this.HandleDeclaration(context, needsComment, node, node.Identifier.GetLocation());
-        }
-
-        private void HandleEnumDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
-        {
-            var node = (EnumDeclarationSyntax)context.Node;
+            var node = (BaseTypeDeclarationSyntax)context.Node;
 
             Accessibility declaredAccessibility = node.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
             Accessibility effectiveAccessibility = node.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
