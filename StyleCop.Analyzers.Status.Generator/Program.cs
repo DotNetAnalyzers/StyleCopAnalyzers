@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.Status.Generator
     using System.IO;
     using System.Linq;
     using LibGit2Sharp;
+    using Microsoft.Build.Locator;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -26,6 +27,7 @@ namespace StyleCop.Analyzers.Status.Generator
                 return;
             }
 
+            MSBuildLocator.RegisterDefaults();
             SolutionReader reader = SolutionReader.CreateAsync(args[0]).Result;
 
             var diagnostics = reader.GetDiagnosticsAsync().Result;

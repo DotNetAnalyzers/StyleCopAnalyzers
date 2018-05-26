@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>net46</TargetFramework>
     <OutputType>Exe</OutputType>
 
     <!-- Automatically generate the necessary assembly binding redirects -->
@@ -21,7 +21,9 @@
 
   <ItemGroup>
     <PackageReference Include="LibGit2Sharp" Version="0.21.0.176" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="1.0.0" />
+    <PackageReference Include="Microsoft.Build.Locator" Version="1.0.13" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.9.0-beta4-62830-01" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="2.9.0-beta4-62830-01" />
     <PackageReference Include="Newtonsoft.Json" Version="7.0.1-beta3" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.0.0-beta015" PrivateAssets="all" />
   </ItemGroup>

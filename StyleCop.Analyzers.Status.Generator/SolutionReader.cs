@@ -177,11 +177,11 @@ namespace StyleCop.Analyzers.Status.Generator
         {
             this.solution = await this.workspace.OpenSolutionAsync(this.SlnPath);
 
-            this.analyzerProject = this.solution.Projects.Single(x => x.Name == this.AnalyzerProjectName);
+            this.analyzerProject = this.solution.Projects.First(x => x.Name == this.AnalyzerProjectName || x.AssemblyName == this.AnalyzerProjectName);
             this.analyzerCompilation = await this.analyzerProject.GetCompilationAsync();
             this.analyzerCompilation = this.analyzerCompilation.WithOptions(this.analyzerCompilation.Options.WithOutputKind(OutputKind.DynamicallyLinkedLibrary));
 
-            this.codeFixProject = this.solution.Projects.Single(x => x.Name == this.CodeFixProjectName);
+            this.codeFixProject = this.solution.Projects.First(x => x.Name == this.CodeFixProjectName || x.AssemblyName == this.CodeFixProjectName);
             this.codeFixCompilation = await this.codeFixProject.GetCompilationAsync();
             this.codeFixCompilation = this.codeFixCompilation.WithOptions(this.codeFixCompilation.Options.WithOutputKind(OutputKind.DynamicallyLinkedLibrary));
 
@@ -210,7 +210,7 @@ namespace StyleCop.Analyzers.Status.Generator
 
         private void Compile()
         {
-            string path = Path.Combine(Path.GetDirectoryName(this.SlnPath), this.AnalyzerProjectName);
+            string path = Path.GetDirectoryName(this.analyzerProject.FilePath);
             this.analyzerAssembly = this.GetAssembly(this.analyzerCompilation, ResourceReader.GetResourcesRecursive(path));
 
             this.codeFixAssembly = this.GetAssembly(this.codeFixCompilation);
