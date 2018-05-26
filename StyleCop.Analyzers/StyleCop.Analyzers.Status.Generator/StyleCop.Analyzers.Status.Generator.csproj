@@ -13,13 +13,18 @@
     <CodeAnalysisRuleSet>..\StyleCop.Analyzers.Internal.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\build\keys\TestingKey.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="LibGit2Sharp" Version="0.21.0.176" />
+    <PackageReference Include="LibGit2Sharp" Version="0.24.0" />
     <PackageReference Include="Microsoft.Build.Locator" Version="1.0.13" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.9.0-beta4-62830-01" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="2.9.0-beta4-62830-01" />
