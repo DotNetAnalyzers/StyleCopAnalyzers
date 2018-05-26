@@ -14,10 +14,6 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <EnableDefaultNoneItems>False</EnableDefaultNoneItems>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <LangVersion>7</LangVersion>
     <Features>strict</Features>
   </PropertyGroup>

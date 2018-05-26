@@ -41,11 +41,4 @@
     <ProjectReference Include="..\StyleCop.Analyzers\StyleCop.Analyzers.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="StyleCop.Analyzers.nuspec" />
-    <None Include="tools\install.ps1" />
-    <None Include="tools\uninstall.ps1" />
-    <None Include="ReadMe.txt" />
-  </ItemGroup>
-
 </Project>

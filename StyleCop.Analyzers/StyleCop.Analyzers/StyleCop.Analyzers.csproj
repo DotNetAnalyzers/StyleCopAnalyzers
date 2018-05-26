@@ -32,9 +32,4 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="1.2.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="**\*.md" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
-    <None Include="**\*.json" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
-  </ItemGroup>
-
 </Project>

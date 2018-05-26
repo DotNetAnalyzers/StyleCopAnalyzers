@@ -44,4 +44,4 @@ See [Contributing](CONTRIBUTING.md)
 
 ## Current status
 
-An up-to-date list of which StyleCop rules are implemented and which have code fixes can be found [here](https://stylecop.pdelvo.com/).
+An up-to-date list of which StyleCop rules are implemented and which have code fixes can be found [here](https://dotnetanalyzers.github.io/StyleCopAnalyzers/).
