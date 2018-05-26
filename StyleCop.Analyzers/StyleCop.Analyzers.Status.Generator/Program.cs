@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.Status.Generator
     using System.IO;
     using System.Linq;
     using LibGit2Sharp;
+    using Microsoft.Build.Locator;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -18,14 +19,22 @@ namespace StyleCop.Analyzers.Status.Generator
         /// The starting point of this application.
         /// </summary>
         /// <param name="args">The command line parameters.</param>
-        internal static void Main(string[] args)
+        /// <returns>Zero if the tool completes successfully; otherwise, a non-zero error code.</returns>
+        internal static int Main(string[] args)
         {
             if (args.Length < 1)
             {
                 Console.WriteLine("Path to sln file required.");
-                return;
+                return 1;
             }
 
+            if (!File.Exists(args[0]))
+            {
+                Console.WriteLine($"Could not find solution file: {Path.GetFullPath(args[0])}");
+                return 1;
+            }
+
+            MSBuildLocator.RegisterDefaults();
             SolutionReader reader = SolutionReader.CreateAsync(args[0]).Result;
 
             var diagnostics = reader.GetDiagnosticsAsync().Result;
@@ -53,8 +62,10 @@ namespace StyleCop.Analyzers.Status.Generator
                     }
                 };
 
-                Console.WriteLine(JsonConvert.SerializeObject(output));
+                Console.WriteLine(JsonConvert.SerializeObject(output, Formatting.Indented));
             }
+
+            return 0;
         }
     }
 }
