@@ -1,4 +1,4 @@
-﻿// Copyright (c) Dennis Fischer. All Rights Reserved.
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Status.Generator
@@ -75,7 +75,7 @@ namespace StyleCop.Analyzers.Status.Generator
             reader.CodeFixProjectName = codeFixProjectName;
             reader.workspace = MSBuildWorkspace.Create(properties: new Dictionary<string, string> { { "Configuration", "Release" } });
 
-            await reader.InitializeAsync();
+            await reader.InitializeAsync().ConfigureAwait(false);
 
             return reader;
         }
@@ -103,7 +103,7 @@ namespace StyleCop.Analyzers.Status.Generator
                 string noCodeFixReason = null;
 
                 // Check if this syntax tree represents a diagnostic
-                SyntaxNode syntaxRoot = await syntaxTree.GetRootAsync();
+                SyntaxNode syntaxRoot = await syntaxTree.GetRootAsync().ConfigureAwait(false);
                 SemanticModel semanticModel = this.analyzerCompilation.GetSemanticModel(syntaxTree);
                 SyntaxNode classSyntaxNode = syntaxRoot.DescendantNodes().FirstOrDefault(x => x.IsKind(SyntaxKind.ClassDeclaration));
 
@@ -147,7 +147,7 @@ namespace StyleCop.Analyzers.Status.Generator
                         Title = descriptorInfo.Title.ToString(),
                         HelpLink = descriptorInfo.HelpLinkUri,
                         CodeFixStatus = codeFixStatus,
-                        NoCodeFixReason = noCodeFixReason
+                        NoCodeFixReason = noCodeFixReason,
                     };
                     diagnostics.Add(diagnostic);
                 }
@@ -175,14 +175,14 @@ namespace StyleCop.Analyzers.Status.Generator
 
         private async Task InitializeAsync()
         {
-            this.solution = await this.workspace.OpenSolutionAsync(this.SlnPath);
+            this.solution = await this.workspace.OpenSolutionAsync(this.SlnPath).ConfigureAwait(false);
 
             this.analyzerProject = this.solution.Projects.First(x => x.Name == this.AnalyzerProjectName || x.AssemblyName == this.AnalyzerProjectName);
-            this.analyzerCompilation = await this.analyzerProject.GetCompilationAsync();
+            this.analyzerCompilation = await this.analyzerProject.GetCompilationAsync().ConfigureAwait(false);
             this.analyzerCompilation = this.analyzerCompilation.WithOptions(this.analyzerCompilation.Options.WithOutputKind(OutputKind.DynamicallyLinkedLibrary));
 
             this.codeFixProject = this.solution.Projects.First(x => x.Name == this.CodeFixProjectName || x.AssemblyName == this.CodeFixProjectName);
-            this.codeFixCompilation = await this.codeFixProject.GetCompilationAsync();
+            this.codeFixCompilation = await this.codeFixProject.GetCompilationAsync().ConfigureAwait(false);
             this.codeFixCompilation = this.codeFixCompilation.WithOptions(this.codeFixCompilation.Options.WithOutputKind(OutputKind.DynamicallyLinkedLibrary));
 
             this.booleanType = this.analyzerCompilation.GetSpecialType(SpecialType.System_Boolean);

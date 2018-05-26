@@ -1,4 +1,4 @@
-﻿// Copyright (c) Dennis Fischer. All Rights Reserved.
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Status.Generator
@@ -58,8 +58,8 @@ namespace StyleCop.Analyzers.Status.Generator
                         commit.Message,
                         commit.Author,
                         commit.Committer,
-                        Parents = commit.Parents.Select(x => x.Sha)
-                    }
+                        Parents = commit.Parents.Select(x => x.Sha),
+                    },
                 };
 
                 Console.WriteLine(JsonConvert.SerializeObject(output, Formatting.Indented));

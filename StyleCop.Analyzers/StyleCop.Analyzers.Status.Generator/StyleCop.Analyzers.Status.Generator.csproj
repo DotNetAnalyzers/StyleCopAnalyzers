@@ -10,8 +10,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <CodeAnalysisRuleSet>Rules.ruleset</CodeAnalysisRuleSet>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <CodeAnalysisRuleSet>..\StyleCop.Analyzers.Internal.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,11 +24,6 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.9.0-beta4-62830-01" />
     <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="2.9.0-beta4-62830-01" />
     <PackageReference Include="Newtonsoft.Json" Version="7.0.1-beta3" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.0.0-beta015" PrivateAssets="all" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="..\stylecop.json" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿// Copyright (c) Dennis Fischer. All Rights Reserved.
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Status.Generator
@@ -12,15 +12,15 @@ namespace StyleCop.Analyzers.Status.Generator
     public class StyleCopDiagnostic
     {
         /// <summary>
-        /// The Id of the diagnostic including the prefix 'SA' or 'SX'
+        /// Gets or sets the ID of the diagnostic, including the prefix 'SA' or 'SX'.
         /// </summary>
         /// <value>
-        /// The Id of the diagnostic including the prefix 'SA' or 'SX'
+        /// The ID of the diagnostic including, the prefix 'SA' or 'SX'.
         /// </value>
         public string Id { get; set; }
 
         /// <summary>
-        /// The short name if the diagnostic that is used in the class name.
+        /// Gets or sets the short name if the diagnostic that is used in the class name.
         /// </summary>
         /// <value>
         /// The short name if the diagnostic that is used in the class name.
@@ -28,67 +28,68 @@ namespace StyleCop.Analyzers.Status.Generator
         public string Name { get; set; }
 
         /// <summary>
-        /// Whether or not the diagnostic is implemented.
+        /// Gets or sets a value indicating whether the diagnostic is implemented.
         /// </summary>
         /// <value>
-        /// Whether or not the diagnostic is implemented.
+        /// <see langword="true"/> if the diagnostic is implemented; otherwise <see langword="false"/>.
         /// </value>
         public bool HasImplementation { get; set; }
 
         /// <summary>
-        /// Represents if the diagnostic is enabled or not. This can indicate if the
-        /// diagnostic is enabled by default or not, or if it is disabled because
+        /// Gets or sets a value indicating whether the diagnostic is enabled. This can indicate if the
+        /// diagnostic is enabled by default, and if not, whether it is disabled because
         /// there are no tests for the diagnostic.
         /// </summary>
         /// <value>
-        /// Represents if the diagnostic is enabled or not. This can indicate if the
-        /// diagnostic is enabled by default or not, or if it is disabled because
-        /// there are no tests for the diagnostic.
+        /// <list type="bullet">
+        /// <item>DisabledNoTests</item>
+        /// <item>DisabledAlternative</item>
+        /// <item>EnabledByDefault</item>
+        /// <item>DisabledByDefault</item>
+        /// </list>
         /// </value>
         public string Status { get; set; }
 
         /// <summary>
-        /// Represents whether or not there is a code fix for the diagnostic.
+        /// Gets or sets a value indicating the code fix status for the diagnostic.
         /// </summary>
         /// <value>
-        /// Represents whether or not there is a code fix for the diagnostic.
+        /// A value indicating the code fix status for the diagnostic.
         /// </value>
         [JsonConverter(typeof(StringEnumConverter))]
         public CodeFixStatus CodeFixStatus { get; set; }
 
         /// <summary>
-        /// Returns the reason why a code fix is not implemented, or null if there is
+        /// Gets or sets the reason why a code fix is not implemented, or <see langword="null"/> if there is
         /// no reason.
         /// </summary>
         /// <value>
-        /// Returns the reason why a code fix is not implemented, or null if there is
+        /// The reason why a code fix is not implemented, or <see langword="null"/> if there is
         /// no reason.
         /// </value>
         public string NoCodeFixReason { get; set; }
 
         /// <summary>
-        /// Returns the title of this diagnostic
-        /// no reason.
+        /// Gets or sets the title of this diagnostic.
         /// </summary>
         /// <value>
-        /// Returns the title of this diagnostic
+        /// The title of this diagnostic.
         /// </value>
         public string Title { get; set; }
 
         /// <summary>
-        /// Returns the category of this diagnostic
-        /// no reason.
+        /// Gets or sets the category of this diagnostic.
         /// </summary>
         /// <value>
-        /// Returns the category of this diagnostic
+        /// The category of this diagnostic.
         /// </value>
         public string Category { get; set; }
 
         /// <summary>
-        /// Returns help link for this diagnostic
+        /// Gets or sets the help link for this diagnostic.
         /// </summary>
         /// <value>
-        /// Returns help link for this diagnostic
+        /// The help link for this diagnostic.
         /// </value>
         public string HelpLink { get; set; }
 

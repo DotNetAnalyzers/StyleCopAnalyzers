@@ -1,4 +1,4 @@
-﻿// Copyright (c) Dennis Fischer. All Rights Reserved.
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Status.Generator
@@ -26,22 +26,23 @@ namespace StyleCop.Analyzers.Status.Generator
             return new ResourceDescription(
                 name,
                 () =>
-            {
-                using (ResXResourceReader reader = new ResXResourceReader(path))
                 {
-                    IDictionaryEnumerator enumerator = reader.GetEnumerator();
-                    MemoryStream memStream = new MemoryStream();
-                    using (IResourceWriter writer = new ResourceWriter(memStream))
+                    using (ResXResourceReader reader = new ResXResourceReader(path))
                     {
-                        while (enumerator.MoveNext())
+                        IDictionaryEnumerator enumerator = reader.GetEnumerator();
+                        MemoryStream memStream = new MemoryStream();
+                        using (IResourceWriter writer = new ResourceWriter(memStream))
                         {
-                            writer.AddResource(enumerator.Key.ToString(), enumerator.Value);
+                            while (enumerator.MoveNext())
+                            {
+                                writer.AddResource(enumerator.Key.ToString(), enumerator.Value);
+                            }
                         }
+
+                        return new MemoryStream(memStream.ToArray());
                     }
-                    return new MemoryStream(memStream.ToArray());
-                }
-            },
-            false);
+                },
+                false);
         }
 
         /// <summary>

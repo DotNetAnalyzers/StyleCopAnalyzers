@@ -1,4 +1,4 @@
-﻿// Copyright (c) Dennis Fischer. All Rights Reserved.
+﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Status.Generator
@@ -25,6 +25,6 @@ namespace StyleCop.Analyzers.Status.Generator
         /// no one implemented it yet, or it is not yet decided if a code fix
         /// is going to be implemented in the future.
         /// </summary>
-        NotYetImplemented
+        NotYetImplemented,
     }
 }
