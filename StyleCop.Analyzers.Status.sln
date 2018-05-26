@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.22823.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27705.2000
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StyleCop.Analyzers.Status.Generator", "StyleCop.Analyzers.Status.Generator\StyleCop.Analyzers.Status.Generator.csproj", "{9BF22A9E-9708-4AE4-A5C7-7A00AE4C8885}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.Status.Generator", "StyleCop.Analyzers.Status.Generator\StyleCop.Analyzers.Status.Generator.csproj", "{9BF22A9E-9708-4AE4-A5C7-7A00AE4C8885}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StyleCop.Analyzers.Status.Web", "StyleCop.Analyzers.Status.Web\StyleCop.Analyzers.Status.Web.csproj", "{361BA18C-5FB9-4F6D-9EF1-3CDA67D6A44C}"
 EndProject
@@ -24,5 +24,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D84D7BCA-FBF6-45BC-815E-88FF2D2F1552}
 	EndGlobalSection
 EndGlobal
