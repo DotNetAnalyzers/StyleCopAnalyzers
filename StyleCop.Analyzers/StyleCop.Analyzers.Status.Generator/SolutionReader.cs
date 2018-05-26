@@ -73,7 +73,7 @@ namespace StyleCop.Analyzers.Status.Generator
             reader.SlnPath = pathToSln;
             reader.AnalyzerProjectName = analyzerProjectName;
             reader.CodeFixProjectName = codeFixProjectName;
-            reader.workspace = MSBuildWorkspace.Create(properties: new Dictionary<string, string> { { "Configuration", "Release" } });
+            reader.workspace = MSBuildWorkspace.Create();
 
             await reader.InitializeAsync().ConfigureAwait(false);
 
@@ -187,7 +187,7 @@ namespace StyleCop.Analyzers.Status.Generator
 
             this.booleanType = this.analyzerCompilation.GetSpecialType(SpecialType.System_Boolean);
 
-            this.Compile();
+            this.LoadAssemblies();
 
             this.noCodeFixAttributeTypeSymbol = this.analyzerCompilation.GetTypeByMetadataName("StyleCop.Analyzers.NoCodeFixAttribute");
             this.diagnosticAnalyzerTypeSymbol = this.analyzerCompilation.GetTypeByMetadataName(typeof(DiagnosticAnalyzer).FullName);
@@ -208,26 +208,15 @@ namespace StyleCop.Analyzers.Status.Generator
                 .ToArray());
         }
 
-        private void Compile()
+        private void LoadAssemblies()
         {
-            string path = Path.GetDirectoryName(this.analyzerProject.FilePath);
-            this.analyzerAssembly = this.GetAssembly(this.analyzerCompilation, ResourceReader.GetResourcesRecursive(path));
-
-            this.codeFixAssembly = this.GetAssembly(this.codeFixCompilation);
+            this.analyzerAssembly = this.GetAssembly(this.analyzerProject);
+            this.codeFixAssembly = this.GetAssembly(this.codeFixProject);
         }
 
-        private Assembly GetAssembly(Compilation compilation, IEnumerable<ResourceDescription> manifestResources = null)
+        private Assembly GetAssembly(Project project)
         {
-            MemoryStream memStream = new MemoryStream();
-
-            var emitResult = compilation.Emit(memStream, manifestResources: manifestResources);
-
-            if (!emitResult.Success)
-            {
-                throw new CompilationFailedException();
-            }
-
-            return Assembly.Load(memStream.ToArray());
+            return Assembly.LoadFile(project.OutputFilePath);
         }
 
         private string GetStatus(INamedTypeSymbol classSymbol, SyntaxNode root, SemanticModel model, DiagnosticDescriptor descriptor)

@@ -12,9 +12,11 @@ test_script:
 - ps: .\opencover-report.ps1 -Debug -NoBuild -NoReport -AppVeyor
 - cd ..
 - .\packages\Codecov.1.0.1\tools\codecov.exe -f ".\build\OpenCover.Reports\OpenCover.StyleCopAnalyzers.xml"
+- .\StyleCop.Analyzers\StyleCop.Analyzers.Status.Generator\bin\Debug\net46\StyleCop.Analyzers.Status.Generator.exe .\StyleCopAnalyzers.sln > StyleCop.Analyzers.Status.json
 cache:
   - packages -> **\packages.config
   - C:\Users\appveyor\.nuget\packages -> appveyor.yml
 artifacts:
 - path: 'StyleCop.Analyzers\**\*.vsix'
 - path: 'StyleCop.Analyzers\**\*.nupkg'
+- path: 'StyleCop.Analyzers.Status.json'

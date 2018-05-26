@@ -254,6 +254,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.Test.CSharp7", "StyleCop.Analyzers\StyleCop.Analyzers.Test.CSharp7\StyleCop.Analyzers.Test.CSharp7.csproj", "{F10E4AEF-86A2-4394-8B6F-1A3468B72F1D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.Status.Generator", "StyleCop.Analyzers\StyleCop.Analyzers.Status.Generator\StyleCop.Analyzers.Status.Generator.csproj", "{80EA831D-D993-44A8-BB77-33D84BACE711}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F91F7815-4E63-4698-B053-E57B2D707194} = {F91F7815-4E63-4698-B053-E57B2D707194}
+		{3B052737-06CE-4182-AE0F-08EB82DFA73E} = {3B052737-06CE-4182-AE0F-08EB82DFA73E}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
