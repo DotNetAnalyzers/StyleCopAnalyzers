@@ -23,11 +23,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// </summary>
         public const string DiagnosticId = "SA1130";
 
-        /// <summary>
-        /// Property identifier used to pass information to the codefix.
-        /// </summary>
-        internal const string DelegateArgumentNamesProperty = "DelegateArgumentNames";
-
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1130Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1130MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1130Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
@@ -52,6 +47,22 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeAction(AnonymousMethodExpressionAction, SyntaxKind.AnonymousMethodExpression);
         }
 
+        /// <summary>
+        /// Gets the delegate parameter list from a method symbol and the argument index.
+        /// </summary>
+        /// <param name="methodSymbol">The symbol containing information about the method invocation.</param>
+        /// <param name="argumentIndex">The index of the argument containing the delegate</param>
+        /// <returns>A parameter list for the delegate parameters.</returns>
+        internal static ParameterListSyntax GetDelegateParameterList(IMethodSymbol methodSymbol, int argumentIndex)
+        {
+            var delegateType = (INamedTypeSymbol)methodSymbol.Parameters[argumentIndex].Type;
+            var delegateParameters = delegateType.DelegateInvokeMethod.Parameters;
+
+            var syntaxParameters = GetSyntaxParametersFromSymbolParameters(delegateParameters);
+
+            return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList(syntaxParameters));
+        }
+
         private static void HandleAnonymousMethodExpression(SyntaxNodeAnalysisContext context)
         {
             var diagnosticProperties = ImmutableDictionary.CreateBuilder<string, string>();
@@ -66,12 +77,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 break;
 
             case SyntaxKind.EqualsValueClause:
-                reportDiagnostic = HandleAssignment(context.SemanticModel, (EqualsValueClauseSyntax)anonymousMethod.Parent, diagnosticProperties);
+                reportDiagnostic = true;
                 break;
 
             case SyntaxKind.AddAssignmentExpression:
             case SyntaxKind.SubtractAssignmentExpression:
-                reportDiagnostic = HandleAssignmentExpression(context.SemanticModel, anonymousMethod, (AssignmentExpressionSyntax)anonymousMethod.Parent, diagnosticProperties);
+                reportDiagnostic = true;
                 break;
             }
 
@@ -93,7 +104,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 Location location = originalInvocationExpression.GetLocation();
 
                 var argumentIndex = argumentListSyntax.Arguments.IndexOf(argumentSyntax);
-                var parameterList = GetDelegateParameterList(originalSymbolInfo, argumentIndex);
+
+                // Determine the parameter list from the method that is invoked, as delegates without parameters are allowed, but they cannot be replaced by a lambda without parameters.
+                var parameterList = GetDelegateParameterList((IMethodSymbol)originalSymbolInfo.Symbol, argumentIndex);
 
                 // In some cases passing a delegate as an argument to a method is required to call the right overload
                 // When there is an other overload that takes an expression.
@@ -110,55 +123,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 {
                     return false;
                 }
-
-                var parameterNames = parameterList.Parameters.Select(p => p.Identifier.ToString());
-                propertiesBuilder.Add(DelegateArgumentNamesProperty, string.Join(",", parameterNames));
             }
 
             return true;
-        }
-
-        private static bool HandleAssignment(SemanticModel semanticModel, EqualsValueClauseSyntax equalsValueClauseSyntax, ImmutableDictionary<string, string>.Builder propertiesBuilder)
-        {
-            var variableDeclaration = (VariableDeclarationSyntax)equalsValueClauseSyntax.Parent.Parent;
-            var symbol = semanticModel.GetSymbolInfo(variableDeclaration.Type);
-
-            var namedTypeSymbol = symbol.Symbol as INamedTypeSymbol;
-            if (namedTypeSymbol?.TypeKind == TypeKind.Delegate)
-            {
-                var delegateParameters = namedTypeSymbol.DelegateInvokeMethod.Parameters;
-                propertiesBuilder.Add(DelegateArgumentNamesProperty, string.Join(",", delegateParameters.Select(ps => ps.Name)));
-                return true;
-            }
-
-            return false;
-        }
-
-        private static bool HandleAssignmentExpression(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod, AssignmentExpressionSyntax assignmentExpressionSyntax, ImmutableDictionary<string, string>.Builder propertiesBuilder)
-        {
-            var symbol = semanticModel.GetSymbolInfo(assignmentExpressionSyntax.Left);
-
-            var eventSymbol = symbol.Symbol as IEventSymbol;
-            if (eventSymbol?.Type.TypeKind == TypeKind.Delegate)
-            {
-                var delegateParameters = ((INamedTypeSymbol)eventSymbol.Type).DelegateInvokeMethod.Parameters;
-                propertiesBuilder.Add(DelegateArgumentNamesProperty, string.Join(",", delegateParameters.Select(ps => ps.Name)));
-                return true;
-            }
-
-            return false;
-        }
-
-        private static ParameterListSyntax GetDelegateParameterList(SymbolInfo originalSymbolInfo, int argumentIndex)
-        {
-            // Determine the parameter list from the method that is invoked, as delegates without parameters are allowed, but they cannot be replaced by a lambda without parameters.
-            var methodSymbol = (IMethodSymbol)originalSymbolInfo.Symbol;
-            var delegateType = (INamedTypeSymbol)methodSymbol.Parameters[argumentIndex].Type;
-            var delegateParameters = delegateType.DelegateInvokeMethod.Parameters;
-
-            var syntaxParameters = GetSyntaxParametersFromSymbolParameters(delegateParameters);
-
-            return SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList(syntaxParameters));
         }
 
         private static ImmutableArray<ParameterSyntax> GetSyntaxParametersFromSymbolParameters(ImmutableArray<IParameterSymbol> symbolParameters)
