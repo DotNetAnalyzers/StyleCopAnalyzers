@@ -20,3 +20,4 @@ artifacts:
 - path: 'StyleCop.Analyzers\**\*.vsix'
 - path: 'StyleCop.Analyzers\**\*.nupkg'
 - path: 'StyleCop.Analyzers.Status.json'
+- path: 'docs\index.html'
