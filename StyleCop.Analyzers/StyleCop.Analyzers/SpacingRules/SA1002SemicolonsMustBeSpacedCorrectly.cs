@@ -107,6 +107,10 @@ namespace StyleCop.Analyzers.SpacingRules
 
                     break;
 
+                case SyntaxKind.None:
+                    // The semi colon is the last character in the file.
+                    return;
+
                 default:
                     break;
                 }
