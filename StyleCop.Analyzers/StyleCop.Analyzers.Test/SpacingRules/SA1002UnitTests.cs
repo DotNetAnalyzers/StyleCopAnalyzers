@@ -326,12 +326,8 @@ class ClassName
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1426.
-        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1426
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1426, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1426")]
         public async Task TestPrecededByBlockCommentAsync()
         {
             string testCode = @"
@@ -360,12 +356,8 @@ class ClassName
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#403.
-        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/403
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(403, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/403")]
         public async Task TestSemicolonAtBeginningOfLineAsync()
         {
             string testCode = @"
@@ -410,6 +402,15 @@ class ClassName
             };
 
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2699, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2699")]
+        public async Task TestSemiColonAtEndOfFileAsync()
+        {
+            string testCode = @"using System;";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
