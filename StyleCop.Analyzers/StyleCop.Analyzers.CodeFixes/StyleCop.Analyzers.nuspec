@@ -29,6 +29,9 @@
     <file src="tools\install.ps1" target="tools\" />
     <file src="tools\uninstall.ps1" target="tools\" />
 
+    <!-- Build logic -->
+    <file src="build\**" target="build\" />
+
     <!-- Source code -->
     <file src="..\StyleCop.Analyzers\**\*.cs" exclude="..\StyleCop.Analyzers\obj\**\*.cs" target="src"/>
     <file src="**\*.cs" exclude="obj\**\*.cs;Properties\AssemblyInfo.cs" target="src"/>

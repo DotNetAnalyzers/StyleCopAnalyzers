@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+  Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Condition="Exists('stylecop.json')">
+    <!--
+      If stylecop.json exists in the project directory add it to <AdditionalFiles /> automatically.  The point of
+      this is that the user sees the file in Visual Studio Solution Explorer but they don't understand that they
+      need to add it to the <AdditionalFiles /> item group.
+      
+      1. Legacy project system - Files in the project directory are in an explicit <None /> item.
+      2. New project system - Files in the project directory are implicitly added to the <None /> item through a glob.
+    -->
+    <None Remove="stylecop.json" />
+
+    <AdditionalFiles Include="stylecop.json" Condition=" '@(AdditionalFiles->EndsWith('stylecop.json', System.StringComparison.OrdinalIgnoreCase))' != 'true' " />
+  </ItemGroup>
+
+  <ItemGroup Condition="!Exists('stylecop.json')">
+    <!--
+      If stylecop.json doesn't exist in the project directory, search parent directories for one.  This allows user
+      to simply create a file at the root of their repository and this will automatically include it.
+    -->
+    <AdditionalFiles Include="$([MSBuild]::GetPathOfFileAbove(stylecop.json, $(MSBuildProjectDirectory)..))"
+                     Condition=" '@(AdditionalFiles->EndsWith('stylecop.json', System.StringComparison.OrdinalIgnoreCase))' != 'true' And Exists('$([MSBuild]::GetPathOfFileAbove(stylecop.json, $(MSBuildProjectDirectory)..))')">
+      <!--
+        Show the file as a link as if its in the project directory so users can open it up in Visual Studio easily
+        and they know its affecting each project.
+      -->
+      <Link>stylecop.json</Link>
+    </AdditionalFiles>
+  </ItemGroup>
+</Project>
