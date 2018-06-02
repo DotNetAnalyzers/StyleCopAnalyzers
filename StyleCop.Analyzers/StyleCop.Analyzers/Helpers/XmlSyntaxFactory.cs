@@ -25,9 +25,28 @@ namespace StyleCop.Analyzers.Helpers
 
         public static XmlElementSyntax MultiLineElement(XmlNameSyntax name, string newLineText, SyntaxList<XmlNodeSyntax> content)
         {
+            var newContent = content.Insert(0, NewLine(newLineText)).Add(NewLine(newLineText));
+
+            for (var i = 1; i < newContent.Count; i++)
+            {
+                if (newContent[i] is XmlTextSyntax xmlTextSyntax
+                    && xmlTextSyntax.TextTokens[0].ValueText == newLineText)
+                {
+                    var previousTrailingTrivia = newContent[i - 1].GetTrailingTrivia();
+                    if (previousTrailingTrivia.Count > 0)
+                    {
+                        var lastTrivia = previousTrailingTrivia.Last();
+                        var updatedLastTriviaText = lastTrivia.ToString().TrimEnd(' ', '\t');
+
+                        var updatedTrailingTrivia = previousTrailingTrivia.Replace(lastTrivia, SyntaxFactory.SyntaxTrivia(lastTrivia.Kind(), updatedLastTriviaText));
+                        newContent = newContent.Replace(newContent[i - 1], newContent[i - 1].WithTrailingTrivia(updatedTrailingTrivia));
+                    }
+                }
+            }
+
             return SyntaxFactory.XmlElement(
                 SyntaxFactory.XmlElementStartTag(name),
-                content.Insert(0, NewLine(newLineText)).Add(NewLine(newLineText)),
+                newContent,
                 SyntaxFactory.XmlElementEndTag(name));
         }
 

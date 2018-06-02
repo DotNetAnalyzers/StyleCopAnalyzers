@@ -726,7 +726,7 @@ using System.Threading.Tasks;
 public {typeKeyword} Test
 {{
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <returns>A <see cref=""Task""/> representing the result of the asynchronous operation.</returns>
     public Task TestMethod1()
@@ -735,7 +735,7 @@ public {typeKeyword} Test
     }}
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <returns>A <see cref=""Task{{TResult}}""/> representing the result of the asynchronous operation.</returns>
     public Task<int> TestMethod2()
@@ -744,7 +744,7 @@ public {typeKeyword} Test
     }}
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <typeparam name=""T""></typeparam>
     /// <returns>A <see cref=""Task{{TResult}}""/> representing the result of the asynchronous operation.</returns>
@@ -754,7 +754,7 @@ public {typeKeyword} Test
     }}
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name=""param1""></param>
     /// <param name=""param2""></param>
@@ -765,7 +765,7 @@ public {typeKeyword} Test
     }}
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name=""param1""></param>
     /// <param name=""param2""></param>
@@ -776,7 +776,7 @@ public {typeKeyword} Test
     }}
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <typeparam name=""T""></typeparam>
     /// <param name=""param1""></param>

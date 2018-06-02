@@ -270,7 +270,7 @@ public class ClassName
     /// <summary>
     /// </summary>
     /// <value>
-    /// 
+    ///
     /// </value>
     public int Property
     {
