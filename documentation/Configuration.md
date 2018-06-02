@@ -594,9 +594,9 @@ metadata               | Class1`3.cs
 
 It is possible to define your preferred configuration once and reuse it across multiple independent projects. This involves rolling out your own NuGet package,
 which will contain the `stylecop.json` configuration and potentially a custom ruleset file. A custom `.props` file glues that configuration to any project
-that wil use the NuGet package.
+that will use the NuGet package.
 
-Example nuspec file:
+Example `.nuspec` file:
 
 ```xml
 <?xml version="1.0"?>
@@ -616,7 +616,7 @@ Example nuspec file:
 </package>
 ```
 
-Example props file:
+Example `.props` file:
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
