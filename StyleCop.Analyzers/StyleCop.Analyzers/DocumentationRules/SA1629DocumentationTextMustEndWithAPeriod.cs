@@ -110,7 +110,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     {
                         // If a diagnostic gets reported for the element, place the diagnostic after the last inline
                         // element.
-                        reportingLocation = xmlElement.Content[i].Span.End;
+                        reportingLocation = reportingLocation ?? xmlElement.Content[i].Span.End;
                     }
                 }
             }
