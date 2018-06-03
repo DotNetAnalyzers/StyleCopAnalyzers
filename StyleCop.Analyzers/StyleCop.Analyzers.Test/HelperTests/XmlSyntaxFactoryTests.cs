@@ -57,7 +57,7 @@ namespace StyleCop.Analyzers.Test.HelperTests
             Assert.Equal(expected, XmlSyntaxFactory.SummaryElement("\r\n", XmlSyntaxFactory.Text("Summary.")).ToFullString());
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2672")]
+        [Fact]
         [WorkItem(2672, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2672")]
         public void TestEmptySummaryElement()
         {
