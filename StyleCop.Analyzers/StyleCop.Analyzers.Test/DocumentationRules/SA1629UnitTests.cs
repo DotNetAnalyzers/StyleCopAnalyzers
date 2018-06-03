@@ -378,6 +378,47 @@ public interface ITest
         }
 
         [Fact]
+        [WorkItem(2680, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2680")]
+        public async Task TestReportingAfterEmptyElementTwoSentencesAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Test interface. <see cref=""ITest""/>
+/// </summary>
+public interface ITest
+{
+    /// <summary>
+    /// Test method. <see cref=""Method""/><see cref=""Method""/>
+    /// </summary>
+    void Method();
+}
+";
+
+            var fixedTestCode = @"
+/// <summary>
+/// Test interface. <see cref=""ITest""/>.
+/// </summary>
+public interface ITest
+{
+    /// <summary>
+    /// Test method. <see cref=""Method""/><see cref=""Method""/>.
+    /// </summary>
+    void Method();
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(3, 40),
+                this.CSharpDiagnostic().WithLocation(8, 62),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        [Fact]
         [WorkItem(2679, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2679")]
         public async Task TestElementsThatDoNotRequirePeriodsAsync()
         {
