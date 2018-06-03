@@ -65,15 +65,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleAnonymousMethodExpression(SyntaxNodeAnalysisContext context)
         {
-            var diagnosticProperties = ImmutableDictionary.CreateBuilder<string, string>();
-
             bool reportDiagnostic = true;
             var anonymousMethod = (AnonymousMethodExpressionSyntax)context.Node;
 
             switch (anonymousMethod.Parent.Kind())
             {
             case SyntaxKind.Argument:
-                reportDiagnostic = HandleMethodInvocation(context.SemanticModel, anonymousMethod, (ArgumentSyntax)anonymousMethod.Parent, diagnosticProperties);
+                reportDiagnostic = HandleMethodInvocation(context.SemanticModel, anonymousMethod, (ArgumentSyntax)anonymousMethod.Parent);
                 break;
 
             case SyntaxKind.EqualsValueClause:
@@ -88,11 +86,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             if (reportDiagnostic)
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, anonymousMethod.DelegateKeyword.GetLocation(), diagnosticProperties.ToImmutable()));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, anonymousMethod.DelegateKeyword.GetLocation()));
             }
         }
 
-        private static bool HandleMethodInvocation(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod, ArgumentSyntax argumentSyntax, ImmutableDictionary<string, string>.Builder propertiesBuilder)
+        private static bool HandleMethodInvocation(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod, ArgumentSyntax argumentSyntax)
         {
             // invocation -> argument list -> argument -> anonymous method
             var argumentListSyntax = argumentSyntax?.Parent as ArgumentListSyntax;
