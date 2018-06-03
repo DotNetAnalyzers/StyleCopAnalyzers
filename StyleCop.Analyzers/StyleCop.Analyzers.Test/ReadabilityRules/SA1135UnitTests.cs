@@ -228,6 +228,19 @@ using Example = System.ValueTuple<System.Collections.List, int>;
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(2690, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2690")]
+        public async Task TestFullyQualifiedAliasInsideNamespaceAsync()
+        {
+            var testCode = @"
+namespace Test {
+    using Example = System.ValueTuple<System.Collections.IList, int>;
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new SA1135CodeFixProvider();
