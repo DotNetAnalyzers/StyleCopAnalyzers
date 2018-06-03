@@ -275,12 +275,12 @@ namespace StyleCop.Analyzers.Helpers
 
         public static XmlEmptyElementSyntax SeeAlsoElement(CrefSyntax cref)
         {
-            return EmptyElement("seealso").AddAttributes(CrefAttribute(cref));
+            return EmptyElement(XmlCommentHelper.SeeAlsoXmlTag).AddAttributes(CrefAttribute(cref));
         }
 
         public static XmlElementSyntax SeeAlsoElement(Uri linkAddress, SyntaxList<XmlNodeSyntax> linkText)
         {
-            XmlElementSyntax element = Element("seealso", linkText);
+            XmlElementSyntax element = Element(XmlCommentHelper.SeeAlsoXmlTag, linkText);
             return element.WithStartTag(element.StartTag.AddAttributes(TextAttribute("href", linkAddress.ToString())));
         }
 

@@ -3,9 +3,7 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -27,7 +25,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             var testCode = @"
 /// <summary>
 /// Test class
-/// <summary>
+/// </summary>
 public class TestClass
 {
     /// <summary>
@@ -89,7 +87,7 @@ public class TestClass
             var fixedTestCode = @"
 /// <summary>
 /// Test class.
-/// <summary>
+/// </summary>
 public class TestClass
 {
     /// <summary>
@@ -184,7 +182,7 @@ public class TestClass
             var testCode = @"
 /// <summary>
 /// Test interface.
-/// <summary>
+/// </summary>
 public interface ITest
 {
     /// <summary>Test method.</summary>
@@ -196,7 +194,7 @@ public interface ITest
 
 /// <summary>
 /// Test class.
-/// <summary>
+/// </summary>
 public class TestClass : ITest
 {
     /// <inheritdoc/>
@@ -214,7 +212,7 @@ public class TestClass : ITest
             var fixedTestCode = @"
 /// <summary>
 /// Test interface.
-/// <summary>
+/// </summary>
 public interface ITest
 {
     /// <summary>Test method.</summary>
@@ -226,7 +224,7 @@ public interface ITest
 
 /// <summary>
 /// Test class.
-/// <summary>
+/// </summary>
 public class TestClass : ITest
 {
     /// <inheritdoc/>
@@ -295,6 +293,160 @@ public class TestClass
 ";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2680, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2680")]
+        public async Task TestReportingAfterEmptyElementAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Test interface <see cref=""ITest""/>
+/// </summary>
+public interface ITest
+{
+    /// <summary>
+    /// Test method <see cref=""Method""/>
+    /// </summary>
+    void Method();
+}
+";
+
+            var fixedTestCode = @"
+/// <summary>
+/// Test interface <see cref=""ITest""/>.
+/// </summary>
+public interface ITest
+{
+    /// <summary>
+    /// Test method <see cref=""Method""/>.
+    /// </summary>
+    void Method();
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(3, 39),
+                this.CSharpDiagnostic().WithLocation(8, 41),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2680, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2680")]
+        public async Task TestReportingAfterTwoEmptyElementsAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Test interface <see cref=""ITest""/> <see cref=""ITest""/>
+/// </summary>
+public interface ITest
+{
+    /// <summary>
+    /// Test method <see cref=""Method""/><see cref=""Method""/>
+    /// </summary>
+    void Method();
+}
+";
+
+            var fixedTestCode = @"
+/// <summary>
+/// Test interface <see cref=""ITest""/> <see cref=""ITest""/>.
+/// </summary>
+public interface ITest
+{
+    /// <summary>
+    /// Test method <see cref=""Method""/><see cref=""Method""/>.
+    /// </summary>
+    void Method();
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(3, 59),
+                this.CSharpDiagnostic().WithLocation(8, 61),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2680, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2680")]
+        public async Task TestReportingAfterEmptyElementTwoSentencesAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Test interface. <see cref=""ITest""/>
+/// </summary>
+public interface ITest
+{
+    /// <summary>
+    /// Test method. <see cref=""Method""/><see cref=""Method""/>
+    /// </summary>
+    void Method();
+}
+";
+
+            var fixedTestCode = @"
+/// <summary>
+/// Test interface. <see cref=""ITest""/>.
+/// </summary>
+public interface ITest
+{
+    /// <summary>
+    /// Test method. <see cref=""Method""/><see cref=""Method""/>.
+    /// </summary>
+    void Method();
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(3, 40),
+                this.CSharpDiagnostic().WithLocation(8, 62),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2679, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2679")]
+        public async Task TestElementsThatDoNotRequirePeriodsAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Test interface <see cref=""ITest"">a see element</see>
+/// </summary>
+/// <seealso href=""https://docs.microsoft.com/en-us/dotnet/framework/wpf/index"">Windows Presentation Foundation</seealso>
+public interface ITest
+{
+}
+";
+
+            var fixedTestCode = @"
+/// <summary>
+/// Test interface <see cref=""ITest"">a see element</see>.
+/// </summary>
+/// <seealso href=""https://docs.microsoft.com/en-us/dotnet/framework/wpf/index"">Windows Presentation Foundation</seealso>
+public interface ITest
+{
+}
+";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 57);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
         protected override Project ApplyCompilationOptions(Project project)

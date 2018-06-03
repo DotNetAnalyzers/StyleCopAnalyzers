@@ -21,9 +21,13 @@ namespace StyleCop.Analyzers.Helpers
         internal const string InheritdocXmlTag = "inheritdoc";
         internal const string ReturnsXmlTag = "returns";
         internal const string ValueXmlTag = "value";
+        internal const string CXmlTag = "c";
         internal const string SeeXmlTag = "see";
+        internal const string SeeAlsoXmlTag = "seealso";
         internal const string ParamXmlTag = "param";
+        internal const string ParamRefXmlTag = "paramref";
         internal const string TypeParamXmlTag = "typeparam";
+        internal const string TypeParamRefXmlTag = "typeparamref";
         internal const string RemarksXmlTag = "remarks";
         internal const string ExampleXmlTag = "example";
         internal const string PermissionXmlTag = "permission";
@@ -263,6 +267,36 @@ namespace StyleCop.Analyzers.Helpers
             }
 
             return null;
+        }
+
+        internal static bool IsInlineElement(this XmlNodeSyntax nodeSyntax)
+        {
+            if (nodeSyntax is XmlEmptyElementSyntax emptyElementSyntax)
+            {
+                return IsInlineElement(emptyElementSyntax.Name?.LocalName.ValueText);
+            }
+
+            if (nodeSyntax is XmlElementSyntax elementSyntax)
+            {
+                return IsInlineElement(elementSyntax.StartTag?.Name?.LocalName.ValueText);
+            }
+
+            return false;
+        }
+
+        private static bool IsInlineElement(string localName)
+        {
+            switch (localName)
+            {
+            case CXmlTag:
+            case ParamRefXmlTag:
+            case SeeXmlTag:
+            case TypeParamRefXmlTag:
+                return true;
+
+            default:
+                return false;
+            }
         }
     }
 }
