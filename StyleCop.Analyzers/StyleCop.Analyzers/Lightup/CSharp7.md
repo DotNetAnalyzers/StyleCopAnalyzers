@@ -65,12 +65,12 @@
 * [ ] `Microsoft.CodeAnalysis.IMethodSymbol.ReturnsByRef.get -> bool`
 * [ ] `Microsoft.CodeAnalysis.INamedTypeSymbol.GetTypeArgumentCustomModifiers(int ordinal) -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.CustomModifier>`
 * [ ] `Microsoft.CodeAnalysis.INamedTypeSymbol.IsComImport.get -> bool`
-* [ ] `Microsoft.CodeAnalysis.INamedTypeSymbol.TupleElements.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.IFieldSymbol>`
-* [ ] `Microsoft.CodeAnalysis.INamedTypeSymbol.TupleUnderlyingType.get -> Microsoft.CodeAnalysis.INamedTypeSymbol`
+* [x] `Microsoft.CodeAnalysis.INamedTypeSymbol.TupleElements.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.IFieldSymbol>`
+* [x] `Microsoft.CodeAnalysis.INamedTypeSymbol.TupleUnderlyingType.get -> Microsoft.CodeAnalysis.INamedTypeSymbol`
 * [ ] `Microsoft.CodeAnalysis.IParameterSymbol.RefCustomModifiers.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.CustomModifier>`
 * [ ] `Microsoft.CodeAnalysis.IPropertySymbol.RefCustomModifiers.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.CustomModifier>`
 * [ ] `Microsoft.CodeAnalysis.IPropertySymbol.ReturnsByRef.get -> bool`
-* [ ] `Microsoft.CodeAnalysis.ITypeSymbol.IsTupleType.get -> bool`
+* [x] `Microsoft.CodeAnalysis.ITypeSymbol.IsTupleType.get -> bool`
 * [x] `Microsoft.CodeAnalysis.MethodKind.LocalFunction = 17 -> Microsoft.CodeAnalysis.MethodKind`
 * [ ] `Microsoft.CodeAnalysis.PortableExecutableReference.GetMetadataId() -> Microsoft.CodeAnalysis.MetadataId`
 * [ ] `Microsoft.CodeAnalysis.SymbolDisplayFormat.RemoveGenericsOptions(Microsoft.CodeAnalysis.SymbolDisplayGenericsOptions options) -> Microsoft.CodeAnalysis.SymbolDisplayFormat`

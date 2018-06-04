@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.Diagnostics;
 
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// A using directive is not qualified.
@@ -87,6 +88,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
                 // if there is no symbol, do not proceed.
                 return;
+            }
+
+            if (symbol is INamedTypeSymbol typeSymbol
+                && typeSymbol.IsTupleType())
+            {
+                symbol = typeSymbol.TupleUnderlyingType();
             }
 
             string symbolString = symbol.ToString();
