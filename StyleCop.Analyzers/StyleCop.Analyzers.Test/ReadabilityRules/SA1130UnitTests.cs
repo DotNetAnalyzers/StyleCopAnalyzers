@@ -294,6 +294,96 @@ public class TypeName
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verify that expansion of a delegate without parameters will generate a lambda with the necessary parameters.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2593, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2593")]
+        public async Task VerifyThatDelegateExpansionWillNotGenerateInvalidCodeAsync()
+        {
+            var testCode = @"
+using System;
+
+namespace StyleCopDemo
+{
+    class Program
+    {
+        public delegate void TestDelegate(int arg1, double arg2);
+        public static event EventHandler TestEvent;
+
+        static void Main(string[] args)
+        {
+            EventHandler anon = delegate { Console.WriteLine(""hello""); };
+            TestEvent += delegate { Console.WriteLine(""hello""); };
+            TestEvent -= delegate { Console.WriteLine(""hello""); };
+        }
+
+        public static void TestMethod()
+        {
+            object sender = null;
+            EventArgs e = EventArgs.Empty;
+
+            EventHandler anon = delegate { Console.WriteLine(""hello""); };
+
+            TestMethod2(delegate { Console.WriteLine(""hello""); });
+        }
+
+        public static void TestMethod2(TestDelegate testDelegate)
+        {
+        }
+    }
+}
+";
+
+            var fixedCode = @"
+using System;
+
+namespace StyleCopDemo
+{
+    class Program
+    {
+        public delegate void TestDelegate(int arg1, double arg2);
+        public static event EventHandler TestEvent;
+
+        static void Main(string[] args)
+        {
+            EventHandler anon = (sender, e) => { Console.WriteLine(""hello""); };
+            TestEvent += (sender, e) => { Console.WriteLine(""hello""); };
+            TestEvent -= (sender, e) => { Console.WriteLine(""hello""); };
+        }
+
+        public static void TestMethod()
+        {
+            object sender = null;
+            EventArgs e = EventArgs.Empty;
+
+            EventHandler anon = (sender1, e1) => { Console.WriteLine(""hello""); };
+
+            TestMethod2((arg1, arg2) => { Console.WriteLine(""hello""); });
+        }
+
+        public static void TestMethod2(TestDelegate testDelegate)
+        {
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(13, 33),
+                this.CSharpDiagnostic().WithLocation(14, 26),
+                this.CSharpDiagnostic().WithLocation(15, 26),
+                this.CSharpDiagnostic().WithLocation(23, 33),
+                this.CSharpDiagnostic().WithLocation(25, 25),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
