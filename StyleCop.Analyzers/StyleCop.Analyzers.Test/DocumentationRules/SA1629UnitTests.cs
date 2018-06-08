@@ -487,6 +487,38 @@ public interface ITest
         }
 
         [Fact]
+        public async Task TestMultipleParagraphBlocksWithColonsAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// <para>Paragraph 1:</para>
+/// <para>Paragraph 2:</para>
+/// <para>Paragraph 3:</para>
+/// </summary>
+public interface ITest
+{
+}
+";
+
+            var fixedTestCode = @"
+/// <summary>
+/// <para>Paragraph 1:</para>
+/// <para>Paragraph 2:</para>
+/// <para>Paragraph 3:.</para>
+/// </summary>
+public interface ITest
+{
+}
+";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 23);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestMultipleParagraphInlinesAsync()
         {
             var testCode = @"

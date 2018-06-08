@@ -78,7 +78,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             foreach (var xmlElement in syntaxList.OfType<XmlElementSyntax>())
             {
-                HandleSectionOrBlockXmlElement(context, xmlElement);
+                HandleSectionOrBlockXmlElement(context, xmlElement, startingWithFinalParagraph: true);
             }
         }
 
@@ -101,7 +101,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
         }
 
-        private static void HandleSectionOrBlockXmlElement(SyntaxNodeAnalysisContext context, XmlElementSyntax xmlElement)
+        private static void HandleSectionOrBlockXmlElement(SyntaxNodeAnalysisContext context, XmlElementSyntax xmlElement, bool startingWithFinalParagraph)
         {
             if (xmlElement.StartTag?.Name?.LocalName.ValueText == XmlCommentHelper.SeeAlsoXmlTag)
             {
@@ -121,6 +121,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                         if (!string.IsNullOrEmpty(textWithoutTrailingWhitespace))
                         {
                             if (!textWithoutTrailingWhitespace.EndsWith(".", StringComparison.Ordinal)
+                                && (startingWithFinalParagraph || !textWithoutTrailingWhitespace.EndsWith(":", StringComparison.Ordinal))
                                 && !textWithoutTrailingWhitespace.EndsWith("-or-", StringComparison.Ordinal))
                             {
                                 var location = Location.Create(xmlElement.SyntaxTree, new TextSpan(textToken.SpanStart + textWithoutTrailingWhitespace.Length, 1));
@@ -145,7 +146,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     case XmlCommentHelper.NoteXmlTag:
                     case XmlCommentHelper.ParaXmlTag:
                         // Recursively handle <note> and <para> elements
-                        HandleSectionOrBlockXmlElement(context, childXmlElement);
+                        HandleSectionOrBlockXmlElement(context, childXmlElement, startingWithFinalParagraph);
                         break;
 
                     default:
@@ -155,6 +156,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     if (childXmlElement.IsBlockElement())
                     {
                         currentParagraphDone = false;
+                        startingWithFinalParagraph = false;
                     }
                 }
                 else if (xmlElement.Content[i] is XmlEmptyElementSyntax emptyElement)
@@ -163,6 +165,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     if (emptyElement.Name?.LocalName.ValueText == XmlCommentHelper.ParaXmlTag)
                     {
                         currentParagraphDone = false;
+                        startingWithFinalParagraph = false;
                     }
                 }
             }
