@@ -120,7 +120,8 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                         if (!string.IsNullOrEmpty(textWithoutTrailingWhitespace))
                         {
-                            if (!textWithoutTrailingWhitespace.EndsWith(".", StringComparison.Ordinal))
+                            if (!textWithoutTrailingWhitespace.EndsWith(".", StringComparison.Ordinal)
+                                && !textWithoutTrailingWhitespace.EndsWith("-or-", StringComparison.Ordinal))
                             {
                                 var location = Location.Create(xmlElement.SyntaxTree, new TextSpan(textToken.SpanStart + textWithoutTrailingWhitespace.Length, 1));
                                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));

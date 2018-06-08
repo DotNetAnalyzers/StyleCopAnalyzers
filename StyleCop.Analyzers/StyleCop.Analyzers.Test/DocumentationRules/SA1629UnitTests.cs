@@ -644,6 +644,88 @@ public interface ITest
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(2712, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2712")]
+        public async Task TestExceptionElementsWithStandardFormAsync()
+        {
+            var testCode = @"
+using System;
+public interface ITest
+{
+    /// <exception cref=""ArgumentNullException"">
+    /// <para>If <paramref name=""name""/> is <see langword=""null""/></para>
+    /// <para>-or-</para>
+    /// <para>If <paramref name=""value""/> is <see langword=""null""/></para>
+    /// </exception>
+    void Method(string name, string value);
+}
+";
+
+            var fixedTestCode = @"
+using System;
+public interface ITest
+{
+    /// <exception cref=""ArgumentNullException"">
+    /// <para>If <paramref name=""name""/> is <see langword=""null""/>.</para>
+    /// <para>-or-</para>
+    /// <para>If <paramref name=""value""/> is <see langword=""null""/>.</para>
+    /// </exception>
+    void Method(string name, string value);
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(6, 67),
+                this.CSharpDiagnostic().WithLocation(8, 68),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2712, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2712")]
+        public async Task TestExceptionElementsWithAlternateFormAsync()
+        {
+            var testCode = @"
+using System;
+public interface ITest
+{
+    /// <exception cref=""ArgumentNullException"">
+    /// <para>If <paramref name=""name""/> is <see langword=""null""/></para>
+    /// -or-
+    /// <para>If <paramref name=""value""/> is <see langword=""null""/></para>
+    /// </exception>
+    void Method(string name, string value);
+}
+";
+
+            var fixedTestCode = @"
+using System;
+public interface ITest
+{
+    /// <exception cref=""ArgumentNullException"">
+    /// <para>If <paramref name=""name""/> is <see langword=""null""/>.</para>
+    /// -or-
+    /// <para>If <paramref name=""value""/> is <see langword=""null""/>.</para>
+    /// </exception>
+    void Method(string name, string value);
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(6, 67),
+                this.CSharpDiagnostic().WithLocation(8, 68),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
         protected override Project ApplyCompilationOptions(Project project)
         {
             var resolver = new TestXmlReferenceResolver();
