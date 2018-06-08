@@ -78,7 +78,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             foreach (var xmlElement in syntaxList.OfType<XmlElementSyntax>())
             {
-                HandleSectionXmlElement(context, xmlElement);
+                HandleSectionOrBlockXmlElement(context, xmlElement);
             }
         }
 
@@ -101,19 +101,19 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
         }
 
-        private static void HandleSectionXmlElement(SyntaxNodeAnalysisContext context, XmlElementSyntax xmlElement)
+        private static void HandleSectionOrBlockXmlElement(SyntaxNodeAnalysisContext context, XmlElementSyntax xmlElement)
         {
             if (xmlElement.StartTag?.Name?.LocalName.ValueText == XmlCommentHelper.SeeAlsoXmlTag)
             {
                 return;
             }
 
-            var elementDone = false;
-            for (var i = xmlElement.Content.Count - 1; !elementDone && (i >= 0); i--)
+            var currentParagraphDone = false;
+            for (var i = xmlElement.Content.Count - 1; i >= 0; i--)
             {
                 if (xmlElement.Content[i] is XmlTextSyntax contentNode)
                 {
-                    for (var j = contentNode.TextTokens.Count - 1; !elementDone && (j >= 0); j--)
+                    for (var j = contentNode.TextTokens.Count - 1; !currentParagraphDone && (j >= 0); j--)
                     {
                         var textToken = contentNode.TextTokens[j];
                         var textWithoutTrailingWhitespace = textToken.Text.TrimEnd(' ', '\r', '\n');
@@ -126,16 +126,43 @@ namespace StyleCop.Analyzers.DocumentationRules
                                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
                             }
 
-                            elementDone = true;
+                            currentParagraphDone = true;
                         }
                     }
                 }
-                else if (xmlElement.Content[i].IsInlineElement())
+                else if (xmlElement.Content[i].IsInlineElement() && !currentParagraphDone)
                 {
                     // Treat empty XML elements as a "word not ending with a period"
                     var location = Location.Create(xmlElement.SyntaxTree, new TextSpan(xmlElement.Content[i].Span.End, 1));
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
-                    elementDone = true;
+                    currentParagraphDone = true;
+                }
+                else if (xmlElement.Content[i] is XmlElementSyntax childXmlElement)
+                {
+                    switch (childXmlElement.StartTag?.Name?.LocalName.ValueText)
+                    {
+                    case XmlCommentHelper.NoteXmlTag:
+                    case XmlCommentHelper.ParaXmlTag:
+                        // Recursively handle <note> and <para> elements
+                        HandleSectionOrBlockXmlElement(context, childXmlElement);
+                        break;
+
+                    default:
+                        break;
+                    }
+
+                    if (childXmlElement.IsBlockElement())
+                    {
+                        currentParagraphDone = false;
+                    }
+                }
+                else if (xmlElement.Content[i] is XmlEmptyElementSyntax emptyElement)
+                {
+                    // Treat the empty element <para/> as a paragraph separator
+                    if (emptyElement.Name?.LocalName.ValueText == XmlCommentHelper.ParaXmlTag)
+                    {
+                        currentParagraphDone = false;
+                    }
                 }
             }
         }

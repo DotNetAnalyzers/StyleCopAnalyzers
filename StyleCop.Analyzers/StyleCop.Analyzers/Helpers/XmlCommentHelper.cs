@@ -23,6 +23,10 @@ namespace StyleCop.Analyzers.Helpers
         internal const string ValueXmlTag = "value";
         internal const string CXmlTag = "c";
         internal const string SeeXmlTag = "see";
+        internal const string CodeXmlTag = "code";
+        internal const string ListXmlTag = "list";
+        internal const string NoteXmlTag = "note";
+        internal const string ParaXmlTag = "para";
         internal const string SeeAlsoXmlTag = "seealso";
         internal const string ParamXmlTag = "param";
         internal const string ParamRefXmlTag = "paramref";
@@ -284,6 +288,16 @@ namespace StyleCop.Analyzers.Helpers
             return false;
         }
 
+        internal static bool IsBlockElement(this XmlNodeSyntax nodeSyntax)
+        {
+            if (nodeSyntax is XmlElementSyntax elementSyntax)
+            {
+                return IsBlockElement(elementSyntax.StartTag?.Name?.LocalName.ValueText);
+            }
+
+            return false;
+        }
+
         private static bool IsInlineElement(string localName)
         {
             switch (localName)
@@ -292,6 +306,21 @@ namespace StyleCop.Analyzers.Helpers
             case ParamRefXmlTag:
             case SeeXmlTag:
             case TypeParamRefXmlTag:
+                return true;
+
+            default:
+                return false;
+            }
+        }
+
+        private static bool IsBlockElement(string localName)
+        {
+            switch (localName)
+            {
+            case CodeXmlTag:
+            case ListXmlTag:
+            case NoteXmlTag:
+            case ParaXmlTag:
                 return true;
 
             default:
