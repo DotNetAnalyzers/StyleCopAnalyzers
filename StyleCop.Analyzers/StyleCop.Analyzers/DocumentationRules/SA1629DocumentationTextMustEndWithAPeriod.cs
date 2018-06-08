@@ -78,41 +78,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             foreach (var xmlElement in syntaxList.OfType<XmlElementSyntax>())
             {
-                if (xmlElement.StartTag?.Name?.LocalName.ValueText == XmlCommentHelper.SeeAlsoXmlTag)
-                {
-                    continue;
-                }
-
-                var elementDone = false;
-                for (var i = xmlElement.Content.Count - 1; !elementDone && (i >= 0); i--)
-                {
-                    if (xmlElement.Content[i] is XmlTextSyntax contentNode)
-                    {
-                        for (var j = contentNode.TextTokens.Count - 1; !elementDone && (j >= 0); j--)
-                        {
-                            var textToken = contentNode.TextTokens[j];
-                            var textWithoutTrailingWhitespace = textToken.Text.TrimEnd(' ', '\r', '\n');
-
-                            if (!string.IsNullOrEmpty(textWithoutTrailingWhitespace))
-                            {
-                                if (!textWithoutTrailingWhitespace.EndsWith(".", StringComparison.Ordinal))
-                                {
-                                    var location = Location.Create(xmlElement.SyntaxTree, new TextSpan(textToken.SpanStart + textWithoutTrailingWhitespace.Length, 1));
-                                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
-                                }
-
-                                elementDone = true;
-                            }
-                        }
-                    }
-                    else if (xmlElement.Content[i].IsInlineElement())
-                    {
-                        // Treat empty XML elements as a "word not ending with a period"
-                        var location = Location.Create(xmlElement.SyntaxTree, new TextSpan(xmlElement.Content[i].Span.End, 1));
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
-                        elementDone = true;
-                    }
-                }
+                HandleSectionXmlElement(context, xmlElement);
             }
         }
 
@@ -131,6 +97,45 @@ namespace StyleCop.Analyzers.DocumentationRules
                         // only report a single instance of the diagnostic, as they will all be reported on the same location anyway.
                         break;
                     }
+                }
+            }
+        }
+
+        private static void HandleSectionXmlElement(SyntaxNodeAnalysisContext context, XmlElementSyntax xmlElement)
+        {
+            if (xmlElement.StartTag?.Name?.LocalName.ValueText == XmlCommentHelper.SeeAlsoXmlTag)
+            {
+                return;
+            }
+
+            var elementDone = false;
+            for (var i = xmlElement.Content.Count - 1; !elementDone && (i >= 0); i--)
+            {
+                if (xmlElement.Content[i] is XmlTextSyntax contentNode)
+                {
+                    for (var j = contentNode.TextTokens.Count - 1; !elementDone && (j >= 0); j--)
+                    {
+                        var textToken = contentNode.TextTokens[j];
+                        var textWithoutTrailingWhitespace = textToken.Text.TrimEnd(' ', '\r', '\n');
+
+                        if (!string.IsNullOrEmpty(textWithoutTrailingWhitespace))
+                        {
+                            if (!textWithoutTrailingWhitespace.EndsWith(".", StringComparison.Ordinal))
+                            {
+                                var location = Location.Create(xmlElement.SyntaxTree, new TextSpan(textToken.SpanStart + textWithoutTrailingWhitespace.Length, 1));
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                            }
+
+                            elementDone = true;
+                        }
+                    }
+                }
+                else if (xmlElement.Content[i].IsInlineElement())
+                {
+                    // Treat empty XML elements as a "word not ending with a period"
+                    var location = Location.Create(xmlElement.SyntaxTree, new TextSpan(xmlElement.Content[i].Span.End, 1));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                    elementDone = true;
                 }
             }
         }
