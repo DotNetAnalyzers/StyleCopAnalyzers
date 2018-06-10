@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Helpers
 {
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class LiteralExpressionHelpers
@@ -44,6 +45,45 @@ namespace StyleCop.Analyzers.Helpers
 
             // If this is reached literalText does not contain a literal
             return string.Empty;
+        }
+
+        internal static LiteralExpressionSyntax WithLiteralSuffix(this LiteralExpressionSyntax literalExpression, SyntaxKind syntaxKindKeyword)
+        {
+            string textWithoutSuffix = literalExpression.StripLiteralSuffix();
+
+            string suffix;
+            switch (syntaxKindKeyword)
+            {
+            case SyntaxKind.UIntKeyword:
+                suffix = "U";
+                break;
+
+            case SyntaxKind.ULongKeyword:
+                suffix = "UL";
+                break;
+
+            case SyntaxKind.LongKeyword:
+                suffix = "L";
+                break;
+
+            case SyntaxKind.FloatKeyword:
+                suffix = "F";
+                break;
+
+            case SyntaxKind.DoubleKeyword:
+                suffix = "D";
+                break;
+
+            case SyntaxKind.DecimalKeyword:
+                suffix = "M";
+                break;
+
+            default:
+                suffix = string.Empty;
+                break;
+            }
+
+            return literalExpression.WithToken(SyntaxFactory.ParseToken(textWithoutSuffix + suffix).WithTriviaFrom(literalExpression.Token));
         }
     }
 }

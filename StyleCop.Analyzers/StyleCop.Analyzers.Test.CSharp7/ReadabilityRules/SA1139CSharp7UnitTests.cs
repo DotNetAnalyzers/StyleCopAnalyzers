@@ -213,19 +213,18 @@ class ClassName
         }
 
         /// <summary>
-        /// Verifies that using casts in unchecked environment produces diagnostics with a correct code fix.
+        /// Verifies that casts in unchecked environment do not get replaced with incorrect values.
         /// </summary>
         /// <param name="castExpression">A cast which can be performed in unchecked environment</param>
-        /// <param name="correctLiteral">The corresponding literal with suffix</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("(ulong)-0_1L", "18446744073709551615UL")]
-        [InlineData("(int)1_000_000_000_000_000_000L", "-1486618624")]
-        [InlineData("(int)0xFFFF_FFFF_FFFF_FFFFL", "-1")]
-        [InlineData("(uint)0xFFFF_FFFF_FFFF_FFFFL", "4294967295U")]
-        [InlineData("(int)0b11111111_11111111_11111111_11111111_11111111_11111111_11111111_11111111L", "-1")]
-        [InlineData("(uint)0b11111111_11111111_11111111_11111111_11111111_11111111_11111111_11111111L", "4294967295U")]
-        public async Task TestCastsWithSeparatorsInUncheckedEnviromentShouldPreserveValueAsync(string castExpression, string correctLiteral)
+        [InlineData("(ulong)-0_1L")]
+        [InlineData("(int)1_000_000_000_000_000_000L")]
+        [InlineData("(int)0xFFFF_FFFF_FFFF_FFFFL")]
+        [InlineData("(uint)0xFFFF_FFFF_FFFF_FFFFL")]
+        [InlineData("(int)0b11111111_11111111_11111111_11111111_11111111_11111111_11111111_11111111L")]
+        [InlineData("(uint)0b11111111_11111111_11111111_11111111_11111111_11111111_11111111_11111111L")]
+        public async Task TestCastsWithSeparatorsInUncheckedEnviromentShouldPreserveValueAsync(string castExpression)
         {
             var testCode = $@"
 class ClassName
@@ -240,26 +239,8 @@ class ClassName
     }}
 }}
 ";
-            var fixedCode = $@"
-class ClassName
-{{
-    public void Method()
-    {{
-        unchecked
-        {{
-            var x = {correctLiteral};
-        }}
-        var y = unchecked({correctLiteral});
-    }}
-}}
-";
-            DiagnosticResult[] expectedDiagnosticResult =
-            {
-                this.CSharpDiagnostic().WithLocation(8, 21),
-                this.CSharpDiagnostic().WithLocation(10, 27),
-            };
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnosticResult, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

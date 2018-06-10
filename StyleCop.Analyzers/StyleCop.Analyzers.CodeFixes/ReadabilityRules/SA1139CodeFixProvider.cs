@@ -24,22 +24,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
     [Shared]
     internal class SA1139CodeFixProvider : CodeFixProvider
     {
-        private static readonly Dictionary<SyntaxKind, string> LiteralSyntaxKindToSuffix = new Dictionary<SyntaxKind, string>()
-            {
-                { SyntaxKind.IntKeyword, string.Empty },
-                { SyntaxKind.LongKeyword, "L" },
-                { SyntaxKind.ULongKeyword, "UL" },
-                { SyntaxKind.UIntKeyword, "U" },
-                { SyntaxKind.FloatKeyword, "F" },
-                { SyntaxKind.DoubleKeyword, "D" },
-                { SyntaxKind.DecimalKeyword, "M" },
-            };
-
-        private static readonly char[] LettersAllowedInLiteralSuffix = LiteralSyntaxKindToSuffix.Values
-            .SelectMany(s => s.ToCharArray()).Distinct()
-            .SelectMany(c => new[] { char.ToLowerInvariant(c), c })
-            .ToArray();
-
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(SA1139UseLiteralSuffixNotationInsteadOfCasting.DiagnosticId);
@@ -73,50 +57,22 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var replacementNode = GenerateReplacementNode(node);
             var newSyntaxRoot = syntaxRoot.ReplaceNode(node, replacementNode);
             var newDocument = document.WithSyntaxRoot(newSyntaxRoot);
-            var newSemanticModel = await newDocument.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
-            var newNode = newSemanticModel.SyntaxTree.GetRoot().FindNode(
-                span: new TextSpan(start: node.FullSpan.Start, length: replacementNode.FullSpan.Length),
-                getInnermostNodeForTie: true);
-
-            var oldConstantValue = oldSemanticModel.GetConstantValue(node).Value;
-            var newConstantValueOption = newSemanticModel.GetConstantValue(newNode, cancellationToken);
-            if (newConstantValueOption.HasValue && oldConstantValue.Equals(newConstantValueOption.Value))
-            {
-                return newDocument;
-            }
-            else
-            {
-                var newNodeBasedOnValue = GenerateReplacementNodeBasedOnValue(node, oldConstantValue);
-                newSyntaxRoot = syntaxRoot.ReplaceNode(node, newNodeBasedOnValue);
-                return document.WithSyntaxRoot(newSyntaxRoot);
-            }
+            return newDocument;
         }
 
         private static SyntaxNode GenerateReplacementNode(CastExpressionSyntax node)
         {
-            var plusMinusSyntax = node.Expression.WalkDownParentheses() as PrefixUnaryExpressionSyntax;
             var literalExpressionSyntax =
-                plusMinusSyntax == null ?
+                !(node.Expression.WalkDownParentheses() is PrefixUnaryExpressionSyntax plusMinusSyntax) ?
                 (LiteralExpressionSyntax)node.Expression.WalkDownParentheses() :
                 (LiteralExpressionSyntax)plusMinusSyntax.Operand.WalkDownParentheses();
             var typeToken = node.Type.GetFirstToken();
-            var prefix = plusMinusSyntax == null
-                ? string.Empty
-                : plusMinusSyntax.OperatorToken.Text;
-            var literalWithoutSuffix = literalExpressionSyntax.StripLiteralSuffix();
-            var correspondingSuffix = LiteralSyntaxKindToSuffix[typeToken.Kind()];
-            var fixedCodePreservingText = SyntaxFactory.ParseExpression(prefix + literalWithoutSuffix + correspondingSuffix);
+            var replacementLiteral = literalExpressionSyntax.WithLiteralSuffix(typeToken.Kind());
+            var replacementNode = node.Expression.ReplaceNode(literalExpressionSyntax, replacementLiteral)
+                .WithLeadingTrivia(node.GetLeadingTrivia().Concat(node.CloseParenToken.TrailingTrivia).Concat(node.Expression.GetLeadingTrivia()))
+                .WithTrailingTrivia(node.Expression.GetTrailingTrivia().Concat(node.GetTrailingTrivia()));
 
-            return fixedCodePreservingText.WithTriviaFrom(node);
-        }
-
-        private static SyntaxNode GenerateReplacementNodeBasedOnValue(CastExpressionSyntax node, object desiredValue)
-        {
-            var typeToken = node.Type.GetFirstToken();
-            var correspondingSuffix = LiteralSyntaxKindToSuffix[typeToken.Kind()];
-            var fixedCodePreservingText = SyntaxFactory.ParseExpression(desiredValue + correspondingSuffix);
-
-            return fixedCodePreservingText.WithTriviaFrom(node);
+            return replacementNode;
         }
     }
 }

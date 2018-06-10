@@ -72,10 +72,10 @@ class ClassName
         [InlineData("long", "1", "1L")]
         [InlineData("long", "+1", "+1L")]
         [InlineData("long", "-1", "-1L")]
-        [InlineData("long", "(+1)", "+1L")]
-        [InlineData("long", "(-1)", "-1L")]
-        [InlineData("long", "(1)", "1L")]
-        [InlineData("long", "(-(1))", "-1L")]
+        [InlineData("long", "(+1)", "(+1L)")]
+        [InlineData("long", "(-1)", "(-1L)")]
+        [InlineData("long", "(1)", "(1L)")]
+        [InlineData("long", "(-(1))", "(-(1L))")]
         [InlineData("ulong", "1", "1UL")]
         [InlineData("ulong", "+1", "+1UL")]
         [InlineData("uint", "1", "1U")]
@@ -96,6 +96,10 @@ class ClassName
         [InlineData("ulong", "1l", "1UL")]
         [InlineData("ulong", "1U", "1UL")]
         [InlineData("ulong", "1u", "1UL")]
+        [InlineData("long", "0xF", "0xFL")]
+        [InlineData("long", "0x1", "0x1L")]
+        [InlineData("ulong", "0x1", "0x1UL")]
+        [InlineData("long", "-0x1", "-0x1L")]
         public async Task TestUsingCastsProducesDiagnosticAndCorrectCodefixAsync(string literalType, string castedLiteral, string correctLiteral)
         {
             var testCode = $@"
@@ -183,9 +187,14 @@ class ClassName
         [InlineData("(bool)true")]
         [InlineData("(bool)(false)")]
         [InlineData("(long)~+1")]
+        [InlineData("(long)(~+1)")]
+        [InlineData("unchecked((int)0x80000000)")]
+        [InlineData("unchecked((int)0xFFFFFFFF)")]
+        [InlineData("unchecked((ulong)-1)")]
         [InlineData("unchecked((byte)-1)")]
         [InlineData("(sbyte)-1")]
         [InlineData("(int)-1")]
+        [InlineData("unchecked((ulong)-1L)")]
         public async Task TestOtherTypesOfCastsShouldNotTriggerDiagnosticAsync(string correctCastExpression)
         {
             var testCode = $@"
@@ -230,17 +239,16 @@ class ClassName
         }
 
         /// <summary>
-        /// Verifies that using casts in unchecked enviroment produces diagnostics with a correct codefix.
+        /// Verifies that casts in unchecked environment do not get replaced with incorrect values.
         /// </summary>
-        /// <param name="castExpression">A cast which can be performend in unchecked enviroment</param>
-        /// <param name="correctLiteral">The corresponding literal with suffix</param>
+        /// <param name="castExpression">A cast which can be performed in unchecked environment</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData("(ulong)-1L", "18446744073709551615UL")]
-        [InlineData("(int)1000000000000000000L", "-1486618624")]
-        [InlineData("(int)0xFFFFFFFFFFFFFFFFL", "-1")]
-        [InlineData("(uint)0xFFFFFFFFFFFFFFFFL", "4294967295U")]
-        public async Task TestCastsInUncheckedEnviromentShouldPreserveValueAsync(string castExpression, string correctLiteral)
+        [InlineData("(ulong)-1L")]
+        [InlineData("(int)1000000000000000000L")]
+        [InlineData("(int)0xFFFFFFFFFFFFFFFFL")]
+        [InlineData("(uint)0xFFFFFFFFFFFFFFFFL")]
+        public async Task TestCastsInUncheckedEnviromentShouldPreserveValueAsync(string castExpression)
         {
             var testCode = $@"
 class ClassName
@@ -255,26 +263,8 @@ class ClassName
     }}
 }}
 ";
-            var fixedCode = $@"
-class ClassName
-{{
-    public void Method()
-    {{
-        unchecked
-        {{
-            var x = {correctLiteral};
-        }}
-        var y = unchecked({correctLiteral});
-    }}
-}}
-";
-            DiagnosticResult[] expectedDiagnosticResult =
-            {
-                this.CSharpDiagnostic().WithLocation(8, 21),
-                this.CSharpDiagnostic().WithLocation(10, 27),
-            };
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnosticResult, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

@@ -91,8 +91,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
-            if (context.SemanticModel.GetTypeInfo(castedElementTypeSyntax).Type
-                == context.SemanticModel.GetTypeInfo(castExpressionSyntax).Type)
+            var targetType = context.SemanticModel.GetTypeInfo(castExpressionSyntax).Type;
+            if (targetType is null)
+            {
+                return;
+            }
+
+            if (targetType.Equals(context.SemanticModel.GetTypeInfo(castedElementTypeSyntax).Type))
             {
                 // cast is redundant which is reported by another diagnostic.
                 return;
@@ -101,6 +106,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
             if (!context.SemanticModel.GetConstantValue(context.Node).HasValue)
             {
                 // cast does not have a valid value (like "(ulong)-1") which is reported as error
+                return;
+            }
+
+            var speculativeExpression = castExpressionSyntax.Expression.ReplaceNode(castedElementTypeSyntax, castedElementTypeSyntax.WithLiteralSuffix(syntaxKindKeyword));
+            var speculativeTypeInfo = context.SemanticModel.GetSpeculativeTypeInfo(castExpressionSyntax.SpanStart, speculativeExpression, SpeculativeBindingOption.BindAsExpression);
+            if (!targetType.Equals(speculativeTypeInfo.Type))
+            {
+                // Suffix notation would change the type of the expression
                 return;
             }
 
