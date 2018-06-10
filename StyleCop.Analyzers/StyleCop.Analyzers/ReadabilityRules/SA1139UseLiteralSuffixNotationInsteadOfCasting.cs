@@ -31,7 +31,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
-        private static readonly Action<SyntaxNodeAnalysisContext> GenericNameAction = HandleGenericName;
+        private static readonly Action<SyntaxNodeAnalysisContext> CastExpressionAction = HandleCastExpression;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -46,10 +46,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            context.RegisterSyntaxNodeAction(GenericNameAction, SyntaxKind.CastExpression);
+            context.RegisterSyntaxNodeAction(CastExpressionAction, SyntaxKind.CastExpression);
         }
 
-        private static void HandleGenericName(SyntaxNodeAnalysisContext context)
+        private static void HandleCastExpression(SyntaxNodeAnalysisContext context)
         {
             var castExpressionSyntax = (CastExpressionSyntax)context.Node;
 
