@@ -94,11 +94,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static SyntaxNode GenerateReplacementNode(CastExpressionSyntax node)
         {
-            var plusMinusSyntax = node.Expression as PrefixUnaryExpressionSyntax;
+            var plusMinusSyntax = node.Expression.WalkDownParentheses() as PrefixUnaryExpressionSyntax;
             var literalExpressionSyntax =
                 plusMinusSyntax == null ?
-                (LiteralExpressionSyntax)node.Expression :
-                (LiteralExpressionSyntax)plusMinusSyntax.Operand;
+                (LiteralExpressionSyntax)node.Expression.WalkDownParentheses() :
+                (LiteralExpressionSyntax)plusMinusSyntax.Operand.WalkDownParentheses();
             var typeToken = node.Type.GetFirstToken();
             var prefix = plusMinusSyntax == null
                 ? string.Empty

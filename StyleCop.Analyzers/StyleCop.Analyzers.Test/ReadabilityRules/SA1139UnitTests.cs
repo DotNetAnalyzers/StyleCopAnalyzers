@@ -72,6 +72,10 @@ class ClassName
         [InlineData("long", "1", "1L")]
         [InlineData("long", "+1", "+1L")]
         [InlineData("long", "-1", "-1L")]
+        [InlineData("long", "(+1)", "+1L")]
+        [InlineData("long", "(-1)", "-1L")]
+        [InlineData("long", "(1)", "1L")]
+        [InlineData("long", "(-(1))", "-1L")]
         [InlineData("ulong", "1", "1UL")]
         [InlineData("ulong", "+1", "+1UL")]
         [InlineData("uint", "1", "1U")]
@@ -175,6 +179,7 @@ class ClassName
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData("(long)~1")]
+        [InlineData("(long)(~1)")]
         [InlineData("(bool)true")]
         [InlineData("(bool)(false)")]
         [InlineData("(long)~+1")]

@@ -58,7 +58,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
-            var unaryExpressionSyntax = castExpressionSyntax.Expression as PrefixUnaryExpressionSyntax;
+            var unaryExpressionSyntax = castExpressionSyntax.Expression.WalkDownParentheses() as PrefixUnaryExpressionSyntax;
             if (unaryExpressionSyntax != null)
             {
                 if (unaryExpressionSyntax.Kind() != SyntaxKind.UnaryPlusExpression
@@ -70,8 +70,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             var castedElementTypeSyntax = unaryExpressionSyntax == null
-                ? castExpressionSyntax.Expression as LiteralExpressionSyntax
-                : unaryExpressionSyntax.Operand as LiteralExpressionSyntax;
+                ? castExpressionSyntax.Expression.WalkDownParentheses() as LiteralExpressionSyntax
+                : unaryExpressionSyntax.Operand.WalkDownParentheses() as LiteralExpressionSyntax;
 
             if (castedElementTypeSyntax == null)
             {
