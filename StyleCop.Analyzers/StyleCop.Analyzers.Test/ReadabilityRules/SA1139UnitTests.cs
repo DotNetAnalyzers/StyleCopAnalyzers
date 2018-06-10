@@ -183,6 +183,9 @@ class ClassName
         [InlineData("(bool)true")]
         [InlineData("(bool)(false)")]
         [InlineData("(long)~+1")]
+        [InlineData("unchecked((byte)-1)")]
+        [InlineData("(sbyte)-1")]
+        [InlineData("(int)-1")]
         public async Task TestOtherTypesOfCastsShouldNotTriggerDiagnosticAsync(string correctCastExpression)
         {
             var testCode = $@"
