@@ -449,6 +449,315 @@ public interface ITest
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        [Fact]
+        public async Task TestMultipleParagraphBlocksAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// <para>Paragraph 1</para>
+/// <para>Paragraph 2</para>
+/// <para>Paragraph 3</para>
+/// </summary>
+public interface ITest
+{
+}
+";
+
+            var fixedTestCode = @"
+/// <summary>
+/// <para>Paragraph 1.</para>
+/// <para>Paragraph 2.</para>
+/// <para>Paragraph 3.</para>
+/// </summary>
+public interface ITest
+{
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(3, 22),
+                this.CSharpDiagnostic().WithLocation(4, 22),
+                this.CSharpDiagnostic().WithLocation(5, 22),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMultipleParagraphBlocksWithColonsAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// <para>Paragraph 1:</para>
+/// <para>Paragraph 2:</para>
+/// <para>Paragraph 3:</para>
+/// </summary>
+public interface ITest
+{
+}
+";
+
+            var fixedTestCode = @"
+/// <summary>
+/// <para>Paragraph 1:</para>
+/// <para>Paragraph 2:</para>
+/// <para>Paragraph 3:.</para>
+/// </summary>
+public interface ITest
+{
+}
+";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 23);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMultipleParagraphInlinesAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Paragraph 1
+/// <para/>
+/// Paragraph 2
+/// <para/>
+/// Paragraph 3
+/// </summary>
+public interface ITest
+{
+}
+";
+
+            var fixedTestCode = @"
+/// <summary>
+/// Paragraph 1.
+/// <para/>
+/// Paragraph 2.
+/// <para/>
+/// Paragraph 3.
+/// </summary>
+public interface ITest
+{
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(3, 16),
+                this.CSharpDiagnostic().WithLocation(5, 16),
+                this.CSharpDiagnostic().WithLocation(7, 16),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMultipleParagraphBlocksAfterFirstAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Paragraph 1
+/// <para>Paragraph 2</para>
+/// <para>Paragraph 3</para>
+/// </summary>
+public interface ITest
+{
+}
+";
+
+            var fixedTestCode = @"
+/// <summary>
+/// Paragraph 1.
+/// <para>Paragraph 2.</para>
+/// <para>Paragraph 3.</para>
+/// </summary>
+public interface ITest
+{
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(3, 16),
+                this.CSharpDiagnostic().WithLocation(4, 22),
+                this.CSharpDiagnostic().WithLocation(5, 22),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMultipleParagraphBlocksAfterFirstInNoteAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Paragraph 0
+/// <note>
+/// Paragraph 1
+/// <para>Paragraph 2</para>
+/// <para>Paragraph 3</para>
+/// </note>
+/// </summary>
+public interface ITest
+{
+}
+";
+
+            var fixedTestCode = @"
+/// <summary>
+/// Paragraph 0.
+/// <note>
+/// Paragraph 1.
+/// <para>Paragraph 2.</para>
+/// <para>Paragraph 3.</para>
+/// </note>
+/// </summary>
+public interface ITest
+{
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(3, 16),
+                this.CSharpDiagnostic().WithLocation(5, 16),
+                this.CSharpDiagnostic().WithLocation(6, 22),
+                this.CSharpDiagnostic().WithLocation(7, 22),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestCodeBetweenParagraphBlocksAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Paragraph 1
+/// <code>Code block</code>
+/// <para>Paragraph 2</para>
+/// </summary>
+public interface ITest
+{
+}
+";
+
+            var fixedTestCode = @"
+/// <summary>
+/// Paragraph 1.
+/// <code>Code block</code>
+/// <para>Paragraph 2.</para>
+/// </summary>
+public interface ITest
+{
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(3, 16),
+                this.CSharpDiagnostic().WithLocation(5, 22),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2712, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2712")]
+        public async Task TestExceptionElementsWithStandardFormAsync()
+        {
+            var testCode = @"
+using System;
+public interface ITest
+{
+    /// <exception cref=""ArgumentNullException"">
+    /// <para>If <paramref name=""name""/> is <see langword=""null""/></para>
+    /// <para>-or-</para>
+    /// <para>If <paramref name=""value""/> is <see langword=""null""/></para>
+    /// </exception>
+    void Method(string name, string value);
+}
+";
+
+            var fixedTestCode = @"
+using System;
+public interface ITest
+{
+    /// <exception cref=""ArgumentNullException"">
+    /// <para>If <paramref name=""name""/> is <see langword=""null""/>.</para>
+    /// <para>-or-</para>
+    /// <para>If <paramref name=""value""/> is <see langword=""null""/>.</para>
+    /// </exception>
+    void Method(string name, string value);
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(6, 67),
+                this.CSharpDiagnostic().WithLocation(8, 68),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2712, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2712")]
+        public async Task TestExceptionElementsWithAlternateFormAsync()
+        {
+            var testCode = @"
+using System;
+public interface ITest
+{
+    /// <exception cref=""ArgumentNullException"">
+    /// <para>If <paramref name=""name""/> is <see langword=""null""/></para>
+    /// -or-
+    /// <para>If <paramref name=""value""/> is <see langword=""null""/></para>
+    /// </exception>
+    void Method(string name, string value);
+}
+";
+
+            var fixedTestCode = @"
+using System;
+public interface ITest
+{
+    /// <exception cref=""ArgumentNullException"">
+    /// <para>If <paramref name=""name""/> is <see langword=""null""/>.</para>
+    /// -or-
+    /// <para>If <paramref name=""value""/> is <see langword=""null""/>.</para>
+    /// </exception>
+    void Method(string name, string value);
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(6, 67),
+                this.CSharpDiagnostic().WithLocation(8, 68),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
         protected override Project ApplyCompilationOptions(Project project)
         {
             var resolver = new TestXmlReferenceResolver();
