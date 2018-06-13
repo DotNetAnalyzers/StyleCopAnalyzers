@@ -55,7 +55,8 @@ namespace StyleCop.Analyzers.NamingRules
             foreach (var diagnostic in context.Diagnostics)
             {
                 var token = root.FindToken(diagnostic.Location.SourceSpan.Start);
-                var baseName = char.ToUpper(token.ValueText[0]) + token.ValueText.Substring(1);
+                var tokenText = token.ValueText.TrimStart('_');
+                var baseName = char.ToUpper(tokenText[0]) + tokenText.Substring(1);
                 var newName = baseName;
                 var memberSyntax = RenameHelper.GetParentDeclaration(token);
 

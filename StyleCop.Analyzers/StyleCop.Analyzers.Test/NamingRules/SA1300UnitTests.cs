@@ -973,6 +973,39 @@ public interface IInterface
             await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(1935, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1935")]
+        public async Task TestUnderscoreExclusionAsync()
+        {
+            var testCode = @"public enum TestEnum
+{
+    _12clock,
+    _12Clock,
+    _tick,
+    _Tock,
+}
+";
+
+            var fixedCode = @"public enum TestEnum
+{
+    _12clock,
+    _12Clock,
+    Tick,
+    Tock,
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(5, 5).WithArguments("_tick"),
+                this.CSharpDiagnostic().WithLocation(6, 5).WithArguments("_Tock"),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+        }
+
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
             yield return new SA1300ElementMustBeginWithUpperCaseLetter();
