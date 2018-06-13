@@ -10,7 +10,7 @@
 
     <Version>1.1.0.39</Version>
     <FileVersion>1.1.0.39</FileVersion>
-    <InformationalVersion>1.1.0-beta008</InformationalVersion>
+    <InformationalVersion>1.1.0-dev</InformationalVersion>
   </PropertyGroup>
 
   <PropertyGroup>
