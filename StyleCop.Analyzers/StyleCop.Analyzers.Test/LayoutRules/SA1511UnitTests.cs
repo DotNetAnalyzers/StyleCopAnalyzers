@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1511WhileDoFooterMustNotBePrecededByBlankLine"/>
+    /// Unit tests for <see cref="SA1511WhileDoFooterMustNotBePrecededByBlankLine"/>.
     /// </summary>
     public class SA1511UnitTests : CodeFixVerifier
     {

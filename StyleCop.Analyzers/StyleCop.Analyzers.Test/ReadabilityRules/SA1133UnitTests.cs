@@ -214,11 +214,11 @@ public class Ear : Attribute
         }
 
         /// <summary>
-        /// Regression test for issue 1878 (SA1133CodeFixProvider crash), https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1878
-        /// Fixing exception "Unable to cast object of type 'Microsoft.CodeAnalysis.CSharp.Syntax.AttributeListSyntax' to type 'Microsoft.CodeAnalysis.CSharp.Syntax.AttributeSyntax'."
+        /// Fixing exception "Unable to cast object of type 'Microsoft.CodeAnalysis.CSharp.Syntax.AttributeListSyntax' to type 'Microsoft.CodeAnalysis.CSharp.Syntax.AttributeSyntax'".
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1878, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1878")]
         public async Task TestRegressionIssue1878Async()
         {
             var testCode = @"namespace Stylecop_rc1_bug_repro
@@ -278,10 +278,10 @@ public class Ear : Attribute
 
         /// <summary>
         /// Verifies that attribute list with multiple attributes for (generic) parameters will not produce diagnostics.
-        /// Regression test for #1882
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1882, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1882")]
         public async Task VerifyAttributeListForParametersAsync()
         {
             var testCode = @"using System;
@@ -307,10 +307,11 @@ internal class BarAttribute : Attribute
         }
 
         /// <summary>
-        /// Regression test for issue 1879 (SA1133CodeFixProvider does only half the work), https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1879
+        /// Regression test for "SA1133CodeFixProvider does only half the work".
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1879, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1879")]
         public async Task TestFixAllAsync()
         {
             var testCode = @"
@@ -422,10 +423,11 @@ public enum ImplicitUseKindFlags { Assign }
         }
 
         /// <summary>
-        /// Regression test for issue 1883 (whitespace is preserved incorrectly): https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1883
+        /// Regression test for "whitespace is preserved incorrectly".
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1883, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1883")]
         public async Task TestWhitespaceIsHandledCorrectlyAsync()
         {
             var testCode = @"

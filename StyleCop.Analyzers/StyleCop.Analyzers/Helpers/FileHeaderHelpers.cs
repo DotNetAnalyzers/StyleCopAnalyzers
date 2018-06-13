@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.Helpers
     using StyleCop.Analyzers.Helpers.ObjectPools;
 
     /// <summary>
-    /// Helper class used for working with file headers
+    /// Helper class used for working with file headers.
     /// </summary>
     internal static class FileHeaderHelpers
     {

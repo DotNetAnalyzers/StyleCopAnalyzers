@@ -953,10 +953,10 @@ public class TestClass
 
         /// <summary>
         /// Verifies that a pragma before a documentation header is properly handled.
-        /// This is regression for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1223
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1223, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1223")]
         public async Task TestPragmaPrecedingDocumentationAsync()
         {
             var testCode = @"
@@ -985,10 +985,10 @@ public class TestClass
 
         /// <summary>
         /// Verifies that preprocessor directives before a documentation header are properly handled.
-        /// This is regression for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1231
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1231, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1231")]
         public async Task TestDirectivesPrecedingDocumentationAsync()
         {
             var testCode = @"

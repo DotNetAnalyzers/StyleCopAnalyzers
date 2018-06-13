@@ -43,7 +43,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// <para>In some cases, a method may contain one or more parameters which are not used within the body of the
     /// method. In this case, the documentation for the parameter can be set to "The parameter is not used." StyleCop
     /// will allow multiple parameters to contain identical documentation as long as the documentation string is "The
-    /// parameter is not used."</para>
+    /// parameter is not used.".</para>
     ///
     /// <code language="csharp">
     /// /// &lt;summary&gt;

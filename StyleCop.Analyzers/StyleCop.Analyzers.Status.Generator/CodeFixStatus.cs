@@ -4,7 +4,7 @@
 namespace StyleCop.Analyzers.Status.Generator
 {
     /// <summary>
-    /// This enum is used to indicate whether or not a code fix is implemented
+    /// This enum is used to indicate whether or not a code fix is implemented.
     /// </summary>
     public enum CodeFixStatus
     {

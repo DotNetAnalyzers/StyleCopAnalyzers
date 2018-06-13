@@ -304,10 +304,10 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
         /// <summary>
         /// Verifies that a collision between a member and a static member is handled properly.
-        /// This is a regression test for #2093
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(2093, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2093")]
         public async Task TestNameCollisionForStaticMethodAsync()
         {
             var testCode = @"

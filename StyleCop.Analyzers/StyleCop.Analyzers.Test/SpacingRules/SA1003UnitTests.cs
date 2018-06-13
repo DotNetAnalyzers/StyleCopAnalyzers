@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using static StyleCop.Analyzers.SpacingRules.SA1003SymbolsMustBeSpacedCorrectly;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1003SymbolsMustBeSpacedCorrectly"/>
+    /// Unit tests for <see cref="SA1003SymbolsMustBeSpacedCorrectly"/>.
     /// </summary>
     public class SA1003UnitTests : CodeFixVerifier
     {
@@ -963,10 +963,10 @@ public class Foo : Exception
 
         /// <summary>
         /// Verifies that pointer dereference will not trigger SA1003, as it is covered by SA1023.
-        /// This is a regression test for #1776
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1776, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1776")]
         public async Task TestPointerDereferenceNotReportedAsync()
         {
             var testCode = @"public class TestClass

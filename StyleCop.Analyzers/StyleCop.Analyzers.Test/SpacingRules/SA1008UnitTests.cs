@@ -1976,12 +1976,8 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1585:
-        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1585
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1585, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1585")]
         public async Task TestCrefAttributeAsync()
         {
             var testCode = @"

@@ -18,11 +18,16 @@ namespace StyleCop.Analyzers.OrderingRules
     {
         /// <summary>
         /// Contains a map of the different regions of a source file.
-        /// Used source file regions are:
-        /// - conditional directives (#if, #else, #elif, #endif)
-        /// - pragma warning directives
-        /// - region directives
         /// </summary>
+        /// <remarks>
+        /// <para>Used source file regions are:</para>
+        ///
+        /// <list type="bullet">
+        /// <item>conditional directives (#if, #else, #elif, #endif)</item>
+        /// <item>pragma warning directives</item>
+        /// <item>region directives</item>
+        /// </list>
+        /// </remarks>
         private class SourceMap
         {
             private readonly TreeTextSpan regionRoot;
@@ -42,7 +47,7 @@ namespace StyleCop.Analyzers.OrderingRules
             internal TreeTextSpan ConditionalRoot { get; }
 
             /// <summary>
-            /// Constructs the directive map for the given <paramref name="compilationUnit"/>
+            /// Constructs the directive map for the given <paramref name="compilationUnit"/>.
             /// </summary>
             /// <param name="compilationUnit">The compilation unit to scan for directive trivia.</param>
             /// <returns>A new <see cref="SourceMap"/> object containing the directive trivia information from the passed <paramref name="compilationUnit"/>.</returns>

@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1510ChainedStatementBlocksMustNotBePrecededByBlankLine"/>
+    /// Unit tests for <see cref="SA1510ChainedStatementBlocksMustNotBePrecededByBlankLine"/>.
     /// </summary>
     public class SA1510UnitTests : CodeFixVerifier
     {

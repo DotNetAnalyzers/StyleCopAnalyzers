@@ -16,7 +16,7 @@ namespace TestHelper
 
     /// <summary>
     /// Diagnostic Producer class with extra methods dealing with applying code fixes.
-    /// All methods are static
+    /// All methods are static.
     /// </summary>
     public abstract partial class CodeFixVerifier : DiagnosticVerifier
     {
@@ -24,7 +24,7 @@ namespace TestHelper
         /// Apply the inputted <see cref="CodeAction"/> to the inputted document.
         /// Meant to be used to apply code fixes.
         /// </summary>
-        /// <param name="project">The <see cref="Project"/> to apply the fix on</param>
+        /// <param name="project">The <see cref="Project"/> to apply the fix on.</param>
         /// <param name="codeAction">A <see cref="CodeAction"/> that will be applied to the
         /// <paramref name="project"/>.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>

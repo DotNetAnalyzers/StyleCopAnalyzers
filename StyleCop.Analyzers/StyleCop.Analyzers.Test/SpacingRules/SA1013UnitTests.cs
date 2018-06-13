@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1013ClosingBracesMustBeSpacedCorrectly"/>
+    /// Unit tests for <see cref="SA1013ClosingBracesMustBeSpacedCorrectly"/>.
     /// </summary>
     public class SA1013UnitTests : CodeFixVerifier
     {
@@ -343,10 +343,10 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
         /// <summary>
         /// Verifies that the analyzer will properly handle anonymous classes in indexers.
-        /// This is a regression test for <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1191">DotNetAnalyzers/StyleCopAnalyzers#1191</see>
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1191, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1191")]
         public async Task TestIndexersAsync()
         {
             var testCode = @"namespace TestNamespace
@@ -368,7 +368,6 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
         /// <summary>
         /// Verifies that the analyzer will properly handle end of file without a new line.
-        /// This is a regression test for <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/685">DotNetAnalyzers/StyleCopAnalyzers#685</see>
         /// </summary>
         /// <param name="declarationType">The declaration type.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
@@ -378,6 +377,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         [InlineData("interface")]
         [InlineData("struct")]
         [InlineData("enum")]
+        [WorkItem(685, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/685")]
         public async Task TestEndOfFileWithoutNewLineAsync(string declarationType)
         {
             var testCode = $"{declarationType} TestItem {{ }}";

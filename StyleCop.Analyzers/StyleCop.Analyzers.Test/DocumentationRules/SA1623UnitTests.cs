@@ -154,10 +154,10 @@ public class TestClass
 
         /// <summary>
         /// Verifies that empty summary tag does not throw an exception.
-        /// Regression test for #1943
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1943, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1943")]
         public async Task EmptySummaryTagShouldNotThrowAnExceptionAsync()
         {
             var testCode = @"public class ClassName
@@ -233,11 +233,11 @@ public class TestClass
         }
 
         /// <summary>
-        /// Verifies that an empty tag summary is ignored (should be handled by SA1606)
-        /// This is a regression test for #2230
+        /// Verifies that an empty tag summary is ignored (should be handled by SA1606).
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(2230, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2230")]
         public async Task VerifyEmptySummaryTagIsIgnoredAsync()
         {
             var testCode = @"

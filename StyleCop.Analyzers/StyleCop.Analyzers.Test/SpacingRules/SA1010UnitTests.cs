@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1010OpeningSquareBracketsMustBeSpacedCorrectly"/>
+    /// Unit tests for <see cref="SA1010OpeningSquareBracketsMustBeSpacedCorrectly"/>.
     /// </summary>
     public class SA1010UnitTests : CodeFixVerifier
     {
@@ -163,10 +163,10 @@ public class Foo
 
         /// <summary>
         /// Verify that index initializers are properly handled.
-        /// Regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1617
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1617, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1617")]
         public async Task VerifyIndexInitializerAsync()
         {
             var testCode = @"using System.Collections.Generic;

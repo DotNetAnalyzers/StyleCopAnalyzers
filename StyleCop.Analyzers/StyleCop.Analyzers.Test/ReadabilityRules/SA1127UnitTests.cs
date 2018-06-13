@@ -70,12 +70,8 @@ class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1476:
-        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1476
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1476, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1476")]
         public async Task TestViolationWithObsoleteMethodDeclarationAsync()
         {
             var testCode = @"
@@ -98,12 +94,8 @@ class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1476:
-        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1476
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1476, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1476")]
         public async Task TestViolationWithMethodDeclarationMultiLineParametersAsync()
         {
             var testCode = @"
@@ -128,12 +120,8 @@ class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1652:
-        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1652
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1652, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1652")]
         public async Task TestViolationWithMethodDeclarationAndXmlCommentsAsync()
         {
             var testCode = $@"
@@ -158,12 +146,8 @@ class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1652:
-        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1652
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1652, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1652")]
         public async Task TestViolationWithMethodDeclarationRegionDirectiveAsync()
         {
             var testCode = $@"

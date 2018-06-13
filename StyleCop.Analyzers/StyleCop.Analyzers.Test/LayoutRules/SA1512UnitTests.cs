@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1512SingleLineCommentsMustNotBeFollowedByBlankLine"/>
+    /// Unit tests for <see cref="SA1512SingleLineCommentsMustNotBeFollowedByBlankLine"/>.
     /// </summary>
     public class SA1512UnitTests : CodeFixVerifier
     {
@@ -181,7 +181,7 @@ namespace Foo
         }
 
         /// <summary>
-        /// Verifies that a standard file header will not produce a diagnostic
+        /// Verifies that a standard file header will not produce a diagnostic.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -200,7 +200,7 @@ namespace Foo
         }
 
         /// <summary>
-        /// Verifies that a non-standard file header will not produce a diagnostic
+        /// Verifies that a non-standard file header will not produce a diagnostic.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]

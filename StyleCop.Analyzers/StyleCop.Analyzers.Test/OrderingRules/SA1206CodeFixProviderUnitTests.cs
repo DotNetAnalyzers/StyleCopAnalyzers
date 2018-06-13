@@ -48,7 +48,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
         /// <summary>
         /// Verifies that the code fix will properly reorder keywords on a struct, interface and enum declaration.
         /// </summary>
-        /// <param name="type">Data for this test</param>
+        /// <param name="type">Data for this test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData("struct")]

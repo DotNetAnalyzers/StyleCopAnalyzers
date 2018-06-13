@@ -442,11 +442,8 @@ public class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// Test for issue 1172, https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1172
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1172, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1172")]
         public async Task TestRegressionIssue1172Async()
         {
             var testCode = @"using System;
@@ -482,11 +479,8 @@ public class Foo
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// Test for issue 1172, https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1172
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1172, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1172")]
         public async Task TestRegressionIssue1172WithHalfClassAsync()
         {
             var testCode = @"using System;

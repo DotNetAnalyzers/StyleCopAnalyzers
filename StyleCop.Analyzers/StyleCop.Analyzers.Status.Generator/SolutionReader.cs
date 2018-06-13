@@ -62,10 +62,10 @@ namespace StyleCop.Analyzers.Status.Generator
         /// <summary>
         /// Creates a new instance of the <see cref="SolutionReader"/> class.
         /// </summary>
-        /// <param name="pathToSln">The path to the StyleCop.Analayzers sln</param>
-        /// <param name="analyzerProjectName">The project name of the analyzer project</param>
-        /// <param name="codeFixProjectName">The project name of the code fix project</param>
-        /// <returns>A <see cref="Task{SolutionReader}"/> representing the asynchronous operation</returns>
+        /// <param name="pathToSln">The path to the StyleCop.Analayzers solution.</param>
+        /// <param name="analyzerProjectName">The project name of the analyzer project.</param>
+        /// <param name="codeFixProjectName">The project name of the code fix project.</param>
+        /// <returns>A <see cref="Task{TResult}"/> representing the asynchronous operation.</returns>
         public static async Task<SolutionReader> CreateAsync(string pathToSln, string analyzerProjectName = "StyleCop.Analyzers", string codeFixProjectName = "StyleCop.Analyzers.CodeFixes")
         {
             SolutionReader reader = new SolutionReader();

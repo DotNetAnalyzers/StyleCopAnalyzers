@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1009ClosingParenthesisMustBeSpacedCorrectly"/>
+    /// Unit tests for <see cref="SA1009ClosingParenthesisMustBeSpacedCorrectly"/>.
     /// </summary>
     public class SA1009UnitTests : CodeFixVerifier
     {
@@ -437,11 +437,11 @@ public class Foo
         }
 
         /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1064 "SA1009: mis-fires for verbatim
-        /// strings"
+        /// This is a regression test for "SA1009: mis-fires for verbatim strings".
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1064, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1064")]
         public async Task TestVerbatimStringArgumentAsync()
         {
             string testCode = @"using System;
@@ -735,12 +735,8 @@ int a)
             await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#684:
-        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/684
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(684, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/684")]
         public async Task TestEmbeddedCommentAsync()
         {
             var testCode = @"

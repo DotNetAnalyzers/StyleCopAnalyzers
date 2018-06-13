@@ -39,7 +39,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     /// }
     /// </code>
     ///
-    /// <para>or</para>
+    /// <para>or:</para>
     ///
     /// <code language="csharp">
     /// if (x || (y &amp;&amp; z &amp;&amp; a) || b)

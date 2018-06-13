@@ -525,10 +525,10 @@ public class Foo
 
         /// <summary>
         /// Verifies that private fields with attributes are handled properly.
-        /// This is a regression test for #1595
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1595, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1595")]
         public async Task VerifyThatPrivateFieldsAreHandledProperlyAsync()
         {
             string testCode = @"using System;
@@ -545,10 +545,10 @@ public class TestClass
 
         /// <summary>
         /// Verifies that setters with an accessibility restriction will report a warning.
-        /// This is a regression for #2269
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(2269, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2269")]
         public async Task TestSetterWithAccessibilityRestrictionAsync()
         {
             var testCode = @"

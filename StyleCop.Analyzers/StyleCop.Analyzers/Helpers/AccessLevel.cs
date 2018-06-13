@@ -4,7 +4,7 @@
 namespace StyleCop.Analyzers.Helpers
 {
     /// <summary>
-    /// Describes an element's access level
+    /// Describes an element's access level.
     /// </summary>
     internal enum AccessLevel
     {

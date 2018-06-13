@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using Xunit;
 
     /// <summary>
-    /// Unit test for <see cref="SA1005SingleLineCommentsMustBeginWithSingleSpace"/>
+    /// Unit test for <see cref="SA1005SingleLineCommentsMustBeginWithSingleSpace"/>.
     /// </summary>
     public class SA1005UnitTests : CodeFixVerifier
     {
@@ -263,7 +263,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         }
 
         /// <summary>
-        /// Verify that the diagnostic is not reported for documentation comments
+        /// Verify that the diagnostic is not reported for documentation comments.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]

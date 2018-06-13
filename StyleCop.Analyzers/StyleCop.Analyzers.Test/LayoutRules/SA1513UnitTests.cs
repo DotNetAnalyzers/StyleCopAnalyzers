@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1513ClosingBraceMustBeFollowedByBlankLine"/>
+    /// Unit tests for <see cref="SA1513ClosingBraceMustBeFollowedByBlankLine"/>.
     /// </summary>
     public class SA1513UnitTests : CodeFixVerifier
     {
@@ -813,10 +813,10 @@ public class TestClass
 
         /// <summary>
         /// Verifies that having an initializer as last parameter / argument will not raise any diagnostics.
-        /// This is a regression for #1713
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1713, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1713")]
         public async Task VerifyThatInitializerAsLastParameterWillNotProduceDiagnosticAsync()
         {
             var testCode = @"
@@ -870,10 +870,10 @@ public class Program
 
         /// <summary>
         /// Verifies that code commented out with four slashes is accepted.
-        /// This is a regression test for #2041
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(2041, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2041")]
         public async Task TestFourSlashCommentsAsync()
         {
             var testCode = @"

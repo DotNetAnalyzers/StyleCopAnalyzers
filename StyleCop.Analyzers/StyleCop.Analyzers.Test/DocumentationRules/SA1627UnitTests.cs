@@ -32,7 +32,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         /// <summary>
         /// Checks an element with a blank value gives an error.
         /// </summary>
-        /// <param name="element">Element to check</param>
+        /// <param name="element">Element to check.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(Elements))]
@@ -96,7 +96,7 @@ public class ClassName
         /// <summary>
         /// Checks an element with an empty element gives an error.
         /// </summary>
-        /// <param name="element">Element to check</param>
+        /// <param name="element">Element to check.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(Elements))]
@@ -123,7 +123,7 @@ public class ClassName
         /// <summary>
         /// Checks an element with non blank text does not give an error.
         /// </summary>
-        /// <param name="element">Element to check</param>
+        /// <param name="element">Element to check.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(Elements))]

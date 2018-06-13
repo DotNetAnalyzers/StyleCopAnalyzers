@@ -572,12 +572,12 @@ namespace StyleCopTester
         /// <summary>
         /// Returns a list of all analyzer diagnostics inside the specific project. This is an asynchronous operation.
         /// </summary>
-        /// <param name="analyzers">The list of analyzers that should be used</param>
-        /// <param name="project">The project that should be analyzed</param>
+        /// <param name="analyzers">The list of analyzers that should be used.</param>
+        /// <param name="project">The project that should be analyzed.</param>
         /// <param name="force"><see langword="true"/> to force the analyzers to be enabled; otherwise,
         /// <see langword="false"/> to use the behavior configured for the specified <paramref name="project"/>.</param>
         /// <param name="cancellationToken">The cancellation token that the task will observe.</param>
-        /// <returns>A list of diagnostics inside the project</returns>
+        /// <returns>A list of diagnostics inside the project.</returns>
         private static async Task<ImmutableArray<Diagnostic>> GetProjectAnalyzerDiagnosticsAsync(ImmutableArray<DiagnosticAnalyzer> analyzers, Project project, bool force, CancellationToken cancellationToken)
         {
             var supportedDiagnosticsSpecificOptions = new Dictionary<string, ReportDiagnostic>();

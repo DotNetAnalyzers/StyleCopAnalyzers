@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     /// TODO.
     /// </summary>
     /// <remarks>
-    /// <para>TODO</para>
+    /// <para>TODO.</para>
     ///
     /// <para>A violation of this rule occurs when unnecessary parenthesis have been used in an attribute constructor.
     /// For example:</para>

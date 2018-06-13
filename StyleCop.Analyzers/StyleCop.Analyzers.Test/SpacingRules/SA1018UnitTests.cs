@@ -19,7 +19,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     public class SA1018UnitTests : CodeFixVerifier
     {
         /// <summary>
-        /// Verifies that nullable types with different kinds of spacing will report
+        /// Verifies that nullable types with different kinds of spacing will report.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -111,12 +111,8 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1256.
-        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1256
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1256, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1256")]
         public async Task TestSyntaxErrorAtEndOfFileAsync()
         {
             string testCode = @"namespace StyleCopAnalyzers_Test

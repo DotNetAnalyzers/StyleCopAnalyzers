@@ -55,8 +55,8 @@ namespace StyleCop.Analyzers.Test
         /// <summary>
         /// Verifies that the source file is excluded from analysis.
         /// </summary>
-        /// <param name="filename">The filename</param>
-        /// <param name="testCode">The code to test</param>
+        /// <param name="filename">The filename.</param>
+        /// <param name="testCode">The code to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(ShouldBeExcluded))]
@@ -68,8 +68,8 @@ namespace StyleCop.Analyzers.Test
         /// <summary>
         /// Verifies that the source file is not excluded from analysis.
         /// </summary>
-        /// <param name="filename">The filename</param>
-        /// <param name="testCode">The code to test</param>
+        /// <param name="filename">The filename.</param>
+        /// <param name="testCode">The code to test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(ShouldNotBeExcluded))]

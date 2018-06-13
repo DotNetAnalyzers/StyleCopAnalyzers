@@ -1403,10 +1403,10 @@ public class Foo
 
         /// <summary>
         /// Verifies that a preprocessor statement with unnecessary parenthesis is handled correctly.
-        /// Regression test for #2069
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(2069, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2069")]
         public async Task VerifyThatPreprocessorStatementIsHandledCorrectlyAsync()
         {
             string testCode = @"

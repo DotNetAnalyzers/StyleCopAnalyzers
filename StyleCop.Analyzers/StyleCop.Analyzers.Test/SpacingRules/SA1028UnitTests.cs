@@ -189,12 +189,11 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         }
 
         /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1373 "SA1028 does not appear to catch single
-        /// space after final closing brace":
-        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1373
+        /// This is a regression test for "SA1028 does not appear to catch single space after final closing brace".
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1373, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1373")]
         public async Task TestTrailingWhitespaceAfterClosingBraceAsync()
         {
             string testCode = new StringBuilder()
@@ -217,12 +216,12 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         }
 
         /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1445 "SA1028 falsely reports when
-        /// <c>[assembly: InternalsVisibleTo("...")]</c> is used at the end of file":
-        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1445
+        /// This is a regression test for "SA1028 falsely reports when <c>[assembly: InternalsVisibleTo("...")]</c> is
+        /// used at the end of file".
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1445, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1445")]
         public async Task TestWhitespaceBeforeClosingBraceAsync()
         {
             string testCode = new StringBuilder()
@@ -331,10 +330,10 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
         /// <summary>
         /// Verifies that trailing whitespace after a multi-line documentation comment is handled properly.
-        /// This is a regression test for #821
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(821, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/821")]
         public async Task VerifyTrailingWhitespaceInsideMultiLineXmlDocumentationCommentAsync()
         {
             string testCode = new StringBuilder()

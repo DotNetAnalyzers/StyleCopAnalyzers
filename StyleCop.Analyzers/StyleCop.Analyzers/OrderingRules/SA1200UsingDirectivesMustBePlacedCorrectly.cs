@@ -113,7 +113,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// </code>
     ///
     /// <para>The code fails on the following compiler error, found on the line containing
-    /// <c>Guid g = new Guid("hello");</c></para>
+    /// <c>Guid g = new Guid("hello");</c>:</para>
     ///
     /// <quote>CS0576: Namespace 'Microsoft.Sample' contains a definition conflicting with alias 'Guid'</quote>
     ///

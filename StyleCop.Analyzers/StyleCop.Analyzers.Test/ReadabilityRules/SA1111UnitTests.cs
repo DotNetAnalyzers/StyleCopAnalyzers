@@ -1171,7 +1171,7 @@ public class FooAttribute: System.Attribute
         }
 
         /// <summary>
-        /// Asserts that an attribute with a no parameters does not report if the open and close brackets are on separate lines
+        /// Asserts that an attribute with a no parameters does not report if the open and close brackets are on separate lines.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
