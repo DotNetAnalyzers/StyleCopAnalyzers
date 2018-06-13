@@ -99,7 +99,7 @@ namespace StyleCop.Analyzers.Test.HelperTests
         private const string TestFilename = "Test0.cs";
 
         /// <summary>
-        /// Verify the workings of IndentationHelper.GetIndentationSteps.
+        /// Verify the workings of <see cref="IndentationHelper.GetIndentationSteps(IndentationSettings, SyntaxToken)"/>.
         /// </summary>
         /// <param name="indentationString">The indentation string to use with the test.</param>
         /// <param name="expectedIndentationSteps">The expected number of indentation steps.</param>
@@ -121,7 +121,8 @@ namespace StyleCop.Analyzers.Test.HelperTests
         }
 
         /// <summary>
-        /// Verify the that IndentationHelper.GetIndentationSteps will return zero (0) for tokens that are not the first token on a line.
+        /// Verify the that <see cref="IndentationHelper.GetIndentationSteps(IndentationSettings, SyntaxToken)"/> will
+        /// return zero (0) for tokens that are not the first token on a line.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]

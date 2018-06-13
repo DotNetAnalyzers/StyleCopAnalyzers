@@ -6,7 +6,7 @@ namespace StyleCop.Analyzers.Test
     using System;
 
     /// <summary>
-    /// Used to tag test methods or types which are created for a given WorkItem.
+    /// Used to tag test methods or types which are created for a given work item.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
     public sealed class WorkItemAttribute : Attribute

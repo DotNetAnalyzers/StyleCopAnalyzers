@@ -54,7 +54,7 @@ namespace StyleCop.Analyzers.Helpers
         /// - it is null
         /// - it does not have any text in any XML element and it does not have an empty XML element in it.
         /// </summary>
-        /// <param name="xmlComment">The xmlComment that should be checked.</param>
+        /// <param name="xmlComment">The XML comment that should be checked.</param>
         /// <returns>true, if the comment should be considered empty, false otherwise.</returns>
         internal static bool IsConsideredEmpty(DocumentationCommentTriviaSyntax xmlComment)
         {
@@ -78,7 +78,7 @@ namespace StyleCop.Analyzers.Helpers
         /// This helper is used by documentation diagnostics to check if a XML comment should be considered empty.
         /// A comment is empty if it does not have any text in any XML element and it does not have an empty XML element in it.
         /// </summary>
-        /// <param name="xmlSyntax">The xmlSyntax that should be checked.</param>
+        /// <param name="xmlSyntax">The XML syntax that should be checked.</param>
         /// <param name="considerEmptyElements">Flag indicating if empty elements should be considered or assumed non-empty.</param>
         /// <returns>true, if the comment should be considered empty, false otherwise.</returns>
         internal static bool IsConsideredEmpty(XmlNodeSyntax xmlSyntax, bool considerEmptyElements = false)
@@ -171,10 +171,14 @@ namespace StyleCop.Analyzers.Helpers
         }
 
         /// <summary>
-        /// Checks if a SyntaxTrivia contains a DocumentationCommentTriviaSyntax and returns true if it is considered empty.
+        /// Checks if a <see cref="SyntaxTrivia"/> contains a <see cref="DocumentationCommentTriviaSyntax"/> and returns
+        /// <see langword="true"/> if it is considered empty.
         /// </summary>
-        /// <param name="commentTrivia">A SyntaxTrivia containing possible documentation.</param>
-        /// <returns>true if commentTrivia does not have documentation in it or the documentation in SyntaxTriviais considered empty. False otherwise.</returns>
+        /// <param name="commentTrivia">A <see cref="SyntaxTrivia"/> containing possible documentation.</param>
+        /// <returns>
+        /// <see langword="true"/> if <paramref name="commentTrivia"/> does not have documentation in it or the
+        /// documentation in <paramref name="commentTrivia"/> is considered empty; otherwise, <see langword="false"/>.
+        /// </returns>
         internal static bool IsMissingOrEmpty(SyntaxTrivia commentTrivia)
         {
             if (!commentTrivia.HasStructure)

@@ -18,11 +18,16 @@ namespace StyleCop.Analyzers.OrderingRules
     {
         /// <summary>
         /// Contains a map of the different regions of a source file.
-        /// Used source file regions are:
-        /// - conditional directives (#if, #else, #elif, #endif)
-        /// - pragma warning directives
-        /// - region directives.
         /// </summary>
+        /// <remarks>
+        /// <para>Used source file regions are:</para>
+        ///
+        /// <list type="bullet">
+        /// <item>conditional directives (#if, #else, #elif, #endif)</item>
+        /// <item>pragma warning directives</item>
+        /// <item>region directives</item>
+        /// </list>
+        /// </remarks>
         private class SourceMap
         {
             private readonly TreeTextSpan regionRoot;
