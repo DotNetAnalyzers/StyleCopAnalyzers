@@ -345,12 +345,8 @@ public class Test : Testbase
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1442:
-        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1442
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [Fact]
+        [WorkItem(1442, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1442")]
         public async Task TestSimpleLambaExpressionAsync()
         {
             var testCode = @"public class TypeName
@@ -366,12 +362,8 @@ public class Test : Testbase
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1343:
-        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1343
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [Fact]
+        [WorkItem(1343, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1343")]
         public async Task TestLambdaParameterNamedUnderscoreAsync()
         {
             var testCode = @"public class TypeName
@@ -388,14 +380,11 @@ public class Test : Testbase
         }
 
         /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1343:
-        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1343
+        /// Verifies this diagnostic does not check whether or not a parameter named <c>_</c> is being used.
         /// </summary>
-        /// <remarks>
-        /// <para>This diagnostic does not check whether or not a parameter named <c>_</c> is being used.</para>
-        /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [Fact]
+        [WorkItem(1343, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1343")]
         public async Task TestLambdaParameterNamedUnderscoreUsageAsync()
         {
             var testCode = @"public class TypeName
@@ -411,12 +400,8 @@ public class Test : Testbase
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1343:
-        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1343
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [Fact]
+        [WorkItem(1343, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1343")]
         public async Task TestLambdaParameterMultipleUnderscoresAsync()
         {
             var testCode = @"public class TypeName
@@ -439,12 +424,8 @@ public class Test : Testbase
             await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1343:
-        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1343
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [Fact]
+        [WorkItem(1343, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1343")]
         public async Task TestMethodParameterNamedUnderscoreAsync()
         {
             var testCode = @"public class TypeName
@@ -458,12 +439,8 @@ public class Test : Testbase
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1529:
-        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1529
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1529, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1529")]
         public async Task TestInheritedInterfacesWithOverloadedMembersAsync()
         {
             var testCode = @"
@@ -489,12 +466,8 @@ public interface IDerivedTest : ITest, IEmptyInterface
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1604:
-        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1604
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1604, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1604")]
         public async Task TestCodeFixProperlyRemovesUnderscoreAsync()
         {
             var testCode = @"
@@ -533,10 +506,10 @@ public class TestClass
 
         /// <summary>
         /// Verify that an invalid method override will not produce a diagnostic nor crash the analyzer.
-        /// This is a regression test for #2189
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(2189, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2189")]
         public async Task InvalidMethodOverrideShouldNotProduceDiagnosticAsync()
         {
             var testCode = @"

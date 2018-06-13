@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using Xunit;
 
     /// <summary>
-    /// This class contains unit tests for <see cref="SA1642ConstructorSummaryDocumentationMustBeginWithStandardText"/>-
+    /// This class contains unit tests for <see cref="SA1642ConstructorSummaryDocumentationMustBeginWithStandardText"/>.
     /// </summary>
     [UseCulture("en-US")]
     public class SA1642UnitTests : CodeFixVerifier
@@ -486,12 +486,11 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         }
 
         /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#676 "SA1642 misfires on nested structs,
-        /// requiring text describing the outer type"
-        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/676
+        /// This is a regression test for "SA1642 misfires on nested structs, requiring text describing the outer type".
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(676, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/676")]
         public async Task TestStructNestedInClassAsync()
         {
             string testCode = @"

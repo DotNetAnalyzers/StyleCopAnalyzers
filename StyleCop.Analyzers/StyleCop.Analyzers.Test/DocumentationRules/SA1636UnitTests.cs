@@ -101,11 +101,11 @@ namespace Bar
         }
 
         /// <summary>
-        /// Verifies that a file header will ignore spurious leading / trailing whitespaces (for multiple line comments)
-        /// This is a regression for #1356
+        /// Verifies that a file header will ignore spurious leading / trailing whitespaces (for multiple line comments).
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1356, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1356")]
         public async Task TestFileHeaderWillIgnoreLeadingAndTrailingWhitespaceAroundCopyrightMessageAsync()
         {
             this.useMultiLineHeaderTestSettings = true;
@@ -149,11 +149,11 @@ namespace Bar
         }
 
         /// <summary>
-        /// Verifies that a file header without XML header will ignore spurious leading / trailing whitespaces (for multiple line comments)
-        /// This is a regression for #1356
+        /// Verifies that a file header without XML header will ignore spurious leading / trailing whitespaces (for multiple line comments).
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1356, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1356")]
         public async Task TestNoXmlFileHeaderWillIgnoreLeadingAndTrailingWhitespaceAroundCopyrightMessageAsync()
         {
             this.useNoXmlMultiLineHeaderTestSettings = true;
@@ -275,7 +275,7 @@ namespace Bar
         }
 
         /// <summary>
-        /// Verifies that a multi line file header will be fixed correctly (for multiple line comments) without a leading star
+        /// Verifies that a multi line file header will be fixed correctly (for multiple line comments) without a leading star.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -320,7 +320,7 @@ namespace Bar
         }
 
         /// <summary>
-        /// Verifies that a multi line file header will be fixed correctly (for multiple line comments) with a leading star
+        /// Verifies that a multi line file header will be fixed correctly (for multiple line comments) with a leading star.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]

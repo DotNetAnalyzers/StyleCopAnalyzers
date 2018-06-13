@@ -22,7 +22,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     internal class SA1127GenericTypeConstraintsMustBeOnOwnLine : DiagnosticAnalyzer
     {
         /// <summary>
-        /// The ID for diagnostics produced by the <see cref="SA1127GenericTypeConstraintsMustBeOnOwnLine"/>
+        /// The ID for diagnostics produced by the <see cref="SA1127GenericTypeConstraintsMustBeOnOwnLine"/>.
         /// </summary>
         public const string DiagnosticId = "SA1127";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1127Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));

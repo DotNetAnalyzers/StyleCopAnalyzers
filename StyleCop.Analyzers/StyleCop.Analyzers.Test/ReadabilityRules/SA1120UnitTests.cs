@@ -356,10 +356,10 @@ public class SomeException : Exception
 
         /// <summary>
         /// Verifies that an empty comment at the start of a source file will be handled correctly.
-        /// This is a regression test for #1708
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1708, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1708")]
         public async Task VerifyThatEmptyCommentAtFileStartWillBeHandledProperlyAsync()
         {
             var testCode = @"//
@@ -406,10 +406,10 @@ public class TestClass
 
         /// <summary>
         /// Verifies that an unclosed multi-line comment at the end of a source file will be handled correctly.
-        /// This is a regression test for #2056
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(2056, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2056")]
         public async Task VerifyThatUnclosedCommentAtFileEndWillBeHandledProperlyAsync()
         {
             var testCode = @"public class TestClass

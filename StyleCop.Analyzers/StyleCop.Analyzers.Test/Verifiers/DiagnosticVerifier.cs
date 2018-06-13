@@ -107,7 +107,7 @@ namespace TestHelper
         }
 
         /// <summary>
-        /// Gets the C# analyzers being tested
+        /// Gets the C# analyzers being tested.
         /// </summary>
         /// <returns>
         /// New instances of all the C# analyzers being tested.
@@ -124,7 +124,7 @@ namespace TestHelper
         /// <param name="expected">A <see cref="DiagnosticResult"/>s describing the <see cref="Diagnostic"/> that should
         /// be reported by the analyzer for the specified source.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
-        /// <param name="filename">The filename or null if the default filename should be used</param>
+        /// <param name="filename">The filename or null if the default filename should be used.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken, string filename = null)
         {
@@ -141,7 +141,7 @@ namespace TestHelper
         /// <param name="expected">A collection of <see cref="DiagnosticResult"/>s describing the
         /// <see cref="Diagnostic"/>s that should be reported by the analyzer for the specified source.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
-        /// <param name="filename">The filename or null if the default filename should be used</param>
+        /// <param name="filename">The filename or null if the default filename should be used.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken, string filename = null)
         {
@@ -159,7 +159,7 @@ namespace TestHelper
         /// <param name="expected">A collection of <see cref="DiagnosticResult"/>s describing the
         /// <see cref="Diagnostic"/>s that should be reported by the analyzer for the specified sources.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
-        /// <param name="filenames">The filenames or null if the default filename should be used</param>
+        /// <param name="filenames">The filenames or null if the default filename should be used.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         protected Task VerifyCSharpDiagnosticAsync(string[] sources, DiagnosticResult[] expected, CancellationToken cancellationToken, string[] filenames = null)
         {
@@ -413,7 +413,7 @@ namespace TestHelper
         /// <param name="expected">A collection of <see cref="DiagnosticResult"/>s that should appear after the analyzer
         /// is run on the sources.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
-        /// <param name="filenames">The filenames or null if the default filename should be used</param>
+        /// <param name="filenames">The filenames or null if the default filename should be used.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         private async Task VerifyDiagnosticsAsync(string[] sources, string language, ImmutableArray<DiagnosticAnalyzer> analyzers, DiagnosticResult[] expected, CancellationToken cancellationToken, string[] filenames)
         {

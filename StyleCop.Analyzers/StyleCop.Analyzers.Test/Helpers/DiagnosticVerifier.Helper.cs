@@ -251,7 +251,7 @@ namespace TestHelper
         /// <param name="sources">Classes in the form of strings.</param>
         /// <param name="language">The language the source classes are in. Values may be taken from the
         /// <see cref="LanguageNames"/> class.</param>
-        /// <param name="filenames">The filenames or null if the default filename should be used</param>
+        /// <param name="filenames">The filenames or null if the default filename should be used.</param>
         /// <returns>A <see cref="Project"/> created out of the <see cref="Document"/>s created from the source
         /// strings.</returns>
         protected Project CreateProject(string[] sources, string language = LanguageNames.CSharp, string[] filenames = null)
@@ -266,7 +266,7 @@ namespace TestHelper
         /// <param name="sources">Classes in the form of strings.</param>
         /// <param name="language">The language the source classes are in. Values may be taken from the
         /// <see cref="LanguageNames"/> class.</param>
-        /// <param name="filenames">The filenames or null if the default filename should be used</param>
+        /// <param name="filenames">The filenames or null if the default filename should be used.</param>
         /// <returns>A <see cref="Project"/> created out of the <see cref="Document"/>s created from the source
         /// strings.</returns>
         protected virtual Project CreateProjectImpl(string[] sources, string language, string[] filenames)
@@ -381,7 +381,7 @@ namespace TestHelper
         /// <see cref="LanguageNames"/> class.</param>
         /// <param name="analyzers">The analyzers to be run on the sources.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
-        /// <param name="filenames">The filenames or null if the default filename should be used</param>
+        /// <param name="filenames">The filenames or null if the default filename should be used.</param>
         /// <returns>A collection of <see cref="Diagnostic"/>s that surfaced in the source code, sorted by
         /// <see cref="Diagnostic.Location"/>.</returns>
         private Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsAsync(string[] sources, string language, ImmutableArray<DiagnosticAnalyzer> analyzers, CancellationToken cancellationToken, string[] filenames)
@@ -396,7 +396,7 @@ namespace TestHelper
         /// <param name="sources">Classes in the form of strings.</param>
         /// <param name="language">The language the source classes are in. Values may be taken from the
         /// <see cref="LanguageNames"/> class.</param>
-        /// <param name="filenames">The filenames or null if the default filename should be used</param>
+        /// <param name="filenames">The filenames or null if the default filename should be used.</param>
         /// <returns>A collection of <see cref="Document"/>s representing the sources.</returns>
         private Document[] GetDocuments(string[] sources, string language, string[] filenames)
         {

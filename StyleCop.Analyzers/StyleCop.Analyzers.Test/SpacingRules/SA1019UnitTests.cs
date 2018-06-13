@@ -292,7 +292,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         }
 
         /// <summary>
-        /// Gets the C# analyzers being tested
+        /// Gets the C# analyzers being tested.
         /// </summary>
         /// <returns>
         /// New instances of all the C# analyzers being tested.

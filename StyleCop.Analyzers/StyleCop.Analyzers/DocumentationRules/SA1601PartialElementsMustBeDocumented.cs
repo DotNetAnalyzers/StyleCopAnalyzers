@@ -48,7 +48,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// When the documentation for this class is built into an SDK, the tool building the documentation will either
     /// choose to use only one part of the documentation for the class and ignore the other parts, or, in some cases, it
     /// may merge the two sources of documentation together, to form a string like: "Documentation for the first part of
-    /// Class1. Documentation for the second part of Class1."</para>
+    /// Class1. Documentation for the second part of Class1.".</para>
     ///
     /// <para>For these reasons, it can be problematic to provide SDK documentation on more than one part of the partial
     /// class. However, it is still advisable to document each part of the class, to increase the readability and

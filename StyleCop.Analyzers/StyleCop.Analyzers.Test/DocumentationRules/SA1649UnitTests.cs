@@ -50,7 +50,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         }
 
         /// <summary>
-        /// Verifies that a wrong file name is correctly reported
+        /// Verifies that a wrong file name is correctly reported.
         /// </summary>
         /// <param name="typeKeyword">The type keyword to use during the test.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>

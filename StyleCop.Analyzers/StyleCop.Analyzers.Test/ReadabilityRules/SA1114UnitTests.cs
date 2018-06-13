@@ -1069,10 +1069,10 @@ public class SomeOtherClass
 
         /// <summary>
         /// Verifies that directive trivia will not result in diagnostics.
-        /// This is a regression test for #1623
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1623, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1623")]
         public async Task TestWithDirectiveTriviaAsync()
         {
             var testCode = @"

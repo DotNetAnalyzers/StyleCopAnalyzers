@@ -42,7 +42,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <summary>
         /// Initializes a new instance of the <see cref="SA1613ElementParameterDocumentationMustDeclareParameterName"/> class.
         /// </summary>
-        /// <remarks>The presence of a &lt;inheritdoc/&gt; tag should NOT suppress warnings from this diagnostic. See DotNetAnalyzers/StyleCopAnalyzers#631</remarks>
+        /// <remarks>The presence of a &lt;inheritdoc/&gt; tag should NOT suppress warnings from this diagnostic. See DotNetAnalyzers/StyleCopAnalyzers#631.</remarks>
         public SA1613ElementParameterDocumentationMustDeclareParameterName()
             : base(matchElementName: XmlCommentHelper.ParamXmlTag, inheritDocSuppressesWarnings: false)
         {

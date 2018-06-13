@@ -835,10 +835,10 @@ to determine the spacing with the close brace.
 
         /// <summary>
         /// Verifies that an invalid syntax will not crash the analyzer.
-        /// This is a regression test for #1534
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1534, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1534")]
         public async Task TestInvalidSyntaxAsync()
         {
             var testCode = @"namespace TestNamespace

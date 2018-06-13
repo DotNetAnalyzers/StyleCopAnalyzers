@@ -51,7 +51,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// Gets the delegate parameter list from a method symbol and the argument index.
         /// </summary>
         /// <param name="methodSymbol">The symbol containing information about the method invocation.</param>
-        /// <param name="argumentIndex">The index of the argument containing the delegate</param>
+        /// <param name="argumentIndex">The index of the argument containing the delegate.</param>
         /// <returns>A parameter list for the delegate parameters.</returns>
         internal static ParameterListSyntax GetDelegateParameterList(IMethodSymbol methodSymbol, int argumentIndex)
         {

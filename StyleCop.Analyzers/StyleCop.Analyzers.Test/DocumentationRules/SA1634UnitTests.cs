@@ -17,7 +17,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         private string multiLineSettings;
 
         /// <summary>
-        /// Verifies that a file header without a copyright element will produce the expected diagnostic (none for the default case)
+        /// Verifies that a file header without a copyright element will produce the expected diagnostic (none for the default case).
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]

@@ -488,7 +488,7 @@ namespace LightJson
         /// </summary>
         /// <param name="index">The zero-based index of the value to get or set.</param>
         /// <exception cref="System.InvalidOperationException">
-        /// Thrown when this JsonValue is not a JsonArray
+        /// Thrown when this JsonValue is not a JsonArray.
         /// </exception>
         public JsonValue this[int index]
         {

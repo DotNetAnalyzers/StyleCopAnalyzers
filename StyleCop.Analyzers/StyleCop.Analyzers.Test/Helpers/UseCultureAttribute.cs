@@ -84,7 +84,7 @@ namespace StyleCop.Analyzers.Test.Helpers
         /// <see cref="CultureInfo.CurrentCulture" /> and <see cref="CultureInfo.CurrentUICulture" />
         /// and replaces them with the new cultures defined in the constructor.
         /// </summary>
-        /// <param name="methodUnderTest">The method under test</param>
+        /// <param name="methodUnderTest">The method under test.</param>
         public override void Before(MethodInfo methodUnderTest)
         {
             this.originalCulture = Thread.CurrentThread.CurrentCulture;
@@ -101,9 +101,9 @@ namespace StyleCop.Analyzers.Test.Helpers
 
         /// <summary>
         /// Restores the original <see cref="CultureInfo.CurrentCulture" /> and
-        /// <see cref="CultureInfo.CurrentUICulture" /> to <see cref="Thread.CurrentPrincipal" />
+        /// <see cref="CultureInfo.CurrentUICulture" /> to <see cref="Thread.CurrentPrincipal" />.
         /// </summary>
-        /// <param name="methodUnderTest">The method under test</param>
+        /// <param name="methodUnderTest">The method under test.</param>
         public override void After(MethodInfo methodUnderTest)
         {
             Thread.CurrentThread.CurrentCulture = this.originalCulture;

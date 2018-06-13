@@ -78,7 +78,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </code>
     ///
     /// <para>Private instance constructors should use the summary text "Prevents a default instance of the {class name}
-    /// class from being created."</para>
+    /// class from being created.".</para>
     ///
     /// <code language="csharp">
     /// /// &lt;summary&gt;

@@ -99,7 +99,7 @@ namespace StyleCop.Analyzers.Test.HelperTests
         private const string TestFilename = "Test0.cs";
 
         /// <summary>
-        /// Verify the workings of IndentationHelper.GetIndentationSteps./>
+        /// Verify the workings of IndentationHelper.GetIndentationSteps.
         /// </summary>
         /// <param name="indentationString">The indentation string to use with the test.</param>
         /// <param name="expectedIndentationSteps">The expected number of indentation steps.</param>

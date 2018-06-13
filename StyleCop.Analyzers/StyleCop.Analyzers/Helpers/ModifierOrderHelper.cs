@@ -9,7 +9,7 @@ namespace StyleCop.Analyzers.OrderingRules
     internal static class ModifierOrderHelper
     {
         /// <summary>
-        /// Represents modifier type for implementing SA1206 rule
+        /// Represents modifier type for implementing SA1206 rule.
         /// </summary>
         internal enum ModifierType
         {

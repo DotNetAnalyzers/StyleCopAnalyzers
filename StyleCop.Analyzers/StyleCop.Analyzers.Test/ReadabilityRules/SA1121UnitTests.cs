@@ -19,7 +19,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using Xunit;
 
     /// <summary>
-    /// This class contains unit tests for <see cref="SA1121UseBuiltInTypeAlias"/>
+    /// This class contains unit tests for <see cref="SA1121UseBuiltInTypeAlias"/>.
     /// </summary>
     public class SA1121UnitTests : CodeFixVerifier
     {

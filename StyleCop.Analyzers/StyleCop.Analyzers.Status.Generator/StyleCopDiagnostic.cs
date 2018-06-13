@@ -7,7 +7,7 @@ namespace StyleCop.Analyzers.Status.Generator
     using Newtonsoft.Json.Converters;
 
     /// <summary>
-    /// Represents a diagnostic in the StyleCop.Analyzers project
+    /// Represents a diagnostic in the StyleCop.Analyzers project.
     /// </summary>
     public class StyleCopDiagnostic
     {
@@ -97,7 +97,7 @@ namespace StyleCop.Analyzers.Status.Generator
         /// Creates an instance of the <see cref="StyleCopDiagnostic"/> class
         /// that is populated with the data stored in <paramref name="value"/>.
         /// </summary>
-        /// <param name="value">A json representing a <see cref="StyleCopDiagnostic"/></param>
+        /// <param name="value">A json representing a <see cref="StyleCopDiagnostic"/>.</param>
         /// <returns>A <see cref="StyleCopDiagnostic"/> that is populated with the data stored in <paramref name="value"/>.</returns>
         public static StyleCopDiagnostic FromJson(string value)
         {
@@ -105,7 +105,7 @@ namespace StyleCop.Analyzers.Status.Generator
         }
 
         /// <summary>
-        /// Returns a string representing this diagnostic
+        /// Returns a string representing this diagnostic.
         /// </summary>
         /// <returns>
         /// The string contains the diagnostic id and the short name.
@@ -116,9 +116,9 @@ namespace StyleCop.Analyzers.Status.Generator
         }
 
         /// <summary>
-        /// Returns a json representation of this diagnostic
+        /// Returns a json representation of this diagnostic.
         /// </summary>
-        /// <returns>A json string representing this diagnostic</returns>
+        /// <returns>A json string representing this diagnostic.</returns>
         public string ToJson()
         {
             return JsonConvert.SerializeObject(this);

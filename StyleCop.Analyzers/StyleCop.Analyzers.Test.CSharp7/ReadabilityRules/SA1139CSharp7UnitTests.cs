@@ -123,8 +123,8 @@ class ClassName
         /// <summary>
         /// Verifies that redundant cast on literal with digit separators does not trigger diagnostic.
         /// </summary>
-        /// <param name="literal">A literal that is casted</param>
-        /// <param name="type">A type that literal is casted on</param>
+        /// <param name="literal">A literal that is casted.</param>
+        /// <param name="type">A type that literal is casted on.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData("0_1", "int")]
@@ -163,7 +163,7 @@ class ClassName
         /// <summary>
         /// Verifies that other types of casts should not produces diagnostics.
         /// </summary>
-        /// <param name="correctCastExpression">A legal cast that should not trigger diagnostic</param>
+        /// <param name="correctCastExpression">A legal cast that should not trigger diagnostic.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData("(long)~0_1")]
@@ -185,9 +185,9 @@ class ClassName
         /// <summary>
         /// Verifies that diagnostics is not produced when error CS0221 is reported.
         /// </summary>
-        /// <param name="type">A type that a literal is casted on</param>
-        /// <param name="castedLiteral">A literal that is casted</param>
-        /// <param name="literalValue">The value of the literal reported in the compiler error</param>
+        /// <param name="type">A type that a literal is casted on.</param>
+        /// <param name="castedLiteral">A literal that is casted.</param>
+        /// <param name="literalValue">The value of the literal reported in the compiler error.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData("ulong", "-0_1", "-1")]
@@ -215,7 +215,7 @@ class ClassName
         /// <summary>
         /// Verifies that casts in unchecked environment do not get replaced with incorrect values.
         /// </summary>
-        /// <param name="castExpression">A cast which can be performed in unchecked environment</param>
+        /// <param name="castExpression">A cast which can be performed in unchecked environment.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData("(ulong)-0_1L")]

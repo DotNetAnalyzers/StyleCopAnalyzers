@@ -58,7 +58,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 
         /// <summary>
         /// Verifies that empty lines at the start of the file do not trigger any diagnostics.
-        /// (This will be handled by SA1517)
+        /// (This will be handled by SA1517).
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -75,7 +75,7 @@ public class Foo
 
         /// <summary>
         /// Verifies that empty lines at the end of the file do not trigger any diagnostics.
-        /// (This will be handled by SA1518)
+        /// (This will be handled by SA1518).
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -140,7 +140,7 @@ namespace Microsoft
 
         /// <summary>
         /// Verifies that a verbatim string literal does not trigger any diagnostics.
-        /// (This will be handled by SA1518)
+        /// (This will be handled by SA1518).
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]

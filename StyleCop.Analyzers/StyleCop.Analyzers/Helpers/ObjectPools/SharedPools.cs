@@ -17,7 +17,7 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
     internal static class SharedPools
     {
         /// <summary>
-        /// pool that uses default constructor with 100 elements pooled
+        /// pool that uses default constructor with 100 elements pooled.
         /// </summary>
         /// <typeparam name="T">The type of the object pool.</typeparam>
         /// <returns>A default big object pool.</returns>
@@ -28,7 +28,7 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
         }
 
         /// <summary>
-        /// pool that uses default constructor with 20 elements pooled
+        /// pool that uses default constructor with 20 elements pooled.
         /// </summary>
         /// <typeparam name="T">The type of the object pool.</typeparam>
         /// <returns>A default object pool.</returns>

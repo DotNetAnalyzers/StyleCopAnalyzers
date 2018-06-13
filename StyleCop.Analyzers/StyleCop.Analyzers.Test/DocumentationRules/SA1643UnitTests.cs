@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using Xunit;
 
     /// <summary>
-    /// This class contains unit tests for <see cref="SA1643DestructorSummaryDocumentationMustBeginWithStandardText"/>-
+    /// This class contains unit tests for <see cref="SA1643DestructorSummaryDocumentationMustBeginWithStandardText"/>.
     /// </summary>
     [UseCulture("en-US")]
     public class SA1643UnitTests : CodeFixVerifier

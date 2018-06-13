@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using Xunit;
 
     /// <summary>
-    /// Unit tests for the <see cref="SA1200UsingDirectivesMustBePlacedCorrectly"/>
+    /// Unit tests for the <see cref="SA1200UsingDirectivesMustBePlacedCorrectly"/>.
     /// </summary>
     public class SA1200UnitTests : CodeFixVerifier
     {

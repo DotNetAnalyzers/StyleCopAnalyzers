@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1024ColonsMustBeSpacedCorrectly"/>
+    /// Unit tests for <see cref="SA1024ColonsMustBeSpacedCorrectly"/>.
     /// </summary>
     public class SA1024UnitTests : CodeFixVerifier
     {

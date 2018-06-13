@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1015ClosingGenericBracketsMustBeSpacedCorrectly"/>
+    /// Unit tests for <see cref="SA1015ClosingGenericBracketsMustBeSpacedCorrectly"/>.
     /// </summary>
     public class SA1015UnitTests : CodeFixVerifier
     {

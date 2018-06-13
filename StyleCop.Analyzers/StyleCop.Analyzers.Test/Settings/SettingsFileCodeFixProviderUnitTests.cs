@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.Test.Settings
     using Xunit;
 
     /// <summary>
-    /// Unit tests for the <see cref="SettingsFileCodeFixProvider"/>
+    /// Unit tests for the <see cref="SettingsFileCodeFixProvider"/>.
     /// </summary>
     public class SettingsFileCodeFixProviderUnitTests : CodeFixVerifier
     {

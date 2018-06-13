@@ -433,10 +433,10 @@ public class Foo
 
         /// <summary>
         /// Verifies that complex element initializers are handled properly.
-        /// Regression for #1679
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1679, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1679")]
         public async Task TestComplexElementInitializerAsync()
         {
             var testCode = @"using System.Collections.Generic;

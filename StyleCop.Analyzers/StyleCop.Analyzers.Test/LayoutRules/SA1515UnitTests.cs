@@ -212,10 +212,10 @@ public class TestClass
 
         /// <summary>
         /// Verifies that a comment between two statements with an end of line comment is handled properly.
-        /// This is a regression test for #2176
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(2176, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2176")]
         public async Task TestCommentBetweenStatementsWithEndOfLineCommentAsync()
         {
             var testCode = @"

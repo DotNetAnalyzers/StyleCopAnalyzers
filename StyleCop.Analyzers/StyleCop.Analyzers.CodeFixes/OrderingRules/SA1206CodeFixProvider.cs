@@ -107,7 +107,7 @@ namespace StyleCop.Analyzers.OrderingRules
         /// </summary>
         /// <param name="modifiers">All modifiers from the declaration.</param>
         /// <param name="modifierToFix">The modifier with diagnostics.</param>
-        /// <returns>A partially sorted modifier list (sorted up to <paramref name="modifierToFix"/>)</returns>
+        /// <returns>A partially sorted modifier list (sorted up to <paramref name="modifierToFix"/>).</returns>
         private static SyntaxTokenList PartiallySortModifiers(SyntaxTokenList modifiers, SyntaxToken modifierToFix)
         {
             var accessModifiers = modifiers.Where(modifier => GetModifierType(modifier) == ModifierType.Access);

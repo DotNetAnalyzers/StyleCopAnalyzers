@@ -19,7 +19,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     internal class SA1128ConstructorInitializerMustBeOnOwnLine : DiagnosticAnalyzer
     {
         /// <summary>
-        /// The ID for diagnostics produced by the <see cref="SA1128ConstructorInitializerMustBeOnOwnLine"/>
+        /// The ID for diagnostics produced by the <see cref="SA1128ConstructorInitializerMustBeOnOwnLine"/>.
         /// </summary>
         public const string DiagnosticId = "SA1128";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1128Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));

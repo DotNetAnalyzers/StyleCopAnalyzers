@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
         /// <summary>
         /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#386.
         /// <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/386">SA1125
-        /// UseShorthandForNullableTypes incorrectly reported in typeof()</see>
+        /// UseShorthandForNullableTypes incorrectly reported in typeof()</see>.
         /// </summary>
         /// <param name="longForm">The source code for the long form of a <c>cref</c> attribute referencing
         /// an instantiation of <see cref="Nullable{T}"/> in a <c>typeof</c> expression.</param>
@@ -117,7 +117,7 @@ namespace System
         /// <summary>
         /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#637.
         /// <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/637">SA1125
-        /// UseShorthandForNullableTypes incorrectly reported in <c>nameof</c> expression</see>
+        /// UseShorthandForNullableTypes incorrectly reported in <c>nameof</c> expression</see>.
         /// </summary>
         /// <param name="form">The source code for the content of a <c>nameof</c> expression referencing
         /// <see cref="Nullable{T}"/>.</param>
@@ -145,7 +145,7 @@ namespace System
         /// <summary>
         /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#636.
         /// <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/636">SA1125
-        /// UseShorthandForNullableTypes incorrectly reported for static access through Nullable&lt;int&gt;</see>
+        /// UseShorthandForNullableTypes incorrectly reported for static access through Nullable&lt;int&gt;</see>.
         /// </summary>
         /// <remarks>
         /// <para>This special case of instance access through <c>Nullable&lt;int&gt;</c> was mentioned in a
@@ -177,7 +177,7 @@ namespace System
         /// <summary>
         /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#636.
         /// <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/636">SA1125
-        /// UseShorthandForNullableTypes incorrectly reported for static access through Nullable&lt;int&gt;</see>
+        /// UseShorthandForNullableTypes incorrectly reported for static access through Nullable&lt;int&gt;</see>.
         /// </summary>
         /// <param name="form">The source code for an instantiation of <see cref="Nullable{T}"/> which does not use the
         /// shorthand syntax.</param>

@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using Xunit;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1025CodeMustNotContainMultipleWhitespaceInARow"/>
+    /// Unit tests for <see cref="SA1025CodeMustNotContainMultipleWhitespaceInARow"/>.
     /// </summary>
     public class SA1025UnitTests : CodeFixVerifier
     {

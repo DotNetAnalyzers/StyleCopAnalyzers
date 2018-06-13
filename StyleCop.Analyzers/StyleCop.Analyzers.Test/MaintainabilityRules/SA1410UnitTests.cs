@@ -149,7 +149,7 @@ public static class TestClassExtensions
         }
 
         /// <summary>
-        /// Verify that the ambiguity detection is specific enough
+        /// Verify that the ambiguity detection is specific enough.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
