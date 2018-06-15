@@ -47,7 +47,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return FixAll.Instance;
         }
 
         /// <inheritdoc/>
@@ -67,6 +67,11 @@ namespace StyleCop.Analyzers.DocumentationRules
         }
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, CancellationToken cancellationToken)
+        {
+            return document.WithSyntaxRoot(await GetTransformedSyntaxRootAsync(document, cancellationToken).ConfigureAwait(false));
+        }
+
+        private static async Task<SyntaxNode> GetTransformedSyntaxRootAsync(Document document, CancellationToken cancellationToken)
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var settings = document.Project.AnalyzerOptions.GetStyleCopSettings(cancellationToken);
@@ -96,7 +101,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
             }
 
-            return document.WithSyntaxRoot(newSyntaxRoot);
+            return newSyntaxRoot;
         }
 
         private static SyntaxNode ReplaceWellFormedMultiLineCommentHeader(Document document, SyntaxNode root, StyleCopSettings settings, int commentIndex, XmlFileHeader header)
@@ -459,6 +464,23 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             return trivia;
+        }
+
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; } = new FixAll();
+
+            protected override string CodeActionTitle => DocumentationResources.SA1633CodeFix;
+
+            protected override Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+            {
+                if (diagnostics.IsEmpty)
+                {
+                    return null;
+                }
+
+                return GetTransformedSyntaxRootAsync(document, fixAllContext.CancellationToken);
+            }
         }
     }
 }
