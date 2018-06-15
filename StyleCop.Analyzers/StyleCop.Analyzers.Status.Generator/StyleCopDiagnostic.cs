@@ -60,6 +60,15 @@ namespace StyleCop.Analyzers.Status.Generator
         public CodeFixStatus CodeFixStatus { get; set; }
 
         /// <summary>
+        /// Gets or sets a value that represents how the fix all functionality is implemented.
+        /// </summary>
+        /// <value>
+        /// A value that represents how the fix all functionality is implemented.
+        /// </value>
+        [JsonConverter(typeof(StringEnumConverter))]
+        public FixAllStatus FixAllStatus { get; set; }
+
+        /// <summary>
         /// Gets or sets the reason why a code fix is not implemented, or <see langword="null"/> if there is
         /// no reason.
         /// </summary>

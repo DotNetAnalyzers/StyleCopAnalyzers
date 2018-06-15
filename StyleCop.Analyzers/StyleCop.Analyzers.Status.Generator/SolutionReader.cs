@@ -37,6 +37,7 @@ namespace StyleCop.Analyzers.Status.Generator
         private Compilation analyzerCompilation;
         private Compilation codeFixCompilation;
         private ITypeSymbol booleanType;
+        private Type batchFixerType;
 
         private SolutionReader()
         {
@@ -99,7 +100,6 @@ namespace StyleCop.Analyzers.Status.Generator
                 }
 
                 string shortName = match.Groups["name"].Value;
-                CodeFixStatus codeFixStatus;
                 string noCodeFixReason = null;
 
                 // Check if this syntax tree represents a diagnostic
@@ -130,7 +130,7 @@ namespace StyleCop.Analyzers.Status.Generator
 
                 foreach (var descriptorInfo in descriptorInfos)
                 {
-                    codeFixStatus = this.HasCodeFix(descriptorInfo.Id, classSymbol, out noCodeFixReason);
+                    var (codeFixStatus, fixAllStatus) = this.GetCodeFixAndFixAllStatus(descriptorInfo.Id, classSymbol, out noCodeFixReason);
                     string status = this.GetStatus(classSymbol, syntaxRoot, semanticModel, descriptorInfo);
                     if (descriptorInfo.CustomTags.Contains(WellKnownDiagnosticTags.NotConfigurable))
                     {
@@ -147,6 +147,7 @@ namespace StyleCop.Analyzers.Status.Generator
                         Title = descriptorInfo.Title.ToString(),
                         HelpLink = descriptorInfo.HelpLinkUri,
                         CodeFixStatus = codeFixStatus,
+                        FixAllStatus = fixAllStatus,
                         NoCodeFixReason = noCodeFixReason,
                     };
                     diagnostics.Add(diagnostic);
@@ -191,6 +192,8 @@ namespace StyleCop.Analyzers.Status.Generator
 
             this.noCodeFixAttributeTypeSymbol = this.analyzerCompilation.GetTypeByMetadataName("StyleCop.Analyzers.NoCodeFixAttribute");
             this.diagnosticAnalyzerTypeSymbol = this.analyzerCompilation.GetTypeByMetadataName(typeof(DiagnosticAnalyzer).FullName);
+
+            this.batchFixerType = this.codeFixAssembly.GetType("StyleCop.Analyzers.Helpers.CustomBatchFixAllProvider");
 
             this.InitializeCodeFixTypes();
         }
@@ -284,18 +287,22 @@ namespace StyleCop.Analyzers.Status.Generator
             return analyzer.SupportedDiagnostics;
         }
 
-        private CodeFixStatus HasCodeFix(string diagnosticId, INamedTypeSymbol classSymbol, out string noCodeFixReason)
+        private (CodeFixStatus, FixAllStatus) GetCodeFixAndFixAllStatus(string diagnosticId, INamedTypeSymbol classSymbol, out string noCodeFixReason)
         {
-            CodeFixStatus status;
+            CodeFixStatus codeFixStatus;
+            FixAllStatus fixAllStatus;
 
             noCodeFixReason = null;
 
-            var noCodeFixAttribute = classSymbol.GetAttributes().SingleOrDefault(x => x.AttributeClass == this.noCodeFixAttributeTypeSymbol);
+            var noCodeFixAttribute = classSymbol
+                .GetAttributes()
+                .SingleOrDefault(x => x.AttributeClass == this.noCodeFixAttributeTypeSymbol);
 
             bool hasCodeFix = noCodeFixAttribute == null;
             if (!hasCodeFix)
             {
-                status = CodeFixStatus.NotImplemented;
+                codeFixStatus = CodeFixStatus.NotImplemented;
+                fixAllStatus = FixAllStatus.None;
                 if (noCodeFixAttribute.ConstructorArguments.Length > 0)
                 {
                     noCodeFixReason = noCodeFixAttribute.ConstructorArguments[0].Value as string;
@@ -304,12 +311,41 @@ namespace StyleCop.Analyzers.Status.Generator
             else
             {
                 // Check if the code fix actually exists
-                hasCodeFix = this.CodeFixProviders.Any(x => x.FixableDiagnosticIds.Contains(diagnosticId));
+                var codeFixes = this.CodeFixProviders
+                    .Where(x => x.FixableDiagnosticIds.Contains(diagnosticId))
+                    .Select(x => this.IsBatchFixer(x))
+                    .Where(x => x != null)
+                    .Select(x => (bool)x).ToArray();
 
-                status = hasCodeFix ? CodeFixStatus.Implemented : CodeFixStatus.NotYetImplemented;
+                hasCodeFix = codeFixes.Length > 0;
+
+                codeFixStatus = hasCodeFix ? CodeFixStatus.Implemented : CodeFixStatus.NotYetImplemented;
+
+                if (codeFixes.Any(x => x))
+                {
+                    fixAllStatus = FixAllStatus.BatchFixer;
+                }
+                else
+                {
+                    fixAllStatus = FixAllStatus.CustomImplementation;
+                }
             }
 
-            return status;
+            return (codeFixStatus, fixAllStatus);
+        }
+
+        private bool? IsBatchFixer(CodeFixProvider provider)
+        {
+            var fixAllProvider = provider.GetFixAllProvider();
+
+            if (fixAllProvider == null)
+            {
+                return null;
+            }
+            else
+            {
+                return fixAllProvider.GetType() == this.batchFixerType;
+            }
         }
 
         private bool InheritsFrom(INamedTypeSymbol declaration, INamedTypeSymbol possibleBaseType)
