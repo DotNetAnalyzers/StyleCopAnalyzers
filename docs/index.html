@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StyleCopAnalyzers Status</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap-theme.min.css" />
 
@@ -125,13 +125,13 @@
                 {{else CodeFixStatus === NotImplemented}}
                 <i class="fa fa-times" style="color: red;"></i>
                 {{else}}
-                <i class="fa fa-times" style="color: red;"></i>
+                <i class="fa fa-exclamation" style="color: blue;"></i>
                 {{/if}}
             </td>
             <td style="overflow: visible; width: 0;">
                 {{if FixAllStatus === "BatchFixer"}}
                 <i class="fa fa-hourglass" style="color: blue;"></i>
-                {{else CodeFixStatus === CustomImplementation}}
+                {{else FixAllStatus === "CustomImplementation"}}
                 <i class="fa fa-check" style="color: green;"></i>
                 {{else}}
                 <i class="fa fa-times" style="color: red;"></i>

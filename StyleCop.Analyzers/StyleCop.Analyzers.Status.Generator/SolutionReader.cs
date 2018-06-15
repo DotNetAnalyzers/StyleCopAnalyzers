@@ -325,9 +325,13 @@ namespace StyleCop.Analyzers.Status.Generator
                 {
                     fixAllStatus = FixAllStatus.BatchFixer;
                 }
-                else
+                else if (codeFixes.Length > 0)
                 {
                     fixAllStatus = FixAllStatus.CustomImplementation;
+                }
+                else
+                {
+                    fixAllStatus = FixAllStatus.None;
                 }
             }
 
