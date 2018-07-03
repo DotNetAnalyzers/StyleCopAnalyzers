@@ -15,7 +15,9 @@ namespace TestHelper
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Formatting;
+    using Microsoft.CodeAnalysis.Host.Mef;
     using Microsoft.CodeAnalysis.Text;
+    using Microsoft.VisualStudio.Composition;
     using StyleCop.Analyzers;
     using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.Test.Helpers;
@@ -32,6 +34,31 @@ namespace TestHelper
         private static readonly string CSharpDefaultFilePath = DefaultFilePathPrefix + 0 + "." + CSharpDefaultFileExt;
         private static readonly string VisualBasicDefaultFilePath = DefaultFilePathPrefix + 0 + "." + VisualBasicDefaultExt;
         private static readonly string TestProjectName = "TestProject";
+
+        private static readonly Lazy<IExportProviderFactory> ExportProviderFactory;
+
+        static DiagnosticVerifier()
+        {
+            ExportProviderFactory = new Lazy<IExportProviderFactory>(
+                () =>
+                {
+                    var discovery = new AttributedPartDiscovery(Resolver.DefaultInstance, isNonPublicSupported: true);
+                    var parts = Task.Run(() => discovery.CreatePartsAsync(MefHostServices.DefaultAssemblies)).GetAwaiter().GetResult();
+                    var catalog = ComposableCatalog.Create(Resolver.DefaultInstance).AddParts(parts);
+
+                    var configuration = CompositionConfiguration.Create(catalog);
+                    var runtimeComposition = RuntimeComposition.CreateRuntimeComposition(configuration);
+                    return runtimeComposition.CreateExportProviderFactory();
+                },
+                LazyThreadSafetyMode.ExecutionAndPublication);
+        }
+
+        internal static AdhocWorkspace CreateWorkspace()
+        {
+            var exportProvider = ExportProviderFactory.Value.CreateExportProvider();
+            var host = MefV1HostServices.Create(exportProvider.AsExportProvider());
+            return new AdhocWorkspace(host);
+        }
 
         /// <summary>
         /// Given an analyzer and a collection of documents to apply it to, run the analyzer and gather an array of
@@ -115,7 +142,7 @@ namespace TestHelper
         {
             var compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true);
 
-            Solution solution = new AdhocWorkspace()
+            Solution solution = CreateWorkspace()
                 .CurrentSolution
                 .AddProject(projectId, TestProjectName, TestProjectName, language)
                 .WithProjectCompilationOptions(projectId, compilationOptions)
