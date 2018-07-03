@@ -12,7 +12,7 @@ StyleCop Analyzers is configured using two separate mechanisms: code analysis ru
    * Specify project-specific text, such as the name of the company and the structure to use for copyright headers
    * Fine-tune the behavior of certain rules
 
-Code analysis rule sets are the standard way to configure most diagnostic analyzers within Visual Studio 2015. Information about creating and customizing these files can be found in the [Using Rule Sets to Group Code Analysis Rules](https://msdn.microsoft.com/en-us/library/dd264996.aspx) documentation on MSDN.
+Code analysis rule sets are the standard way to configure most diagnostic analyzers within Visual Studio. Information about creating and customizing these files can be found in the [Using Rule Sets to Group Code Analysis Rules](https://docs.microsoft.com/visualstudio/code-quality/using-rule-sets-to-group-code-analysis-rules) documentation on docs.microsoft.com.
 
 ## Getting Started with **stylecop.json**
 
