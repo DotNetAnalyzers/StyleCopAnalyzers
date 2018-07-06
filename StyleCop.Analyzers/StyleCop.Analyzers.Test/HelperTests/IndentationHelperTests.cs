@@ -9,10 +9,12 @@ namespace StyleCop.Analyzers.Test.HelperTests
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Formatting;
+    using Microsoft.CodeAnalysis.Host.Mef;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.Test.Helpers;
+    using TestHelper;
     using Xunit;
 
     /// <summary>
@@ -140,7 +142,7 @@ namespace StyleCop.Analyzers.Test.HelperTests
 
         private static Document CreateTestDocument(string source, int indentationSize = 4, bool useTabs = false, int tabSize = 4)
         {
-            var workspace = new AdhocWorkspace();
+            var workspace = DiagnosticVerifier.CreateWorkspace();
             workspace.Options = workspace.Options
                 .WithChangedOption(FormattingOptions.IndentationSize, LanguageNames.CSharp, indentationSize)
                 .WithChangedOption(FormattingOptions.UseTabs, LanguageNames.CSharp, useTabs)
