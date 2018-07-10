@@ -596,7 +596,7 @@ The [SA1629 Documentation Text Must End With A Period](SA1629.md) analyzer check
 
 | Property | Default Value | Minimum Version | Summary |
 | --- | --- | --- | --- |
-| `excludedFromEndWithAPeriod` | `"seealso"` |  1.1.0 | Specifies the comma separated list of top-level tags within XML documentation that will be excluded from analysis. |
+| `excludeFromPunctuationCheck` | `[ "seealso" ]` |  1.1.0 | Specifies the top-level tags within XML documentation that will be excluded from analysis. |
 
 ## Sharing configuration among solutions
 

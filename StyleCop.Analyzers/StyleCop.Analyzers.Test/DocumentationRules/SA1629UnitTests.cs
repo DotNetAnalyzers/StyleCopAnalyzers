@@ -767,7 +767,7 @@ public interface ITest
 {
   ""settings"": {
     ""documentationRules"": {
-      ""excludedFromEndWithAPeriod"": ""typeparam,example, exception ,permission,author""
+      ""excludeFromPunctuationCheck"": [ ""typeparam"",""example"",""exception"",""permission"",""author"" ]
     }
   }
 }
@@ -817,7 +817,7 @@ public interface ITest
 {
   ""settings"": {
     ""documentationRules"": {
-      ""excludedFromEndWithAPeriod"": """"
+      ""excludeFromPunctuationCheck"": [ ]
     }
   }
 }

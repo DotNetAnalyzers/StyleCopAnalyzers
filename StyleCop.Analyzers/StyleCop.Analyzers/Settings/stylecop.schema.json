@@ -248,10 +248,12 @@
               "description": "The culture that should be used for documentation comments.",
               "default": "en-US"
             },
-            "excludedFromEndWithAPeriod": {
-              "type": "string",
-              "description": "Specifies the comma separated list of top-level tags within XML documentation that will be excluded from analysis for text ending with a period.",
-              "default": "seealso"
+            "excludeFromPunctuationCheck": {
+              "type": "array",
+              "description": "Specifies the top-level tags within XML documentation that will be excluded from punctuation analysis.",
+              "default": [
+                "seealso"
+              ]
             }
           }
         }

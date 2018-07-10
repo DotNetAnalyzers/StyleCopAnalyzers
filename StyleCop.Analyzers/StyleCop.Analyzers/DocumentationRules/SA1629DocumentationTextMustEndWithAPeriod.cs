@@ -105,7 +105,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static void HandleSectionOrBlockXmlElement(SyntaxNodeAnalysisContext context, StyleCopSettings settings, XmlElementSyntax xmlElement, bool startingWithFinalParagraph)
         {
             var startTag = xmlElement.StartTag?.Name?.LocalName.ValueText;
-            if (settings.DocumentationRules.ExcludedFromEndWithAPeriod.Contains(startTag))
+            if (settings.DocumentationRules.ExcludeFromPunctuationCheck.Contains(startTag))
             {
                 return;
             }
