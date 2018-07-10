@@ -526,6 +526,53 @@ public class TestClass
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that <c>new CancellationToken()</c> is replaced by <c>default(CancellationToken)</c> when its used for a default parameter.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2740, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2740")]
+        public async Task VerifyCancellationTokenDefaultParameterAsync()
+        {
+            var testCode = @"using System.Threading;
+
+public class TestClass
+{
+    public TestClass(CancellationToken cancellationToken = new CancellationToken())
+    {
+    }
+
+    public void TestMethod(CancellationToken cancellationToken = new CancellationToken())
+    {
+    }
+}
+";
+
+            var fixedTestCode = @"using System.Threading;
+
+public class TestClass
+{
+    public TestClass(CancellationToken cancellationToken = default(CancellationToken))
+    {
+    }
+
+    public void TestMethod(CancellationToken cancellationToken = default(CancellationToken))
+    {
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                this.CSharpDiagnostic().WithLocation(5, 60),
+                this.CSharpDiagnostic().WithLocation(9, 66),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {

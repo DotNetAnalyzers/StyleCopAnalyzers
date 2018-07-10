@@ -70,7 +70,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             if (IsType<CancellationToken>(namedTypeSymbol))
             {
-                replacement = ConstructMemberAccessSyntax(newExpression.Type, nameof(CancellationToken.None));
+                if (IsDefaultParameterValue(newExpression))
+                {
+                    replacement = SyntaxFactory.DefaultExpression(newExpression.Type);
+                }
+                else
+                {
+                    replacement = ConstructMemberAccessSyntax(newExpression.Type, nameof(CancellationToken.None));
+                }
             }
             else if (IsEnumWithDefaultMember(namedTypeSymbol, out memberName))
             {
@@ -115,6 +122,16 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             return true;
+        }
+
+        private static bool IsDefaultParameterValue(ObjectCreationExpressionSyntax expression)
+        {
+            if (expression.Parent.Parent is ParameterSyntax parameterSyntax)
+            {
+                return parameterSyntax.Parent.Parent is BaseMethodDeclarationSyntax;
+            }
+
+            return false;
         }
 
         /// <summary>
