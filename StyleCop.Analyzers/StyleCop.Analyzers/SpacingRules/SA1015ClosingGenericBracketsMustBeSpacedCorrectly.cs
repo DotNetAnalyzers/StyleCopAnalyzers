@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.SpacingRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// A closing generic bracket within a C# element is not spaced correctly.
@@ -103,6 +104,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 case SyntaxKind.OpenBracketToken:
                 // SemicolonToken isn't listed above, but it's required for reasonable using alias declaration formatting
                 case SyntaxKind.SemicolonToken:
+                case SyntaxKind.ColonToken when nextToken.Parent.IsKind(SyntaxKindEx.CasePatternSwitchLabel):
                     allowTrailingNoSpace = true;
                     allowTrailingSpace = false;
                     break;
