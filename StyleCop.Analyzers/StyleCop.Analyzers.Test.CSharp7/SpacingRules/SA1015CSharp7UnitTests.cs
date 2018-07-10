@@ -50,5 +50,33 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that a pattern in a switch statement that ends with a generic type does not produce a diagnostic.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2735, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2735")]
+        public async Task TestPatternMatchingInSwitchStatementWithGenericTypesAsync()
+        {
+            var testCode = @"using System.Collections.Generic;
+
+public class TestClass
+{
+    public void TestMethod(int i, object value)
+    {
+        switch (i)
+        {
+            case 1 when value is List<TestClass>:
+                break;
+        }
+
+        var x = i == 3 ? value as List<TestClass> : null;
+    }
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
