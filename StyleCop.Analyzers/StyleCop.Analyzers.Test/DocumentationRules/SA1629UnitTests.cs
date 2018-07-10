@@ -19,6 +19,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     /// </summary>
     public class SA1629UnitTests : CodeFixVerifier
     {
+        private string currentTestSettings;
+
         [Fact]
         public async Task TestDocumentationAsync()
         {
@@ -756,6 +758,91 @@ public interface ITest
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestConfigurationSettingsAsync()
+        {
+            this.currentTestSettings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""excludedFromEndWithAPeriod"": ""typeparam,example, exception ,permission,author""
+    }
+  }
+}
+";
+
+            var testCode = @"
+public interface ITest
+{
+    /// <summary>
+    /// Test method #1.
+    /// </summary>
+    /// <typeparam name=""T"">
+    /// Template type
+    /// </typeparam>
+    /// <param name=""arg1"">
+    /// First argument.
+    /// </param>
+    /// <returns>
+    /// Some value.
+    /// </returns>
+    /// <remarks>
+    /// Random remark.
+    /// </remarks>
+    /// <example>
+    /// Random example
+    /// </example>
+    /// <exception cref=""System.Exception"">
+    /// Exception description
+    /// </exception>
+    /// <permission cref=""System.Security.PermissionSet"">
+    /// Everyone can access this method
+    /// </permission>
+    /// <author>
+    /// john.doe@example.com
+    /// </author>
+    int TestMethod1<T>(T arg1);
+}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestConfigurationSettingsEmptyAsync()
+        {
+            this.currentTestSettings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""excludedFromEndWithAPeriod"": """"
+    }
+  }
+}
+";
+
+            var testCode = @"
+public interface ITest
+{
+    /// <summary>Test method #1.</summary>
+    /// <seealso>Missing period</seealso>
+    void TestMethod1();
+}
+";
+
+            DiagnosticResult[] expectedResult =
+            {
+                this.CSharpDiagnostic().WithLocation(5, 32),
+            };
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expectedResult, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected override string GetSettings()
+        {
+            return this.currentTestSettings ?? base.GetSettings();
         }
 
         protected override Project ApplyCompilationOptions(Project project)

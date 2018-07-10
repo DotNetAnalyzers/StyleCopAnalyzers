@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Linq;
     using System.Text.RegularExpressions;
     using LightJson;
 
@@ -25,6 +26,11 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// The default value for the <see cref="DocumentationCulture"/> property.
         /// </summary>
         internal const string DefaultDocumentationCulture = "en-US";
+
+        /// <summary>
+        /// The default value for the <see cref="ExcludedFromEndWithAPeriod"/> property.
+        /// </summary>
+        internal const string DefaultExcludedFromEndWithAPeriod = "seealso";
 
         /// <summary>
         /// This is the backing field for the <see cref="CompanyName"/> property.
@@ -87,6 +93,11 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         private readonly string documentationCulture;
 
         /// <summary>
+        /// This is the backing field for the <see cref="ExcludedFromEndWithAPeriod"/> property.
+        /// </summary>
+        private readonly string excludedFromEndWithAPeriod;
+
+        /// <summary>
         /// This is the cache for the <see cref="GetCopyrightText(string)"/> method.
         /// </summary>
         private string copyrightTextCache;
@@ -111,6 +122,8 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.fileNamingConvention = FileNamingConvention.StyleCop;
 
             this.documentationCulture = DefaultDocumentationCulture;
+
+            this.excludedFromEndWithAPeriod = DefaultExcludedFromEndWithAPeriod;
         }
 
         /// <summary>
@@ -185,6 +198,10 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                     this.documentationCulture = kvp.ToStringValue();
                     break;
 
+                case "excludedFromEndWithAPeriod":
+                    this.excludedFromEndWithAPeriod = kvp.ToStringValue();
+                    break;
+
                 default:
                     break;
                 }
@@ -243,6 +260,17 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
         public string DocumentationCulture =>
             this.documentationCulture;
+
+        public ImmutableArray<string> ExcludedFromEndWithAPeriod
+        {
+            get
+            {
+                return this.excludedFromEndWithAPeriod
+                    .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(s => s.Trim())
+                    .ToImmutableArray();
+            }
+        }
 
         public string GetCopyrightText(string fileName)
         {

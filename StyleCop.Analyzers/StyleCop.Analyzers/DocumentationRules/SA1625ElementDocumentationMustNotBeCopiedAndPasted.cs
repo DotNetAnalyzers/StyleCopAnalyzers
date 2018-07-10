@@ -15,6 +15,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Helpers.ObjectPools;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// The XML documentation for a C# element contains two or more identical entries, indicating that the documentation
@@ -84,11 +85,10 @@ namespace StyleCop.Analyzers.DocumentationRules
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, bool needsComment, IEnumerable<XmlNodeSyntax> syntaxList, params Location[] diagnosticLocations)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, StyleCopSettings settings, bool needsComment, IEnumerable<XmlNodeSyntax> syntaxList, params Location[] diagnosticLocations)
         {
             var objectPool = SharedPools.Default<HashSet<string>>();
             HashSet<string> documentationTexts = objectPool.Allocate();
-            var settings = context.Options.GetStyleCopSettings(context.CancellationToken);
             var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
             var resourceManager = DocumentationResources.ResourceManager;
 
