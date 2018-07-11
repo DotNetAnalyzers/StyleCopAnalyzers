@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Linq;
     using System.Text.RegularExpressions;
     using LightJson;
 
@@ -25,6 +26,11 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// The default value for the <see cref="DocumentationCulture"/> property.
         /// </summary>
         internal const string DefaultDocumentationCulture = "en-US";
+
+        /// <summary>
+        /// The default value for the <see cref="ExcludeFromPunctuationCheck"/> property.
+        /// </summary>
+        internal static readonly ImmutableArray<string> DefaultExcludeFromPunctuationCheck = ImmutableArray.Create("seealso");
 
         /// <summary>
         /// This is the backing field for the <see cref="CompanyName"/> property.
@@ -87,6 +93,11 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         private readonly string documentationCulture;
 
         /// <summary>
+        /// This is the backing field for the <see cref="ExcludeFromPunctuationCheck"/> property.
+        /// </summary>
+        private readonly ImmutableArray<string> excludeFromPunctuationCheck;
+
+        /// <summary>
         /// This is the cache for the <see cref="GetCopyrightText(string)"/> method.
         /// </summary>
         private string copyrightTextCache;
@@ -111,6 +122,8 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.fileNamingConvention = FileNamingConvention.StyleCop;
 
             this.documentationCulture = DefaultDocumentationCulture;
+
+            this.excludeFromPunctuationCheck = DefaultExcludeFromPunctuationCheck;
         }
 
         /// <summary>
@@ -185,6 +198,17 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                     this.documentationCulture = kvp.ToStringValue();
                     break;
 
+                case "excludeFromPunctuationCheck":
+                    kvp.AssertIsArray();
+                    var excludedTags = ImmutableArray.CreateBuilder<string>();
+                    foreach (var value in kvp.Value.AsJsonArray)
+                    {
+                        excludedTags.Add(value.AsString);
+                    }
+
+                    this.excludeFromPunctuationCheck = excludedTags.ToImmutable();
+                    break;
+
                 default:
                     break;
                 }
@@ -243,6 +267,9 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
         public string DocumentationCulture =>
             this.documentationCulture;
+
+        public ImmutableArray<string> ExcludeFromPunctuationCheck
+            => this.excludeFromPunctuationCheck;
 
         public string GetCopyrightText(string fileName)
         {

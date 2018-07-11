@@ -244,9 +244,16 @@
               "enum": [ "stylecop", "metadata" ]
             },
             "documentationCulture": {
-                "type": "string",
-                "description": "The culture that should be used for documentation comments.",
-                "default": "en-US"
+              "type": "string",
+              "description": "The culture that should be used for documentation comments.",
+              "default": "en-US"
+            },
+            "excludeFromPunctuationCheck": {
+              "type": "array",
+              "description": "Specifies the top-level tags within XML documentation that will be excluded from punctuation analysis.",
+              "default": [
+                "seealso"
+              ]
             }
           }
         }

@@ -13,6 +13,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// A section of the XML header documentation for a C# element does not end with a period (also known as a full
@@ -74,11 +75,11 @@ namespace StyleCop.Analyzers.DocumentationRules
             ImmutableArray.Create(Descriptor);
 
         /// <inheritdoc/>
-        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, bool needsComment, IEnumerable<XmlNodeSyntax> syntaxList, params Location[] diagnosticLocations)
+        protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, StyleCopSettings settings, bool needsComment, IEnumerable<XmlNodeSyntax> syntaxList, params Location[] diagnosticLocations)
         {
             foreach (var xmlElement in syntaxList.OfType<XmlElementSyntax>())
             {
-                HandleSectionOrBlockXmlElement(context, xmlElement, startingWithFinalParagraph: true);
+                HandleSectionOrBlockXmlElement(context, settings, xmlElement, startingWithFinalParagraph: true);
             }
         }
 
@@ -101,9 +102,10 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
         }
 
-        private static void HandleSectionOrBlockXmlElement(SyntaxNodeAnalysisContext context, XmlElementSyntax xmlElement, bool startingWithFinalParagraph)
+        private static void HandleSectionOrBlockXmlElement(SyntaxNodeAnalysisContext context, StyleCopSettings settings, XmlElementSyntax xmlElement, bool startingWithFinalParagraph)
         {
-            if (xmlElement.StartTag?.Name?.LocalName.ValueText == XmlCommentHelper.SeeAlsoXmlTag)
+            var startTag = xmlElement.StartTag?.Name?.LocalName.ValueText;
+            if (settings.DocumentationRules.ExcludeFromPunctuationCheck.Contains(startTag))
             {
                 return;
             }
@@ -146,7 +148,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                     case XmlCommentHelper.NoteXmlTag:
                     case XmlCommentHelper.ParaXmlTag:
                         // Recursively handle <note> and <para> elements
-                        HandleSectionOrBlockXmlElement(context, childXmlElement, startingWithFinalParagraph);
+                        HandleSectionOrBlockXmlElement(context, settings, childXmlElement, startingWithFinalParagraph);
                         break;
 
                     default:

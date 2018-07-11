@@ -590,6 +590,14 @@ File naming convention | Expected file name
 stylecop               | Class1{T1,T2,T3}.cs
 metadata               | Class1`3.cs
 
+### Text ending with a period
+
+The [SA1629 Documentation Text Must End With A Period](SA1629.md) analyzer checks if sections within XML documentation end with a period. The following properties can be used to control the behavior of the analyzer:
+
+| Property | Default Value | Minimum Version | Summary |
+| --- | --- | --- | --- |
+| `excludeFromPunctuationCheck` | `[ "seealso" ]` |  1.1.0 | Specifies the top-level tags within XML documentation that will be excluded from analysis. |
+
 ## Sharing configuration among solutions
 
 It is possible to define your preferred configuration once and reuse it across multiple independent projects. This involves rolling out your own NuGet package,
