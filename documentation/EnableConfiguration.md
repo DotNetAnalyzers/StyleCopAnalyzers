@@ -1,8 +1,15 @@
 ﻿# Enabling **stylecop.json**
 
-At this time, the code fix is not able to fully configure the newly-created **stylecop.json** file for use. This is
-tracked in bug report [dotnet/roslyn#4655](https://github.com/dotnet/roslyn/issues/4655). In the mean time, users must
-manually perform the following additional steps after creating the **stylecop.json** file.
+## StyleCop.Analyzers v1.2 and above
+
+If you are using version 1.1.1 or newer, you no longer need to include stylecop.json using the methods below.  It is
+automatically included if it is next to the project or in a directory above the project.  
+
+## StyleCop.Analyzers v1.1 and below
+
+For older versions of the StyleCop.Analyzers package (v1.1.0 and below), the code fix is not able to fully configure the
+ newly-created **stylecop.json** file for use. This is tracked in bug report [dotnet/roslyn#4655](https://github.com/dotnet/roslyn/issues/4655).
+In the mean time, users must manually perform the following additional steps after creating the **stylecop.json** file.
 
 In Visual Studio 2017:
 

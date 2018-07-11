@@ -44,7 +44,7 @@ Describes the configuration options for StyleCop.Analyzers
 
 **[How to enable the configuration](documentation/EnableConfiguration.md)**
 
-Describes how to enable the **stylecop.json** file for usage.
+Describes how to enable the **stylecop.json** file for usage in version 1.1.0 and below of the StyleCop.Analyzers package.
 
 **[Known changes](documentation/KnownChanges.md)**
 

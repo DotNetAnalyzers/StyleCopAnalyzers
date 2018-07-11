@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--
+  Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
+  Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+-->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--
+    Attempt to automatically include stylecop.json in the <AdditionalFiles /> item group.
+    
+    To disable this functionality, set the MSBuild property "AutoIncludeStyleCopJson" to "false".  Example:
+    
+    <PropertyGroup>
+      <AutoIncludeStyleCopJson>false</AutoIncludeStyleCopJson>
+    </PropertyGroup>
+  -->
+  <ImportGroup Condition=" '$(AutoIncludeStyleCopJson)' != 'false' ">
+    <!--
+      MSBuild 15.0+ has support for newer syntax that will cause project parsing errors so import the
+      appropriate file based on the version of MSBuild being used.
+    -->
+    <Import Project="MSBuild15.props"
+            Condition=" '$(MSBuildAssemblyVersion)' != '' And '$(MSBuildAssemblyVersion)' >= '15.0' " />
+    
+    <Import Project="MSBuildOld.props"
+            Condition=" '$(MSBuildAssemblyVersion)' == '' Or '$(MSBuildAssemblyVersion)' &lt; '15.0' " />
+
+  </ImportGroup>
+</Project>
