@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <LangVersion>7</LangVersion>
+    <LangVersion>7.2</LangVersion>
     <Features>strict</Features>
   </PropertyGroup>
 
