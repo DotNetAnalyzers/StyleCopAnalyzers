@@ -269,21 +269,21 @@ namespace LightJson
             {
                 switch (this.Type)
                 {
-                    case JsonValueType.Boolean:
-                        return this.value == 1;
+                case JsonValueType.Boolean:
+                    return this.value == 1;
 
-                    case JsonValueType.Number:
-                        return this.value != 0;
+                case JsonValueType.Number:
+                    return this.value != 0;
 
-                    case JsonValueType.String:
-                        return (string)this.reference != string.Empty;
+                case JsonValueType.String:
+                    return (string)this.reference != string.Empty;
 
-                    case JsonValueType.Object:
-                    case JsonValueType.Array:
-                        return true;
+                case JsonValueType.Object:
+                case JsonValueType.Array:
+                    return true;
 
-                    default:
-                        return false;
+                default:
+                    return false;
                 }
             }
         }
@@ -323,27 +323,27 @@ namespace LightJson
             {
                 switch (this.Type)
                 {
-                    case JsonValueType.Boolean:
-                        return (this.value == 1)
-                            ? 1
-                            : 0;
+                case JsonValueType.Boolean:
+                    return (this.value == 1)
+                        ? 1
+                        : 0;
 
-                    case JsonValueType.Number:
-                        return this.value;
+                case JsonValueType.Number:
+                    return this.value;
 
-                    case JsonValueType.String:
-                        double number;
-                        if (double.TryParse((string)this.reference, NumberStyles.Float, CultureInfo.InvariantCulture, out number))
-                        {
-                            return number;
-                        }
-                        else
-                        {
-                            goto default;
-                        }
+                case JsonValueType.String:
+                    double number;
+                    if (double.TryParse((string)this.reference, NumberStyles.Float, CultureInfo.InvariantCulture, out number))
+                    {
+                        return number;
+                    }
+                    else
+                    {
+                        goto default;
+                    }
 
-                    default:
-                        return 0;
+                default:
+                    return 0;
                 }
             }
         }
@@ -358,19 +358,19 @@ namespace LightJson
             {
                 switch (this.Type)
                 {
-                    case JsonValueType.Boolean:
-                        return (this.value == 1)
-                            ? "true"
-                            : "false";
+                case JsonValueType.Boolean:
+                    return (this.value == 1)
+                        ? "true"
+                        : "false";
 
-                    case JsonValueType.Number:
-                        return this.value.ToString(CultureInfo.InvariantCulture);
+                case JsonValueType.Number:
+                    return this.value.ToString(CultureInfo.InvariantCulture);
 
-                    case JsonValueType.String:
-                        return (string)this.reference;
+                case JsonValueType.String:
+                    return (string)this.reference;
 
-                    default:
-                        return null;
+                default:
+                    return null;
                 }
             }
         }
@@ -434,17 +434,17 @@ namespace LightJson
             {
                 switch (this.Type)
                 {
-                    case JsonValueType.Boolean:
-                    case JsonValueType.Number:
-                        return this.value;
+                case JsonValueType.Boolean:
+                case JsonValueType.Number:
+                    return this.value;
 
-                    case JsonValueType.String:
-                    case JsonValueType.Object:
-                    case JsonValueType.Array:
-                        return this.reference;
+                case JsonValueType.String:
+                case JsonValueType.Object:
+                case JsonValueType.Array:
+                    return this.reference;
 
-                    default:
-                        return null;
+                default:
+                    return null;
                 }
             }
         }
