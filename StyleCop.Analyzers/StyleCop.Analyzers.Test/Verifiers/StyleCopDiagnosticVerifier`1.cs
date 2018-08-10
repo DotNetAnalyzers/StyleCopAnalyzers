@@ -51,13 +51,13 @@ namespace StyleCop.Analyzers.Test.Verifiers
 
             public CSharpTest()
             {
-                this.OptionsTransform = options =>
+                this.OptionsTransforms.Add(options =>
                     options
                     .WithChangedOption(FormattingOptions.IndentationSize, this.Language, this.IndentationSize)
                     .WithChangedOption(FormattingOptions.TabSize, this.Language, this.TabSize)
-                    .WithChangedOption(FormattingOptions.UseTabs, this.Language, this.UseTabs);
+                    .WithChangedOption(FormattingOptions.UseTabs, this.Language, this.UseTabs));
 
-                this.SolutionTransform = (solution, projectId) =>
+                this.SolutionTransforms.Add((solution, projectId) =>
                 {
                     var settings = this.Settings;
 
@@ -101,7 +101,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
                     }
 
                     return solution;
-                };
+                });
             }
 
             /// <summary>

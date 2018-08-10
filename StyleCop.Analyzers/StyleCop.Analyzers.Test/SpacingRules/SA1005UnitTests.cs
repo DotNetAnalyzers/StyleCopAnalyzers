@@ -268,21 +268,18 @@ public class Bar
             await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
 
             // Verify that this works if the project was configured to treat documentation comments as regular comments
-            var test = new CSharpTest
+            await new CSharpTest
             {
                 TestCode = testCode,
-            };
-
-            var baseSolutionTransform = test.SolutionTransform;
-            test.SolutionTransform = (solution, projectId) =>
-            {
-                solution = baseSolutionTransform(solution, projectId);
-                var project = solution.GetProject(projectId);
-
-                return solution.WithProjectParseOptions(projectId, project.ParseOptions.WithDocumentationMode(DocumentationMode.None));
-            };
-
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+                SolutionTransforms =
+                {
+                    (solution, projectId) =>
+                    {
+                        var project = solution.GetProject(projectId);
+                        return solution.WithProjectParseOptions(projectId, project.ParseOptions.WithDocumentationMode(DocumentationMode.None));
+                    },
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

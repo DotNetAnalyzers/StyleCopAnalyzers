@@ -92,9 +92,9 @@ namespace StyleCop.Analyzers.Test.Verifiers
 
         public int NumberOfFixAllIterations { get; set; } = 1;
 
-        public Func<OptionSet, OptionSet> OptionsTransform { get; set; } = options => options;
+        public List<Func<OptionSet, OptionSet>> OptionsTransforms { get; } = new List<Func<OptionSet, OptionSet>>();
 
-        public Func<Solution, ProjectId, Solution> SolutionTransform { get; set; } = (solution, _) => solution;
+        public List<Func<Solution, ProjectId, Solution>> SolutionTransforms { get; } = new List<Func<Solution, ProjectId, Solution>>();
 
         public async Task RunAsync(CancellationToken cancellationToken)
         {
@@ -435,12 +435,20 @@ namespace StyleCop.Analyzers.Test.Verifiers
                 solution = solution.AddMetadataReference(projectId, MetadataReferences.SystemValueTupleReference);
             }
 
-            solution.Workspace.Options = this.OptionsTransform(solution.Workspace.Options);
+            foreach (var transform in this.OptionsTransforms)
+            {
+                solution.Workspace.Options = transform(solution.Workspace.Options);
+            }
 
             ParseOptions parseOptions = solution.GetProject(projectId).ParseOptions;
             solution = solution.WithProjectParseOptions(projectId, parseOptions.WithDocumentationMode(DocumentationMode.Diagnose));
 
-            return this.SolutionTransform(solution, projectId);
+            foreach (var transform in this.SolutionTransforms)
+            {
+                solution = transform(solution, projectId);
+            }
+
+            return solution;
         }
 
         /// <summary>
