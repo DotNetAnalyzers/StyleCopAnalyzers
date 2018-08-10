@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.Test.HelperTests.ObjectPools
     using StyleCop.Analyzers.Helpers.ObjectPools;
     using Xunit;
 
+    [Collection(nameof(SequentialTestCollection))]
     public class ObjectPoolTests
     {
         [Fact]
