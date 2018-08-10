@@ -73,40 +73,6 @@ namespace TestHelper
         protected static DiagnosticResult[] EmptyDiagnosticResults { get; } = { };
 
         /// <summary>
-        /// Verifies that the analyzer will properly handle an empty source.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task TestEmptySourceAsync()
-        {
-            var testCode = string.Empty;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Verifies that each diagnostics contains a <see cref="DiagnosticDescriptor.HelpLinkUri"/> in the expected
-        /// format.
-        /// </summary>
-        [Fact]
-        public void TestHelpLink()
-        {
-            foreach (var diagnosticAnalyzer in this.GetCSharpDiagnosticAnalyzers())
-            {
-                foreach (var diagnostic in diagnosticAnalyzer.SupportedDiagnostics)
-                {
-                    if (diagnostic.DefaultSeverity == DiagnosticSeverity.Hidden && diagnostic.CustomTags.Contains(WellKnownDiagnosticTags.NotConfigurable))
-                    {
-                        // This diagnostic will never appear in the UI.
-                        continue;
-                    }
-
-                    string expected = $"https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/{diagnostic.Id}.md";
-                    Assert.Equal(expected, diagnostic.HelpLinkUri);
-                }
-            }
-        }
-
-        /// <summary>
         /// Gets the C# analyzers being tested.
         /// </summary>
         /// <returns>
