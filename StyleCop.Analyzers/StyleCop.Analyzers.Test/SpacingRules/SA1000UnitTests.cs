@@ -8,7 +8,9 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using StyleCop.Analyzers.SpacingRules;
     using TestHelper;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<StyleCop.Analyzers.SpacingRules.SA1000KeywordsMustBeSpacedCorrectly, StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.SpacingRules.SA1000KeywordsMustBeSpacedCorrectly,
+        StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1000KeywordsMustBeSpacedCorrectly"/> and
@@ -16,8 +18,6 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     /// </summary>
     public class SA1000UnitTests
     {
-        protected static DiagnosticResult[] EmptyDiagnosticResults { get; } = { };
-
         [Fact]
         public async Task TestCatchallStatementAsync()
         {
