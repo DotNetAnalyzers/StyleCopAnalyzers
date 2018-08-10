@@ -102,7 +102,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
 
             var expected = this.ExpectedDiagnostics.ToArray();
             await this.VerifyDiagnosticsAsync(new[] { this.TestCode }, expected, filenames: null, cancellationToken).ConfigureAwait(false);
-            if (this.FixedCode != null)
+            if (this.HasFixableDiagnostics())
             {
                 await this.VerifyDiagnosticsAsync(new[] { this.FixedCode }, this.RemainingDiagnostics.ToArray(), filenames: null, cancellationToken).ConfigureAwait(false);
                 await this.VerifyFixAsync(numberOfIncrementalIterations: this.NumberOfIncrementalIterations, numberOfFixAllIterations: this.NumberOfFixAllIterations, cancellationToken: cancellationToken).ConfigureAwait(false);
@@ -122,6 +122,31 @@ namespace StyleCop.Analyzers.Test.Verifiers
         /// </summary>
         /// <returns>The <see cref="CodeFixProvider"/> to be used for C# code.</returns>
         protected abstract IEnumerable<CodeFixProvider> GetCodeFixProviders();
+
+        private bool HasFixableDiagnostics()
+        {
+            var fixers = this.GetCodeFixProviders().ToArray();
+            if (HasFixableDiagnosticsCore())
+            {
+                if (this.FixedCode != null)
+                {
+                    return true;
+                }
+
+                Assert.Empty(this.RemainingDiagnostics);
+                return false;
+            }
+
+            Assert.True(string.IsNullOrEmpty(this.FixedCode) || this.FixedCode == this.TestCode);
+            Assert.Empty(this.RemainingDiagnostics);
+            return false;
+
+            // Local function
+            bool HasFixableDiagnosticsCore()
+            {
+                return this.ExpectedDiagnostics.Any(diagnostic => fixers.Any(fixer => fixer.FixableDiagnosticIds.Contains(diagnostic.Id)));
+            }
+        }
 
         private static bool IsSubjectToExclusion(DiagnosticResult result)
         {

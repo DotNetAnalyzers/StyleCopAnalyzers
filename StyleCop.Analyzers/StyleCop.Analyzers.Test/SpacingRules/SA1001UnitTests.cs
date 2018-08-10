@@ -374,7 +374,7 @@ public class TestClass
             var test = new CSharpTest
             {
                 TestCode = originalCode,
-                FixedCode = fixedCode != originalCode ? fixedCode : null,
+                FixedCode = fixedCode,
             };
 
             test.ExpectedDiagnostics.AddRange(expected);

@@ -964,7 +964,7 @@ namespace Namespace
             var test = new CSharpTest
             {
                 TestCode = testCode,
-                FixedCode = fixedTest != testCode ? fixedTest : null,
+                FixedCode = fixedTest,
             };
 
             test.ExpectedDiagnostics.AddRange(expected);
@@ -997,7 +997,7 @@ namespace Namespace
             var test = new CSharpTest
             {
                 TestCode = testCode,
-                FixedCode = fixedTest != testCode ? fixedTest : null,
+                FixedCode = fixedTest,
             };
 
             test.ExpectedDiagnostics.AddRange(expected);

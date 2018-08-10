@@ -236,8 +236,8 @@ public class Foo
             var ignoredStatement = $"var i = (int) {operatorToken}2;";
             var correctStatement = $"var i = (int){operatorToken}2;";
 
-            await this.TestWhitespaceInStatementOrDeclAsync(ignoredStatement, string.Empty, EmptyDiagnosticResults).ConfigureAwait(false);
-            await this.TestWhitespaceInStatementOrDeclAsync(correctStatement, string.Empty, EmptyDiagnosticResults).ConfigureAwait(false);
+            await this.TestWhitespaceInStatementOrDeclAsync(ignoredStatement, null, EmptyDiagnosticResults).ConfigureAwait(false);
+            await this.TestWhitespaceInStatementOrDeclAsync(correctStatement, null, EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -1019,12 +1019,12 @@ public class TestClass
 }}
 ";
             string originalCode = string.Format(template, originalStatement);
-            string fixedCode = string.Format(template, fixedStatement);
+            string fixedCode = string.Format(template, fixedStatement ?? originalStatement);
 
             var test = new CSharpTest
             {
                 TestCode = originalCode,
-                FixedCode = expected.Length > 0 ? fixedCode : null,
+                FixedCode = fixedCode,
             };
 
             test.ExpectedDiagnostics.AddRange(expected);

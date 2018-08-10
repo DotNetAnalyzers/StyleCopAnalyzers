@@ -261,7 +261,7 @@ public class ClassName
                 @"var i = new int[1];
             i[0]{0};", operatorText);
 
-            await this.TestWhitespaceInStatementOrDeclAsync(validStatament, string.Empty, EmptyDiagnosticResults).ConfigureAwait(false);
+            await this.TestWhitespaceInStatementOrDeclAsync(validStatament, null, EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Theory]
@@ -375,12 +375,12 @@ class ClassName
 }}
 ";
             string originalCode = string.Format(template, originalStatement);
-            string fixedCode = string.Format(template, fixedStatement);
+            string fixedCode = string.Format(template, fixedStatement ?? originalStatement);
 
             var test = new CSharpTest
             {
                 TestCode = originalCode,
-                FixedCode = expected.Length > 0 ? fixedCode : null,
+                FixedCode = fixedCode,
             };
 
             test.ExpectedDiagnostics.AddRange(expected);
