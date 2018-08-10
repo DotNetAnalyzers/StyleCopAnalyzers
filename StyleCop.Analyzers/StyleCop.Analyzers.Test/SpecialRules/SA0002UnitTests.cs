@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.Test.SpecialRules
 {
     using System;
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
     using System.Threading;
@@ -16,37 +15,38 @@ namespace StyleCop.Analyzers.Test.SpecialRules
     using StyleCop.Analyzers.SpecialRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.SpecialRules.SA0002InvalidSettingsFile>;
 
     /// <summary>
     /// Unit tests for <see cref="SA0002InvalidSettingsFile"/>.
     /// </summary>
-    public class SA0002UnitTests : DiagnosticVerifier
+    public class SA0002UnitTests
     {
         private const string TestCode = @"
 namespace NamespaceName { }
 ";
 
-        private string settings;
-
         [Fact]
         public async Task TestMissingSettingsAsync()
         {
-           await this.VerifyCSharpDiagnosticAsync(TestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+           await VerifyCSharpDiagnosticAsync(TestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestValidSettingsAsync()
         {
-            this.settings = SettingsFileCodeFixProvider.DefaultSettingsFileContent;
-
-            await this.VerifyCSharpDiagnosticAsync(TestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest
+            {
+                TestCode = TestCode,
+                Settings = SettingsFileCodeFixProvider.DefaultSettingsFileContent,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestInvalidSettingsAsync()
         {
             // The settings file is missing a comma after the $schema property
-            this.settings = @"
+            var settings = @"
 {
   ""$schema"": ""https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json""
   ""settings"": {
@@ -59,15 +59,20 @@ namespace NamespaceName { }
 ";
 
             // This diagnostic is reported without a location
-            DiagnosticResult expected = this.CSharpDiagnostic();
+            DiagnosticResult expected = Diagnostic();
 
-            await this.VerifyCSharpDiagnosticAsync(TestCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest
+            {
+                TestCode = TestCode,
+                ExpectedDiagnostics = { expected },
+                Settings = settings,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestInvalidSettingStringValueAsync()
         {
-            this.settings = @"
+            var settings = @"
 {
   ""settings"": {
     ""documentationRules"": {
@@ -78,15 +83,20 @@ namespace NamespaceName { }
 ";
 
             // This diagnostic is reported without a location
-            DiagnosticResult expected = this.CSharpDiagnostic();
+            DiagnosticResult expected = Diagnostic();
 
-            await this.VerifyCSharpDiagnosticAsync(TestCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest
+            {
+                TestCode = TestCode,
+                ExpectedDiagnostics = { expected },
+                Settings = settings,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestInvalidSettingStringArrayElementValueAsync()
         {
-            this.settings = @"
+            var settings = @"
 {
   ""settings"": {
     ""namingRules"": {
@@ -97,15 +107,20 @@ namespace NamespaceName { }
 ";
 
             // This diagnostic is reported without a location
-            DiagnosticResult expected = this.CSharpDiagnostic();
+            DiagnosticResult expected = Diagnostic();
 
-            await this.VerifyCSharpDiagnosticAsync(TestCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest
+            {
+                TestCode = TestCode,
+                ExpectedDiagnostics = { expected },
+                Settings = settings,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestInvalidSettingBooleanValueAsync()
         {
-            this.settings = @"
+            var settings = @"
 {
   ""settings"": {
     ""documentationRules"": {
@@ -116,15 +131,20 @@ namespace NamespaceName { }
 ";
 
             // This diagnostic is reported without a location
-            DiagnosticResult expected = this.CSharpDiagnostic();
+            DiagnosticResult expected = Diagnostic();
 
-            await this.VerifyCSharpDiagnosticAsync(TestCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest
+            {
+                TestCode = TestCode,
+                ExpectedDiagnostics = { expected },
+                Settings = settings,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestInvalidSettingIntegerValueAsync()
         {
-            this.settings = @"
+            var settings = @"
 {
   ""settings"": {
     ""indentation"": {
@@ -135,15 +155,20 @@ namespace NamespaceName { }
 ";
 
             // This diagnostic is reported without a location
-            DiagnosticResult expected = this.CSharpDiagnostic();
+            DiagnosticResult expected = Diagnostic();
 
-            await this.VerifyCSharpDiagnosticAsync(TestCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest
+            {
+                TestCode = TestCode,
+                ExpectedDiagnostics = { expected },
+                Settings = settings,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestInvalidSettingEnumValueNotStringAsync()
         {
-            this.settings = @"
+            var settings = @"
 {
   ""settings"": {
     ""documentationRules"": {
@@ -154,15 +179,20 @@ namespace NamespaceName { }
 ";
 
             // This diagnostic is reported without a location
-            DiagnosticResult expected = this.CSharpDiagnostic();
+            DiagnosticResult expected = Diagnostic();
 
-            await this.VerifyCSharpDiagnosticAsync(TestCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest
+            {
+                TestCode = TestCode,
+                ExpectedDiagnostics = { expected },
+                Settings = settings,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestInvalidSettingArrayElementEnumValueNotStringAsync()
         {
-            this.settings = @"
+            var settings = @"
 {
   ""settings"": {
     ""maintainabilityRules"": {
@@ -173,15 +203,20 @@ namespace NamespaceName { }
 ";
 
             // This diagnostic is reported without a location
-            DiagnosticResult expected = this.CSharpDiagnostic();
+            DiagnosticResult expected = Diagnostic();
 
-            await this.VerifyCSharpDiagnosticAsync(TestCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest
+            {
+                TestCode = TestCode,
+                ExpectedDiagnostics = { expected },
+                Settings = settings,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestInvalidSettingArrayElementEnumValueNotRecognizedAsync()
         {
-            this.settings = @"
+            var settings = @"
 {
   ""settings"": {
     ""maintainabilityRules"": {
@@ -192,15 +227,20 @@ namespace NamespaceName { }
 ";
 
             // This diagnostic is reported without a location
-            DiagnosticResult expected = this.CSharpDiagnostic();
+            DiagnosticResult expected = Diagnostic();
 
-            await this.VerifyCSharpDiagnosticAsync(TestCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest
+            {
+                TestCode = TestCode,
+                ExpectedDiagnostics = { expected },
+                Settings = settings,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestInvalidSettingArrayAsync()
         {
-            this.settings = @"
+            var settings = @"
 {
   ""settings"": {
     ""namingRules"": {
@@ -211,15 +251,20 @@ namespace NamespaceName { }
 ";
 
             // This diagnostic is reported without a location
-            DiagnosticResult expected = this.CSharpDiagnostic();
+            DiagnosticResult expected = Diagnostic();
 
-            await this.VerifyCSharpDiagnosticAsync(TestCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest
+            {
+                TestCode = TestCode,
+                ExpectedDiagnostics = { expected },
+                Settings = settings,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestInvalidSettingObjectAsync()
         {
-            this.settings = @"
+            var settings = @"
 {
   ""settings"": {
     ""namingRules"": true
@@ -228,16 +273,21 @@ namespace NamespaceName { }
 ";
 
             // This diagnostic is reported without a location
-            DiagnosticResult expected = this.CSharpDiagnostic();
+            DiagnosticResult expected = Diagnostic();
 
-            await this.VerifyCSharpDiagnosticAsync(TestCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest
+            {
+                TestCode = TestCode,
+                ExpectedDiagnostics = { expected },
+                Settings = settings,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestInvalidSettingSyntaxAsync()
         {
             // Missing the ':' between "companyName" and "name"
-            this.settings = @"
+            var settings = @"
 {
   ""settings"": {
     ""documentationRules"": {
@@ -248,9 +298,14 @@ namespace NamespaceName { }
 ";
 
             // This diagnostic is reported without a location
-            DiagnosticResult expected = this.CSharpDiagnostic();
+            DiagnosticResult expected = Diagnostic();
 
-            await this.VerifyCSharpDiagnosticAsync(TestCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest
+            {
+                TestCode = TestCode,
+                ExpectedDiagnostics = { expected },
+                Settings = settings,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -258,12 +313,17 @@ namespace NamespaceName { }
         {
             // The test infrastructure will not add a settings file to the compilation if GetSettings returns null or an empty string.
             // This is why we set settings to a simple whitespace character.
-            this.settings = " ";
+            var settings = " ";
 
             // This diagnostic is reported without a location
-            DiagnosticResult expected = this.CSharpDiagnostic();
+            DiagnosticResult expected = Diagnostic();
 
-            await this.VerifyCSharpDiagnosticAsync(TestCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest
+            {
+                TestCode = TestCode,
+                ExpectedDiagnostics = { expected },
+                Settings = settings,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -279,18 +339,6 @@ namespace NamespaceName { }
             Assert.Null(additionalFiles[0].GetText(CancellationToken.None));
             var context = new CompilationAnalysisContext(compilation: null, options: new AnalyzerOptions(additionalFiles), reportDiagnostic: null, isSupportedDiagnostic: null, cancellationToken: CancellationToken.None);
             Assert.Throws<ArgumentNullException>(() => analysisContext.CompilationAction(context));
-        }
-
-        /// <inheritdoc/>
-        protected override string GetSettings()
-        {
-            return this.settings;
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA0002InvalidSettingsFile();
         }
 
         private class InvalidAdditionalText : AdditionalText

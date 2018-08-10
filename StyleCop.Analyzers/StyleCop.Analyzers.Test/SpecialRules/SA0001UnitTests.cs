@@ -3,22 +3,19 @@
 
 namespace StyleCop.Analyzers.Test.SpecialRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.SpecialRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.SpecialRules.SA0001XmlCommentAnalysisDisabled>;
 
     /// <summary>
     /// Unit tests for <see cref="SA0001XmlCommentAnalysisDisabled"/>.
     /// </summary>
-    public class SA0001UnitTests : DiagnosticVerifier
+    public class SA0001UnitTests
     {
-        private DocumentationMode documentationMode;
-
         [Theory]
         [InlineData(DocumentationMode.Parse)]
         [InlineData(DocumentationMode.Diagnose)]
@@ -29,8 +26,18 @@ namespace StyleCop.Analyzers.Test.SpecialRules
 }
 ";
 
-            this.documentationMode = documentationMode;
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                SolutionTransforms =
+                {
+                    (solution, projectId) =>
+                    {
+                        var project = solution.GetProject(projectId);
+                        return solution.WithProjectParseOptions(projectId, project.ParseOptions.WithDocumentationMode(documentationMode));
+                    },
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -43,24 +50,21 @@ namespace StyleCop.Analyzers.Test.SpecialRules
 ";
 
             // This diagnostic is reported without a location
-            DiagnosticResult expected = this.CSharpDiagnostic();
+            DiagnosticResult expected = Diagnostic();
 
-            this.documentationMode = documentationMode;
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA0001XmlCommentAnalysisDisabled();
-        }
-
-        protected override Solution CreateSolution(ProjectId projectId, string language)
-        {
-            Solution solution = base.CreateSolution(projectId, language);
-            Project project = solution.GetProject(projectId);
-
-            return solution.WithProjectParseOptions(projectId, project.ParseOptions.WithDocumentationMode(this.documentationMode));
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics = { expected },
+                SolutionTransforms =
+                {
+                    (solution, projectId) =>
+                    {
+                        var project = solution.GetProject(projectId);
+                        return solution.WithProjectParseOptions(projectId, project.ParseOptions.WithDocumentationMode(documentationMode));
+                    },
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
