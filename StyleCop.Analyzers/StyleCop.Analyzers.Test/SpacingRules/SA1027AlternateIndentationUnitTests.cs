@@ -237,16 +237,8 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             var test = new StyleCopCodeFixVerifier<SA1027UseTabsCorrectly, SA1027CodeFixProvider>.CSharpTest
             {
                 TestCode = source,
-                Settings = @"
-{
-    ""settings"": {
-        ""indentation"": {
-            ""useTabs"": true,
-            ""tabSize"": 3
-        }
-    }
-}
-",
+                UseTabs = true,
+                TabSize = 3,
             };
 
             test.ExpectedDiagnostics.AddRange(expected);
@@ -259,16 +251,8 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             {
                 TestCode = source,
                 FixedCode = fixedSource,
-                Settings = @"
-{
-    ""settings"": {
-        ""indentation"": {
-            ""useTabs"": true,
-            ""tabSize"": 3
-        }
-    }
-}
-",
+                UseTabs = true,
+                TabSize = 3,
             };
 
             test.ExpectedDiagnostics.AddRange(expected);
