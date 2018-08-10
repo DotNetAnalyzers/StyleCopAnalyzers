@@ -3,19 +3,19 @@
 
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.SpacingRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.SpacingRules.SA1023DereferenceAndAccessOfSymbolsMustBeSpacedCorrectly,
+        StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1023DereferenceAndAccessOfSymbolsMustBeSpacedCorrectly"/>.
     /// </summary>
-    public class SA1023UnitTests : CodeFixVerifier
+    public class SA1023UnitTests
     {
         /// <summary>
         /// Verifies that the analyzer will properly handle valid dereference and access of symbols.
@@ -46,7 +46,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -108,31 +108,29 @@ x;
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(6, 12).WithArguments("be followed by a space"),
-                this.CSharpDiagnostic().WithLocation(8, 13).WithArguments("not be preceded by a space"),
-                this.CSharpDiagnostic().WithLocation(8, 13).WithArguments("not be followed by a space"),
-                this.CSharpDiagnostic().WithLocation(9, 21).WithArguments("not be preceded by a space"),
-                this.CSharpDiagnostic().WithLocation(9, 21).WithArguments("not be followed by a space"),
-                this.CSharpDiagnostic().WithLocation(11, 0).WithArguments("not appear at the beginning of a line"),
-                this.CSharpDiagnostic().WithLocation(12, 13).WithArguments("not appear at the end of a line"),
-                this.CSharpDiagnostic().WithLocation(16, 18).WithArguments("not be preceded by a space"),
-                this.CSharpDiagnostic().WithLocation(16, 18).WithArguments("not be followed by a space"),
-                this.CSharpDiagnostic().WithLocation(17, 13).WithArguments("not be followed by a space"),
-                this.CSharpDiagnostic().WithLocation(17, 19).WithArguments("not be followed by a space"),
-                this.CSharpDiagnostic().WithLocation(17, 21).WithArguments("not be preceded by a space"),
-                this.CSharpDiagnostic().WithLocation(17, 21).WithArguments("not be followed by a space"),
-                this.CSharpDiagnostic().WithLocation(18, 29).WithArguments("not be preceded by a space"),
-                this.CSharpDiagnostic().WithLocation(19, 24).WithArguments("not be followed by a space"),
-                this.CSharpDiagnostic().WithLocation(19, 26).WithArguments("not be preceded by a space"),
-                this.CSharpDiagnostic().WithLocation(20, 30).WithArguments("not be followed by a space"),
-                this.CSharpDiagnostic().WithLocation(21, 31).WithArguments("not be followed by a space"),
-                this.CSharpDiagnostic().WithLocation(22, 13).WithArguments("not be followed by a space"),
-                this.CSharpDiagnostic().WithLocation(22, 17).WithArguments("not be followed by a space"),
+                Diagnostic().WithLocation(6, 12).WithArguments("be followed by a space"),
+                Diagnostic().WithLocation(8, 13).WithArguments("not be preceded by a space"),
+                Diagnostic().WithLocation(8, 13).WithArguments("not be followed by a space"),
+                Diagnostic().WithLocation(9, 21).WithArguments("not be preceded by a space"),
+                Diagnostic().WithLocation(9, 21).WithArguments("not be followed by a space"),
+                Diagnostic().WithLocation(11, 0).WithArguments("not appear at the beginning of a line"),
+                Diagnostic().WithLocation(12, 13).WithArguments("not appear at the end of a line"),
+                Diagnostic().WithLocation(16, 18).WithArguments("not be preceded by a space"),
+                Diagnostic().WithLocation(16, 18).WithArguments("not be followed by a space"),
+                Diagnostic().WithLocation(17, 13).WithArguments("not be followed by a space"),
+                Diagnostic().WithLocation(17, 19).WithArguments("not be followed by a space"),
+                Diagnostic().WithLocation(17, 21).WithArguments("not be preceded by a space"),
+                Diagnostic().WithLocation(17, 21).WithArguments("not be followed by a space"),
+                Diagnostic().WithLocation(18, 29).WithArguments("not be preceded by a space"),
+                Diagnostic().WithLocation(19, 24).WithArguments("not be followed by a space"),
+                Diagnostic().WithLocation(19, 26).WithArguments("not be preceded by a space"),
+                Diagnostic().WithLocation(20, 30).WithArguments("not be followed by a space"),
+                Diagnostic().WithLocation(21, 31).WithArguments("not be followed by a space"),
+                Diagnostic().WithLocation(22, 13).WithArguments("not be followed by a space"),
+                Diagnostic().WithLocation(22, 17).WithArguments("not be followed by a space"),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -157,19 +155,7 @@ x;
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1023DereferenceAndAccessOfSymbolsMustBeSpacedCorrectly();
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new TokenSpacingCodeFixProvider();
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

@@ -3,13 +3,11 @@
 
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.SpacingRules;
+    using StyleCop.Analyzers.Test.Verifiers;
     using TestHelper;
     using Xunit;
 
@@ -17,8 +15,11 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     /// Unit tests for <see cref="SA1027UseTabsCorrectly"/> when <see cref="IndentationSettings.UseTabs"/> is
     /// <see langword="true"/> and <see cref="IndentationSettings.TabSize"/> is set to a non-default value.
     /// </summary>
-    public class SA1027AlternateIndentationUnitTests : CodeFixVerifier
+    public class SA1027AlternateIndentationUnitTests
     {
+        private static DiagnosticResult[] EmptyDiagnosticResults
+            => StyleCopCodeFixVerifier<SA1027UseTabsCorrectly, SA1027CodeFixProvider>.EmptyDiagnosticResults;
+
         /// <summary>
         /// Verifies that tabs used inside string and char literals are not producing diagnostics.
         /// </summary>
@@ -33,7 +34,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 "\tpublic const char ValidTestChar = '\t';\r\n" +
                 "}\r\n";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -52,7 +53,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 "#endif\r\n" +
                 "}\r\n";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -84,19 +85,17 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(1, 6),
-                this.CSharpDiagnostic().WithLocation(3, 7),
-                this.CSharpDiagnostic().WithLocation(3, 13),
-                this.CSharpDiagnostic().WithLocation(5, 1),
-                this.CSharpDiagnostic().WithLocation(6, 1),
-                this.CSharpDiagnostic().WithLocation(7, 1),
-                this.CSharpDiagnostic().WithLocation(8, 1),
-                this.CSharpDiagnostic().WithLocation(9, 1),
+                Diagnostic().WithLocation(1, 6),
+                Diagnostic().WithLocation(3, 7),
+                Diagnostic().WithLocation(3, 13),
+                Diagnostic().WithLocation(5, 1),
+                Diagnostic().WithLocation(6, 1),
+                Diagnostic().WithLocation(7, 1),
+                Diagnostic().WithLocation(8, 1),
+                Diagnostic().WithLocation(9, 1),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -124,25 +123,23 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(1, 1),
-                this.CSharpDiagnostic().WithLocation(1, 8),
-                this.CSharpDiagnostic().WithLocation(2, 1),
-                this.CSharpDiagnostic().WithLocation(2, 12),
-                this.CSharpDiagnostic().WithLocation(3, 1),
-                this.CSharpDiagnostic().WithLocation(3, 8),
-                this.CSharpDiagnostic().WithLocation(4, 1),
-                this.CSharpDiagnostic().WithLocation(5, 1),
-                this.CSharpDiagnostic().WithLocation(6, 1),
-                this.CSharpDiagnostic().WithLocation(6, 22),
-                this.CSharpDiagnostic().WithLocation(7, 1),
-                this.CSharpDiagnostic().WithLocation(7, 9),
-                this.CSharpDiagnostic().WithLocation(7, 42),
-                this.CSharpDiagnostic().WithLocation(8, 1),
+                Diagnostic().WithLocation(1, 1),
+                Diagnostic().WithLocation(1, 8),
+                Diagnostic().WithLocation(2, 1),
+                Diagnostic().WithLocation(2, 12),
+                Diagnostic().WithLocation(3, 1),
+                Diagnostic().WithLocation(3, 8),
+                Diagnostic().WithLocation(4, 1),
+                Diagnostic().WithLocation(5, 1),
+                Diagnostic().WithLocation(6, 1),
+                Diagnostic().WithLocation(6, 22),
+                Diagnostic().WithLocation(7, 1),
+                Diagnostic().WithLocation(7, 9),
+                Diagnostic().WithLocation(7, 42),
+                Diagnostic().WithLocation(8, 1),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -172,21 +169,19 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(1, 1),
-                this.CSharpDiagnostic().WithLocation(2, 1),
-                this.CSharpDiagnostic().WithLocation(3, 1),
-                this.CSharpDiagnostic().WithLocation(4, 1),
-                this.CSharpDiagnostic().WithLocation(5, 1),
-                this.CSharpDiagnostic().WithLocation(5, 13),
-                this.CSharpDiagnostic().WithLocation(5, 21),
-                this.CSharpDiagnostic().WithLocation(7, 1),
-                this.CSharpDiagnostic().WithLocation(8, 1),
-                this.CSharpDiagnostic().WithLocation(9, 1),
+                Diagnostic().WithLocation(1, 1),
+                Diagnostic().WithLocation(2, 1),
+                Diagnostic().WithLocation(3, 1),
+                Diagnostic().WithLocation(4, 1),
+                Diagnostic().WithLocation(5, 1),
+                Diagnostic().WithLocation(5, 13),
+                Diagnostic().WithLocation(5, 21),
+                Diagnostic().WithLocation(7, 1),
+                Diagnostic().WithLocation(8, 1),
+                Diagnostic().WithLocation(9, 1),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -218,27 +213,31 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(1, 1),
-                this.CSharpDiagnostic().WithLocation(2, 1),
-                this.CSharpDiagnostic().WithLocation(3, 1),
-                this.CSharpDiagnostic().WithLocation(4, 1),
-                this.CSharpDiagnostic().WithLocation(5, 1),
-                this.CSharpDiagnostic().WithLocation(6, 1),
-                this.CSharpDiagnostic().WithLocation(6, 17),
-                this.CSharpDiagnostic().WithLocation(7, 1),
-                this.CSharpDiagnostic().WithLocation(8, 1),
-                this.CSharpDiagnostic().WithLocation(9, 1),
-                this.CSharpDiagnostic().WithLocation(10, 1),
+                Diagnostic().WithLocation(1, 1),
+                Diagnostic().WithLocation(2, 1),
+                Diagnostic().WithLocation(3, 1),
+                Diagnostic().WithLocation(4, 1),
+                Diagnostic().WithLocation(5, 1),
+                Diagnostic().WithLocation(6, 1),
+                Diagnostic().WithLocation(6, 17),
+                Diagnostic().WithLocation(7, 1),
+                Diagnostic().WithLocation(8, 1),
+                Diagnostic().WithLocation(9, 1),
+                Diagnostic().WithLocation(10, 1),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override string GetSettings() =>
-            @"
+        private static DiagnosticResult Diagnostic()
+            => StyleCopCodeFixVerifier<SA1027UseTabsCorrectly, SA1027CodeFixProvider>.Diagnostic();
+
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        {
+            var test = new StyleCopCodeFixVerifier<SA1027UseTabsCorrectly, SA1027CodeFixProvider>.CSharpTest
+            {
+                TestCode = source,
+                Settings = @"
 {
     ""settings"": {
         ""indentation"": {
@@ -247,18 +246,33 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         }
     }
 }
-";
+",
+            };
 
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1027UseTabsCorrectly();
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test.RunAsync(cancellationToken);
         }
 
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        private static Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
         {
-            return new SA1027CodeFixProvider();
+            var test = new StyleCopCodeFixVerifier<SA1027UseTabsCorrectly, SA1027CodeFixProvider>.CSharpTest
+            {
+                TestCode = source,
+                FixedCode = fixedSource,
+                Settings = @"
+{
+    ""settings"": {
+        ""indentation"": {
+            ""useTabs"": true,
+            ""tabSize"": 3
+        }
+    }
+}
+",
+            };
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test.RunAsync(cancellationToken);
         }
     }
 }

@@ -88,6 +88,10 @@ namespace StyleCop.Analyzers.Test.Verifiers
             set;
         }
 
+        public int NumberOfIncrementalIterations { get; set; } = DefaultNumberOfIncrementalIterations;
+
+        public int NumberOfFixAllIterations { get; set; } = 1;
+
         public Func<OptionSet, OptionSet> OptionsTransform { get; set; } = options => options;
 
         public Func<Solution, ProjectId, Solution> SolutionTransform { get; set; } = (solution, _) => solution;
@@ -101,7 +105,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
             if (this.FixedCode != null)
             {
                 await this.VerifyDiagnosticsAsync(new[] { this.FixedCode }, this.RemainingDiagnostics.ToArray(), filenames: null, cancellationToken).ConfigureAwait(false);
-                await this.VerifyFixAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
+                await this.VerifyFixAsync(numberOfIncrementalIterations: this.NumberOfIncrementalIterations, numberOfFixAllIterations: this.NumberOfFixAllIterations, cancellationToken: cancellationToken).ConfigureAwait(false);
             }
         }
 

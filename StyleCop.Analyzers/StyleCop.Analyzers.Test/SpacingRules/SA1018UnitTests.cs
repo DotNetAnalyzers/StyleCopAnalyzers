@@ -3,20 +3,19 @@
 
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.SpacingRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.SpacingRules.SA1018NullableTypeSymbolsMustNotBePrecededBySpace,
+        StyleCop.Analyzers.SpacingRules.SA1018CodeFixProvider>;
 
     /// <summary>
     /// This class contains unit tests for the <see cref="SA1018NullableTypeSymbolsMustNotBePrecededBySpace"/> class.
     /// </summary>
-    public class SA1018UnitTests : CodeFixVerifier
+    public class SA1018UnitTests
     {
         /// <summary>
         /// Verifies that nullable types with different kinds of spacing will report.
@@ -78,37 +77,38 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 }
 ";
 
-            DiagnosticResult[] expectedResults =
+            await new CSharpTest
             {
-                // v1
-                this.CSharpDiagnostic().WithLocation(7, 17),
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    // v1
+                    Diagnostic().WithLocation(7, 17),
 
-                // v2
-                this.CSharpDiagnostic().WithLocation(8, 28),
+                    // v2
+                    Diagnostic().WithLocation(8, 28),
 
-                // v3
-                this.CSharpDiagnostic().WithLocation(10, 1),
+                    // v3
+                    Diagnostic().WithLocation(10, 1),
 
-                // v4
-                this.CSharpDiagnostic().WithLocation(13, 1),
+                    // v4
+                    Diagnostic().WithLocation(13, 1),
 
-                // v5
-                this.CSharpDiagnostic().WithLocation(16, 1),
+                    // v5
+                    Diagnostic().WithLocation(16, 1),
 
-                // v6
-                this.CSharpDiagnostic().WithLocation(22, 1),
-            };
-
-            // The fixed test code will have diagnostics, because not all cases can be code fixed automatically.
-            DiagnosticResult[] fixedExpectedResults =
-            {
-                this.CSharpDiagnostic().WithLocation(13, 1),
-                this.CSharpDiagnostic().WithLocation(19, 1),
-            };
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, fixedExpectedResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+                    // v6
+                    Diagnostic().WithLocation(22, 1),
+                },
+                FixedCode = fixedTestCode,
+                RemainingDiagnostics =
+                {
+                    // The fixed test code will have diagnostics, because not all cases can be code fixed automatically.
+                    Diagnostic().WithLocation(13, 1),
+                    Diagnostic().WithLocation(19, 1),
+                },
+                NumberOfFixAllIterations = 2,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -130,22 +130,10 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             DiagnosticResult[] expected =
             {
-                this.CSharpCompilerError("CS1031").WithMessage("Type expected").WithLocation(10, 2),
+                CompilerError("CS1031").WithMessage("Type expected").WithLocation(10, 2),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1018NullableTypeSymbolsMustNotBePrecededBySpace();
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1018CodeFixProvider();
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

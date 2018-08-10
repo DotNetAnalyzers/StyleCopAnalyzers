@@ -6,8 +6,10 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
     using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.Test.SpacingRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.SpacingRules.SA1018NullableTypeSymbolsMustNotBePrecededBySpace,
+        StyleCop.Analyzers.SpacingRules.SA1018CodeFixProvider>;
 
     public class SA1018CSharp7UnitTests : SA1018UnitTests
     {
@@ -71,37 +73,38 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 }
 ";
 
-            DiagnosticResult[] expectedResults =
+            await new CSharpTest
             {
-                // v1
-                this.CSharpDiagnostic().WithLocation(7, 24),
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    // v1
+                    Diagnostic().WithLocation(7, 24),
 
-                // v2
-                this.CSharpDiagnostic().WithLocation(8, 35),
+                    // v2
+                    Diagnostic().WithLocation(8, 35),
 
-                // v3
-                this.CSharpDiagnostic().WithLocation(10, 1),
+                    // v3
+                    Diagnostic().WithLocation(10, 1),
 
-                // v4
-                this.CSharpDiagnostic().WithLocation(13, 1),
+                    // v4
+                    Diagnostic().WithLocation(13, 1),
 
-                // v5
-                this.CSharpDiagnostic().WithLocation(16, 1),
+                    // v5
+                    Diagnostic().WithLocation(16, 1),
 
-                // v6
-                this.CSharpDiagnostic().WithLocation(22, 1),
-            };
-
-            // The fixed test code will have diagnostics, because not all cases can be code fixed automatically.
-            DiagnosticResult[] fixedExpectedResults =
-            {
-                this.CSharpDiagnostic().WithLocation(13, 1),
-                this.CSharpDiagnostic().WithLocation(19, 1),
-            };
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, fixedExpectedResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+                    // v6
+                    Diagnostic().WithLocation(22, 1),
+                },
+                FixedCode = fixedTestCode,
+                RemainingDiagnostics =
+                {
+                    // The fixed test code will have diagnostics, because not all cases can be code fixed automatically.
+                    Diagnostic().WithLocation(13, 1),
+                    Diagnostic().WithLocation(19, 1),
+                },
+                NumberOfFixAllIterations = 2,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
