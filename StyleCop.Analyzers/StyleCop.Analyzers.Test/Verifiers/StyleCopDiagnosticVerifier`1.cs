@@ -4,6 +4,8 @@
 namespace StyleCop.Analyzers.Test.Verifiers
 {
     using System;
+    using System.Threading;
+    using System.Threading.Tasks;
     using global::LightJson;
     using global::LightJson.Serialization;
     using Microsoft.CodeAnalysis;
@@ -26,6 +28,20 @@ namespace StyleCop.Analyzers.Test.Verifiers
 
         internal static DiagnosticResult CompilerError(string errorIdentifier)
             => DiagnosticVerifier<TAnalyzer>.CompilerError(errorIdentifier);
+
+        internal static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
+            => VerifyCSharpDiagnosticAsync(source, new[] { expected }, cancellationToken);
+
+        internal static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        {
+            var test = new CSharpTest
+            {
+                TestCode = source,
+            };
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test.RunAsync(cancellationToken);
+        }
 
         internal class CSharpTest : DiagnosticVerifier<TAnalyzer>.CSharpTest
         {

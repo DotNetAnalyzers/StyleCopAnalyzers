@@ -4,20 +4,20 @@
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System;
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.SpacingRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.SpacingRules.SA1001CommasMustBeSpacedCorrectly,
+        StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1001CommasMustBeSpacedCorrectly"/> and
     /// <see cref="TokenSpacingCodeFixProvider"/>.
     /// </summary>
-    public class SA1001UnitTests : CodeFixVerifier
+    public class SA1001UnitTests
     {
         [Fact]
         public async Task TestSpaceAfterCommaAsync()
@@ -34,7 +34,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             await this.TestCommaInStatementOrDeclAsync(statementWithSpace, EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 16);
+            DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 16);
 
             await this.TestCommaInStatementOrDeclAsync(statementWithoutSpace, expected, statementWithSpace).ConfigureAwait(false);
         }
@@ -45,7 +45,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             string spaceBeforeComma = @"f(a , b);";
             string spaceOnlyAfterComma = @"f(a, b);";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 17);
+            DiagnosticResult expected = Diagnostic().WithArguments(" not", "preceded").WithLocation(7, 17);
 
             await this.TestCommaInStatementOrDeclAsync(spaceBeforeComma, expected, spaceOnlyAfterComma).ConfigureAwait(false);
         }
@@ -56,7 +56,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             string spaceBeforeComma = $"f(a ,{Environment.NewLine}b);";
             string spaceOnlyAfterComma = $"f(a,{Environment.NewLine}b);";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 17);
+            DiagnosticResult expected = Diagnostic().WithArguments(" not", "preceded").WithLocation(7, 17);
 
             await this.TestCommaInStatementOrDeclAsync(spaceBeforeComma, expected, spaceOnlyAfterComma).ConfigureAwait(false);
         }
@@ -74,7 +74,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             string testStatement = $"f(a{Environment.NewLine}, b);";
             string fixedStatement = $"f(a,{Environment.NewLine}b);";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(8, 1);
+            DiagnosticResult expected = Diagnostic().WithArguments(" not", "preceded").WithLocation(8, 1);
 
             await this.TestCommaInStatementOrDeclAsync(testStatement, expected, fixedStatement).ConfigureAwait(false);
         }
@@ -85,7 +85,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             string testStatement = $"f(a // comment{Environment.NewLine}, b);";
             string fixedStatement = $"f(a, // comment{Environment.NewLine}b);";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(8, 1);
+            DiagnosticResult expected = Diagnostic().WithArguments(" not", "preceded").WithLocation(8, 1);
 
             await this.TestCommaInStatementOrDeclAsync(testStatement, expected, fixedStatement).ConfigureAwait(false);
         }
@@ -96,7 +96,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             string statement = @"var a = typeof(System.Func< ,>);";
             string fixedStatement = @"var a = typeof(System.Func<,>);";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 41);
+            DiagnosticResult expected = Diagnostic().WithArguments(" not", "preceded").WithLocation(7, 41);
 
             await this.TestCommaInStatementOrDeclAsync(statement, expected, fixedStatement).ConfigureAwait(false);
         }
@@ -122,7 +122,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             string statement = @"var a = typeof(System.Func< ,,>);";
             string fixedStatement = @"var a = typeof(System.Func<,,>);";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 41);
+            DiagnosticResult expected = Diagnostic().WithArguments(" not", "preceded").WithLocation(7, 41);
 
             await this.TestCommaInStatementOrDeclAsync(statement, expected, fixedStatement).ConfigureAwait(false);
         }
@@ -139,7 +139,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         {
             string statement = @"var a = typeof(System.Func<, ,>);";
             string fixedStatement = @"var a = typeof(System.Func<,,>);";
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 42);
+            DiagnosticResult expected = Diagnostic().WithArguments(" not", "preceded").WithLocation(7, 42);
 
             await this.TestCommaInStatementOrDeclAsync(statement, expected, fixedStatement).ConfigureAwait(false);
         }
@@ -157,7 +157,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             string statement = @"int[, ,] myArray;";
             string fixedStatement = @"int[,,] myArray;";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 19);
+            DiagnosticResult expected = Diagnostic().WithArguments(" not", "preceded").WithLocation(7, 19);
 
             await this.TestCommaInStatementOrDeclAsync(statement, expected, fixedStatement).ConfigureAwait(false);
         }
@@ -171,7 +171,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             string fixedStatement = @"var x = new[] { 1, 2, 3, 4, 5, 6, 7 };
             var t = $""{x[2],3}"";";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(8, 29);
+            DiagnosticResult expected = Diagnostic().WithArguments(" not", "preceded").WithLocation(8, 29);
 
             await this.TestCommaInStatementOrDeclAsync(statement, expected, fixedStatement).ConfigureAwait(false);
         }
@@ -185,7 +185,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             string fixedStatement = @"var x = new[] { 1, 2, 3, 4, 5, 6, 7 };
             var t = $""{x[2],3}"";";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(8, 28);
+            DiagnosticResult expected = Diagnostic().WithArguments(" not", "followed").WithLocation(8, 28);
 
             await this.TestCommaInStatementOrDeclAsync(statement, expected, fixedStatement).ConfigureAwait(false);
         }
@@ -201,8 +201,8 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             DiagnosticResult[] expected =
                 {
-                    this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(8, 29),
-                    this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(8, 29),
+                    Diagnostic().WithArguments(" not", "preceded").WithLocation(8, 29),
+                    Diagnostic().WithArguments(" not", "followed").WithLocation(8, 29),
                 };
 
             await this.TestCommaInStatementOrDeclAsync(statement, expected, fixedStatement).ConfigureAwait(false);
@@ -219,7 +219,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             DiagnosticResult[] expected =
                 {
-                    this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(8, 28),
+                    Diagnostic().WithArguments(" not", "followed").WithLocation(8, 28),
                 };
 
             await this.TestCommaInStatementOrDeclAsync(statement, expected, fixedStatement).ConfigureAwait(false);
@@ -236,7 +236,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             DiagnosticResult[] expected =
                 {
-                    this.CSharpDiagnostic().WithArguments(" not", "followed").WithLocation(8, 28),
+                    Diagnostic().WithArguments(" not", "followed").WithLocation(8, 28),
                 };
 
             await this.TestCommaInStatementOrDeclAsync(statement, expected, fixedStatement).ConfigureAwait(false);
@@ -250,8 +250,8 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(7, 17),
-                this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 17),
+                Diagnostic().WithArguments(" not", "preceded").WithLocation(7, 17),
+                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 17),
             };
 
             await this.TestCommaInStatementOrDeclAsync(spaceOnlyBeforeComma, expected, spaceOnlyAfterComma).ConfigureAwait(false);
@@ -270,12 +270,8 @@ class ClassName
 }
 ";
 
-            DiagnosticResult[] expected =
-            {
-                this.CSharpCompilerError("CS1003").WithMessage("Syntax error, ',' expected").WithLocation(6, 25),
-            };
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = CompilerError("CS1003").WithMessage("Syntax error, ',' expected").WithLocation(6, 25);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -300,10 +296,8 @@ class ClassName
 }
 ";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(6, 24);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "followed").WithLocation(6, 24);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -344,25 +338,13 @@ public class TestClass
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(10, 12),
-                this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(10, 12),
-                this.CSharpDiagnostic().WithArguments(" not", "preceded").WithLocation(11, 12),
-                this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(11, 12),
+                Diagnostic().WithArguments(" not", "preceded").WithLocation(10, 12),
+                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(10, 12),
+                Diagnostic().WithArguments(" not", "preceded").WithLocation(11, 12),
+                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(11, 12),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1001CommasMustBeSpacedCorrectly();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new TokenSpacingCodeFixProvider();
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         private Task TestCommaInStatementOrDeclAsync(string originalStatement, DiagnosticResult expected, string fixedStatement)
@@ -389,12 +371,14 @@ public class TestClass
             string originalCode = string.Format(template, originalStatement);
             string fixedCode = string.Format(template, fixedStatement);
 
-            await this.VerifyCSharpDiagnosticAsync(originalCode, expected, CancellationToken.None).ConfigureAwait(false);
-            if (expected.Length > 0)
+            var test = new CSharpTest
             {
-                await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-                await this.VerifyCSharpFixAsync(originalCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
-            }
+                TestCode = originalCode,
+                FixedCode = fixedCode != originalCode ? fixedCode : null,
+            };
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

@@ -136,17 +136,14 @@ namespace TestNamespace
 }
 ";
 
-            await new CSharpTest
+            DiagnosticResult[] expected =
             {
-                TestCode = testCode,
-                FixedCode = fixedCode,
-                ExpectedDiagnostics =
-                {
-                    // Returns
-                    Diagnostic().WithArguments("return", string.Empty, "followed").WithLocation(10, 43),
-                    Diagnostic().WithArguments("return", string.Empty, "followed").WithLocation(11, 43),
-                },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+                // Returns
+                Diagnostic().WithArguments("return", string.Empty, "followed").WithLocation(10, 43),
+                Diagnostic().WithArguments("return", string.Empty, "followed").WithLocation(11, 43),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -185,16 +182,13 @@ namespace TestNamespace
 }
 ";
 
-            await new CSharpTest
+            DiagnosticResult[] expected =
             {
-                TestCode = testCode,
-                FixedCode = fixedCode,
-                ExpectedDiagnostics =
-                {
-                    Diagnostic().WithArguments("new", string.Empty, "followed").WithLocation(7, 21),
-                    Diagnostic().WithArguments("new", string.Empty, "followed").WithLocation(8, 21),
-                },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+                Diagnostic().WithArguments("new", string.Empty, "followed").WithLocation(7, 21),
+                Diagnostic().WithArguments("new", string.Empty, "followed").WithLocation(8, 21),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -233,16 +227,13 @@ namespace TestNamespace
 }
 ";
 
-            await new CSharpTest
+            DiagnosticResult[] expected =
             {
-                TestCode = testCode,
-                FixedCode = fixedCode,
-                ExpectedDiagnostics =
-                {
-                    Diagnostic().WithArguments("foreach", string.Empty, "followed").WithLocation(7, 13),
-                    Diagnostic().WithArguments("foreach", string.Empty, "followed").WithLocation(8, 13),
-                },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+                Diagnostic().WithArguments("foreach", string.Empty, "followed").WithLocation(7, 13),
+                Diagnostic().WithArguments("foreach", string.Empty, "followed").WithLocation(8, 13),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

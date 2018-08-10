@@ -896,11 +896,8 @@ class ClassName
 }
 ";
 
-            await new CSharpTest
-            {
-                TestCode = testCode,
-                ExpectedDiagnostics = { CompilerError("CS0742").WithMessage("A query body must end with a select clause or a group clause").WithLocation(6, 42) },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            var expected = CompilerError("CS0742").WithMessage("A query body must end with a select clause or a group clause").WithLocation(6, 42);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -929,12 +926,8 @@ class ClassName
 }
 ";
 
-            await new CSharpTest
-            {
-                TestCode = testCode,
-                FixedCode = fixedCode,
-                ExpectedDiagnostics = { Diagnostic().WithArguments("if", string.Empty, "followed").WithLocation(6, 9) },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithArguments("if", string.Empty, "followed").WithLocation(6, 9);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected Task TestKeywordStatementAsync(string statement, DiagnosticResult expected, string fixedStatement, string returnType = "void", bool asyncMethod = false)
