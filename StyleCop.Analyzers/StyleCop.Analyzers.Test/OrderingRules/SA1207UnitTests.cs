@@ -8,16 +8,16 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.OrderingRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.OrderingRules.SA1207ProtectedMustComeBeforeInternal,
+        StyleCop.Analyzers.OrderingRules.SA1207CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for the <see cref="SA1207ProtectedMustComeBeforeInternal"/> class.
     /// </summary>
-    public class SA1207UnitTests : CodeFixVerifier
+    public class SA1207UnitTests
     {
         private const string TestCodeTemplate = @"
 public class Foo
@@ -110,7 +110,7 @@ public class Foo
         public async Task TestValidDeclarationAsync(string declaration)
         {
             var testCode = TestCodeTemplate.Replace("$$", declaration);
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -128,21 +128,7 @@ public class Foo
             var testCode = TestCodeTemplate.Replace("$$", invalidDeclaration);
             var fixedTestCode = TestCodeTemplate.Replace("$$", fixedDeclaration);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, this.CSharpDiagnostic().WithLocation(4, 4 + diagnosticColumn), CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1207ProtectedMustComeBeforeInternal();
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1207CodeFixProvider();
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(4, 4 + diagnosticColumn), fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

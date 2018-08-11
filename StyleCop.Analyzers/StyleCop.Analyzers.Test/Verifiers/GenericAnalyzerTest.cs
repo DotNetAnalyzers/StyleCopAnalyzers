@@ -72,9 +72,14 @@ namespace StyleCop.Analyzers.Test.Verifiers
 
         public string TestCode
         {
-            get;
-            set;
+            set
+            {
+                Assert.Empty(this.TestSources);
+                this.TestSources.Add(value);
+            }
         }
+
+        public List<string> TestSources { get; } = new List<string>();
 
         public List<DiagnosticResult> ExpectedDiagnostics { get; } = new List<DiagnosticResult>();
 
@@ -86,9 +91,14 @@ namespace StyleCop.Analyzers.Test.Verifiers
 
         public string FixedCode
         {
-            get;
-            set;
+            set
+            {
+                Assert.Empty(this.FixedSources);
+                this.FixedSources.Add(value);
+            }
         }
+
+        public List<string> FixedSources { get; } = new List<string>();
 
         public int NumberOfIncrementalIterations { get; set; } = DefaultNumberOfIncrementalIterations;
 
@@ -102,13 +112,13 @@ namespace StyleCop.Analyzers.Test.Verifiers
 
         public async Task RunAsync(CancellationToken cancellationToken)
         {
-            Assert.NotNull(this.TestCode);
+            Assert.NotEmpty(this.TestSources);
 
             var expected = this.ExpectedDiagnostics.ToArray();
-            await this.VerifyDiagnosticsAsync(new[] { this.TestCode }, expected, filenames: null, cancellationToken).ConfigureAwait(false);
+            await this.VerifyDiagnosticsAsync(this.TestSources.ToArray(), expected, filenames: null, cancellationToken).ConfigureAwait(false);
             if (this.HasFixableDiagnostics())
             {
-                await this.VerifyDiagnosticsAsync(new[] { this.FixedCode }, this.RemainingDiagnostics.ToArray(), filenames: null, cancellationToken).ConfigureAwait(false);
+                await this.VerifyDiagnosticsAsync(this.FixedSources.ToArray(), this.RemainingDiagnostics.ToArray(), filenames: null, cancellationToken).ConfigureAwait(false);
                 await this.VerifyFixAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
             }
         }
@@ -132,7 +142,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
             var fixers = this.GetCodeFixProviders().ToArray();
             if (HasFixableDiagnosticsCore())
             {
-                if (this.FixedCode != null)
+                if (this.FixedSources.Count > 0)
                 {
                     return true;
                 }
@@ -141,7 +151,9 @@ namespace StyleCop.Analyzers.Test.Verifiers
                 return false;
             }
 
-            Assert.True(string.IsNullOrEmpty(this.FixedCode) || this.FixedCode == this.TestCode);
+            Assert.True(this.FixedSources.Count == 0
+                || (this.FixedSources.Count == 1 && string.IsNullOrEmpty(this.FixedSources[0]))
+                || this.FixedSources.SequenceEqual(this.TestSources));
             Assert.Empty(this.RemainingDiagnostics);
             return false;
 
@@ -682,8 +694,8 @@ namespace StyleCop.Analyzers.Test.Verifiers
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         protected async Task VerifyFixAsync(string[] batchNewSources = null, string[] oldFileNames = null, string[] newFileNames = null, CancellationToken cancellationToken = default(CancellationToken))
         {
-            var oldSources = new[] { this.TestCode };
-            var newSources = new[] { this.FixedCode };
+            var oldSources = this.TestSources.ToArray();
+            var newSources = this.FixedSources.ToArray();
 
             var t1 = this.VerifyFixInternalAsync(this.Language, this.GetDiagnosticAnalyzers().ToImmutableArray(), this.GetCodeFixProviders().ToImmutableArray(), oldSources, newSources, oldFileNames, newFileNames, this.NumberOfIncrementalIterations, FixEachAnalyzerDiagnosticAsync, cancellationToken).ConfigureAwait(false);
 

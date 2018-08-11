@@ -3,17 +3,15 @@
 
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
-    using System;
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using StyleCop.Analyzers.OrderingRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.OrderingRules.SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives,
+        StyleCop.Analyzers.OrderingRules.UsingCodeFixProvider>;
 
-    public class SA1208UnitTests : CodeFixVerifier
+    public class SA1208UnitTests
     {
         [Fact]
         public async Task TestWhenSystemUsingDirectivesAreOnTopInCompilationAsync()
@@ -25,7 +23,7 @@ class A
 {
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(usingsInCompilationUnit, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(usingsInCompilationUnit, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -41,7 +39,7 @@ class A
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(usingsInNamespaceDeclaration, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(usingsInNamespaceDeclaration, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -55,17 +53,19 @@ class A
     using System.Threading;
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(usingsInNamespaceDeclaration, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(usingsInNamespaceDeclaration, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestWhenSystemUsingDirectivesAreNotOnTopInCompilationAsync()
         {
-            var usingsInCompilationUnit = new[]
+            await new CSharpTest
             {
-                "namespace Xyz {}",
-                "namespace AnotherNamespace {}",
-                @"using Xyz;
+                TestSources =
+                {
+                    "namespace Xyz {}",
+                    "namespace AnotherNamespace {}",
+                    @"using Xyz;
 using System;
 using System.IO;
 using AnotherNamespace;
@@ -74,26 +74,26 @@ using System.Threading.Tasks;
 class A
 {
 }",
-            };
-
-            DiagnosticResult[] expected =
-            {
-                this.CSharpDiagnostic().WithLocation("Test2.cs", 2, 1).WithArguments("System", "Xyz"),
-                this.CSharpDiagnostic().WithLocation("Test2.cs", 3, 1).WithArguments("System.IO", "Xyz"),
-                this.CSharpDiagnostic().WithLocation("Test2.cs", 5, 1).WithArguments("System.Threading.Tasks", "Xyz"),
-            };
-
-            await this.VerifyCSharpDiagnosticAsync(usingsInCompilationUnit, expected, CancellationToken.None).ConfigureAwait(false);
+                },
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation("Test2.cs", 2, 1).WithArguments("System", "Xyz"),
+                    Diagnostic().WithLocation("Test2.cs", 3, 1).WithArguments("System.IO", "Xyz"),
+                    Diagnostic().WithLocation("Test2.cs", 5, 1).WithArguments("System.Threading.Tasks", "Xyz"),
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestWhenSystemUsingDirectivesAreNotOnTopInNamespaceAsync()
         {
-            var usingsInNamespaceDeclaration = new[]
+            await new CSharpTest
             {
-                "namespace Namespace {}",
-                "namespace AnotherNamespace {}",
-                @"namespace Test
+                TestSources =
+                {
+                    "namespace Namespace {}",
+                    "namespace AnotherNamespace {}",
+                    @"namespace Test
 {
     using Namespace;
     using System.Threading;
@@ -104,26 +104,26 @@ class A
     {
     }
 }",
-            };
-
-            DiagnosticResult[] expected =
-            {
-                this.CSharpDiagnostic().WithLocation("Test2.cs", 4, 5).WithArguments("System.Threading", "Namespace"),
-                this.CSharpDiagnostic().WithLocation("Test2.cs", 5, 5).WithArguments("System.IO", "Namespace"),
-            };
-
-            await this.VerifyCSharpDiagnosticAsync(usingsInNamespaceDeclaration, expected, CancellationToken.None).ConfigureAwait(false);
+                },
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation("Test2.cs", 4, 5).WithArguments("System.Threading", "Namespace"),
+                    Diagnostic().WithLocation("Test2.cs", 5, 5).WithArguments("System.IO", "Namespace"),
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestSystemUsingDirectivesInCompilationUnitAndInNamespaceDeclarationAsync()
         {
-            var sources = new[]
+            await new CSharpTest
             {
-                "namespace Xyz {}",
-                "namespace Namespace {}",
-                "namespace AnotherNamespace {}",
-                @"using AnotherNamespace;
+                TestSources =
+                {
+                    "namespace Xyz {}",
+                    "namespace Namespace {}",
+                    "namespace AnotherNamespace {}",
+                    @"using AnotherNamespace;
 using System.IO;
 using Namespace;
 
@@ -137,27 +137,27 @@ namespace Test
     {
     }
 }",
-            };
-
-            DiagnosticResult[] expected =
-            {
-                this.CSharpDiagnostic().WithLocation("Test3.cs", 2, 1).WithArguments("System.IO", "AnotherNamespace"),
-                this.CSharpDiagnostic().WithLocation("Test3.cs", 8, 5).WithArguments("System.Threading", "Xyz"),
-                this.CSharpDiagnostic().WithLocation("Test3.cs", 9, 5).WithArguments("System", "Xyz"),
-            };
-
-            await this.VerifyCSharpDiagnosticAsync(sources, expected, CancellationToken.None).ConfigureAwait(false);
+                },
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation("Test3.cs", 2, 1).WithArguments("System.IO", "AnotherNamespace"),
+                    Diagnostic().WithLocation("Test3.cs", 8, 5).WithArguments("System.Threading", "Xyz"),
+                    Diagnostic().WithLocation("Test3.cs", 9, 5).WithArguments("System", "Xyz"),
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestPlaceSystemUsingDirectivesWithGlobalContextualKeywordAsync()
         {
-            var sources = new[]
+            await new CSharpTest
             {
-                "namespace Xyz {}",
-                "namespace Namespace {}",
-                "namespace AnotherNamespace {}",
-                @"using global::AnotherNamespace;
+                TestSources =
+                {
+                    "namespace Xyz {}",
+                    "namespace Namespace {}",
+                    "namespace AnotherNamespace {}",
+                    @"using global::AnotherNamespace;
 using global::System.IO;
 using Namespace;
 
@@ -171,14 +171,12 @@ namespace Test
     {
     }
 }",
-        };
-
-            DiagnosticResult[] expected =
-            {
-                this.CSharpDiagnostic().WithLocation("Test3.cs", 8, 5).WithArguments("System.Threading", "Xyz"),
-            };
-
-            await this.VerifyCSharpDiagnosticAsync(sources, expected, CancellationToken.None).ConfigureAwait(false);
+                },
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation("Test3.cs", 8, 5).WithArguments("System.Threading", "Xyz"),
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -205,13 +203,21 @@ namespace Test
     }
 }";
 
-            DiagnosticResult[] expected =
-            {
-                this.CSharpDiagnostic().WithLocation("Test2.cs", 6, 5).WithArguments("System.IO", "System.IO.Path"),
-            };
+            await VerifyCSharpDiagnosticAsync(compilationUnitWithoutDiagnostic, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
 
-            await this.VerifyCSharpDiagnosticAsync(compilationUnitWithoutDiagnostic, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(new[] { source1, source2, source3 }, expected, CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest
+            {
+                TestSources =
+                {
+                    source1,
+                    source2,
+                    source3,
+                },
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation("Test2.cs", 6, 5).WithArguments("System.IO", "System.IO.Path"),
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -232,20 +238,22 @@ namespace Test
 using System;
 ";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 1).WithArguments("System", "System.IO.Path");
+            DiagnosticResult expected = Diagnostic().WithLocation(2, 1).WithArguments("System", "System.IO.Path");
 
-            await this.VerifyCSharpDiagnosticAsync(namespaceDeclarationWithoutDiagnostic, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(source, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(namespaceDeclarationWithoutDiagnostic, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(source, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestWhenThereArePreprocessorDirectivesCloseToUsingDirectivesAsync()
         {
-            var sources = new[]
+            await new CSharpTest
             {
-                "namespace Namespace {}",
-                "namespace AnotherNamespace {}",
-                @"#define DEBUG
+                TestSources =
+                {
+                    "namespace Namespace {}",
+                    "namespace AnotherNamespace {}",
+                    @"#define DEBUG
 namespace Test
 {
     using Namespace;
@@ -259,24 +267,24 @@ namespace Test
     {
     }
 }",
-        };
-
-            DiagnosticResult[] expected =
-            {
-                this.CSharpDiagnostic().WithLocation("Test2.cs", 5, 5).WithArguments("System.Threading", "Namespace"),
-            };
-
-            await this.VerifyCSharpDiagnosticAsync(sources, expected, CancellationToken.None).ConfigureAwait(false);
+                },
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation("Test2.cs", 5, 5).WithArguments("System.Threading", "Namespace"),
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestWithInlineCommentsInUsingDirectivesAsync()
         {
-            var sources = new[]
+            await new CSharpTest
             {
-                "namespace Namespace {}",
-                "namespace AnotherNamespace {}",
-                @"namespace Test
+                TestSources =
+                {
+                    "namespace Namespace {}",
+                    "namespace AnotherNamespace {}",
+                    @"namespace Test
 {
     using Namespace;
     using /* inline comment */ System.Threading;
@@ -287,15 +295,13 @@ namespace Test
     {
     }
 }",
-            };
-
-            DiagnosticResult[] expected =
-            {
-                this.CSharpDiagnostic().WithLocation("Test2.cs", 4, 5).WithArguments("System.Threading", "Namespace"),
-                this.CSharpDiagnostic().WithLocation("Test2.cs", 5, 5).WithArguments("System.IO", "Namespace"),
-            };
-
-            await this.VerifyCSharpDiagnosticAsync(sources, expected, CancellationToken.None).ConfigureAwait(false);
+                },
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation("Test2.cs", 4, 5).WithArguments("System.Threading", "Namespace"),
+                    Diagnostic().WithLocation("Test2.cs", 5, 5).WithArguments("System.IO", "Namespace"),
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -340,13 +346,11 @@ using System.Collections;
             // else block is skipped
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(8, 1).WithArguments("System.Threading", "Microsoft.CodeAnalysis.CSharp"),
-                this.CSharpDiagnostic().WithLocation(9, 1).WithArguments("System.Collections", "Microsoft.CodeAnalysis.CSharp"),
+                Diagnostic().WithLocation(8, 1).WithArguments("System.Threading", "Microsoft.CodeAnalysis.CSharp"),
+                Diagnostic().WithLocation(9, 1).WithArguments("System.Collections", "Microsoft.CodeAnalysis.CSharp"),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -371,19 +375,7 @@ namespace Foo
     using Microsoft;
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives();
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new UsingCodeFixProvider();
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

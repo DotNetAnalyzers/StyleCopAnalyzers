@@ -3,19 +3,19 @@
 
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.OrderingRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.OrderingRules.SA1200UsingDirectivesMustBePlacedCorrectly,
+        StyleCop.Analyzers.OrderingRules.UsingCodeFixProvider>;
 
     /// <summary>
     /// Unit tests for the <see cref="SA1200UsingDirectivesMustBePlacedCorrectly"/>.
     /// </summary>
-    public class SA1200UnitTests : CodeFixVerifier
+    public class SA1200UnitTests
     {
         private const string ClassDefinition = @"public class TestClass
 {
@@ -50,7 +50,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
 {typeDefinition}
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace TestNamespace
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -119,13 +119,11 @@ namespace TestNamespace
 
             DiagnosticResult[] expectedResults =
             {
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(1, 1),
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(2, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(1, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(2, 1),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -150,13 +148,11 @@ namespace TestNamespace
 
             DiagnosticResult[] expectedResults =
             {
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(2, 1),
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(3, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(2, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(3, 1),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -183,13 +179,11 @@ namespace TestNamespace
 
             DiagnosticResult[] expectedResults =
             {
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(3, 1),
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(4, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(3, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(4, 1),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -215,13 +209,11 @@ namespace TestNamespace
 
             DiagnosticResult[] expectedResults =
             {
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(2, 1),
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(3, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(2, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(3, 1),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -249,13 +241,11 @@ namespace TestNamespace
 
             DiagnosticResult[] expectedResults =
             {
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(3, 1),
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(4, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(3, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(4, 1),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -287,13 +277,11 @@ namespace TestNamespace
 
             DiagnosticResult[] expectedResults =
             {
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(5, 1),
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(6, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(5, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(6, 1),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -321,13 +309,11 @@ namespace TestNamespace
 
             DiagnosticResult[] expectedResults =
             {
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(3, 1),
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(4, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(3, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(4, 1),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -357,25 +343,11 @@ namespace TestNamespace
 
             DiagnosticResult[] expectedResults =
             {
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(4, 1),
-                this.CSharpDiagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(5, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(4, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(5, 1),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1200UsingDirectivesMustBePlacedCorrectly();
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new UsingCodeFixProvider();
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

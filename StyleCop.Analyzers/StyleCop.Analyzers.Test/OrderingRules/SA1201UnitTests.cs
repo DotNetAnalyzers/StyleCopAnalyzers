@@ -3,20 +3,20 @@
 
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
 
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
 
-    using StyleCop.Analyzers.OrderingRules;
     using TestHelper;
     using Xunit;
 
-    public class SA1201UnitTests : CodeFixVerifier
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.OrderingRules.SA1201ElementsMustAppearInTheCorrectOrder,
+        StyleCop.Analyzers.OrderingRules.ElementOrderCodeFixProvider>;
+
+    public class SA1201UnitTests
     {
         [Fact]
         public async Task TestOuterOrderCorrectOrderAsync()
@@ -29,8 +29,8 @@ public struct FooStruct { }
 public class FooClass { }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync("namespace OuterNamespace { " + testCode + " }", EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync("namespace OuterNamespace { " + testCode + " }", EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -46,12 +46,12 @@ public struct FooStruct { }
 ";
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(4, 22).WithArguments("delegate", "enum"),
-                this.CSharpDiagnostic().WithLocation(7, 15).WithArguments("struct", "class"),
+                Diagnostic().WithLocation(4, 22).WithArguments("delegate", "enum"),
+                Diagnostic().WithLocation(7, 15).WithArguments("struct", "class"),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync("namespace OuterNamespace { " + testCode + " }", expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync("namespace OuterNamespace { " + testCode + " }", expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -76,7 +76,7 @@ public struct FooStruct { }
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -100,7 +100,7 @@ public struct FooStruct { }
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -115,7 +115,7 @@ public struct FooStruct { }
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -141,15 +141,13 @@ public struct FooStruct { }
 ";
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(5, 12).WithArguments("constructor", "destructor"),
-                this.CSharpDiagnostic().WithLocation(7, 26).WithArguments("delegate", "interface"),
-                this.CSharpDiagnostic().WithLocation(11, 5).WithArguments("conversion", "operator"),
-                this.CSharpDiagnostic().WithLocation(12, 19).WithArguments("property", "conversion"),
-                this.CSharpDiagnostic().WithLocation(14, 17).WithArguments("method", "struct"),
-                this.CSharpDiagnostic().WithLocation(16, 19).WithArguments("indexer", "class"),
+                Diagnostic().WithLocation(5, 12).WithArguments("constructor", "destructor"),
+                Diagnostic().WithLocation(7, 26).WithArguments("delegate", "interface"),
+                Diagnostic().WithLocation(11, 5).WithArguments("conversion", "operator"),
+                Diagnostic().WithLocation(12, 19).WithArguments("property", "conversion"),
+                Diagnostic().WithLocation(14, 17).WithArguments("method", "struct"),
+                Diagnostic().WithLocation(16, 19).WithArguments("indexer", "class"),
             };
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             string fixedCode = @"public class OuterType
 {
@@ -170,8 +168,15 @@ public struct FooStruct { }
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 3, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                NumberOfFixAllIterations = 3,
+            };
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -196,14 +201,12 @@ public struct FooStruct { }
 ";
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(6, 26).WithArguments("delegate", "interface"),
-                this.CSharpDiagnostic().WithLocation(10, 5).WithArguments("conversion", "operator"),
-                this.CSharpDiagnostic().WithLocation(11, 19).WithArguments("property", "conversion"),
-                this.CSharpDiagnostic().WithLocation(13, 17).WithArguments("method", "struct"),
-                this.CSharpDiagnostic().WithLocation(15, 19).WithArguments("indexer", "class"),
+                Diagnostic().WithLocation(6, 26).WithArguments("delegate", "interface"),
+                Diagnostic().WithLocation(10, 5).WithArguments("conversion", "operator"),
+                Diagnostic().WithLocation(11, 19).WithArguments("property", "conversion"),
+                Diagnostic().WithLocation(13, 17).WithArguments("method", "struct"),
+                Diagnostic().WithLocation(15, 19).WithArguments("indexer", "class"),
             };
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             string fixedCode = @"public struct OuterType
 {
@@ -223,8 +226,15 @@ public struct FooStruct { }
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 3, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                NumberOfFixAllIterations = 3,
+            };
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -241,11 +251,9 @@ public struct FooStruct { }
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(4, 5).WithArguments("event", "property"),
-                this.CSharpDiagnostic().WithLocation(6, 12).WithArguments("indexer", "method"),
+                Diagnostic().WithLocation(4, 5).WithArguments("event", "property"),
+                Diagnostic().WithLocation(6, 12).WithArguments("indexer", "method"),
             };
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             string fixedCode = @"public interface OuterType
 {
@@ -256,8 +264,7 @@ public struct FooStruct { }
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -293,7 +300,7 @@ public struct FooStruct { }
                 },
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -308,19 +315,7 @@ public struct FooStruct { }
     public event System.Action TestEvent4 { add { } remove { } }
 }
 ";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1201ElementsMustAppearInTheCorrectOrder();
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new ElementOrderCodeFixProvider();
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
