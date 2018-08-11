@@ -5,11 +5,13 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using StyleCop.Analyzers.Test.ReadabilityRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.ReadabilityRules.SA1131UseReadableConditions,
+        StyleCop.Analyzers.ReadabilityRules.SA1131CodeFixProvider>;
 
     public class SA1131CSharp7UnitTests : SA1131UnitTests
     {
@@ -53,22 +55,21 @@ struct TestStruct
     public static bool operator != (TestStruct a, TestStruct b) {{ return false; }}
 }}
 ";
-            DiagnosticResult[] expected =
+            DiagnosticResult expected = Diagnostic().WithLocation(8, 18);
+            await new CSharpTest
             {
-                this.CSharpDiagnostic().WithLocation(8, 18),
-            };
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
-        }
-
-        protected override Project ApplyCompilationOptions(Project project)
-        {
-            var newProject = base.ApplyCompilationOptions(project);
-
-            var parseOptions = (CSharpParseOptions)newProject.ParseOptions;
-
-            return newProject.WithParseOptions(parseOptions.WithLanguageVersion(LanguageVersion.Latest));
+                TestCode = testCode,
+                ExpectedDiagnostics = { expected },
+                FixedCode = fixedCode,
+                SolutionTransforms =
+                {
+                    (solution, projectId) =>
+                    {
+                        var parseOptions = (CSharpParseOptions)solution.GetProject(projectId).ParseOptions;
+                        return solution.WithProjectParseOptions(projectId, parseOptions.WithLanguageVersion(LanguageVersion.Latest));
+                    },
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

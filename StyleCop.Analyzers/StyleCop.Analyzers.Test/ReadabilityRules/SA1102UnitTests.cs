@@ -3,16 +3,16 @@
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.ReadabilityRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.ReadabilityRules.SA110xQueryClauses,
+        StyleCop.Analyzers.ReadabilityRules.SA1102CodeFixProvider>;
 
-    public class SA1102UnitTests : CodeFixVerifier
+    public class SA1102UnitTests
     {
         [Fact]
         public async Task TestSelectOnSeparateLineWithAdditionalEmptyLineAsync()
@@ -48,11 +48,9 @@ public class Foo4
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(13, 13);
+            DiagnosticResult expected = Diagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(13, 13);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -107,16 +105,14 @@ public class Foo4
 
             DiagnosticResult[] expected =
                 {
-                    this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(13, 13),
-                    this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(15, 13),
-                    this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(18, 13),
-                    this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(21, 13),
-                    this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(23, 13),
+                    Diagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(13, 13),
+                    Diagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(15, 13),
+                    Diagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(18, 13),
+                    Diagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(21, 13),
+                    Diagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(23, 13),
                 };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -135,7 +131,7 @@ public class Foo4
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -179,27 +175,13 @@ public class Foo4
 
             DiagnosticResult[] expected =
                 {
-                    this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(10, 13),
-                    this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(12, 13),
-                    this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(14, 13),
-                    this.CSharpDiagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(16, 13),
+                    Diagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(10, 13),
+                    Diagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(12, 13),
+                    Diagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(14, 13),
+                    Diagnostic(SA110xQueryClauses.SA1102Descriptor).WithLocation(16, 13),
                 };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA110xQueryClauses();
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1102CodeFixProvider();
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

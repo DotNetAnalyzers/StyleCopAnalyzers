@@ -7,6 +7,9 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
     using System.Threading.Tasks;
     using StyleCop.Analyzers.Test.ReadabilityRules;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.ReadabilityRules.SA1101PrefixLocalCallsWithThis,
+        StyleCop.Analyzers.ReadabilityRules.SA1101CodeFixProvider>;
 
     public class SA1101CSharp7UnitTests : SA1101UnitTests
     {
@@ -27,7 +30,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
