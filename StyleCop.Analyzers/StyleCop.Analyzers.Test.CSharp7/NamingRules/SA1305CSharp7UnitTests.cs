@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
     using StyleCop.Analyzers.Test.NamingRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.NamingRules.SA1305FieldNamesMustNotUseHungarianNotation>;
 
     public class SA1305CSharp7UnitTests : SA1305UnitTests
     {
@@ -25,13 +26,13 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(5, 14).WithArguments("variable", "baR"),
-                this.CSharpDiagnostic().WithLocation(5, 19).WithArguments("variable", "caRe"),
-                this.CSharpDiagnostic().WithLocation(5, 25).WithArguments("variable", "daRE"),
-                this.CSharpDiagnostic().WithLocation(5, 31).WithArguments("variable", "fAre"),
+                Diagnostic().WithLocation(5, 14).WithArguments("variable", "baR"),
+                Diagnostic().WithLocation(5, 19).WithArguments("variable", "caRe"),
+                Diagnostic().WithLocation(5, 25).WithArguments("variable", "daRE"),
+                Diagnostic().WithLocation(5, 31).WithArguments("variable", "fAre"),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -50,10 +51,10 @@ public class TypeName
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithArguments("parameter", "abX").WithLocation(6, 33),
+                Diagnostic().WithArguments("parameter", "abX").WithLocation(6, 33),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -70,7 +71,7 @@ public class TypeNameNativeMethods
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

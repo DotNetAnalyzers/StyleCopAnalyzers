@@ -3,16 +3,15 @@
 
 namespace StyleCop.Analyzers.Test.NamingRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using StyleCop.Analyzers.NamingRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.NamingRules.SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter,
+        StyleCop.Analyzers.NamingRules.RenameToUpperCaseCodeFixProvider>;
 
-    public class SA1311UnitTests : CodeFixVerifier
+    public class SA1311UnitTests
     {
         [Fact]
         public async Task TestStaticReadonlyFieldStartingWithLowerCaseAsync()
@@ -22,16 +21,14 @@ namespace StyleCop.Analyzers.Test.NamingRules
     public static readonly string bar = ""baz"";
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 35);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(3, 35);
 
             var fixedCode = @"public class Foo
 {
     public static readonly string Bar = ""baz"";
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -43,9 +40,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     public int Bar => 0;
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 35);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(3, 35);
 
             var fixedCode = @"public class Foo
 {
@@ -53,7 +48,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     public int Bar => 0;
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -64,16 +59,14 @@ namespace StyleCop.Analyzers.Test.NamingRules
     internal static readonly string b = ""baz"";
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 37);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(3, 37);
 
             var fixedCode = @"public class Foo
 {
     internal static readonly string B = ""baz"";
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -89,9 +82,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 35);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(3, 35);
 
             var fixedCode = @"public class Foo
 {
@@ -103,7 +94,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -114,7 +105,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     public static readonly string Bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -125,7 +116,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     public readonly string bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -136,7 +127,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     public static string bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -152,9 +143,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 35);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(3, 35);
 
             var fixedCode = @"public class Bar
 {
@@ -166,7 +155,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -184,9 +173,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     public static readonly string Bar;
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 35);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(3, 35);
 
             var fixedCode = @"public class Foo
 {
@@ -200,17 +187,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     public static readonly string Bar;
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1311StaticReadonlyFieldsMustBeginWithUpperCaseLetter();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new RenameToUpperCaseCodeFixProvider();
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

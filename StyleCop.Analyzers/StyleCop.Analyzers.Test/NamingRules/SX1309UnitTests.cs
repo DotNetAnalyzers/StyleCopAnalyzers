@@ -6,13 +6,13 @@ namespace StyleCop.Analyzers.Test.NamingRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using StyleCop.Analyzers.NamingRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.NamingRules.SX1309FieldNamesMustBeginWithUnderscore,
+        StyleCop.Analyzers.NamingRules.SX1309CodeFixProvider>;
 
-    public class SX1309UnitTests : CodeFixVerifier
+    public class SX1309UnitTests
     {
         public static IEnumerable<object[]> CheckedModifiersData
         {
@@ -67,17 +67,14 @@ namespace StyleCop.Analyzers.Test.NamingRules
     {modifiers} string bar = ""bar"";
 }}";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("bar").WithLocation(3, 13 + modifiers.Length);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithArguments("bar").WithLocation(3, 13 + modifiers.Length);
 
             var fixedCode = $@"public class ClassName
 {{
     {modifiers} string _bar = ""bar"";
 }}";
 
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -89,7 +86,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     {modifiers} string bar = ""bar"";
 }}";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -102,7 +99,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     {modifiers} string bar = ""bar"";
 }}";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -114,17 +111,14 @@ namespace StyleCop.Analyzers.Test.NamingRules
     {modifiers} string bar = ""bar"";
 }}";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("bar").WithLocation(3, 13 + modifiers.Length);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithArguments("bar").WithLocation(3, 13 + modifiers.Length);
 
             var fixedCode = $@"public class ClassNameNativeMethodsClass
 {{
     {modifiers} string _bar = ""bar"";
 }}";
 
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -136,7 +130,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     {modifiers} string bar = ""bar"";
 }}";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -152,17 +146,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     }}
 }}";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SX1309FieldNamesMustBeginWithUnderscore();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SX1309CodeFixProvider();
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

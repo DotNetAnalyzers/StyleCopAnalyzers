@@ -100,6 +100,17 @@ namespace StyleCop.Analyzers.Test.Verifiers
 
         public List<string> FixedSources { get; } = new List<string>();
 
+        public string BatchFixedCode
+        {
+            set
+            {
+                Assert.Empty(this.BatchFixedSources);
+                this.BatchFixedSources.Add(value);
+            }
+        }
+
+        public List<string> BatchFixedSources { get; } = new List<string>();
+
         public int NumberOfIncrementalIterations { get; set; } = DefaultNumberOfIncrementalIterations;
 
         public int NumberOfFixAllIterations { get; set; } = 1;
@@ -118,7 +129,13 @@ namespace StyleCop.Analyzers.Test.Verifiers
             await this.VerifyDiagnosticsAsync(this.TestSources.ToArray(), expected, filenames: null, cancellationToken).ConfigureAwait(false);
             if (this.HasFixableDiagnostics())
             {
-                await this.VerifyDiagnosticsAsync(this.FixedSources.ToArray(), this.RemainingDiagnostics.ToArray(), filenames: null, cancellationToken).ConfigureAwait(false);
+                var remainingDiagnostics = this.FixedSources.SequenceEqual(this.TestSources) ? expected : this.RemainingDiagnostics.ToArray();
+                await this.VerifyDiagnosticsAsync(this.FixedSources.ToArray(), remainingDiagnostics, filenames: null, cancellationToken).ConfigureAwait(false);
+                if (this.BatchFixedSources.Any())
+                {
+                    await this.VerifyDiagnosticsAsync(this.BatchFixedSources.ToArray(), remainingDiagnostics, filenames: null, cancellationToken).ConfigureAwait(false);
+                }
+
                 await this.VerifyFixAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
             }
         }
@@ -154,6 +171,9 @@ namespace StyleCop.Analyzers.Test.Verifiers
             Assert.True(this.FixedSources.Count == 0
                 || (this.FixedSources.Count == 1 && string.IsNullOrEmpty(this.FixedSources[0]))
                 || this.FixedSources.SequenceEqual(this.TestSources));
+            Assert.True(this.BatchFixedSources.Count == 0
+                || (this.BatchFixedSources.Count == 1 && string.IsNullOrEmpty(this.BatchFixedSources[0]))
+                || this.BatchFixedSources.SequenceEqual(this.TestSources));
             Assert.Empty(this.RemainingDiagnostics);
             return false;
 
@@ -687,15 +707,15 @@ namespace StyleCop.Analyzers.Test.Verifiers
         /// <summary>
         /// Called to test a C# code fix when applied on the input source as a string.
         /// </summary>
-        /// <param name="batchNewSources">An array of sources in the form of a strings after the batch fixer was applied to them.</param>
         /// <param name="oldFileNames">An array of file names in the project before the code fix was applied.</param>
         /// <param name="newFileNames">An array of file names in the project after the code fix was applied.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        protected async Task VerifyFixAsync(string[] batchNewSources = null, string[] oldFileNames = null, string[] newFileNames = null, CancellationToken cancellationToken = default(CancellationToken))
+        protected async Task VerifyFixAsync(string[] oldFileNames = null, string[] newFileNames = null, CancellationToken cancellationToken = default(CancellationToken))
         {
             var oldSources = this.TestSources.ToArray();
             var newSources = this.FixedSources.ToArray();
+            var batchNewSources = this.BatchFixedSources.Any() ? this.BatchFixedSources.ToArray() : newSources;
 
             var t1 = this.VerifyFixInternalAsync(this.Language, this.GetDiagnosticAnalyzers().ToImmutableArray(), this.GetCodeFixProviders().ToImmutableArray(), oldSources, newSources, oldFileNames, newFileNames, this.NumberOfIncrementalIterations, FixEachAnalyzerDiagnosticAsync, cancellationToken).ConfigureAwait(false);
 
