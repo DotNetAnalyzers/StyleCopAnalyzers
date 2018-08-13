@@ -3,19 +3,18 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
+    using StyleCop.Analyzers.Test.Verifiers;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.FileHeaderAnalyzers>;
 
     /// <summary>
     /// Unit tests for file header that do not follow the XML syntax.
     /// </summary>
-    public class NoXmlFileHeaderUnitTests : CodeFixVerifier
+    public class NoXmlFileHeaderUnitTests
     {
         private const string TestSettings = @"
 {
@@ -49,8 +48,6 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 }
 ";
 
-        private string currentTestSettings = TestSettings;
-
         /// <summary>
         /// Verifies that the analyzer will report <see cref="FileHeaderAnalyzers.SA1633DescriptorMissing"/> for
         /// projects not using XML headers when the file is completely missing a header.
@@ -71,10 +68,8 @@ namespace Foo
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -102,10 +97,8 @@ namespace Foo
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -134,10 +127,8 @@ namespace Foo
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -166,10 +157,8 @@ namespace Foo
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -179,7 +168,7 @@ namespace Foo
         [Fact]
         public virtual async Task TestFileNameBuiltInVariableAsync()
         {
-            this.currentTestSettings = @"
+            var testSettings = @"
 {
   ""settings"": {
     ""documentationRules"": {
@@ -207,10 +196,8 @@ namespace Foo
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
+            await VerifyCSharpFixAsync(testCode, testSettings, new[] { expectedDiagnostic }, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -220,7 +207,7 @@ namespace Foo
         [Fact]
         public virtual async Task TestFileNameUserVariableAsync()
         {
-            this.currentTestSettings = @"
+            var testSettings = @"
 {
   ""settings"": {
     ""documentationRules"": {
@@ -249,10 +236,8 @@ namespace Foo
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
+            await VerifyCSharpFixAsync(testCode, testSettings, new[] { expectedDiagnostic }, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -269,7 +254,7 @@ namespace Bar
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -287,7 +272,7 @@ namespace Bar
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -306,7 +291,7 @@ namespace Bar
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -324,7 +309,7 @@ namespace Bar
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -351,10 +336,8 @@ namespace Bar
 }
 ";
 
-            var expected = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1635Descriptor).WithLocation(1, 1);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic(FileHeaderAnalyzers.SA1635Descriptor).WithLocation(1, 1);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -378,10 +361,8 @@ namespace Bar
 {
 }
 ";
-            var expected = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(1, 1);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(1, 1);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -406,29 +387,30 @@ namespace Bar
 }
 ";
 
-            this.currentTestSettings = TestSettingsWithEmptyLines;
-            var expected = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(1, 1);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(1, 1);
+            await VerifyCSharpFixAsync(testCode, TestSettingsWithEmptyLines, new[] { expected }, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override string GetSettings()
-        {
-            return this.currentTestSettings;
-        }
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
+            => VerifyCSharpFixAsync(source, TestSettings, new[] { expected }, fixedSource: null, cancellationToken);
 
-        /// <inheritdoc/>
-        protected sealed override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new FileHeaderAnalyzers();
-        }
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+            => VerifyCSharpFixAsync(source, TestSettings, expected, fixedSource: null, cancellationToken);
 
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        private static Task VerifyCSharpFixAsync(string source, DiagnosticResult expected, string fixedSource, CancellationToken cancellationToken)
+            => VerifyCSharpFixAsync(source, TestSettings, new[] { expected }, fixedSource, cancellationToken);
+
+        private static Task VerifyCSharpFixAsync(string source, string testSettings, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
         {
-            return new FileHeaderCodeFixProvider();
+            var test = new StyleCopCodeFixVerifier<FileHeaderAnalyzers, FileHeaderCodeFixProvider>.CSharpTest
+            {
+                TestCode = source,
+                FixedCode = fixedSource,
+                Settings = testSettings,
+            };
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test.RunAsync(cancellationToken);
         }
     }
 }

@@ -3,26 +3,23 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.DocumentationRules.SA1600ElementsMustBeDocumented,
+        StyleCop.Analyzers.DocumentationRules.InheritdocCodeFixProvider>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="InheritdocCodeFixProvider"/>.
     /// </summary>
-    public class InheritdocCodeFixProviderUnitTests : CodeFixVerifier
+    public class InheritdocCodeFixProviderUnitTests
     {
         private static readonly DiagnosticDescriptor SA1600 = new SA1600ElementsMustBeDocumented().SupportedDiagnostics[0];
         private static readonly DiagnosticDescriptor CS1591 =
             new DiagnosticDescriptor(nameof(CS1591), "Title", "Missing XML comment for publicly visible type or member '{0}'", "Category", DiagnosticSeverity.Error, AnalyzerConstants.EnabledByDefault);
-
-        private DiagnosticDescriptor descriptor = SA1600;
 
         [Theory]
         [InlineData(false, null, "string             TestMember { get; set; }")]
@@ -66,27 +63,32 @@ public class ChildClass : ParentClass
 }}
 ";
 
+            var descriptor = compilerWarning ? CS1591 : SA1600;
+
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic(descriptor).WithArguments("ParentClass").WithLocation(2, 14),
+                    Diagnostic(descriptor).WithArguments("ChildClass").WithLocation(10, 14),
+                    Diagnostic(descriptor).WithArguments(memberName).WithLocation(12, 40),
+                },
+                FixedCode = fixedCode,
+                RemainingDiagnostics =
+                {
+                    Diagnostic(descriptor).WithArguments("ParentClass").WithLocation(2, 14),
+                    Diagnostic(descriptor).WithArguments("ChildClass").WithLocation(10, 14),
+                },
+            };
+
             if (compilerWarning)
             {
-                this.descriptor = CS1591;
+                test.DisabledDiagnostics.Add(SA1600.Id);
+                test.SolutionTransforms.Add(SetCompilerDocumentationWarningToError);
             }
 
-            DiagnosticResult[] expected =
-            {
-                this.CSharpDiagnostic(this.descriptor).WithArguments("ParentClass").WithLocation(2, 14),
-                this.CSharpDiagnostic(this.descriptor).WithArguments("ChildClass").WithLocation(10, 14),
-                this.CSharpDiagnostic(this.descriptor).WithArguments(memberName).WithLocation(12, 40),
-            };
-
-            DiagnosticResult[] expectedFixed =
-            {
-                this.CSharpDiagnostic(this.descriptor).WithArguments("ParentClass").WithLocation(2, 14),
-                this.CSharpDiagnostic(this.descriptor).WithArguments("ChildClass").WithLocation(10, 14),
-            };
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, expectedFixed, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -131,27 +133,32 @@ public class ChildClass : IParent
 }}
 ";
 
+            var descriptor = compilerWarning ? CS1591 : SA1600;
+
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic(descriptor).WithArguments("IParent").WithLocation(2, 18),
+                    Diagnostic(descriptor).WithArguments("ChildClass").WithLocation(10, 14),
+                    Diagnostic(descriptor).WithArguments(memberName).WithLocation(12, 31),
+                },
+                FixedCode = fixedCode,
+                RemainingDiagnostics =
+                {
+                    Diagnostic(descriptor).WithArguments("IParent").WithLocation(2, 18),
+                    Diagnostic(descriptor).WithArguments("ChildClass").WithLocation(10, 14),
+                },
+            };
+
             if (compilerWarning)
             {
-                this.descriptor = CS1591;
+                test.DisabledDiagnostics.Add(SA1600.Id);
+                test.SolutionTransforms.Add(SetCompilerDocumentationWarningToError);
             }
 
-            DiagnosticResult[] expected =
-            {
-                this.CSharpDiagnostic(this.descriptor).WithArguments("IParent").WithLocation(2, 18),
-                this.CSharpDiagnostic(this.descriptor).WithArguments("ChildClass").WithLocation(10, 14),
-                this.CSharpDiagnostic(this.descriptor).WithArguments(memberName).WithLocation(12, 31),
-            };
-
-            DiagnosticResult[] expectedFixed =
-            {
-                this.CSharpDiagnostic(this.descriptor).WithArguments("IParent").WithLocation(2, 18),
-                this.CSharpDiagnostic(this.descriptor).WithArguments("ChildClass").WithLocation(10, 14),
-            };
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, expectedFixed, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -176,15 +183,19 @@ public class ChildClass : ParentClass
 }}
 ";
 
-            DiagnosticResult[] expected =
+            await new CSharpTest
             {
-                this.CSharpDiagnostic(this.descriptor).WithLocation(2, 14),
-                this.CSharpDiagnostic(this.descriptor).WithLocation(10, 14),
-                this.CSharpDiagnostic(this.descriptor).WithLocation(12, 35),
-            };
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, testCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic(SA1600).WithLocation(2, 14),
+                    Diagnostic(SA1600).WithLocation(10, 14),
+                    Diagnostic(SA1600).WithLocation(12, 35),
+                },
+                FixedCode = testCode,
+                NumberOfIncrementalIterations = 1,
+                NumberOfFixAllIterations = 1,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -209,59 +220,30 @@ public class ChildClass : ParentClass
 }}
 ";
 
-            var fixedCode = testCode;
-
-            DiagnosticResult[] expected =
+            await new CSharpTest
             {
-                this.CSharpDiagnostic(this.descriptor).WithLocation(2, 14),
-                this.CSharpDiagnostic(this.descriptor).WithLocation(10, 14),
-                this.CSharpDiagnostic(this.descriptor).WithLocation(12, 35),
-            };
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic(SA1600).WithLocation(2, 14),
+                    Diagnostic(SA1600).WithLocation(10, 14),
+                    Diagnostic(SA1600).WithLocation(12, 35),
+                },
+                FixedCode = testCode,
+                NumberOfIncrementalIterations = 1,
+                NumberOfFixAllIterations = 1,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override IEnumerable<string> GetDisabledDiagnostics()
+        private static Solution SetCompilerDocumentationWarningToError(Solution solution, ProjectId projectId)
         {
-            if (this.descriptor == CS1591)
-            {
-                yield return SA1600.Id;
-            }
-        }
+            var project = solution.GetProject(projectId);
 
-        /// <inheritdoc/>
-        protected override Project ApplyCompilationOptions(Project project)
-        {
-            project = base.ApplyCompilationOptions(project);
+            // update the project compilation options
+            var modifiedSpecificDiagnosticOptions = project.CompilationOptions.SpecificDiagnosticOptions.SetItem(CS1591.Id, ReportDiagnostic.Error);
+            var modifiedCompilationOptions = project.CompilationOptions.WithSpecificDiagnosticOptions(modifiedSpecificDiagnosticOptions);
 
-            if (this.descriptor == CS1591)
-            {
-                var supportedDiagnosticsSpecificOptions = new Dictionary<string, ReportDiagnostic>();
-                supportedDiagnosticsSpecificOptions.Add(CS1591.Id, ReportDiagnostic.Error);
-
-                // update the project compilation options
-                var modifiedSpecificDiagnosticOptions = project.CompilationOptions.SpecificDiagnosticOptions.SetItem(CS1591.Id, ReportDiagnostic.Error);
-                var modifiedCompilationOptions = project.CompilationOptions.WithSpecificDiagnosticOptions(modifiedSpecificDiagnosticOptions);
-
-                Solution solution = project.Solution.WithProjectCompilationOptions(project.Id, modifiedCompilationOptions);
-                project = solution.GetProject(project.Id);
-            }
-
-            return project;
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1600ElementsMustBeDocumented();
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new InheritdocCodeFixProvider();
+            return solution.WithProjectCompilationOptions(projectId, modifiedCompilationOptions);
         }
     }
 }

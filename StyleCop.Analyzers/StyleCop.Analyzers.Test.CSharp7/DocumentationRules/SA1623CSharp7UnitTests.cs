@@ -8,6 +8,9 @@ namespace StyleCop.Analyzers.Test.CSharp7.DocumentationRules
     using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Test.DocumentationRules;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.DocumentationRules.PropertySummaryDocumentationAnalyzer,
+        StyleCop.Analyzers.DocumentationRules.PropertySummaryDocumentationCodeFixProvider>;
 
     public class SA1623CSharp7UnitTests : SA1623UnitTests
     {
@@ -71,11 +74,8 @@ public class TestClass
 }}
 ";
 
-            var expected = this.CSharpDiagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(9, 7 + accessibility.Length + type.Length).WithArguments(expectedArgument);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expected = Diagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(9, 7 + accessibility.Length + type.Length).WithArguments(expectedArgument);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

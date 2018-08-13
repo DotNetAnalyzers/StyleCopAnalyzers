@@ -6,17 +6,16 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
-    using StyleCop.Analyzers.Test.Helpers;
+    using StyleCop.Analyzers.Test.Verifiers;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1618GenericTypeParametersMustBeDocumented>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1618GenericTypeParametersMustBeDocumented"/>.
     /// </summary>
-    public class SA1618UnitTests : DiagnosticVerifier
+    public class SA1618UnitTests
     {
         public static IEnumerable<object[]> Members
         {
@@ -57,7 +56,7 @@ public class ClassName
     /// </summary>
     public void Foo() { }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -68,7 +67,7 @@ public class ClassName
 /// Foo
 /// </summary>
 public class Foo { }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -88,7 +87,7 @@ public class ClassName
     /// <typeparam name=""Tb"">Param 2</param>
     public ##
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -102,7 +101,7 @@ public class ClassName
 /// <typeparam name=""Ta"">Param 1</param>
 /// <typeparam name=""Tb"">Param 2</param>
 public ##";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -122,7 +121,7 @@ public class ClassName
     /// <typeparam name=""T&#x62;"">Param 2</param>
     public ##
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -136,7 +135,7 @@ public class ClassName
 /// <typeparam name=""T&#97;"">Param 1</param>
 /// <typeparam name=""T&#x62;"">Param 2</param>
 public ##";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -156,7 +155,7 @@ public class ClassName
     /// <typeparam name=""Ta"">Param 1</param>
     public ##
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -170,7 +169,7 @@ public class ClassName
 /// <typeparam name=""Tb"">Param 2</param>
 /// <typeparam name=""Ta"">Param 1</param>
 public ##";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -185,7 +184,7 @@ public class ClassName
 {
     public ##
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -194,7 +193,7 @@ public class ClassName
         {
             var testCode = @"
 public ##";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -210,7 +209,7 @@ public class ClassName
     /// <inheritdoc/>
     public ##
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -220,7 +219,7 @@ public class ClassName
             var testCode = @"
 /// <inheritdoc/>
 public ##";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -240,11 +239,11 @@ public class ClassName
 }";
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(10, 30).WithArguments("Ta"),
-                this.CSharpDiagnostic().WithLocation(10, 34).WithArguments("Tb"),
+                Diagnostic().WithLocation(10, 30).WithArguments("Ta"),
+                Diagnostic().WithLocation(10, 34).WithArguments("Tb"),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -259,11 +258,11 @@ public ##";
 
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(5, 22).WithArguments("Ta"),
-                this.CSharpDiagnostic().WithLocation(5, 26).WithArguments("Tb"),
+                Diagnostic().WithLocation(5, 22).WithArguments("Ta"),
+                Diagnostic().WithLocation(5, 26).WithArguments("Tb"),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -276,7 +275,7 @@ public ##";
 /// </summary>
 public partial ##";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -293,7 +292,7 @@ public class TestClass<T>
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -314,7 +313,7 @@ public class TestClass
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -331,8 +330,8 @@ public class TestClass<T>
 }
 ";
 
-            var expected = this.CSharpDiagnostic().WithLocation(3, 24).WithArguments("T");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(3, 24).WithArguments("T");
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -353,8 +352,8 @@ public class TestClass
 }
 ";
 
-            var expected = this.CSharpDiagnostic().WithLocation(8, 26).WithArguments("T");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(8, 26).WithArguments("T");
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -371,7 +370,7 @@ public class TestClass<T>
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -392,7 +391,7 @@ public class TestClass
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -411,21 +410,20 @@ internal class ClassName
     private void Test2<T>(int arg) { }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override Project ApplyCompilationOptions(Project project)
-        {
-            var resolver = new TestXmlReferenceResolver();
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
+            => VerifyCSharpDiagnosticAsync(source, new[] { expected }, cancellationToken);
 
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        {
             string contentClassWithTypeparamDoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <TestClass>
   <summary>Test class</summary>
   <typeparam name=""T"">Param 1</typeparam>
 </TestClass>
 ";
-            resolver.XmlReferences.Add("ClassWithTypeparamDoc.xml", contentClassWithTypeparamDoc);
-
             string contentMethodWithTypeparamDoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <TestClass>
   <TestMethod>
@@ -434,15 +432,11 @@ internal class ClassName
   </TestMethod>
 </TestClass>
 ";
-            resolver.XmlReferences.Add("MethodWithTypeparamDoc.xml", contentMethodWithTypeparamDoc);
-
             string contentClassWithoutTypeparamDoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <TestClass>
   <summary>Test class</summary>
 </TestClass>
 ";
-            resolver.XmlReferences.Add("ClassWithoutTypeparamDoc.xml", contentClassWithoutTypeparamDoc);
-
             string contentMethodWithoutTypeparamDoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <TestClass>
   <TestMethod>
@@ -450,15 +444,11 @@ internal class ClassName
   </TestMethod>
 </TestClass>
 ";
-            resolver.XmlReferences.Add("MethodWithoutTypeparamDoc.xml", contentMethodWithoutTypeparamDoc);
-
             string contentClassInheritdoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <TestClass>
   <inheritdoc/>
 </TestClass>
 ";
-            resolver.XmlReferences.Add("ClassWithIneheritdoc.xml", contentClassInheritdoc);
-
             string contentMethodWithInheritdoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <TestClass>
   <TestMethod>
@@ -466,16 +456,23 @@ internal class ClassName
   </TestMethod>
 </TestClass>
 ";
-            resolver.XmlReferences.Add("MethodWithInheritdoc.xml", contentMethodWithInheritdoc);
 
-            project = base.ApplyCompilationOptions(project);
-            project = project.WithCompilationOptions(project.CompilationOptions.WithXmlReferenceResolver(resolver));
-            return project;
-        }
+            var test = new StyleCopDiagnosticVerifier<SA1618GenericTypeParametersMustBeDocumented>.CSharpTest
+            {
+                TestCode = source,
+                XmlReferences =
+                {
+                    { "ClassWithTypeparamDoc.xml", contentClassWithTypeparamDoc },
+                    { "MethodWithTypeparamDoc.xml", contentMethodWithTypeparamDoc },
+                    { "ClassWithoutTypeparamDoc.xml", contentClassWithoutTypeparamDoc },
+                    { "MethodWithoutTypeparamDoc.xml", contentMethodWithoutTypeparamDoc },
+                    { "ClassWithIneheritdoc.xml", contentClassInheritdoc },
+                    { "MethodWithInheritdoc.xml", contentMethodWithInheritdoc },
+                },
+            };
 
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1618GenericTypeParametersMustBeDocumented();
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test.RunAsync(cancellationToken);
         }
     }
 }

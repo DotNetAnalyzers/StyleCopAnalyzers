@@ -3,19 +3,19 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.DocumentationRules.PropertySummaryDocumentationAnalyzer,
+        StyleCop.Analyzers.DocumentationRules.PropertySummaryDocumentationCodeFixProvider>;
 
     /// <summary>
     /// This class contains the unit tests for SA1623.
     /// </summary>
-    public class SA1623UnitTests : CodeFixVerifier
+    public class SA1623UnitTests
     {
         /// <summary>
         /// Verifies that property documentation that does not start with the appropriate text will result in a diagnostic.
@@ -74,11 +74,8 @@ public class TestClass
 }}
 ";
 
-            var expected = this.CSharpDiagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(7, 7 + accessibility.Length + type.Length).WithArguments(expectedArgument);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expected = Diagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(7, 7 + accessibility.Length + type.Length).WithArguments(expectedArgument);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -145,11 +142,8 @@ public class TestClass
 }}
 ";
 
-            var expected = this.CSharpDiagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(9, 11 + accessibility.Length + type.Length).WithArguments(expectedArgument);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expected = Diagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(9, 11 + accessibility.Length + type.Length).WithArguments(expectedArgument);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -169,11 +163,8 @@ public class TestClass
     }
 }";
 
-            var expected = this.CSharpDiagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(4, 16).WithArguments("Gets");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-
-            var offeredFixes = await this.GetOfferedCSharpFixesAsync(testCode).ConfigureAwait(false);
-            Assert.Empty(offeredFixes);
+            var expected = Diagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(4, 16).WithArguments("Gets");
+            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -224,12 +215,10 @@ public class TestClass
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(7, 7 + accessibility.Length + type.Length).WithArguments(expectedArgument),
+                Diagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(7, 7 + accessibility.Length + type.Length).WithArguments(expectedArgument),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -248,19 +237,7 @@ public class TestClass
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new PropertySummaryDocumentationCodeFixProvider();
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new PropertySummaryDocumentationAnalyzer();
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

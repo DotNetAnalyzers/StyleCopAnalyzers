@@ -5,7 +5,6 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
     using StyleCop.Analyzers.DocumentationRules;
     using Xunit;
 
@@ -38,10 +37,8 @@ namespace Bar
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1640Descriptor).WithLocation(1, 4);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1640Descriptor).WithLocation(1, 4);
+            await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -68,10 +65,8 @@ namespace Bar
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1640Descriptor).WithLocation(1, 4);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1640Descriptor).WithLocation(1, 4);
+            await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -98,15 +93,8 @@ namespace Bar
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1640Descriptor).WithLocation(1, 4);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new FileHeaderCodeFixProvider();
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1640Descriptor).WithLocation(1, 4);
+            await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

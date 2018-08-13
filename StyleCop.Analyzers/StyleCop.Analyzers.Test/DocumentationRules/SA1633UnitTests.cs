@@ -5,10 +5,10 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
     using StyleCop.Analyzers.DocumentationRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.FileHeaderAnalyzers>;
 
     /// <summary>
     /// Unit tests for the SA1633 diagnostic.
@@ -56,7 +56,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
             await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -80,33 +80,63 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestValidMultilineCommentFileHeadersAsync()
+        public async Task TestValidMultilineCommentFileHeaders1Async()
         {
-            var testCode1 = @"/* <copyright file=""Test0.cs"" company=""FooCorp"">
+            var testCode = @"/* <copyright file=""Test0.cs"" company=""FooCorp"">
   Copyright (c) FooCorp. All rights reserved.
 </copyright> */
 ";
 
-            var testCode2 = @"/*
-<copyright file=""Test1.cs"" company=""FooCorp"">
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a file with a valid header and no other content will not produce a diagnostic message.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestValidMultilineCommentFileHeaders2Async()
+        {
+            var testCode = @"/*
+<copyright file=""Test0.cs"" company=""FooCorp"">
   Copyright (c) FooCorp. All rights reserved.
 </copyright>
 */
 ";
 
-            var testCode3 = @"/*<copyright file=""Test2.cs"" company=""FooCorp"">
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a file with a valid header and no other content will not produce a diagnostic message.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestValidMultilineCommentFileHeaders3Async()
+        {
+            var testCode = @"/*<copyright file=""Test0.cs"" company=""FooCorp"">
   Copyright (c) FooCorp. All rights reserved.
 </copyright>*/
 ";
 
-            var testCode4 = @"/*
- * <copyright file=""Test3.cs"" company=""FooCorp"">
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a file with a valid header and no other content will not produce a diagnostic message.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestValidMultilineCommentFileHeaders4Async()
+        {
+            var testCode = @"/*
+ * <copyright file=""Test0.cs"" company=""FooCorp"">
  *   Copyright (c) FooCorp. All rights reserved.
  * </copyright>
 */
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(new[] { testCode1, testCode2, testCode3, testCode4 }, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -129,7 +159,7 @@ namespace Bar
 }
 ";
 
-            var expected = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
+            var expected = Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -176,10 +206,8 @@ namespace Foo
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
+            await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -206,10 +234,8 @@ namespace Foo
 
             this.useDecoratedXmlMultiLineHeaderTestSettings = true;
 
-            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
+            await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -234,10 +260,8 @@ namespace Foo
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMalformed).WithLocation(1, 1);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMalformed).WithLocation(1, 1);
+            await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -263,10 +287,8 @@ namespace Foo
 }
 ";
 
-            var expected = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMalformed).WithLocation(1, 1);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            var expected = Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMalformed).WithLocation(1, 1);
+            await this.VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -294,10 +316,8 @@ namespace Foo
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMalformed).WithLocation(1, 1);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMalformed).WithLocation(1, 1);
+            await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -367,19 +387,17 @@ namespace Foo
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                this.CSharpCompilerError("CS1035").WithMessage("End-of-file found, '*/' expected").WithLocation(1, 1),
-                this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1),
+                CompilerError("CS1035").WithMessage("End-of-file found, '*/' expected").WithLocation(1, 1),
+                Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1),
             };
 
             // The fixed code will still have the incomplete comment, as there is no certainty that the incomplete comment was intended as file header.
             DiagnosticResult[] expectedFixedDiagnostics =
             {
-                this.CSharpCompilerError("CS1035").WithMessage("End-of-file found, '*/' expected").WithLocation(3, 1),
+                CompilerError("CS1035").WithMessage("End-of-file found, '*/' expected").WithLocation(3, 1),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, expectedFixedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode, expectedFixedDiagnostics, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -396,12 +414,6 @@ namespace Foo
             }
 
             return base.GetSettings();
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new FileHeaderCodeFixProvider();
         }
     }
 }

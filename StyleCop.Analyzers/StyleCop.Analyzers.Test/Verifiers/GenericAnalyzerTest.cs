@@ -75,11 +75,16 @@ namespace StyleCop.Analyzers.Test.Verifiers
             set
             {
                 Assert.Empty(this.TestSources);
-                this.TestSources.Add(value);
+                if (value != null)
+                {
+                    this.TestSources.Add(value);
+                }
             }
         }
 
         public List<string> TestSources { get; } = new List<string>();
+
+        public Dictionary<string, string> XmlReferences { get; } = new Dictionary<string, string>();
 
         public List<DiagnosticResult> ExpectedDiagnostics { get; } = new List<DiagnosticResult>();
 
@@ -96,7 +101,10 @@ namespace StyleCop.Analyzers.Test.Verifiers
             set
             {
                 Assert.Empty(this.FixedSources);
-                this.FixedSources.Add(value);
+                if (value != null)
+                {
+                    this.FixedSources.Add(value);
+                }
             }
         }
 
@@ -107,7 +115,10 @@ namespace StyleCop.Analyzers.Test.Verifiers
             set
             {
                 Assert.Empty(this.BatchFixedSources);
-                this.BatchFixedSources.Add(value);
+                if (value != null)
+                {
+                    this.BatchFixedSources.Add(value);
+                }
             }
         }
 
@@ -455,6 +466,14 @@ namespace StyleCop.Analyzers.Test.Verifiers
             var compilationOptions = language == LanguageNames.CSharp
                 ? (CompilationOptions)new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true)
                 : new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
+
+            var xmlReferenceResolver = new TestXmlReferenceResolver();
+            foreach (var xmlReference in this.XmlReferences)
+            {
+                xmlReferenceResolver.XmlReferences.Add(xmlReference.Key, xmlReference.Value);
+            }
+
+            compilationOptions = compilationOptions.WithXmlReferenceResolver(xmlReferenceResolver);
 
             Solution solution = CreateWorkspace()
                 .CurrentSolution

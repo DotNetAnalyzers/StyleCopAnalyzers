@@ -5,7 +5,6 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
     using StyleCop.Analyzers.DocumentationRules;
     using Xunit;
 
@@ -64,10 +63,8 @@ namespace Bar
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(1, 4);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(1, 4);
+            await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -94,10 +91,8 @@ namespace Bar
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(1, 4);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(1, 4);
+            await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -106,11 +101,11 @@ namespace Bar
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         [WorkItem(1356, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1356")]
-        public async Task TestFileHeaderWillIgnoreLeadingAndTrailingWhitespaceAroundCopyrightMessageAsync()
+        public async Task TestFileHeaderWillIgnoreLeadingAndTrailingWhitespaceAroundCopyrightMessage1Async()
         {
             this.useMultiLineHeaderTestSettings = true;
 
-            var testCode1 = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
+            var testCode = @"// <copyright file=""Test0.cs"" company=""FooCorp"">
 //   copyright (c) FooCorp. All rights reserved.
 //
 //   Line #3
@@ -121,7 +116,20 @@ namespace Bar
 }
 ";
 
-            var testCode2 = @"/* <copyright file=""Test1.cs"" company=""FooCorp"">
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a file header will ignore spurious leading / trailing whitespaces (for multiple line comments).
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(1356, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1356")]
+        public async Task TestFileHeaderWillIgnoreLeadingAndTrailingWhitespaceAroundCopyrightMessage2Async()
+        {
+            this.useMultiLineHeaderTestSettings = true;
+
+            var testCode = @"/* <copyright file=""Test0.cs"" company=""FooCorp"">
   copyright (c) FooCorp. All rights reserved.
 
   Line #3
@@ -132,8 +140,21 @@ namespace Bar
 }
 ";
 
-            var testCode3 = @"/*
- * <copyright file=""Test2.cs"" company=""FooCorp"">
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a file header will ignore spurious leading / trailing whitespaces (for multiple line comments).
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(1356, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1356")]
+        public async Task TestFileHeaderWillIgnoreLeadingAndTrailingWhitespaceAroundCopyrightMessage3Async()
+        {
+            this.useMultiLineHeaderTestSettings = true;
+
+            var testCode = @"/*
+ * <copyright file=""Test0.cs"" company=""FooCorp"">
  *   copyright (c) FooCorp. All rights reserved.
  *
  *   Line #3
@@ -145,7 +166,7 @@ namespace Bar
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(new[] { testCode1, testCode2, testCode3 }, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -154,11 +175,11 @@ namespace Bar
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         [WorkItem(1356, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1356")]
-        public async Task TestNoXmlFileHeaderWillIgnoreLeadingAndTrailingWhitespaceAroundCopyrightMessageAsync()
+        public async Task TestNoXmlFileHeaderWillIgnoreLeadingAndTrailingWhitespaceAroundCopyrightMessage1Async()
         {
             this.useNoXmlMultiLineHeaderTestSettings = true;
 
-            var testCode1 = @"//   copyright (c) FooCorp. All rights reserved.
+            var testCode = @"//   copyright (c) FooCorp. All rights reserved.
 //
 //   Line #3
 
@@ -167,7 +188,20 @@ namespace Bar
 }
 ";
 
-            var testCode2 = @"/*
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a file header without XML header will ignore spurious leading / trailing whitespaces (for multiple line comments).
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(1356, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1356")]
+        public async Task TestNoXmlFileHeaderWillIgnoreLeadingAndTrailingWhitespaceAroundCopyrightMessage2Async()
+        {
+            this.useNoXmlMultiLineHeaderTestSettings = true;
+
+            var testCode = @"/*
  *   copyright (c) FooCorp. All rights reserved.
  *
  *   Line #3
@@ -178,7 +212,20 @@ namespace Bar
 }
 ";
 
-            var testCode3 = @"/*
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a file header without XML header will ignore spurious leading / trailing whitespaces (for multiple line comments).
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(1356, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1356")]
+        public async Task TestNoXmlFileHeaderWillIgnoreLeadingAndTrailingWhitespaceAroundCopyrightMessage3Async()
+        {
+            this.useNoXmlMultiLineHeaderTestSettings = true;
+
+            var testCode = @"/*
   copyright (c) FooCorp. All rights reserved.
 
   Line #3
@@ -189,7 +236,7 @@ namespace Bar
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(new[] { testCode1, testCode2, testCode3 }, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -224,10 +271,8 @@ namespace Bar
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(4, 4);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(4, 4);
+            await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -268,10 +313,8 @@ namespace Bar
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(2, 8);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(2, 8);
+            await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -313,10 +356,8 @@ namespace Bar
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(3, 4);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(3, 4);
+            await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -358,10 +399,8 @@ namespace Bar
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(3, 4);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(3, 4);
+            await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -402,10 +441,8 @@ namespace Bar
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(2, 4);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(2, 4);
+            await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -446,15 +483,8 @@ namespace Bar
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(1, 4);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new FileHeaderCodeFixProvider();
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(1, 4);
+            await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>

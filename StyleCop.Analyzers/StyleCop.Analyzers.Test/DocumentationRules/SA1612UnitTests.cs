@@ -6,20 +6,17 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.DocumentationRules;
-    using StyleCop.Analyzers.Test.Helpers;
+    using StyleCop.Analyzers.Test.Verifiers;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1612ElementParameterDocumentationMustMatchElementParameters>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1612ElementParameterDocumentationMustMatchElementParameters"/>.
     /// </summary>
-    public class SA1612UnitTests : DiagnosticVerifier
+    public class SA1612UnitTests
     {
-        private string currentTestSettings;
-
         public static IEnumerable<object[]> Declarations
         {
             get
@@ -41,7 +38,7 @@ public class ClassName
 {
     public ClassName Method() { return null; }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -59,7 +56,7 @@ public class ClassName
     /// </summary>
 $$
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -80,7 +77,7 @@ public class ClassName
     ///<param name=""new"">Test</param>
 $$
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -102,7 +99,7 @@ public class ClassName
 $$
 }";
 
-            this.currentTestSettings = @"
+            var testSettings = @"
 {
   ""settings"": {
     ""documentationRules"": {
@@ -111,7 +108,7 @@ $$
   }
 }
 ";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), testSettings, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -133,7 +130,7 @@ public class ClassName
 $$
 }";
 
-            var diagnostic = this.CSharpDiagnostic()
+            var diagnostic = Diagnostic()
                 .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}.");
 
             var expected = new[]
@@ -142,7 +139,7 @@ $$
                 diagnostic.WithLocation(11, 21).WithArguments("foo", 1),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -166,12 +163,12 @@ $$
 
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(10, 21).WithArguments("boo"),
-                this.CSharpDiagnostic().WithLocation(11, 21).WithArguments("far"),
-                this.CSharpDiagnostic().WithLocation(12, 21).WithArguments("foe"),
+                Diagnostic().WithLocation(10, 21).WithArguments("boo"),
+                Diagnostic().WithLocation(11, 21).WithArguments("far"),
+                Diagnostic().WithLocation(12, 21).WithArguments("foe"),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -194,7 +191,7 @@ public class ClassName
     ///<param name=""  "">Test</param>
 $$
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -216,7 +213,7 @@ public class ClassName
     $$
 }";
 
-            var diagnostic = this.CSharpDiagnostic()
+            var diagnostic = Diagnostic()
                 .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}.");
 
             var expected = new[]
@@ -226,7 +223,7 @@ public class ClassName
                 diagnostic.WithLocation(12, 22).WithArguments("foo", 1),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", p), expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", p), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -249,12 +246,12 @@ public class ClassName
     $$
 }";
 
-            var diagnostic = this.CSharpDiagnostic()
+            var diagnostic = Diagnostic()
                 .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}.");
 
             var expected = diagnostic.WithLocation(13, 22).WithArguments("bar", 2);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", p), expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", p), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -270,7 +267,7 @@ public class ClassName
     /// <inheritdoc/>
     $$
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -285,7 +282,7 @@ public class ClassName
     /// <include file='MissingParamDocumentation.xml' path='/ClassName/Method/*' />
     public ClassName Method() { return null; }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -300,7 +297,7 @@ public class ClassName
     /// <include file='WithParamDocumentation.xml' path='/ClassName/Method/*' />
     public ClassName Method(string foo, string bar, string @new) { return null; }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -318,12 +315,12 @@ public class ClassName
 
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(8, 22).WithArguments("boo"),
-                this.CSharpDiagnostic().WithLocation(8, 22).WithArguments("far"),
-                this.CSharpDiagnostic().WithLocation(8, 22).WithArguments("foe"),
+                Diagnostic().WithLocation(8, 22).WithArguments("boo"),
+                Diagnostic().WithLocation(8, 22).WithArguments("far"),
+                Diagnostic().WithLocation(8, 22).WithArguments("foe"),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -338,7 +335,7 @@ public class ClassName
     /// <include file='WithSA1613ParamDocumentation.xml' path='/ClassName/Method/*' />
     public ClassName Method(string foo, string bar, string @new) { return null; }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -354,7 +351,7 @@ public class ClassName
     public ClassName Method(string bar, string @new, string foo) { return null; }
 }";
 
-            var diagnostic = this.CSharpDiagnostic()
+            var diagnostic = Diagnostic()
                 .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}.");
 
             var expected = new[]
@@ -364,12 +361,12 @@ public class ClassName
                 diagnostic.WithLocation(8, 22).WithArguments("new", 2),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             // This is even reported if the documentation is not required, except that no warning is reported for the
             // first param element (which is actually the last parameter) since it would otherwise be allowed to skip
             // the documentation for the first two parameters.
-            this.currentTestSettings = @"
+            var testSettings = @"
 {
   ""settings"": {
     ""documentationRules"": {
@@ -385,7 +382,7 @@ public class ClassName
                 diagnostic.WithLocation(8, 22).WithArguments("new", 2),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, testSettings, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -401,12 +398,12 @@ public class ClassName
     public ClassName Method(string foo, string bar, string @new) { return null; }
 }";
 
-            var diagnostic = this.CSharpDiagnostic()
+            var diagnostic = Diagnostic()
                 .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}.");
 
             var expected = diagnostic.WithLocation(8, 22).WithArguments("bar", 2);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -421,14 +418,17 @@ public class ClassName
     /// <include file='WithInheritedDocumentation.xml' path='/ClassName/Method/*' />
     public ClassName Method(string foo, string bar, string @new) { return null; }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override Project ApplyCompilationOptions(Project project)
-        {
-            var resolver = new TestXmlReferenceResolver();
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
+            => VerifyCSharpDiagnosticAsync(source, testSettings: null, new[] { expected }, cancellationToken);
 
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+            => VerifyCSharpDiagnosticAsync(source, testSettings: null, expected, cancellationToken);
+
+        private static Task VerifyCSharpDiagnosticAsync(string source, string testSettings, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        {
             string contentWithoutParamDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <ClassName>
     <Method>
@@ -438,8 +438,6 @@ public class ClassName
     </Method>
 </ClassName>
 ";
-            resolver.XmlReferences.Add("MissingParamDocumentation.xml", contentWithoutParamDocumentation);
-
             string contentWithParamDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <ClassName>
     <Method>
@@ -452,8 +450,6 @@ public class ClassName
     </Method>
 </ClassName>
 ";
-            resolver.XmlReferences.Add("WithParamDocumentation.xml", contentWithParamDocumentation);
-
             string contentWithInvalidParamDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <ClassName>
     <Method>
@@ -466,8 +462,6 @@ public class ClassName
     </Method>
 </ClassName>
 ";
-            resolver.XmlReferences.Add("WithInvalidParamDocumentation.xml", contentWithInvalidParamDocumentation);
-
             string contentWithSA1613ParamDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <ClassName>
     <Method>
@@ -482,8 +476,6 @@ public class ClassName
     </Method>
 </ClassName>
 ";
-            resolver.XmlReferences.Add("WithSA1613ParamDocumentation.xml", contentWithSA1613ParamDocumentation);
-
             string contentWithTooManyParamDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <ClassName>
     <Method>
@@ -497,8 +489,6 @@ public class ClassName
     </Method>
 </ClassName>
 ";
-            resolver.XmlReferences.Add("WithTooManyParamDocumentation.xml", contentWithTooManyParamDocumentation);
-
             string contentWithInheritedDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
  <ClassName>
     <Method>
@@ -506,21 +496,24 @@ public class ClassName
     </Method>
  </ClassName>
  ";
-            resolver.XmlReferences.Add("WithInheritedDocumentation.xml", contentWithInheritedDocumentation);
 
-            project = base.ApplyCompilationOptions(project);
-            project = project.WithCompilationOptions(project.CompilationOptions.WithXmlReferenceResolver(resolver));
-            return project;
-        }
+            var test = new StyleCopDiagnosticVerifier<SA1612ElementParameterDocumentationMustMatchElementParameters>.CSharpTest
+            {
+                TestCode = source,
+                Settings = testSettings,
+                XmlReferences =
+                {
+                    { "MissingParamDocumentation.xml", contentWithoutParamDocumentation },
+                    { "WithParamDocumentation.xml", contentWithParamDocumentation },
+                    { "WithInvalidParamDocumentation.xml", contentWithInvalidParamDocumentation },
+                    { "WithSA1613ParamDocumentation.xml", contentWithSA1613ParamDocumentation },
+                    { "WithTooManyParamDocumentation.xml", contentWithTooManyParamDocumentation },
+                    { "WithInheritedDocumentation.xml", contentWithInheritedDocumentation },
+                },
+            };
 
-        protected override string GetSettings()
-        {
-            return this.currentTestSettings ?? base.GetSettings();
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1612ElementParameterDocumentationMustMatchElementParameters();
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test.RunAsync(cancellationToken);
         }
     }
 }
