@@ -1003,6 +1003,8 @@ public class TestClass
                 ExpectedDiagnostics = { expected },
                 FixedCode = fixedCode,
                 RemainingDiagnostics = { expected },
+                NumberOfIncrementalIterations = 1,
+                NumberOfFixAllIterations = 1,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }

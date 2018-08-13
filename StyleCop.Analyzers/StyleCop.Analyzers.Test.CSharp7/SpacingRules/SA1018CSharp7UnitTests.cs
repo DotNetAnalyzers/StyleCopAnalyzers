@@ -103,7 +103,6 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
                     Diagnostic().WithLocation(13, 1),
                     Diagnostic().WithLocation(19, 1),
                 },
-                NumberOfFixAllIterations = 2,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }

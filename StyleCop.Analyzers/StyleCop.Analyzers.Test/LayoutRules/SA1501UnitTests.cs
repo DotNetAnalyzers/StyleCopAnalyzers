@@ -527,7 +527,6 @@ class TypeName
                     CompilerError("CS1513").WithLocation(11, 23).WithMessage("} expected"),
                     CompilerError("CS1513").WithLocation(11, 23).WithMessage("} expected"),
                 },
-                NumberOfFixAllIterations = 2,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 

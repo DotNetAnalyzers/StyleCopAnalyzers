@@ -113,9 +113,9 @@ namespace StyleCop.Analyzers.Test.Verifiers
 
         public List<string> BatchFixedSources { get; } = new List<string>();
 
-        public int NumberOfIncrementalIterations { get; set; } = DefaultNumberOfIncrementalIterations;
+        public int? NumberOfIncrementalIterations { get; set; }
 
-        public int NumberOfFixAllIterations { get; set; } = 1;
+        public int? NumberOfFixAllIterations { get; set; }
 
         public bool AllowNewCompilerDiagnostics { get; set; } = false;
 
@@ -722,7 +722,41 @@ namespace StyleCop.Analyzers.Test.Verifiers
             var newSources = this.FixedSources.ToArray();
             var batchNewSources = this.BatchFixedSources.Any() ? this.BatchFixedSources.ToArray() : newSources;
 
-            var t1 = this.VerifyFixInternalAsync(this.Language, this.GetDiagnosticAnalyzers().ToImmutableArray(), this.GetCodeFixProviders().ToImmutableArray(), oldSources, newSources, oldFileNames, newFileNames, this.NumberOfIncrementalIterations, FixEachAnalyzerDiagnosticAsync, cancellationToken).ConfigureAwait(false);
+            int numberOfIncrementalIterations;
+            int numberOfFixAllIterations;
+            if (this.NumberOfIncrementalIterations != null)
+            {
+                numberOfIncrementalIterations = this.NumberOfIncrementalIterations.Value;
+            }
+            else
+            {
+                if (!HasAnyChange(oldSources, newSources, oldFileNames, newFileNames))
+                {
+                    numberOfIncrementalIterations = 0;
+                }
+                else
+                {
+                    numberOfIncrementalIterations = DefaultNumberOfIncrementalIterations;
+                }
+            }
+
+            if (this.NumberOfFixAllIterations != null)
+            {
+                numberOfFixAllIterations = this.NumberOfFixAllIterations.Value;
+            }
+            else
+            {
+                if (!HasAnyChange(oldSources, batchNewSources, oldFileNames, newFileNames))
+                {
+                    numberOfFixAllIterations = 0;
+                }
+                else
+                {
+                    numberOfFixAllIterations = 1;
+                }
+            }
+
+            var t1 = this.VerifyFixInternalAsync(this.Language, this.GetDiagnosticAnalyzers().ToImmutableArray(), this.GetCodeFixProviders().ToImmutableArray(), oldSources, newSources, oldFileNames, newFileNames, numberOfIncrementalIterations, FixEachAnalyzerDiagnosticAsync, cancellationToken).ConfigureAwait(false);
 
             var fixAllProvider = this.GetCodeFixProviders().Select(codeFixProvider => codeFixProvider.GetFixAllProvider()).Where(codeFixProvider => codeFixProvider != null).ToImmutableArray();
 
@@ -737,19 +771,19 @@ namespace StyleCop.Analyzers.Test.Verifiers
                     await t1;
                 }
 
-                var t2 = this.VerifyFixInternalAsync(LanguageNames.CSharp, this.GetDiagnosticAnalyzers().ToImmutableArray(), this.GetCodeFixProviders().ToImmutableArray(), oldSources, batchNewSources ?? newSources, oldFileNames, newFileNames, this.NumberOfFixAllIterations, FixAllAnalyzerDiagnosticsInDocumentAsync, cancellationToken).ConfigureAwait(false);
+                var t2 = this.VerifyFixInternalAsync(LanguageNames.CSharp, this.GetDiagnosticAnalyzers().ToImmutableArray(), this.GetCodeFixProviders().ToImmutableArray(), oldSources, batchNewSources ?? newSources, oldFileNames, newFileNames, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInDocumentAsync, cancellationToken).ConfigureAwait(false);
                 if (Debugger.IsAttached)
                 {
                     await t2;
                 }
 
-                var t3 = this.VerifyFixInternalAsync(LanguageNames.CSharp, this.GetDiagnosticAnalyzers().ToImmutableArray(), this.GetCodeFixProviders().ToImmutableArray(), oldSources, batchNewSources ?? newSources, oldFileNames, newFileNames, this.NumberOfFixAllIterations, FixAllAnalyzerDiagnosticsInProjectAsync, cancellationToken).ConfigureAwait(false);
+                var t3 = this.VerifyFixInternalAsync(LanguageNames.CSharp, this.GetDiagnosticAnalyzers().ToImmutableArray(), this.GetCodeFixProviders().ToImmutableArray(), oldSources, batchNewSources ?? newSources, oldFileNames, newFileNames, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInProjectAsync, cancellationToken).ConfigureAwait(false);
                 if (Debugger.IsAttached)
                 {
                     await t3;
                 }
 
-                var t4 = this.VerifyFixInternalAsync(LanguageNames.CSharp, this.GetDiagnosticAnalyzers().ToImmutableArray(), this.GetCodeFixProviders().ToImmutableArray(), oldSources, batchNewSources ?? newSources, oldFileNames, newFileNames, this.NumberOfFixAllIterations, FixAllAnalyzerDiagnosticsInSolutionAsync, cancellationToken).ConfigureAwait(false);
+                var t4 = this.VerifyFixInternalAsync(LanguageNames.CSharp, this.GetDiagnosticAnalyzers().ToImmutableArray(), this.GetCodeFixProviders().ToImmutableArray(), oldSources, batchNewSources ?? newSources, oldFileNames, newFileNames, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInSolutionAsync, cancellationToken).ConfigureAwait(false);
                 if (Debugger.IsAttached)
                 {
                     await t4;
@@ -834,6 +868,21 @@ namespace StyleCop.Analyzers.Test.Verifiers
             }
         }
 
+        private static bool HasAnyChange(string[] oldSources, string[] newSources, string[] oldFileNames, string[] newFileNames)
+        {
+            if (!oldSources.SequenceEqual(newSources))
+            {
+                return true;
+            }
+
+            if (oldFileNames != null && newFileNames != null && !oldFileNames.SequenceEqual(newFileNames))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         private static async Task<Project> FixEachAnalyzerDiagnosticAsync(ImmutableArray<DiagnosticAnalyzer> analyzers, ImmutableArray<CodeFixProvider> codeFixProviders, int? codeFixIndex, Project project, int numberOfIterations, CancellationToken cancellationToken)
         {
             var codeFixProvider = codeFixProviders.Single();
@@ -860,7 +909,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
                     break;
                 }
 
-                if (--numberOfIterations < 0)
+                if (--numberOfIterations < -1)
                 {
                     Assert.True(false, "The upper limit for the number of code fix iterations was exceeded");
                 }
@@ -868,6 +917,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
                 previousDiagnostics = analyzerDiagnostics;
 
                 done = true;
+                bool anyActions = false;
                 foreach (var diagnostic in analyzerDiagnostics)
                 {
                     if (!codeFixProvider.FixableDiagnosticIds.Contains(diagnostic.Id))
@@ -882,6 +932,8 @@ namespace StyleCop.Analyzers.Test.Verifiers
 
                     if (actions.Count > 0)
                     {
+                        anyActions = true;
+
                         var fixedProject = await ApplyFixAsync(project, actions.ElementAt(codeFixIndex.GetValueOrDefault(0)), cancellationToken).ConfigureAwait(false);
                         if (fixedProject != project)
                         {
@@ -891,6 +943,14 @@ namespace StyleCop.Analyzers.Test.Verifiers
                             break;
                         }
                     }
+                }
+
+                if (!anyActions)
+                {
+                    Assert.True(done);
+
+                    // Avoid counting iterations that do not provide any code actions
+                    numberOfIterations++;
                 }
             }
             while (!done);
@@ -951,7 +1011,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
                     break;
                 }
 
-                if (--numberOfIterations < 0)
+                if (--numberOfIterations < -1)
                 {
                     Assert.True(false, "The upper limit for the number of fix all iterations was exceeded");
                 }
@@ -979,7 +1039,8 @@ namespace StyleCop.Analyzers.Test.Verifiers
 
                 if (firstDiagnostic == null)
                 {
-                    return project;
+                    numberOfIterations++;
+                    break;
                 }
 
                 previousDiagnostics = analyzerDiagnostics;

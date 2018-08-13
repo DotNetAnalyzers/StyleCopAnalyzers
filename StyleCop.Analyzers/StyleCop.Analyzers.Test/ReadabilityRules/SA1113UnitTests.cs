@@ -1082,6 +1082,8 @@ public class TestClass
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
+                NumberOfIncrementalIterations = 1,
+                NumberOfFixAllIterations = 1,
             };
 
             test.ExpectedDiagnostics.AddRange(expected);

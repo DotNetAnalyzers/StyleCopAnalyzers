@@ -107,7 +107,6 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                     Diagnostic().WithLocation(13, 1),
                     Diagnostic().WithLocation(19, 1),
                 },
-                NumberOfFixAllIterations = 2,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 

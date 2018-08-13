@@ -192,7 +192,6 @@ v1;
                     Diagnostic(DescriptorNotFollowedByComment).WithLocation(12, 18).WithArguments("~"),
                     Diagnostic(DescriptorNotFollowedByComment).WithLocation(14, 18).WithArguments("~"),
                 },
-                NumberOfFixAllIterations = 2,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -702,7 +701,6 @@ public class Foo : Exception
                 {
                     Diagnostic(DescriptorNotAtEndOfLine).WithLocation(26, 29).WithArguments(":"),
                 },
-                NumberOfFixAllIterations = 2,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
