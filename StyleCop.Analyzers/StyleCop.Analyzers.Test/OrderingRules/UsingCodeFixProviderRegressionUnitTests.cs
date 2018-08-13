@@ -3,19 +3,18 @@
 
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.OrderingRules;
+    using StyleCop.Analyzers.Test.Verifiers;
     using TestHelper;
     using Xunit;
+    using static CombinedUsingDirectivesVerifier;
 
     /// <summary>
     /// Regression unit tests for issue #2026.
     /// </summary>
-    public class UsingCodeFixProviderRegressionUnitTests : CodeFixVerifier
+    public class UsingCodeFixProviderRegressionUnitTests
     {
         private bool disableSA1200;
 
@@ -82,8 +81,8 @@ namespace Microsoft.VisualStudio.Shell
 #endif
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expected = DiagnosticVerifier<SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace>.Diagnostic().WithLocation(6, 1);
+            await this.VerifyCSharpFixAsync(testCode, new[] { expected }, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -115,26 +114,13 @@ namespace MyNamespace
 }
 ";
 
-            var expected = this.CSharpDiagnostic(SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace.DiagnosticId).WithLocation(2, 1);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expected = DiagnosticVerifier<SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace>.Diagnostic().WithLocation(2, 1);
+            await this.VerifyCSharpFixAsync(testCode, new[] { expected }, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override IEnumerable<string> GetDisabledDiagnostics()
+        private Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
         {
-            if (this.disableSA1200)
-            {
-                yield return SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId;
-            }
-        }
-
-        /// <inheritdoc/>
-        protected override string GetSettings()
-        {
-            return @"
+            var testSettings = @"
 {
   ""$schema"": ""https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json"",
   ""settings"": {
@@ -153,24 +139,22 @@ namespace MyNamespace
   }
 }
 ";
-        }
 
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1200UsingDirectivesMustBePlacedCorrectly();
-            yield return new SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives();
-            yield return new SA1209UsingAliasDirectivesMustBePlacedAfterOtherUsingDirectives();
-            yield return new SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace();
-            yield return new SA1211UsingAliasDirectivesMustBeOrderedAlphabeticallyByAliasName();
-            yield return new SA1216UsingStaticDirectivesMustBePlacedAtTheCorrectLocation();
-            yield return new SA1217UsingStaticDirectivesMustBeOrderedAlphabetically();
-        }
+            var test = new CSharpTest
+            {
+                TestCode = source,
+                FixedCode = fixedSource,
+                Settings = testSettings,
+            };
 
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new UsingCodeFixProvider();
+            test.ExpectedDiagnostics.AddRange(expected);
+
+            if (this.disableSA1200)
+            {
+                test.DisabledDiagnostics.Add(SA1200UsingDirectivesMustBePlacedCorrectly.DiagnosticId);
+            }
+
+            return test.RunAsync(cancellationToken);
         }
     }
 }
