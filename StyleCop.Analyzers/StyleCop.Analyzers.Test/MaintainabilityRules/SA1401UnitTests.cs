@@ -3,18 +3,17 @@
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.MaintainabilityRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.MaintainabilityRules.SA1401FieldsMustBePrivate>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1401FieldsMustBePrivate"/>.
     /// </summary>
-    public class SA1401UnitTests : DiagnosticVerifier
+    public class SA1401UnitTests
     {
         [Fact]
         public async Task TestClassWithPublicFieldAsync()
@@ -24,9 +23,9 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     public string bar;
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 19);
+            DiagnosticResult expected = Diagnostic().WithLocation(3, 19);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -37,9 +36,9 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     internal string bar;
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 21);
+            DiagnosticResult expected = Diagnostic().WithLocation(3, 21);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -50,7 +49,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     string bar;
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -61,7 +60,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     public string bar;
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -71,7 +70,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     public const string bar = ""qwe"";
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -86,12 +85,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 }}
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1401FieldsMustBePrivate();
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

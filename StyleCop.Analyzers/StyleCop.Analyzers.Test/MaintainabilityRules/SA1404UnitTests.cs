@@ -3,18 +3,16 @@
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.MaintainabilityRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.MaintainabilityRules.SA1404CodeAnalysisSuppressionMustHaveJustification,
+        StyleCop.Analyzers.MaintainabilityRules.SA1404CodeFixProvider>;
 
-    public class SA1404UnitTests : CodeFixVerifier
+    public class SA1404UnitTests
     {
         [Fact]
         public async Task TestSuppressionWithStringLiteralAsync()
@@ -28,7 +26,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -44,7 +42,7 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -60,8 +58,8 @@ public class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 34);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(4, 34);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -76,10 +74,6 @@ public class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 6);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-
             var fixedCode = @"public class Foo
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = """ + SA1404CodeAnalysisSuppressionMustHaveJustification.JustificationPlaceholder + @""")]
@@ -89,9 +83,20 @@ public class Foo
     }
 }";
 
-            expected = this.CSharpDiagnostic().WithLocation(3, 66);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(3, 6),
+                },
+                FixedCode = fixedCode,
+                RemainingDiagnostics =
+                {
+                    Diagnostic().WithLocation(3, 66),
+                },
+                NumberOfFixAllIterations = 2,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -107,10 +112,6 @@ public class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 6);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-
             var fixedCode = @"using SuppressMessageAttribute = System.Diagnostics.CodeAnalysis.SuppressMessageAttribute;
 public class Foo
 {
@@ -121,9 +122,20 @@ public class Foo
     }
 }";
 
-            expected = this.CSharpDiagnostic().WithLocation(4, 34);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(4, 6),
+                },
+                FixedCode = fixedCode,
+                RemainingDiagnostics =
+                {
+                    Diagnostic().WithLocation(4, 34),
+                },
+                NumberOfFixAllIterations = 2,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -139,10 +151,6 @@ public class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 6);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-
             var fixedCode = @"using MySuppressionAttribute = System.Diagnostics.CodeAnalysis.SuppressMessageAttribute;
 public class Foo
 {
@@ -153,9 +161,20 @@ public class Foo
     }
 }";
 
-            expected = this.CSharpDiagnostic().WithLocation(4, 32);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(4, 6),
+                },
+                FixedCode = fixedCode,
+                RemainingDiagnostics =
+                {
+                    Diagnostic().WithLocation(4, 32),
+                },
+                NumberOfFixAllIterations = 2,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -170,10 +189,6 @@ public class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 66);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-
             var fixedCode = @"public class Foo
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = """ + SA1404CodeAnalysisSuppressionMustHaveJustification.JustificationPlaceholder + @""")]
@@ -183,9 +198,20 @@ public class Foo
     }
 }";
 
-            expected = this.CSharpDiagnostic().WithLocation(3, 66);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(3, 66),
+                },
+                FixedCode = fixedCode,
+                RemainingDiagnostics =
+                {
+                    Diagnostic().WithLocation(3, 66),
+                },
+                NumberOfFixAllIterations = 2,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -200,10 +226,6 @@ public class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 66);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-
             var fixedCode = @"public class Foo
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justific\u0061tion = """ + SA1404CodeAnalysisSuppressionMustHaveJustification.JustificationPlaceholder + @""")]
@@ -213,9 +235,20 @@ public class Foo
     }
 }";
 
-            expected = this.CSharpDiagnostic().WithLocation(3, 66);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(3, 66),
+                },
+                FixedCode = fixedCode,
+                RemainingDiagnostics =
+                {
+                    Diagnostic().WithLocation(3, 66),
+                },
+                NumberOfFixAllIterations = 2,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -230,10 +263,6 @@ public class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 66);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-
             var fixedCode = @"public class Foo
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = """ + SA1404CodeAnalysisSuppressionMustHaveJustification.JustificationPlaceholder + @""")]
@@ -243,9 +272,20 @@ public class Foo
     }
 }";
 
-            expected = this.CSharpDiagnostic().WithLocation(3, 66);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(3, 66),
+                },
+                FixedCode = fixedCode,
+                RemainingDiagnostics =
+                {
+                    Diagnostic().WithLocation(3, 66),
+                },
+                NumberOfFixAllIterations = 2,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -260,10 +300,6 @@ public class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 66);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-
             var fixedCode = @"public class Foo
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage(null, null, Justification = """ + SA1404CodeAnalysisSuppressionMustHaveJustification.JustificationPlaceholder + @""")]
@@ -273,9 +309,20 @@ public class Foo
     }
 }";
 
-            expected = this.CSharpDiagnostic().WithLocation(3, 66);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(3, 66),
+                },
+                FixedCode = fixedCode,
+                RemainingDiagnostics =
+                {
+                    Diagnostic().WithLocation(3, 66),
+                },
+                NumberOfFixAllIterations = 2,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -291,7 +338,7 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -307,10 +354,6 @@ public class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 66);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-
             var fixedCode = @"public class Foo
 {
     const string JUSTIFICATION = ""    "";
@@ -321,9 +364,20 @@ public class Foo
     }
 }";
 
-            expected = this.CSharpDiagnostic().WithLocation(4, 66);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(4, 66),
+                },
+                FixedCode = fixedCode,
+                RemainingDiagnostics =
+                {
+                    Diagnostic().WithLocation(4, 66),
+                },
+                NumberOfFixAllIterations = 2,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -339,29 +393,12 @@ public class Foo
     }
 }";
 
-            var expectedLinePosition = new LinePosition(4, 82);
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(4, 66),
-                new DiagnosticResult
-                {
-                    Id = "CS0029",
-                    Message = "Cannot implicitly convert type 'int' to 'string'",
-                    Severity = DiagnosticSeverity.Error,
-                    Spans = new[] { new FileLinePositionSpan("Test0.cs", expectedLinePosition, expectedLinePosition) },
-                },
+                Diagnostic().WithLocation(4, 66),
+                CompilerError("CS0029").WithMessage("Cannot implicitly convert type 'int' to 'string'").WithLocation(4, 82),
             };
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1404CodeAnalysisSuppressionMustHaveJustification();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1404CodeFixProvider();
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

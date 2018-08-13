@@ -7,6 +7,9 @@ namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
     using System.Threading.Tasks;
     using StyleCop.Analyzers.Test.MaintainabilityRules;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.MaintainabilityRules.SA1408ConditionalExpressionsMustDeclarePrecedence,
+        StyleCop.Analyzers.MaintainabilityRules.SA1407SA1408CodeFixProvider>;
 
     public class SA1408CSharp7UnitTests : SA1408UnitTests
     {
@@ -29,7 +32,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
