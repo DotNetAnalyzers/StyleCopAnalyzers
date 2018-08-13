@@ -3,14 +3,14 @@
 
 namespace StyleCop.Analyzers.Test.LayoutRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.LayoutRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1500BracesForMultiLineStatementsMustNotShareLine,
+        StyleCop.Analyzers.LayoutRules.SA1500CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1500BracesForMultiLineStatementsMustNotShareLine"/>.
@@ -18,7 +18,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     /// <remarks>
     /// The test cases can be found in the SA1500 subfolder.
     /// </remarks>
-    public partial class SA1500UnitTests : CodeFixVerifier
+    public partial class SA1500UnitTests
     {
         /// <summary>
         /// Verifies that a complex multiple fix scenario is handled correctly.
@@ -84,35 +84,21 @@ public class TestClass
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                this.CSharpDiagnostic().WithLocation(6, 13),
-                this.CSharpDiagnostic().WithLocation(7, 24),
-                this.CSharpDiagnostic().WithLocation(9, 13),
-                this.CSharpDiagnostic().WithLocation(9, 31),
-                this.CSharpDiagnostic().WithLocation(11, 13),
-                this.CSharpDiagnostic().WithLocation(11, 20),
-                this.CSharpDiagnostic().WithLocation(14, 9),
-                this.CSharpDiagnostic().WithLocation(14, 29),
-                this.CSharpDiagnostic().WithLocation(15, 9),
-                this.CSharpDiagnostic().WithLocation(15, 17),
-                this.CSharpDiagnostic().WithLocation(16, 9),
-                this.CSharpDiagnostic().WithLocation(16, 19),
+                Diagnostic().WithLocation(6, 13),
+                Diagnostic().WithLocation(7, 24),
+                Diagnostic().WithLocation(9, 13),
+                Diagnostic().WithLocation(9, 31),
+                Diagnostic().WithLocation(11, 13),
+                Diagnostic().WithLocation(11, 20),
+                Diagnostic().WithLocation(14, 9),
+                Diagnostic().WithLocation(14, 29),
+                Diagnostic().WithLocation(15, 9),
+                Diagnostic().WithLocation(15, 17),
+                Diagnostic().WithLocation(16, 9),
+                Diagnostic().WithLocation(16, 19),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1500BracesForMultiLineStatementsMustNotShareLine();
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1500CodeFixProvider();
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

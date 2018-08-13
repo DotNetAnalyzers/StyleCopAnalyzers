@@ -8,6 +8,9 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using StyleCop.Analyzers.LayoutRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1500BracesForMultiLineStatementsMustNotShareLine,
+        StyleCop.Analyzers.LayoutRules.SA1500CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1500BracesForMultiLineStatementsMustNotShareLine"/>.
@@ -53,7 +56,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -110,7 +113,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -201,28 +204,26 @@ namespace StyleCop.Analyzers.Test.LayoutRules
             DiagnosticResult[] expectedDiagnostics =
             {
                 // Invalid if #1
-                this.CSharpDiagnostic().WithLocation(8, 21),
+                Diagnostic().WithLocation(8, 21),
 
                 // Invalid if #2
-                this.CSharpDiagnostic().WithLocation(12, 21),
+                Diagnostic().WithLocation(12, 21),
 
                 // Invalid if #3
-                this.CSharpDiagnostic().WithLocation(17, 21),
-                this.CSharpDiagnostic().WithLocation(18, 20),
+                Diagnostic().WithLocation(17, 21),
+                Diagnostic().WithLocation(18, 20),
 
                 // Invalid if #4
-                this.CSharpDiagnostic().WithLocation(21, 21),
+                Diagnostic().WithLocation(21, 21),
 
                 // Invalid if #5
-                this.CSharpDiagnostic().WithLocation(27, 20),
+                Diagnostic().WithLocation(27, 20),
 
                 // Invalid if #6
-                this.CSharpDiagnostic().WithLocation(31, 9),
+                Diagnostic().WithLocation(31, 9),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -349,28 +350,26 @@ namespace StyleCop.Analyzers.Test.LayoutRules
             DiagnosticResult[] expectedDiagnostics =
             {
                 // Invalid if ... else #1
-                this.CSharpDiagnostic().WithLocation(11, 14),
+                Diagnostic().WithLocation(11, 14),
 
                 // Invalid if ... else #2
-                this.CSharpDiagnostic().WithLocation(18, 14),
+                Diagnostic().WithLocation(18, 14),
 
                 // Invalid if ... else #3
-                this.CSharpDiagnostic().WithLocation(26, 14),
-                this.CSharpDiagnostic().WithLocation(27, 20),
+                Diagnostic().WithLocation(26, 14),
+                Diagnostic().WithLocation(27, 20),
 
                 // Invalid if ... else #4
-                this.CSharpDiagnostic().WithLocation(33, 14),
+                Diagnostic().WithLocation(33, 14),
 
                 // Invalid if ... else #5
-                this.CSharpDiagnostic().WithLocation(42, 20),
+                Diagnostic().WithLocation(42, 20),
 
                 // Invalid if ... else #6
-                this.CSharpDiagnostic().WithLocation(49, 9),
+                Diagnostic().WithLocation(49, 9),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

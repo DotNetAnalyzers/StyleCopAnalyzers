@@ -6,13 +6,15 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.LayoutRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1502ElementMustNotBeOnASingleLine,
+        StyleCop.Analyzers.LayoutRules.SA1502CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for the namespaces part of <see cref="SA1502ElementMustNotBeOnASingleLine"/>.
     /// </summary>
-    public partial class SA1502UnitTests : CodeFixVerifier
+    public partial class SA1502UnitTests
     {
         /// <summary>
         /// Verifies that a correct empty namespace will pass without diagnostic.
@@ -25,7 +27,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 {
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -37,8 +39,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         {
             var testCode = @"namespace Foo { }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(1, 15);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(1, 15);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -50,8 +52,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         {
             var testCode = @"namespace Foo { using System; }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(1, 15);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(1, 15);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -64,8 +66,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
             var testCode = @"namespace Foo 
 { using System; }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(2, 1);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(2, 1);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -79,7 +81,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using System;
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -95,7 +97,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 }
 ";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(1, 15);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -112,7 +115,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 }
 ";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(1, 15);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -130,7 +134,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 }
 ";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(2, 1);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -147,7 +152,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 } /* TR4 */
 ";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(1, 25);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

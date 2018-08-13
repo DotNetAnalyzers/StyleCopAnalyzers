@@ -6,13 +6,15 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using System.Threading;
     using System.Threading.Tasks;
     using StyleCop.Analyzers.LayoutRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1502ElementMustNotBeOnASingleLine,
+        StyleCop.Analyzers.LayoutRules.SA1502CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for the properties part of <see cref="SA1502ElementMustNotBeOnASingleLine"/>.
     /// </summary>
-    public partial class SA1502UnitTests : CodeFixVerifier
+    public partial class SA1502UnitTests
     {
         /// <summary>
         /// Verifies that valid properties will pass without diagnostic.
@@ -49,7 +51,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     public int AutoBaz { get; } = 9;
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -64,8 +66,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     public bool Bar { get { return true; } }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(3, 21);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(3, 21);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -81,8 +83,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     { get { return true; } }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(4, 5);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(4, 5);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -99,7 +101,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -117,7 +119,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     public bool Bar => this.x ^ this.y;
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -139,7 +141,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(3, 21);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -162,7 +165,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(4, 5);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -184,7 +188,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     } /* TR11 */
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(3, 31);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

@@ -85,6 +85,8 @@ namespace StyleCop.Analyzers.Test.Verifiers
 
         public List<DiagnosticResult> RemainingDiagnostics { get; } = new List<DiagnosticResult>();
 
+        public List<DiagnosticResult> BatchRemainingDiagnostics { get; } = new List<DiagnosticResult>();
+
         public List<string> DisabledDiagnostics { get; } = new List<string>();
 
         public int? CodeFixIndex { get; set; }
@@ -133,7 +135,8 @@ namespace StyleCop.Analyzers.Test.Verifiers
                 await this.VerifyDiagnosticsAsync(this.FixedSources.ToArray(), remainingDiagnostics, filenames: null, cancellationToken).ConfigureAwait(false);
                 if (this.BatchFixedSources.Any())
                 {
-                    await this.VerifyDiagnosticsAsync(this.BatchFixedSources.ToArray(), remainingDiagnostics, filenames: null, cancellationToken).ConfigureAwait(false);
+                    var batchRemainingDiagnostics = this.BatchFixedSources.SequenceEqual(this.TestSources) ? expected : this.BatchRemainingDiagnostics.ToArray();
+                    await this.VerifyDiagnosticsAsync(this.BatchFixedSources.ToArray(), batchRemainingDiagnostics, filenames: null, cancellationToken).ConfigureAwait(false);
                 }
 
                 await this.VerifyFixAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
@@ -165,6 +168,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
                 }
 
                 Assert.Empty(this.RemainingDiagnostics);
+                Assert.Empty(this.BatchRemainingDiagnostics);
                 return false;
             }
 
@@ -175,6 +179,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
                 || (this.BatchFixedSources.Count == 1 && string.IsNullOrEmpty(this.BatchFixedSources[0]))
                 || this.BatchFixedSources.SequenceEqual(this.TestSources));
             Assert.Empty(this.RemainingDiagnostics);
+            Assert.Empty(this.BatchRemainingDiagnostics);
             return false;
 
             // Local function

@@ -8,6 +8,9 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using StyleCop.Analyzers.LayoutRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1500BracesForMultiLineStatementsMustNotShareLine,
+        StyleCop.Analyzers.LayoutRules.SA1500CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1500BracesForMultiLineStatementsMustNotShareLine"/>.
@@ -41,7 +44,7 @@ namespace ValidNamespace5 /* Valid only for SA1500 */
 { using System; }  
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -106,28 +109,26 @@ namespace InvalidNamespace6
             DiagnosticResult[] expectedDiagnostics =
             {
                 // InvalidNamespace1
-                this.CSharpDiagnostic().WithLocation(1, 29),
+                Diagnostic().WithLocation(1, 29),
 
                 // InvalidNamespace2
-                this.CSharpDiagnostic().WithLocation(4, 29),
+                Diagnostic().WithLocation(4, 29),
 
                 // InvalidNamespace3
-                this.CSharpDiagnostic().WithLocation(8, 29),
-                this.CSharpDiagnostic().WithLocation(9, 19),
+                Diagnostic().WithLocation(8, 29),
+                Diagnostic().WithLocation(9, 19),
 
                 // InvalidNamespace4
-                this.CSharpDiagnostic().WithLocation(11, 29),
+                Diagnostic().WithLocation(11, 29),
 
                 // InvalidNamespace5
-                this.CSharpDiagnostic().WithLocation(16, 19),
+                Diagnostic().WithLocation(16, 19),
 
                 // InvalidNamespace6
-                this.CSharpDiagnostic().WithLocation(19, 1),
+                Diagnostic().WithLocation(19, 1),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -150,12 +151,10 @@ namespace TestNamespace
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                this.CSharpDiagnostic().WithLocation(4, 17),
+                Diagnostic().WithLocation(4, 17),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

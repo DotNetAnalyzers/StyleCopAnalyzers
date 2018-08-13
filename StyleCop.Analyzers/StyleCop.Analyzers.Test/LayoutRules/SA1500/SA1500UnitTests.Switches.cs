@@ -8,6 +8,9 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using StyleCop.Analyzers.LayoutRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1500BracesForMultiLineStatementsMustNotShareLine,
+        StyleCop.Analyzers.LayoutRules.SA1500CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1500BracesForMultiLineStatementsMustNotShareLine"/>.
@@ -46,7 +49,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -138,25 +141,23 @@ namespace StyleCop.Analyzers.Test.LayoutRules
             DiagnosticResult[] expectedDiagnostics =
             {
                 // invalid switch #1
-                this.CSharpDiagnostic().WithLocation(8, 25),
+                Diagnostic().WithLocation(8, 25),
 
                 // invalid switch #2
-                this.CSharpDiagnostic().WithLocation(14, 25),
-                this.CSharpDiagnostic().WithLocation(16, 24),
+                Diagnostic().WithLocation(14, 25),
+                Diagnostic().WithLocation(16, 24),
 
                 // invalid switch #3
-                this.CSharpDiagnostic().WithLocation(19, 25),
+                Diagnostic().WithLocation(19, 25),
 
                 // invalid switch #4
-                this.CSharpDiagnostic().WithLocation(27, 24),
+                Diagnostic().WithLocation(27, 24),
 
                 // invalid switch #5
-                this.CSharpDiagnostic().WithLocation(31, 9),
+                Diagnostic().WithLocation(31, 9),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
