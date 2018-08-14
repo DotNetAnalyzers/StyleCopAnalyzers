@@ -59,6 +59,13 @@ namespace StyleCop.Analyzers.Test.Verifiers
                 LazyThreadSafetyMode.ExecutionAndPublication);
         }
 
+        protected GenericAnalyzerTest()
+        {
+            this.TestSources = new SourceFileList(DefaultFilePathPrefix, this.Language == LanguageNames.CSharp ? CSharpDefaultFileExt : VisualBasicDefaultExt);
+            this.FixedSources = new SourceFileList(DefaultFilePathPrefix, this.Language == LanguageNames.CSharp ? CSharpDefaultFileExt : VisualBasicDefaultExt);
+            this.BatchFixedSources = new SourceFileList(DefaultFilePathPrefix, this.Language == LanguageNames.CSharp ? CSharpDefaultFileExt : VisualBasicDefaultExt);
+        }
+
         /// <summary>
         /// Gets the language name used for the test.
         /// </summary>
@@ -82,7 +89,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
             }
         }
 
-        public List<string> TestSources { get; } = new List<string>();
+        public SourceFileList TestSources { get; }
 
         public Dictionary<string, string> XmlReferences { get; } = new Dictionary<string, string>();
 
@@ -91,6 +98,8 @@ namespace StyleCop.Analyzers.Test.Verifiers
         public List<DiagnosticResult> RemainingDiagnostics { get; } = new List<DiagnosticResult>();
 
         public List<DiagnosticResult> BatchRemainingDiagnostics { get; } = new List<DiagnosticResult>();
+
+        public bool VerifyExclusions { get; set; }
 
         public List<string> DisabledDiagnostics { get; } = new List<string>();
 
@@ -108,7 +117,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
             }
         }
 
-        public List<string> FixedSources { get; } = new List<string>();
+        public SourceFileList FixedSources { get; }
 
         public string BatchFixedCode
         {
@@ -122,7 +131,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
             }
         }
 
-        public List<string> BatchFixedSources { get; } = new List<string>();
+        public SourceFileList BatchFixedSources { get; }
 
         public int? NumberOfIncrementalIterations { get; set; }
 
@@ -139,15 +148,15 @@ namespace StyleCop.Analyzers.Test.Verifiers
             Assert.NotEmpty(this.TestSources);
 
             var expected = this.ExpectedDiagnostics.ToArray();
-            await this.VerifyDiagnosticsAsync(this.TestSources.ToArray(), expected, filenames: null, cancellationToken).ConfigureAwait(false);
+            await this.VerifyDiagnosticsAsync(this.TestSources.ToArray(), expected, cancellationToken).ConfigureAwait(false);
             if (this.HasFixableDiagnostics())
             {
                 var remainingDiagnostics = this.FixedSources.SequenceEqual(this.TestSources) ? expected : this.RemainingDiagnostics.ToArray();
-                await this.VerifyDiagnosticsAsync(this.FixedSources.ToArray(), remainingDiagnostics, filenames: null, cancellationToken).ConfigureAwait(false);
+                await this.VerifyDiagnosticsAsync(this.FixedSources.ToArray(), remainingDiagnostics, cancellationToken).ConfigureAwait(false);
                 if (this.BatchFixedSources.Any())
                 {
                     var batchRemainingDiagnostics = this.BatchFixedSources.SequenceEqual(this.TestSources) ? expected : this.BatchRemainingDiagnostics.ToArray();
-                    await this.VerifyDiagnosticsAsync(this.BatchFixedSources.ToArray(), batchRemainingDiagnostics, filenames: null, cancellationToken).ConfigureAwait(false);
+                    await this.VerifyDiagnosticsAsync(this.BatchFixedSources.ToArray(), batchRemainingDiagnostics, cancellationToken).ConfigureAwait(false);
                 }
 
                 await this.VerifyFixAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
@@ -184,10 +193,10 @@ namespace StyleCop.Analyzers.Test.Verifiers
             }
 
             Assert.True(this.FixedSources.Count == 0
-                || (this.FixedSources.Count == 1 && string.IsNullOrEmpty(this.FixedSources[0]))
+                || (this.FixedSources.Count == 1 && string.IsNullOrEmpty(this.FixedSources[0].content))
                 || this.FixedSources.SequenceEqual(this.TestSources));
             Assert.True(this.BatchFixedSources.Count == 0
-                || (this.BatchFixedSources.Count == 1 && string.IsNullOrEmpty(this.BatchFixedSources[0]))
+                || (this.BatchFixedSources.Count == 1 && string.IsNullOrEmpty(this.BatchFixedSources[0].content))
                 || this.BatchFixedSources.SequenceEqual(this.TestSources));
             Assert.Empty(this.RemainingDiagnostics);
             Assert.Empty(this.BatchRemainingDiagnostics);
@@ -227,16 +236,15 @@ namespace StyleCop.Analyzers.Test.Verifiers
         /// <param name="sources">An array of strings to create source documents from to run the analyzers on.</param>
         /// <param name="expected">A collection of <see cref="DiagnosticResult"/>s that should appear after the analyzer
         /// is run on the sources.</param>
-        /// <param name="filenames">The filenames or null if the default filename should be used.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        private async Task VerifyDiagnosticsAsync(string[] sources, DiagnosticResult[] expected, string[] filenames, CancellationToken cancellationToken)
+        private async Task VerifyDiagnosticsAsync((string filename, string content)[] sources, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
             var analyzers = this.GetDiagnosticAnalyzers().ToImmutableArray();
-            VerifyDiagnosticResults(await this.GetSortedDiagnosticsAsync(sources, analyzers, filenames, cancellationToken).ConfigureAwait(false), analyzers, expected);
+            VerifyDiagnosticResults(await this.GetSortedDiagnosticsAsync(sources, analyzers, cancellationToken).ConfigureAwait(false), analyzers, expected);
 
-            // If filenames is null we want to test for exclusions too
-            if (filenames == null)
+            // Automatically test for exclusions
+            if (this.VerifyExclusions)
             {
                 // Also check if the analyzer honors exclusions
                 if (expected.Any(IsSubjectToExclusion))
@@ -249,7 +257,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
                         .Select(x => x.WithLineOffset(1))
                         .ToArray();
 
-                    VerifyDiagnosticResults(await this.GetSortedDiagnosticsAsync(sources.Select(x => " // <auto-generated>\r\n" + x).ToArray(), analyzers, null, cancellationToken).ConfigureAwait(false), analyzers, expectedResults);
+                    VerifyDiagnosticResults(await this.GetSortedDiagnosticsAsync(sources.Select(x => (x.filename, " // <auto-generated>\r\n" + x.content)).ToArray(), analyzers, cancellationToken).ConfigureAwait(false), analyzers, expectedResults);
                 }
             }
         }
@@ -324,13 +332,12 @@ namespace StyleCop.Analyzers.Test.Verifiers
         /// </summary>
         /// <param name="sources">Classes in the form of strings.</param>
         /// <param name="analyzers">The analyzers to be run on the sources.</param>
-        /// <param name="filenames">The filenames or <see langword="null"/> if the default filename should be used.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>A collection of <see cref="Diagnostic"/>s that surfaced in the source code, sorted by
         /// <see cref="Diagnostic.Location"/>.</returns>
-        private Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsAsync(string[] sources, ImmutableArray<DiagnosticAnalyzer> analyzers, string[] filenames, CancellationToken cancellationToken)
+        private Task<ImmutableArray<Diagnostic>> GetSortedDiagnosticsAsync((string filename, string content)[] sources, ImmutableArray<DiagnosticAnalyzer> analyzers, CancellationToken cancellationToken)
         {
-            return GetSortedDiagnosticsFromDocumentsAsync(analyzers, this.GetDocuments(sources, filenames), cancellationToken);
+            return GetSortedDiagnosticsFromDocumentsAsync(analyzers, this.GetDocuments(sources), cancellationToken);
         }
 
         /// <summary>
@@ -338,16 +345,15 @@ namespace StyleCop.Analyzers.Test.Verifiers
         /// documents and spans of it.
         /// </summary>
         /// <param name="sources">Classes in the form of strings.</param>
-        /// <param name="filenames">The filenames or <see langword="null"/> if the default filename should be used.</param>
         /// <returns>A collection of <see cref="Document"/>s representing the sources.</returns>
-        private Document[] GetDocuments(string[] sources, string[] filenames)
+        private Document[] GetDocuments((string filename, string content)[] sources)
         {
             if (this.Language != LanguageNames.CSharp && this.Language != LanguageNames.VisualBasic)
             {
                 throw new ArgumentException("Unsupported Language");
             }
 
-            var project = this.CreateProject(sources, this.Language, filenames);
+            var project = this.CreateProject(sources, this.Language);
             var documents = project.Documents.ToArray();
 
             if (sources.Length != documents.Length)
@@ -368,12 +374,11 @@ namespace StyleCop.Analyzers.Test.Verifiers
         /// <param name="sources">Classes in the form of strings.</param>
         /// <param name="language">The language the source classes are in. Values may be taken from the
         /// <see cref="LanguageNames"/> class.</param>
-        /// <param name="filenames">The filenames or <see langword="null"/> if the default filename should be used.</param>
         /// <returns>A <see cref="Project"/> created out of the <see cref="Document"/>s created from the source
         /// strings.</returns>
-        protected Project CreateProject(string[] sources, string language = LanguageNames.CSharp, string[] filenames = null)
+        protected Project CreateProject((string filename, string content)[] sources, string language = LanguageNames.CSharp)
         {
-            Project project = this.CreateProjectImpl(sources, language, filenames);
+            Project project = this.CreateProjectImpl(sources, language);
             return this.ApplyCompilationOptions(project);
         }
 
@@ -383,22 +388,17 @@ namespace StyleCop.Analyzers.Test.Verifiers
         /// <param name="sources">Classes in the form of strings.</param>
         /// <param name="language">The language the source classes are in. Values may be taken from the
         /// <see cref="LanguageNames"/> class.</param>
-        /// <param name="filenames">The filenames or <see langword="null"/> if the default filename should be used.</param>
         /// <returns>A <see cref="Project"/> created out of the <see cref="Document"/>s created from the source
         /// strings.</returns>
-        protected virtual Project CreateProjectImpl(string[] sources, string language, string[] filenames)
+        protected virtual Project CreateProjectImpl((string filename, string content)[] sources, string language)
         {
-            string fileNamePrefix = DefaultFilePathPrefix;
-            string fileExt = language == LanguageNames.CSharp ? CSharpDefaultFileExt : VisualBasicDefaultExt;
-
             var projectId = ProjectId.CreateNewId(debugName: TestProjectName);
             var solution = this.CreateSolution(projectId, language);
 
             int count = 0;
             for (int i = 0; i < sources.Length; i++)
             {
-                string source = sources[i];
-                var newFileName = filenames?[i] ?? fileNamePrefix + count + "." + fileExt;
+                var (newFileName, source) = sources[i];
                 var documentId = DocumentId.CreateNewId(projectId, debugName: newFileName);
                 solution = solution.AddDocument(documentId, newFileName, SourceText.From(source));
                 count++;
@@ -731,11 +731,9 @@ namespace StyleCop.Analyzers.Test.Verifiers
         /// <summary>
         /// Called to test a C# code fix when applied on the input source as a string.
         /// </summary>
-        /// <param name="oldFileNames">An array of file names in the project before the code fix was applied.</param>
-        /// <param name="newFileNames">An array of file names in the project after the code fix was applied.</param>
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        protected async Task VerifyFixAsync(string[] oldFileNames = null, string[] newFileNames = null, CancellationToken cancellationToken = default(CancellationToken))
+        protected async Task VerifyFixAsync(CancellationToken cancellationToken)
         {
             var oldSources = this.TestSources.ToArray();
             var newSources = this.FixedSources.ToArray();
@@ -749,7 +747,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
             }
             else
             {
-                if (!HasAnyChange(oldSources, newSources, oldFileNames, newFileNames))
+                if (!HasAnyChange(oldSources, newSources))
                 {
                     numberOfIncrementalIterations = 0;
                 }
@@ -765,7 +763,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
             }
             else
             {
-                if (!HasAnyChange(oldSources, batchNewSources, oldFileNames, newFileNames))
+                if (!HasAnyChange(oldSources, batchNewSources))
                 {
                     numberOfFixAllIterations = 0;
                 }
@@ -775,7 +773,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
                 }
             }
 
-            var t1 = this.VerifyFixInternalAsync(this.Language, this.GetDiagnosticAnalyzers().ToImmutableArray(), this.GetCodeFixProviders().ToImmutableArray(), oldSources, newSources, oldFileNames, newFileNames, numberOfIncrementalIterations, FixEachAnalyzerDiagnosticAsync, cancellationToken).ConfigureAwait(false);
+            var t1 = this.VerifyFixInternalAsync(this.Language, this.GetDiagnosticAnalyzers().ToImmutableArray(), this.GetCodeFixProviders().ToImmutableArray(), oldSources, newSources, numberOfIncrementalIterations, FixEachAnalyzerDiagnosticAsync, cancellationToken).ConfigureAwait(false);
 
             var fixAllProvider = this.GetCodeFixProviders().Select(codeFixProvider => codeFixProvider.GetFixAllProvider()).Where(codeFixProvider => codeFixProvider != null).ToImmutableArray();
 
@@ -790,19 +788,19 @@ namespace StyleCop.Analyzers.Test.Verifiers
                     await t1;
                 }
 
-                var t2 = this.VerifyFixInternalAsync(LanguageNames.CSharp, this.GetDiagnosticAnalyzers().ToImmutableArray(), this.GetCodeFixProviders().ToImmutableArray(), oldSources, batchNewSources ?? newSources, oldFileNames, newFileNames, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInDocumentAsync, cancellationToken).ConfigureAwait(false);
+                var t2 = this.VerifyFixInternalAsync(LanguageNames.CSharp, this.GetDiagnosticAnalyzers().ToImmutableArray(), this.GetCodeFixProviders().ToImmutableArray(), oldSources, batchNewSources ?? newSources, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInDocumentAsync, cancellationToken).ConfigureAwait(false);
                 if (Debugger.IsAttached)
                 {
                     await t2;
                 }
 
-                var t3 = this.VerifyFixInternalAsync(LanguageNames.CSharp, this.GetDiagnosticAnalyzers().ToImmutableArray(), this.GetCodeFixProviders().ToImmutableArray(), oldSources, batchNewSources ?? newSources, oldFileNames, newFileNames, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInProjectAsync, cancellationToken).ConfigureAwait(false);
+                var t3 = this.VerifyFixInternalAsync(LanguageNames.CSharp, this.GetDiagnosticAnalyzers().ToImmutableArray(), this.GetCodeFixProviders().ToImmutableArray(), oldSources, batchNewSources ?? newSources, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInProjectAsync, cancellationToken).ConfigureAwait(false);
                 if (Debugger.IsAttached)
                 {
                     await t3;
                 }
 
-                var t4 = this.VerifyFixInternalAsync(LanguageNames.CSharp, this.GetDiagnosticAnalyzers().ToImmutableArray(), this.GetCodeFixProviders().ToImmutableArray(), oldSources, batchNewSources ?? newSources, oldFileNames, newFileNames, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInSolutionAsync, cancellationToken).ConfigureAwait(false);
+                var t4 = this.VerifyFixInternalAsync(LanguageNames.CSharp, this.GetDiagnosticAnalyzers().ToImmutableArray(), this.GetCodeFixProviders().ToImmutableArray(), oldSources, batchNewSources ?? newSources, numberOfFixAllIterations, FixAllAnalyzerDiagnosticsInSolutionAsync, cancellationToken).ConfigureAwait(false);
                 if (Debugger.IsAttached)
                 {
                     await t4;
@@ -823,27 +821,13 @@ namespace StyleCop.Analyzers.Test.Verifiers
             string language,
             ImmutableArray<DiagnosticAnalyzer> analyzers,
             ImmutableArray<CodeFixProvider> codeFixProviders,
-            string[] oldSources,
-            string[] newSources,
-            string[] oldFileNames,
-            string[] newFileNames,
+            (string filename, string content)[] oldSources,
+            (string filename, string content)[] newSources,
             int numberOfIterations,
             Func<ImmutableArray<DiagnosticAnalyzer>, ImmutableArray<CodeFixProvider>, int?, Project, int, CancellationToken, Task<Project>> getFixedProject,
             CancellationToken cancellationToken)
         {
-            if (oldFileNames != null)
-            {
-                // Make sure the test case is consistent regarding the number of sources and file names before the code fix
-                Assert.Equal($"{oldSources.Length} old file names", $"{oldFileNames.Length} old file names");
-            }
-
-            if (newFileNames != null)
-            {
-                // Make sure the test case is consistent regarding the number of sources and file names after the code fix
-                Assert.Equal($"{newSources.Length} new file names", $"{newFileNames.Length} new file names");
-            }
-
-            var project = this.CreateProject(oldSources, language, oldFileNames);
+            var project = this.CreateProject(oldSources, language);
             var compilerDiagnostics = await GetCompilerDiagnosticsAsync(project, cancellationToken).ConfigureAwait(false);
 
             project = await getFixedProject(analyzers, codeFixProviders, this.CodeFixIndex, project, numberOfIterations, cancellationToken).ConfigureAwait(false);
@@ -878,28 +862,14 @@ namespace StyleCop.Analyzers.Test.Verifiers
             for (int i = 0; i < updatedDocuments.Length; i++)
             {
                 var actual = await GetStringFromDocumentAsync(updatedDocuments[i], cancellationToken).ConfigureAwait(false);
-                Assert.Equal(newSources[i], actual);
-
-                if (newFileNames != null)
-                {
-                    Assert.Equal(newFileNames[i], updatedDocuments[i].Name);
-                }
+                Assert.Equal(newSources[i].content, actual);
+                Assert.Equal(newSources[i].filename, updatedDocuments[i].Name);
             }
         }
 
-        private static bool HasAnyChange(string[] oldSources, string[] newSources, string[] oldFileNames, string[] newFileNames)
+        private static bool HasAnyChange((string filename, string content)[] oldSources, (string filename, string content)[] newSources)
         {
-            if (!oldSources.SequenceEqual(newSources))
-            {
-                return true;
-            }
-
-            if (oldFileNames != null && newFileNames != null && !oldFileNames.SequenceEqual(newFileNames))
-            {
-                return true;
-            }
-
-            return false;
+            return !oldSources.SequenceEqual(newSources);
         }
 
         private static async Task<Project> FixEachAnalyzerDiagnosticAsync(ImmutableArray<DiagnosticAnalyzer> analyzers, ImmutableArray<CodeFixProvider> codeFixProviders, int? codeFixIndex, Project project, int numberOfIterations, CancellationToken cancellationToken)

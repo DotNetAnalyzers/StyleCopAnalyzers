@@ -522,7 +522,7 @@ public class Foo
                 await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
 
                 // Test again with the fixedCode as the test code
-                test.TestSources[0] = fixedCode;
+                test.TestSources[0] = (test.TestSources[0].filename, fixedCode);
                 await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
             }
         }

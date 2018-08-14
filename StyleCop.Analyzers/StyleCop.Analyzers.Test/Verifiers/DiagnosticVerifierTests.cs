@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.Test.Verifiers
 {
     using System;
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -14,14 +13,13 @@ namespace StyleCop.Analyzers.Test.Verifiers
     using TestHelper;
     using Xunit;
     using Xunit.Sdk;
+    using static StyleCopDiagnosticVerifier<StyleCop.Analyzers.SpacingRules.SA1002SemicolonsMustBeSpacedCorrectly>;
 
     /// <summary>
-    /// This class verifies that <see cref="DiagnosticVerifier"/> will correctly report failing tests.
+    /// This class verifies that <see cref="DiagnosticVerifier{TAnalyzer}"/> will correctly report failing tests.
     /// </summary>
-    public class DiagnosticVerifierTests : DiagnosticVerifier
+    public class DiagnosticVerifierTests
     {
-        private bool throwException;
-
         [Fact]
         public async Task TestExpectedDiagnosticMissingAsync()
         {
@@ -35,11 +33,11 @@ class ClassName
 }
 ";
 
-            var expected = this.CSharpDiagnostic();
+            var expected = Diagnostic();
             var ex = await Assert.ThrowsAnyAsync<XunitException>(
                 async () =>
                 {
-                    await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+                    await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
             Assert.StartsWith("Mismatch between number of diagnostics returned, expected \"1\" actual \"0\"", ex.Message);
         }
@@ -58,9 +56,9 @@ class ClassName
 }
 ";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 33);
+            DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 33);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -77,9 +75,9 @@ class ClassName
 }
 ";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(0, 33);
+            DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "followed").WithLocation(0, 33);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -96,9 +94,9 @@ class ClassName
 }
 ";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 0);
+            DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 0);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -115,9 +113,9 @@ class ClassName
 }
 ";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithSpan(7, 33, 7, 34);
+            DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "followed").WithSpan(7, 33, 7, 34);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -135,12 +133,12 @@ class ClassName
 ";
 
             // By failing to include a location, the verified thinks we're only trying to verify a project diagnostic.
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Empty, "followed");
+            DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "followed");
 
             var ex = await Assert.ThrowsAnyAsync<XunitException>(
                 async () =>
                 {
-                    await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+                    await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
             Assert.StartsWith("Expected:\nA project diagnostic with No location\nActual:\n", ex.Message);
         }
@@ -162,7 +160,7 @@ class ClassName
             var ex = await Assert.ThrowsAnyAsync<XunitException>(
                 async () =>
                 {
-                    await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                    await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
             Assert.StartsWith("Mismatch between number of diagnostics returned, expected \"0\" actual \"1\"", ex.Message);
             Assert.Contains("warning SA1002", ex.Message);
@@ -181,11 +179,10 @@ class ClassName
 }
 ";
 
-            this.throwException = true;
             var ex = await Assert.ThrowsAnyAsync<XunitException>(
                 async () =>
                 {
-                    await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                    await DiagnosticVerifier<ErrorThrowingAnalyzer>.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
             Assert.StartsWith("Mismatch between number of diagnostics returned, expected \"0\" actual \"2\"", ex.Message);
             Assert.Contains("error AD0001", ex.Message);
@@ -205,12 +202,12 @@ class ClassName
 }
 ";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 33);
+            DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 33);
 
             var ex = await Assert.ThrowsAnyAsync<XunitException>(
                 async () =>
                 {
-                    await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+                    await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
             Assert.StartsWith("Mismatch between number of diagnostics returned, expected \"1\" actual \"2\"", ex.Message);
             Assert.Contains("error CS0246", ex.Message);
@@ -231,12 +228,12 @@ class ClassName
 }
 ";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(8, 33);
+            DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "followed").WithLocation(8, 33);
 
             var ex = await Assert.ThrowsAnyAsync<XunitException>(
                 async () =>
                 {
-                    await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+                    await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
             Assert.StartsWith("Mismatch between number of diagnostics returned, expected \"1\" actual \"2\"", ex.Message);
             Assert.Contains("error CS0246", ex.Message);
@@ -257,12 +254,12 @@ class ClassName
 ";
 
             var descriptor = new DiagnosticDescriptor("SA9999", "Title", "Message", "Category", DiagnosticSeverity.Warning, isEnabledByDefault: true);
-            DiagnosticResult expected = this.CSharpDiagnostic(descriptor).WithLocation(7, 33);
+            DiagnosticResult expected = Diagnostic(descriptor).WithLocation(7, 33);
 
             var ex = await Assert.ThrowsAnyAsync<XunitException>(
                 async () =>
                 {
-                    await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+                    await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
             Assert.StartsWith("Expected diagnostic id to be \"SA9999\" was \"SA1002\"", ex.Message);
         }
@@ -281,12 +278,12 @@ class ClassName
 }
 ";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 33).WithSeverity(DiagnosticSeverity.Error);
+            DiagnosticResult expected = Diagnostic().WithLocation(7, 33).WithSeverity(DiagnosticSeverity.Error);
 
             var ex = await Assert.ThrowsAnyAsync<XunitException>(
                 async () =>
                 {
-                    await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+                    await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
             Assert.StartsWith("Expected diagnostic severity to be \"Error\" was \"Warning\"", ex.Message);
         }
@@ -305,12 +302,12 @@ class ClassName
 }
 ";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(8, 33);
+            DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "followed").WithLocation(8, 33);
 
             var ex = await Assert.ThrowsAnyAsync<XunitException>(
                 async () =>
                 {
-                    await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+                    await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
             Assert.StartsWith("Expected diagnostic to start on line \"8\" was actually on line \"7\"", ex.Message);
         }
@@ -332,14 +329,14 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 33),
-                this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 34),
+                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 33),
+                Diagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 34),
             };
 
             var ex = await Assert.ThrowsAnyAsync<XunitException>(
                 async () =>
                 {
-                    await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+                    await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
             Assert.StartsWith("Expected diagnostic to start on line \"7\" was actually on line \"8\"", ex.Message);
         }
@@ -358,12 +355,12 @@ class ClassName
 }
 ";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 34);
+            DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 34);
 
             var ex = await Assert.ThrowsAnyAsync<XunitException>(
                 async () =>
                 {
-                    await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+                    await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
             Assert.StartsWith("Expected diagnostic to start at column \"34\" was actually at column \"33\"", ex.Message);
         }
@@ -382,12 +379,12 @@ class ClassName
 }
 ";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Empty, "followed").WithSpan(7, 33, 7, 35);
+            DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "followed").WithSpan(7, 33, 7, 35);
 
             var ex = await Assert.ThrowsAnyAsync<XunitException>(
                 async () =>
                 {
-                    await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+                    await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
             Assert.StartsWith("Expected diagnostic to end at column \"35\" was actually at column \"34\"", ex.Message);
         }
@@ -406,12 +403,12 @@ class ClassName
 }
 ";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Empty, "bogus argument").WithLocation(7, 33);
+            DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "bogus argument").WithLocation(7, 33);
 
             var ex = await Assert.ThrowsAnyAsync<XunitException>(
                 async () =>
                 {
-                    await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+                    await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
             Assert.StartsWith("Expected diagnostic message to be ", ex.Message);
         }
@@ -430,26 +427,14 @@ class ClassName
 }
 ";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(string.Empty, "bogus argument").WithLocation(7, 33).WithLocation(8, 34);
+            DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "bogus argument").WithLocation(7, 33).WithLocation(8, 34);
 
             var ex = await Assert.ThrowsAnyAsync<XunitException>(
                 async () =>
                 {
-                    await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+                    await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
             Assert.StartsWith("Expected 1 additional locations but got 0 for Diagnostic", ex.Message);
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            if (this.throwException)
-            {
-                yield return new ErrorThrowingAnalyzer();
-            }
-            else
-            {
-                yield return new SA1002SemicolonsMustBeSpacedCorrectly();
-            }
         }
 
         private class ErrorThrowingAnalyzer : SA1002SemicolonsMustBeSpacedCorrectly
