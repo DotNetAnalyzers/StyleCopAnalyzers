@@ -29,6 +29,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
     using StyleCop.Analyzers.Test.Helpers;
     using TestHelper;
     using Xunit;
+    using Path = System.IO.Path;
 
     internal abstract class GenericAnalyzerTest
     {
@@ -90,6 +91,8 @@ namespace StyleCop.Analyzers.Test.Verifiers
         }
 
         public SourceFileList TestSources { get; }
+
+        public List<(string filename, string content)> AdditionalFiles { get; } = new List<(string filename, string content)>();
 
         public Dictionary<string, string> XmlReferences { get; } = new Dictionary<string, string>();
 
@@ -484,6 +487,12 @@ namespace StyleCop.Analyzers.Test.Verifiers
                 .AddMetadataReference(projectId, MetadataReferences.SystemCoreReference)
                 .AddMetadataReference(projectId, MetadataReferences.CSharpSymbolsReference)
                 .AddMetadataReference(projectId, MetadataReferences.CodeAnalysisReference);
+
+            foreach (var (fileName, content) in this.AdditionalFiles)
+            {
+                var documentId = DocumentId.CreateNewId(projectId, fileName);
+                solution = solution.AddAdditionalDocument(documentId, Path.GetFileName(fileName), content, filePath: fileName);
+            }
 
             if (MetadataReferences.SystemRuntimeReference != null)
             {
