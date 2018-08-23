@@ -401,8 +401,8 @@ public class Test : Testbase
         }
 
         [Fact]
-        [WorkItem(1343, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1343")]
-        public async Task TestLambdaParameterMultipleUnderscoresAsync()
+        [WorkItem(1606, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1606")]
+        public async Task TestLambdaParameterNamedDoubleUnderscoreAsync()
         {
             var testCode = @"public class TypeName
 {
@@ -414,11 +414,49 @@ public class Test : Testbase
     }
 }";
 
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies this diagnostic does not check whether or not a parameter named <c>__</c> is being used.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+        [Fact]
+        [WorkItem(1606, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1606")]
+        public async Task TestLambdaParameterNamedDoubleUnderscoreUsageAsync()
+        {
+            var testCode = @"public class TypeName
+{
+    public void MethodName()
+    {
+        System.Func<int, int> function1 = __ => __;
+        System.Func<int, int> function2 = (__) => __;
+        System.Func<int, int> function3 = delegate(int __) { return __; };
+    }
+}";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1343, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1343")]
+        public async Task TestLambdaParameterWithThreeUnderscoresAsync()
+        {
+            var testCode = @"public class TypeName
+{
+    public void MethodName()
+    {
+        System.Action<int> action1 = ___ => { };
+        System.Action<int> action2 = (___) => { };
+        System.Action<int> action3 = delegate(int ___) { };
+    }
+}";
+
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithArguments("__").WithLocation(5, 38),
-                this.CSharpDiagnostic().WithArguments("__").WithLocation(6, 39),
-                this.CSharpDiagnostic().WithArguments("__").WithLocation(7, 51),
+                this.CSharpDiagnostic().WithArguments("___").WithLocation(5, 38),
+                this.CSharpDiagnostic().WithArguments("___").WithLocation(6, 39),
+                this.CSharpDiagnostic().WithArguments("___").WithLocation(7, 51),
             };
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
@@ -436,6 +474,21 @@ public class Test : Testbase
 }";
 
             DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("_").WithLocation(3, 32);
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1606, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1606")]
+        public async Task TestMethodParameterNamedDoubleUnderscoreAsync()
+        {
+            var testCode = @"public class TypeName
+{
+    public void MethodName(int __)
+    {
+    }
+}";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("__").WithLocation(3, 32);
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
