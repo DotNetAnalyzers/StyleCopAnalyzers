@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.LayoutRules;
     using TestHelper;
     using Xunit;
@@ -522,7 +523,7 @@ public class Foo
                 await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
 
                 // Test again with the fixedCode as the test code
-                test.TestSources[0] = (test.TestSources[0].filename, fixedCode);
+                test.TestSources[0] = (test.TestSources[0].filename, SourceText.From(fixedCode));
                 await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
             }
         }

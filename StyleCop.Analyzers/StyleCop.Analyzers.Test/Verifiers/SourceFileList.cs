@@ -4,8 +4,9 @@
 namespace StyleCop.Analyzers.Test.Verifiers
 {
     using System.Collections.Generic;
+    using Microsoft.CodeAnalysis.Text;
 
-    public class SourceFileList : List<(string filename, string content)>
+    public class SourceFileList : List<(string filename, SourceText content)>
     {
         private readonly string defaultPrefix;
         private readonly string defaultExtension;
@@ -19,6 +20,16 @@ namespace StyleCop.Analyzers.Test.Verifiers
         public void Add(string content)
         {
             this.Add(($"{this.defaultPrefix}{this.Count}.{this.defaultExtension}", content));
+        }
+
+        public void Add(SourceText content)
+        {
+            this.Add(($"{this.defaultPrefix}{this.Count}.{this.defaultExtension}", content));
+        }
+
+        public void Add((string filename, string content) file)
+        {
+            this.Add((file.filename, SourceText.From(file.content)));
         }
     }
 }

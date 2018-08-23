@@ -333,7 +333,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 Settings = testSettings,
             };
 
-            test.FixedSources.AddRange(fixedSources);
+            foreach (var fixedSource in fixedSources)
+            {
+                test.FixedSources.Add(fixedSource);
+            }
+
             test.ExpectedDiagnostics.AddRange(expected);
             return test.RunAsync(cancellationToken);
         }
