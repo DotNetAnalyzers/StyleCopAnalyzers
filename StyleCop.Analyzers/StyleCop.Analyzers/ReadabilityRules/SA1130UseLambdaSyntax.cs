@@ -117,7 +117,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 var invocationExpression = originalInvocationExpression.ReplaceNode(anonymousMethod, lambdaExpression);
                 SymbolInfo newSymbolInfo = semanticModel.GetSpeculativeSymbolInfo(location.SourceSpan.Start, invocationExpression, SpeculativeBindingOption.BindAsExpression);
 
-                if (originalSymbolInfo.Symbol != newSymbolInfo.Symbol)
+                if (!originalSymbolInfo.Symbol.Equals(newSymbolInfo.Symbol))
                 {
                     return false;
                 }
