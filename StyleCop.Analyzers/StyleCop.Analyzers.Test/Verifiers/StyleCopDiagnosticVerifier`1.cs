@@ -4,6 +4,7 @@
 namespace StyleCop.Analyzers.Test.Verifiers
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using global::LightJson;
@@ -11,6 +12,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Formatting;
+    using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Settings.ObjectModel;
     using TestHelper;
 
@@ -57,7 +59,12 @@ namespace StyleCop.Analyzers.Test.Verifiers
                     .WithChangedOption(FormattingOptions.TabSize, this.Language, this.TabSize)
                     .WithChangedOption(FormattingOptions.UseTabs, this.Language, this.UseTabs));
 
-                this.AdditionalFilesFactories.Add(() =>
+                this.AdditionalFilesFactories.Add(GenerateSettingsFile);
+
+                return;
+
+                // Local function
+                IEnumerable<(string filename, SourceText content)> GenerateSettingsFile()
                 {
                     var settings = this.Settings;
 
@@ -96,13 +103,9 @@ namespace StyleCop.Analyzers.Test.Verifiers
 
                     if (!string.IsNullOrEmpty(settings))
                     {
-                        return new[] { (this.SettingsFileName, settings) };
+                        yield return (this.SettingsFileName, SourceText.From(settings));
                     }
-                    else
-                    {
-                        return new (string filename, string content)[0];
-                    }
-                });
+                }
             }
 
             /// <summary>
