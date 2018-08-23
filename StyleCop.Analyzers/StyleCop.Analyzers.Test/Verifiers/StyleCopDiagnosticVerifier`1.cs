@@ -57,7 +57,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
                     .WithChangedOption(FormattingOptions.TabSize, this.Language, this.TabSize)
                     .WithChangedOption(FormattingOptions.UseTabs, this.Language, this.UseTabs));
 
-                this.SolutionTransforms.Add((solution, projectId) =>
+                this.AdditionalFilesFactories.Add(() =>
                 {
                     var settings = this.Settings;
 
@@ -96,11 +96,12 @@ namespace StyleCop.Analyzers.Test.Verifiers
 
                     if (!string.IsNullOrEmpty(settings))
                     {
-                        var documentId = DocumentId.CreateNewId(projectId);
-                        solution = solution.AddAdditionalDocument(documentId, this.SettingsFileName, settings);
+                        return new[] { (this.SettingsFileName, settings) };
                     }
-
-                    return solution;
+                    else
+                    {
+                        return new (string filename, string content)[0];
+                    }
                 });
             }
 
