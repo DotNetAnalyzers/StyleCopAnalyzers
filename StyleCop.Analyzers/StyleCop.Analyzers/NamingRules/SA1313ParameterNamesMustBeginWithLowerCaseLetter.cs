@@ -17,8 +17,8 @@ namespace StyleCop.Analyzers.NamingRules
     /// <remarks>
     /// <para>A violation of this rule occurs when the name of a parameter does not begin with a lower-case letter.</para>
     ///
-    /// <para>An exception to this rule is made for lambda parameters named <c>_</c>. These parameters are often used to
-    /// designate a placeholder parameter which is not actually used in the body of the lambda expression.</para>
+    /// <para>An exception to this rule is made for lambda parameters named <c>_</c> and <c>__</c>. These parameters are
+    /// often used to designate a placeholder parameter which is not actually used in the body of the lambda expression.</para>
     ///
     /// <para>If the parameter name is intended to match the name of an item associated with Win32 or COM, and thus
     /// needs to begin with an upper-case letter, place the parameter within a special <c>NativeMethods</c> class. A
@@ -76,7 +76,7 @@ namespace StyleCop.Analyzers.NamingRules
                 return;
             }
 
-            if (name == "_" && IsInLambda(syntax))
+            if ((name == "_" || name == "__") && IsInLambda(syntax))
             {
                 return;
             }

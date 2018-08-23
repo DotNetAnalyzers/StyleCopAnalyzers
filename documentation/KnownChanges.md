@@ -199,6 +199,10 @@ This rule is disabled by default in StyleCop Analyzers, but can be enabled by us
 :warning: StyleCop Analyzers does not report SA1305 for parameters in overriding methods and methods which implement an
 interface. StyleCop Classic reported SA1305 for all methods.
 
+### SA1313
+
+StyleCop Analyzers allows the single and double underscore (`_` and `__`) as lambda parameter names.
+
 ## Maintainability Rules
 
 There are no known changes at this time.
