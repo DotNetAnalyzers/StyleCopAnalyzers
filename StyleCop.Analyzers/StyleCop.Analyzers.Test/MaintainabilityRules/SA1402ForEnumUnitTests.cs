@@ -21,7 +21,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -37,26 +37,22 @@ enum Bar
 }
 ";
 
-            var fixedFileNames = new[] { "Test0.cs", "Bar.cs" };
             var fixedCode = new[]
             {
-                @"enum Foo
+                ("Test0.cs", @"enum Foo
 {
     A, B, C
 }
-",
-                @"enum Bar
+"),
+                ("Bar.cs", @"enum Bar
 {
     D, E
 }
-",
+"),
             };
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 6);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(new[] { testCode }, fixedCode, newFileNames: fixedFileNames, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(5, 6);
+            await VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -74,7 +70,7 @@ enum Bar
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -92,7 +88,7 @@ enum Bar
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -112,35 +108,32 @@ enum FooBar
 }
 ";
 
-            var fixedFileNames = new[] { "Test0.cs", "Bar.cs", "FooBar.cs" };
             var fixedCode = new[]
             {
-                @"enum Foo
+                ("Test0.cs", @"enum Foo
 {
     A, B, C
 }
-",
-                @"enum Bar
+"),
+                ("Bar.cs", @"enum Bar
 {
     D, E
 }
-",
-                @"enum FooBar
+"),
+                ("FooBar.cs", @"enum FooBar
 {
     F, G, H
 }
-",
+"),
             };
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(5, 6),
-                this.CSharpDiagnostic().WithLocation(9, 6),
+                Diagnostic().WithLocation(5, 6),
+                Diagnostic().WithLocation(9, 6),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(new[] { testCode }, fixedCode, newFileNames: fixedFileNames, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -156,26 +149,22 @@ enum Test0
 }
 ";
 
-            var fixedFileNames = new[] { "Test0.cs", "Foo.cs" };
             var fixedCode = new[]
             {
-                @"enum Test0
+                ("Test0.cs", @"enum Test0
 {
     D, E
 }
-",
-                @"enum Foo
+"),
+                ("Foo.cs", @"enum Foo
 {
     A, B, C
 }
-",
+"),
             };
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(1, 6);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(new[] { testCode }, fixedCode, newFileNames: fixedFileNames, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(1, 6);
+            await VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

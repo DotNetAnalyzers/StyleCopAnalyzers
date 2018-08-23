@@ -3,17 +3,16 @@
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
-    using System;
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.MaintainabilityRules;
+    using StyleCop.Analyzers.Test.Helpers;
     using TestHelper;
     using Xunit;
 
-    public class SA1403UnitTests : FileMayOnlyContainTestBase
+#pragma warning disable xUnit1000 // Test classes must be public
+    internal class SA1403UnitTests : FileMayOnlyContainTestBase<SA1403FileMayOnlyContainASingleNamespace, EmptyCodeFixProvider>
+#pragma warning restore xUnit1000 // Test classes must be public
     {
         public override string Keyword => "namespace";
 
@@ -30,19 +29,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 15);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1403FileMayOnlyContainASingleNamespace();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            throw new NotSupportedException();
+            DiagnosticResult expected = Diagnostic().WithLocation(3, 15);
+            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), expected, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

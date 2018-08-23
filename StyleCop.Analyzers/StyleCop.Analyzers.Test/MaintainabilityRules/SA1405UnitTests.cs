@@ -3,18 +3,17 @@
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
-    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.MaintainabilityRules;
     using TestHelper;
     using Xunit;
 
-    public class SA1405UnitTests : DebugMessagesUnitTestsBase
+#pragma warning disable xUnit1000 // Test classes must be public
+    internal class SA1405UnitTests : DebugMessagesUnitTestsBase<SA1405DebugAssertMustProvideMessageText>
+#pragma warning restore xUnit1000 // Test classes must be public
     {
         protected override string MethodName
         {
@@ -44,16 +43,13 @@ public class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 9);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(6, 9);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestCustomDebugClassAsync()
         {
-            this.IncludeSystemDll = false;
-
             var testCode = @"namespace System.Diagnostics
 {
     internal static class Debug
@@ -77,15 +73,10 @@ public class Foo
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(17, 13),
+                Diagnostic().WithLocation(17, 13),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1405DebugAssertMustProvideMessageText();
+            await VerifyCSharpDiagnosticAsync(testCode, expected, includeSystemDll: false, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

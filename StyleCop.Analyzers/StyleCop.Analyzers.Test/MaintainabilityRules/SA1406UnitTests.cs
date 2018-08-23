@@ -3,19 +3,18 @@
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
-    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.MaintainabilityRules;
     using TestHelper;
     using Xunit;
 
-    public class SA1406UnitTests : DebugMessagesUnitTestsBase
+#pragma warning disable xUnit1000 // Test classes must be public
+    internal class SA1406UnitTests : DebugMessagesUnitTestsBase<SA1406DebugFailMustProvideMessageText>
+#pragma warning restore xUnit1000 // Test classes must be public
     {
         protected override string MethodName
         {
@@ -36,8 +35,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         [Fact]
         public async Task TestCustomDebugClassAsync()
         {
-            this.IncludeSystemDll = false;
-
             var testCode = @"namespace System.Diagnostics
 {
     internal static class Debug
@@ -61,15 +58,10 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(17, 13),
+                Diagnostic().WithLocation(17, 13),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1406DebugFailMustProvideMessageText();
+            await VerifyCSharpDiagnosticAsync(testCode, expected, includeSystemDll: false, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

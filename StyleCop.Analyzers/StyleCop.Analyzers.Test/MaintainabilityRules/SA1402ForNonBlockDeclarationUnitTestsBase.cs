@@ -3,31 +3,58 @@
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
-    using System.Collections.Generic;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using System.Threading;
+    using System.Threading.Tasks;
     using StyleCop.Analyzers.MaintainabilityRules;
+    using StyleCop.Analyzers.Test.Verifiers;
     using TestHelper;
 
-    public abstract class SA1402ForNonBlockDeclarationUnitTestsBase : CodeFixVerifier
+    public abstract class SA1402ForNonBlockDeclarationUnitTestsBase
     {
         public abstract string Keyword { get; }
 
+        protected static DiagnosticResult[] EmptyDiagnosticResults
+            => DiagnosticVerifier<SA1402FileMayOnlyContainASingleType>.EmptyDiagnosticResults;
+
         protected SA1402SettingsConfiguration SettingsConfiguration { get; set; } = SA1402SettingsConfiguration.ConfigureAsTopLevelType;
 
-        protected override string GetSettings()
+        protected static DiagnosticResult Diagnostic()
+            => StyleCopDiagnosticVerifier<SA1402FileMayOnlyContainASingleType>.Diagnostic();
+
+        protected static Task VerifyCSharpDiagnosticAsync(string source, string testSettings, DiagnosticResult expected, CancellationToken cancellationToken)
+            => VerifyCSharpDiagnosticAsync(source, testSettings, new[] { expected }, cancellationToken);
+
+        protected static Task VerifyCSharpDiagnosticAsync(string source, string testSettings, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        {
+            var test = new StyleCopCodeFixVerifier<SA1402FileMayOnlyContainASingleType, SA1402CodeFixProvider>.CSharpTest
+            {
+                TestCode = source,
+                Settings = testSettings,
+            };
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test.RunAsync(cancellationToken);
+        }
+
+        protected static Task VerifyCSharpFixAsync(string source, string testSettings, DiagnosticResult expected, (string fileName, string content)[] fixedSources, CancellationToken cancellationToken)
+            => VerifyCSharpFixAsync(source, testSettings, new[] { expected }, fixedSources, cancellationToken);
+
+        protected static Task VerifyCSharpFixAsync(string source, string testSettings, DiagnosticResult[] expected, (string fileName, string content)[] fixedSources, CancellationToken cancellationToken)
+        {
+            var test = new StyleCopCodeFixVerifier<SA1402FileMayOnlyContainASingleType, SA1402CodeFixProvider>.CSharpTest
+            {
+                TestCode = source,
+                Settings = testSettings,
+            };
+
+            test.FixedSources.AddRange(fixedSources);
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test.RunAsync(cancellationToken);
+        }
+
+        protected virtual string GetSettings()
         {
             return this.SettingsConfiguration.GetSettings(this.Keyword);
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1402FileMayOnlyContainASingleType();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1402CodeFixProvider();
         }
     }
 }
