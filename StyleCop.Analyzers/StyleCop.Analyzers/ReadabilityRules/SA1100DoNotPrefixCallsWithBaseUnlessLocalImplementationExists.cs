@@ -112,7 +112,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             var speculativeSymbol = context.SemanticModel.GetSpeculativeSymbolInfo(parent.SpanStart, speculativeExpression, SpeculativeBindingOption.BindAsExpression);
-            if (speculativeSymbol.Symbol != targetSymbol.Symbol)
+            if (!targetSymbol.Symbol.Equals(speculativeSymbol.Symbol))
             {
                 return;
             }

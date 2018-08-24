@@ -118,7 +118,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                         this.suppressMessageAttribute = context.SemanticModel.Compilation.GetTypeByMetadataName(typeof(SuppressMessageAttribute).FullName);
                     }
 
-                    if (symbol.ContainingType == this.suppressMessageAttribute)
+                    if (Equals(symbol.ContainingType, this.suppressMessageAttribute))
                     {
                         foreach (var attributeArgument in attribute.ArgumentList.Arguments)
                         {
