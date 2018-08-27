@@ -29,8 +29,8 @@ Not all versions of StyleCop.Analyzers support all features of each C# language 
 
 | C# version | StyleCop.Analyzers version | Visual Studio version |
 |------------|----------------------------|-----------------------|
-|  1.0 - 6.0 | v1.0.2                     | VS2015+               |
-|  7.0 - 7.3 | v1.1.0-beta                | VS2017                |
+|  1.0 - 6.0 | v1.0.2 or higher           | VS2015+               |
+|  7.0 - 7.3 | v1.1.0-beta or higher      | VS2017                |
 
 ## Installation
 
