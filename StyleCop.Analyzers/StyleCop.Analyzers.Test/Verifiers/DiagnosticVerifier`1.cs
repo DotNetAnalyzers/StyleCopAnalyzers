@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using TestHelper;
 
     internal static class DiagnosticVerifier<TAnalyzer>
@@ -37,13 +38,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
         }
 
         internal static DiagnosticResult CompilerError(string errorIdentifier)
-        {
-            return new DiagnosticResult
-            {
-                Id = errorIdentifier,
-                Severity = DiagnosticSeverity.Error,
-            };
-        }
+            => DiagnosticResult.CompilerError(errorIdentifier);
 
         internal static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
             => VerifyCSharpDiagnosticAsync(source, new[] { expected }, cancellationToken);

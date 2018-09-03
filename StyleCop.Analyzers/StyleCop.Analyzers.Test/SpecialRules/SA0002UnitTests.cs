@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.Test.SpecialRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Settings;
     using StyleCop.Analyzers.SpecialRules;

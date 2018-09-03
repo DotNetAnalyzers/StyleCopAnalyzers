@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using System;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
     using TestHelper;
     using Xunit;

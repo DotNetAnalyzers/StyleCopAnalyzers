@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.Helpers;
     using TestHelper;
     using Xunit;

@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.HelperTests
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Formatting;
+    using Microsoft.CodeAnalysis.Testing;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Settings.ObjectModel;
@@ -157,7 +158,7 @@ namespace StyleCop.Analyzers.Test.HelperTests
                 .AddMetadataReference(projectId, MetadataReferences.CorlibReference)
                 .AddMetadataReference(projectId, MetadataReferences.SystemReference)
                 .AddMetadataReference(projectId, MetadataReferences.SystemCoreReference)
-                .AddMetadataReference(projectId, MetadataReferences.CSharpSymbolsReference)
+                .AddMetadataReference(projectId, GenericAnalyzerTest.CSharpSymbolsReference)
                 .AddMetadataReference(projectId, MetadataReferences.CodeAnalysisReference)
                 .AddDocument(documentId, TestFilename, SourceText.From(source));
 

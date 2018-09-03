@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.SpacingRules;
     using StyleCop.Analyzers.Test.Verifiers;

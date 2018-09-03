@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.MaintainabilityRules;
     using TestHelper;
     using Xunit;

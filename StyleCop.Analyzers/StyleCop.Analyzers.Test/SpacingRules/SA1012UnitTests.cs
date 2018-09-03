@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
     using TestHelper;
     using Xunit;
@@ -51,15 +52,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             var testCode = @"namespace TestNamespace
 {";
 
-            DiagnosticResult expected = new DiagnosticResult
-            {
-                Id = "CS1513",
-                Message = "} expected",
-                Severity = DiagnosticSeverity.Error,
-            };
-
-            expected = expected.WithLocation(2, 2);
-
+            DiagnosticResult expected = DiagnosticResult.CompilerError("CS1513").WithLocation(2, 2).WithMessage("} expected");
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 

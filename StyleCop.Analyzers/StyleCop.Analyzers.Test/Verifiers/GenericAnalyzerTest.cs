@@ -23,6 +23,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
     using Microsoft.CodeAnalysis.Host.Mef;
     using Microsoft.CodeAnalysis.Options;
     using Microsoft.CodeAnalysis.Simplification;
+    using Microsoft.CodeAnalysis.Testing;
     using Microsoft.CodeAnalysis.Text;
     using Microsoft.CodeAnalysis.VisualBasic;
     using Microsoft.VisualStudio.Composition;
@@ -34,6 +35,8 @@ namespace StyleCop.Analyzers.Test.Verifiers
     internal abstract class GenericAnalyzerTest
     {
         private const int DefaultNumberOfIncrementalIterations = -1000;
+
+        internal static readonly MetadataReference CSharpSymbolsReference = MetadataReference.CreateFromFile(typeof(CSharpCompilation).Assembly.Location);
 
         private static readonly string DefaultFilePathPrefix = "Test";
         private static readonly string CSharpDefaultFileExt = "cs";
@@ -156,13 +159,13 @@ namespace StyleCop.Analyzers.Test.Verifiers
         {
             Assert.NotEmpty(this.TestSources);
 
-            var expected = this.ExpectedDiagnostics.ToArray();
+            var expected = this.ExpectedDiagnostics.Select(diagnostic => diagnostic.WithDefaultPath(CSharpDefaultFilePath)).ToArray();
             (string filename, SourceText content)[] additionalFiles = this.AdditionalFiles.Concat(this.AdditionalFilesFactories.SelectMany(factory => factory())).ToArray();
             await this.VerifyDiagnosticsAsync(this.TestSources.ToArray(), additionalFiles, expected, cancellationToken).ConfigureAwait(false);
             if (this.HasFixableDiagnostics())
             {
                 var fixedAdditionalFiles = this.FixedAdditionalFiles.Count == 0 ? additionalFiles : this.FixedAdditionalFiles.Concat(this.AdditionalFilesFactories.SelectMany(factory => factory())).ToArray();
-                var remainingDiagnostics = this.FixedSources.SequenceEqual(this.TestSources, SourceFileEqualityComparer.Instance) && fixedAdditionalFiles.SequenceEqual(additionalFiles) ? expected : this.RemainingDiagnostics.ToArray();
+                var remainingDiagnostics = this.FixedSources.SequenceEqual(this.TestSources, SourceFileEqualityComparer.Instance) && fixedAdditionalFiles.SequenceEqual(additionalFiles) ? expected : this.RemainingDiagnostics.Select(diagnostic => diagnostic.WithDefaultPath(CSharpDefaultFilePath)).ToArray();
                 await this.VerifyDiagnosticsAsync(this.FixedSources.ToArray(), fixedAdditionalFiles.ToArray(), remainingDiagnostics, cancellationToken).ConfigureAwait(false);
                 if (this.BatchFixedSources.Any())
                 {
@@ -510,7 +513,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
                 .AddMetadataReference(projectId, MetadataReferences.CorlibReference)
                 .AddMetadataReference(projectId, MetadataReferences.SystemReference)
                 .AddMetadataReference(projectId, MetadataReferences.SystemCoreReference)
-                .AddMetadataReference(projectId, MetadataReferences.CSharpSymbolsReference)
+                .AddMetadataReference(projectId, CSharpSymbolsReference)
                 .AddMetadataReference(projectId, MetadataReferences.CodeAnalysisReference);
 
             if (MetadataReferences.SystemRuntimeReference != null)
@@ -518,7 +521,8 @@ namespace StyleCop.Analyzers.Test.Verifiers
                 solution = solution.AddMetadataReference(projectId, MetadataReferences.SystemRuntimeReference);
             }
 
-            if (MetadataReferences.SystemValueTupleReference != null)
+            if (typeof(object).Assembly.GetType("System.ValueTuple`2", throwOnError: false) == null
+                && MetadataReferences.SystemValueTupleReference != null)
             {
                 solution = solution.AddMetadataReference(projectId, MetadataReferences.SystemValueTupleReference);
             }

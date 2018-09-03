@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
     using TestHelper;
     using Xunit;
@@ -131,30 +132,10 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                new DiagnosticResult()
-                {
-                    Id = "CS0443",
-                    Message = "Syntax error; value expected",
-                    Severity = DiagnosticSeverity.Error,
-                },
-                new DiagnosticResult()
-                {
-                    Id = "CS1003",
-                    Message = "Syntax error, ',' expected",
-                    Severity = DiagnosticSeverity.Error,
-                },
-                new DiagnosticResult()
-                {
-                    Id = "CS1003",
-                    Message = "Syntax error, ']' expected",
-                    Severity = DiagnosticSeverity.Error,
-                },
+                DiagnosticResult.CompilerError("CS0443").WithLocation(6, 28).WithMessage("Syntax error; value expected"),
+                DiagnosticResult.CompilerError("CS1003").WithLocation(6, 28).WithMessage("Syntax error, ',' expected"),
+                DiagnosticResult.CompilerError("CS1003").WithLocation(6, 28).WithMessage("Syntax error, ']' expected"),
             };
-
-            for (int i = 0; i < expected.Length; i++)
-            {
-                expected[i] = expected[i].WithLocation(6, 28);
-            }
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }

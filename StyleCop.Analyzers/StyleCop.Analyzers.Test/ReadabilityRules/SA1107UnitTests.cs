@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
     using TestHelper;
     using Xunit;
@@ -138,15 +139,7 @@ class ClassName
     }
 }
 ";
-            DiagnosticResult expected = new DiagnosticResult
-            {
-                Id = "CS1002",
-                Message = "; expected",
-                Severity = DiagnosticSeverity.Error,
-            };
-
-            expected = expected.WithLocation(7, 14);
-
+            DiagnosticResult expected = DiagnosticResult.CompilerError("CS1002").WithLocation(7, 14).WithMessage("; expected");
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
     }

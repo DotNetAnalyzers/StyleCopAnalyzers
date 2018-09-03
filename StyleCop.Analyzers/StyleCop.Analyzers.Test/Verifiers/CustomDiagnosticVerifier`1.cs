@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
 {
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using TestHelper;
 
     internal static class CustomDiagnosticVerifier<TAnalyzer>

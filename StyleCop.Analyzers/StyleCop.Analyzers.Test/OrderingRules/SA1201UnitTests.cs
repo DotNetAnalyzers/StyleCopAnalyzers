@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using System.Threading.Tasks;
 
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.Testing;
     using Microsoft.CodeAnalysis.Text;
 
     using TestHelper;
@@ -280,24 +281,10 @@ public struct FooStruct { }
 ";
 
             // We don't care about the syntax errors.
-            var expectedLinePosition1 = new LinePosition(5, 5);
-            var expectedLinePosition2 = new LinePosition(6, 1);
             var expected = new[]
             {
-                new DiagnosticResult
-                {
-                    Id = "CS1585",
-                    Message = "Member modifier 'public' must precede the member type and name",
-                    Severity = DiagnosticSeverity.Error,
-                    Spans = new[] { new FileLinePositionSpan("Test0.cs", expectedLinePosition1, expectedLinePosition1) },
-                },
-                new DiagnosticResult
-                {
-                    Id = "CS1519",
-                    Message = "Invalid token '}' in class, struct, or interface member declaration",
-                    Severity = DiagnosticSeverity.Error,
-                    Spans = new[] { new FileLinePositionSpan("Test0.cs", expectedLinePosition2, expectedLinePosition2) },
-                },
+                DiagnosticResult.CompilerError("CS1585").WithLocation(5, 5).WithMessage("Member modifier 'public' must precede the member type and name"),
+                DiagnosticResult.CompilerError("CS1519").WithLocation(6, 1).WithMessage("Invalid token '}' in class, struct, or interface member declaration"),
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.SpecialRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpecialRules;
     using TestHelper;
     using Xunit;

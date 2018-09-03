@@ -11,6 +11,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Test.Verifiers;
     using TestHelper;
@@ -50,13 +51,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             LinePosition linePosition = new LinePosition(4, 28);
             DiagnosticResult[] expected =
             {
-                new DiagnosticResult
-                {
-                    Id = "CS0029",
-                    Message = "Cannot implicitly convert type 'int' to 'string'",
-                    Severity = DiagnosticSeverity.Error,
-                    Spans = new[] { new FileLinePositionSpan("Test0.cs", linePosition, linePosition) },
-                },
+                DiagnosticResult.CompilerError("CS0029").WithSpan(new FileLinePositionSpan("Test0.cs", linePosition, linePosition)).WithMessage("Cannot implicitly convert type 'int' to 'string'"),
             };
 
             await this.TestConstantMessage_Field_PassExecuterAsync("3", expected).ConfigureAwait(false);
@@ -80,13 +75,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             LinePosition linePosition = new LinePosition(6, 32);
             DiagnosticResult[] expected =
             {
-                new DiagnosticResult
-                {
-                    Id = "CS0029",
-                    Message = "Cannot implicitly convert type 'int' to 'string'",
-                    Severity = DiagnosticSeverity.Error,
-                    Spans = new[] { new FileLinePositionSpan("Test0.cs", linePosition, linePosition) },
-                },
+                DiagnosticResult.CompilerError("CS0029").WithSpan(new FileLinePositionSpan("Test0.cs", linePosition, linePosition)).WithMessage("Cannot implicitly convert type 'int' to 'string'"),
             };
 
             await this.TestConstantMessage_Local_PassExecuterAsync("3", expected).ConfigureAwait(false);
@@ -110,13 +99,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             LinePosition linePosition = new LinePosition(6, 16 + this.MethodName.Length + this.InitialArguments.Sum(i => i.Length + ", ".Length));
             DiagnosticResult[] expected =
             {
-                new DiagnosticResult
-                {
-                    Id = "CS1503",
-                    Message = $"Argument {1 + this.InitialArguments.Count()}: cannot convert from 'int' to 'string'",
-                    Severity = DiagnosticSeverity.Error,
-                    Spans = new[] { new FileLinePositionSpan("Test0.cs", linePosition, linePosition) },
-                },
+                DiagnosticResult.CompilerError("CS1503").WithSpan(new FileLinePositionSpan("Test0.cs", linePosition, linePosition)).WithMessage($"Argument {1 + this.InitialArguments.Count()}: cannot implicitly convert type 'int' to 'string'"),
             };
 
             await this.TestConstantMessage_Inline_PassExecuterAsync("3", expected).ConfigureAwait(false);
