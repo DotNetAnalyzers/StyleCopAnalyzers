@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.LayoutRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -39,7 +40,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 {
 }";
 
-            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, token), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, token), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -101,7 +102,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     private int bar; 
 }";
 
-            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, token), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, token), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>

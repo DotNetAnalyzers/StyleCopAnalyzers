@@ -87,7 +87,7 @@ public class Foo
 
             if (expectedText == null)
             {
-                await VerifyCSharpDiagnosticAsync(newlineAtEndOfFile, testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                await VerifyCSharpDiagnosticAsync(newlineAtEndOfFile, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             }
             else
             {
@@ -115,7 +115,7 @@ public class Foo
 
             if (expectedText == null)
             {
-                await VerifyCSharpDiagnosticAsync(newlineAtEndOfFile, testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                await VerifyCSharpDiagnosticAsync(newlineAtEndOfFile, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             }
             else
             {
@@ -143,7 +143,7 @@ public class Foo
 
             if (expectedText == null)
             {
-                await VerifyCSharpDiagnosticAsync(newlineAtEndOfFile, testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                await VerifyCSharpDiagnosticAsync(newlineAtEndOfFile, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             }
             else
             {
@@ -191,7 +191,7 @@ public class Foo
 
             if (expectedText == null)
             {
-                await VerifyCSharpDiagnosticAsync(newlineAtEndOfFile, testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                await VerifyCSharpDiagnosticAsync(newlineAtEndOfFile, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             }
             else
             {
@@ -239,7 +239,7 @@ public class Foo
 
             if (expectedText == null)
             {
-                await VerifyCSharpDiagnosticAsync(newlineAtEndOfFile, testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                await VerifyCSharpDiagnosticAsync(newlineAtEndOfFile, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             }
             else
             {

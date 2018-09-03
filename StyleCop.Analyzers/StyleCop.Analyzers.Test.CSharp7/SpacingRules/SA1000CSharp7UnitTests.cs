@@ -22,7 +22,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 
             string statementWithSpace = @"int.TryParse(""0"", out @Int32 x);";
 
-            await this.TestKeywordStatementAsync(statementWithSpace, EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
+            await this.TestKeywordStatementAsync(statementWithSpace, DiagnosticResult.EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
 
             DiagnosticResult expected = Diagnostic().WithArguments("out", string.Empty, "followed").WithLocation(12, 31);
 
@@ -35,7 +35,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
         {
             string statementWithSpace = @"int.TryParse(""0"", out var _);";
 
-            await this.TestKeywordStatementAsync(statementWithSpace, EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
+            await this.TestKeywordStatementAsync(statementWithSpace, DiagnosticResult.EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
         }
 
         [Fact]
@@ -44,7 +44,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
         {
             string statementWithSpace = @"int.TryParse(""0"", out _);";
 
-            await this.TestKeywordStatementAsync(statementWithSpace, EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
+            await this.TestKeywordStatementAsync(statementWithSpace, DiagnosticResult.EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
         }
 
         [Fact]
@@ -54,7 +54,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 
             string statementWithSpace = @"var (a, b) = (2, 3);";
 
-            await this.TestKeywordStatementAsync(statementWithSpace, EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
+            await this.TestKeywordStatementAsync(statementWithSpace, DiagnosticResult.EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
 
             DiagnosticResult expected = Diagnostic().WithArguments("var", string.Empty, "followed").WithLocation(12, 13);
 
@@ -80,7 +80,7 @@ ref @Int32 Call(ref @Int32 p)
     => ref @p;
 ";
 
-            await this.TestKeywordStatementAsync(statementWithSpace, EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
+            await this.TestKeywordStatementAsync(statementWithSpace, DiagnosticResult.EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
 
             DiagnosticResult[] expected =
             {

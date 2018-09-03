@@ -24,7 +24,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         public async Task TestSpaceAfterCommaAsync()
         {
             string statement = "f(a, b);";
-            await this.TestCommaInStatementOrDeclAsync(statement, EmptyDiagnosticResults, statement).ConfigureAwait(false);
+            await this.TestCommaInStatementOrDeclAsync(statement, DiagnosticResult.EmptyDiagnosticResults, statement).ConfigureAwait(false);
         }
 
         [Fact]
@@ -33,7 +33,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             string statementWithoutSpace = @"f(a,b);";
             string statementWithSpace = @"f(a, b);";
 
-            await this.TestCommaInStatementOrDeclAsync(statementWithSpace, EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
+            await this.TestCommaInStatementOrDeclAsync(statementWithSpace, DiagnosticResult.EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
 
             DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 16);
 
@@ -66,7 +66,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         public async Task TestLastCommaInLineAsync()
         {
             string statement = $"f(a,{Environment.NewLine}b);";
-            await this.TestCommaInStatementOrDeclAsync(statement, EmptyDiagnosticResults, statement).ConfigureAwait(false);
+            await this.TestCommaInStatementOrDeclAsync(statement, DiagnosticResult.EmptyDiagnosticResults, statement).ConfigureAwait(false);
         }
 
         [Fact]
@@ -106,7 +106,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         public async Task TestCommaFollowedByAngleBracketInFuncTypeAsync()
         {
             string statement = @"var a = typeof(System.Func<,>);";
-            await this.TestCommaInStatementOrDeclAsync(statement, EmptyDiagnosticResults, statement).ConfigureAwait(false);
+            await this.TestCommaInStatementOrDeclAsync(statement, DiagnosticResult.EmptyDiagnosticResults, statement).ConfigureAwait(false);
         }
 
         [Fact]
@@ -114,7 +114,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         {
             // This is correct by SA1001, and reported as an error by SA1015
             string statement = @"var a = typeof(System.Func<, >);";
-            await this.TestCommaInStatementOrDeclAsync(statement, EmptyDiagnosticResults, statement).ConfigureAwait(false);
+            await this.TestCommaInStatementOrDeclAsync(statement, DiagnosticResult.EmptyDiagnosticResults, statement).ConfigureAwait(false);
         }
 
         [Fact]
@@ -132,7 +132,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         public async Task TestCommaFollowedByCommaInFuncTypeAsync()
         {
             string statement = @"var a = typeof(System.Func<,,>);";
-            await this.TestCommaInStatementOrDeclAsync(statement, EmptyDiagnosticResults, statement).ConfigureAwait(false);
+            await this.TestCommaInStatementOrDeclAsync(statement, DiagnosticResult.EmptyDiagnosticResults, statement).ConfigureAwait(false);
         }
 
         [Fact]
@@ -149,7 +149,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         public async Task TestCommaFollowedByBracketInArrayDeclAsync()
         {
             string statement = @"int[,] myArray;";
-            await this.TestCommaInStatementOrDeclAsync(statement, EmptyDiagnosticResults, statement).ConfigureAwait(false);
+            await this.TestCommaInStatementOrDeclAsync(statement, DiagnosticResult.EmptyDiagnosticResults, statement).ConfigureAwait(false);
         }
 
         [Fact]

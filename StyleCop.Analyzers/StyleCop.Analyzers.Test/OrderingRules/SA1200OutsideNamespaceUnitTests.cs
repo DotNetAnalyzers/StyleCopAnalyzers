@@ -51,9 +51,6 @@ namespace StyleCop.Analyzers.Test.OrderingRules
 
         private const string DelegateDefinition = @"public delegate void TestDelegate();";
 
-        internal static DiagnosticResult[] EmptyDiagnosticResults
-            => StyleCopCodeFixVerifier<SA1200UsingDirectivesMustBePlacedCorrectly, UsingCodeFixProvider>.EmptyDiagnosticResults;
-
         /// <summary>
         /// Verifies that using statements in a namespace produces the expected diagnostics.
         /// </summary>
@@ -171,7 +168,7 @@ namespace System.MyExtension
 {typeDefinition}
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -226,7 +223,7 @@ namespace TestNamespace
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>

@@ -57,7 +57,7 @@ public class Foo
         public async Task TestWithNonWhitespaceTriviaAsync()
         {
             var testCode = "#if true\r\n" + BaseCode + "\r\n#endif\r\n";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ public class Foo
         [Fact]
         public async Task TestWithoutCarriageReturnLineFeedAtStartOfFileAsync()
         {
-            await VerifyCSharpDiagnosticAsync(BaseCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(BaseCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -89,7 +89,7 @@ public class Foo
         public async Task TestWithInvalidSpacingAsync()
         {
             var testCode = "    " + BaseCode;
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>

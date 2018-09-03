@@ -21,9 +21,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
         public abstract bool SupportsCodeFix { get; }
 
-        protected static DiagnosticResult[] EmptyDiagnosticResults
-            => DiagnosticVerifier<TAnalyzer>.EmptyDiagnosticResults;
-
         [Fact]
         public async Task TestOneElementAsync()
         {
@@ -33,7 +30,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             testCode = testCode.Replace("%1", this.Keyword);
 
-            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -71,7 +68,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), expected, CancellationToken.None).ConfigureAwait(false);
                 foreach (var (_, code) in fixedCode)
                 {
-                    await VerifyCSharpDiagnosticAsync(code, this.GetSettings(), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                    await VerifyCSharpDiagnosticAsync(code, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
                 }
             }
         }
@@ -122,7 +119,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), expected, CancellationToken.None).ConfigureAwait(false);
                 foreach (var (_, code) in fixedCode)
                 {
-                    await VerifyCSharpDiagnosticAsync(code, this.GetSettings(), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                    await VerifyCSharpDiagnosticAsync(code, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
                 }
             }
         }
@@ -166,7 +163,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), expected, CancellationToken.None).ConfigureAwait(false);
                 foreach (var (_, code) in fixedCode)
                 {
-                    await VerifyCSharpDiagnosticAsync(code, this.GetSettings(), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                    await VerifyCSharpDiagnosticAsync(code, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
                 }
             }
         }
@@ -207,7 +204,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
                 foreach (var (_, code) in fixedCode)
                 {
-                    await VerifyCSharpDiagnosticAsync(code.Replace("%1", this.Keyword), this.GetSettings(), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                    await VerifyCSharpDiagnosticAsync(code.Replace("%1", this.Keyword), this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
                 }
             }
         }
@@ -251,7 +248,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), expected, CancellationToken.None).ConfigureAwait(false);
                 foreach (var (_, code) in fixedCode)
                 {
-                    await VerifyCSharpDiagnosticAsync(code, this.GetSettings(), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                    await VerifyCSharpDiagnosticAsync(code, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
                 }
             }
         }
@@ -300,7 +297,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), expected, CancellationToken.None).ConfigureAwait(false);
                 foreach (var (_, code) in fixedCode)
                 {
-                    await VerifyCSharpDiagnosticAsync(code, this.GetSettings(), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                    await VerifyCSharpDiagnosticAsync(code, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
                 }
             }
         }

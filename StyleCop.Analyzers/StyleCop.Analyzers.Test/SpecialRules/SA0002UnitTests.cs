@@ -30,7 +30,7 @@ namespace NamespaceName { }
         [Fact]
         public async Task TestMissingSettingsAsync()
         {
-            await VerifyCSharpDiagnosticAsync(TestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(TestCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]

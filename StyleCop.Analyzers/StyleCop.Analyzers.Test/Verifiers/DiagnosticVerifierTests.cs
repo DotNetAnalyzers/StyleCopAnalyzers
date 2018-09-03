@@ -161,7 +161,7 @@ class ClassName
             var ex = await Assert.ThrowsAnyAsync<XunitException>(
                 async () =>
                 {
-                    await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                    await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
             Assert.StartsWith("Mismatch between number of diagnostics returned, expected \"0\" actual \"1\"", ex.Message);
             Assert.Contains("warning SA1002", ex.Message);
@@ -183,7 +183,7 @@ class ClassName
             var ex = await Assert.ThrowsAnyAsync<XunitException>(
                 async () =>
                 {
-                    await DiagnosticVerifier<ErrorThrowingAnalyzer>.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                    await DiagnosticVerifier<ErrorThrowingAnalyzer>.VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
             Assert.StartsWith("Mismatch between number of diagnostics returned, expected \"0\" actual \"2\"", ex.Message);
             Assert.Contains("error AD0001", ex.Message);

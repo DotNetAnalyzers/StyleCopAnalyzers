@@ -15,9 +15,6 @@ namespace StyleCop.Analyzers.Test.Verifiers
         where TAnalyzer : DiagnosticAnalyzer, new()
         where TCodeFix : CodeFixProvider, new()
     {
-        internal static DiagnosticResult[] EmptyDiagnosticResults
-            => DiagnosticVerifier<TAnalyzer>.EmptyDiagnosticResults;
-
         internal static DiagnosticResult Diagnostic(string diagnosticId = null)
             => DiagnosticVerifier<TAnalyzer>.Diagnostic(diagnosticId);
 

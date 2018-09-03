@@ -34,7 +34,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         [MemberData(nameof(GetNullTests))]
         public async Task TestNullScenariosAsync(string declaration)
         {
-            await VerifyCSharpDiagnosticAsync(declaration, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(declaration, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]

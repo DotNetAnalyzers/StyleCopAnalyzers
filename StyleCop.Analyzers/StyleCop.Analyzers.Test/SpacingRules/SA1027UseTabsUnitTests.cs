@@ -18,9 +18,6 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     /// </summary>
     public class SA1027UseTabsUnitTests
     {
-        private static DiagnosticResult[] EmptyDiagnosticResults
-            => StyleCopCodeFixVerifier<SA1027UseTabsCorrectly, SA1027CodeFixProvider>.EmptyDiagnosticResults;
-
         /// <summary>
         /// Verifies that tabs used inside string and char literals are not producing diagnostics.
         /// </summary>
@@ -35,7 +32,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 "\tpublic const char ValidTestChar = '\t';\r\n" +
                 "}\r\n";
 
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -54,7 +51,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 "#endif\r\n" +
                 "}\r\n";
 
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]

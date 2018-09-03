@@ -14,9 +14,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     {
         public abstract string Keyword { get; }
 
-        protected static DiagnosticResult[] EmptyDiagnosticResults
-            => DiagnosticVerifier<SA1402FileMayOnlyContainASingleType>.EmptyDiagnosticResults;
-
         protected SA1402SettingsConfiguration SettingsConfiguration { get; set; } = SA1402SettingsConfiguration.ConfigureAsTopLevelType;
 
         protected static DiagnosticResult Diagnostic()

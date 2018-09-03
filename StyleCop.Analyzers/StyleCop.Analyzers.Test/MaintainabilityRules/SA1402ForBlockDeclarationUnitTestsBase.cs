@@ -63,7 +63,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             testCode = testCode.Replace("%1", this.Keyword);
 
-            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -99,7 +99,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             }
             else
             {
-                await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             }
         }
 
@@ -114,7 +114,7 @@ public partial {this.Keyword} Foo
 
 }}";
 
-            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -180,7 +180,7 @@ public {this.Keyword} Test0
     }}
 }}";
 
-            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override string GetSettings()

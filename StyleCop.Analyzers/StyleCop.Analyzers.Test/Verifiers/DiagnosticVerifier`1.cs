@@ -16,8 +16,6 @@ namespace StyleCop.Analyzers.Test.Verifiers
     internal static class DiagnosticVerifier<TAnalyzer>
         where TAnalyzer : DiagnosticAnalyzer, new()
     {
-        internal static DiagnosticResult[] EmptyDiagnosticResults { get; } = { };
-
         internal static DiagnosticResult Diagnostic(string diagnosticId = null)
         {
             var analyzer = new TAnalyzer();

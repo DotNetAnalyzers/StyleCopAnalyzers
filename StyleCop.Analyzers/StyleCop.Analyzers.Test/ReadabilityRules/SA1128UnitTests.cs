@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1128ConstructorInitializerMustBeOnOwnLine,
@@ -24,7 +25,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         [MemberData(nameof(GetNullTests))]
         public async Task TestNullScenariosAsync(string declaration)
         {
-            await VerifyCSharpDiagnosticAsync(declaration, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(declaration, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]

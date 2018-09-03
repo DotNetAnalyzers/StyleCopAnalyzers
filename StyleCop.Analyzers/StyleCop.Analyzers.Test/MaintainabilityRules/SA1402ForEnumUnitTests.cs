@@ -22,7 +22,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -71,7 +71,7 @@ enum Bar
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -89,7 +89,7 @@ enum Bar
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]

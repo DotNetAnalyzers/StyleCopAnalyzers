@@ -47,7 +47,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     { public int Field; }  /* Valid only for SA1500 */
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>

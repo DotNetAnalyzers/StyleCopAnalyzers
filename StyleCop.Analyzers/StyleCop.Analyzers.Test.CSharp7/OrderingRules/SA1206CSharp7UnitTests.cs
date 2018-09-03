@@ -15,9 +15,6 @@ namespace StyleCop.Analyzers.Test.CSharp7.OrderingRules
 
     public class SA1206CSharp7UnitTests : SA1206UnitTests
     {
-        private static DiagnosticResult[] EmptyDiagnosticResults
-            => StyleCopCodeFixVerifier<SA1206DeclarationKeywordsMustFollowOrder, SA1206CodeFixProvider>.EmptyDiagnosticResults;
-
         [Theory]
         [InlineData("readonly")]
         [InlineData("ref")]
@@ -35,7 +32,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.OrderingRules
     }}
 }}
 ";
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]

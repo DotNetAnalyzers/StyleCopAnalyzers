@@ -13,9 +13,6 @@ namespace StyleCop.Analyzers.Test.OrderingRules
 
     internal static class CombinedUsingDirectivesVerifier
     {
-        internal static DiagnosticResult[] EmptyDiagnosticResults
-            => DiagnosticVerifier<SA1200UsingDirectivesMustBePlacedCorrectly>.EmptyDiagnosticResults;
-
         internal static DiagnosticResult Diagnostic(DiagnosticDescriptor descriptor)
             => new DiagnosticResult(descriptor);
 

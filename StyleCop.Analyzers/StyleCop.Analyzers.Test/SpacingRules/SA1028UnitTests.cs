@@ -217,7 +217,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 .Append(" }")
                 .ToString();
 
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -276,7 +276,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 .ToString();
 
             // Note: we verify that no diagnostics are produced inside non-compiled blocks
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -288,7 +288,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 .AppendLine("}")
                 .ToString();
 
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]

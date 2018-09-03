@@ -18,7 +18,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         {
             var testCode = @"public delegate void Foo();";
 
-            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -68,7 +68,7 @@ public delegate void Bar<T1, T2, T3>(T1 x, T2 y, T3 z);
 public delegate void Bar();
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -80,7 +80,7 @@ public delegate void Bar();
 public delegate void Bar();
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]

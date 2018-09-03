@@ -30,9 +30,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             get;
         }
 
-        private static DiagnosticResult[] EmptyDiagnosticResults
-            => DiagnosticVerifier<TAnalyzer>.EmptyDiagnosticResults;
-
         [Fact]
         public async Task TestConstantMessage_Field_PassAsync()
         {
@@ -190,7 +187,7 @@ public class Foo
     }}
 }}";
 
-            await VerifyCSharpDiagnosticAsync(this.BuildTestCode(testCode), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(this.BuildTestCode(testCode), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -218,7 +215,7 @@ class Debug
 }}
 ";
 
-            await VerifyCSharpDiagnosticAsync(this.BuildTestCode(testCode), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(this.BuildTestCode(testCode), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -233,7 +230,7 @@ public class Foo
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
