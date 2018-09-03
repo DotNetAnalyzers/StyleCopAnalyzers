@@ -8,16 +8,17 @@ namespace StyleCop.Analyzers.Test.Verifiers
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.CSharp.Testing;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Testing;
+    using Microsoft.CodeAnalysis.Testing.Verifiers;
     using StyleCop.Analyzers.SpacingRules;
-    using TestHelper;
     using Xunit;
     using Xunit.Sdk;
     using static StyleCopDiagnosticVerifier<StyleCop.Analyzers.SpacingRules.SA1002SemicolonsMustBeSpacedCorrectly>;
 
     /// <summary>
-    /// This class verifies that <see cref="DiagnosticVerifier{TAnalyzer}"/> will correctly report failing tests.
+    /// This class verifies that <see cref="CSharpCodeFixVerifier{TAnalyzer, TCodeFix, TVerifier}"/> will correctly report failing tests.
     /// </summary>
     public class DiagnosticVerifierTests
     {
@@ -183,7 +184,7 @@ class ClassName
             var ex = await Assert.ThrowsAnyAsync<XunitException>(
                 async () =>
                 {
-                    await DiagnosticVerifier<ErrorThrowingAnalyzer>.VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                    await CSharpCodeFixVerifier<ErrorThrowingAnalyzer, EmptyCodeFixProvider, XUnitVerifier>.VerifyAnalyzerAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
             Assert.StartsWith("Mismatch between number of diagnostics returned, expected \"0\" actual \"2\"", ex.Message);
             Assert.Contains("error AD0001", ex.Message);

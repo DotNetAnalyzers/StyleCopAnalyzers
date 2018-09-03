@@ -7,7 +7,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.MaintainabilityRules;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.MaintainabilityRules.SA1119StatementMustNotUseUnnecessaryParenthesis,
@@ -44,7 +43,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             DiagnosticResult[] expected =
                 {
-                    Diagnostic(DiagnosticId).WithLocation(5, 17),
+                    Diagnostic(DiagnosticId).WithSpan(5, 17, 5, 20),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(5, 17),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(5, 19),
                 };
@@ -72,9 +71,9 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             DiagnosticResult[] expected =
                 {
-                    Diagnostic(DiagnosticId).WithLocation(5, 17),
+                    Diagnostic(DiagnosticId).WithSpan(5, 17, 5, 22),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(5, 17),
-                    Diagnostic(DiagnosticId).WithLocation(5, 18),
+                    Diagnostic(DiagnosticId).WithSpan(5, 18, 5, 21),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(5, 18),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(5, 20),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(5, 21),
@@ -116,7 +115,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             DiagnosticResult[] expected =
                 {
-                    Diagnostic(DiagnosticId).WithLocation(5, 20),
+                    Diagnostic(DiagnosticId).WithSpan(5, 20, 5, 32),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(5, 20),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(5, 31),
                 };
@@ -158,10 +157,10 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 }";
             DiagnosticResult[] expected =
                 {
-                    Diagnostic(DiagnosticId).WithLocation(6, 20),
+                    Diagnostic(DiagnosticId).WithSpan(6, 20, 6, 27),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 20),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 26),
-                    Diagnostic(DiagnosticId).WithLocation(6, 55),
+                    Diagnostic(DiagnosticId).WithSpan(6, 55, 6, 60),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 55),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 59),
                 };
@@ -205,7 +204,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             DiagnosticResult[] expected =
                 {
-                    Diagnostic(DiagnosticId).WithLocation(6, 9),
+                    Diagnostic(DiagnosticId).WithSpan(6, 9, 6, 21),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 9),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 20),
                 };
@@ -234,7 +233,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 }";
             DiagnosticResult[] expected =
                 {
-                    Diagnostic(DiagnosticId).WithLocation(6, 17),
+                    Diagnostic(DiagnosticId).WithSpan(6, 17, 6, 24),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 17),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 23),
                 };
@@ -276,7 +275,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             DiagnosticResult[] expected =
                 {
-                    Diagnostic(DiagnosticId).WithLocation(5, 17),
+                    Diagnostic(DiagnosticId).WithSpan(5, 17, 5, 25),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(5, 17),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(5, 24),
                 };
@@ -318,7 +317,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 }";
             DiagnosticResult[] expected =
                 {
-                    Diagnostic(DiagnosticId).WithLocation(6, 13),
+                    Diagnostic(DiagnosticId).WithSpan(6, 13, 6, 21),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 13),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 20),
                 };
@@ -398,22 +397,22 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 }";
             DiagnosticResult[] expected =
                 {
-                    Diagnostic(DiagnosticId).WithLocation(6, 13),
+                    Diagnostic(DiagnosticId).WithSpan(6, 13, 6, 18),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 13),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 17),
-                    Diagnostic(DiagnosticId).WithLocation(7, 13),
+                    Diagnostic(DiagnosticId).WithSpan(7, 13, 7, 18),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(7, 13),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(7, 17),
-                    Diagnostic(DiagnosticId).WithLocation(8, 13),
+                    Diagnostic(DiagnosticId).WithSpan(8, 13, 8, 18),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(8, 13),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(8, 17),
-                    Diagnostic(DiagnosticId).WithLocation(9, 13),
+                    Diagnostic(DiagnosticId).WithSpan(9, 13, 9, 17),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(9, 13),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(9, 16),
-                    Diagnostic(DiagnosticId).WithLocation(10, 13),
+                    Diagnostic(DiagnosticId).WithSpan(10, 13, 10, 17),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(10, 13),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(10, 16),
-                    Diagnostic(DiagnosticId).WithLocation(11, 13),
+                    Diagnostic(DiagnosticId).WithSpan(11, 13, 11, 17),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(11, 13),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(11, 16),
                 };
@@ -462,10 +461,10 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             DiagnosticResult[] expected =
                 {
-                    Diagnostic(DiagnosticId).WithLocation(5, 21),
+                    Diagnostic(DiagnosticId).WithSpan(5, 21, 5, 33),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(5, 21),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(5, 32),
-                    Diagnostic(DiagnosticId).WithLocation(6, 17),
+                    Diagnostic(DiagnosticId).WithSpan(6, 17, 6, 31),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 17),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 30),
                 };
@@ -506,7 +505,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 }";
             DiagnosticResult[] expected =
                 {
-                    Diagnostic(DiagnosticId).WithLocation(5, 20),
+                    Diagnostic(DiagnosticId).WithSpan(5, 20, 5, 33),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(5, 20),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(5, 32),
                 };
@@ -560,10 +559,10 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 }";
             DiagnosticResult[] expected =
                 {
-                    Diagnostic(DiagnosticId).WithLocation(5, 18),
+                    Diagnostic(DiagnosticId).WithSpan(5, 18, 5, 32),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(5, 18),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(5, 31),
-                    Diagnostic(DiagnosticId).WithLocation(6, 13),
+                    Diagnostic(DiagnosticId).WithSpan(6, 13, 6, 27),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 13),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 26),
                 };
@@ -606,7 +605,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 }";
             DiagnosticResult[] expected =
                 {
-                    Diagnostic(DiagnosticId).WithLocation(6, 20),
+                    Diagnostic(DiagnosticId).WithSpan(6, 20, 6, 31),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 20),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 30),
                 };
@@ -662,7 +661,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 }";
             DiagnosticResult[] expected =
                 {
-                    Diagnostic(DiagnosticId).WithLocation(5, 20),
+                    Diagnostic(DiagnosticId).WithSpan(5, 20, 5, 42),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(5, 20),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(5, 41),
                 };
@@ -716,7 +715,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 }";
             DiagnosticResult[] expected =
                 {
-                    Diagnostic(DiagnosticId).WithLocation(5, 20),
+                    Diagnostic(DiagnosticId).WithSpan(5, 20, 5, 36),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(5, 20),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(5, 35),
                 };
@@ -772,10 +771,10 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 }";
             DiagnosticResult[] expected =
                 {
-                    Diagnostic(DiagnosticId).WithLocation(5, 41),
+                    Diagnostic(DiagnosticId).WithSpan(5, 41, 5, 49),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(5, 41),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(5, 48),
-                    Diagnostic(DiagnosticId).WithLocation(6, 41),
+                    Diagnostic(DiagnosticId).WithSpan(6, 41, 6, 51),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 41),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 50),
                 };
@@ -830,7 +829,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 }";
             DiagnosticResult[] expected =
                 {
-                    Diagnostic(DiagnosticId).WithLocation(5, 19),
+                    Diagnostic(DiagnosticId).WithSpan(5, 19, 5, 32),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(5, 19),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(5, 31),
                 };
@@ -885,7 +884,7 @@ public class Foo
 }";
             DiagnosticResult[] expected =
                 {
-                    Diagnostic(DiagnosticId).WithLocation(6, 17),
+                    Diagnostic(DiagnosticId).WithSpan(6, 17, 6, 53),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 17),
                     Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 52),
                 };
@@ -972,7 +971,7 @@ public class Foo
 }";
             DiagnosticResult[] expected =
             {
-                Diagnostic(DiagnosticId).WithLocation(6, 20),
+                Diagnostic(DiagnosticId).WithSpan(6, 20, 10, 18),
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 20),
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(10, 17),
             };
@@ -992,7 +991,7 @@ public class Foo
 
             DiagnosticResult[] expected =
             {
-                Diagnostic(DiagnosticId).WithLocation(1, 5),
+                Diagnostic(DiagnosticId).WithSpan(1, 5, 1, 21),
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(1, 5),
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(1, 20),
             };
@@ -1013,7 +1012,7 @@ public class Foo
 }";
             DiagnosticResult[] expected =
             {
-                Diagnostic(DiagnosticId).WithLocation(6, 15),
+                Diagnostic(DiagnosticId).WithSpan(6, 15, 6, 20),
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 15),
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 19),
             };
@@ -1043,7 +1042,7 @@ public class Foo
 }";
             DiagnosticResult[] expected =
             {
-                Diagnostic(DiagnosticId).WithLocation(6, 26),
+                Diagnostic(DiagnosticId).WithSpan(6, 26, 6, 32),
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 26),
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 31),
             };
@@ -1108,7 +1107,7 @@ public class Foo
 
             DiagnosticResult[] expected =
             {
-                Diagnostic(DiagnosticId).WithLocation(6, 20),
+                Diagnostic(DiagnosticId).WithSpan(6, 20, 6, 35),
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 20),
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 34),
             };
@@ -1191,7 +1190,7 @@ public class Foo
 }";
             DiagnosticResult[] expected =
             {
-                Diagnostic(DiagnosticId).WithLocation(6, 23),
+                Diagnostic(DiagnosticId).WithSpan(6, 23, 6, 43),
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 23),
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 42),
             };
@@ -1251,7 +1250,7 @@ public class Foo
 }";
             DiagnosticResult[] expected =
             {
-                Diagnostic(DiagnosticId).WithLocation(6, 22),
+                Diagnostic(DiagnosticId).WithSpan(6, 22, 6, 36),
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 22),
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 35),
             };
@@ -1311,7 +1310,7 @@ public class Foo
 }";
             DiagnosticResult[] expected =
             {
-                Diagnostic(DiagnosticId).WithLocation(6, 22),
+                Diagnostic(DiagnosticId).WithSpan(6, 22, 6, 31),
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 22),
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 30),
             };
@@ -1371,7 +1370,7 @@ public class Foo
 }";
             DiagnosticResult[] expected =
             {
-                Diagnostic(DiagnosticId).WithLocation(6, 22),
+                Diagnostic(DiagnosticId).WithSpan(6, 22, 6, 30),
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 22),
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 29),
             };
@@ -1420,10 +1419,10 @@ public class Program
 ";
             DiagnosticResult[] expected =
             {
-                Diagnostic(DiagnosticId).WithLocation(6, 4),
+                Diagnostic(DiagnosticId).WithSpan(6, 4, 6, 11),
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 4),
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 10),
-                Diagnostic(DiagnosticId).WithLocation(10, 5),
+                Diagnostic(DiagnosticId).WithSpan(10, 5, 10, 12),
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(10, 5),
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(10, 11),
             };

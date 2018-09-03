@@ -10,8 +10,10 @@ namespace StyleCop.Analyzers.Test
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using StyleCop.Analyzers.Test.Verifiers;
+    using Microsoft.CodeAnalysis.Testing;
+    using Microsoft.CodeAnalysis.Testing.Verifiers;
     using Xunit;
 
     public class AnalyzerConfigurationTests
@@ -58,7 +60,7 @@ namespace StyleCop.Analyzers.Test
             }
         }
 
-        private class CSharpTest : GenericAnalyzerTest
+        private class CSharpTest : CodeFixTest<XUnitVerifier>
         {
             private readonly Type analyzerType;
 
@@ -68,6 +70,11 @@ namespace StyleCop.Analyzers.Test
             }
 
             public override string Language => LanguageNames.CSharp;
+
+            protected override string DefaultFileExt => "cs";
+
+            protected override CompilationOptions CreateCompilationOptions()
+                => new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true);
 
             protected override IEnumerable<CodeFixProvider> GetCodeFixProviders()
                 => new CodeFixProvider[0];

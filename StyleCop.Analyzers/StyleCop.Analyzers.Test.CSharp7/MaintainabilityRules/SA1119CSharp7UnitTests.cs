@@ -77,7 +77,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
 
             DiagnosticResult[] expected =
             {
-                Diagnostic(DiagnosticId).WithLocation(5, 38),
+                Diagnostic(DiagnosticId).WithSpan(5, 38, 5, 41),
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(5, 38),
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(5, 40),
             };

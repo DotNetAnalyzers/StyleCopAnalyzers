@@ -4,17 +4,18 @@
 namespace StyleCop.Analyzers.Test.Verifiers
 {
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp.Testing;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Testing;
-    using TestHelper;
+    using Microsoft.CodeAnalysis.Testing.Verifiers;
 
     internal static class CustomDiagnosticVerifier<TAnalyzer>
         where TAnalyzer : DiagnosticAnalyzer, new()
     {
         internal static DiagnosticResult Diagnostic(string diagnosticId = null)
-            => DiagnosticVerifier<TAnalyzer>.Diagnostic(diagnosticId);
+            => CSharpCodeFixVerifier<TAnalyzer, EmptyCodeFixProvider, XUnitVerifier>.Diagnostic(diagnosticId);
 
         internal static DiagnosticResult Diagnostic(DiagnosticDescriptor descriptor)
-            => DiagnosticVerifier<TAnalyzer>.Diagnostic(descriptor);
+            => new DiagnosticResult(descriptor);
     }
 }
