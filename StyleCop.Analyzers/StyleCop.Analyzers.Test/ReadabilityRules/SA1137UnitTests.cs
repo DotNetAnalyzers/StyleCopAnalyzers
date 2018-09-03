@@ -1502,7 +1502,7 @@ class ClassName
             }
 
           break;
-        }
+       }
         default:
       label5a:
       label5b:
@@ -1524,6 +1524,7 @@ class ClassName
                 Diagnostic().WithLocation(34, 1),
                 Diagnostic().WithLocation(35, 1),
                 Diagnostic().WithLocation(36, 1),
+                Diagnostic().WithLocation(43, 1),
                 Diagnostic().WithLocation(44, 1),
                 Diagnostic().WithLocation(45, 1),
                 Diagnostic().WithLocation(46, 1),
@@ -1935,6 +1936,80 @@ Z = 0,
                 Diagnostic().WithLocation(11, 1),
                 Diagnostic().WithLocation(21, 1),
                 Diagnostic().WithLocation(22, 1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2747, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2747")]
+        public async Task VerifyInitializerBracesAreCheckedAndFixedAsync()
+        {
+            var testCode = @"
+using System.Collections.Generic;
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        List<int> testObject1 = new List<int>
+        {
+            1,
+       };
+
+        TestClass2 testObject2 = new TestClass2
+        {
+            Test = 1,
+         };
+
+        var testObject3 = new
+        {
+            TestValue = 1,
+       };
+    }
+
+    private class TestClass2
+    {
+        public int Test { get; set; }
+    }
+}
+";
+
+            var fixedCode = @"
+using System.Collections.Generic;
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        List<int> testObject1 = new List<int>
+        {
+            1,
+        };
+
+        TestClass2 testObject2 = new TestClass2
+        {
+            Test = 1,
+        };
+
+        var testObject3 = new
+        {
+            TestValue = 1,
+        };
+    }
+
+    private class TestClass2
+    {
+        public int Test { get; set; }
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(11, 1),
+                Diagnostic().WithLocation(16, 1),
+                Diagnostic().WithLocation(21, 1),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
