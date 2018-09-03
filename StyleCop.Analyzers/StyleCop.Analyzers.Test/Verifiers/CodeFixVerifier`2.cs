@@ -24,9 +24,6 @@ namespace StyleCop.Analyzers.Test.Verifiers
         internal static DiagnosticResult Diagnostic(DiagnosticDescriptor descriptor)
             => DiagnosticVerifier<TAnalyzer>.Diagnostic(descriptor);
 
-        internal static DiagnosticResult CompilerError(string errorIdentifier)
-            => DiagnosticVerifier<TAnalyzer>.CompilerError(errorIdentifier);
-
         internal static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
             => DiagnosticVerifier<TAnalyzer>.VerifyCSharpDiagnosticAsync(source, expected, cancellationToken);
 

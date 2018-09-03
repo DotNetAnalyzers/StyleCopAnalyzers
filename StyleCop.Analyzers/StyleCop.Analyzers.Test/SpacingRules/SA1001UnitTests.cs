@@ -271,7 +271,7 @@ class ClassName
 }
 ";
 
-            DiagnosticResult expected = CompilerError("CS1003").WithMessage("Syntax error, ',' expected").WithLocation(6, 25);
+            DiagnosticResult expected = DiagnosticResult.CompilerError("CS1003").WithMessage("Syntax error, ',' expected").WithLocation(6, 25);
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 

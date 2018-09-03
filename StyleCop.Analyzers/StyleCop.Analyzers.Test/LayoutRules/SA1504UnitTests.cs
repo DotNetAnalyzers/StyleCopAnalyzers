@@ -304,7 +304,7 @@ public class Foo
 }";
             DiagnosticResult[] expected =
             {
-                CompilerError("CS0501").WithMessage("'Foo.Prop.get' must declare a body because it is not marked abstract, extern, or partial").WithLocation(6, 9),
+                DiagnosticResult.CompilerError("CS0501").WithMessage("'Foo.Prop.get' must declare a body because it is not marked abstract, extern, or partial").WithLocation(6, 9),
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

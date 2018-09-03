@@ -376,7 +376,7 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                CompilerError("CS1003").WithMessage("Syntax error, '>' expected").WithLocation(7, 35),
+                DiagnosticResult.CompilerError("CS1003").WithMessage("Syntax error, '>' expected").WithLocation(7, 35),
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

@@ -517,16 +517,16 @@ class TypeName
                 ExpectedDiagnostics =
                 {
                     Diagnostic().WithLocation(7, 12),
-                    CompilerError("CS0103").WithLocation(7, 14).WithMessage("The name 'Bar' does not exist in the current context"),
-                    CompilerError("CS1513").WithLocation(7, 37).WithMessage("} expected"),
-                    CompilerError("CS1513").WithLocation(7, 37).WithMessage("} expected"),
+                    DiagnosticResult.CompilerError("CS0103").WithLocation(7, 14).WithMessage("The name 'Bar' does not exist in the current context"),
+                    DiagnosticResult.CompilerError("CS1513").WithLocation(7, 37).WithMessage("} expected"),
+                    DiagnosticResult.CompilerError("CS1513").WithLocation(7, 37).WithMessage("} expected"),
                 },
                 FixedCode = fixedTestCode,
                 RemainingDiagnostics =
                 {
-                    CompilerError("CS0103").WithLocation(9, 13).WithMessage("The name 'Bar' does not exist in the current context"),
-                    CompilerError("CS1513").WithLocation(11, 23).WithMessage("} expected"),
-                    CompilerError("CS1513").WithLocation(11, 23).WithMessage("} expected"),
+                    DiagnosticResult.CompilerError("CS0103").WithLocation(9, 13).WithMessage("The name 'Bar' does not exist in the current context"),
+                    DiagnosticResult.CompilerError("CS1513").WithLocation(11, 23).WithMessage("} expected"),
+                    DiagnosticResult.CompilerError("CS1513").WithLocation(11, 23).WithMessage("} expected"),
                 },
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }

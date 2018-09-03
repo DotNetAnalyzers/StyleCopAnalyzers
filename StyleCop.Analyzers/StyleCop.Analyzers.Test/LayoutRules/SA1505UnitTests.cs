@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.LayoutRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -834,7 +835,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 {
 ";
 
-            var expected = CompilerError("CS1513").WithMessage("} expected").WithLocation(2, 2);
+            var expected = DiagnosticResult.CompilerError("CS1513").WithMessage("} expected").WithLocation(2, 2);
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
     }

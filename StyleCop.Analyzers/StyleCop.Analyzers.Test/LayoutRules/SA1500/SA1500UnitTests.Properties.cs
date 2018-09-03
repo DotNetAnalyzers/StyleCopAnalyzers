@@ -493,17 +493,17 @@ class ClassName
             DiagnosticResult accessorError;
             if (LightupHelpers.SupportsCSharp7)
             {
-                accessorError = CompilerError("CS8180").WithMessage("{ or ; or => expected");
+                accessorError = DiagnosticResult.CompilerError("CS8180").WithMessage("{ or ; or => expected");
             }
             else
             {
-                accessorError = CompilerError("CS1043").WithMessage("{ or ; expected");
+                accessorError = DiagnosticResult.CompilerError("CS1043").WithMessage("{ or ; expected");
             }
 
             DiagnosticResult[] expected =
             {
                 accessorError.WithLocation(6, 12),
-                CompilerError("CS1022").WithMessage("Type or namespace definition, or end-of-file expected").WithLocation(9, 1),
+                DiagnosticResult.CompilerError("CS1022").WithMessage("Type or namespace definition, or end-of-file expected").WithLocation(9, 1),
             };
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
@@ -526,10 +526,10 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                CompilerError("CS0161").WithMessage("'ClassName.Property.get': not all code paths return a value").WithLocation(6, 9),
-                CompilerError("CS1513").WithMessage("} expected").WithLocation(7, 10),
-                CompilerError("CS1513").WithMessage("} expected").WithLocation(7, 10),
-                CompilerError("CS1513").WithMessage("} expected").WithLocation(7, 10),
+                DiagnosticResult.CompilerError("CS0161").WithMessage("'ClassName.Property.get': not all code paths return a value").WithLocation(6, 9),
+                DiagnosticResult.CompilerError("CS1513").WithMessage("} expected").WithLocation(7, 10),
+                DiagnosticResult.CompilerError("CS1513").WithMessage("} expected").WithLocation(7, 10),
+                DiagnosticResult.CompilerError("CS1513").WithMessage("} expected").WithLocation(7, 10),
             };
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }

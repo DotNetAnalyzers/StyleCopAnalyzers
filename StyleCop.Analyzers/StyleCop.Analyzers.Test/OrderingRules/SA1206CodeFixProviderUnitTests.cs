@@ -292,7 +292,7 @@ public class ExtendedTestClass : TestClass
 
             DiagnosticResult[] expected =
             {
-                CompilerError("CS0267").WithLocation(5, 1).WithMessage("The 'partial' modifier can only appear immediately before 'class', 'struct', 'interface', or 'void'"),
+                DiagnosticResult.CompilerError("CS0267").WithLocation(5, 1).WithMessage("The 'partial' modifier can only appear immediately before 'class', 'struct', 'interface', or 'void'"),
                 Diagnostic().WithLocation(5, 9).WithArguments("public", "partial"),
                 Diagnostic().WithLocation(15, 12).WithArguments("public", "static"),
                 Diagnostic().WithLocation(26, 9).WithArguments("protected", "new"),

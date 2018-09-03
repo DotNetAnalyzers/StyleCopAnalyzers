@@ -19,8 +19,5 @@ namespace StyleCop.Analyzers.Test.Verifiers
 
         internal static DiagnosticResult Diagnostic(DiagnosticDescriptor descriptor)
             => DiagnosticVerifier<TAnalyzer>.Diagnostic(descriptor);
-
-        internal static DiagnosticResult CompilerError(string errorIdentifier)
-            => DiagnosticVerifier<TAnalyzer>.CompilerError(errorIdentifier);
     }
 }

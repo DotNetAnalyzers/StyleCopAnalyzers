@@ -397,7 +397,7 @@ public class Foo
             DiagnosticResult[] expected =
             {
                 Diagnostic().WithLocation(4, 66),
-                CompilerError("CS0029").WithMessage("Cannot implicitly convert type 'int' to 'string'").WithLocation(4, 82),
+                DiagnosticResult.CompilerError("CS0029").WithMessage("Cannot implicitly convert type 'int' to 'string'").WithLocation(4, 82),
             };
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }

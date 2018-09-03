@@ -388,14 +388,14 @@ namespace Foo
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                CompilerError("CS1035").WithMessage("End-of-file found, '*/' expected").WithLocation(1, 1),
+                DiagnosticResult.CompilerError("CS1035").WithMessage("End-of-file found, '*/' expected").WithLocation(1, 1),
                 Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1),
             };
 
             // The fixed code will still have the incomplete comment, as there is no certainty that the incomplete comment was intended as file header.
             DiagnosticResult[] expectedFixedDiagnostics =
             {
-                CompilerError("CS1035").WithMessage("End-of-file found, '*/' expected").WithLocation(3, 1),
+                DiagnosticResult.CompilerError("CS1035").WithMessage("End-of-file found, '*/' expected").WithLocation(3, 1),
             };
 
             await this.VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode, expectedFixedDiagnostics, CancellationToken.None).ConfigureAwait(false);

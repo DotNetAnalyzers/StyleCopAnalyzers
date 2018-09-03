@@ -879,7 +879,7 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                CompilerError("CS1026").WithMessage(") expected").WithLocation(5, 16),
+                DiagnosticResult.CompilerError("CS1026").WithMessage(") expected").WithLocation(5, 16),
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

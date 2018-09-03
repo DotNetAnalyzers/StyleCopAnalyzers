@@ -112,7 +112,7 @@ class ClassName
 }
 # ";
 
-            DiagnosticResult expected = CompilerError("CS1024").WithMessage("Preprocessor directive expected").WithLocation(5, 1);
+            DiagnosticResult expected = DiagnosticResult.CompilerError("CS1024").WithMessage("Preprocessor directive expected").WithLocation(5, 1);
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
     }

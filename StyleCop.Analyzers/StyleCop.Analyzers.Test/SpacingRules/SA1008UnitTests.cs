@@ -2020,7 +2020,7 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                CompilerError("CS1003").WithMessage("Syntax error, '(' expected").WithLocation(5, 15),
+                DiagnosticResult.CompilerError("CS1003").WithMessage("Syntax error, '(' expected").WithLocation(5, 15),
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

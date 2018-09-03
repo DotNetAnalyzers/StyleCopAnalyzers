@@ -897,7 +897,7 @@ class ClassName
 }
 ";
 
-            var expected = CompilerError("CS0742").WithMessage("A query body must end with a select clause or a group clause").WithLocation(6, 42);
+            var expected = DiagnosticResult.CompilerError("CS0742").WithMessage("A query body must end with a select clause or a group clause").WithLocation(6, 42);
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 

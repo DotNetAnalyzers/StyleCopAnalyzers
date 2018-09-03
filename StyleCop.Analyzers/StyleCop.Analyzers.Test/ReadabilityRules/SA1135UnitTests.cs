@@ -214,7 +214,7 @@ using Example = System.ValueTuple<System.Collections.IList, int>;
 using Example = System.ValueTuple<System.Collections.List, int>;
 ";
 
-            var expected = CompilerError("CS0234").WithLocation(2, 54).WithMessage("The type or namespace name 'List' does not exist in the namespace 'System.Collections' (are you missing an assembly reference?)");
+            var expected = DiagnosticResult.CompilerError("CS0234").WithLocation(2, 54).WithMessage("The type or namespace name 'List' does not exist in the namespace 'System.Collections' (are you missing an assembly reference?)");
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 

@@ -34,7 +34,7 @@ using System;
 
             DiagnosticResult[] expected =
             {
-                CompilerError("CS0116").WithMessage("A namespace cannot directly contain members such as fields or methods").WithLocation(4, column),
+                DiagnosticResult.CompilerError("CS0116").WithMessage("A namespace cannot directly contain members such as fields or methods").WithLocation(4, column),
                 Diagnostic().WithLocation(4, column),
             };
 

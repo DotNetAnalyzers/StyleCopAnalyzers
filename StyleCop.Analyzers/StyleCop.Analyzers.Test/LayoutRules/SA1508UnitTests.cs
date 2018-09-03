@@ -819,10 +819,10 @@ to determine the spacing with the close brace.
 
             DiagnosticResult[] expected =
             {
-                CompilerError("CS1022").WithMessage("Type or namespace definition, or end-of-file expected").WithLocation(3, 28),
-                CompilerError("CS1513").WithMessage("} expected").WithLocation(3, 28),
-                CompilerError("CS1514").WithMessage("{ expected").WithLocation(3, 28),
-                CompilerError("CS1022").WithMessage("Type or namespace definition, or end-of-file expected").WithLocation(6, 1),
+                DiagnosticResult.CompilerError("CS1022").WithMessage("Type or namespace definition, or end-of-file expected").WithLocation(3, 28),
+                DiagnosticResult.CompilerError("CS1513").WithMessage("} expected").WithLocation(3, 28),
+                DiagnosticResult.CompilerError("CS1514").WithMessage("{ expected").WithLocation(3, 28),
+                DiagnosticResult.CompilerError("CS1022").WithMessage("Type or namespace definition, or end-of-file expected").WithLocation(6, 1),
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);

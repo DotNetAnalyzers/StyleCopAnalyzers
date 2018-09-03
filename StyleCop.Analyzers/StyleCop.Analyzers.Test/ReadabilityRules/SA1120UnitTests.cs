@@ -408,7 +408,7 @@ public class TestClass
 
             DiagnosticResult[] expected =
             {
-                CompilerError("CS1035").WithMessage("End-of-file found, '*/' expected").WithLocation(4, 1),
+                DiagnosticResult.CompilerError("CS1035").WithMessage("End-of-file found, '*/' expected").WithLocation(4, 1),
                 Diagnostic().WithLocation(4, 1),
             };
 

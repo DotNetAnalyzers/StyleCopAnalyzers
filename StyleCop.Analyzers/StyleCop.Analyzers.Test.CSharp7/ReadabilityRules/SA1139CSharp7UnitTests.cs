@@ -208,7 +208,7 @@ class ClassName
 
             DiagnosticResult[] expectedDiagnosticResult =
             {
-                CompilerError("CS0221")
+                DiagnosticResult.CompilerError("CS0221")
                     .WithMessage($"Constant value '{literalValue}' cannot be converted to a '{type}' (use 'unchecked' syntax to override)")
                     .WithLocation(6, 17),
             };

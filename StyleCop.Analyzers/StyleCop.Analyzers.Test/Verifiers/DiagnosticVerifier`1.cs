@@ -37,9 +37,6 @@ namespace StyleCop.Analyzers.Test.Verifiers
             return new DiagnosticResult(descriptor);
         }
 
-        internal static DiagnosticResult CompilerError(string errorIdentifier)
-            => DiagnosticResult.CompilerError(errorIdentifier);
-
         internal static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
             => VerifyCSharpDiagnosticAsync(source, new[] { expected }, cancellationToken);
 

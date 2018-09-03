@@ -150,8 +150,8 @@ public enum TestEnum
 
             DiagnosticResult[] expected =
             {
-                CompilerError("CS1513").WithMessage("} expected").WithLocation(2, 21),
-                CompilerError("CS1514").WithMessage("{ expected").WithLocation(2, 21),
+                DiagnosticResult.CompilerError("CS1513").WithMessage("} expected").WithLocation(2, 21),
+                DiagnosticResult.CompilerError("CS1514").WithMessage("{ expected").WithLocation(2, 21),
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
