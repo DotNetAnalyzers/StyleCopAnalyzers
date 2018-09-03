@@ -1017,7 +1017,7 @@ public class TypeName
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TestStatements))]
-        private async Task TestNoSA1503CodeFixForStatementAsync(string statementText)
+        public async Task TestNoSA1503CodeFixForStatementAsync(string statementText)
         {
             this.suppressSA1503 = true;
             await this.VerifyCSharpFixAsync(this.GenerateTestStatement(statementText), this.GenerateFixedTestStatement(statementText)).ConfigureAwait(false);
