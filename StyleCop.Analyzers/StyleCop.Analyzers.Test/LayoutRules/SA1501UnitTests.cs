@@ -988,6 +988,20 @@ public class TypeName
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode, batchFixedTestCode).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verifies that the code fix provider will work properly for a statement.
+        /// </summary>
+        /// <param name="statementText">The source code for the first part of a compound statement whose child can be
+        /// either a statement block or a single statement.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [MemberData(nameof(TestStatements))]
+        public async Task TestNoSA1503CodeFixForStatementAsync(string statementText)
+        {
+            this.suppressSA1503 = true;
+            await this.VerifyCSharpFixAsync(this.GenerateTestStatement(statementText), this.GenerateFixedTestStatement(statementText)).ConfigureAwait(false);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
         {
@@ -1007,20 +1021,6 @@ public class TypeName
             {
                 yield return SA1503BracesMustNotBeOmitted.DiagnosticId;
             }
-        }
-
-        /// <summary>
-        /// Verifies that the code fix provider will work properly for a statement.
-        /// </summary>
-        /// <param name="statementText">The source code for the first part of a compound statement whose child can be
-        /// either a statement block or a single statement.</param>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Theory]
-        [MemberData(nameof(TestStatements))]
-        public async Task TestNoSA1503CodeFixForStatementAsync(string statementText)
-        {
-            this.suppressSA1503 = true;
-            await this.VerifyCSharpFixAsync(this.GenerateTestStatement(statementText), this.GenerateFixedTestStatement(statementText)).ConfigureAwait(false);
         }
 
         private string GenerateTestStatement(string statementText)
