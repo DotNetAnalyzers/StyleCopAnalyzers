@@ -11,7 +11,7 @@ test_script:
 - cd build
 - ps: .\opencover-report.ps1 -Debug -NoBuild -NoReport -AppVeyor
 - cd ..
-- .\packages\Codecov.1.0.1\tools\codecov.exe -f ".\build\OpenCover.Reports\OpenCover.StyleCopAnalyzers.xml"
+- .\packages\Codecov.1.0.6-auto-gzip0001\tools\codecov.exe -f ".\build\OpenCover.Reports\OpenCover.StyleCopAnalyzers.xml"
 - .\StyleCop.Analyzers\StyleCop.Analyzers.Status.Generator\bin\Debug\net46\StyleCop.Analyzers.Status.Generator.exe .\StyleCopAnalyzers.sln > StyleCop.Analyzers.Status.json
 cache:
   - packages -> **\packages.config
