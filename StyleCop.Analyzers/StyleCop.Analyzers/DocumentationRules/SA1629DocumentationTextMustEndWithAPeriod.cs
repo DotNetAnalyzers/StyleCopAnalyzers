@@ -91,7 +91,8 @@ namespace StyleCop.Analyzers.DocumentationRules
                 var textWithoutTrailingWhitespace = node.Value.TrimEnd(' ', '\r', '\n');
                 if (!string.IsNullOrEmpty(textWithoutTrailingWhitespace))
                 {
-                    if (!textWithoutTrailingWhitespace.EndsWith(".", StringComparison.Ordinal))
+                    if (!textWithoutTrailingWhitespace.EndsWith(".", StringComparison.Ordinal)
+                        && !textWithoutTrailingWhitespace.EndsWith(".)", StringComparison.Ordinal))
                     {
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, diagnosticLocations[0], NoCodeFixProperties));
 
@@ -123,6 +124,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                         if (!string.IsNullOrEmpty(textWithoutTrailingWhitespace))
                         {
                             if (!textWithoutTrailingWhitespace.EndsWith(".", StringComparison.Ordinal)
+                                && !textWithoutTrailingWhitespace.EndsWith(".)", StringComparison.Ordinal)
                                 && (startingWithFinalParagraph || !textWithoutTrailingWhitespace.EndsWith(":", StringComparison.Ordinal))
                                 && !textWithoutTrailingWhitespace.EndsWith("-or-", StringComparison.Ordinal))
                             {
