@@ -451,6 +451,52 @@ public interface ITest
             await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
         }
 
+        [Theory]
+        [WorkItem(2744, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2744")]
+        [InlineData("Summary. (For example.)")]
+        [InlineData("Summary (for example).")]
+        public async Task TestSentenceEndingWithParenthesesAsync(string allowedSummary)
+        {
+            var testCode = $@"
+/// <summary>
+/// {allowedSummary}
+/// </summary>
+public interface ITest
+{{
+}}
+";
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2744, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2744")]
+        public async Task TestSentenceEndingWithParenthesesWithoutPeriodAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Summary (for example)
+/// </summary>
+public interface ITest
+{
+}
+";
+            var fixedTestCode = $@"
+/// <summary>
+/// Summary (for example).
+/// </summary>
+public interface ITest
+{{
+}}
+";
+
+            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 26);
+
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestMultipleParagraphBlocksAsync()
         {
