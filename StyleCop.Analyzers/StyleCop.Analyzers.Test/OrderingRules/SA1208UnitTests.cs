@@ -171,7 +171,7 @@ namespace Test
     {
     }
 }",
-        };
+            };
 
             DiagnosticResult[] expected =
             {
@@ -259,7 +259,7 @@ namespace Test
     {
     }
 }",
-        };
+            };
 
             DiagnosticResult[] expected =
             {
