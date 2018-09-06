@@ -433,6 +433,49 @@ public interface ITest
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Theory]
+        [WorkItem(2744, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2744")]
+        [InlineData("Summary. (For example.)")]
+        [InlineData("Summary (for example).")]
+        public async Task TestSentenceEndingWithParenthesesAsync(string allowedSummary)
+        {
+            var testCode = $@"
+/// <summary>
+/// {allowedSummary}
+/// </summary>
+public interface ITest
+{{
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2744, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2744")]
+        public async Task TestSentenceEndingWithParenthesesWithoutPeriodAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Summary (for example)
+/// </summary>
+public interface ITest
+{
+}
+";
+            var fixedTestCode = $@"
+/// <summary>
+/// Summary (for example).
+/// </summary>
+public interface ITest
+{{
+}}
+";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(3, 26);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestMultipleParagraphBlocksAsync()
         {
