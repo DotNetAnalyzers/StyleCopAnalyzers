@@ -74,19 +74,16 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             if (documentationSettings.DocumentPrivateElements)
             {
-                if (syntaxKind == SyntaxKind.FieldDeclaration && declaredAccessibility == Accessibility.Private)
+                if ((syntaxKind == SyntaxKind.FieldDeclaration && declaredAccessibility == Accessibility.Private)
+                    || (syntaxKind == SyntaxKind.FieldDeclaration && declaredAccessibility == Accessibility.Internal)
+                    || (syntaxKind == SyntaxKind.FieldDeclaration && declaredAccessibility == Accessibility.ProtectedAndInternal))
                 {
                     // Handled by DocumentPrivateFields
                     return false;
                 }
 
-                if (syntaxKind == SyntaxKind.FieldDeclaration && declaredAccessibility == Accessibility.Internal)
-                {
-                    // Handled by DocumentPrivateFields
-                    return false;
-                }
-
-                // DocumentPrivateMembers => everything except declared private or internal fields should be documented
+                // DocumentPrivateMembers => everything except declared private, internal, or protected internal
+                // fields should be documented
                 return true;
             }
 
