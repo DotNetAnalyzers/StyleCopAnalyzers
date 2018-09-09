@@ -224,8 +224,8 @@ using System;
             await this.TestFieldDeclarationDocumentationAsync(string.Empty, true, false).ConfigureAwait(false);
             await this.TestFieldDeclarationDocumentationAsync("private", true, false).ConfigureAwait(false);
             await this.TestFieldDeclarationDocumentationAsync("protected", true, false).ConfigureAwait(false);
-            await this.TestFieldDeclarationDocumentationAsync("internal", true, false).ConfigureAwait(false);
-            await this.TestFieldDeclarationDocumentationAsync("protected internal", true, false).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("internal", false, false).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("protected internal", false, false).ConfigureAwait(false);
             await this.TestFieldDeclarationDocumentationAsync("public", true, false).ConfigureAwait(false);
         }
 
