@@ -214,7 +214,7 @@ using System;
             this.currentTestSettings = @"
 {
   ""settings"": {
-    ""documentationRules"": {+
+    ""documentationRules"": {
       ""documentPrivateFields"": true
     }
   }
