@@ -80,7 +80,13 @@ namespace StyleCop.Analyzers.DocumentationRules
                     return false;
                 }
 
-                // DocumentPrivateMembers => everything except declared private fields should be documented
+                if (syntaxKind == SyntaxKind.FieldDeclaration && declaredAccessibility == Accessibility.Internal)
+                {
+                    // Handled by DocumentPrivateFields
+                    return false;
+                }
+
+                // DocumentPrivateMembers => everything except declared private or internal fields should be documented
                 return true;
             }
 
