@@ -855,7 +855,7 @@ public {typeKeyword} Test
             return new SA1600CodeFixProvider();
         }
 
-        private async Task TestTypeDeclarationDocumentationAsync(string type, string modifiers, bool requiresDiagnostic, bool hasDocumentation)
+        protected async Task TestTypeDeclarationDocumentationAsync(string type, string modifiers, bool requiresDiagnostic, bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"
 {0} {1}
@@ -876,7 +876,7 @@ TypeName
             await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers, type), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestNestedTypeDeclarationDocumentationAsync(string type, string modifiers, bool requiresDiagnostic, bool hasDocumentation)
+        protected async Task TestNestedTypeDeclarationDocumentationAsync(string type, string modifiers, bool requiresDiagnostic, bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
@@ -909,7 +909,7 @@ public class OuterClass
             await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers, type), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestDelegateDeclarationDocumentationAsync(string modifiers, bool requiresDiagnostic, bool hasDocumentation)
+        protected async Task TestDelegateDeclarationDocumentationAsync(string modifiers, bool requiresDiagnostic, bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"
 {0} delegate void
@@ -926,7 +926,7 @@ DelegateName();";
             await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestNestedDelegateDeclarationDocumentationAsync(string modifiers, bool requiresDiagnostic, bool hasDocumentation)
+        protected async Task TestNestedDelegateDeclarationDocumentationAsync(string modifiers, bool requiresDiagnostic, bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
@@ -955,7 +955,7 @@ public class OuterClass
             await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestMethodDeclarationDocumentationAsync(string modifiers, bool isExplicitInterfaceMethod, bool requiresDiagnostic, bool hasDocumentation)
+        protected async Task TestMethodDeclarationDocumentationAsync(string modifiers, bool isExplicitInterfaceMethod, bool requiresDiagnostic, bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
@@ -997,7 +997,7 @@ public interface IInterface {{ void MemberName(); }}
             await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers, explicitInterfaceText), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestInterfaceMethodDeclarationDocumentationAsync(bool hasDocumentation)
+        protected async Task TestInterfaceMethodDeclarationDocumentationAsync(bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
@@ -1026,7 +1026,7 @@ public interface InterfaceName
             await this.VerifyCSharpDiagnosticAsync(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, !hasDocumentation ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestInterfacePropertyDeclarationDocumentationAsync(bool hasDocumentation)
+        protected async Task TestInterfacePropertyDeclarationDocumentationAsync(bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
@@ -1061,7 +1061,7 @@ public interface InterfaceName
             await this.VerifyCSharpDiagnosticAsync(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, !hasDocumentation ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestInterfaceEventDeclarationDocumentationAsync(bool hasDocumentation)
+        protected async Task TestInterfaceEventDeclarationDocumentationAsync(bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
@@ -1090,7 +1090,7 @@ public interface InterfaceName
             await this.VerifyCSharpDiagnosticAsync(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, !hasDocumentation ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestInterfaceIndexerDeclarationDocumentationAsync(bool hasDocumentation)
+        protected async Task TestInterfaceIndexerDeclarationDocumentationAsync(bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
@@ -1119,7 +1119,7 @@ public interface InterfaceName
             await this.VerifyCSharpDiagnosticAsync(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, !hasDocumentation ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestConstructorDeclarationDocumentationAsync(string modifiers, bool requiresDiagnostic, bool hasDocumentation)
+        protected async Task TestConstructorDeclarationDocumentationAsync(string modifiers, bool requiresDiagnostic, bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
@@ -1152,7 +1152,7 @@ public class OuterClass
             await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestDestructorDeclarationDocumentationAsync(bool requiresDiagnostic, bool hasDocumentation)
+        protected async Task TestDestructorDeclarationDocumentationAsync(bool requiresDiagnostic, bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
@@ -1183,7 +1183,7 @@ public class OuterClass
             await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestPropertyDeclarationDocumentationAsync(string modifiers, bool isExplicitInterfaceProperty, bool requiresDiagnostic, bool hasDocumentation)
+        protected async Task TestPropertyDeclarationDocumentationAsync(string modifiers, bool isExplicitInterfaceProperty, bool requiresDiagnostic, bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
@@ -1223,7 +1223,7 @@ public interface IInterface {{ string MemberName {{ get; set; }} }}
             await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers, explicitInterfaceText), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestIndexerDeclarationDocumentationAsync(string modifiers, bool isExplicitInterfaceIndexer, bool requiresDiagnostic, bool hasDocumentation)
+        protected async Task TestIndexerDeclarationDocumentationAsync(string modifiers, bool isExplicitInterfaceIndexer, bool requiresDiagnostic, bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
@@ -1263,7 +1263,7 @@ public interface IInterface {{ string this[string key] {{ get; set; }} }}
             await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers, explicitInterfaceText), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestEventDeclarationDocumentationAsync(string modifiers, bool isExplicitInterfaceEvent, bool requiresDiagnostic, bool hasDocumentation)
+        protected async Task TestEventDeclarationDocumentationAsync(string modifiers, bool isExplicitInterfaceEvent, bool requiresDiagnostic, bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
@@ -1325,7 +1325,7 @@ public interface IInterface {{ event System.Action MyEvent; }}
             await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers, explicitInterfaceText), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestFieldDeclarationDocumentationAsync(string modifiers, bool requiresDiagnostic, bool hasDocumentation)
+        protected async Task TestFieldDeclarationDocumentationAsync(string modifiers, bool requiresDiagnostic, bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
@@ -1354,7 +1354,7 @@ public class OuterClass
             await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestEventFieldDeclarationDocumentationAsync(string modifiers, bool requiresDiagnostic, bool hasDocumentation)
+        protected async Task TestEventFieldDeclarationDocumentationAsync(string modifiers, bool requiresDiagnostic, bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
@@ -1383,7 +1383,7 @@ public class OuterClass
             await this.VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers), requiresDiagnostic ? expected : EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestTypeWithoutDocumentationAsync(string type, bool isInterface)
+        protected virtual async Task TestTypeWithoutDocumentationAsync(string type, bool isInterface)
         {
             await this.TestTypeDeclarationDocumentationAsync(type, string.Empty, true, false).ConfigureAwait(false);
             await this.TestTypeDeclarationDocumentationAsync(type, "internal", true, false).ConfigureAwait(false);
@@ -1397,7 +1397,7 @@ public class OuterClass
             await this.TestNestedTypeDeclarationDocumentationAsync(type, "public", true, false).ConfigureAwait(false);
         }
 
-        private async Task TestTypeWithDocumentationAsync(string type)
+        protected virtual async Task TestTypeWithDocumentationAsync(string type)
         {
             await this.TestTypeDeclarationDocumentationAsync(type, string.Empty, false, true).ConfigureAwait(false);
             await this.TestTypeDeclarationDocumentationAsync(type, "internal", false, true).ConfigureAwait(false);

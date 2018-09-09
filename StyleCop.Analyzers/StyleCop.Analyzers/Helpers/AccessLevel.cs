@@ -14,6 +14,9 @@ namespace StyleCop.Analyzers.Helpers
         /// <summary>Private access.</summary>
         Private,
 
+        /// <summary>Private protected access.</summary>
+        PrivateProtected,
+
         /// <summary>Protected access.</summary>
         Protected,
 
