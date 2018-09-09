@@ -210,6 +210,24 @@ using System;
             await this.TestFieldDeclarationDocumentationAsync("protected internal", true, false).ConfigureAwait(false);
             await this.TestFieldDeclarationDocumentationAsync("public", true, false).ConfigureAwait(false);
 
+            // Re-test with the 'documentInternalElements' setting disabled (does impact fields)
+            this.currentTestSettings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""documentInternalElements"": false
+    }
+  }
+}
+";
+
+            await this.TestFieldDeclarationDocumentationAsync(string.Empty, false, false).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("private", false, false).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("protected", true, false).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("internal", false, false).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("protected internal", true, false).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("public", true, false).ConfigureAwait(false);
+
             // Re-test with the 'documentPrivateFields' setting enabled (does impact fields)
             this.currentTestSettings = @"
 {
@@ -245,6 +263,24 @@ using System;
   ""settings"": {
     ""documentationRules"": {
       ""documentPrivateElements"": true
+    }
+  }
+}
+";
+
+            await this.TestFieldDeclarationDocumentationAsync(string.Empty, false, true).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("private", false, true).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("protected", false, true).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("internal", false, true).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("protected internal", false, true).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync("public", false, true).ConfigureAwait(false);
+
+            // Re-test with the 'documentInternalElements' setting disabled (does impact fields)
+            this.currentTestSettings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""documentInternalElements"": false
     }
   }
 }
