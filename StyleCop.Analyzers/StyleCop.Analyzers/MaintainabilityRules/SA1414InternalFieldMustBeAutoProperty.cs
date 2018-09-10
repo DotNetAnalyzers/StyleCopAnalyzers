@@ -86,9 +86,6 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
             private static bool IsProtectedInternal(IFieldSymbol fieldDeclarationSyntax)
             {
-                // Seems Microsoft.CodeAnalysis.CSharp has a issue with this being "ProtectedAndInternal"
-                // and detects them as "ProtectedOrInternal". Not sure if by design or just flat out a
-                // or because the version used is not the newest version bug.
                 return fieldDeclarationSyntax.DeclaredAccessibility == Accessibility.ProtectedOrInternal;
             }
 
