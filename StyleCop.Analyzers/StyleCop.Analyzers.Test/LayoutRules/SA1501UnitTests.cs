@@ -648,7 +648,7 @@ public class TypeName
         /// Tests the behavior of SA1503 when SA1503 is suppressed for many different forms of <c>if</c> statements.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact(Skip = "https://github.com/dotnet/roslyn-sdk/pull/191")]
+        [Fact]
         public async Task TestNoSA1503IfStatementsAsync()
         {
             var testCode = @"using System.Diagnostics;

@@ -24,7 +24,10 @@ namespace StyleCop.Analyzers.Test.Verifiers
         where TAnalyzer : DiagnosticAnalyzer, new()
         where TCodeFix : CodeFixProvider, new()
     {
-        internal static DiagnosticResult Diagnostic(string diagnosticId = null)
+        internal static DiagnosticResult Diagnostic()
+            => CSharpCodeFixVerifier<TAnalyzer, TCodeFix, XUnitVerifier>.Diagnostic();
+
+        internal static DiagnosticResult Diagnostic(string diagnosticId)
             => CSharpCodeFixVerifier<TAnalyzer, TCodeFix, XUnitVerifier>.Diagnostic(diagnosticId);
 
         internal static DiagnosticResult Diagnostic(DiagnosticDescriptor descriptor)
@@ -47,6 +50,14 @@ namespace StyleCop.Analyzers.Test.Verifiers
                 FixedCode = fixedSource,
             };
 
+            if (source == fixedSource)
+            {
+                test.FixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
+                test.FixedState.MarkupHandling = MarkupMode.Allow;
+                test.BatchFixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
+                test.BatchFixedState.MarkupHandling = MarkupMode.Allow;
+            }
+
             test.ExpectedDiagnostics.AddRange(expected);
             return test.RunAsync(cancellationToken);
         }
@@ -65,18 +76,8 @@ namespace StyleCop.Analyzers.Test.Verifiers
                     .WithChangedOption(FormattingOptions.TabSize, this.Language, this.TabSize)
                     .WithChangedOption(FormattingOptions.UseTabs, this.Language, this.UseTabs));
 
-                this.SolutionTransforms.Add((solution, projectId) =>
-                {
-                    if (typeof(object).Assembly.GetType("System.ValueTuple`2", throwOnError: false) != null
-                        && MetadataReferences.SystemValueTupleReference != null)
-                    {
-                        solution = solution.RemoveMetadataReference(projectId, MetadataReferences.SystemValueTupleReference);
-                    }
-
-                    return solution.AddMetadataReference(projectId, GenericAnalyzerTest.CSharpSymbolsReference);
-                });
-
-                this.AdditionalFilesFactories.Add(GenerateSettingsFile);
+                this.TestState.AdditionalReferences.Add(GenericAnalyzerTest.CSharpSymbolsReference);
+                this.TestState.AdditionalFilesFactories.Add(GenerateSettingsFile);
                 this.CodeFixValidationMode = CodeFixValidationMode.None;
 
                 return;
@@ -125,6 +126,14 @@ namespace StyleCop.Analyzers.Test.Verifiers
                     }
                 }
             }
+
+            public SourceFileList TestSources => TestState.Sources;
+
+            public SourceFileList FixedSources => FixedState.Sources;
+
+            public SourceFileCollection FixedAdditionalFiles => FixedState.AdditionalFiles;
+
+            public List<DiagnosticResult> RemainingDiagnostics => FixedState.ExpectedDiagnostics;
 
             /// <summary>
             /// Gets or sets the value of the <see cref="FormattingOptions.IndentationSize"/> to apply to the test

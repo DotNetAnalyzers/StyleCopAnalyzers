@@ -64,44 +64,6 @@ class ClassName
         }
 
         [Fact]
-        public async Task TestValidBehaviorUncheckedLineAsync()
-        {
-            string testCode = @"
-class ClassName
-{
-    int property;
-    int PropertyName
-    {
-        get{return this.property;}
-    }
-}
-";
-
-            DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "followed").WithLocation(0, 33);
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestValidBehaviorUncheckedColumnAsync()
-        {
-            string testCode = @"
-class ClassName
-{
-    int property;
-    int PropertyName
-    {
-        get{return this.property;}
-    }
-}
-";
-
-            DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "followed").WithLocation(7, 0);
-
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
         public async Task TestValidBehaviorWithFullSpanAsync()
         {
             string testCode = @"
@@ -184,7 +146,7 @@ class ClassName
             var ex = await Assert.ThrowsAnyAsync<XunitException>(
                 async () =>
                 {
-                    await CSharpCodeFixVerifier<ErrorThrowingAnalyzer, EmptyCodeFixProvider, XUnitVerifier>.VerifyAnalyzerAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                    await CSharpCodeFixVerifier<ErrorThrowingAnalyzer, EmptyCodeFixProvider, XUnitVerifier>.VerifyAnalyzerAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
                 }).ConfigureAwait(false);
             Assert.StartsWith("Mismatch between number of diagnostics returned, expected \"0\" actual \"2\"", ex.Message);
             Assert.Contains("error AD0001", ex.Message);

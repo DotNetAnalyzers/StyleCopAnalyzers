@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -193,6 +194,7 @@ public class ChildClass : ParentClass
                     Diagnostic(SA1600).WithLocation(12, 35),
                 },
                 FixedCode = testCode,
+                FixedState = { InheritanceMode = StateInheritanceMode.AutoInheritAll },
                 NumberOfIncrementalIterations = 1,
                 NumberOfFixAllIterations = 1,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
@@ -230,6 +232,7 @@ public class ChildClass : ParentClass
                     Diagnostic(SA1600).WithLocation(12, 35),
                 },
                 FixedCode = testCode,
+                FixedState = { InheritanceMode = StateInheritanceMode.AutoInheritAll },
                 NumberOfIncrementalIterations = 1,
                 NumberOfFixAllIterations = 1,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);

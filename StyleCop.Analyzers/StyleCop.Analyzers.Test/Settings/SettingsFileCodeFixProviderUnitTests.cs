@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.Test.Settings
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Settings;
     using Xunit;
@@ -77,6 +78,7 @@ namespace NamespaceName
                 TestCode = TestCode,
                 ExpectedDiagnostics = { Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1) },
                 FixedCode = TestCode,
+                FixedState = { InheritanceMode = StateInheritanceMode.AutoInheritAll },
                 Settings = "{}",
                 SettingsFileName = SettingsHelper.SettingsFileName,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
@@ -94,6 +96,7 @@ namespace NamespaceName
                 TestCode = TestCode,
                 ExpectedDiagnostics = { Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1) },
                 FixedCode = TestCode,
+                FixedState = { InheritanceMode = StateInheritanceMode.AutoInheritAll },
                 Settings = "{}",
                 SettingsFileName = SettingsHelper.AltSettingsFileName,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);

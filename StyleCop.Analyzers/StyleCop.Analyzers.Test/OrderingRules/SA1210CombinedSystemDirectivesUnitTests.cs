@@ -76,7 +76,7 @@ namespace Bar
                 Diagnostic().WithLocation(11, 5),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, allowNewCompilerDiagnostics: false, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -112,7 +112,7 @@ namespace Food
                 Diagnostic().WithLocation(3, 1),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, allowNewCompilerDiagnostics: false, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -152,7 +152,7 @@ namespace Food
                 Diagnostic().WithLocation(5, 1),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, allowNewCompilerDiagnostics: true, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -205,13 +205,13 @@ using Microsoft.CodeAnalysis;
                 Diagnostic().WithLocation(7, 1),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, allowNewCompilerDiagnostics: false, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
-            => VerifyCSharpFixAsync(source, expected, fixedSource: null, allowNewCompilerDiagnostics: false, cancellationToken);
+            => VerifyCSharpFixAsync(source, expected, fixedSource: null, cancellationToken);
 
-        private static Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, bool allowNewCompilerDiagnostics, CancellationToken cancellationToken)
+        private static Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
         {
             const string CombinedUsingDirectivesTestSettings = @"
 {
@@ -228,7 +228,6 @@ using Microsoft.CodeAnalysis;
                 TestCode = source,
                 FixedCode = fixedSource,
                 Settings = CombinedUsingDirectivesTestSettings,
-                AllowNewCompilerDiagnostics = allowNewCompilerDiagnostics,
             };
 
             test.ExpectedDiagnostics.AddRange(expected);

@@ -235,7 +235,6 @@ namespace Foo
                     Diagnostic().WithLocation(7, 1),
                 },
                 FixedCode = fixedTestCode,
-                AllowNewCompilerDiagnostics = true,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 

@@ -114,7 +114,7 @@ x;
                 Diagnostic().WithLocation(8, 13).WithArguments("not be followed by a space"),
                 Diagnostic().WithLocation(9, 21).WithArguments("not be preceded by a space"),
                 Diagnostic().WithLocation(9, 21).WithArguments("not be followed by a space"),
-                Diagnostic().WithLocation(11, 0).WithArguments("not appear at the beginning of a line"),
+                Diagnostic().WithLocation(11, 1).WithArguments("not appear at the beginning of a line"),
                 Diagnostic().WithLocation(12, 13).WithArguments("not appear at the end of a line"),
                 Diagnostic().WithLocation(16, 18).WithArguments("not be preceded by a space"),
                 Diagnostic().WithLocation(16, 18).WithArguments("not be followed by a space"),

@@ -238,7 +238,7 @@ public class ExtendedTestClass : TestClass
 /// <summary>
 /// Test class
 /// </summary>
-partial public class TestClass
+{|CS0267:partial|} public class TestClass
 {
     /// <summary>
     /// Test delegate
@@ -290,14 +290,17 @@ public class ExtendedTestClass : TestClass
     protected new delegate void SomeDelegate(int a);
 }";
 
-            DiagnosticResult[] expected =
+            await new CSharpTest
             {
-                DiagnosticResult.CompilerError("CS0267").WithLocation(5, 1).WithMessage("The 'partial' modifier can only appear immediately before 'class', 'struct', 'interface', or 'void'"),
-                Diagnostic().WithLocation(5, 9).WithArguments("public", "partial"),
-                Diagnostic().WithLocation(15, 12).WithArguments("public", "static"),
-                Diagnostic().WithLocation(26, 9).WithArguments("protected", "new"),
-            };
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(5, 9).WithArguments("public", "partial"),
+                    Diagnostic().WithLocation(15, 12).WithArguments("public", "static"),
+                    Diagnostic().WithLocation(26, 9).WithArguments("protected", "new"),
+                },
+                FixedCode = fixedTestCode,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>

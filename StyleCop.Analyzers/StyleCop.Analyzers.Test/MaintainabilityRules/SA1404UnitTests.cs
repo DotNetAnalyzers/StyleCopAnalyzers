@@ -96,6 +96,7 @@ public class Foo
                 {
                     Diagnostic().WithLocation(3, 66),
                 },
+                NumberOfIncrementalIterations = 2,
                 NumberOfFixAllIterations = 2,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
@@ -135,6 +136,7 @@ public class Foo
                 {
                     Diagnostic().WithLocation(4, 34),
                 },
+                NumberOfIncrementalIterations = 2,
                 NumberOfFixAllIterations = 2,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
@@ -174,6 +176,7 @@ public class Foo
                 {
                     Diagnostic().WithLocation(4, 32),
                 },
+                NumberOfIncrementalIterations = 2,
                 NumberOfFixAllIterations = 2,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
@@ -211,6 +214,7 @@ public class Foo
                 {
                     Diagnostic().WithLocation(3, 66),
                 },
+                NumberOfIncrementalIterations = 2,
                 NumberOfFixAllIterations = 2,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
@@ -248,6 +252,7 @@ public class Foo
                 {
                     Diagnostic().WithLocation(3, 66),
                 },
+                NumberOfIncrementalIterations = 2,
                 NumberOfFixAllIterations = 2,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
@@ -285,6 +290,7 @@ public class Foo
                 {
                     Diagnostic().WithLocation(3, 66),
                 },
+                NumberOfIncrementalIterations = 2,
                 NumberOfFixAllIterations = 2,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
@@ -322,6 +328,7 @@ public class Foo
                 {
                     Diagnostic().WithLocation(3, 66),
                 },
+                NumberOfIncrementalIterations = 2,
                 NumberOfFixAllIterations = 2,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
@@ -377,6 +384,7 @@ public class Foo
                 {
                     Diagnostic().WithLocation(4, 66),
                 },
+                NumberOfIncrementalIterations = 2,
                 NumberOfFixAllIterations = 2,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }

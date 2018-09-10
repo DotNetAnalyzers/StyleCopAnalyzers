@@ -399,20 +399,19 @@ public class TestClass
             var testCode = @"public class TestClass
 {
 }
-/*";
+[|{|CS1035:|}/*|]";
 
             var fixedTestCode = @"public class TestClass
 {
 }
 ";
 
-            DiagnosticResult[] expected =
+            await new CSharpTest
             {
-                DiagnosticResult.CompilerError("CS1035").WithMessage("End-of-file found, '*/' expected").WithLocation(4, 1),
-                Diagnostic().WithLocation(4, 1),
-            };
-
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+                TestCode = testCode,
+                FixedCode = fixedTestCode,
+                FixedState = { MarkupHandling = MarkupMode.Ignore },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

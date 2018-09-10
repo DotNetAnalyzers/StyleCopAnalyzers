@@ -417,13 +417,21 @@ public class ClassName : ITestInterface
                 },
             };
 
-            test.ExpectedDiagnostics.AddRange(expected);
-
-            if (offerEmptyFixer && fixedSource == source)
+            if (source == fixedSource)
             {
-                test.NumberOfIncrementalIterations = 1;
-                test.NumberOfFixAllIterations = 1;
+                test.FixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
+                test.FixedState.MarkupHandling = MarkupMode.Allow;
+                test.BatchFixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
+                test.BatchFixedState.MarkupHandling = MarkupMode.Allow;
+
+                if (offerEmptyFixer)
+                {
+                    test.NumberOfIncrementalIterations = 1;
+                    test.NumberOfFixAllIterations = 1;
+                }
             }
+
+            test.ExpectedDiagnostics.AddRange(expected);
 
             return test.RunAsync(cancellationToken);
         }

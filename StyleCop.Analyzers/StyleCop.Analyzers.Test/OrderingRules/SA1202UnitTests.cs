@@ -470,6 +470,7 @@ class TestClass1 { }
                 TestCode = testCode,
                 ExpectedDiagnostics = { expected },
                 FixedCode = fixedCode,
+                NumberOfIncrementalIterations = 2,
                 NumberOfFixAllIterations = 2,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }

@@ -1421,6 +1421,14 @@ public class OuterClass
                 FixedCode = fixedSource,
             };
 
+            if (source == fixedSource)
+            {
+                test.FixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
+                test.FixedState.MarkupHandling = MarkupMode.Allow;
+                test.BatchFixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
+                test.BatchFixedState.MarkupHandling = MarkupMode.Allow;
+            }
+
             test.ExpectedDiagnostics.AddRange(expected);
             return test.RunAsync(cancellationToken);
         }

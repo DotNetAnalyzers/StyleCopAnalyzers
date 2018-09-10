@@ -537,7 +537,6 @@ public class Foo
                 TestCode = oldSource,
                 ExpectedDiagnostics = { Diagnostic().WithLocation(6, 5) },
                 FixedCode = newSource,
-                AllowNewCompilerDiagnostics = true,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -568,7 +567,6 @@ public class Foo
                 TestCode = oldSource,
                 ExpectedDiagnostics = { Diagnostic().WithLocation(6, 5) },
                 FixedCode = newSource,
-                AllowNewCompilerDiagnostics = true,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -600,7 +598,6 @@ public class Foo
                 ExpectedDiagnostics = { Diagnostic().WithLocation(6, 5) },
                 FixedCode = newSource,
                 Settings = AllowBuiltInTypeAliasesSettings,
-                AllowNewCompilerDiagnostics = true,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 

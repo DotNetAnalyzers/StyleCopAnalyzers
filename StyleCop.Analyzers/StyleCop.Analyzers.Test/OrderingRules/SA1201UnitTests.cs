@@ -173,6 +173,7 @@ public struct FooStruct { }
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
+                NumberOfIncrementalIterations = 8,
                 NumberOfFixAllIterations = 3,
             };
 
@@ -231,6 +232,7 @@ public struct FooStruct { }
             {
                 TestCode = testCode,
                 FixedCode = fixedCode,
+                NumberOfIncrementalIterations = 7,
                 NumberOfFixAllIterations = 3,
             };
 

@@ -12,7 +12,10 @@ namespace StyleCop.Analyzers.Test.Verifiers
     internal static class CustomDiagnosticVerifier<TAnalyzer>
         where TAnalyzer : DiagnosticAnalyzer, new()
     {
-        internal static DiagnosticResult Diagnostic(string diagnosticId = null)
+        internal static DiagnosticResult Diagnostic()
+            => CSharpCodeFixVerifier<TAnalyzer, EmptyCodeFixProvider, XUnitVerifier>.Diagnostic();
+
+        internal static DiagnosticResult Diagnostic(string diagnosticId)
             => CSharpCodeFixVerifier<TAnalyzer, EmptyCodeFixProvider, XUnitVerifier>.Diagnostic(diagnosticId);
 
         internal static DiagnosticResult Diagnostic(DiagnosticDescriptor descriptor)

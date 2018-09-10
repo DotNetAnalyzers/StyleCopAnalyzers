@@ -247,7 +247,6 @@ internal class TypeName
                 TestCode = testCode,
                 FixedCode = fixedCode,
                 NumberOfFixAllIterations = 2,
-                AllowNewCompilerDiagnostics = true,
             };
 
             test.ExpectedDiagnostics.AddRange(expected);
