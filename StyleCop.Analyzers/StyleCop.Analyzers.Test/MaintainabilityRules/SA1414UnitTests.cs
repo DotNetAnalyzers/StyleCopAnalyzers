@@ -47,7 +47,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         {
             var testCode = @"public class Foo
 {
-    internal const string bar = string.Empty;
+    internal const string bar = ""bar"";
 }";
 
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -61,6 +61,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     internal static string bar;
 }";
 
+            // DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 28);
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 

@@ -56,10 +56,10 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             internal static void AnalyzeField(SymbolAnalysisContext symbolAnalysisContext)
             {
                 var fieldDeclarationSyntax = (IFieldSymbol)symbolAnalysisContext.Symbol;
-                if ((IsInternal(fieldDeclarationSyntax)
-                    || IsProtectedInternal(fieldDeclarationSyntax))
-                    && (!IsStatic(fieldDeclarationSyntax)
-                    || !IsConst(fieldDeclarationSyntax)))
+                if (((IsProtectedInternal(fieldDeclarationSyntax)
+                    || IsInternal(fieldDeclarationSyntax)) == true)
+                    && ((IsInternalStatic(fieldDeclarationSyntax)
+                    || IsInternalConst(fieldDeclarationSyntax)) != true))
                 {
                     foreach (var location in symbolAnalysisContext.Symbol.Locations)
                     {
@@ -74,14 +74,14 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 }
             }
 
-            private static bool IsStatic(IFieldSymbol fieldDeclarationSyntax)
+            private static bool IsInternalStatic(IFieldSymbol fieldDeclarationSyntax)
             {
-                return fieldDeclarationSyntax.IsStatic;
+                return fieldDeclarationSyntax.IsStatic && IsInternal(fieldDeclarationSyntax);
             }
 
-            private static bool IsConst(IFieldSymbol fieldDeclarationSyntax)
+            private static bool IsInternalConst(IFieldSymbol fieldDeclarationSyntax)
             {
-                return fieldDeclarationSyntax.IsConst;
+                return fieldDeclarationSyntax.IsConst && IsInternal(fieldDeclarationSyntax);
             }
 
             private static bool IsProtectedInternal(IFieldSymbol fieldDeclarationSyntax)
