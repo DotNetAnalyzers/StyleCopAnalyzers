@@ -61,7 +61,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     internal static string bar;
 }";
 
-            // DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 28);
             await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
