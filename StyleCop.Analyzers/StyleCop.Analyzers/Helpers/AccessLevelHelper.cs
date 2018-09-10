@@ -22,6 +22,7 @@ namespace StyleCop.Analyzers.Helpers
             [AccessLevel.Internal] = "internal",
             [AccessLevel.ProtectedInternal] = "protected internal",
             [AccessLevel.Protected] = "protected",
+            [AccessLevel.PrivateProtected] = "private protected",
             [AccessLevel.Private] = "private",
         };
 
@@ -30,6 +31,7 @@ namespace StyleCop.Analyzers.Helpers
         /// <returns>A <see cref="AccessLevel"/> value representing the access level.</returns>
         internal static AccessLevel GetAccessLevel(SyntaxTokenList modifiers)
         {
+            bool isPrivate = false;
             bool isProtected = false;
             bool isInternal = false;
             foreach (var modifier in modifiers)
@@ -39,7 +41,16 @@ namespace StyleCop.Analyzers.Helpers
                 case SyntaxKind.PublicKeyword:
                     return AccessLevel.Public;
                 case SyntaxKind.PrivateKeyword:
-                    return AccessLevel.Private;
+                    if (isProtected)
+                    {
+                        return AccessLevel.PrivateProtected;
+                    }
+                    else
+                    {
+                        isPrivate = true;
+                    }
+
+                    break;
                 case SyntaxKind.InternalKeyword:
                     if (isProtected)
                     {
@@ -56,6 +67,10 @@ namespace StyleCop.Analyzers.Helpers
                     {
                         return AccessLevel.ProtectedInternal;
                     }
+                    else if (isPrivate)
+                    {
+                        return AccessLevel.PrivateProtected;
+                    }
                     else
                     {
                         isProtected = true;
@@ -65,7 +80,11 @@ namespace StyleCop.Analyzers.Helpers
                 }
             }
 
-            if (isProtected)
+            if (isPrivate)
+            {
+                return AccessLevel.Private;
+            }
+            else if (isProtected)
             {
                 return AccessLevel.Protected;
             }
@@ -111,6 +130,9 @@ namespace StyleCop.Analyzers.Helpers
 
             case AccessLevel.Protected:
                 return Accessibility.Protected;
+
+            case AccessLevel.PrivateProtected:
+                return Accessibility.ProtectedAndInternal;
 
             case AccessLevel.Private:
                 return Accessibility.Private;

@@ -5,19 +5,20 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
-    using TestHelper;
+    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.DocumentationRules.SA1600ElementsMustBeDocumented,
-        StyleCop.Analyzers.DocumentationRules.SA1600CodeFixProvider>;
+    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1600ElementsMustBeDocumented>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1600ElementsMustBeDocumented"/>.
     /// </summary>
     public class SA1600UnitTests
     {
+        protected virtual LanguageVersion LanguageVersion => LanguageVersion.CSharp6;
+
         [Theory]
         [InlineData("public string TestMember;", 15)]
         [InlineData("public string TestMember { get; set; }", 15)]
@@ -38,7 +39,7 @@ using System;
                 Diagnostic().WithLocation(4, column),
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(this.LanguageVersion, testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -209,6 +210,24 @@ using System;
             await this.TestFieldDeclarationDocumentationAsync(testSettings, "protected internal", true, false).ConfigureAwait(false);
             await this.TestFieldDeclarationDocumentationAsync(testSettings, "public", true, false).ConfigureAwait(false);
 
+            // Re-test with the 'documentInternalElements' setting disabled (does impact fields)
+            testSettings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""documentInternalElements"": false
+    }
+  }
+}
+";
+
+            await this.TestFieldDeclarationDocumentationAsync(testSettings, string.Empty, false, false).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync(testSettings, "private", false, false).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync(testSettings, "protected", true, false).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync(testSettings, "internal", false, false).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync(testSettings, "protected internal", true, false).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync(testSettings, "public", true, false).ConfigureAwait(false);
+
             // Re-test with the 'documentPrivateFields' setting enabled (does impact fields)
             testSettings = @"
 {
@@ -244,6 +263,24 @@ using System;
   ""settings"": {
     ""documentationRules"": {
       ""documentPrivateElements"": true
+    }
+  }
+}
+";
+
+            await this.TestFieldDeclarationDocumentationAsync(testSettings, string.Empty, false, true).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync(testSettings, "private", false, true).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync(testSettings, "protected", false, true).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync(testSettings, "internal", false, true).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync(testSettings, "protected internal", false, true).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync(testSettings, "public", false, true).ConfigureAwait(false);
+
+            // Re-test with the 'documentInternalElements' setting disabled (does impact fields)
+            testSettings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""documentInternalElements"": false
     }
   }
 }
@@ -398,8 +435,8 @@ public class OuterClass
 
             DiagnosticResult expected = Diagnostic().WithLocation(3, 14);
 
-            await VerifyCSharpDiagnosticAsync(testCodeWithDocumentation, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await VerifyCSharpDiagnosticAsync(testCodeWithEmptyDocumentation, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(this.LanguageVersion, testCodeWithDocumentation, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(this.LanguageVersion, testCodeWithEmptyDocumentation, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -420,8 +457,8 @@ public class OuterClass
 
             DiagnosticResult expected = Diagnostic().WithLocation(4, 14);
 
-            await VerifyCSharpDiagnosticAsync(testCodeWithDocumentation, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await VerifyCSharpDiagnosticAsync(testCodeWithEmptyDocumentation, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(this.LanguageVersion, testCodeWithDocumentation, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(this.LanguageVersion, testCodeWithEmptyDocumentation, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -432,7 +469,7 @@ public class OuterClass
 {
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCodeWithDocumentation, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(this.LanguageVersion, testCodeWithDocumentation, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -450,7 +487,7 @@ public class OuterClass
     public void SomeMethod() { }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCodeWithDocumentation, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(this.LanguageVersion, testCodeWithDocumentation, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -475,7 +512,7 @@ public class OuterClass
     public void SomeMethod() { }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(this.LanguageVersion, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -500,7 +537,7 @@ public class OuterClass
     public void SomeMethod() { }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(this.LanguageVersion, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -582,7 +619,7 @@ public struct Test2
                 Diagnostic().WithLocation(21, 12),
             };
 
-            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(this.LanguageVersion, testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -624,7 +661,7 @@ public class TestClass
                 Diagnostic().WithLocation(7, 6),
             };
 
-            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(this.LanguageVersion, testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -657,7 +694,7 @@ public class TestClass
                 Diagnostic().WithLocation(11, 16),
             };
 
-            await VerifyCSharpFixAsync(testCode, expectedResults, testCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(this.LanguageVersion, testCode, expectedResults, testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -792,10 +829,10 @@ public {typeKeyword} Test
                 Diagnostic().WithLocation(34, 20),
             };
 
-            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(this.LanguageVersion, testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestTypeDeclarationDocumentationAsync(string type, string modifiers, bool requiresDiagnostic, bool hasDocumentation)
+        protected async Task TestTypeDeclarationDocumentationAsync(string type, string modifiers, bool requiresDiagnostic, bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"
 {0} {1}
@@ -813,10 +850,10 @@ TypeName
                     Diagnostic().WithLocation(3, 1),
                 };
 
-            await VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers, type), requiresDiagnostic ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(this.LanguageVersion, string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers, type), requiresDiagnostic ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestNestedTypeDeclarationDocumentationAsync(string type, string modifiers, bool requiresDiagnostic, bool hasDocumentation)
+        protected async Task TestNestedTypeDeclarationDocumentationAsync(string type, string modifiers, bool requiresDiagnostic, bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
@@ -846,10 +883,10 @@ public class OuterClass
                     Diagnostic().WithLocation(8, 5),
                 };
 
-            await VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers, type), requiresDiagnostic ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(this.LanguageVersion, string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers, type), requiresDiagnostic ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestDelegateDeclarationDocumentationAsync(string modifiers, bool requiresDiagnostic, bool hasDocumentation)
+        protected async Task TestDelegateDeclarationDocumentationAsync(string modifiers, bool requiresDiagnostic, bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"
 {0} delegate void
@@ -863,10 +900,10 @@ DelegateName();";
                     Diagnostic().WithLocation(3, 1),
                 };
 
-            await VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers), requiresDiagnostic ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(this.LanguageVersion, string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers), requiresDiagnostic ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestNestedDelegateDeclarationDocumentationAsync(string modifiers, bool requiresDiagnostic, bool hasDocumentation)
+        protected async Task TestNestedDelegateDeclarationDocumentationAsync(string modifiers, bool requiresDiagnostic, bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
@@ -892,10 +929,10 @@ public class OuterClass
                     Diagnostic().WithLocation(8, 5),
                 };
 
-            await VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers), requiresDiagnostic ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(this.LanguageVersion, string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers), requiresDiagnostic ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestMethodDeclarationDocumentationAsync(string modifiers, bool isExplicitInterfaceMethod, bool requiresDiagnostic, bool hasDocumentation)
+        protected async Task TestMethodDeclarationDocumentationAsync(string modifiers, bool isExplicitInterfaceMethod, bool requiresDiagnostic, bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
@@ -934,10 +971,10 @@ public interface IInterface {{ void MemberName(); }}
                 };
 
             string explicitInterfaceText = isExplicitInterfaceMethod ? " IInterface." : string.Empty;
-            await VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers, explicitInterfaceText), requiresDiagnostic ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(this.LanguageVersion, string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers, explicitInterfaceText), requiresDiagnostic ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestInterfaceMethodDeclarationDocumentationAsync(bool hasDocumentation)
+        protected async Task TestInterfaceMethodDeclarationDocumentationAsync(bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
@@ -963,10 +1000,10 @@ public interface InterfaceName
                     Diagnostic().WithLocation(8, 5),
                 };
 
-            await VerifyCSharpDiagnosticAsync(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, !hasDocumentation ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(this.LanguageVersion, hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, !hasDocumentation ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestInterfacePropertyDeclarationDocumentationAsync(bool hasDocumentation)
+        protected async Task TestInterfacePropertyDeclarationDocumentationAsync(bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
@@ -998,10 +1035,10 @@ public interface InterfaceName
                     Diagnostic().WithLocation(8, 12),
                 };
 
-            await VerifyCSharpDiagnosticAsync(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, !hasDocumentation ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(this.LanguageVersion, hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, !hasDocumentation ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestInterfaceEventDeclarationDocumentationAsync(bool hasDocumentation)
+        protected async Task TestInterfaceEventDeclarationDocumentationAsync(bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
@@ -1027,10 +1064,10 @@ public interface InterfaceName
                     Diagnostic().WithLocation(8, 25),
                 };
 
-            await VerifyCSharpDiagnosticAsync(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, !hasDocumentation ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(this.LanguageVersion, hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, !hasDocumentation ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestInterfaceIndexerDeclarationDocumentationAsync(bool hasDocumentation)
+        protected async Task TestInterfaceIndexerDeclarationDocumentationAsync(bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
@@ -1056,10 +1093,10 @@ public interface InterfaceName
                     Diagnostic().WithLocation(8, 5),
                 };
 
-            await VerifyCSharpDiagnosticAsync(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, !hasDocumentation ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(this.LanguageVersion, hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, !hasDocumentation ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestConstructorDeclarationDocumentationAsync(string modifiers, bool requiresDiagnostic, bool hasDocumentation)
+        protected async Task TestConstructorDeclarationDocumentationAsync(string modifiers, bool requiresDiagnostic, bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
@@ -1089,10 +1126,10 @@ public class OuterClass
                     Diagnostic().WithLocation(8, 5),
                 };
 
-            await VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers), requiresDiagnostic ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(this.LanguageVersion, string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers), requiresDiagnostic ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestDestructorDeclarationDocumentationAsync(bool requiresDiagnostic, bool hasDocumentation)
+        protected async Task TestDestructorDeclarationDocumentationAsync(bool requiresDiagnostic, bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
@@ -1120,10 +1157,10 @@ public class OuterClass
                     Diagnostic().WithLocation(7, 6),
                 };
 
-            await VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation), requiresDiagnostic ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(this.LanguageVersion, string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation), requiresDiagnostic ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestPropertyDeclarationDocumentationAsync(string modifiers, bool isExplicitInterfaceProperty, bool requiresDiagnostic, bool hasDocumentation)
+        protected async Task TestPropertyDeclarationDocumentationAsync(string modifiers, bool isExplicitInterfaceProperty, bool requiresDiagnostic, bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
@@ -1160,10 +1197,10 @@ public interface IInterface {{ string MemberName {{ get; set; }} }}
                 };
 
             string explicitInterfaceText = isExplicitInterfaceProperty ? " IInterface." : string.Empty;
-            await VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers, explicitInterfaceText), requiresDiagnostic ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(this.LanguageVersion, string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers, explicitInterfaceText), requiresDiagnostic ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestIndexerDeclarationDocumentationAsync(string modifiers, bool isExplicitInterfaceIndexer, bool requiresDiagnostic, bool hasDocumentation)
+        protected async Task TestIndexerDeclarationDocumentationAsync(string modifiers, bool isExplicitInterfaceIndexer, bool requiresDiagnostic, bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
@@ -1200,10 +1237,10 @@ public interface IInterface {{ string this[string key] {{ get; set; }} }}
                 };
 
             string explicitInterfaceText = isExplicitInterfaceIndexer ? " IInterface." : string.Empty;
-            await VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers, explicitInterfaceText), requiresDiagnostic ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(this.LanguageVersion, string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers, explicitInterfaceText), requiresDiagnostic ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestEventDeclarationDocumentationAsync(string modifiers, bool isExplicitInterfaceEvent, bool requiresDiagnostic, bool hasDocumentation)
+        protected async Task TestEventDeclarationDocumentationAsync(string modifiers, bool isExplicitInterfaceEvent, bool requiresDiagnostic, bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
@@ -1262,10 +1299,10 @@ public interface IInterface {{ event System.Action MyEvent; }}
                 };
 
             string explicitInterfaceText = isExplicitInterfaceEvent ? " IInterface." : string.Empty;
-            await VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers, explicitInterfaceText), requiresDiagnostic ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(this.LanguageVersion, string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers, explicitInterfaceText), requiresDiagnostic ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestFieldDeclarationDocumentationAsync(string testSettings, string modifiers, bool requiresDiagnostic, bool hasDocumentation)
+        protected async Task TestFieldDeclarationDocumentationAsync(string testSettings, string modifiers, bool requiresDiagnostic, bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
@@ -1291,7 +1328,7 @@ public class OuterClass
                     Diagnostic().WithLocation(8, 19),
                 };
 
-            var test = new CSharpTest
+            var test = new CSharpTest(this.LanguageVersion)
             {
                 TestCode = string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers),
                 Settings = testSettings,
@@ -1305,7 +1342,7 @@ public class OuterClass
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestEventFieldDeclarationDocumentationAsync(string modifiers, bool requiresDiagnostic, bool hasDocumentation)
+        protected async Task TestEventFieldDeclarationDocumentationAsync(string modifiers, bool requiresDiagnostic, bool hasDocumentation)
         {
             var testCodeWithoutDocumentation = @"    /// <summary>
     /// A summary
@@ -1331,10 +1368,10 @@ public class OuterClass
                     Diagnostic().WithLocation(8, 19),
                 };
 
-            await VerifyCSharpDiagnosticAsync(string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers), requiresDiagnostic ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(this.LanguageVersion, string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers), requiresDiagnostic ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestTypeWithoutDocumentationAsync(string type, bool isInterface)
+        protected virtual async Task TestTypeWithoutDocumentationAsync(string type, bool isInterface)
         {
             await this.TestTypeDeclarationDocumentationAsync(type, string.Empty, true, false).ConfigureAwait(false);
             await this.TestTypeDeclarationDocumentationAsync(type, "internal", true, false).ConfigureAwait(false);
@@ -1348,7 +1385,7 @@ public class OuterClass
             await this.TestNestedTypeDeclarationDocumentationAsync(type, "public", true, false).ConfigureAwait(false);
         }
 
-        private async Task TestTypeWithDocumentationAsync(string type)
+        protected virtual async Task TestTypeWithDocumentationAsync(string type)
         {
             await this.TestTypeDeclarationDocumentationAsync(type, string.Empty, false, true).ConfigureAwait(false);
             await this.TestTypeDeclarationDocumentationAsync(type, "internal", false, true).ConfigureAwait(false);
@@ -1360,6 +1397,44 @@ public class OuterClass
             await this.TestNestedTypeDeclarationDocumentationAsync(type, "internal", false, true).ConfigureAwait(false);
             await this.TestNestedTypeDeclarationDocumentationAsync(type, "protected internal", false, true).ConfigureAwait(false);
             await this.TestNestedTypeDeclarationDocumentationAsync(type, "public", false, true).ConfigureAwait(false);
+        }
+
+        private static Task VerifyCSharpDiagnosticAsync(LanguageVersion languageVersion, string source, DiagnosticResult expected, CancellationToken cancellationToken)
+            => VerifyCSharpDiagnosticAsync(languageVersion, source, new[] { expected }, cancellationToken);
+
+        private static Task VerifyCSharpDiagnosticAsync(LanguageVersion languageVersion, string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        {
+            var test = new CSharpTest(languageVersion)
+            {
+                TestCode = source,
+            };
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test.RunAsync(cancellationToken);
+        }
+
+        private static Task VerifyCSharpFixAsync(LanguageVersion languageVersion, string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
+        {
+            var test = new CSharpTest(languageVersion)
+            {
+                TestCode = source,
+                FixedCode = fixedSource,
+            };
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test.RunAsync(cancellationToken);
+        }
+
+        private class CSharpTest : StyleCopCodeFixVerifier<SA1600ElementsMustBeDocumented, SA1600CodeFixProvider>.CSharpTest
+        {
+            public CSharpTest(LanguageVersion languageVersion)
+            {
+                this.SolutionTransforms.Add((solution, projectId) =>
+                {
+                    var parseOptions = (CSharpParseOptions)solution.GetProject(projectId).ParseOptions;
+                    return solution.WithProjectParseOptions(projectId, parseOptions.WithLanguageVersion(languageVersion));
+                });
+            }
         }
     }
 }
