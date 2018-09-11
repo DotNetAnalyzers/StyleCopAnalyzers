@@ -5,19 +5,21 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.MaintainabilityRules;
-    using StyleCop.Analyzers.Test.Helpers;
-    using TestHelper;
     using Xunit;
 
-#pragma warning disable xUnit1000 // Test classes must be public
-    internal class SA1403UnitTests : FileMayOnlyContainTestBase<SA1403FileMayOnlyContainASingleNamespace, EmptyCodeFixProvider>
-#pragma warning restore xUnit1000 // Test classes must be public
+    public class SA1403UnitTests : FileMayOnlyContainTestBase
     {
         public override string Keyword => "namespace";
 
         public override bool SupportsCodeFix => false;
+
+        protected override DiagnosticAnalyzer Analyzer => new SA1403FileMayOnlyContainASingleNamespace();
+
+        protected override CodeFixProvider CodeFix => new EmptyCodeFixProvider();
 
         [Fact]
         public async Task TestNestedNamespacesAsync()
@@ -30,8 +32,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            DiagnosticResult expected = Diagnostic().WithLocation(3, 15);
-            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = this.Diagnostic().WithLocation(3, 15);
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), expected, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

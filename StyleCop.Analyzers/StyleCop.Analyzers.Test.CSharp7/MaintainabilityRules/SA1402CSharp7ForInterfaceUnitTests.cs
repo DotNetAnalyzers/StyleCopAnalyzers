@@ -5,7 +5,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
 {
     using StyleCop.Analyzers.Test.MaintainabilityRules;
 
-    internal class SA1402CSharp7ForInterfaceUnitTests : SA1402ForInterfaceUnitTests
+    public class SA1402CSharp7ForInterfaceUnitTests : SA1402ForInterfaceUnitTests
     {
     }
 }

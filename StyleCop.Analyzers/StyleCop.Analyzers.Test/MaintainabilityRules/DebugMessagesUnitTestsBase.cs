@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
-    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
@@ -14,11 +13,9 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using Microsoft.CodeAnalysis.Testing;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Test.Verifiers;
-    using TestHelper;
     using Xunit;
 
-    public abstract class DebugMessagesUnitTestsBase<TAnalyzer>
-        where TAnalyzer : DiagnosticAnalyzer, new()
+    public abstract class DebugMessagesUnitTestsBase
     {
         protected abstract string MethodName
         {
@@ -29,6 +26,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         {
             get;
         }
+
+        protected abstract DiagnosticAnalyzer Analyzer { get; }
 
         [Fact]
         public async Task TestConstantMessage_Field_PassAsync()
@@ -45,7 +44,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         [Fact]
         public async Task TestConstantMessage_Field_PassWrongTypeAsync()
         {
-            LinePosition linePosition = new LinePosition(4, 28);
+            LinePosition linePosition = new LinePosition(3, 27);
             DiagnosticResult[] expected =
             {
                 DiagnosticResult.CompilerError("CS0029").WithSpan(new FileLinePositionSpan("Test0.cs", linePosition, linePosition)).WithMessage("Cannot implicitly convert type 'int' to 'string'"),
@@ -69,7 +68,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         [Fact]
         public async Task TestConstantMessage_Local_PassWrongTypeAsync()
         {
-            LinePosition linePosition = new LinePosition(6, 32);
+            LinePosition linePosition = new LinePosition(5, 31);
             DiagnosticResult[] expected =
             {
                 DiagnosticResult.CompilerError("CS0029").WithSpan(new FileLinePositionSpan("Test0.cs", linePosition, linePosition)).WithMessage("Cannot implicitly convert type 'int' to 'string'"),
@@ -93,10 +92,10 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         [Fact]
         public async Task TestConstantMessage_Inline_PassWrongTypeAsync()
         {
-            LinePosition linePosition = new LinePosition(6, 16 + this.MethodName.Length + this.InitialArguments.Sum(i => i.Length + ", ".Length));
+            LinePosition linePosition = new LinePosition(5, 15 + this.MethodName.Length + this.InitialArguments.Sum(i => i.Length + ", ".Length));
             DiagnosticResult[] expected =
             {
-                DiagnosticResult.CompilerError("CS1503").WithSpan(new FileLinePositionSpan("Test0.cs", linePosition, linePosition)).WithMessage($"Argument {1 + this.InitialArguments.Count()}: cannot implicitly convert type 'int' to 'string'"),
+                DiagnosticResult.CompilerError("CS1503").WithSpan(new FileLinePositionSpan("Test0.cs", linePosition, linePosition)).WithMessage($"Argument {1 + this.InitialArguments.Count()}: cannot convert from 'int' to 'string'"),
             };
 
             await this.TestConstantMessage_Inline_PassExecuterAsync("3", expected).ConfigureAwait(false);
@@ -187,7 +186,7 @@ public class Foo
     }}
 }}";
 
-            await VerifyCSharpDiagnosticAsync(this.BuildTestCode(testCode), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(this.BuildTestCode(testCode), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -215,7 +214,7 @@ class Debug
 }}
 ";
 
-            await VerifyCSharpDiagnosticAsync(this.BuildTestCode(testCode), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(this.BuildTestCode(testCode), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -230,7 +229,7 @@ public class Foo
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -253,28 +252,28 @@ public class Foo
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(8, 9),
-                Diagnostic().WithLocation(9, 9),
-                Diagnostic().WithLocation(10, 9),
-                Diagnostic().WithLocation(11, 9),
-                Diagnostic().WithLocation(12, 9),
+                this.Diagnostic().WithLocation(8, 9),
+                this.Diagnostic().WithLocation(9, 9),
+                this.Diagnostic().WithLocation(10, 9),
+                this.Diagnostic().WithLocation(11, 9),
+                this.Diagnostic().WithLocation(12, 9),
             };
 
-            await VerifyCSharpDiagnosticAsync(this.BuildTestCode(testCode), expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(this.BuildTestCode(testCode), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected static DiagnosticResult Diagnostic()
-            => StyleCopDiagnosticVerifier<TAnalyzer>.Diagnostic();
+        protected DiagnosticResult Diagnostic()
+            => new DiagnosticResult(this.Analyzer.SupportedDiagnostics.Single());
 
-        protected static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
-            => VerifyCSharpDiagnosticAsync(source, new[] { expected }, includeSystemDll: true, cancellationToken);
+        protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
+            => this.VerifyCSharpDiagnosticAsync(source, new[] { expected }, includeSystemDll: true, cancellationToken);
 
-        protected static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
-            => VerifyCSharpDiagnosticAsync(source, expected, includeSystemDll: true, cancellationToken);
+        protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+            => this.VerifyCSharpDiagnosticAsync(source, expected, includeSystemDll: true, cancellationToken);
 
-        protected static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, bool includeSystemDll, CancellationToken cancellationToken)
+        protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, bool includeSystemDll, CancellationToken cancellationToken)
         {
-            var test = new StyleCopDiagnosticVerifier<TAnalyzer>.CSharpTest
+            var test = new CSharpTest(this)
             {
                 TestCode = source,
             };
@@ -325,7 +324,7 @@ public class Foo
     }}}}
 }}}}";
 
-            await VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         private async Task TestConstantMessage_Local_PassExecuterAsync(string argument, params DiagnosticResult[] expected)
@@ -340,7 +339,7 @@ public class Foo
     }}}}
 }}}}";
 
-            await VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         private async Task TestConstantMessage_Inline_PassExecuterAsync(string argument, params DiagnosticResult[] expected)
@@ -354,7 +353,7 @@ public class Foo
     }}}}
 }}}}";
 
-            await VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         private async Task TestConstantMessage_Field_FailAsync(string argument)
@@ -369,8 +368,8 @@ public class Foo
     }}}}
 }}}}";
 
-            DiagnosticResult expected = Diagnostic().WithLocation(7, 9);
-            await VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = this.Diagnostic().WithLocation(7, 9);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         private async Task TestConstantMessage_Local_FailAsync(string argument)
@@ -385,8 +384,8 @@ public class Foo
     }}}}
 }}}}";
 
-            DiagnosticResult expected = Diagnostic().WithLocation(7, 9);
-            await VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = this.Diagnostic().WithLocation(7, 9);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         private async Task TestConstantMessage_Inline_FailAsync(string argument)
@@ -400,8 +399,23 @@ public class Foo
     }}}}
 }}}}";
 
-            DiagnosticResult expected = Diagnostic().WithLocation(6, 9);
-            await VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = this.Diagnostic().WithLocation(6, 9);
+            await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        private class CSharpTest : StyleCopDiagnosticVerifier<EmptyAnalyzer>.CSharpTest
+        {
+            private readonly DebugMessagesUnitTestsBase testFixture;
+
+            public CSharpTest(DebugMessagesUnitTestsBase testFixture)
+            {
+                this.testFixture = testFixture;
+            }
+
+            protected override IEnumerable<DiagnosticAnalyzer> GetDiagnosticAnalyzers()
+            {
+                yield return this.testFixture.Analyzer;
+            }
         }
     }
 }

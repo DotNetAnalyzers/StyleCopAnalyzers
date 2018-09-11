@@ -3,9 +3,11 @@
 
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.SpacingRules;
 
-    internal class SA1021UnitTests : NumberSignSpacingTestBase<SA1021NegativeSignsMustBeSpacedCorrectly, TokenSpacingCodeFixProvider>
+    public class SA1021UnitTests : NumberSignSpacingTestBase
     {
         protected override string Sign
         {
@@ -14,5 +16,9 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 return "-";
             }
         }
+
+        protected override DiagnosticAnalyzer Analyzer => new SA1021NegativeSignsMustBeSpacedCorrectly();
+
+        protected override CodeFixProvider CodeFix => new TokenSpacingCodeFixProvider();
     }
 }

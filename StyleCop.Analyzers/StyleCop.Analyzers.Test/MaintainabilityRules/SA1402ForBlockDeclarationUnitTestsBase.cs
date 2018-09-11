@@ -6,16 +6,19 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.MaintainabilityRules;
-    using TestHelper;
     using Xunit;
 
-#pragma warning disable xUnit1000 // Test classes must be public
-    internal abstract class SA1402ForBlockDeclarationUnitTestsBase : FileMayOnlyContainTestBase<SA1402FileMayOnlyContainASingleType, SA1402CodeFixProvider>
-#pragma warning restore xUnit1000 // Test classes must be public
+    public abstract class SA1402ForBlockDeclarationUnitTestsBase : FileMayOnlyContainTestBase
     {
         public override bool SupportsCodeFix => true;
+
+        protected override DiagnosticAnalyzer Analyzer => new SA1402FileMayOnlyContainASingleType();
+
+        protected override CodeFixProvider CodeFix => new SA1402CodeFixProvider();
 
         protected SA1402SettingsConfiguration SettingsConfiguration { get; set; } = SA1402SettingsConfiguration.ConfigureAsTopLevelType;
 
@@ -37,7 +40,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
 }
 "),
-                ("Test1.cs", @"%1 Bar<T2, T3>
+                ("Bar{T2,T3}.cs", @"%1 Bar<T2, T3>
 {
 }"),
             };
@@ -45,8 +48,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             testCode = testCode.Replace("%1", this.Keyword);
             fixedCode = fixedCode.Select(c => (c.Item1, c.Item2.Replace("%1", this.Keyword))).ToArray();
 
-            DiagnosticResult expected = Diagnostic().WithLocation(4, this.Keyword.Length + 2);
-            await VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = this.Diagnostic().WithLocation(4, this.Keyword.Length + 2);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -63,7 +66,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             testCode = testCode.Replace("%1", this.Keyword);
 
-            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -84,7 +87,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
 }
 "),
-                ("Test1.cs", @"%1 Bar
+                ("Bar.cs", @"%1 Bar
 {
 }"),
             };
@@ -94,12 +97,12 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             if (this.IsConfiguredAsTopLevelTypeByDefault)
             {
-                DiagnosticResult expected = Diagnostic().WithLocation(4, this.Keyword.Length + 2);
-                await VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+                DiagnosticResult expected = this.Diagnostic().WithLocation(4, this.Keyword.Length + 2);
+                await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
             }
             else
             {
-                await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             }
         }
 
@@ -114,7 +117,7 @@ public partial {this.Keyword} Foo
 
 }}";
 
-            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -140,8 +143,8 @@ public partial {this.Keyword} Bar
 }}"),
             };
 
-            DiagnosticResult expected = Diagnostic().WithLocation(4, 17 + this.Keyword.Length);
-            await VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = this.Diagnostic().WithLocation(4, 17 + this.Keyword.Length);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -165,8 +168,8 @@ public {this.Keyword} Test0
 "),
             };
 
-            DiagnosticResult expected = Diagnostic().WithLocation(1, 9 + this.Keyword.Length);
-            await VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = this.Diagnostic().WithLocation(1, 9 + this.Keyword.Length);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -180,7 +183,7 @@ public {this.Keyword} Test0
     }}
 }}";
 
-            await VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override string GetSettings()
