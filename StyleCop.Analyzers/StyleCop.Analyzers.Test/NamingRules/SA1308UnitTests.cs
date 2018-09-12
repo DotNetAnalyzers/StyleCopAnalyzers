@@ -6,13 +6,14 @@ namespace StyleCop.Analyzers.Test.NamingRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using StyleCop.Analyzers.NamingRules;
+    using Microsoft.CodeAnalysis.Testing;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.NamingRules.SA1308VariableNamesMustNotBePrefixed,
+        StyleCop.Analyzers.NamingRules.SA1308CodeFixProvider>;
 
-    public class SA1308UnitTests : CodeFixVerifier
+    public class SA1308UnitTests
     {
         private const string UnderscoreEscapeSequence = @"\u005F";
 
@@ -55,11 +56,10 @@ namespace StyleCop.Analyzers.Test.NamingRules
 {
 private string m_ = ""baz"";
 }";
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("m_", "m_").WithLocation(3, 16);
-            await this.VerifyCSharpDiagnosticAsync(originalCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithArguments("m_", "m_").WithLocation(3, 16);
 
             // When the variable name is simply the disallowed prefix, we will not offer a code fix, as we cannot infer the correct variable name.
-            await this.VerifyCSharpFixAsync(originalCode, originalCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(originalCode, expected, originalCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -71,7 +71,7 @@ private string m_ = ""baz"";
 string x_bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -83,7 +83,7 @@ string x_bar = ""baz"";
 string m_bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -104,14 +104,12 @@ string m_bar = ""baz"";
 
             string diagnosticPrefix = UnescapeUnderscores(prefix);
             DiagnosticResult expected =
-                this.CSharpDiagnostic()
+                Diagnostic()
                 .WithArguments($"{diagnosticPrefix}{diagnosticPrefix}bar", diagnosticPrefix)
                 .WithLocation(3, 20);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-
             var fixedCode = testCode.Replace(prefix, string.Empty);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -125,14 +123,12 @@ string m_bar = ""baz"";
 
             string diagnosticPrefix = UnescapeUnderscores(prefix);
             DiagnosticResult expected =
-                this.CSharpDiagnostic()
+                Diagnostic()
                 .WithArguments($"{diagnosticPrefix}{diagnosticPrefix}", diagnosticPrefix)
                 .WithLocation(3, 20);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-
             // A code fix is not offered as removing the prefixes would create an empty identifier.
-            await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -154,14 +150,12 @@ string m_bar = ""baz"";
 
             string diagnosticPrefixes = UnescapeUnderscores(prefixes);
             DiagnosticResult expected =
-                this.CSharpDiagnostic()
+                Diagnostic()
                 .WithArguments($"{diagnosticPrefixes}bar", diagnosticPrefix)
                 .WithLocation(3, 20);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-
             var fixedCode = testCode.Replace(prefixes, string.Empty);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -175,24 +169,12 @@ string m_bar = ""baz"";
 
             string diagnosticPrefixes = UnescapeUnderscores(prefixes);
             DiagnosticResult expected =
-                this.CSharpDiagnostic()
+                Diagnostic()
                 .WithArguments(diagnosticPrefixes, diagnosticPrefix)
                 .WithLocation(3, 20);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-
             // A code fix is not offered as removing the prefixes would create an empty identifier.
-            await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1308VariableNamesMustNotBePrefixed();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1308CodeFixProvider();
+            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         private static string UnescapeUnderscores(string identifier) => identifier.Replace(UnderscoreEscapeSequence, "_");
@@ -206,15 +188,14 @@ string {1}bar = ""baz"";
 }}";
 
             DiagnosticResult expected =
-                this.CSharpDiagnostic()
+                Diagnostic()
                 .WithArguments($"{diagnosticPrefix}bar", diagnosticPrefix)
                 .WithLocation(4, 8);
 
             var testCode = string.Format(originalCode, modifier, codePrefix);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = string.Format(originalCode, modifier, string.Empty);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

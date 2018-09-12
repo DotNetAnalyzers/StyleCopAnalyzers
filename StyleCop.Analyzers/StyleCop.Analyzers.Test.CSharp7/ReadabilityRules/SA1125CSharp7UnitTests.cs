@@ -6,9 +6,11 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
     using System;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.ReadabilityRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.ReadabilityRules.SA1125UseShorthandForNullableTypes>;
 
     public class SA1125CSharp7UnitTests : SA1125UnitTests
     {
@@ -48,9 +50,9 @@ namespace System
             string testCode = string.Format(template, longForm);
             string fixedCode = string.Format(template, shortForm);
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 36);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(7, 36);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(fixedCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -77,9 +79,9 @@ namespace System
             string testCode = string.Format(template, longForm);
             string fixedCode = string.Format(template, shortForm);
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 9);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(7, 9);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(fixedCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -109,9 +111,9 @@ namespace System
             string testCode = string.Format(template, longForm);
             string fixedCode = string.Format(template, shortForm);
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(9, 41);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(9, 41);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(fixedCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -139,7 +141,7 @@ namespace System
 }}
 ";
             string testCode = string.Format(template, form);
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -171,7 +173,7 @@ namespace System
 }}
 ";
             string testCode = string.Format(template, form);
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -199,7 +201,7 @@ namespace System
 }}
 ";
             string testCode = string.Format(template, form);
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -227,9 +229,9 @@ namespace System
             string testCode = string.Format(template, longForm);
             string fixedCode = string.Format(template, shortForm);
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 43);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(8, 43);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(fixedCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         // This is a regression test for issue 2284.
@@ -252,9 +254,9 @@ namespace System
             string testCode = string.Format(template, longForm);
             string fixedCode = string.Format(template, shortForm);
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 9);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(7, 9);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(fixedCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

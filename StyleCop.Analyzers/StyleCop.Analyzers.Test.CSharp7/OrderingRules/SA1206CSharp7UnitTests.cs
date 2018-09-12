@@ -5,9 +5,11 @@ namespace StyleCop.Analyzers.Test.CSharp7.OrderingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
+    using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.OrderingRules;
     using StyleCop.Analyzers.Test.OrderingRules;
+    using StyleCop.Analyzers.Test.Verifiers;
     using TestHelper;
     using Xunit;
 
@@ -30,7 +32,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.OrderingRules
     }}
 }}
 ";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -47,18 +49,31 @@ namespace StyleCop.Analyzers.Test.CSharp7.OrderingRules
 
             DiagnosticResult[] expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(3, 14).WithArguments("private", "readonly"),
+                Diagnostic().WithLocation(3, 14).WithArguments("private", "readonly"),
             };
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override Project ApplyCompilationOptions(Project project)
+        private static DiagnosticResult Diagnostic()
+            => StyleCopCodeFixVerifier<SA1206DeclarationKeywordsMustFollowOrder, SA1206CodeFixProvider>.Diagnostic();
+
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
-            var newProject = base.ApplyCompilationOptions(project);
+            var test = new StyleCopCodeFixVerifier<SA1206DeclarationKeywordsMustFollowOrder, SA1206CodeFixProvider>.CSharpTest
+            {
+                TestCode = source,
+                SolutionTransforms =
+                {
+                    (solution, projectId) =>
+                    {
+                        var parseOptions = (CSharpParseOptions)solution.GetProject(projectId).ParseOptions;
+                        return solution.WithProjectParseOptions(projectId, parseOptions.WithLanguageVersion(LanguageVersion.Latest));
+                    },
+                },
+            };
 
-            var parseOptions = (CSharpParseOptions)newProject.ParseOptions;
-
-            return newProject.WithParseOptions(parseOptions.WithLanguageVersion(LanguageVersion.Latest));
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test.RunAsync(cancellationToken);
         }
     }
 }

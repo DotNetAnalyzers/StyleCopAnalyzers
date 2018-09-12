@@ -5,9 +5,13 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.LayoutRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1500BracesForMultiLineStatementsMustNotShareLine,
+        StyleCop.Analyzers.LayoutRules.SA1500CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1500BracesForMultiLineStatementsMustNotShareLine"/>.
@@ -79,7 +83,7 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -240,47 +244,45 @@ public class Foo
             DiagnosticResult[] expectedDiagnostics =
             {
                 // Invalid lambda expression #1
-                this.CSharpDiagnostic().WithLocation(12, 30),
+                Diagnostic().WithLocation(12, 30),
 
                 // Invalid lambda expression #2
-                this.CSharpDiagnostic().WithLocation(16, 30),
+                Diagnostic().WithLocation(16, 30),
 
                 // Invalid lambda expression #3
-                this.CSharpDiagnostic().WithLocation(21, 30),
-                this.CSharpDiagnostic().WithLocation(22, 29),
+                Diagnostic().WithLocation(21, 30),
+                Diagnostic().WithLocation(22, 29),
 
                 // Invalid lambda expression #4
-                this.CSharpDiagnostic().WithLocation(25, 30),
+                Diagnostic().WithLocation(25, 30),
 
                 // Invalid lambda expression #5
-                this.CSharpDiagnostic().WithLocation(31, 29),
+                Diagnostic().WithLocation(31, 29),
 
                 // Invalid lambda expression #6
-                this.CSharpDiagnostic().WithLocation(35, 9),
+                Diagnostic().WithLocation(35, 9),
 
                 // Invalid lambda expression #7
-                this.CSharpDiagnostic().WithLocation(39, 31),
+                Diagnostic().WithLocation(39, 31),
 
                 // Invalid lambda expression #8
-                this.CSharpDiagnostic().WithLocation(43, 31),
+                Diagnostic().WithLocation(43, 31),
 
                 // Invalid lambda expression #9
-                this.CSharpDiagnostic().WithLocation(48, 31),
-                this.CSharpDiagnostic().WithLocation(49, 29),
+                Diagnostic().WithLocation(48, 31),
+                Diagnostic().WithLocation(49, 29),
 
                 // Invalid lambda expression #10
-                this.CSharpDiagnostic().WithLocation(52, 31),
+                Diagnostic().WithLocation(52, 31),
 
                 // Invalid lambda expression #11
-                this.CSharpDiagnostic().WithLocation(58, 29),
+                Diagnostic().WithLocation(58, 29),
 
                 // Invalid lambda expression #12
-                this.CSharpDiagnostic().WithLocation(62, 9),
+                Diagnostic().WithLocation(62, 9),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

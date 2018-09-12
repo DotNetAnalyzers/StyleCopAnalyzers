@@ -3,19 +3,20 @@
 
 namespace StyleCop.Analyzers.Test.LayoutRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.LayoutRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1510ChainedStatementBlocksMustNotBePrecededByBlankLine,
+        StyleCop.Analyzers.LayoutRules.SA1510CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1510ChainedStatementBlocksMustNotBePrecededByBlankLine"/>.
     /// </summary>
-    public class SA1510UnitTests : CodeFixVerifier
+    public class SA1510UnitTests
     {
         /// <summary>
         /// Verifies that valid chained statements will not produce any diagnostics.
@@ -63,7 +64,7 @@ namespace Foo
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -118,12 +119,10 @@ namespace Foo
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                this.CSharpDiagnostic().WithLocation(14, 13).WithArguments("else"),
+                Diagnostic().WithLocation(14, 13).WithArguments("else"),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -191,23 +190,11 @@ namespace Foo
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                this.CSharpDiagnostic().WithLocation(16, 13).WithArguments("catch"),
-                this.CSharpDiagnostic().WithLocation(21, 13).WithArguments("finally"),
+                Diagnostic().WithLocation(16, 13).WithArguments("catch"),
+                Diagnostic().WithLocation(21, 13).WithArguments("finally"),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1510ChainedStatementBlocksMustNotBePrecededByBlankLine();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1510CodeFixProvider();
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

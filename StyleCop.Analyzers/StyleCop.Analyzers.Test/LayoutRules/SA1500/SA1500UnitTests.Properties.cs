@@ -5,10 +5,14 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.LayoutRules;
     using StyleCop.Analyzers.Lightup;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1500BracesForMultiLineStatementsMustNotShareLine,
+        StyleCop.Analyzers.LayoutRules.SA1500CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1500BracesForMultiLineStatementsMustNotShareLine"/>.
@@ -93,7 +97,7 @@ public class Foo
     public int[] Property8 { get; set; } = { 0, 1, 2 };
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -367,64 +371,62 @@ public class Foo
             DiagnosticResult[] expectedDiagnostics =
             {
                 // Invalid property #1
-                this.CSharpDiagnostic().WithLocation(10, 13),
-                this.CSharpDiagnostic().WithLocation(14, 13),
+                Diagnostic().WithLocation(10, 13),
+                Diagnostic().WithLocation(14, 13),
 
                 // Invalid property #2
-                this.CSharpDiagnostic().WithLocation(22, 13),
-                this.CSharpDiagnostic().WithLocation(23, 31),
-                this.CSharpDiagnostic().WithLocation(25, 13),
-                this.CSharpDiagnostic().WithLocation(26, 32),
+                Diagnostic().WithLocation(22, 13),
+                Diagnostic().WithLocation(23, 31),
+                Diagnostic().WithLocation(25, 13),
+                Diagnostic().WithLocation(26, 32),
 
                 // Invalid property #3
-                this.CSharpDiagnostic().WithLocation(32, 13),
-                this.CSharpDiagnostic().WithLocation(35, 13),
+                Diagnostic().WithLocation(32, 13),
+                Diagnostic().WithLocation(35, 13),
 
                 // Invalid property #4
-                this.CSharpDiagnostic().WithLocation(44, 31),
-                this.CSharpDiagnostic().WithLocation(48, 32),
+                Diagnostic().WithLocation(44, 31),
+                Diagnostic().WithLocation(48, 32),
 
                 // Invalid property #5
-                this.CSharpDiagnostic().WithLocation(55, 9),
-                this.CSharpDiagnostic().WithLocation(59, 9),
+                Diagnostic().WithLocation(55, 9),
+                Diagnostic().WithLocation(59, 9),
 
                 // Invalid property #6 (Only report once for accessor statements on a single line)
-                this.CSharpDiagnostic().WithLocation(67, 9),
-                this.CSharpDiagnostic().WithLocation(70, 9),
+                Diagnostic().WithLocation(67, 9),
+                Diagnostic().WithLocation(70, 9),
 
                 // Invalid property #7
-                this.CSharpDiagnostic().WithLocation(76, 35),
+                Diagnostic().WithLocation(76, 35),
 
                 // Invalid property #8
-                this.CSharpDiagnostic().WithLocation(79, 27),
+                Diagnostic().WithLocation(79, 27),
 
                 // Invalid property #9
-                this.CSharpDiagnostic().WithLocation(84, 27),
-                this.CSharpDiagnostic().WithLocation(85, 35),
+                Diagnostic().WithLocation(84, 27),
+                Diagnostic().WithLocation(85, 35),
 
                 // Invalid property #10
-                this.CSharpDiagnostic().WithLocation(88, 28),
+                Diagnostic().WithLocation(88, 28),
 
                 // Invalid property #11
-                this.CSharpDiagnostic().WithLocation(93, 5),
+                Diagnostic().WithLocation(93, 5),
 
                 // Invalid property #12
-                this.CSharpDiagnostic().WithLocation(101, 11),
+                Diagnostic().WithLocation(101, 11),
 
                 // Invalid property #13
-                this.CSharpDiagnostic().WithLocation(104, 45),
+                Diagnostic().WithLocation(104, 45),
 
                 // Invalid property #14
-                this.CSharpDiagnostic().WithLocation(111, 45),
+                Diagnostic().WithLocation(111, 45),
 
                 // Invalid property #15
-                this.CSharpDiagnostic().WithLocation(116, 5),
-                this.CSharpDiagnostic().WithLocation(116, 15),
+                Diagnostic().WithLocation(116, 5),
+                Diagnostic().WithLocation(116, 15),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -463,14 +465,12 @@ public class TestClass
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(6, 13),
-                this.CSharpDiagnostic().WithLocation(8, 43),
-                this.CSharpDiagnostic().WithLocation(8, 45),
+                Diagnostic().WithLocation(6, 13),
+                Diagnostic().WithLocation(8, 43),
+                Diagnostic().WithLocation(8, 45),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -493,19 +493,19 @@ class ClassName
             DiagnosticResult accessorError;
             if (LightupHelpers.SupportsCSharp7)
             {
-                accessorError = this.CSharpCompilerError("CS8180").WithMessage("{ or ; or => expected");
+                accessorError = DiagnosticResult.CompilerError("CS8180").WithMessage("{ or ; or => expected");
             }
             else
             {
-                accessorError = this.CSharpCompilerError("CS1043").WithMessage("{ or ; expected");
+                accessorError = DiagnosticResult.CompilerError("CS1043").WithMessage("{ or ; expected");
             }
 
             DiagnosticResult[] expected =
             {
                 accessorError.WithLocation(6, 12),
-                this.CSharpCompilerError("CS1022").WithMessage("Type or namespace definition, or end-of-file expected").WithLocation(9, 1),
+                DiagnosticResult.CompilerError("CS1022").WithMessage("Type or namespace definition, or end-of-file expected").WithLocation(9, 1),
             };
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -526,12 +526,12 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                this.CSharpCompilerError("CS0161").WithMessage("'ClassName.Property.get': not all code paths return a value").WithLocation(6, 9),
-                this.CSharpCompilerError("CS1513").WithMessage("} expected").WithLocation(7, 10),
-                this.CSharpCompilerError("CS1513").WithMessage("} expected").WithLocation(7, 10),
-                this.CSharpCompilerError("CS1513").WithMessage("} expected").WithLocation(7, 10),
+                DiagnosticResult.CompilerError("CS0161").WithMessage("'ClassName.Property.get': not all code paths return a value").WithLocation(6, 9),
+                DiagnosticResult.CompilerError("CS1513").WithMessage("} expected").WithLocation(7, 10),
+                DiagnosticResult.CompilerError("CS1513").WithMessage("} expected").WithLocation(7, 10),
+                DiagnosticResult.CompilerError("CS1513").WithMessage("} expected").WithLocation(7, 10),
             };
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

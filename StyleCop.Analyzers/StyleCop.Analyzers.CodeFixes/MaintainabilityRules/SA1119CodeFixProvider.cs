@@ -27,7 +27,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(SA1119StatementMustNotUseUnnecessaryParenthesis.DiagnosticId);
+            ImmutableArray.Create(SA1119StatementMustNotUseUnnecessaryParenthesis.DiagnosticId, SA1119StatementMustNotUseUnnecessaryParenthesis.ParenthesesDiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -42,6 +42,11 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
             foreach (var diagnostic in context.Diagnostics)
             {
+                if (diagnostic.Id != SA1119StatementMustNotUseUnnecessaryParenthesis.DiagnosticId)
+                {
+                    continue;
+                }
+
                 SyntaxNode node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true, findInsideTrivia: true);
                 if (node.IsMissing)
                 {

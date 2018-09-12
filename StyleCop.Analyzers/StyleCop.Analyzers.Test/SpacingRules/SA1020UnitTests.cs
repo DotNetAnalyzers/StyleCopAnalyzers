@@ -3,19 +3,20 @@
 
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.SpacingRules.SA1020IncrementDecrementSymbolsMustBeSpacedCorrectly,
+        StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1020IncrementDecrementSymbolsMustBeSpacedCorrectly"/>.
     /// </summary>
-    public class SA1020UnitTests : CodeFixVerifier
+    public class SA1020UnitTests
     {
         /// <summary>
         /// Verifies that the analyzer will properly valid symbol spacing.
@@ -42,7 +43,7 @@ class ClassName
 }}
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -106,31 +107,17 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(7, 11).WithArguments(symbolName, symbol, "preceded"),
-                this.CSharpDiagnostic().WithLocation(8, 9).WithArguments(symbolName, symbol, "followed"),
-                this.CSharpDiagnostic().WithLocation(9, 33).WithArguments(symbolName, symbol, "followed"),
-                this.CSharpDiagnostic().WithLocation(9, 41).WithArguments(symbolName, symbol, "preceded"),
-                this.CSharpDiagnostic().WithLocation(14, 9).WithArguments(symbolName, symbol, "preceded"),
-                this.CSharpDiagnostic().WithLocation(15, 9).WithArguments(symbolName, symbol, "followed"),
-                this.CSharpDiagnostic().WithLocation(17, 33).WithArguments(symbolName, symbol, "followed"),
-                this.CSharpDiagnostic().WithLocation(20, 13).WithArguments(symbolName, symbol, "preceded"),
+                Diagnostic().WithLocation(7, 11).WithArguments(symbolName, symbol, "preceded"),
+                Diagnostic().WithLocation(8, 9).WithArguments(symbolName, symbol, "followed"),
+                Diagnostic().WithLocation(9, 33).WithArguments(symbolName, symbol, "followed"),
+                Diagnostic().WithLocation(9, 41).WithArguments(symbolName, symbol, "preceded"),
+                Diagnostic().WithLocation(14, 9).WithArguments(symbolName, symbol, "preceded"),
+                Diagnostic().WithLocation(15, 9).WithArguments(symbolName, symbol, "followed"),
+                Diagnostic().WithLocation(17, 33).WithArguments(symbolName, symbol, "followed"),
+                Diagnostic().WithLocation(20, 13).WithArguments(symbolName, symbol, "preceded"),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1020IncrementDecrementSymbolsMustBeSpacedCorrectly();
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new TokenSpacingCodeFixProvider();
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

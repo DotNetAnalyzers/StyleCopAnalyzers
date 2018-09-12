@@ -3,16 +3,16 @@
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using StyleCop.Analyzers.MaintainabilityRules;
+    using Microsoft.CodeAnalysis.Testing;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.MaintainabilityRules.SA1400AccessModifierMustBeDeclared,
+        StyleCop.Analyzers.MaintainabilityRules.SA1400CodeFixProvider>;
 
-    public class SA1400UnitTests : CodeFixVerifier
+    public class SA1400UnitTests
     {
         private const string Tab = "\t";
 
@@ -652,16 +652,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await this.TestNestedDeclarationWithDirectivesAsync("private", "OuterTypeName", "static OuterTypeName(", " ) { }", warning: false).ConfigureAwait(false);
         }
 
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1400AccessModifierMustBeDeclared();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1400CodeFixProvider();
-        }
-
         private async Task TestTypeDeclarationAsync(string keyword, bool warning = true)
         {
             await this.TestDeclarationAsync("internal", "TypeName", $"{keyword} TypeName", "{\n}", warning: warning).ConfigureAwait(false);
@@ -700,19 +690,17 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             if (!warning)
             {
-                await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
                 return;
             }
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(elementName ?? identifier).WithLocation(2, 4 + keywordLine.IndexOf(identifier));
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithArguments(elementName ?? identifier).WithLocation(2, 4 + keywordLine.IndexOf(identifier));
 
             var fixedTestCode = $@"
  {Tab} {modifier} {keywordLine}
 {linesAfter}";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         private async Task TestDeclarationWithAttributesAsync(string modifier, string identifier, string keywordLine, string linesAfter, string elementName = null, bool warning = true)
@@ -724,20 +712,18 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             if (!warning)
             {
-                await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
                 return;
             }
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(elementName ?? identifier).WithLocation(3, 4 + keywordLine.IndexOf(identifier));
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithArguments(elementName ?? identifier).WithLocation(3, 4 + keywordLine.IndexOf(identifier));
 
             var fixedTestCode = $@"using System;
   [Obsolete]
  {Tab} {modifier} {keywordLine}
 {linesAfter}";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         private async Task TestDeclarationWithDirectivesAsync(string modifier, string identifier, string keywordLine, string linesAfter, string elementName = null, bool warning = true)
@@ -750,13 +736,11 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             if (!warning)
             {
-                await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
                 return;
             }
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(elementName ?? identifier).WithLocation(3, 4 + keywordLine.IndexOf(identifier));
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithArguments(elementName ?? identifier).WithLocation(3, 4 + keywordLine.IndexOf(identifier));
 
             var fixedTestCode = $@"
  #  if true
@@ -764,7 +748,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 # endif
 {linesAfter}";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         private async Task TestNestedDeclarationAsync(string modifier, string identifier, string keywordLine, string linesAfter, string containingType = "class", string baseTypeList = "", string baseTypeDeclarations = "", string elementName = null, bool warning = true)
@@ -777,13 +761,11 @@ public {containingType} OuterTypeName {baseTypeList} {{
 
             if (!warning)
             {
-                await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
                 return;
             }
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(elementName ?? identifier).WithLocation(3, 4 + keywordLine.IndexOf(identifier));
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithArguments(elementName ?? identifier).WithLocation(3, 4 + keywordLine.IndexOf(identifier));
 
             var fixedTestCode = $@"using System;
 public {containingType} OuterTypeName {baseTypeList} {{
@@ -791,7 +773,7 @@ public {containingType} OuterTypeName {baseTypeList} {{
 {linesAfter} }}
 {baseTypeDeclarations}";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         private async Task TestNestedDeclarationWithAttributesAsync(string modifier, string identifier, string keywordLine, string linesAfter, string containingType = "class", string baseTypeList = "", string baseTypeDeclarations = "", string elementName = null, bool warning = true)
@@ -805,13 +787,11 @@ public {containingType} OuterTypeName {baseTypeList} {{
 
             if (!warning)
             {
-                await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
                 return;
             }
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(elementName ?? identifier).WithLocation(4, 4 + keywordLine.IndexOf(identifier));
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithArguments(elementName ?? identifier).WithLocation(4, 4 + keywordLine.IndexOf(identifier));
 
             var fixedTestCode = $@"using System;
 public {containingType} OuterTypeName {baseTypeList} {{
@@ -820,7 +800,7 @@ public {containingType} OuterTypeName {baseTypeList} {{
 {linesAfter} }}
 {baseTypeDeclarations}";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         private async Task TestNestedDeclarationWithDirectivesAsync(string modifier, string identifier, string keywordLine, string linesAfter, string containingType = "class", string baseTypeList = "", string baseTypeDeclarations = "", string elementName = null, bool warning = true)
@@ -835,13 +815,11 @@ public {containingType} OuterTypeName {baseTypeList} {{
 
             if (!warning)
             {
-                await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
                 return;
             }
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments(elementName ?? identifier).WithLocation(4, 4 + keywordLine.IndexOf(identifier));
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithArguments(elementName ?? identifier).WithLocation(4, 4 + keywordLine.IndexOf(identifier));
 
             var fixedTestCode = $@"using System;
 public {containingType} OuterTypeName {baseTypeList} {{
@@ -851,7 +829,7 @@ public {containingType} OuterTypeName {baseTypeList} {{
 {linesAfter} }}
 {baseTypeDeclarations}";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

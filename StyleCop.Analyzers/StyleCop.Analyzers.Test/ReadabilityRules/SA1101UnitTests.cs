@@ -3,16 +3,15 @@
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using StyleCop.Analyzers.ReadabilityRules;
-    using TestHelper;
+    using Microsoft.CodeAnalysis.Testing;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.ReadabilityRules.SA1101PrefixLocalCallsWithThis,
+        StyleCop.Analyzers.ReadabilityRules.SA1101CodeFixProvider>;
 
-    public class SA1101UnitTests : CodeFixVerifier
+    public class SA1101UnitTests
     {
         [Fact]
         public async Task TestPrefixLocalCallsWithThisAsync()
@@ -251,18 +250,16 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(91, 36),
-                this.CSharpDiagnostic().WithLocation(95, 36),
-                this.CSharpDiagnostic().WithLocation(97, 36),
-                this.CSharpDiagnostic().WithLocation(99, 36),
-                this.CSharpDiagnostic().WithLocation(101, 36),
-                this.CSharpDiagnostic().WithLocation(106, 45),
-                this.CSharpDiagnostic().WithLocation(107, 48),
+                Diagnostic().WithLocation(91, 36),
+                Diagnostic().WithLocation(95, 36),
+                Diagnostic().WithLocation(97, 36),
+                Diagnostic().WithLocation(99, 36),
+                Diagnostic().WithLocation(101, 36),
+                Diagnostic().WithLocation(106, 45),
+                Diagnostic().WithLocation(107, 48),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -293,13 +290,11 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(5, 9),
-                this.CSharpDiagnostic().WithLocation(7, 9),
+                Diagnostic().WithLocation(5, 9),
+                Diagnostic().WithLocation(7, 9),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -319,7 +314,7 @@ public class TestClass
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -338,7 +333,7 @@ public class TestClass
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -356,7 +351,7 @@ public class Foo
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -370,17 +365,7 @@ public class Foo
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1101PrefixLocalCallsWithThis();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1101CodeFixProvider();
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

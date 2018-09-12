@@ -3,19 +3,20 @@
 
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.OrderingRules.SA1214ReadonlyElementsMustAppearBeforeNonReadonlyElements,
+        StyleCop.Analyzers.OrderingRules.ElementOrderCodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1214ReadonlyElementsMustAppearBeforeNonReadonlyElements"/>.
     /// </summary>
-    public class SA1215UnitTests : CodeFixVerifier
+    public class SA1215UnitTests
     {
         /// <summary>
         /// Verifies that the analyzer will properly handle valid ordering.
@@ -86,7 +87,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -103,7 +104,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -120,9 +121,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
 }
 ";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 25);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(4, 25);
 
             var fixTestCode = @"public class TestClass
 {
@@ -130,8 +129,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     public int TestField1;
 }
 ";
-            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -148,9 +146,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
 }
 ";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 25);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(4, 25);
 
             var fixTestCode = @"public struct TestStruct
 {
@@ -158,8 +154,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     public int TestField1;
 }
 ";
-            await this.VerifyCSharpDiagnosticAsync(fixTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -176,7 +171,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -193,18 +188,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1214ReadonlyElementsMustAppearBeforeNonReadonlyElements();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new ElementOrderCodeFixProvider();
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

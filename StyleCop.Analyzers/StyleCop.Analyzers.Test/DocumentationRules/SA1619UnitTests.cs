@@ -6,20 +6,18 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
-    using StyleCop.Analyzers.Test.Helpers;
+    using StyleCop.Analyzers.Test.Verifiers;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1619GenericTypeParametersMustBeDocumentedPartialClass>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1619GenericTypeParametersMustBeDocumentedPartialClass"/>.
     /// </summary>
-    public class SA1619UnitTests : DiagnosticVerifier
+    public class SA1619UnitTests
     {
-        private string currentTestSettings;
-
         public static IEnumerable<object[]> Types
         {
             get
@@ -41,7 +39,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 /// Foo
 /// </summary>
 public partial class Foo { }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -55,7 +53,7 @@ public partial class Foo { }";
 /// <typeparam name=""Ta"">Param 1</param>
 /// <typeparam name=""Tb"">Param 2</param>
 public partial ##";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -69,7 +67,7 @@ public partial ##";
 /// <typeparam name=""T&#97;"">Param 1</param>
 /// <typeparam name=""T&#x62;"">Param 2</param>
 public partial ##";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -83,7 +81,7 @@ public partial ##";
 /// <typeparam name=""Tb"">Param 2</param>
 /// <typeparam name=""Ta"">Param 1</param>
 public partial ##";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -92,7 +90,7 @@ public partial ##";
         {
             var testCode = @"
 public partial ##";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -102,7 +100,7 @@ public partial ##";
             var testCode = @"
 /// <inheritdoc/>
 public partial ##";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -117,11 +115,11 @@ public partial ##";
 
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(5, 30).WithArguments("Ta"),
-                this.CSharpDiagnostic().WithLocation(5, 34).WithArguments("Tb"),
+                Diagnostic().WithLocation(5, 30).WithArguments("Ta"),
+                Diagnostic().WithLocation(5, 34).WithArguments("Tb"),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -137,7 +135,7 @@ public partial ##";
 
             // This situation is allowed if 'documentExposedElements' and 'documentInterfaces' is false
             string interfaceSettingName = p.StartsWith("interface ") ? "documentInterfaces" : "ignoredProperty";
-            this.currentTestSettings = $@"
+            var testSettings = $@"
 {{
   ""settings"": {{
     ""documentationRules"": {{
@@ -147,7 +145,7 @@ public partial ##";
   }}
 }}
 ";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), testSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -160,7 +158,7 @@ public partial ##";
 /// </summary>
 public ##";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -173,7 +171,7 @@ public ##";
 /// </content>
 public partial ##";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -190,7 +188,7 @@ public partial class TestClass<T>
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -207,7 +205,7 @@ public partial class TestClass<T>
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -224,8 +222,8 @@ public partial class TestClass<T>
 }
 ";
 
-            var expected = this.CSharpDiagnostic().WithLocation(3, 32).WithArguments("T");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(3, 32).WithArguments("T");
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -240,7 +238,7 @@ public partial class TestClass<T>
 ";
 
             // The situation is allowed if 'documentExposedElements' false
-            this.currentTestSettings = @"
+            var testSettings = @"
 {
   ""settings"": {
     ""documentationRules"": {
@@ -250,7 +248,7 @@ public partial class TestClass<T>
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, testSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -267,54 +265,53 @@ public partial class TestClass<T>
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override Project ApplyCompilationOptions(Project project)
-        {
-            var resolver = new TestXmlReferenceResolver();
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
+            => VerifyCSharpDiagnosticAsync(source, testSettings: null, new[] { expected }, cancellationToken);
 
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+            => VerifyCSharpDiagnosticAsync(source, testSettings: null, expected, cancellationToken);
+
+        private static Task VerifyCSharpDiagnosticAsync(string source, string testSettings, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        {
             string contentClassWithTypeparamDoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <TestClass>
   <summary>Test class</summary>
   <typeparam name=""T"">Param 1</typeparam>
 </TestClass>
 ";
-            resolver.XmlReferences.Add("ClassWithTypeparamDoc.xml", contentClassWithTypeparamDoc);
-
             string contentClassWithoutSummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <TestClass>
 </TestClass>
 ";
-            resolver.XmlReferences.Add("ClassWithoutSummary.xml", contentClassWithoutSummary);
-
             string contentClassWithoutTypeparamDoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <TestClass>
   <summary>Test class</summary>
 </TestClass>
 ";
-            resolver.XmlReferences.Add("ClassWithoutTypeparamDoc.xml", contentClassWithoutTypeparamDoc);
-
             string contentClassInheritdoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <TestClass>
   <inheritdoc/>
 </TestClass>
 ";
-            resolver.XmlReferences.Add("ClassWithIneheritdoc.xml", contentClassInheritdoc);
 
-            project = base.ApplyCompilationOptions(project);
-            project = project.WithCompilationOptions(project.CompilationOptions.WithXmlReferenceResolver(resolver));
-            return project;
-        }
+            var test = new StyleCopDiagnosticVerifier<SA1619GenericTypeParametersMustBeDocumentedPartialClass>.CSharpTest
+            {
+                TestCode = source,
+                Settings = testSettings,
+                XmlReferences =
+                {
+                    { "ClassWithTypeparamDoc.xml", contentClassWithTypeparamDoc },
+                    { "ClassWithoutSummary.xml", contentClassWithoutSummary },
+                    { "ClassWithoutTypeparamDoc.xml", contentClassWithoutTypeparamDoc },
+                    { "ClassWithIneheritdoc.xml", contentClassInheritdoc },
+                },
+            };
 
-        protected override string GetSettings()
-        {
-            return this.currentTestSettings ?? base.GetSettings();
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1619GenericTypeParametersMustBeDocumentedPartialClass();
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test.RunAsync(cancellationToken);
         }
     }
 }

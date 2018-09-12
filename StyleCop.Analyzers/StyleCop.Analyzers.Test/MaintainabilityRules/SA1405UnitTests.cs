@@ -3,15 +3,13 @@
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
-    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.MaintainabilityRules;
-    using TestHelper;
     using Xunit;
 
     public class SA1405UnitTests : DebugMessagesUnitTestsBase
@@ -32,6 +30,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             }
         }
 
+        protected override DiagnosticAnalyzer Analyzer => new SA1405DebugAssertMustProvideMessageText();
+
         [Fact]
         public async Task TestWrongOverloadAsync()
         {
@@ -44,16 +44,13 @@ public class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 9);
-
+            DiagnosticResult expected = this.Diagnostic().WithLocation(6, 9);
             await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestCustomDebugClassAsync()
         {
-            this.IncludeSystemDll = false;
-
             var testCode = @"namespace System.Diagnostics
 {
     internal static class Debug
@@ -77,15 +74,10 @@ public class Foo
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(17, 13),
+                this.Diagnostic().WithLocation(17, 13),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1405DebugAssertMustProvideMessageText();
+            await this.VerifyCSharpDiagnosticAsync(testCode, expected, includeSystemDll: false, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

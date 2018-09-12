@@ -5,11 +5,15 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.SpacingRules;
     using TestHelper;
     using Xunit;
 
     using static StyleCop.Analyzers.SpacingRules.SA1003SymbolsMustBeSpacedCorrectly;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.SpacingRules.SA1003SymbolsMustBeSpacedCorrectly,
+        StyleCop.Analyzers.SpacingRules.SA1003CodeFixProvider>;
 
     public class SA1003CSharp7UnitTests : SA1003UnitTests
     {
@@ -62,33 +66,32 @@ namespace N1
 ";
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(9, 20).WithArguments("=>"),
-                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(9, 20).WithArguments("=>"),
+                Diagnostic(DescriptorPrecededByWhitespace).WithLocation(9, 20).WithArguments("=>"),
+                Diagnostic(DescriptorFollowedByWhitespace).WithLocation(9, 20).WithArguments("=>"),
 
-                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(10, 14).WithArguments("=>"),
-                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(10, 14).WithArguments("=>"),
+                Diagnostic(DescriptorPrecededByWhitespace).WithLocation(10, 14).WithArguments("=>"),
+                Diagnostic(DescriptorFollowedByWhitespace).WithLocation(10, 14).WithArguments("=>"),
 
-                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(11, 42).WithArguments("=>"),
-                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(11, 42).WithArguments("=>"),
-                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(11, 62).WithArguments("=>"),
-                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(11, 62).WithArguments("=>"),
+                Diagnostic(DescriptorPrecededByWhitespace).WithLocation(11, 42).WithArguments("=>"),
+                Diagnostic(DescriptorFollowedByWhitespace).WithLocation(11, 42).WithArguments("=>"),
+                Diagnostic(DescriptorPrecededByWhitespace).WithLocation(11, 62).WithArguments("=>"),
+                Diagnostic(DescriptorFollowedByWhitespace).WithLocation(11, 62).WithArguments("=>"),
 
-                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(12, 32).WithArguments("=>"),
-                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(12, 32).WithArguments("=>"),
-                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(12, 41).WithArguments("=>"),
-                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(12, 41).WithArguments("=>"),
+                Diagnostic(DescriptorPrecededByWhitespace).WithLocation(12, 32).WithArguments("=>"),
+                Diagnostic(DescriptorFollowedByWhitespace).WithLocation(12, 32).WithArguments("=>"),
+                Diagnostic(DescriptorPrecededByWhitespace).WithLocation(12, 41).WithArguments("=>"),
+                Diagnostic(DescriptorFollowedByWhitespace).WithLocation(12, 41).WithArguments("=>"),
 
-                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(13, 41).WithArguments("=>"),
-                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(13, 41).WithArguments("=>"),
-                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(13, 50).WithArguments("=>"),
-                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(13, 50).WithArguments("=>"),
+                Diagnostic(DescriptorPrecededByWhitespace).WithLocation(13, 41).WithArguments("=>"),
+                Diagnostic(DescriptorFollowedByWhitespace).WithLocation(13, 41).WithArguments("=>"),
+                Diagnostic(DescriptorPrecededByWhitespace).WithLocation(13, 50).WithArguments("=>"),
+                Diagnostic(DescriptorFollowedByWhitespace).WithLocation(13, 50).WithArguments("=>"),
 
-                this.CSharpDiagnostic(DescriptorPrecededByWhitespace).WithLocation(16, 32).WithArguments("=>"),
-                this.CSharpDiagnostic(DescriptorFollowedByWhitespace).WithLocation(16, 32).WithArguments("=>"),
+                Diagnostic(DescriptorPrecededByWhitespace).WithLocation(16, 32).WithArguments("=>"),
+                Diagnostic(DescriptorFollowedByWhitespace).WithLocation(16, 32).WithArguments("=>"),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

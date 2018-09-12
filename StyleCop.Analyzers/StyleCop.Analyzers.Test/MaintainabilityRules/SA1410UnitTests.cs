@@ -3,16 +3,16 @@
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using StyleCop.Analyzers.MaintainabilityRules;
+    using Microsoft.CodeAnalysis.Testing;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.MaintainabilityRules.SA1410RemoveDelegateParenthesisWhenPossible,
+        StyleCop.Analyzers.MaintainabilityRules.SA1410SA1411CodeFixProvider>;
 
-    public class SA1410UnitTests : CodeFixVerifier
+    public class SA1410UnitTests
     {
         [Fact]
         public async Task TestMissingParenthesisAsync()
@@ -24,7 +24,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         System.Func<int> getRandomNumber = delegate { return 3; };
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -37,7 +37,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         System.Func<int, int> getNumber = delegate (int i) { return i; };
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -50,9 +50,9 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         System.Func<int> getRandomNumber = delegate() { return 3; };
     }
 }";
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 52);
+            DiagnosticResult expected = Diagnostic().WithLocation(5, 52);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -74,7 +74,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(oldSource, newSource, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(5, 52);
+            await VerifyCSharpFixAsync(oldSource, expected, newSource, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -96,7 +97,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(oldSource, newSource, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(5, 59);
+            await VerifyCSharpFixAsync(oldSource, expected, newSource, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -145,7 +147,7 @@ public static class TestClassExtensions
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -217,24 +219,14 @@ public static class TestClassExtensions
 
             DiagnosticResult[] expectedResults =
             {
-                this.CSharpDiagnostic().WithLocation(8, 34),
-                this.CSharpDiagnostic().WithLocation(9, 37),
-                this.CSharpDiagnostic().WithLocation(10, 34),
-                this.CSharpDiagnostic().WithLocation(11, 34),
-                this.CSharpDiagnostic().WithLocation(12, 34),
+                Diagnostic().WithLocation(8, 34),
+                Diagnostic().WithLocation(9, 37),
+                Diagnostic().WithLocation(10, 34),
+                Diagnostic().WithLocation(11, 34),
+                Diagnostic().WithLocation(12, 34),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1410RemoveDelegateParenthesisWhenPossible();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1410SA1411CodeFixProvider();
+            await VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

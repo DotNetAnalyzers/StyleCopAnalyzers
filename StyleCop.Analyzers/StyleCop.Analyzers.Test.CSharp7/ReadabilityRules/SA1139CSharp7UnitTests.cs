@@ -5,9 +5,13 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.ReadabilityRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.ReadabilityRules.SA1139UseLiteralSuffixNotationInsteadOfCasting,
+        StyleCop.Analyzers.ReadabilityRules.SA1139CodeFixProvider>;
 
     public class SA1139CSharp7UnitTests : SA1139UnitTests
     {
@@ -50,7 +54,7 @@ class ClassName
     }}
 }}
 ";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -113,11 +117,10 @@ class ClassName
 ";
             DiagnosticResult[] expectedDiagnosticResult =
             {
-                this.CSharpDiagnostic().WithLocation(4, 10 + literalType.Length),
-                this.CSharpDiagnostic().WithLocation(8, 17),
+                Diagnostic().WithLocation(4, 10 + literalType.Length),
+                Diagnostic().WithLocation(8, 17),
             };
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnosticResult, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnosticResult, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -157,7 +160,7 @@ class ClassName
     }}
 }}
 ";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -179,7 +182,7 @@ class ClassName
     }}
 }}
 ";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -205,11 +208,11 @@ class ClassName
 
             DiagnosticResult[] expectedDiagnosticResult =
             {
-                this.CSharpCompilerError("CS0221")
+                DiagnosticResult.CompilerError("CS0221")
                     .WithMessage($"Constant value '{literalValue}' cannot be converted to a '{type}' (use 'unchecked' syntax to override)")
                     .WithLocation(6, 17),
             };
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnosticResult, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expectedDiagnosticResult, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -240,7 +243,7 @@ class ClassName
 }}
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

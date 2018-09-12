@@ -5,9 +5,13 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.LayoutRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1500BracesForMultiLineStatementsMustNotShareLine,
+        StyleCop.Analyzers.LayoutRules.SA1500CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1500BracesForMultiLineStatementsMustNotShareLine"/>.
@@ -81,7 +85,7 @@ public class TestClass
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -225,31 +229,29 @@ public class TestClass
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                this.CSharpDiagnostic().WithLocation(5, 9),
-                this.CSharpDiagnostic().WithLocation(5, 11),
-                this.CSharpDiagnostic().WithLocation(8, 9),
-                this.CSharpDiagnostic().WithLocation(8, 16),
-                this.CSharpDiagnostic().WithLocation(11, 9),
-                this.CSharpDiagnostic().WithLocation(16, 18),
-                this.CSharpDiagnostic().WithLocation(19, 9),
-                this.CSharpDiagnostic().WithLocation(19, 16),
-                this.CSharpDiagnostic().WithLocation(22, 9),
-                this.CSharpDiagnostic().WithLocation(27, 18),
-                this.CSharpDiagnostic().WithLocation(32, 13),
-                this.CSharpDiagnostic().WithLocation(32, 15),
-                this.CSharpDiagnostic().WithLocation(35, 13),
-                this.CSharpDiagnostic().WithLocation(35, 20),
-                this.CSharpDiagnostic().WithLocation(38, 13),
-                this.CSharpDiagnostic().WithLocation(43, 22),
-                this.CSharpDiagnostic().WithLocation(46, 13),
-                this.CSharpDiagnostic().WithLocation(46, 20),
-                this.CSharpDiagnostic().WithLocation(49, 13),
-                this.CSharpDiagnostic().WithLocation(54, 22),
+                Diagnostic().WithLocation(5, 9),
+                Diagnostic().WithLocation(5, 11),
+                Diagnostic().WithLocation(8, 9),
+                Diagnostic().WithLocation(8, 16),
+                Diagnostic().WithLocation(11, 9),
+                Diagnostic().WithLocation(16, 18),
+                Diagnostic().WithLocation(19, 9),
+                Diagnostic().WithLocation(19, 16),
+                Diagnostic().WithLocation(22, 9),
+                Diagnostic().WithLocation(27, 18),
+                Diagnostic().WithLocation(32, 13),
+                Diagnostic().WithLocation(32, 15),
+                Diagnostic().WithLocation(35, 13),
+                Diagnostic().WithLocation(35, 20),
+                Diagnostic().WithLocation(38, 13),
+                Diagnostic().WithLocation(43, 22),
+                Diagnostic().WithLocation(46, 13),
+                Diagnostic().WithLocation(46, 20),
+                Diagnostic().WithLocation(49, 13),
+                Diagnostic().WithLocation(54, 22),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -328,19 +330,17 @@ public class TestClass
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                this.CSharpDiagnostic().WithLocation(5, 9),
-                this.CSharpDiagnostic().WithLocation(5, 16),
-                this.CSharpDiagnostic().WithLocation(8, 9),
-                this.CSharpDiagnostic().WithLocation(13, 18),
-                this.CSharpDiagnostic().WithLocation(18, 13),
-                this.CSharpDiagnostic().WithLocation(18, 20),
-                this.CSharpDiagnostic().WithLocation(21, 13),
-                this.CSharpDiagnostic().WithLocation(26, 22),
+                Diagnostic().WithLocation(5, 9),
+                Diagnostic().WithLocation(5, 16),
+                Diagnostic().WithLocation(8, 9),
+                Diagnostic().WithLocation(13, 18),
+                Diagnostic().WithLocation(18, 13),
+                Diagnostic().WithLocation(18, 20),
+                Diagnostic().WithLocation(21, 13),
+                Diagnostic().WithLocation(26, 22),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -424,14 +424,12 @@ public class TestClass
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                this.CSharpDiagnostic().WithLocation(14, 9),
-                this.CSharpDiagnostic().WithLocation(24, 28),
-                this.CSharpDiagnostic().WithLocation(29, 29),
+                Diagnostic().WithLocation(14, 9),
+                Diagnostic().WithLocation(24, 28),
+                Diagnostic().WithLocation(29, 29),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -514,13 +512,11 @@ public class TestClass
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                this.CSharpDiagnostic().WithLocation(14, 9),
-                this.CSharpDiagnostic().WithLocation(24, 34),
+                Diagnostic().WithLocation(14, 9),
+                Diagnostic().WithLocation(24, 34),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

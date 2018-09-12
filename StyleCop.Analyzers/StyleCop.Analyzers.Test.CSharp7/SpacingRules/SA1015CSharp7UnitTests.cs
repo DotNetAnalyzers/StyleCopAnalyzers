@@ -5,9 +5,13 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.SpacingRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.SpacingRules.SA1015ClosingGenericBracketsMustBeSpacedCorrectly,
+        StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
     public class SA1015CSharp7UnitTests : SA1015UnitTests
     {
@@ -41,14 +45,12 @@ public class Foo
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(7, 19).WithArguments(" not", "preceded"),
-                this.CSharpDiagnostic().WithLocation(7, 19).WithArguments(" not", "followed"),
-                this.CSharpDiagnostic().WithLocation(7, 32).WithArguments(" not", "preceded"),
+                Diagnostic().WithLocation(7, 19).WithArguments(" not", "preceded"),
+                Diagnostic().WithLocation(7, 19).WithArguments(" not", "followed"),
+                Diagnostic().WithLocation(7, 32).WithArguments(" not", "preceded"),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -76,7 +78,7 @@ public class TestClass
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

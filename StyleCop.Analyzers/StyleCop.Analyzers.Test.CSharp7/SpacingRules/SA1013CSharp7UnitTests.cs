@@ -5,9 +5,13 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.SpacingRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.SpacingRules.SA1013ClosingBracesMustBeSpacedCorrectly,
+        StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
     public class SA1013CSharp7UnitTests : SA1013UnitTests
     {
@@ -41,13 +45,11 @@ public class Foo
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(7, 32).WithArguments(string.Empty, "preceded"),
-                this.CSharpDiagnostic().WithLocation(7, 45).WithArguments(string.Empty, "preceded"),
+                Diagnostic().WithLocation(7, 32).WithArguments(string.Empty, "preceded"),
+                Diagnostic().WithLocation(7, 45).WithArguments(string.Empty, "preceded"),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

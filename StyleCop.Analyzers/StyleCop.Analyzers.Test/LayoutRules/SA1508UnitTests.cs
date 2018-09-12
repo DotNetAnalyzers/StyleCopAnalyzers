@@ -6,17 +6,18 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.LayoutRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1508ClosingBracesMustNotBePrecededByBlankLine,
+        StyleCop.Analyzers.LayoutRules.SA1508CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for the <see cref="SA1508ClosingBracesMustNotBePrecededByBlankLine"/> class.
     /// </summary>
-    public class SA1508UnitTests : CodeFixVerifier
+    public class SA1508UnitTests
     {
         public static IEnumerable<object[]> TypeTestData
         {
@@ -52,7 +53,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -97,11 +98,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(13, 13);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic().WithLocation(13, 13);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -143,7 +141,7 @@ to determine the spacing with the close brace.
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -198,11 +196,8 @@ to determine the spacing with the close brace.
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(18, 13);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic().WithLocation(18, 13);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -232,7 +227,7 @@ to determine the spacing with the close brace.
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -281,11 +276,8 @@ to determine the spacing with the close brace.
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(15, 13);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic().WithLocation(15, 13);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -313,7 +305,7 @@ to determine the spacing with the close brace.
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -358,11 +350,8 @@ to determine the spacing with the close brace.
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(13, 13);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic().WithLocation(13, 13);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -397,7 +386,7 @@ to determine the spacing with the close brace.
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -448,11 +437,8 @@ to determine the spacing with the close brace.
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(15, 17);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic().WithLocation(15, 17);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -479,7 +465,7 @@ to determine the spacing with the close brace.
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -522,11 +508,8 @@ to determine the spacing with the close brace.
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(12, 13);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic().WithLocation(12, 13);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -554,7 +537,7 @@ to determine the spacing with the close brace.
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -601,11 +584,8 @@ to determine the spacing with the close brace.
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(14, 13);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic().WithLocation(14, 13);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -623,7 +603,7 @@ to determine the spacing with the close brace.
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -650,11 +630,8 @@ to determine the spacing with the close brace.
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(7, 1);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic().WithLocation(7, 1);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -676,7 +653,7 @@ to determine the spacing with the close brace.
 }}
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -708,11 +685,8 @@ to determine the spacing with the close brace.
 }}
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(7, 5);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic().WithLocation(7, 5);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -732,7 +706,7 @@ to determine the spacing with the close brace.
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -763,11 +737,8 @@ to determine the spacing with the close brace.
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(8, 5);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic().WithLocation(8, 5);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -791,7 +762,7 @@ to determine the spacing with the close brace.
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -826,11 +797,8 @@ to determine the spacing with the close brace.
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic().WithLocation(9, 9);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic().WithLocation(9, 9);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -851,25 +819,13 @@ to determine the spacing with the close brace.
 
             DiagnosticResult[] expected =
             {
-                this.CSharpCompilerError("CS1022").WithMessage("Type or namespace definition, or end-of-file expected").WithLocation(3, 28),
-                this.CSharpCompilerError("CS1513").WithMessage("} expected").WithLocation(3, 28),
-                this.CSharpCompilerError("CS1514").WithMessage("{ expected").WithLocation(3, 28),
-                this.CSharpCompilerError("CS1022").WithMessage("Type or namespace definition, or end-of-file expected").WithLocation(6, 1),
+                DiagnosticResult.CompilerError("CS1022").WithMessage("Type or namespace definition, or end-of-file expected").WithLocation(3, 28),
+                DiagnosticResult.CompilerError("CS1513").WithMessage("} expected").WithLocation(3, 28),
+                DiagnosticResult.CompilerError("CS1514").WithMessage("{ expected").WithLocation(3, 28),
+                DiagnosticResult.CompilerError("CS1022").WithMessage("Type or namespace definition, or end-of-file expected").WithLocation(6, 1),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1508ClosingBracesMustNotBePrecededByBlankLine();
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1508CodeFixProvider();
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

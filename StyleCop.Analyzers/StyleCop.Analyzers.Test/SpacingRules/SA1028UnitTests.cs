@@ -3,21 +3,22 @@
 
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
-    using System.Collections.Generic;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.SpacingRules.SA1028CodeMustNotContainTrailingWhitespace,
+        StyleCop.Analyzers.SpacingRules.SA1028CodeFixProvider>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1028CodeMustNotContainTrailingWhitespace"/> and
     /// <see cref="SA1028CodeFixProvider"/>.
     /// </summary>
-    public class SA1028UnitTests : CodeFixVerifier
+    public class SA1028UnitTests
     {
         [Fact]
         public async Task TrailingWhitespaceAfterStatementAsync()
@@ -44,12 +45,10 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(5, 36),
+                Diagnostic().WithLocation(5, 36),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -69,12 +68,10 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(1, 16),
+                Diagnostic().WithLocation(1, 16),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -90,12 +87,10 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(1, 12),
+                Diagnostic().WithLocation(1, 12),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -117,15 +112,13 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(1, 3),
-                this.CSharpDiagnostic().WithLocation(2, 5),
-                this.CSharpDiagnostic().WithLocation(3, 6),
-                this.CSharpDiagnostic().WithLocation(4, 3),
+                Diagnostic().WithLocation(1, 3),
+                Diagnostic().WithLocation(2, 5),
+                Diagnostic().WithLocation(3, 6),
+                Diagnostic().WithLocation(4, 3),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -147,14 +140,12 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(1, 14),
-                this.CSharpDiagnostic().WithLocation(2, 21),
-                this.CSharpDiagnostic().WithLocation(3, 15),
+                Diagnostic().WithLocation(1, 14),
+                Diagnostic().WithLocation(2, 21),
+                Diagnostic().WithLocation(3, 15),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -180,12 +171,10 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(5, 3),
+                Diagnostic().WithLocation(5, 3),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -208,11 +197,9 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 .Append("}")
                 .ToString();
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 2);
+            DiagnosticResult expected = Diagnostic().WithLocation(3, 2);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -230,7 +217,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 .Append(" }")
                 .ToString();
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -264,21 +251,19 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(1, 13),
-                this.CSharpDiagnostic().WithLocation(2, 13),
-                this.CSharpDiagnostic().WithLocation(3, 14),
-                this.CSharpDiagnostic().WithLocation(4, 8),
-                this.CSharpDiagnostic().WithLocation(5, 10),
-                this.CSharpDiagnostic().WithLocation(6, 6),
-                this.CSharpDiagnostic().WithLocation(7, 7),
-                this.CSharpDiagnostic().WithLocation(8, 22),
-                this.CSharpDiagnostic().WithLocation(9, 20),
-                this.CSharpDiagnostic().WithLocation(10, 11),
+                Diagnostic().WithLocation(1, 13),
+                Diagnostic().WithLocation(2, 13),
+                Diagnostic().WithLocation(3, 14),
+                Diagnostic().WithLocation(4, 8),
+                Diagnostic().WithLocation(5, 10),
+                Diagnostic().WithLocation(6, 6),
+                Diagnostic().WithLocation(7, 7),
+                Diagnostic().WithLocation(8, 22),
+                Diagnostic().WithLocation(9, 20),
+                Diagnostic().WithLocation(10, 11),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -291,7 +276,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 .ToString();
 
             // Note: we verify that no diagnostics are produced inside non-compiled blocks
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -303,7 +288,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 .AppendLine("}")
                 .ToString();
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -321,11 +306,9 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 .AppendLine("/// </summary>")
                 .ToString();
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 10);
+            DiagnosticResult expected = Diagnostic().WithLocation(2, 10);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -356,26 +339,12 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(2, 13),
-                this.CSharpDiagnostic().WithLocation(3, 20),
-                this.CSharpDiagnostic().WithLocation(4, 14),
+                Diagnostic().WithLocation(2, 13),
+                Diagnostic().WithLocation(3, 20),
+                Diagnostic().WithLocation(4, 14),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1028CodeMustNotContainTrailingWhitespace();
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1028CodeFixProvider();
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

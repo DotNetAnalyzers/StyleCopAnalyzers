@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
-    using System.Collections.Generic;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.SpacingRules;
@@ -18,14 +17,8 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             }
         }
 
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1022PositiveSignsMustBeSpacedCorrectly();
-        }
+        protected override DiagnosticAnalyzer Analyzer => new SA1022PositiveSignsMustBeSpacedCorrectly();
 
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new TokenSpacingCodeFixProvider();
-        }
+        protected override CodeFixProvider CodeFix => new TokenSpacingCodeFixProvider();
     }
 }

@@ -8,10 +8,9 @@ namespace StyleCop.Analyzers.Test.Settings
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Microsoft.CodeAnalysis.Host.Mef;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Settings.ObjectModel;
-    using TestHelper;
+    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
 
     public class SettingsUnitTests
@@ -360,7 +359,7 @@ namespace StyleCop.Analyzers.Test.Settings
             var projectId = ProjectId.CreateNewId();
             var documentId = DocumentId.CreateNewId(projectId);
 
-            var solution = DiagnosticVerifier.CreateWorkspace()
+            var solution = GenericAnalyzerTest.CreateWorkspace()
                 .CurrentSolution
                 .AddProject(projectId, TestProjectName, TestProjectName, LanguageNames.CSharp)
                 .AddDocument(documentId, "Test0.cs", SourceText.From(string.Empty));

@@ -3,21 +3,21 @@
 
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
     using StyleCop.Analyzers.Settings.ObjectModel;
+    using StyleCop.Analyzers.Test.Verifiers;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.OrderingRules.SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace"/> for the special case
     /// where <see cref="OrderingSettings.SystemUsingDirectivesFirst"/> is <see langword="false"/>.
     /// </summary>
-    public class SA1210CombinedSystemDirectivesUnitTests : CodeFixVerifier
+    public class SA1210CombinedSystemDirectivesUnitTests
     {
         [Fact]
         public async Task TestProperOrderedUsingDirectivesInNamespaceDeclarationAsync()
@@ -35,7 +35,7 @@ namespace Bar
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(namespaceDeclaration, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(namespaceDeclaration, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -71,14 +71,12 @@ namespace Bar
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(3, 5),
-                this.CSharpDiagnostic().WithLocation(9, 5),
-                this.CSharpDiagnostic().WithLocation(11, 5),
+                Diagnostic().WithLocation(3, 5),
+                Diagnostic().WithLocation(9, 5),
+                Diagnostic().WithLocation(11, 5),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -110,13 +108,11 @@ namespace Food
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(1, 1),
-                this.CSharpDiagnostic().WithLocation(3, 1),
+                Diagnostic().WithLocation(1, 1),
+                Diagnostic().WithLocation(3, 1),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -150,15 +146,13 @@ namespace Food
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(1, 1),
-                this.CSharpDiagnostic().WithLocation(3, 1),
-                this.CSharpDiagnostic().WithLocation(4, 1),
-                this.CSharpDiagnostic().WithLocation(5, 1),
+                Diagnostic().WithLocation(1, 1),
+                Diagnostic().WithLocation(3, 1),
+                Diagnostic().WithLocation(4, 1),
+                Diagnostic().WithLocation(5, 1),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -172,7 +166,7 @@ namespace Food
     using static System.Math;
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(namespaceDeclaration, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(namespaceDeclaration, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -207,17 +201,17 @@ using Microsoft.CodeAnalysis;
             // else block is skipped
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(2, 1),
-                this.CSharpDiagnostic().WithLocation(7, 1),
+                Diagnostic().WithLocation(2, 1),
+                Diagnostic().WithLocation(7, 1),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override string GetSettings()
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+            => VerifyCSharpFixAsync(source, expected, fixedSource: null, cancellationToken);
+
+        private static Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
         {
             const string CombinedUsingDirectivesTestSettings = @"
 {
@@ -229,26 +223,15 @@ using Microsoft.CodeAnalysis;
 }
 ";
 
-            return CombinedUsingDirectivesTestSettings;
-        }
+            var test = new StyleCopCodeFixVerifier<SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace, UsingCodeFixProvider>.CSharpTest
+            {
+                TestCode = source,
+                FixedCode = fixedSource,
+                Settings = CombinedUsingDirectivesTestSettings,
+            };
 
-        /// <inheritdoc/>
-        protected override IEnumerable<string> GetDisabledDiagnostics()
-        {
-            // Using directive appeared previously in this namespace
-            yield return "CS0105";
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace();
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new UsingCodeFixProvider();
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test.RunAsync(cancellationToken);
         }
     }
 }

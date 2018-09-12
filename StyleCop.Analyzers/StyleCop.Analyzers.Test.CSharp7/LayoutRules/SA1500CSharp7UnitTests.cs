@@ -5,9 +5,13 @@ namespace StyleCop.Analyzers.Test.CSharp7.LayoutRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.LayoutRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1500BracesForMultiLineStatementsMustNotShareLine,
+        StyleCop.Analyzers.LayoutRules.SA1500CodeFixProvider>;
 
     public class SA1500CSharp7UnitTests : SA1500UnitTests
     {
@@ -50,7 +54,7 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -141,28 +145,26 @@ public class Foo
             DiagnosticResult[] expectedDiagnostics =
             {
                 // Invalid local function #1
-                this.CSharpDiagnostic().WithLocation(8, 31),
+                Diagnostic().WithLocation(8, 31),
 
                 // Invalid local function #2
-                this.CSharpDiagnostic().WithLocation(12, 31),
+                Diagnostic().WithLocation(12, 31),
 
                 // Invalid local function #3
-                this.CSharpDiagnostic().WithLocation(17, 31),
-                this.CSharpDiagnostic().WithLocation(18, 29),
+                Diagnostic().WithLocation(17, 31),
+                Diagnostic().WithLocation(18, 29),
 
                 // Invalid local function #4
-                this.CSharpDiagnostic().WithLocation(21, 31),
+                Diagnostic().WithLocation(21, 31),
 
                 // Invalid local function #5
-                this.CSharpDiagnostic().WithLocation(27, 29),
+                Diagnostic().WithLocation(27, 29),
 
                 // Invalid local function #6
-                this.CSharpDiagnostic().WithLocation(31, 9),
+                Diagnostic().WithLocation(31, 9),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

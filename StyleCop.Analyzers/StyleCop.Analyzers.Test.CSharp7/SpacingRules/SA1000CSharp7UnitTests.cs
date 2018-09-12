@@ -5,9 +5,13 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.SpacingRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.SpacingRules.SA1000KeywordsMustBeSpacedCorrectly,
+        StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
     public class SA1000CSharp7UnitTests : SA1000UnitTests
     {
@@ -18,9 +22,9 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 
             string statementWithSpace = @"int.TryParse(""0"", out @Int32 x);";
 
-            await this.TestKeywordStatementAsync(statementWithSpace, EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
+            await this.TestKeywordStatementAsync(statementWithSpace, DiagnosticResult.EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("out", string.Empty, "followed").WithLocation(12, 31);
+            DiagnosticResult expected = Diagnostic().WithArguments("out", string.Empty, "followed").WithLocation(12, 31);
 
             await this.TestKeywordStatementAsync(statementWithoutSpace, expected, statementWithSpace).ConfigureAwait(false);
         }
@@ -31,7 +35,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
         {
             string statementWithSpace = @"int.TryParse(""0"", out var _);";
 
-            await this.TestKeywordStatementAsync(statementWithSpace, EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
+            await this.TestKeywordStatementAsync(statementWithSpace, DiagnosticResult.EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
         }
 
         [Fact]
@@ -40,7 +44,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
         {
             string statementWithSpace = @"int.TryParse(""0"", out _);";
 
-            await this.TestKeywordStatementAsync(statementWithSpace, EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
+            await this.TestKeywordStatementAsync(statementWithSpace, DiagnosticResult.EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
         }
 
         [Fact]
@@ -50,9 +54,9 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 
             string statementWithSpace = @"var (a, b) = (2, 3);";
 
-            await this.TestKeywordStatementAsync(statementWithSpace, EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
+            await this.TestKeywordStatementAsync(statementWithSpace, DiagnosticResult.EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("var", string.Empty, "followed").WithLocation(12, 13);
+            DiagnosticResult expected = Diagnostic().WithArguments("var", string.Empty, "followed").WithLocation(12, 13);
 
             await this.TestKeywordStatementAsync(statementWithoutSpace, expected, statementWithSpace).ConfigureAwait(false);
         }
@@ -76,16 +80,16 @@ ref @Int32 Call(ref @Int32 p)
     => ref @p;
 ";
 
-            await this.TestKeywordStatementAsync(statementWithSpace, EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
+            await this.TestKeywordStatementAsync(statementWithSpace, DiagnosticResult.EmptyDiagnosticResults, statementWithSpace).ConfigureAwait(false);
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithArguments("ref", string.Empty, "followed").WithLocation(14, 1),
-                this.CSharpDiagnostic().WithArguments("ref", string.Empty, "followed").WithLocation(14, 15),
-                this.CSharpDiagnostic().WithArguments("ref", string.Empty, "followed").WithLocation(14, 24),
-                this.CSharpDiagnostic().WithArguments("ref", string.Empty, "followed").WithLocation(16, 1),
-                this.CSharpDiagnostic().WithArguments("ref", string.Empty, "followed").WithLocation(16, 16),
-                this.CSharpDiagnostic().WithArguments("ref", string.Empty, "followed").WithLocation(17, 8),
+                Diagnostic().WithArguments("ref", string.Empty, "followed").WithLocation(14, 1),
+                Diagnostic().WithArguments("ref", string.Empty, "followed").WithLocation(14, 15),
+                Diagnostic().WithArguments("ref", string.Empty, "followed").WithLocation(14, 24),
+                Diagnostic().WithArguments("ref", string.Empty, "followed").WithLocation(16, 1),
+                Diagnostic().WithArguments("ref", string.Empty, "followed").WithLocation(16, 16),
+                Diagnostic().WithArguments("ref", string.Empty, "followed").WithLocation(17, 8),
             };
 
             await this.TestKeywordStatementAsync(statementWithoutSpace, expected, statementWithSpace).ConfigureAwait(false);
@@ -133,16 +137,14 @@ namespace TestNamespace
 }
 ";
 
-            DiagnosticResult[] expectedDiagnostics =
+            DiagnosticResult[] expected =
             {
                 // Returns
-                this.CSharpDiagnostic().WithArguments("return", string.Empty, "followed").WithLocation(10, 43),
-                this.CSharpDiagnostic().WithArguments("return", string.Empty, "followed").WithLocation(11, 43),
+                Diagnostic().WithArguments("return", string.Empty, "followed").WithLocation(10, 43),
+                Diagnostic().WithArguments("return", string.Empty, "followed").WithLocation(11, 43),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -181,15 +183,13 @@ namespace TestNamespace
 }
 ";
 
-            DiagnosticResult[] expectedDiagnostics =
+            DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithArguments("new", string.Empty, "followed").WithLocation(7, 21),
-                this.CSharpDiagnostic().WithArguments("new", string.Empty, "followed").WithLocation(8, 21),
+                Diagnostic().WithArguments("new", string.Empty, "followed").WithLocation(7, 21),
+                Diagnostic().WithArguments("new", string.Empty, "followed").WithLocation(8, 21),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -228,15 +228,13 @@ namespace TestNamespace
 }
 ";
 
-            DiagnosticResult[] expectedDiagnostics =
+            DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithArguments("foreach", string.Empty, "followed").WithLocation(7, 13),
-                this.CSharpDiagnostic().WithArguments("foreach", string.Empty, "followed").WithLocation(8, 13),
+                Diagnostic().WithArguments("foreach", string.Empty, "followed").WithLocation(7, 13),
+                Diagnostic().WithArguments("foreach", string.Empty, "followed").WithLocation(8, 13),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

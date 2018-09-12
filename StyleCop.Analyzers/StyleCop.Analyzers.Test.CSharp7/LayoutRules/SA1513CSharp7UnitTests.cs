@@ -5,8 +5,12 @@ namespace StyleCop.Analyzers.Test.CSharp7.LayoutRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.LayoutRules;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1513ClosingBraceMustBeFollowedByBlankLine,
+        StyleCop.Analyzers.LayoutRules.SA1513CodeFixProvider>;
 
     public class SA1513CSharp7UnitTests : SA1513UnitTests
     {
@@ -48,7 +52,7 @@ public class Foo
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -128,16 +132,14 @@ public class Foo
             var expected = new[]
             {
                 // Invalid #1
-                this.CSharpDiagnostic().WithLocation(15, 14),
+                Diagnostic().WithLocation(15, 14),
 
                 // Invalid #2, #3
-                this.CSharpDiagnostic().WithLocation(24, 10),
-                this.CSharpDiagnostic().WithLocation(27, 10),
+                Diagnostic().WithLocation(24, 10),
+                Diagnostic().WithLocation(27, 10),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

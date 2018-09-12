@@ -3,19 +3,22 @@
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
-    using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.MaintainabilityRules;
-    using TestHelper;
     using Xunit;
 
     public abstract class SA1402ForBlockDeclarationUnitTestsBase : FileMayOnlyContainTestBase
     {
         public override bool SupportsCodeFix => true;
+
+        protected override DiagnosticAnalyzer Analyzer => new SA1402FileMayOnlyContainASingleType();
+
+        protected override CodeFixProvider CodeFix => new SA1402CodeFixProvider();
 
         protected SA1402SettingsConfiguration SettingsConfiguration { get; set; } = SA1402SettingsConfiguration.ConfigureAsTopLevelType;
 
@@ -33,23 +36,20 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             var fixedCode = new[]
             {
-                @"%1 Foo<T1>
+                ("Test0.cs", @"%1 Foo<T1>
 {
 }
-",
-                @"%1 Bar<T2, T3>
+"),
+                ("Bar{T2,T3}.cs", @"%1 Bar<T2, T3>
 {
-}",
+}"),
             };
 
             testCode = testCode.Replace("%1", this.Keyword);
-            fixedCode = fixedCode.Select(c => c.Replace("%1", this.Keyword)).ToArray();
+            fixedCode = fixedCode.Select(c => (c.Item1, c.Item2.Replace("%1", this.Keyword))).ToArray();
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, this.Keyword.Length + 2);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(new[] { testCode }, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = this.Diagnostic().WithLocation(4, this.Keyword.Length + 2);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -66,7 +66,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             testCode = testCode.Replace("%1", this.Keyword);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -83,29 +83,26 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             var fixedCode = new[]
             {
-                @"%1 Foo
+                ("Test0.cs", @"%1 Foo
 {
 }
-",
-                @"%1 Bar
+"),
+                ("Bar.cs", @"%1 Bar
 {
-}",
+}"),
             };
 
             testCode = testCode.Replace("%1", this.Keyword);
-            fixedCode = fixedCode.Select(c => c.Replace("%1", this.Keyword)).ToArray();
+            fixedCode = fixedCode.Select(c => (c.Item1, c.Item2.Replace("%1", this.Keyword))).ToArray();
 
             if (this.IsConfiguredAsTopLevelTypeByDefault)
             {
-                DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, this.Keyword.Length + 2);
-
-                await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-                await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-                await this.VerifyCSharpFixAsync(new[] { testCode }, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+                DiagnosticResult expected = this.Diagnostic().WithLocation(4, this.Keyword.Length + 2);
+                await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
             }
             else
             {
-                await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+                await this.VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
             }
         }
 
@@ -120,7 +117,7 @@ public partial {this.Keyword} Foo
 
 }}";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -134,24 +131,20 @@ public partial {this.Keyword} Bar
 
 }}";
 
-            var fixedFileNames = new[] { "Test0.cs", "Bar.cs" };
             var fixedCode = new[]
             {
-                $@"public partial {this.Keyword} Foo
+                ("Test0.cs", $@"public partial {this.Keyword} Foo
 {{
 }}
-",
-                $@"public partial {this.Keyword} Bar
+"),
+                ("Bar.cs", $@"public partial {this.Keyword} Bar
 {{
 
-}}",
+}}"),
             };
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 17 + this.Keyword.Length);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(new[] { testCode }, fixedCode, newFileNames: fixedFileNames, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = this.Diagnostic().WithLocation(4, 17 + this.Keyword.Length);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -164,23 +157,19 @@ public {this.Keyword} Test0
 {{
 }}";
 
-            var fixedFileNames = new[] { "Test0.cs", "Foo.cs" };
             var fixedCode = new[]
             {
-                $@"public {this.Keyword} Test0
+                ("Test0.cs", $@"public {this.Keyword} Test0
 {{
-}}",
-                $@"public {this.Keyword} Foo
+}}"),
+                ("Foo.cs", $@"public {this.Keyword} Foo
 {{
 }}
-",
+"),
             };
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(1, 9 + this.Keyword.Length);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(new[] { testCode }, fixedCode, newFileNames: fixedFileNames, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = this.Diagnostic().WithLocation(1, 9 + this.Keyword.Length);
+            await this.VerifyCSharpFixAsync(testCode, this.GetSettings(), expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -194,22 +183,12 @@ public {this.Keyword} Test0
     }}
 }}";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, this.GetSettings(), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         protected override string GetSettings()
         {
             return this.SettingsConfiguration.GetSettings(this.Keyword);
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1402FileMayOnlyContainASingleType();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1402CodeFixProvider();
         }
     }
 }

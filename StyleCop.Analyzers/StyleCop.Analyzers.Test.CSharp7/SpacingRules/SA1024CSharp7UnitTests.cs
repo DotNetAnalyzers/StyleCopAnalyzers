@@ -5,9 +5,13 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.SpacingRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.SpacingRules.SA1024ColonsMustBeSpacedCorrectly,
+        StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
     public class SA1024CSharp7UnitTests : SA1024UnitTests
     {
@@ -39,15 +43,13 @@ public class Foo
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(7, 25).WithArguments(" not", "preceded", string.Empty),
-                this.CSharpDiagnostic().WithLocation(7, 25).WithArguments(string.Empty, "followed", string.Empty),
-                this.CSharpDiagnostic().WithLocation(7, 31).WithArguments(" not", "preceded", string.Empty),
-                this.CSharpDiagnostic().WithLocation(7, 31).WithArguments(string.Empty, "followed", string.Empty),
+                Diagnostic().WithLocation(7, 25).WithArguments(" not", "preceded", string.Empty),
+                Diagnostic().WithLocation(7, 25).WithArguments(string.Empty, "followed", string.Empty),
+                Diagnostic().WithLocation(7, 31).WithArguments(" not", "preceded", string.Empty),
+                Diagnostic().WithLocation(7, 31).WithArguments(string.Empty, "followed", string.Empty),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -88,13 +90,11 @@ public class Foo
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(9, 35).WithArguments(" not", "preceded", string.Empty),
-                this.CSharpDiagnostic().WithLocation(11, 22).WithArguments(" not", "preceded", string.Empty),
+                Diagnostic().WithLocation(9, 35).WithArguments(" not", "preceded", string.Empty),
+                Diagnostic().WithLocation(11, 22).WithArguments(" not", "preceded", string.Empty),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

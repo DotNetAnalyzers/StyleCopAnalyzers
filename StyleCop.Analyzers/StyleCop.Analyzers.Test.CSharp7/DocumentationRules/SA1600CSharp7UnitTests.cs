@@ -4,14 +4,13 @@
 namespace StyleCop.Analyzers.Test.CSharp7.DocumentationRules
 {
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using StyleCop.Analyzers.Test.DocumentationRules;
     using Xunit;
 
     public class SA1600CSharp7UnitTests : SA1600UnitTests
     {
-        private string currentTestSettings;
+        protected override LanguageVersion LanguageVersion => LanguageVersion.CSharp7_2;
 
         [Fact]
         public async Task TestPrivateProtectedDelegateWithoutDocumentationAsync()
@@ -52,10 +51,10 @@ namespace StyleCop.Analyzers.Test.CSharp7.DocumentationRules
         [Fact]
         public async Task TestPrivateProtectedFieldWithoutDocumentationAsync()
         {
-            await this.TestFieldDeclarationDocumentationAsync("private protected", true, false).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync(testSettings: null, "private protected", true, false).ConfigureAwait(false);
 
             // Re-test with the 'documentPrivateElements' setting enabled (doesn't impact fields)
-            this.currentTestSettings = @"
+            var testSettings = @"
 {
   ""settings"": {
     ""documentationRules"": {
@@ -65,10 +64,10 @@ namespace StyleCop.Analyzers.Test.CSharp7.DocumentationRules
 }
 ";
 
-            await this.TestFieldDeclarationDocumentationAsync("private protected", true, false).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync(testSettings, "private protected", true, false).ConfigureAwait(false);
 
             // Re-test with the 'documentInternalElements' setting disabled (does impact fields)
-            this.currentTestSettings = @"
+            testSettings = @"
 {
   ""settings"": {
     ""documentationRules"": {
@@ -78,10 +77,10 @@ namespace StyleCop.Analyzers.Test.CSharp7.DocumentationRules
 }
 ";
 
-            await this.TestFieldDeclarationDocumentationAsync("private protected", false, false).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync(testSettings, "private protected", false, false).ConfigureAwait(false);
 
             // Re-test with the 'documentPrivateFields' setting enabled (does impact fields)
-            this.currentTestSettings = @"
+            testSettings = @"
 {
   ""settings"": {
     ""documentationRules"": {
@@ -91,16 +90,16 @@ namespace StyleCop.Analyzers.Test.CSharp7.DocumentationRules
 }
 ";
 
-            await this.TestFieldDeclarationDocumentationAsync("private protected", true, false).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync(testSettings, "private protected", true, false).ConfigureAwait(false);
         }
 
         [Fact]
         public async Task TestPrivateProtectedFieldWithDocumentationAsync()
         {
-            await this.TestFieldDeclarationDocumentationAsync("private protected", false, true).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync(testSettings: null, "private protected", false, true).ConfigureAwait(false);
 
             // Re-test with the 'documentPrivateElements' setting enabled (doesn't impact fields)
-            this.currentTestSettings = @"
+            var testSettings = @"
 {
   ""settings"": {
     ""documentationRules"": {
@@ -110,10 +109,10 @@ namespace StyleCop.Analyzers.Test.CSharp7.DocumentationRules
 }
 ";
 
-            await this.TestFieldDeclarationDocumentationAsync("private protected", false, true).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync(testSettings, "private protected", false, true).ConfigureAwait(false);
 
             // Re-test with the 'documentInternalElements' setting disabled (does impact fields)
-            this.currentTestSettings = @"
+            testSettings = @"
 {
   ""settings"": {
     ""documentationRules"": {
@@ -123,10 +122,10 @@ namespace StyleCop.Analyzers.Test.CSharp7.DocumentationRules
 }
 ";
 
-            await this.TestFieldDeclarationDocumentationAsync("private protected", false, true).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync(testSettings, "private protected", false, true).ConfigureAwait(false);
 
             // Re-test with the 'documentPrivateFields' setting enabled (does impact fields)
-            this.currentTestSettings = @"
+            testSettings = @"
 {
   ""settings"": {
     ""documentationRules"": {
@@ -136,7 +135,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.DocumentationRules
 }
 ";
 
-            await this.TestFieldDeclarationDocumentationAsync("private protected", false, true).ConfigureAwait(false);
+            await this.TestFieldDeclarationDocumentationAsync(testSettings, "private protected", false, true).ConfigureAwait(false);
         }
 
         [Fact]
@@ -185,18 +184,6 @@ namespace StyleCop.Analyzers.Test.CSharp7.DocumentationRules
         public async Task TestPrivateProtectedEventFieldWithDocumentationAsync()
         {
             await this.TestEventFieldDeclarationDocumentationAsync("private protected", false, true).ConfigureAwait(false);
-        }
-
-        protected override string GetSettings()
-        {
-            return this.currentTestSettings ?? base.GetSettings();
-        }
-
-        protected override Project CreateProjectImpl(string[] sources, string language, string[] filenames)
-        {
-            var project = base.CreateProjectImpl(sources, language, filenames);
-            var parseOptions = (CSharpParseOptions)project.ParseOptions;
-            return project.WithParseOptions(parseOptions.WithLanguageVersion(LanguageVersion.CSharp7_2));
         }
 
         protected override async Task TestTypeWithoutDocumentationAsync(string type, bool isInterface)

@@ -9,12 +9,13 @@ namespace StyleCop.Analyzers.Test.HelperTests
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Formatting;
-    using Microsoft.CodeAnalysis.Host.Mef;
+    using Microsoft.CodeAnalysis.Testing;
+    using Microsoft.CodeAnalysis.Testing.Verifiers;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.Test.Helpers;
-    using TestHelper;
+    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
 
     /// <summary>
@@ -142,7 +143,7 @@ namespace StyleCop.Analyzers.Test.HelperTests
 
         private static Document CreateTestDocument(string source, int indentationSize = 4, bool useTabs = false, int tabSize = 4)
         {
-            var workspace = DiagnosticVerifier.CreateWorkspace();
+            var workspace = GenericAnalyzerTest.CreateWorkspace();
             workspace.Options = workspace.Options
                 .WithChangedOption(FormattingOptions.IndentationSize, LanguageNames.CSharp, indentationSize)
                 .WithChangedOption(FormattingOptions.UseTabs, LanguageNames.CSharp, useTabs)
@@ -158,7 +159,7 @@ namespace StyleCop.Analyzers.Test.HelperTests
                 .AddMetadataReference(projectId, MetadataReferences.CorlibReference)
                 .AddMetadataReference(projectId, MetadataReferences.SystemReference)
                 .AddMetadataReference(projectId, MetadataReferences.SystemCoreReference)
-                .AddMetadataReference(projectId, MetadataReferences.CSharpSymbolsReference)
+                .AddMetadataReference(projectId, GenericAnalyzerTest.CSharpSymbolsReference)
                 .AddMetadataReference(projectId, MetadataReferences.CodeAnalysisReference)
                 .AddDocument(documentId, TestFilename, SourceText.From(source));
 

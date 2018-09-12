@@ -9,14 +9,14 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using Microsoft.CodeAnalysis.Text;
-    using TestHelper;
+    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
 
-    public abstract class DebugMessagesUnitTestsBase : DiagnosticVerifier
+    public abstract class DebugMessagesUnitTestsBase
     {
-        protected bool IncludeSystemDll { get; set; } = true;
-
         protected abstract string MethodName
         {
             get;
@@ -26,6 +26,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         {
             get;
         }
+
+        protected abstract DiagnosticAnalyzer Analyzer { get; }
 
         [Fact]
         public async Task TestConstantMessage_Field_PassAsync()
@@ -42,16 +44,10 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         [Fact]
         public async Task TestConstantMessage_Field_PassWrongTypeAsync()
         {
-            LinePosition linePosition = new LinePosition(4, 28);
+            LinePosition linePosition = new LinePosition(3, 27);
             DiagnosticResult[] expected =
             {
-                new DiagnosticResult
-                {
-                    Id = "CS0029",
-                    Message = "Cannot implicitly convert type 'int' to 'string'",
-                    Severity = DiagnosticSeverity.Error,
-                    Spans = new[] { new FileLinePositionSpan("Test0.cs", linePosition, linePosition) },
-                },
+                DiagnosticResult.CompilerError("CS0029").WithSpan(new FileLinePositionSpan("Test0.cs", linePosition, linePosition)).WithMessage("Cannot implicitly convert type 'int' to 'string'"),
             };
 
             await this.TestConstantMessage_Field_PassExecuterAsync("3", expected).ConfigureAwait(false);
@@ -72,16 +68,10 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         [Fact]
         public async Task TestConstantMessage_Local_PassWrongTypeAsync()
         {
-            LinePosition linePosition = new LinePosition(6, 32);
+            LinePosition linePosition = new LinePosition(5, 31);
             DiagnosticResult[] expected =
             {
-                new DiagnosticResult
-                {
-                    Id = "CS0029",
-                    Message = "Cannot implicitly convert type 'int' to 'string'",
-                    Severity = DiagnosticSeverity.Error,
-                    Spans = new[] { new FileLinePositionSpan("Test0.cs", linePosition, linePosition) },
-                },
+                DiagnosticResult.CompilerError("CS0029").WithSpan(new FileLinePositionSpan("Test0.cs", linePosition, linePosition)).WithMessage("Cannot implicitly convert type 'int' to 'string'"),
             };
 
             await this.TestConstantMessage_Local_PassExecuterAsync("3", expected).ConfigureAwait(false);
@@ -102,16 +92,10 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         [Fact]
         public async Task TestConstantMessage_Inline_PassWrongTypeAsync()
         {
-            LinePosition linePosition = new LinePosition(6, 16 + this.MethodName.Length + this.InitialArguments.Sum(i => i.Length + ", ".Length));
+            LinePosition linePosition = new LinePosition(5, 15 + this.MethodName.Length + this.InitialArguments.Sum(i => i.Length + ", ".Length));
             DiagnosticResult[] expected =
             {
-                new DiagnosticResult
-                {
-                    Id = "CS1503",
-                    Message = $"Argument {1 + this.InitialArguments.Count()}: cannot convert from 'int' to 'string'",
-                    Severity = DiagnosticSeverity.Error,
-                    Spans = new[] { new FileLinePositionSpan("Test0.cs", linePosition, linePosition) },
-                },
+                DiagnosticResult.CompilerError("CS1503").WithSpan(new FileLinePositionSpan("Test0.cs", linePosition, linePosition)).WithMessage($"Argument {1 + this.InitialArguments.Count()}: cannot convert from 'int' to 'string'"),
             };
 
             await this.TestConstantMessage_Inline_PassExecuterAsync("3", expected).ConfigureAwait(false);
@@ -202,7 +186,7 @@ public class Foo
     }}
 }}";
 
-            await this.VerifyCSharpDiagnosticAsync(this.BuildTestCode(testCode), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(this.BuildTestCode(testCode), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -230,7 +214,7 @@ class Debug
 }}
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(this.BuildTestCode(testCode), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(this.BuildTestCode(testCode), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -245,7 +229,7 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -268,14 +252,43 @@ public class Foo
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(8, 9),
-                this.CSharpDiagnostic().WithLocation(9, 9),
-                this.CSharpDiagnostic().WithLocation(10, 9),
-                this.CSharpDiagnostic().WithLocation(11, 9),
-                this.CSharpDiagnostic().WithLocation(12, 9),
+                this.Diagnostic().WithLocation(8, 9),
+                this.Diagnostic().WithLocation(9, 9),
+                this.Diagnostic().WithLocation(10, 9),
+                this.Diagnostic().WithLocation(11, 9),
+                this.Diagnostic().WithLocation(12, 9),
             };
 
             await this.VerifyCSharpDiagnosticAsync(this.BuildTestCode(testCode), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected DiagnosticResult Diagnostic()
+            => new DiagnosticResult(this.Analyzer.SupportedDiagnostics.Single());
+
+        protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
+            => this.VerifyCSharpDiagnosticAsync(source, new[] { expected }, includeSystemDll: true, cancellationToken);
+
+        protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+            => this.VerifyCSharpDiagnosticAsync(source, expected, includeSystemDll: true, cancellationToken);
+
+        protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, bool includeSystemDll, CancellationToken cancellationToken)
+        {
+            var test = new CSharpTest(this)
+            {
+                TestCode = source,
+            };
+
+            if (!includeSystemDll)
+            {
+                test.SolutionTransforms.Add((solution, projectId) =>
+                {
+                    var references = solution.GetProject(projectId).MetadataReferences;
+                    return solution.WithProjectMetadataReferences(projectId, references.Where(x => !x.Display.Contains("System.dll")));
+                });
+            }
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test.RunAsync(cancellationToken);
         }
 
         protected virtual string BuildTestCode(string format)
@@ -297,22 +310,6 @@ public class Foo
             }
 
             return string.Format(format, this.MethodName, argumentList);
-        }
-
-        protected override Solution CreateSolution(ProjectId projectId, string language)
-        {
-            Solution solution = base.CreateSolution(projectId, language);
-
-            if (this.IncludeSystemDll)
-            {
-                return solution;
-            }
-            else
-            {
-                IEnumerable<MetadataReference> references = solution.Projects.First().MetadataReferences;
-
-                return solution.WithProjectMetadataReferences(solution.ProjectIds[0], references.Where(x => !x.Display.Contains("System.dll")));
-            }
         }
 
         private async Task TestConstantMessage_Field_PassExecuterAsync(string argument, params DiagnosticResult[] expected)
@@ -371,8 +368,7 @@ public class Foo
     }}}}
 }}}}";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 9);
-
+            DiagnosticResult expected = this.Diagnostic().WithLocation(7, 9);
             await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -388,8 +384,7 @@ public class Foo
     }}}}
 }}}}";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 9);
-
+            DiagnosticResult expected = this.Diagnostic().WithLocation(7, 9);
             await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -404,9 +399,23 @@ public class Foo
     }}}}
 }}}}";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 9);
-
+            DiagnosticResult expected = this.Diagnostic().WithLocation(6, 9);
             await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        private class CSharpTest : StyleCopDiagnosticVerifier<EmptyAnalyzer>.CSharpTest
+        {
+            private readonly DebugMessagesUnitTestsBase testFixture;
+
+            public CSharpTest(DebugMessagesUnitTestsBase testFixture)
+            {
+                this.testFixture = testFixture;
+            }
+
+            protected override IEnumerable<DiagnosticAnalyzer> GetDiagnosticAnalyzers()
+            {
+                yield return this.testFixture.Analyzer;
+            }
         }
     }
 }

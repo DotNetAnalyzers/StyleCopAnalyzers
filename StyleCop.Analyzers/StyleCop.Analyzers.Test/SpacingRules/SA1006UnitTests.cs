@@ -3,20 +3,21 @@
 
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.SpacingRules.SA1006PreprocessorKeywordsMustNotBePrecededBySpace,
+        StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1006PreprocessorKeywordsMustNotBePrecededBySpace"/> and
     /// <see cref="TokenSpacingCodeFixProvider"/>.
     /// </summary>
-    public class SA1006UnitTests : CodeFixVerifier
+    public class SA1006UnitTests
     {
         [Fact]
         public async Task TestRegionDirectivesAsync()
@@ -45,13 +46,11 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithArguments("region").WithLocation(4, 7),
-                this.CSharpDiagnostic().WithArguments("endregion").WithLocation(8, 8),
+                Diagnostic().WithArguments("region").WithLocation(4, 7),
+                Diagnostic().WithArguments("endregion").WithLocation(8, 8),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -93,17 +92,15 @@ more invalid text
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithArguments("if").WithLocation(4, 3),
-                this.CSharpDiagnostic().WithArguments("pragma").WithLocation(5, 3),
-                this.CSharpDiagnostic().WithArguments("elif").WithLocation(9, 4),
-                this.CSharpDiagnostic().WithArguments("pragma").WithLocation(10, 3),
-                this.CSharpDiagnostic().WithArguments("else").WithLocation(12, 3),
-                this.CSharpDiagnostic().WithArguments("endif").WithLocation(14, 5),
+                Diagnostic().WithArguments("if").WithLocation(4, 3),
+                Diagnostic().WithArguments("pragma").WithLocation(5, 3),
+                Diagnostic().WithArguments("elif").WithLocation(9, 4),
+                Diagnostic().WithArguments("pragma").WithLocation(10, 3),
+                Diagnostic().WithArguments("else").WithLocation(12, 3),
+                Diagnostic().WithArguments("endif").WithLocation(14, 5),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -115,19 +112,8 @@ class ClassName
 }
 # ";
 
-            DiagnosticResult expected = this.CSharpCompilerError("CS1024").WithMessage("Preprocessor directive expected").WithLocation(5, 1);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1006PreprocessorKeywordsMustNotBePrecededBySpace();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new TokenSpacingCodeFixProvider();
+            DiagnosticResult expected = DiagnosticResult.CompilerError("CS1024").WithMessage("Preprocessor directive expected").WithLocation(5, 1);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

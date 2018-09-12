@@ -3,20 +3,19 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
-    using StyleCop.Analyzers.Test.Helpers;
+    using StyleCop.Analyzers.Test.Verifiers;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1608ElementDocumentationMustNotHaveDefaultSummary>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1608ElementDocumentationMustNotHaveDefaultSummary"/>.
     /// </summary>
-    public class SA1608UnitTests : DiagnosticVerifier
+    public class SA1608UnitTests
     {
         [Theory]
         [InlineData("class")]
@@ -28,7 +27,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 {0} TypeName
 {{
 }}";
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -44,7 +43,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 {0} TypeName
 {{
 }}";
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -60,7 +59,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 {0} TypeName
 {{
 }}";
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -74,7 +73,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 {0} TypeName
 {{
 }}";
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -91,7 +90,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 TypeName
 {{
 }}";
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -108,7 +107,7 @@ partial {0}
 TypeName
 {{
 }}";
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -125,9 +124,9 @@ public {typeName} ClassName
 {{
 }}";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 5);
+            DiagnosticResult expected = Diagnostic().WithLocation(2, 5);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -142,9 +141,9 @@ public class ClassName
 {
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(2, 5);
+            DiagnosticResult expected = Diagnostic().WithLocation(2, 5);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -155,7 +154,7 @@ public class ClassName
 public class ClassName
 {
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -166,7 +165,7 @@ public class ClassName
 public class ClassName
 {
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -178,22 +177,20 @@ public class ClassName
 {
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 14);
+            DiagnosticResult expected = Diagnostic().WithLocation(3, 14);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override Project ApplyCompilationOptions(Project project)
-        {
-            var resolver = new TestXmlReferenceResolver();
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
+            => VerifyCSharpDiagnosticAsync(source, new[] { expected }, cancellationToken);
 
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        {
             string contentWithoutSummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <ClassName>
 </ClassName>
 ";
-            resolver.XmlReferences.Add("ClassWithoutSummary.xml", contentWithoutSummary);
-
             string contentWithSummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <ClassName>
   <summary>
@@ -201,8 +198,6 @@ public class ClassName
   </summary>
 </ClassName>
 ";
-            resolver.XmlReferences.Add("ClassWithSummary.xml", contentWithSummary);
-
             string contentWithDefaultSummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <ClassName>
   <summary>
@@ -210,17 +205,20 @@ public class ClassName
   </summary>
 </ClassName>
 ";
-            resolver.XmlReferences.Add("ClassWithDefaultSummary.xml", contentWithDefaultSummary);
 
-            project = base.ApplyCompilationOptions(project);
-            project = project.WithCompilationOptions(project.CompilationOptions.WithXmlReferenceResolver(resolver));
-            return project;
-        }
+            var test = new StyleCopDiagnosticVerifier<SA1608ElementDocumentationMustNotHaveDefaultSummary>.CSharpTest
+            {
+                TestCode = source,
+                XmlReferences =
+                {
+                    { "ClassWithoutSummary.xml", contentWithoutSummary },
+                    { "ClassWithSummary.xml", contentWithSummary },
+                    { "ClassWithDefaultSummary.xml", contentWithDefaultSummary },
+                },
+            };
 
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1608ElementDocumentationMustNotHaveDefaultSummary();
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test.RunAsync(cancellationToken);
         }
     }
 }

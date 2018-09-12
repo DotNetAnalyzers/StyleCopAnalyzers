@@ -3,21 +3,21 @@
 
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
     using StyleCop.Analyzers.Settings.ObjectModel;
+    using StyleCop.Analyzers.Test.Verifiers;
     using TestHelper;
     using Xunit;
+    using static CombinedUsingDirectivesVerifier;
 
     /// <summary>
     /// Unit tests for the <see cref="UsingCodeFixProvider"/> for the special case where
     /// <see cref="OrderingSettings.BlankLinesBetweenUsingGroups"/> is <see cref="OptionSetting.Require"/>.
     /// </summary>
-    public class UsingCodeFixProviderGroupSeparationUnitTests : CodeFixVerifier
+    public class UsingCodeFixProviderGroupSeparationUnitTests
     {
         private bool usingsInsideNamespace = true;
         private bool? systemUsingDirectivesFirst;
@@ -68,8 +68,25 @@ namespace Foo
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(1, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(2, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(3, 1),
+                StyleCopDiagnosticVerifier<SA1216UsingStaticDirectivesMustBePlacedAtTheCorrectLocation>.Diagnostic().WithLocation(3, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(4, 1),
+                StyleCopDiagnosticVerifier<SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives>.Diagnostic().WithLocation(4, 1).WithArguments("System", "System.Math"),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(5, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(6, 1),
+                StyleCopDiagnosticVerifier<SA1209UsingAliasDirectivesMustBePlacedAfterOtherUsingDirectives>.Diagnostic().WithLocation(6, 1),
+                StyleCopDiagnosticVerifier<SA1211UsingAliasDirectivesMustBeOrderedAlphabeticallyByAliasName>.Diagnostic().WithLocation(6, 1).WithArguments("MyFunc", "SystemAction"),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(7, 1),
+                StyleCopDiagnosticVerifier<SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives>.Diagnostic().WithLocation(7, 1).WithArguments("System.Collections.Generic", "System.Math"),
+                StyleCopDiagnosticVerifier<SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace>.Diagnostic().WithLocation(7, 1),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorInside).WithLocation(8, 1),
+                StyleCopDiagnosticVerifier<SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives>.Diagnostic().WithLocation(8, 1).WithArguments("System.Collections", "System.Math"),
+            };
+            await this.VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -115,16 +132,32 @@ namespace Foo
 ";
 
             this.usingsInsideNamespace = false;
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(3, 5),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(4, 5),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(5, 5),
+                StyleCopDiagnosticVerifier<SA1216UsingStaticDirectivesMustBePlacedAtTheCorrectLocation>.Diagnostic().WithLocation(5, 5),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(6, 5),
+                StyleCopDiagnosticVerifier<SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives>.Diagnostic().WithLocation(6, 5).WithArguments("System", "System.Math"),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(7, 5),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(8, 5),
+                StyleCopDiagnosticVerifier<SA1209UsingAliasDirectivesMustBePlacedAfterOtherUsingDirectives>.Diagnostic().WithLocation(8, 5),
+                StyleCopDiagnosticVerifier<SA1211UsingAliasDirectivesMustBeOrderedAlphabeticallyByAliasName>.Diagnostic().WithLocation(8, 5).WithArguments("MyFunc", "SystemAction"),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(9, 5),
+                StyleCopDiagnosticVerifier<SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives>.Diagnostic().WithLocation(9, 5).WithArguments("System.Collections.Generic", "System.Math"),
+                StyleCopDiagnosticVerifier<SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace>.Diagnostic().WithLocation(9, 5),
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(10, 5),
+                StyleCopDiagnosticVerifier<SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives>.Diagnostic().WithLocation(10, 5).WithArguments("System.Collections", "System.Math"),
+            };
+            await this.VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override string GetSettings()
+        private Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
         {
             var systemUsingDirectivesFirst = this.systemUsingDirectivesFirst ?? true;
 
-            return $@"
+            var testSettings = $@"
 {{
     ""settings"": {{
         ""orderingRules"": {{
@@ -135,24 +168,16 @@ namespace Foo
     }}
 }}
 ";
-        }
 
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1200UsingDirectivesMustBePlacedCorrectly();
-            yield return new SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives();
-            yield return new SA1209UsingAliasDirectivesMustBePlacedAfterOtherUsingDirectives();
-            yield return new SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace();
-            yield return new SA1211UsingAliasDirectivesMustBeOrderedAlphabeticallyByAliasName();
-            yield return new SA1216UsingStaticDirectivesMustBePlacedAtTheCorrectLocation();
-            yield return new SA1217UsingStaticDirectivesMustBeOrderedAlphabetically();
-        }
+            var test = new CSharpTest
+            {
+                TestCode = source,
+                FixedCode = fixedSource,
+                Settings = testSettings,
+            };
 
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new UsingCodeFixProvider();
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test.RunAsync(cancellationToken);
         }
     }
 }

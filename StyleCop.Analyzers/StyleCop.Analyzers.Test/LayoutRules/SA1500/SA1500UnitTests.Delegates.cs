@@ -5,9 +5,13 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.LayoutRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1500BracesForMultiLineStatementsMustNotShareLine,
+        StyleCop.Analyzers.LayoutRules.SA1500CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1500BracesForMultiLineStatementsMustNotShareLine"/>.
@@ -80,7 +84,7 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -245,47 +249,45 @@ public class Foo
             DiagnosticResult[] expectedDiagnostics =
             {
                 // Invalid delegate #1
-                this.CSharpDiagnostic().WithLocation(14, 37),
+                Diagnostic().WithLocation(14, 37),
 
                 // Invalid delegate #2
-                this.CSharpDiagnostic().WithLocation(18, 37),
+                Diagnostic().WithLocation(18, 37),
 
                 // Invalid delegate #3
-                this.CSharpDiagnostic().WithLocation(23, 37),
-                this.CSharpDiagnostic().WithLocation(24, 29),
+                Diagnostic().WithLocation(23, 37),
+                Diagnostic().WithLocation(24, 29),
 
                 // Invalid delegate #4
-                this.CSharpDiagnostic().WithLocation(27, 37),
+                Diagnostic().WithLocation(27, 37),
 
                 // Invalid delegate #5
-                this.CSharpDiagnostic().WithLocation(33, 29),
+                Diagnostic().WithLocation(33, 29),
 
                 // Invalid delegate #6
-                this.CSharpDiagnostic().WithLocation(37, 9),
+                Diagnostic().WithLocation(37, 9),
 
                 // Invalid delegate #7
-                this.CSharpDiagnostic().WithLocation(41, 34),
+                Diagnostic().WithLocation(41, 34),
 
                 // Invalid delegate #8
-                this.CSharpDiagnostic().WithLocation(45, 34),
+                Diagnostic().WithLocation(45, 34),
 
                 // Invalid delegate #9
-                this.CSharpDiagnostic().WithLocation(50, 34),
-                this.CSharpDiagnostic().WithLocation(51, 29),
+                Diagnostic().WithLocation(50, 34),
+                Diagnostic().WithLocation(51, 29),
 
                 // Invalid delegate #10
-                this.CSharpDiagnostic().WithLocation(54, 34),
+                Diagnostic().WithLocation(54, 34),
 
                 // Invalid delegate #11
-                this.CSharpDiagnostic().WithLocation(60, 29),
+                Diagnostic().WithLocation(60, 29),
 
                 // Invalid delegate #12
-                this.CSharpDiagnostic().WithLocation(64, 9),
+                Diagnostic().WithLocation(64, 9),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

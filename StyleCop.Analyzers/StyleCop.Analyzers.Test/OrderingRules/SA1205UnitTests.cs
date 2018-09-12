@@ -6,16 +6,17 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.OrderingRules.SA1205PartialElementsMustDeclareAccess,
+        StyleCop.Analyzers.OrderingRules.SA1205CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for the <see cref="SA1205PartialElementsMustDeclareAccess"/> class.
     /// </summary>
-    public class SA1205UnitTests : CodeFixVerifier
+    public class SA1205UnitTests
     {
         private const string TestCodeTemplate = @"$$ Foo
 {
@@ -93,7 +94,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
         public async Task TestValidDeclarationAsync(string declaration)
         {
             var testCode = TestCodeTemplate.Replace("$$", declaration);
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -108,9 +109,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
             var testCode = TestCodeTemplate.Replace("$$", declaration);
             var fixedTestCode = FixedTestCodeTemplate.Replace("##", "internal").Replace("$$", declaration);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, this.CSharpDiagnostic().WithLocation(1, 2 + declaration.Length), CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(1, 2 + declaration.Length), fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -142,9 +141,7 @@ public partial class Foo
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, this.CSharpDiagnostic().WithLocation(6, 15), CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(6, 15), fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -182,9 +179,7 @@ public partial class Foo
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, this.CSharpDiagnostic().WithLocation(9, 15), CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(9, 15), fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -207,7 +202,7 @@ internal static partial class TestPartial
 }}
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -237,9 +232,7 @@ public class Foo
 }}
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, this.CSharpDiagnostic().WithLocation(4, 6 + declaration.Length), CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(4, 6 + declaration.Length), fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -278,21 +271,7 @@ public class Foo
 }}
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, this.CSharpDiagnostic().WithLocation(8, 14 + typeKeyword.Length), CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1205PartialElementsMustDeclareAccess();
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1205CodeFixProvider();
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(8, 14 + typeKeyword.Length), fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

@@ -3,18 +3,18 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1602EnumerationItemsMustBeDocumented>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1602EnumerationItemsMustBeDocumented"/>.
     /// </summary>
-    public class SA1602UnitTests : DiagnosticVerifier
+    public class SA1602UnitTests
     {
         [Fact]
         public async Task TestEnumWithDocumentationAsync()
@@ -30,7 +30,7 @@ enum TypeName
     /// </summary>
     Bar
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -42,9 +42,9 @@ enum TypeName
     Bar
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 5);
+            DiagnosticResult expected = Diagnostic().WithLocation(4, 5);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -59,7 +59,7 @@ class ClassName
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -77,14 +77,9 @@ enum TypeName
     Bar
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 5);
+            DiagnosticResult expected = Diagnostic().WithLocation(10, 5);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1602EnumerationItemsMustBeDocumented();
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

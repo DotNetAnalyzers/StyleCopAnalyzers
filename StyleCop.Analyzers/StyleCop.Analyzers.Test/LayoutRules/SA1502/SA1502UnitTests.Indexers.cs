@@ -5,14 +5,17 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.LayoutRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1502ElementMustNotBeOnASingleLine,
+        StyleCop.Analyzers.LayoutRules.SA1502CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for the indexers part of <see cref="SA1502ElementMustNotBeOnASingleLine"/>.
     /// </summary>
-    public partial class SA1502UnitTests : CodeFixVerifier
+    public partial class SA1502UnitTests
     {
         /// <summary>
         /// Verifies that valid indexers will pass without diagnostic.
@@ -37,7 +40,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -52,8 +55,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     public bool this[int index] { get { return true; } }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(3, 33);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(3, 33);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -69,8 +72,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     { get { return true; } }
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(4, 5);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(4, 5);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -86,7 +89,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     get { return true; } }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -101,7 +104,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     public bool this[int index] => index > 0;
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -123,7 +126,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(3, 33);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -146,7 +150,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(4, 5);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -168,7 +173,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     } /* TR11 */
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(3, 43);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

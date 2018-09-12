@@ -6,14 +6,13 @@ namespace StyleCop.Analyzers.Test
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<TestHelper.ExclusionTestAnalyzer>;
 
     /// <summary>
     /// Unit tests for testing exclusion of auto generated files.
     /// </summary>
-    public class ExclusionTests : DiagnosticVerifier
+    public class ExclusionTests
     {
         /// <summary>
         /// Gets the statements that will be used in the theory test cases.
@@ -62,7 +61,13 @@ namespace StyleCop.Analyzers.Test
         [MemberData(nameof(ShouldBeExcluded))]
         public async Task TestIsExcludedAsync(string filename, string testCode)
         {
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None, filename: filename).ConfigureAwait(false);
+            await new CSharpTest
+            {
+                TestSources =
+                {
+                    (filename, testCode),
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -75,15 +80,19 @@ namespace StyleCop.Analyzers.Test
         [MemberData(nameof(ShouldNotBeExcluded))]
         public async Task TestIsNotExcludedAsync(string filename, string testCode)
         {
-            var result = this.CSharpDiagnostic().WithLocation(filename, 1, 1);
+            var result = Diagnostic().WithLocation(filename, 1, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, result, CancellationToken.None, filename: filename).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new ExclusionTestAnalyzer();
+            await new CSharpTest
+            {
+                TestSources =
+                {
+                    (filename, testCode),
+                },
+                ExpectedDiagnostics =
+                {
+                    result,
+                },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

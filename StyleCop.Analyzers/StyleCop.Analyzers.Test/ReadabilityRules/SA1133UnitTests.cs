@@ -3,19 +3,20 @@
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.ReadabilityRules.SA1133DoNotCombineAttributes,
+        StyleCop.Analyzers.ReadabilityRules.SA1133CodeFixProvider>;
 
     /// <summary>
     /// This class contains unit tests for the <see cref="SA1133DoNotCombineAttributes"/> class.
     /// </summary>
-    public class SA1133UnitTests : CodeFixVerifier
+    public class SA1133UnitTests
     {
         /// <summary>
         /// Verifies that a single attribute will not produce a diagnostic.
@@ -31,7 +32,7 @@ public class TestClass
 {
 }
 ";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -48,7 +49,7 @@ public class TestClass
 {
 }
 ";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -93,13 +94,11 @@ public class TestClass
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(3, 47),
-                this.CSharpDiagnostic().WithLocation(9, 51),
+                Diagnostic().WithLocation(3, 47),
+                Diagnostic().WithLocation(9, 51),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -155,14 +154,12 @@ public class TestClass
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(3, 47),
-                this.CSharpDiagnostic().WithLocation(7, 20),
-                this.CSharpDiagnostic().WithLocation(14, 51),
+                Diagnostic().WithLocation(3, 47),
+                Diagnostic().WithLocation(7, 20),
+                Diagnostic().WithLocation(14, 51),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -205,12 +202,10 @@ public class Ear : Attribute
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(line, column),
+                Diagnostic().WithLocation(line, column),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(codeBefore, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(codeAfter, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(codeBefore, codeAfter).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(codeBefore, expected, codeAfter, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -268,12 +263,10 @@ public class Ear : Attribute
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(7, 15),
+                Diagnostic().WithLocation(7, 15),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -303,7 +296,7 @@ internal class BarAttribute : Attribute
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -406,20 +399,17 @@ public enum ImplicitUseKindFlags { Assign }
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(6, 21),
-                this.CSharpDiagnostic().WithLocation(9, 21),
-                this.CSharpDiagnostic().WithLocation(12, 21),
-                this.CSharpDiagnostic().WithLocation(15, 21),
-                this.CSharpDiagnostic().WithLocation(18, 21),
-                this.CSharpDiagnostic().WithLocation(21, 21),
-                this.CSharpDiagnostic().WithLocation(24, 21),
-                this.CSharpDiagnostic().WithLocation(27, 21),
+                Diagnostic().WithLocation(6, 21),
+                Diagnostic().WithLocation(9, 21),
+                Diagnostic().WithLocation(12, 21),
+                Diagnostic().WithLocation(15, 21),
+                Diagnostic().WithLocation(18, 21),
+                Diagnostic().WithLocation(21, 21),
+                Diagnostic().WithLocation(24, 21),
+                Diagnostic().WithLocation(27, 21),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
-            await this.VerifyCSharpFixAllFixAsync(testCode, fixedTestCode, numberOfIterations: 1, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -460,24 +450,10 @@ namespace SA1133CodeFix
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(8, 5),
+                Diagnostic().WithLocation(8, 5),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1133CodeFixProvider();
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1133DoNotCombineAttributes();
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

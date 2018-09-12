@@ -3,25 +3,21 @@
 
 namespace StyleCop.Analyzers.Test.LayoutRules
 {
-    using System.Collections.Generic;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.LayoutRules;
     using StyleCop.Analyzers.Settings.ObjectModel;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1516ElementsMustBeSeparatedByBlankLine,
+        StyleCop.Analyzers.LayoutRules.SA1516CodeFixProvider>;
 
     /// <summary>
     /// Verifies the using directives functionality of <see cref="SA1516ElementsMustBeSeparatedByBlankLine"/>.
     /// </summary>
-    public class SA1516UsingGroupsUnitTests : CodeFixVerifier
+    public class SA1516UsingGroupsUnitTests
     {
-        private bool? systemUsingDirectivesFirst;
-        private OptionSetting? blankLinesBetweenUsingGroups;
-
         /// <summary>
         /// Verifies the allow scenario is handled properly.
         /// </summary>
@@ -32,8 +28,6 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         [InlineData("Test")]
         public async Task TestAllowForCompilationUnitAsync(string namespaceName)
         {
-            this.blankLinesBetweenUsingGroups = OptionSetting.Allow;
-
             var testCode = @"
 using System;
 
@@ -45,7 +39,11 @@ using Factory = System.Activator;
 
             testCode = WrapWithNamespace(testCode, namespaceName);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                Settings = GetSettings(blankLinesBetweenUsingGroups: OptionSetting.Allow),
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         //// TODO: Add namespace checks to the remaining code using WrapWithNamespace
@@ -60,9 +58,6 @@ using Factory = System.Activator;
         [InlineData("Test")]
         public async Task TestOmitWithSystemFirstAsync(string namespaceName)
         {
-            this.systemUsingDirectivesFirst = true;
-            this.blankLinesBetweenUsingGroups = OptionSetting.Omit;
-
             var testCode = @"
 using System;
 
@@ -92,16 +87,18 @@ namespace TestNamespace
             fixedTestCode = WrapWithNamespace(fixedTestCode, namespaceName);
             var offset = GetLineOffset(namespaceName);
 
-            DiagnosticResult[] expected =
+            await new CSharpTest
             {
-                this.CSharpDiagnostic(SA1516ElementsMustBeSeparatedByBlankLine.DescriptorOmit).WithLocation(4 + offset, 1),
-                this.CSharpDiagnostic(SA1516ElementsMustBeSeparatedByBlankLine.DescriptorOmit).WithLocation(6 + offset, 1),
-                this.CSharpDiagnostic(SA1516ElementsMustBeSeparatedByBlankLine.DescriptorOmit).WithLocation(8 + offset, 1),
-            };
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic(SA1516ElementsMustBeSeparatedByBlankLine.DescriptorOmit).WithLocation(4 + offset, 1),
+                    Diagnostic(SA1516ElementsMustBeSeparatedByBlankLine.DescriptorOmit).WithLocation(6 + offset, 1),
+                    Diagnostic(SA1516ElementsMustBeSeparatedByBlankLine.DescriptorOmit).WithLocation(8 + offset, 1),
+                },
+                FixedCode = fixedTestCode,
+                Settings = GetSettings(systemUsingDirectivesFirst: true, blankLinesBetweenUsingGroups: OptionSetting.Omit),
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -114,9 +111,6 @@ namespace TestNamespace
         [InlineData("Test")]
         public async Task TestOmitWithoutSystemFirstAsync(string namespaceName)
         {
-            this.systemUsingDirectivesFirst = false;
-            this.blankLinesBetweenUsingGroups = OptionSetting.Omit;
-
             var testCode = @"
 using System;
 using TestNamespace;
@@ -145,15 +139,17 @@ namespace TestNamespace
             fixedTestCode = WrapWithNamespace(fixedTestCode, namespaceName);
             var offset = GetLineOffset(namespaceName);
 
-            DiagnosticResult[] expected =
+            await new CSharpTest
             {
-                this.CSharpDiagnostic(SA1516ElementsMustBeSeparatedByBlankLine.DescriptorOmit).WithLocation(5 + offset, 1),
-                this.CSharpDiagnostic(SA1516ElementsMustBeSeparatedByBlankLine.DescriptorOmit).WithLocation(7 + offset, 1),
-            };
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic(SA1516ElementsMustBeSeparatedByBlankLine.DescriptorOmit).WithLocation(5 + offset, 1),
+                    Diagnostic(SA1516ElementsMustBeSeparatedByBlankLine.DescriptorOmit).WithLocation(7 + offset, 1),
+                },
+                FixedCode = fixedTestCode,
+                Settings = GetSettings(systemUsingDirectivesFirst: false, blankLinesBetweenUsingGroups: OptionSetting.Omit),
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -166,9 +162,6 @@ namespace TestNamespace
         [InlineData("Test")]
         public async Task TestOmitWithSeparingCommentsAsync(string namespaceName)
         {
-            this.systemUsingDirectivesFirst = true;
-            this.blankLinesBetweenUsingGroups = OptionSetting.Omit;
-
             var testCode = @"
 using System;
 // regular group
@@ -185,7 +178,11 @@ namespace TestNamespace
 
             testCode = WrapWithNamespace(testCode, namespaceName);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                Settings = GetSettings(systemUsingDirectivesFirst: true, blankLinesBetweenUsingGroups: OptionSetting.Omit),
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -198,9 +195,6 @@ namespace TestNamespace
         [InlineData("Test")]
         public async Task TestRequireWithSystemFirstAsync(string namespaceName)
         {
-            this.systemUsingDirectivesFirst = true;
-            this.blankLinesBetweenUsingGroups = OptionSetting.Require;
-
             var testCode = @"
 using System;
 using TestNamespace;
@@ -230,16 +224,18 @@ namespace TestNamespace
             fixedTestCode = WrapWithNamespace(fixedTestCode, namespaceName);
             var offset = GetLineOffset(namespaceName);
 
-            DiagnosticResult[] expected =
+            await new CSharpTest
             {
-                this.CSharpDiagnostic(SA1516ElementsMustBeSeparatedByBlankLine.DescriptorRequire).WithLocation(3 + offset, 1),
-                this.CSharpDiagnostic(SA1516ElementsMustBeSeparatedByBlankLine.DescriptorRequire).WithLocation(4 + offset, 1),
-                this.CSharpDiagnostic(SA1516ElementsMustBeSeparatedByBlankLine.DescriptorRequire).WithLocation(5 + offset, 1),
-            };
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic(SA1516ElementsMustBeSeparatedByBlankLine.DescriptorRequire).WithLocation(3 + offset, 1),
+                    Diagnostic(SA1516ElementsMustBeSeparatedByBlankLine.DescriptorRequire).WithLocation(4 + offset, 1),
+                    Diagnostic(SA1516ElementsMustBeSeparatedByBlankLine.DescriptorRequire).WithLocation(5 + offset, 1),
+                },
+                FixedCode = fixedTestCode,
+                Settings = GetSettings(systemUsingDirectivesFirst: true, blankLinesBetweenUsingGroups: OptionSetting.Require),
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -252,9 +248,6 @@ namespace TestNamespace
         [InlineData("Test")]
         public async Task TestRequireWithoutSystemFirstAsync(string namespaceName)
         {
-            this.systemUsingDirectivesFirst = false;
-            this.blankLinesBetweenUsingGroups = OptionSetting.Require;
-
             var testCode = @"
 using System;
 using TestNamespace;
@@ -283,45 +276,31 @@ namespace TestNamespace
             fixedTestCode = WrapWithNamespace(fixedTestCode, namespaceName);
             var offset = GetLineOffset(namespaceName);
 
-            DiagnosticResult[] expected =
+            await new CSharpTest
             {
-                this.CSharpDiagnostic(SA1516ElementsMustBeSeparatedByBlankLine.DescriptorRequire).WithLocation(4 + offset, 1),
-                this.CSharpDiagnostic(SA1516ElementsMustBeSeparatedByBlankLine.DescriptorRequire).WithLocation(5 + offset, 1),
-            };
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic(SA1516ElementsMustBeSeparatedByBlankLine.DescriptorRequire).WithLocation(4 + offset, 1),
+                    Diagnostic(SA1516ElementsMustBeSeparatedByBlankLine.DescriptorRequire).WithLocation(5 + offset, 1),
+                },
+                FixedCode = fixedTestCode,
+                Settings = GetSettings(systemUsingDirectivesFirst: false, blankLinesBetweenUsingGroups: OptionSetting.Require),
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override string GetSettings()
+        private static string GetSettings(bool systemUsingDirectivesFirst = true, OptionSetting blankLinesBetweenUsingGroups = OptionSetting.Allow)
         {
-            var useBlankLinesBetweenUsingGroups = this.blankLinesBetweenUsingGroups ?? OptionSetting.Allow;
-            var systemUsingDirectivesFirst = this.systemUsingDirectivesFirst ?? true;
-
             return $@"
 {{
     ""settings"": {{
         ""orderingRules"": {{
             ""systemUsingDirectivesFirst"" : {systemUsingDirectivesFirst.ToString().ToLowerInvariant()},
-            ""blankLinesBetweenUsingGroups"": ""{this.blankLinesBetweenUsingGroups.ToString().ToLowerInvariant()}""
+            ""blankLinesBetweenUsingGroups"": ""{blankLinesBetweenUsingGroups.ToString().ToLowerInvariant()}""
         }}
     }}
 }}
 ";
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1516ElementsMustBeSeparatedByBlankLine();
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1516CodeFixProvider();
         }
 
         private static string WrapWithNamespace(string testCode, string namespaceName)

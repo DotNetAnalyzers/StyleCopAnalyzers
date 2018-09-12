@@ -3,6 +3,8 @@
 
   <PropertyGroup>
     <TargetFramework>net452</TargetFramework>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -16,7 +18,9 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis" Version="1.2.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.XUnit" Version="1.0.0-beta1-63310-01" />
     <PackageReference Include="Microsoft.VisualStudio.Composition" Version="15.6.36" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
     <PackageReference Include="xunit" Version="2.3.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" PrivateAssets="all" />
   </ItemGroup>

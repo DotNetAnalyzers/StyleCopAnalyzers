@@ -6,14 +6,17 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.LayoutRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1502ElementMustNotBeOnASingleLine,
+        StyleCop.Analyzers.LayoutRules.SA1502CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for the type declaration part of <see cref="SA1502ElementMustNotBeOnASingleLine"/>.
     /// </summary>
-    public partial class SA1502UnitTests : CodeFixVerifier
+    public partial class SA1502UnitTests
     {
         public static IEnumerable<object[]> TokensToTest
         {
@@ -37,7 +40,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 {
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, token), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, token), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -51,8 +54,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         {
             var testCode = "public ##PH## Foo { }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(1, 13 + token.Length);
-            await this.VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, token), expected, CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(1, 13 + token.Length);
+            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, token), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -66,8 +69,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         {
             var testCode = "public ##PH## Foo { private int bar; }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(1, 13 + token.Length);
-            await this.VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, token), expected, CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(1, 13 + token.Length);
+            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, token), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -82,8 +85,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
             var testCode = @"public ##PH## Foo
 { private int bar; }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(2, 1);
-            await this.VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, token), expected, CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(2, 1);
+            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, token), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -99,7 +102,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     private int bar; 
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, token), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, token), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -117,7 +120,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 }
 ";
 
-            await this.VerifyCSharpFixAsync(FormatTestCode(testCode, token), FormatTestCode(fixedTestCode, token)).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(1, 13 + token.Length);
+            await VerifyCSharpFixAsync(FormatTestCode(testCode, token), expected, FormatTestCode(fixedTestCode, token), CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -136,7 +140,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 }
 ";
 
-            await this.VerifyCSharpFixAsync(FormatTestCode(testCode, token), FormatTestCode(fixedTestCode, token)).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(1, 13 + token.Length);
+            await VerifyCSharpFixAsync(FormatTestCode(testCode, token), expected, FormatTestCode(fixedTestCode, token), CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -155,7 +160,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 }
 ";
 
-            await this.VerifyCSharpFixAsync(FormatTestCode(testCode, token), FormatTestCode(fixedTestCode, token)).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(1, 13 + token.Length);
+            await VerifyCSharpFixAsync(FormatTestCode(testCode, token), expected, FormatTestCode(fixedTestCode, token), CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -175,7 +181,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 }
 ";
 
-            await this.VerifyCSharpFixAsync(FormatTestCode(testCode, token), FormatTestCode(fixedTestCode, token)).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(2, 1);
+            await VerifyCSharpFixAsync(FormatTestCode(testCode, token), expected, FormatTestCode(fixedTestCode, token), CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -194,7 +201,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 } /* TR5 */
 ";
 
-            await this.VerifyCSharpFixAsync(FormatTestCode(testCode, token), FormatTestCode(fixedTestCode, token)).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(1, 23 + token.Length);
+            await VerifyCSharpFixAsync(FormatTestCode(testCode, token), expected, FormatTestCode(fixedTestCode, token), CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

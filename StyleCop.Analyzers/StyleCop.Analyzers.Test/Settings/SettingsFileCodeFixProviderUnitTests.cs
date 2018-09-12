@@ -3,30 +3,26 @@
 
 namespace StyleCop.Analyzers.Test.Settings
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Settings;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.DocumentationRules.FileHeaderAnalyzers,
+        StyleCop.Analyzers.Settings.SettingsFileCodeFixProvider>;
 
     /// <summary>
     /// Unit tests for the <see cref="SettingsFileCodeFixProvider"/>.
     /// </summary>
-    public class SettingsFileCodeFixProviderUnitTests : CodeFixVerifier
+    public class SettingsFileCodeFixProviderUnitTests
     {
         private const string TestCode = @"
 namespace NamespaceName
 {
 }
 ";
-
-        private bool createSettingsFile;
-        private string settingsFileName = SettingsHelper.SettingsFileName;
 
         /// <summary>
         /// Verifies that a file without a header, but with leading trivia will produce the correct diagnostic message.
@@ -35,13 +31,18 @@ namespace NamespaceName
         [Fact]
         public async Task TestMissingFileHeaderWithLeadingTriviaAsync()
         {
-            this.createSettingsFile = false;
-
-            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
-            await this.VerifyCSharpDiagnosticAsync(TestCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-
-            // verify that the code fix does not alter the document
-            await this.VerifyCSharpFixAsync(TestCode, TestCode).ConfigureAwait(false);
+            await new CSharpTest
+            {
+                TestCode = TestCode,
+                ExpectedDiagnostics = { Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1) },
+                FixedCode = TestCode,
+                RemainingDiagnostics = { Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1) },
+                FixedAdditionalFiles =
+                {
+                    (SettingsHelper.SettingsFileName, SettingsFileCodeFixProvider.DefaultSettingsFileContent),
+                },
+                Settings = null,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -51,10 +52,18 @@ namespace NamespaceName
         [Fact]
         public async Task TestSettingsFileDoesNotExistAsync()
         {
-            this.createSettingsFile = false;
-
-            var offeredFixes = await this.GetOfferedCSharpFixesAsync(TestCode).ConfigureAwait(false);
-            Assert.Single(offeredFixes);
+            await new CSharpTest
+            {
+                TestCode = TestCode,
+                ExpectedDiagnostics = { Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1) },
+                FixedCode = TestCode,
+                RemainingDiagnostics = { Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1) },
+                FixedAdditionalFiles =
+                {
+                    (SettingsHelper.SettingsFileName, SettingsFileCodeFixProvider.DefaultSettingsFileContent),
+                },
+                Settings = null,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -64,11 +73,15 @@ namespace NamespaceName
         [Fact]
         public async Task TestSettingsFileAlreadyExistsAsync()
         {
-            this.createSettingsFile = true;
-            this.settingsFileName = SettingsHelper.SettingsFileName;
-
-            var offeredFixes = await this.GetOfferedCSharpFixesAsync(TestCode).ConfigureAwait(false);
-            Assert.Empty(offeredFixes);
+            await new CSharpTest
+            {
+                TestCode = TestCode,
+                ExpectedDiagnostics = { Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1) },
+                FixedCode = TestCode,
+                FixedState = { InheritanceMode = StateInheritanceMode.AutoInheritAll },
+                Settings = "{}",
+                SettingsFileName = SettingsHelper.SettingsFileName,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -78,40 +91,15 @@ namespace NamespaceName
         [Fact]
         public async Task TestDotPrefixedSettingsFileAlreadyExistsAsync()
         {
-            this.createSettingsFile = true;
-            this.settingsFileName = SettingsHelper.AltSettingsFileName;
-
-            var offeredFixes = await this.GetOfferedCSharpFixesAsync(TestCode).ConfigureAwait(false);
-            Assert.Empty(offeredFixes);
-        }
-
-        /// <inheritdoc/>
-        protected override string GetSettings()
-        {
-            if (this.createSettingsFile)
+            await new CSharpTest
             {
-                return "{}";
-            }
-
-            return null;
-        }
-
-        /// <inheritdoc/>
-        protected override string GetSettingsFileName()
-        {
-            return this.settingsFileName;
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new FileHeaderAnalyzers();
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SettingsFileCodeFixProvider();
+                TestCode = TestCode,
+                ExpectedDiagnostics = { Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1) },
+                FixedCode = TestCode,
+                FixedState = { InheritanceMode = StateInheritanceMode.AutoInheritAll },
+                Settings = "{}",
+                SettingsFileName = SettingsHelper.AltSettingsFileName,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
