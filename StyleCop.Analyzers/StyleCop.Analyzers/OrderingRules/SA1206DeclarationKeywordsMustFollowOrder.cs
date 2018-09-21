@@ -22,9 +22,9 @@ namespace StyleCop.Analyzers.OrderingRules
     /// <para>Within an element declaration, keywords should appear in the following order:</para>
     ///
     /// <list type="bullet">
-    /// <item>Access modifiers</item>
-    /// <item><see langword="static"/></item>
-    /// <item>All other keywords</item>
+    /// <item><description>Access modifiers</description></item>
+    /// <item><description><see langword="static"/></description></item>
+    /// <item><description>All other keywords</description></item>
     /// </list>
     ///
     /// <para>Using a standard ordering scheme for element declaration keywords can make the code more readable by

@@ -79,4 +79,20 @@
     <Rule Id="SA1600" Action="None" />
     <Rule Id="SA1609" Action="Warning" />
   </Rules>
+  <Rules AnalyzerId="DocumentationAnalyzers" RuleNamespace="DocumentationAnalyzers">
+    <Rule Id="DOC100" Action="Warning" />
+    <Rule Id="DOC101" Action="Warning" />
+    <Rule Id="DOC102" Action="Warning" />
+    <Rule Id="DOC103" Action="Warning" />
+    <Rule Id="DOC104" Action="Warning" />
+    <Rule Id="DOC105" Action="Warning" />
+    <Rule Id="DOC106" Action="Warning" />
+    <Rule Id="DOC107" Action="Warning" />
+    <Rule Id="DOC108" Action="Warning" />
+    <Rule Id="DOC200" Action="Warning" />
+    <Rule Id="DOC201" Action="Warning" />
+    <Rule Id="DOC202" Action="Warning" />
+    <Rule Id="DOC203" Action="Warning" />
+    <Rule Id="DOC204" Action="Warning" />
+  </Rules>
 </RuleSet>

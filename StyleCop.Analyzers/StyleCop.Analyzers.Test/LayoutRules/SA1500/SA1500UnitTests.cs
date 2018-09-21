@@ -17,7 +17,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     /// Unit tests for <see cref="SA1500BracesForMultiLineStatementsMustNotShareLine"/>.
     /// </summary>
     /// <remarks>
-    /// The test cases can be found in the SA1500 subfolder.
+    /// <para>The test cases can be found in the SA1500 subfolder.</para>
     /// </remarks>
     public partial class SA1500UnitTests
     {

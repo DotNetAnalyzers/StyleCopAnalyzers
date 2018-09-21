@@ -131,9 +131,9 @@ namespace StyleCop.Analyzers.Helpers
         /// Returns whether or not a member is implementing an interface member.
         /// </summary>
         /// <remarks>
-        /// This method does only check the interfaces the containing type is implementing directly.
+        /// <para>This method does only check the interfaces the containing type is implementing directly.
         /// If a derived class is implementing an interface and this member is required for it
-        /// this method will still return false.
+        /// this method will still return false.</para>
         /// </remarks>
         /// <param name="memberSymbol">The member symbol that should be analyzed.</param>
         /// <returns>true if the member is implementing an interface member, otherwise false.</returns>

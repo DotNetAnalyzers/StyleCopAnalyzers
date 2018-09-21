@@ -39,9 +39,9 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// Verifies that no diagnostics are reported for the valid statements defined in this test.
         /// </summary>
         /// <remarks>
-        /// These are valid for SA1500 only, some will report other diagnostics outside of the unit test scenario.
+        /// <para>These are valid for SA1500 only, some will report other diagnostics outside of the unit test scenario.
         ///
-        /// The class is marked unsafe to make testing the fixed statement possible.
+        /// The class is marked unsafe to make testing the fixed statement possible.</para>
         /// </remarks>
         /// <param name="token">The source code preceding the opening <c>{</c> of a statement block.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
@@ -87,7 +87,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// Verifies that diagnostics will be reported for all invalid statements.
         /// </summary>
         /// <remarks>
-        /// The class is marked unsafe to make testing the fixed statement possible.
+        /// <para>The class is marked unsafe to make testing the fixed statement possible.</para>
         /// </remarks>
         /// <param name="token">The source code preceding the opening <c>{</c> of a statement block.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>

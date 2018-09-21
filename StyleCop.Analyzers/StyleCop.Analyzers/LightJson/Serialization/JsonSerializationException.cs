@@ -9,7 +9,7 @@ namespace LightJson.Serialization
     /// The exception that is thrown when a JSON value cannot be serialized.
     /// </summary>
     /// <remarks>
-    /// This exception is only intended to be thrown by LightJson.
+    /// <para>This exception is only intended to be thrown by LightJson.</para>
     /// </remarks>
     internal sealed class JsonSerializationException : Exception
     {

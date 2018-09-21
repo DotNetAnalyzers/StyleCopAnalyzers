@@ -20,8 +20,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// Implements a code fix for <see cref="SA1133DoNotCombineAttributes"/>.
     /// </summary>
     /// <remarks>
-    /// The SA1133 code fix adds the new lines to make sure that it doesn't immediately introduces a SA1134 after code fixing,
-    /// but it will not / should not attempt to fix any preexisting SA1134 cases.
+    /// <para>The SA1133 code fix adds the new lines to make sure that it doesn't immediately introduces a SA1134 after
+    /// code fixing, but it will not / should not attempt to fix any preexisting SA1134 cases.</para>
     /// </remarks>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1133CodeFixProvider))]
     [Shared]

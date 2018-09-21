@@ -13,8 +13,8 @@ namespace StyleCop.Analyzers
     /// <para>There are several reasons an analyzer does not have a code fix, including but not limited to the
     /// following:</para>
     /// <list type="bullet">
-    /// <item>Visual Studio provides a built-in code fix.</item>
-    /// <item>A code fix could not provide a useful solution.</item>
+    /// <item><description>Visual Studio provides a built-in code fix.</description></item>
+    /// <item><description>A code fix could not provide a useful solution.</description></item>
     /// </list>
     /// <para>The <see cref="Reason"/> should be provided.</para>
     /// </remarks>

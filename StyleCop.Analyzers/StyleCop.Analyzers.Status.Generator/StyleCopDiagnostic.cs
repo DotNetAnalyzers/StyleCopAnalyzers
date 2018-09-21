@@ -42,10 +42,10 @@ namespace StyleCop.Analyzers.Status.Generator
         /// </summary>
         /// <value>
         /// <list type="bullet">
-        /// <item>DisabledNoTests</item>
-        /// <item>DisabledAlternative</item>
-        /// <item>EnabledByDefault</item>
-        /// <item>DisabledByDefault</item>
+        /// <item><description>DisabledNoTests</description></item>
+        /// <item><description>DisabledAlternative</description></item>
+        /// <item><description>EnabledByDefault</description></item>
+        /// <item><description>DisabledByDefault</description></item>
         /// </list>
         /// </value>
         public string Status { get; set; }

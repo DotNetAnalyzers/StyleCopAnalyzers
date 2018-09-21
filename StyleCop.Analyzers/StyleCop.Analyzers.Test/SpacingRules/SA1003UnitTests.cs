@@ -789,7 +789,7 @@ public class Foo : Exception
         /// <summary>
         /// Verifies that a simple for statement will not trigger any diagnostics.
         /// </summary>
-        /// <remarks>This is a regression for issue #955.</remarks>
+        /// <remarks><para>This is a regression for issue #955.</para></remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestForStatementAsync()

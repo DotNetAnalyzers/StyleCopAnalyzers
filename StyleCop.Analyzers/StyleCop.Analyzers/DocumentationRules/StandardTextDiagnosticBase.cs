@@ -53,7 +53,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         }
 
         /// <summary>
-        /// Analyzes a <see cref="BaseMethodDeclarationSyntax"/> node. If it has a summary it is checked if the text starts with &quot;[firstTextPart]&lt;see cref=&quot;[className]&quot;/&gt;[secondTextPart]&quot;.
+        /// Analyzes a <see cref="BaseMethodDeclarationSyntax"/> node. If it has a summary it is checked if the text starts with "[firstTextPart]&lt;see cref="[className]"/&gt;[secondTextPart]".
         /// </summary>
         /// <param name="context">The <see cref="SyntaxNodeAnalysisContext"/> of this analysis.</param>
         /// <param name="firstTextPart">The first part of the standard text.</param>

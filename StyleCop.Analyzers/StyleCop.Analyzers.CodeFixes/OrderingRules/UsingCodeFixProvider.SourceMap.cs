@@ -23,9 +23,9 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <para>Used source file regions are:</para>
         ///
         /// <list type="bullet">
-        /// <item>conditional directives (#if, #else, #elif, #endif)</item>
-        /// <item>pragma warning directives</item>
-        /// <item>region directives</item>
+        /// <item><description>conditional directives (#if, #else, #elif, #endif)</description></item>
+        /// <item><description>pragma warning directives</description></item>
+        /// <item><description>region directives</description></item>
         /// </list>
         /// </remarks>
         private class SourceMap

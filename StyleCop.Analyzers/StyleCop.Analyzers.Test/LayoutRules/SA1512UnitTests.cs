@@ -158,7 +158,8 @@ namespace Foo
         /// Verifies that a single line comment followed by multiple blank lines will not produce the correct diagnostic when SA1507 is enabled or not.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        /// <remarks>This cannot be tested properly until #522 is available, for now only situation where SA1507 is enabled is tested.</remarks>
+        /// <remarks><para>This cannot be tested properly until #522 is available, for now only situation where SA1507
+        /// is enabled is tested.</para></remarks>
         [Fact]
         public async Task TestSingleLineCommentFollowedByMultipleBlankLinesAsync()
         {

@@ -17,8 +17,8 @@ namespace StyleCop.Analyzers.Helpers
         /// A cache of the result of computing whether a document has using alias directives.
         /// </summary>
         /// <remarks>
-        /// This allows many analyzers that run on every token in the file to avoid checking
-        /// the same state in the document repeatedly.
+        /// <para>This allows many analyzers that run on every token in the file to avoid checking
+        /// the same state in the document repeatedly.</para>
         /// </remarks>
         private static Tuple<WeakReference<Compilation>, ConcurrentDictionary<SyntaxTree, bool>> usingAliasCache
             = Tuple.Create(new WeakReference<Compilation>(null), default(ConcurrentDictionary<SyntaxTree, bool>));
