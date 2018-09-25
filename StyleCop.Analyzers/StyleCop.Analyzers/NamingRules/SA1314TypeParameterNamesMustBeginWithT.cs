@@ -14,8 +14,8 @@ namespace StyleCop.Analyzers.NamingRules
     /// The name of a C# type parameter does not begin with the capital letter T.
     /// </summary>
     /// <remarks>
-    /// A violation of this rule occurs when the name of a C# type parameter does not begin with the capital letter T.
-    /// Type parameter names should always begin with T. For example, <c>T</c> or <c>TKey</c>.
+    /// <para>A violation of this rule occurs when the name of a C# type parameter does not begin with the capital
+    /// letter T. Type parameter names should always begin with T. For example, <c>T</c> or <c>TKey</c>.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class SA1314TypeParameterNamesMustBeginWithT : DiagnosticAnalyzer

@@ -24,11 +24,11 @@ namespace StyleCop.Analyzers.OrderingRules
     /// access level:</para>
     ///
     /// <list type="bullet">
-    /// <item>public</item>
-    /// <item>internal</item>
-    /// <item>protected internal</item>
-    /// <item>protected</item>
-    /// <item>private</item>
+    /// <item><description>public</description></item>
+    /// <item><description>internal</description></item>
+    /// <item><description>protected internal</description></item>
+    /// <item><description>protected</description></item>
+    /// <item><description>private</description></item>
     /// </list>
     ///
     /// <para>Complying with a standard ordering scheme based on access level can increase the readability and

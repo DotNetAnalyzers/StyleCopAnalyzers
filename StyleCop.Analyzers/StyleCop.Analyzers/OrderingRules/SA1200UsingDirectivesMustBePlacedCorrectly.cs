@@ -51,10 +51,10 @@ namespace StyleCop.Analyzers.OrderingRules
     /// outside of the namespace, including:</para>
     ///
     /// <list type="number">
-    /// <item>Placing using-alias directives within the namespace eliminates compiler confusion between conflicting
-    /// types.</item>
-    /// <item>When multiple namespaces are defined within a single file, placing using directives within the namespace
-    /// elements scopes references and aliases.</item>
+    /// <item><description>Placing using-alias directives within the namespace eliminates compiler confusion between
+    /// conflicting types.</description></item>
+    /// <item><description>When multiple namespaces are defined within a single file, placing using directives within
+    /// the namespace elements scopes references and aliases.</description></item>
     /// </list>
     ///
     /// <h2>1. Eliminating Type Confusion</h2>

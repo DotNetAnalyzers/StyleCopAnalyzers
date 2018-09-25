@@ -566,8 +566,8 @@ namespace LightJson
         /// Converts the given DateTime? into a JsonValue.
         /// </summary>
         /// <remarks>
-        /// The DateTime value will be stored as a string using ISO 8601 format,
-        /// since JSON does not define a DateTime type.
+        /// <para>The DateTime value will be stored as a string using ISO 8601 format,
+        /// since JSON does not define a DateTime type.</para>
         /// </remarks>
         /// <param name="value">The value to be converted.</param>
         public static implicit operator JsonValue(DateTime? value)

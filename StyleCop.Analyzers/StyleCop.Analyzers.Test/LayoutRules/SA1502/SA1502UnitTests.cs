@@ -9,7 +9,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     /// Unit tests for <see cref="SA1502ElementMustNotBeOnASingleLine"/>.
     /// </summary>
     /// <remarks>
-    /// The test cases can be found in the SA1502 subfolder.
+    /// <para>The test cases can be found in the SA1502 subfolder.</para>
     /// </remarks>
     public partial class SA1502UnitTests
     {

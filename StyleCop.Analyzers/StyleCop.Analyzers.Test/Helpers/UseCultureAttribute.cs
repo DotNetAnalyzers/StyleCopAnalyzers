@@ -15,10 +15,10 @@ namespace StyleCop.Analyzers.Test.Helpers
     /// <see cref="CultureInfo.CurrentUICulture" /> with another culture.
     /// </summary>
     /// <remarks>
-    /// This code was adapted from
+    /// <para>This code was adapted from
     /// https://github.com/xunit/samples.xunit/blob/885edfc/UseCulture/UseCultureAttribute.cs.
     /// The original code is (c) 2014 Outercurve Foundation and licensed under the Apache License,
-    /// Version 2.0.
+    /// Version 2.0.</para>
     /// </remarks>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class UseCultureAttribute : BeforeAfterTestAttribute

@@ -56,9 +56,9 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
         /// Produces an instance.
         /// </summary>
         /// <remarks>
-        /// Search strategy is a simple linear probing which is chosen for it cache-friendliness.
+        /// <para>Search strategy is a simple linear probing which is chosen for it cache-friendliness.
         /// Note that Free will try to store recycled objects close to the start thus statistically
-        /// reducing how far we will typically search.
+        /// reducing how far we will typically search.</para>
         /// </remarks>
         /// <returns>A (possibly) cached instance of type <typeparamref name="T"/>.</returns>
         internal T Allocate()
@@ -80,9 +80,9 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
         /// Returns objects to the pool.
         /// </summary>
         /// <remarks>
-        /// Search strategy is a simple linear probing which is chosen for it cache-friendliness.
+        /// <para>Search strategy is a simple linear probing which is chosen for it cache-friendliness.
         /// Note that Free will try to store recycled objects close to the start thus statistically
-        /// reducing how far we will typically search in Allocate.
+        /// reducing how far we will typically search in Allocate.</para>
         /// </remarks>
         /// <param name="obj">The object to free.</param>
         internal void Free(T obj)

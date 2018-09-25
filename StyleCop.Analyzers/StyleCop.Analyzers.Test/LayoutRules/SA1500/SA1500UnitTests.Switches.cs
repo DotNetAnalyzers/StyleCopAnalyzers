@@ -22,7 +22,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// Verifies that no diagnostics are reported for the valid switch statements defined in this test.
         /// </summary>
         /// <remarks>
-        /// These are valid for SA1500 only, some will report other diagnostics outside of the unit test scenario.
+        /// <para>These are valid for SA1500 only, some will report other diagnostics outside of the unit test
+        /// scenario.</para>
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]

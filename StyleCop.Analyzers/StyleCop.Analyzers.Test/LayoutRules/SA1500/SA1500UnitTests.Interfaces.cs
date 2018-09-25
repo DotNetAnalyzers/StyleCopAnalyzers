@@ -22,7 +22,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// Verifies that no diagnostics are reported for the valid interfaces defined in this test.
         /// </summary>
         /// <remarks>
-        /// These are valid for SA1500 only, some will report other diagnostics from the layout (SA15xx) series.
+        /// <para>These are valid for SA1500 only, some will report other diagnostics from the layout (SA15xx)
+        /// series.</para>
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -54,7 +55,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// Verifies that diagnostics will be reported for all invalid interface definitions.
         /// </summary>
         /// <remarks>
-        /// These will normally also report SA1401, but not in the unit test.
+        /// <para>These will normally also report SA1401, but not in the unit test.</para>
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]

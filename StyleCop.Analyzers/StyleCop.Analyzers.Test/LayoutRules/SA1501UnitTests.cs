@@ -62,7 +62,8 @@ public class Foo
         /// Verifies that a lock statement with preprocessor trivia will trigger the correct warnings.
         /// </summary>
         /// <remarks>
-        /// The analyzer will only trigger on the second block, as the first block will be marked as DisabledTextTrivia due to the preprocessor statements.
+        /// <para>The analyzer will only trigger on the second block, as the first block will be marked as
+        /// DisabledTextTrivia due to the preprocessor statements.</para>
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -107,9 +108,10 @@ public class Foo
         }
 
         /// <summary>
-        /// Verifies that lock statement with an invalid formatted block statement spread over multiple lines will not trigger a warning.
+        /// Verifies that lock statement with an invalid formatted block statement spread over multiple lines will not
+        /// trigger a warning.
         /// </summary>
-        /// <remarks>This will trigger SA1500.</remarks>
+        /// <remarks><para>This will trigger SA1500.</para></remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         public async Task TestLockWithInvalidMultilineBlockAsync()
@@ -340,7 +342,7 @@ public class Foo
         /// Verifies that the code fix provider will correctly handle preprocessor trivia.
         /// </summary>
         /// <remarks>
-        /// Only the second block will be fixed, as the first block is marked as DisabledTextTrivia.
+        /// <para>Only the second block will be fixed, as the first block is marked as DisabledTextTrivia.</para>
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]

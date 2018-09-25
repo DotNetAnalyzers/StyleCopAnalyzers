@@ -72,7 +72,8 @@ namespace StyleCop.Analyzers
         /// Gets a value indicating whether the specified path points to a StyleCop settings file (stylecop.json or .stylecop.json).
         /// </summary>
         /// <param name="path">The path to test.</param>
-        /// <returns><c>true</c> if <paramref name="path"/> points to a StyleCop settings file; otherwise, <c>false</c>.</returns>
+        /// <returns><see langword="true"/> if <paramref name="path"/> points to a StyleCop settings file; otherwise,
+        /// <see langword="false"/>.</returns>
         internal static bool IsStyleCopSettingsFile(string path)
         {
             if (path == null)
