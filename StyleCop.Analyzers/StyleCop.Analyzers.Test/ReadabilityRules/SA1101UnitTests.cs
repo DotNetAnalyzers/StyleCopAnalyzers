@@ -367,5 +367,40 @@ public class Foo
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(2799, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2799")]
+        public async Task TestNameofInConstructorCallAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public TestClass()
+        : this(nameof(P))
+    {
+    }
+
+    public TestClass(string p)
+    {
+        this.P = p;
+    }
+
+    public string P { get; }
+}
+
+public class DerivedTestClass : TestClass
+{
+    public DerivedTestClass()
+        : base(nameof(Q))
+    {
+        this.Q = string.Empty;
+    }
+
+    public string Q { get; }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

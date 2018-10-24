@@ -124,6 +124,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 break;
 
+            case SyntaxKind.Argument when IsPartOfConstructorInitializer((SimpleNameSyntax)context.Node):
+                // constructor invocations cannot contain this.
+                return;
+
             default:
                 break;
             }
@@ -259,6 +263,21 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 default:
                     continue;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool IsPartOfConstructorInitializer(SyntaxNode node)
+        {
+            for (; node != null; node = node.Parent)
+            {
+                switch (node.Kind())
+                {
+                case SyntaxKind.ThisConstructorInitializer:
+                case SyntaxKind.BaseConstructorInitializer:
+                    return true;
                 }
             }
 
