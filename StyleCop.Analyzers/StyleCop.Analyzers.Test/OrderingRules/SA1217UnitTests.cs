@@ -19,7 +19,17 @@ namespace StyleCop.Analyzers.Test.OrderingRules
 {
   ""settings"": {
     ""orderingRules"": {
-      ""systemUsingDirectivesFirst"": ""true""
+      ""systemUsingDirectivesFirst"": true
+    }
+  }
+}
+";
+
+        private const string TestSettingsNoSystemDirectivesFirst = @"
+{
+  ""settings"": {
+    ""orderingRules"": {
+      ""systemUsingDirectivesFirst"": false
     }
   }
 }
@@ -203,8 +213,8 @@ namespace Bar
         public async Task TestPreprocessorDirectivesAsync()
         {
             var testCode = @"
-using System;
 using Microsoft.Win32;
+using System;
 using MyList = System.Collections.Generic.List<int>;
 using static System.Tuple;
 
@@ -217,8 +227,8 @@ using static System.Math;
 #endif";
 
             var fixedTestCode = @"
-using System;
 using Microsoft.Win32;
+using System;
 using static System.Tuple;
 using MyList = System.Collections.Generic.List<int>;
 
@@ -295,7 +305,7 @@ namespace MyNamespace
             var test = new StyleCopCodeFixVerifier<SA1217UsingStaticDirectivesMustBeOrderedAlphabetically, UsingCodeFixProvider>.CSharpTest
             {
                 TestCode = source,
-                Settings = this.useSystemUsingDirectivesFirst ? TestSettings : null,
+                Settings = this.useSystemUsingDirectivesFirst ? TestSettings : TestSettingsNoSystemDirectivesFirst,
             };
 
             test.ExpectedDiagnostics.AddRange(expected);
@@ -308,7 +318,7 @@ namespace MyNamespace
             {
                 TestCode = source,
                 FixedCode = fixedSource,
-                Settings = this.useSystemUsingDirectivesFirst ? TestSettings : null,
+                Settings = this.useSystemUsingDirectivesFirst ? TestSettings : TestSettingsNoSystemDirectivesFirst,
             };
 
             test.ExpectedDiagnostics.AddRange(expected);
