@@ -123,7 +123,7 @@
                 {{if CodeFixStatus === "Implemented"}}
                 <i class="fa fa-check" style="color: green;"></i>
                 {{else CodeFixStatus === "NotImplemented"}}
-                <i class="fa fa-times" style="color: red;"></i>
+                <i class="fa fa-times" style="color: red;" title="{{>NoCodeFixReason}}"></i>
                 {{else}}
                 <i class="fa fa-exclamation" style="color: blue;"></i>
                 {{/if}}
