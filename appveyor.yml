@@ -1,22 +1,38 @@
-version: 1.0.{build}
+version: '{build}'
 image: Visual Studio 2017
 init:
 - git config --global core.autocrlf true
+configuration:
+- Debug
+- Release
 before_build:
 - nuget restore
+skip_tags: true
 build:
   project: StyleCopAnalyzers.sln
   verbosity: minimal
 test_script:
 - cd build
-- ps: .\opencover-report.ps1 -Debug -NoBuild -NoReport -AppVeyor
+- ps: |
+    if ($env:Configuration -eq 'Debug') {
+      .\opencover-report.ps1 -Debug -NoBuild -NoReport -AppVeyor
+      if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
+      $packageConfig = [xml](Get-Content ..\.nuget\packages.config)
+      $codecov_version = $packageConfig.SelectSingleNode('/packages/package[@id="Codecov"]').version
+      $codecov = "..\packages\Codecov.$codecov_version\tools\codecov.exe"
+      &$codecov -f '..\build\OpenCover.Reports\OpenCover.StyleCopAnalyzers.xml'
+    } else {
+      .\opencover-report.ps1 -NoBuild -NoReport -AppVeyor
+      if ($LastExitCode -ne 0) { $host.SetShouldExit($LastExitCode) }
+    }
 - cd ..
-- .\packages\Codecov.1.1.0\tools\codecov.exe -f ".\build\OpenCover.Reports\OpenCover.StyleCopAnalyzers.xml"
-- .\StyleCop.Analyzers\StyleCop.Analyzers.Status.Generator\bin\Debug\net46\StyleCop.Analyzers.Status.Generator.exe .\StyleCopAnalyzers.sln > StyleCop.Analyzers.Status.json
+- .\StyleCop.Analyzers\StyleCop.Analyzers.Status.Generator\bin\%Configuration%\net46\StyleCop.Analyzers.Status.Generator.exe .\StyleCopAnalyzers.sln > StyleCop.Analyzers.Status.json
 cache:
   - packages -> **\packages.config
   - C:\Users\appveyor\.nuget\packages -> appveyor.yml
+
+# 'Release' is hard-coded to ensure VSIX and NuGet artifacts are only published for release configuration builds
 artifacts:
-- path: 'StyleCop.Analyzers\**\*.vsix'
-- path: 'StyleCop.Analyzers\**\*.nupkg'
+- path: 'StyleCop.Analyzers\StyleCop.Analyzers.Vsix\bin\Release\net452\*.vsix'
+- path: 'StyleCop.Analyzers\StyleCop.Analyzers.CodeFixes\bin\Release\*.nupkg'
 - path: 'StyleCop.Analyzers.Status.json'

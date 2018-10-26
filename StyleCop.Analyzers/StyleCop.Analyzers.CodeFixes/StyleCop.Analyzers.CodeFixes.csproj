@@ -6,8 +6,14 @@
     <RootNamespace>StyleCop.Analyzers</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <IncludeSymbols>true</IncludeSymbols>
-    <NuspecFile>StyleCop.Analyzers.nuspec</NuspecFile>
-    <NuspecProperties>configuration=$(Configuration);version=$(InformationalVersion)</NuspecProperties>
+
+    <NuspecFile Condition="'$(MetadataPackage)' != 'true'">StyleCop.Analyzers.nuspec</NuspecFile>
+    <NuspecFile Condition="'$(MetadataPackage)' == 'true'">StyleCop.Analyzers.Metadata.nuspec</NuspecFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- This package intentionally uses SemVer 2. -->
+    <NoWarn>$(NoWarn),NU5105</NoWarn>
   </PropertyGroup>
 
   <Choose>
@@ -40,5 +46,39 @@
   <ItemGroup>
     <ProjectReference Include="..\StyleCop.Analyzers\StyleCop.Analyzers.csproj" />
   </ItemGroup>
+
+  <Target Name="SetNuspecProperties" AfterTargets="GetBuildVersion">
+    <PropertyGroup>
+      <BaseNuspecId>StyleCop.Analyzers</BaseNuspecId>
+      <ImplementationNuspecId>$(BaseNuspecId)</ImplementationNuspecId>
+      <MetadataNuspecId>$(BaseNuspecId)</MetadataNuspecId>
+
+      <ImplementationNuspecId Condition="'$(PrereleaseVersion)' != ''">$(BaseNuspecId).Unstable</ImplementationNuspecId>
+      <MetadataNuspecId Condition="'$(PrereleaseVersion)' == ''">$(BaseNuspecId).Unstable</MetadataNuspecId>
+
+      <NuspecId Condition="'$(MetadataPackage)' != 'true'">$(ImplementationNuspecId)</NuspecId>
+      <NuspecId Condition="'$(MetadataPackage)' == 'true'">$(MetadataNuspecId)</NuspecId>
+
+      <NuspecUnstableVersion>$(AssemblyVersion)</NuspecUnstableVersion>
+      <NuspecUnstableVersion Condition="'$(PublicRelease)' != 'true'">$(NuspecUnstableVersion)-g$(GitCommitIdShort)</NuspecUnstableVersion>
+      <NuspecStableVersion>$(PackageVersion)</NuspecStableVersion>
+
+      <UnstablePackage Condition="('$(PrereleaseVersion)' != '' AND '$(MetadataPackage)' != 'true') OR ('$(PrereleaseVersion)' == '' AND '$(MetadataPackage)' == 'true')">true</UnstablePackage>
+
+      <NuspecVersion Condition="'$(UnstablePackage)' != 'true'">$(NuspecStableVersion)</NuspecVersion>
+      <NuspecVersion Condition="'$(UnstablePackage)' == 'true'">$(NuspecUnstableVersion)</NuspecVersion>
+
+      <ImplementationNuspecVersion Condition="'$(PrereleaseVersion)' != ''">$(NuspecUnstableVersion)</ImplementationNuspecVersion>
+      <ImplementationNuspecVersion Condition="'$(PrereleaseVersion)' == ''">$(NuspecStableVersion)</ImplementationNuspecVersion>
+
+      <NuspecProperties>id=$(NuspecId);configuration=$(Configuration);GitCommitIdShort=$(GitCommitIdShort);version=$(NuspecVersion);tag=$(NuspecStableVersion);implId=$(ImplementationNuspecId);implVersion=$(ImplementationNuspecVersion)</NuspecProperties>
+    </PropertyGroup>
+  </Target>
+
+  <Target Name="PackMetadata" AfterTargets="Pack" Condition="'$(MetadataPackage)' != 'true'">
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Targets="Pack"
+             Properties="MetadataPackage=true;IncludeSymbols=false" />
+  </Target>
 
 </Project>

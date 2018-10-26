@@ -173,7 +173,7 @@
     </script>
 
     <script type="text/javascript">
-        $.getJSON("https://ci.appveyor.com/api/projects/sharwell/stylecopanalyzers/artifacts/StyleCop.Analyzers.Status.json?branch=master&pr=false&stream=true", function (data) {
+        $.getJSON("https://ci.appveyor.com/api/projects/sharwell/stylecopanalyzers/artifacts/StyleCop.Analyzers.Status.json?branch=master&pr=false&stream=true&job=Configuration:%20Release", function (data) {
             $("#renderedDiagnostics").html($.templates($("#diagnostics").html()).render(data));
             $("#renderedCommitInfo").html($.templates($("#commitInfo").html()).render(data.git));
         });
