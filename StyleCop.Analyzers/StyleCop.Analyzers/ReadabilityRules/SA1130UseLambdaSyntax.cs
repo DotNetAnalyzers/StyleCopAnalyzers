@@ -99,6 +99,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
             if (originalInvocationExpression != null)
             {
                 SymbolInfo originalSymbolInfo = semanticModel.GetSymbolInfo(originalInvocationExpression);
+
+                if (originalSymbolInfo.Symbol == null)
+                {
+                    // The most likely cause for this is an overload resolution failure.
+                    return false;
+                }
+
                 Location location = originalInvocationExpression.GetLocation();
 
                 var argumentIndex = argumentListSyntax.Arguments.IndexOf(argumentSyntax);

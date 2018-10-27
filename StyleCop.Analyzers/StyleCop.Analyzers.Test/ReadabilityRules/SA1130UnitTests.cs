@@ -380,5 +380,29 @@ namespace StyleCopDemo
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestOverloadResolutionFailureAsync()
+        {
+            var testCode = @"
+using System;
+using System.Linq.Expressions;
+public class TypeName
+{
+    public void Test(string argument)
+    {
+
+    }
+
+    public void Test()
+    {
+        Test(delegate { });
+    }
+}";
+
+            var expected = DiagnosticResult.CompilerError("CS1660").WithLocation(13, 14);
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
