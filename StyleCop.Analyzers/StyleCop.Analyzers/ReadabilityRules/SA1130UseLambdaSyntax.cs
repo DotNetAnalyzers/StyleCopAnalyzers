@@ -50,16 +50,32 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <summary>
         /// Gets the delegate parameter list from a method symbol and the argument index.
         /// </summary>
-        /// <param name="methodSymbol">The symbol containing information about the method invocation.</param>
+        /// <param name="symbol">The symbol containing information about the method invocation.</param>
         /// <param name="argumentIndex">The index of the argument containing the delegate.</param>
         /// <returns>A parameter list for the delegate parameters.</returns>
-        internal static ParameterListSyntax GetDelegateParameterList(IMethodSymbol methodSymbol, int argumentIndex)
+        internal static ParameterListSyntax GetDelegateParameterList(ISymbol symbol, int argumentIndex)
         {
-            var realIndex = Math.Min(argumentIndex, methodSymbol.Parameters.Length - 1);
+            ImmutableArray<IParameterSymbol> parameterList;
+            int realIndex;
+            INamedTypeSymbol delegateType;
+            if (symbol is IMethodSymbol methodSymbol)
+            {
+                parameterList = methodSymbol.Parameters;
+            }
+            else if (symbol is IPropertySymbol propertySymbol)
+            {
+                parameterList = propertySymbol.Parameters;
+            }
+            else
+            {
+                throw new InvalidOperationException("This should be unreachable.");
+            }
 
-            var type = methodSymbol.Parameters[realIndex].Type;
+            realIndex = Math.Min(argumentIndex, parameterList.Length - 1);
 
-            if (methodSymbol.Parameters[realIndex].IsParams)
+            var type = parameterList[realIndex].Type;
+
+            if (parameterList[realIndex].IsParams)
             {
                 if (type is IArrayTypeSymbol arrayTypeSymbol)
                 {
@@ -73,7 +89,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
             }
 
-            var delegateType = (INamedTypeSymbol)type;
+            delegateType = (INamedTypeSymbol)type;
+
             var delegateParameters = delegateType.DelegateInvokeMethod.Parameters;
 
             var syntaxParameters = GetSyntaxParametersFromSymbolParameters(delegateParameters);
@@ -111,11 +128,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static bool HandleMethodInvocation(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod, ArgumentSyntax argumentSyntax)
         {
             // invocation -> argument list -> argument -> anonymous method
-            var argumentListSyntax = argumentSyntax?.Parent as ArgumentListSyntax;
+            var argumentListSyntax = argumentSyntax?.Parent as BaseArgumentListSyntax;
 
-            if (argumentListSyntax?.Parent is InvocationExpressionSyntax originalInvocationExpression)
+            if (argumentListSyntax != null)
             {
-                SymbolInfo originalSymbolInfo = semanticModel.GetSymbolInfo(originalInvocationExpression);
+                var originalInvocableExpression = argumentListSyntax.Parent;
+                SymbolInfo originalSymbolInfo = semanticModel.GetSymbolInfo(originalInvocableExpression);
+                Location location = originalInvocableExpression.GetLocation();
 
                 if (originalSymbolInfo.Symbol == null)
                 {
@@ -123,12 +142,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     return false;
                 }
 
-                Location location = originalInvocationExpression.GetLocation();
-
                 var argumentIndex = argumentListSyntax.Arguments.IndexOf(argumentSyntax);
 
                 // Determine the parameter list from the method that is invoked, as delegates without parameters are allowed, but they cannot be replaced by a lambda without parameters.
-                var parameterList = GetDelegateParameterList((IMethodSymbol)originalSymbolInfo.Symbol, argumentIndex);
+                var parameterList = GetDelegateParameterList(originalSymbolInfo.Symbol, argumentIndex);
 
                 if (parameterList == null)
                 {
@@ -144,7 +161,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     SyntaxFactory.Token(SyntaxKind.EqualsGreaterThanToken),
                     anonymousMethod.Body);
 
-                var invocationExpression = originalInvocationExpression.ReplaceNode(anonymousMethod, lambdaExpression);
+                var invocationExpression = originalInvocableExpression.ReplaceNode(anonymousMethod, lambdaExpression);
                 SymbolInfo newSymbolInfo = semanticModel.GetSpeculativeSymbolInfo(location.SourceSpan.Start, invocationExpression, SpeculativeBindingOption.BindAsExpression);
 
                 if (!originalSymbolInfo.Symbol.Equals(newSymbolInfo.Symbol))
