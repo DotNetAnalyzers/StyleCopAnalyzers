@@ -380,5 +380,47 @@ namespace StyleCopDemo
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestParamsAsync()
+        {
+            var testCode = @"
+using System;
+public class TypeName
+{
+    public void Test(params Action[] argument)
+    {
+
+    }
+
+    public void Test()
+    {
+        Test(delegate { }, delegate { });
+    }
+}";
+
+            string fixedCode = @"
+using System;
+public class TypeName
+{
+    public void Test(params Action[] argument)
+    {
+
+    }
+
+    public void Test()
+    {
+        Test(() => { }, () => { });
+    }
+}";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(12, 14),
+                Diagnostic().WithLocation(12, 28),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
