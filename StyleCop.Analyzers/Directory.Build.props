@@ -7,10 +7,6 @@
     <Company>Tunnel Vision Laboratories, LLC</Company>
     <Copyright>Copyright © Tunnel Vision Laboratories, LLC 2015</Copyright>
     <NeutralLanguage>en-US</NeutralLanguage>
-
-    <Version>1.1.0.40</Version>
-    <FileVersion>1.1.0.40</FileVersion>
-    <InformationalVersion>1.1.0-dev</InformationalVersion>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -40,6 +36,10 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <NoWarn>$(NoWarn),1573,1591,1712</NoWarn>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Nerdbank.GitVersioning" Version="2.2.13" PrivateAssets="all" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AsyncUsageAnalyzers" Version="1.0.0-alpha003" PrivateAssets="all" />

@@ -1,0 +1,28 @@
+﻿<?xml version="1.0"?>
+<package>
+  <metadata minClientVersion="2.7">
+    <id>$id$</id>
+    <version>0.0.0</version>
+    <title>$id$</title>
+    <authors>Sam Harwell et. al.</authors>
+    <owners>Sam Harwell</owners>
+    <licenseUrl>https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/$GitCommitIdShort$/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/DotNetAnalyzers/StyleCopAnalyzers</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>An implementation of StyleCop's rules using Roslyn analyzers and code fixes</description>
+    <releaseNotes>https://github.com/DotNetAnalyzers/StyleCopAnalyzers/releases/$tag$</releaseNotes>
+    <copyright>Copyright 2015 Tunnel Vision Laboratories, LLC</copyright>
+    <tags>StyleCop DotNetAnalyzers Roslyn Diagnostic Analyzer</tags>
+    <developmentDependency>true</developmentDependency>
+    <dependencies>
+      <dependency id="$implId$" version="$implVersion$"/>
+    </dependencies>
+  </metadata>
+  <files>
+
+    <!-- Additional Files -->
+    <file src="..\..\LICENSE" />
+    <file src="..\..\THIRD-PARTY-NOTICES.txt" />
+
+  </files>
+</package>
