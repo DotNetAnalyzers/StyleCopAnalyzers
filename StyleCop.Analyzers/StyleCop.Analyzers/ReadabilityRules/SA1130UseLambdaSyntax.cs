@@ -55,7 +55,25 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <returns>A parameter list for the delegate parameters.</returns>
         internal static ParameterListSyntax GetDelegateParameterList(IMethodSymbol methodSymbol, int argumentIndex)
         {
-            var delegateType = (INamedTypeSymbol)methodSymbol.Parameters[argumentIndex].Type;
+            var realIndex = Math.Min(argumentIndex, methodSymbol.Parameters.Length - 1);
+
+            var type = methodSymbol.Parameters[realIndex].Type;
+
+            if (methodSymbol.Parameters[realIndex].IsParams)
+            {
+                if (type is IArrayTypeSymbol arrayTypeSymbol)
+                {
+                    type = arrayTypeSymbol.ElementType;
+                }
+                else
+                {
+                    // Just to make sure that we do not crash if in future versions of the compiler other types are allowed for params.
+                    // This if statement should be extended if e.g. Span params are introduced into the language.
+                    return null;
+                }
+            }
+
+            var delegateType = (INamedTypeSymbol)type;
             var delegateParameters = delegateType.DelegateInvokeMethod.Parameters;
 
             var syntaxParameters = GetSyntaxParametersFromSymbolParameters(delegateParameters);
@@ -95,8 +113,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             // invocation -> argument list -> argument -> anonymous method
             var argumentListSyntax = argumentSyntax?.Parent as ArgumentListSyntax;
 
-            var originalInvocationExpression = argumentListSyntax?.Parent as InvocationExpressionSyntax;
-            if (originalInvocationExpression != null)
+            if (argumentListSyntax?.Parent is InvocationExpressionSyntax originalInvocationExpression)
             {
                 SymbolInfo originalSymbolInfo = semanticModel.GetSymbolInfo(originalInvocationExpression);
 
@@ -112,6 +129,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 // Determine the parameter list from the method that is invoked, as delegates without parameters are allowed, but they cannot be replaced by a lambda without parameters.
                 var parameterList = GetDelegateParameterList((IMethodSymbol)originalSymbolInfo.Symbol, argumentIndex);
+
+                if (parameterList == null)
+                {
+                    // This might happen if the call was using params witha type unknown to the analyzer, e.g. params Span<T>.
+                    return false;
+                }
 
                 // In some cases passing a delegate as an argument to a method is required to call the right overload
                 // When there is an other overload that takes an expression.
