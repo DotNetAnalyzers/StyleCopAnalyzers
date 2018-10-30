@@ -149,6 +149,14 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             var newContent = RemoveMalformattedStandardText(node.Content, typeDeclaration.Identifier, standardText[0], standardText[1], ref trailingString);
 
+            if (newContent.Count == 1 && newContent[0] is XmlTextSyntax xmlText)
+            {
+                if (string.IsNullOrWhiteSpace(xmlText.ToString()))
+                {
+                    newContent = default;
+                }
+            }
+
             var list = BuildStandardTextSyntaxList(typeDeclaration, newLineText, standardText[0], standardText[1] + trailingString);
             newContent = newContent.InsertRange(0, list);
 

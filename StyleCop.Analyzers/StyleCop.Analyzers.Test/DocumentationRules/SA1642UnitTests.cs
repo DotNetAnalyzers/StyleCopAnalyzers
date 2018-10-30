@@ -940,7 +940,7 @@ public class TestClass
     public class ClassName
     {{
         /// <summary>
-        /// Initializes a new instance of the <see cref=""ClassName""/> class.{emptyContent}</summary>
+        /// Initializes a new instance of the <see cref=""ClassName""/> class.</summary>
         public ClassName()
         {{
         }}
