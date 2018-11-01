@@ -446,5 +446,242 @@ public class TypeName
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestDelegateUseAsConstructorArgumentsAsync()
+        {
+            var testCode = @"
+using System;
+public class TypeName
+{
+    public TypeName(Action argument)
+    {
+
+    }
+
+    public void Test()
+    {
+        new TypeName(delegate { });
+    }
+}";
+            string fixedCode = @"
+using System;
+public class TypeName
+{
+    public TypeName(Action argument)
+    {
+
+    }
+
+    public void Test()
+    {
+        new TypeName(() => { });
+    }
+}";
+            var expected = Diagnostic().WithLocation(12, 22);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestDelegateUseAsConstructorArgumentsWithConflictingExpressionOverloadAsync()
+        {
+            var testCode = @"
+using System;
+using System.Linq.Expressions;
+public class TypeName
+{
+    public TypeName(Action argument)
+    {
+     
+    }
+    
+    public TypeName(Expression<Action> argument)
+    {
+    
+    }
+    
+    public void Test()
+    {
+        new TypeName(delegate { });
+    }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestDelegateUseAsConstructorArgumentsWithNonConflictingExpressionOverloadAsync()
+        {
+            var testCode = @"
+using System;
+using System.Linq.Expressions;
+public class TypeName
+{
+    public TypeName(Action argument)
+    {
+
+    }
+
+    public TypeName(Expression<Func<int>> argument)
+    {
+
+    }
+
+    public void Test()
+    {
+        new TypeName(delegate { });
+    }
+}";
+            var fixedCode = @"
+using System;
+using System.Linq.Expressions;
+public class TypeName
+{
+    public TypeName(Action argument)
+    {
+
+    }
+
+    public TypeName(Expression<Func<int>> argument)
+    {
+
+    }
+
+    public void Test()
+    {
+        new TypeName(() => { });
+    }
+}";
+            var expected = Diagnostic().WithLocation(18, 22);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestDelegateUseAsIndexerArgumentsAsync()
+        {
+            var testCode = @"
+using System;
+public class TypeName
+{
+    public int this[Action argument]
+    {
+        get { return 0; }
+    }
+
+    public void Test()
+    {
+        int _ = this[delegate { }];
+    }
+}";
+            string fixedCode = @"
+using System;
+public class TypeName
+{
+    public int this[Action argument]
+    {
+        get { return 0; }
+    }
+
+    public void Test()
+    {
+        int _ = this[() => { }];
+    }
+}";
+            var expected = Diagnostic().WithLocation(12, 22);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestDelegateUseAsIndexerArgumentsWithConflictingExpressionOverloadAsync()
+        {
+            var testCode = @"
+using System;
+using System.Linq.Expressions;
+public class TypeName
+{
+    public int this[Action argument]
+    {
+        get { return 0; }
+    }
+     public int this[Expression<Action> argument]
+    {
+        get { return 0; }
+    }
+     public void Test()
+    {
+        int _ = this[delegate { }];
+    }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestDelegateUseAsIndexerArgumentsWithNonConflictingExpressionOverloadAsync()
+        {
+            var testCode = @"
+using System;
+using System.Linq.Expressions;
+public class TypeName
+{
+    public int this[Action argument]
+    {
+        get { return 0; }
+    }
+
+    public int this[Expression<Func<int>> argument]
+    {
+        get { return 0; }
+    }
+
+    public void Test()
+    {
+        int _ = this[delegate { }];
+    }
+}";
+            var fixedCode = @"
+using System;
+using System.Linq.Expressions;
+public class TypeName
+{
+    public int this[Action argument]
+    {
+        get { return 0; }
+    }
+
+    public int this[Expression<Func<int>> argument]
+    {
+        get { return 0; }
+    }
+
+    public void Test()
+    {
+        int _ = this[() => { }];
+    }
+}";
+            var expected = Diagnostic().WithLocation(18, 22);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestInvalidOverloadAsync()
+        {
+            var testCode = @"
+using System;
+using System.Linq.Expressions;
+public unsafe class TypeName
+{
+    void Method(int* data) { throw null; }
+    void Caller() => Method(delegate { });
+}";
+            var fixedCode = @"
+using System;
+using System.Linq.Expressions;
+public unsafe class TypeName
+{
+    void Method(int* data) { throw null; }
+    void Caller() => Method(delegate { });
+}";
+            var expected = DiagnosticResult.CompilerError("CS1660").WithLocation(7, 29);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

@@ -136,12 +136,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static ImmutableArray<string> GetMethodInvocationArgumentList(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod)
         {
             var argumentSyntax = (ArgumentSyntax)anonymousMethod.Parent;
-            var argumentListSyntax = (ArgumentListSyntax)argumentSyntax.Parent;
-            var originalInvocationExpression = (InvocationExpressionSyntax)argumentListSyntax.Parent;
+            var argumentListSyntax = (BaseArgumentListSyntax)argumentSyntax.Parent;
+            var originalInvocableExpression = argumentListSyntax.Parent;
 
-            var originalSymbolInfo = semanticModel.GetSymbolInfo(originalInvocationExpression);
+            var originalSymbolInfo = semanticModel.GetSymbolInfo(originalInvocableExpression);
             var argumentIndex = argumentListSyntax.Arguments.IndexOf(argumentSyntax);
-            var parameterList = SA1130UseLambdaSyntax.GetDelegateParameterList((IMethodSymbol)originalSymbolInfo.Symbol, argumentIndex);
+            var parameterList = SA1130UseLambdaSyntax.GetDelegateParameterList(originalSymbolInfo.Symbol, argumentIndex);
             return parameterList.Parameters.Select(p => p.Identifier.ToString()).ToImmutableArray();
         }
 
