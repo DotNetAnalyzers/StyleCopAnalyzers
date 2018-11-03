@@ -683,5 +683,32 @@ public unsafe class TypeName
             var expected = DiagnosticResult.CompilerError("CS1660").WithLocation(7, 29);
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task VerifyThatCodeFixDoesNotCrashOnMissingEventSymbolAsync()
+        {
+            var testCode = @"
+using System;
+
+namespace StyleCopDemo
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            TestEvent -= delegate { Console.WriteLine(""hello""); };
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(10, 26),
+                DiagnosticResult.CompilerError("CS0103").WithLocation(10, 13),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

@@ -38,10 +38,15 @@ namespace StyleCop.Analyzers.ReadabilityRules
         }
 
         /// <inheritdoc/>
-        public override Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             foreach (var diagnostic in context.Diagnostics)
             {
+                if (!(await CanFixAsync(context, diagnostic).ConfigureAwait(false)))
+                {
+                    continue;
+                }
+
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         ReadabilityResources.SA1130CodeFix,
@@ -49,8 +54,18 @@ namespace StyleCop.Analyzers.ReadabilityRules
                         nameof(SA1134CodeFixProvider)),
                     diagnostic);
             }
+        }
 
-            return SpecializedTasks.CompletedTask;
+        private static async Task<bool> CanFixAsync(CodeFixContext context, Diagnostic diagnostic)
+        {
+            var syntaxRoot = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+            var semanticModel = await context.Document.GetSemanticModelAsync(context.CancellationToken).ConfigureAwait(false);
+
+            var anonymousMethod = (AnonymousMethodExpressionSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
+
+            var newNode = ReplaceWithLambda(semanticModel, anonymousMethod);
+
+            return newNode != null;
         }
 
         private static SyntaxNode ReplaceWithLambda(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod)
@@ -74,7 +89,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 case SyntaxKind.AddAssignmentExpression:
                 case SyntaxKind.SubtractAssignmentExpression:
-                    argumentList = GetAssignmentArgumentList(semanticModel, anonymousMethod);
+                    var list = GetAssignmentArgumentList(semanticModel, anonymousMethod);
+
+                    if (list == null)
+                    {
+                        return null;
+                    }
+
+                    argumentList = list.Value;
                     break;
                 }
 
@@ -155,11 +177,17 @@ namespace StyleCop.Analyzers.ReadabilityRules
             return namedTypeSymbol.DelegateInvokeMethod.Parameters.Select(ps => ps.Name).ToImmutableArray();
         }
 
-        private static ImmutableArray<string> GetAssignmentArgumentList(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod)
+        private static ImmutableArray<string>? GetAssignmentArgumentList(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod)
         {
             var assignmentExpressionSyntax = (AssignmentExpressionSyntax)anonymousMethod.Parent;
 
             var symbol = semanticModel.GetSymbolInfo(assignmentExpressionSyntax.Left);
+
+            if (symbol.Symbol == null)
+            {
+                return null;
+            }
+
             var eventSymbol = (IEventSymbol)symbol.Symbol;
             var namedTypeSymbol = (INamedTypeSymbol)eventSymbol.Type;
             return namedTypeSymbol.DelegateInvokeMethod.Parameters.Select(ps => ps.Name).ToImmutableArray();
@@ -221,7 +249,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             var anonymousMethod = (AnonymousMethodExpressionSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
 
-            var newSyntaxRoot = syntaxRoot.ReplaceNode(anonymousMethod, ReplaceWithLambda(semanticModel, anonymousMethod));
+            var newNode = ReplaceWithLambda(semanticModel, anonymousMethod);
+
+            var newSyntaxRoot = syntaxRoot.ReplaceNode(anonymousMethod, newNode);
             var newDocument = document.WithSyntaxRoot(newSyntaxRoot.WithoutFormatting());
 
             return newDocument;
@@ -247,7 +277,17 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     nodes.Add(node);
                 }
 
-                return syntaxRoot.ReplaceNodes(nodes, (originalNode, rewrittenNode) => ReplaceWithLambda(semanticModel, rewrittenNode));
+                return syntaxRoot.ReplaceNodes(nodes, (originalNode, rewrittenNode) =>
+                {
+                    var newNode = ReplaceWithLambda(semanticModel, rewrittenNode);
+
+                    if (newNode == null)
+                    {
+                        return rewrittenNode;
+                    }
+
+                    return newNode;
+                });
             }
         }
     }
