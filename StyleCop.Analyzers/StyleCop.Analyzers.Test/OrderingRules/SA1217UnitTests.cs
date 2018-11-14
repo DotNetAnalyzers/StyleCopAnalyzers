@@ -297,6 +297,54 @@ namespace MyNamespace
             await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Verify that the systemUsingDirectivesFirst setting is honored correctly when using multiple static system usings.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2163, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2163")]
+        public async Task VerifyMultipleStaticSystemUsingDirectivesAsync()
+        {
+            this.useSystemUsingDirectivesFirst = true;
+
+            var testCode = @"
+using static System.Math;
+using static System.Activator;
+
+namespace MyNamespace
+{
+    public static class TestClass
+    {
+        public static void TestMethod()
+        {
+        }
+    }
+}
+";
+
+            var fixedTestCode = @"
+using static System.Activator;
+using static System.Math;
+
+namespace MyNamespace
+{
+    public static class TestClass
+    {
+        public static void TestMethod()
+        {
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expectedDiagnostic =
+            {
+                Diagnostic().WithLocation(2, 1).WithArguments("System.Math", "System.Activator"),
+            };
+
+            await this.VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         private static DiagnosticResult Diagnostic()
             => StyleCopCodeFixVerifier<SA1217UsingStaticDirectivesMustBeOrderedAlphabetically, UsingCodeFixProvider>.Diagnostic();
 
