@@ -230,5 +230,44 @@ namespace Test {
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestFullyQualifiedAliasWithWrappedTypeArgumentsAsync()
+        {
+            var testCode = @"
+using Example = System.ValueTuple<
+    System.Int32,
+    System.Int32>;
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2820")]
+        [WorkItem(2820, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2820")]
+        public async Task TestAliasWithWrappedTypeArgumentsInsideNamespaceAsync()
+        {
+            var testCode = @"
+using System;
+
+namespace Test {
+    using Example = System.ValueTuple<
+        Exception,
+        Exception>;
+}
+";
+            var fixedCode = @"
+using System;
+
+namespace Test {
+    using Example = System.ValueTuple<
+        System.Exception,
+        System.Exception>;
+}
+";
+
+            var expected = Diagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorType).WithLocation(5, 5).WithArguments("System.ValueTuple<System.Exception, System.Exception>");
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
