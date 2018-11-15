@@ -4,13 +4,13 @@
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Test.Verifiers;
-    using TestHelper;
     using Xunit;
 
     /// <summary>
@@ -97,6 +97,9 @@ namespace Bar
         protected virtual IEnumerable<string> GetDisabledDiagnostics()
             => new[] { FileHeaderAnalyzers.SA1639Descriptor.Id };
 
+        protected virtual IEnumerable<string> GetExplicitlyEnabledDiagnostics()
+            => Enumerable.Empty<string>();
+
         protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
             => this.VerifyCSharpFixAsync(source, new[] { expected }, fixedSource: null, cancellationToken);
 
@@ -121,6 +124,7 @@ namespace Bar
             test.ExpectedDiagnostics.AddRange(expected);
             test.RemainingDiagnostics.AddRange(remainingDiagnostics);
             test.DisabledDiagnostics.AddRange(this.GetDisabledDiagnostics());
+            test.ExplicitlyEnabledDiagnostics.AddRange(this.GetExplicitlyEnabledDiagnostics());
             return test.RunAsync(cancellationToken);
         }
     }
