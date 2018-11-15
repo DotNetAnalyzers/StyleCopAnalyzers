@@ -35,6 +35,7 @@ namespace StyleCop.Analyzers.OrderingRules
             private readonly Dictionary<TreeTextSpan, List<UsingDirectiveSyntax>> systemUsings = new Dictionary<TreeTextSpan, List<UsingDirectiveSyntax>>();
             private readonly Dictionary<TreeTextSpan, List<UsingDirectiveSyntax>> namespaceUsings = new Dictionary<TreeTextSpan, List<UsingDirectiveSyntax>>();
             private readonly Dictionary<TreeTextSpan, List<UsingDirectiveSyntax>> aliases = new Dictionary<TreeTextSpan, List<UsingDirectiveSyntax>>();
+            private readonly Dictionary<TreeTextSpan, List<UsingDirectiveSyntax>> systemStaticImports = new Dictionary<TreeTextSpan, List<UsingDirectiveSyntax>>();
             private readonly Dictionary<TreeTextSpan, List<UsingDirectiveSyntax>> staticImports = new Dictionary<TreeTextSpan, List<UsingDirectiveSyntax>>();
 
             public UsingsSorter(StyleCopSettings settings, SemanticModel semanticModel, CompilationUnitSyntax compilationUnit, ImmutableArray<SyntaxTrivia> fileHeader)
@@ -76,6 +77,11 @@ namespace StyleCop.Analyzers.OrderingRules
                     result.AddRange(usingsList);
                 }
 
+                if (this.systemStaticImports.TryGetValue(directiveSpan, out usingsList))
+                {
+                    result.AddRange(usingsList);
+                }
+
                 if (this.staticImports.TryGetValue(directiveSpan, out usingsList))
                 {
                     result.AddRange(usingsList);
@@ -91,6 +97,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
                 usingList.AddRange(this.GenerateUsings(this.systemUsings, directiveSpan, indentation, triviaToMove, qualifyNames));
                 usingList.AddRange(this.GenerateUsings(this.namespaceUsings, directiveSpan, indentation, triviaToMove, qualifyNames));
+                usingList.AddRange(this.GenerateUsings(this.systemStaticImports, directiveSpan, indentation, triviaToMove, qualifyNames));
                 usingList.AddRange(this.GenerateUsings(this.staticImports, directiveSpan, indentation, triviaToMove, qualifyNames));
                 usingList.AddRange(this.GenerateUsings(this.aliases, directiveSpan, indentation, triviaToMove, qualifyNames));
 
@@ -116,6 +123,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
                 usingList.AddRange(this.GenerateUsings(this.systemUsings, usingsList, indentation, triviaToMove, qualifyNames));
                 usingList.AddRange(this.GenerateUsings(this.namespaceUsings, usingsList, indentation, triviaToMove, qualifyNames));
+                usingList.AddRange(this.GenerateUsings(this.systemStaticImports, usingsList, indentation, triviaToMove, qualifyNames));
                 usingList.AddRange(this.GenerateUsings(this.staticImports, usingsList, indentation, triviaToMove, qualifyNames));
                 usingList.AddRange(this.GenerateUsings(this.aliases, usingsList, indentation, triviaToMove, qualifyNames));
 
@@ -419,22 +427,35 @@ namespace StyleCop.Analyzers.OrderingRules
                 return NameSyntaxHelpers.Compare(left.Name, right.Name);
             }
 
+            private bool IsSeparatedStaticSystemUsing(UsingDirectiveSyntax syntax)
+            {
+                if (!this.separateSystemDirectives)
+                {
+                    return false;
+                }
+
+                return this.StartsWithSystemUsingDirectiveIdentifier(syntax.Name);
+            }
+
             private bool IsSeparatedSystemUsing(UsingDirectiveSyntax syntax)
             {
                 if (!this.separateSystemDirectives
-                    || (syntax.Alias != null)
-                    || syntax.StaticKeyword.IsKind(SyntaxKind.StaticKeyword)
                     || syntax.HasNamespaceAliasQualifier())
                 {
                     return false;
                 }
 
-                if (!(this.semanticModel.GetSymbolInfo(syntax.Name).Symbol is INamespaceSymbol namespaceSymbol))
+                return this.StartsWithSystemUsingDirectiveIdentifier(syntax.Name);
+            }
+
+            private bool StartsWithSystemUsingDirectiveIdentifier(NameSyntax name)
+            {
+                if (!(this.semanticModel.GetSymbolInfo(name).Symbol is INamespaceOrTypeSymbol namespaceOrTypeSymbol))
                 {
                     return false;
                 }
 
-                var namespaceTypeName = namespaceSymbol.ToDisplayString(FullNamespaceDisplayFormat);
+                var namespaceTypeName = namespaceOrTypeSymbol.ToDisplayString(FullNamespaceDisplayFormat);
                 var firstPart = namespaceTypeName.Split('.')[0];
 
                 return string.Equals(SystemUsingDirectiveIdentifier, firstPart, StringComparison.Ordinal);
@@ -459,9 +480,16 @@ namespace StyleCop.Analyzers.OrderingRules
                     {
                         this.AddUsingDirective(this.aliases, usingDirective, containingSpan);
                     }
-                    else if (!usingDirective.StaticKeyword.IsKind(SyntaxKind.None))
+                    else if (usingDirective.StaticKeyword.IsKind(SyntaxKind.StaticKeyword))
                     {
-                        this.AddUsingDirective(this.staticImports, usingDirective, containingSpan);
+                        if (this.IsSeparatedStaticSystemUsing(usingDirective))
+                        {
+                            this.AddUsingDirective(this.systemStaticImports, usingDirective, containingSpan);
+                        }
+                        else
+                        {
+                            this.AddUsingDirective(this.staticImports, usingDirective, containingSpan);
+                        }
                     }
                     else if (this.IsSeparatedSystemUsing(usingDirective))
                     {
