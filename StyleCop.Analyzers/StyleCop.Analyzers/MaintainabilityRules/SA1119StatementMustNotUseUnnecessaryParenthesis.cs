@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Lightup;
 
     /// <summary>
@@ -88,7 +89,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             // Only register the syntax node action if the diagnostic is enabled. This is important because
             // otherwise the diagnostic for fading out the parenthesis is still active, even if the main diagnostic
             // is disabled
-            if (context.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(Descriptor.Id) != Microsoft.CodeAnalysis.ReportDiagnostic.Suppress)
+            if (!context.IsAnalyzerSuppressed(Descriptor))
             {
                 context.RegisterSyntaxNodeAction(ParenthesizedExpressionAction, SyntaxKind.ParenthesizedExpression);
             }

@@ -103,10 +103,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
             HandleQueryClause(queryExpression.FromClause, tokensToCheck);
             HandleQueryBody(queryExpression.Body, tokensToCheck);
 
-            bool isEnabledSA1102 = !context.IsAnalyzerSuppressed(SA1102Identifier);
-            bool isEnabledSA1103 = !context.IsAnalyzerSuppressed(SA1103Identifier);
-            bool isEnabledSA1104 = !context.IsAnalyzerSuppressed(SA1104Identifier);
-            bool isEnabledSA1105 = !context.IsAnalyzerSuppressed(SA1105Identifier);
+            bool isEnabledSA1102 = !context.IsAnalyzerSuppressed(SA1102Descriptor);
+            bool isEnabledSA1103 = !context.IsAnalyzerSuppressed(SA1103Descriptor);
+            bool isEnabledSA1104 = !context.IsAnalyzerSuppressed(SA1104Descriptor);
+            bool isEnabledSA1105 = !context.IsAnalyzerSuppressed(SA1105Descriptor);
 
             bool allOnSameLine = true;
             bool allOnSeparateLine = true;

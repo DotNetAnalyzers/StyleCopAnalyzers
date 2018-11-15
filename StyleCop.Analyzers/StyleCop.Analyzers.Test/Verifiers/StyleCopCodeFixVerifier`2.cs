@@ -177,6 +177,27 @@ namespace StyleCop.Analyzers.Test.Verifiers
             /// </value>
             public string SettingsFileName { get; set; } = SettingsHelper.SettingsFileName;
 
+            /// <summary>
+            /// Gets the list of diagnostic identifier that will be explicitly enabled in the compilation options.
+            /// </summary>
+            /// <value>
+            /// The list of explicitly enabled diagnostic identifiers.
+            /// </value>
+            public List<string> ExplicitlyEnabledDiagnostics { get; } = new List<string>();
+
+            protected override CompilationOptions CreateCompilationOptions()
+            {
+                var compilationOptions = base.CreateCompilationOptions();
+                var specificDiagnosticOptions = compilationOptions.SpecificDiagnosticOptions;
+
+                foreach (var id in this.ExplicitlyEnabledDiagnostics)
+                {
+                    specificDiagnosticOptions = specificDiagnosticOptions.SetItem(id, ReportDiagnostic.Warn);
+                }
+
+                return compilationOptions.WithSpecificDiagnosticOptions(specificDiagnosticOptions);
+            }
+
             protected override IEnumerable<CodeFixProvider> GetCodeFixProviders()
             {
                 var codeFixProvider = new TCodeFix();

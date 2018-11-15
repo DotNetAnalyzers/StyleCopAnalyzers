@@ -91,5 +91,11 @@ namespace Bar
         {
             return Enumerable.Empty<string>();
         }
+
+        /// <inheritdoc/>
+        protected override IEnumerable<string> GetExplicitlyEnabledDiagnostics()
+        {
+            yield return FileHeaderAnalyzers.SA1639Descriptor.Id;
+        }
     }
 }

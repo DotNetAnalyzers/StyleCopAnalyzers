@@ -82,7 +82,7 @@ namespace StyleCop.Analyzers.LayoutRules
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
             // If SA1503 is suppressed, we need to handle compound blocks as well.
-            if (context.IsAnalyzerSuppressed(SA1503BracesMustNotBeOmitted.DiagnosticId))
+            if (context.IsAnalyzerSuppressed(SA1503BracesMustNotBeOmitted.Descriptor))
             {
                 context.RegisterSyntaxNodeAction(HandleIfStatement, SyntaxKind.IfStatement);
                 context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ctx.Node, ((DoStatementSyntax)ctx.Node).Statement), SyntaxKind.DoStatement);
@@ -146,7 +146,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 }
             }
 
-            if (!context.IsAnalyzerSuppressed(SA1520UseBracesConsistently.DiagnosticId))
+            if (!context.IsAnalyzerSuppressed(SA1520UseBracesConsistently.Descriptor))
             {
                 // inconsistencies will be reported as SA1520, as long as it's not suppressed
                 if (clauses.OfType<BlockSyntax>().Any())
@@ -190,7 +190,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 return;
             }
 
-            if (!context.IsAnalyzerSuppressed(SA1519BracesMustNotBeOmittedFromMultiLineChildStatement.DiagnosticId))
+            if (!context.IsAnalyzerSuppressed(SA1519BracesMustNotBeOmittedFromMultiLineChildStatement.Descriptor))
             {
                 // diagnostics for multi-line statements is handled by SA1519, as long as it's not suppressed
                 FileLinePositionSpan lineSpan = childStatement.GetLineSpan();
