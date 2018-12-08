@@ -2015,5 +2015,34 @@ public class TestClass
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(2774, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2774")]
+        public async Task VerifyThatBraceOnSameLineAsOtherCodeAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var x = TestMethod2(new TestClass2 {
+            TestValue = 12,
+        });
+    }
+
+    public int TestMethod2(TestClass2 input)
+    {
+        return 0;
+    }
+}
+
+public class TestClass2
+{
+    public int TestValue { get; set; }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
