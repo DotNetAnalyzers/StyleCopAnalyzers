@@ -3,6 +3,8 @@
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
+    using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
@@ -63,7 +65,75 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static SyntaxNode GetReplacementNode(SemanticModel semanticModel, UsingDirectiveSyntax node, CancellationToken cancellationToken)
         {
             SymbolInfo symbolInfo = semanticModel.GetSymbolInfo(node.Name, cancellationToken);
-            return node.WithName(SyntaxFactory.ParseName(symbolInfo.Symbol.ToString()));
+            var symbolNameSyntax = SyntaxFactory.ParseName(symbolInfo.Symbol.ToQualifiedString());
+
+            var newName = GetReplacementName(symbolNameSyntax, node.Name);
+            return node.WithName(newName);
+        }
+
+        private static NameSyntax GetReplacementName(NameSyntax symbolNameSyntax, NameSyntax nameSyntax)
+        {
+            switch (nameSyntax.Kind())
+            {
+            case SyntaxKind.GenericName:
+                return GetReplacementGenericName(symbolNameSyntax, (GenericNameSyntax)nameSyntax);
+
+            case SyntaxKind.QualifiedName:
+                return GetReplacementQualifiedName((QualifiedNameSyntax)symbolNameSyntax, (QualifiedNameSyntax)nameSyntax);
+
+            default:
+                return symbolNameSyntax;
+            }
+        }
+
+        private static NameSyntax GetReplacementGenericName(NameSyntax symbolNameSyntax, GenericNameSyntax genericNameSyntax)
+        {
+            var symbolQualifiedNameSyntax = symbolNameSyntax as QualifiedNameSyntax;
+            var symbolGenericNameSyntax = (GenericNameSyntax)(symbolQualifiedNameSyntax?.Right ?? symbolNameSyntax);
+
+            TypeArgumentListSyntax newTypeArgumentList = GetReplacementTypeArgumentList(symbolGenericNameSyntax, genericNameSyntax);
+
+            if (symbolQualifiedNameSyntax != null)
+            {
+                var newRightPart = ((GenericNameSyntax)symbolQualifiedNameSyntax.Right).WithTypeArgumentList(newTypeArgumentList);
+                return symbolQualifiedNameSyntax.WithRight(newRightPart);
+            }
+
+            return genericNameSyntax.WithTypeArgumentList(newTypeArgumentList);
+        }
+
+        private static TypeArgumentListSyntax GetReplacementTypeArgumentList(GenericNameSyntax symbolGenericNameSyntax, GenericNameSyntax genericNameSyntax)
+        {
+            var replacements = new Dictionary<NameSyntax, NameSyntax>();
+            for (var i = 0; i < genericNameSyntax.TypeArgumentList.Arguments.Count; i++)
+            {
+                if (!genericNameSyntax.TypeArgumentList.Arguments[i].IsKind(SyntaxKind.PredefinedType))
+                {
+                    var argument = (NameSyntax)genericNameSyntax.TypeArgumentList.Arguments[i];
+                    var symbolArgument = (NameSyntax)symbolGenericNameSyntax.TypeArgumentList.Arguments[i];
+
+                    var replacementArgument = GetReplacementName(symbolArgument, argument)
+                        .WithLeadingTrivia(argument.GetLeadingTrivia())
+                        .WithTrailingTrivia(argument.GetTrailingTrivia());
+
+                    replacements.Add(argument, replacementArgument);
+                }
+            }
+
+            var newTypeArgumentList = genericNameSyntax.TypeArgumentList.ReplaceNodes(replacements.Keys, (original, maybeRewritten) => replacements[original]);
+            return newTypeArgumentList;
+        }
+
+        private static NameSyntax GetReplacementQualifiedName(QualifiedNameSyntax symbolNameSyntax, QualifiedNameSyntax nameSyntax)
+        {
+            if (nameSyntax.Right.IsKind(SyntaxKind.GenericName))
+            {
+                return GetReplacementGenericName(symbolNameSyntax, (GenericNameSyntax)nameSyntax.Right);
+            }
+            else
+            {
+                return symbolNameSyntax;
+            }
         }
 
         private class FixAll : DocumentBasedFixAllProvider
