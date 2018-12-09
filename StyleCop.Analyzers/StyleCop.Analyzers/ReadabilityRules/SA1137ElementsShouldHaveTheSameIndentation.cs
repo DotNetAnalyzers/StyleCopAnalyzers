@@ -480,6 +480,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
+            if (!openBraceToken.IsFirstInLine())
+            {
+                // Do not check brace indentation if the opening brace is not the first token on a line.
+                return;
+            }
+
             SyntaxTrivia openBraceIndentationTrivia = openBraceToken.LeadingTrivia.LastOrDefault();
             string openBraceIndentation = openBraceIndentationTrivia.IsKind(SyntaxKind.WhitespaceTrivia) ? openBraceIndentationTrivia.ToString() : string.Empty;
 
