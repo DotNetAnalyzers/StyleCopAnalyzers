@@ -257,8 +257,8 @@ namespace Test
         Exception>;
 
     using Example2 = ValueTuple<
-        Exception,
-        Exception>;
+        Exception[],
+        Exception[,,]>;
 
     using Example3 = ValueTuple<
         ValueTuple<
@@ -282,8 +282,8 @@ namespace Test
         System.Exception>;
 
     using Example2 = System.ValueTuple<
-        System.Exception,
-        System.Exception>;
+        System.Exception[],
+        System.Exception[,,]>;
 
     using Example3 = System.ValueTuple<
         System.ValueTuple<
@@ -300,7 +300,7 @@ namespace Test
             DiagnosticResult[] expected =
             {
                 Diagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorType).WithLocation(7, 5).WithArguments("System.ValueTuple<System.Exception, System.Exception>"),
-                Diagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorType).WithLocation(11, 5).WithArguments("System.ValueTuple<System.Exception, System.Exception>"),
+                Diagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorType).WithLocation(11, 5).WithArguments("System.ValueTuple<System.Exception[], System.Exception[,,]>"),
                 Diagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorType).WithLocation(15, 5).WithArguments("System.ValueTuple<System.ValueTuple<System.Exception, System.Exception>, System.Exception>"),
                 Diagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorType).WithLocation(21, 5).WithArguments("System.ValueTuple<System.Exception, System.Exception>"),
             };

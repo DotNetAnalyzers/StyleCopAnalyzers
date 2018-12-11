@@ -68,10 +68,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var symbolNameSyntax = SyntaxFactory.ParseName(symbolInfo.Symbol.ToQualifiedString());
 
             var newName = GetReplacementName(symbolNameSyntax, node.Name);
-            return node.WithName(newName);
+            return node.WithName((NameSyntax)newName);
         }
 
-        private static NameSyntax GetReplacementName(NameSyntax symbolNameSyntax, NameSyntax nameSyntax)
+        private static TypeSyntax GetReplacementName(TypeSyntax symbolNameSyntax, TypeSyntax nameSyntax)
         {
             switch (nameSyntax.Kind())
             {
@@ -86,7 +86,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
-        private static NameSyntax GetReplacementGenericName(NameSyntax symbolNameSyntax, GenericNameSyntax genericNameSyntax)
+        private static NameSyntax GetReplacementGenericName(TypeSyntax symbolNameSyntax, GenericNameSyntax genericNameSyntax)
         {
             var symbolQualifiedNameSyntax = symbolNameSyntax as QualifiedNameSyntax;
             var symbolGenericNameSyntax = (GenericNameSyntax)(symbolQualifiedNameSyntax?.Right ?? symbolNameSyntax);
@@ -104,19 +104,20 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static TypeArgumentListSyntax GetReplacementTypeArgumentList(GenericNameSyntax symbolGenericNameSyntax, GenericNameSyntax genericNameSyntax)
         {
-            var replacements = new Dictionary<NameSyntax, NameSyntax>();
+            var replacements = new Dictionary<TypeSyntax, TypeSyntax>();
             for (var i = 0; i < genericNameSyntax.TypeArgumentList.Arguments.Count; i++)
             {
-                if (!genericNameSyntax.TypeArgumentList.Arguments[i].IsKind(SyntaxKind.PredefinedType))
+                var argument = genericNameSyntax.TypeArgumentList.Arguments[i];
+
+                if (!argument.IsKind(SyntaxKind.PredefinedType))
                 {
-                    var argument = (NameSyntax)genericNameSyntax.TypeArgumentList.Arguments[i];
-                    var symbolArgument = (NameSyntax)symbolGenericNameSyntax.TypeArgumentList.Arguments[i];
+                var symbolArgument = symbolGenericNameSyntax.TypeArgumentList.Arguments[i];
 
-                    var replacementArgument = GetReplacementName(symbolArgument, argument)
-                        .WithLeadingTrivia(argument.GetLeadingTrivia())
-                        .WithTrailingTrivia(argument.GetTrailingTrivia());
+                var replacementArgument = GetReplacementName(symbolArgument, argument)
+                    .WithLeadingTrivia(argument.GetLeadingTrivia())
+                    .WithTrailingTrivia(argument.GetTrailingTrivia());
 
-                    replacements.Add(argument, replacementArgument);
+                replacements.Add(argument, replacementArgument);
                 }
             }
 

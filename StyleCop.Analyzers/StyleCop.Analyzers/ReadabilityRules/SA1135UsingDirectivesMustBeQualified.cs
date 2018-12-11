@@ -124,6 +124,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static string UsingDirectiveSyntaxToCanonicalString(UsingDirectiveSyntax usingDirective)
         {
             var builder = StringBuilderPool.Allocate();
+            var insideArrayDeclaration = false;
 
             // NOTE: this does not cover embedded comments. It is very unlikely that comments are present
             // within a multiline using statement and handling them requires a lot more effort (and keeping of state).
@@ -136,8 +137,16 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 case '\r':
                 case '\n':
                     break;
+                case '[':
+                    insideArrayDeclaration = true;
+                    builder.Append(c);
+                    break;
+                case ']':
+                    insideArrayDeclaration = false;
+                    builder.Append(c);
+                    break;
                 case ',':
-                    builder.Append(", ");
+                    builder.Append(insideArrayDeclaration ? "," : ", ");
                     break;
                 default:
                     builder.Append(c);

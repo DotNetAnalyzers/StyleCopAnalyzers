@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Helpers
 {
-    using System;
     using System.Text;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -73,9 +72,25 @@ namespace StyleCop.Analyzers.Helpers
 
         private static void AppendQualifiedSymbolName(StringBuilder builder, ISymbol symbol)
         {
-            builder.Append(symbol.ContainingNamespace.ToDisplayString());
-            builder.Append(".");
-            builder.Append(symbol.Name);
+            switch (symbol)
+            {
+            case IArrayTypeSymbol arraySymbol:
+                builder
+                    .Append(arraySymbol.ElementType.ContainingNamespace.ToDisplayString())
+                    .Append(".")
+                    .Append(arraySymbol.ElementType.Name)
+                    .Append("[")
+                    .Append(',', arraySymbol.Rank - 1)
+                    .Append("]");
+                break;
+
+            default:
+                builder
+                    .Append(symbol.ContainingNamespace.ToDisplayString())
+                    .Append(".")
+                    .Append(symbol.Name);
+                break;
+            }
         }
     }
 }
