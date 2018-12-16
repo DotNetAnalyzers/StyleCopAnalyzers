@@ -111,13 +111,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 if (!argument.IsKind(SyntaxKind.PredefinedType))
                 {
-                var symbolArgument = symbolGenericNameSyntax.TypeArgumentList.Arguments[i];
+                    var symbolArgument = symbolGenericNameSyntax.TypeArgumentList.Arguments[i];
 
-                var replacementArgument = GetReplacementName(symbolArgument, argument)
-                    .WithLeadingTrivia(argument.GetLeadingTrivia())
-                    .WithTrailingTrivia(argument.GetTrailingTrivia());
+                    var replacementArgument = GetReplacementName(symbolArgument, argument)
+                        .WithLeadingTrivia(argument.GetLeadingTrivia())
+                        .WithTrailingTrivia(argument.GetTrailingTrivia());
 
-                replacements.Add(argument, replacementArgument);
+                    replacements.Add(argument, replacementArgument);
                 }
             }
 
