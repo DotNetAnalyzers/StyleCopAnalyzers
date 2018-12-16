@@ -7,7 +7,6 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1135UsingDirectivesMustBeQualified,
@@ -243,30 +242,69 @@ using Example = System.ValueTuple<
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact(Skip = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2820")]
+        [Fact]
         [WorkItem(2820, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2820")]
         public async Task TestAliasWithWrappedTypeArgumentsInsideNamespaceAsync()
         {
             var testCode = @"
 using System;
+using MyAlias = System.Exception;
 
-namespace Test {
+namespace Test
+{
     using Example = System.ValueTuple<
         Exception,
+        Exception>;
+
+    using Example2 = ValueTuple<
+        Exception[],
+        Exception[,,]>;
+
+    using Example3 = ValueTuple<
+        ValueTuple<
+            Exception,
+            Exception>,
+        Exception>;
+
+    using Example4 = ValueTuple<
+        MyAlias,
         Exception>;
 }
 ";
             var fixedCode = @"
 using System;
+using MyAlias = System.Exception;
 
-namespace Test {
+namespace Test
+{
     using Example = System.ValueTuple<
+        System.Exception,
+        System.Exception>;
+
+    using Example2 = System.ValueTuple<
+        System.Exception[],
+        System.Exception[,,]>;
+
+    using Example3 = System.ValueTuple<
+        System.ValueTuple<
+            System.Exception,
+            System.Exception>,
+        System.Exception>;
+
+    using Example4 = System.ValueTuple<
         System.Exception,
         System.Exception>;
 }
 ";
 
-            var expected = Diagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorType).WithLocation(5, 5).WithArguments("System.ValueTuple<System.Exception, System.Exception>");
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorType).WithLocation(7, 5).WithArguments("System.ValueTuple<System.Exception, System.Exception>"),
+                Diagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorType).WithLocation(11, 5).WithArguments("System.ValueTuple<System.Exception[], System.Exception[,,]>"),
+                Diagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorType).WithLocation(15, 5).WithArguments("System.ValueTuple<System.ValueTuple<System.Exception, System.Exception>, System.Exception>"),
+                Diagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorType).WithLocation(21, 5).WithArguments("System.ValueTuple<System.Exception, System.Exception>"),
+            };
+
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }

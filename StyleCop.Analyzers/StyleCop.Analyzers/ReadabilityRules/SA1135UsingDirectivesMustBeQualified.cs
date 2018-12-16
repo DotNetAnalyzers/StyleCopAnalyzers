@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
+    using System;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -10,6 +11,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.Diagnostics;
 
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Helpers.ObjectPools;
     using StyleCop.Analyzers.Lightup;
 
     /// <summary>
@@ -96,8 +98,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 symbol = typeSymbol.TupleUnderlyingType();
             }
 
-            string symbolString = symbol.ToString();
-            string usingString = usingDirective.Name.ToString();
+            string symbolString = symbol.ToQualifiedString();
+
+            string usingString = UsingDirectiveSyntaxToCanonicalString(usingDirective);
             if ((symbolString != usingString) && !usingDirective.StartsWithAlias(context.SemanticModel, context.CancellationToken))
             {
                 switch (symbol.Kind)
@@ -116,6 +119,42 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     break;
                 }
             }
+        }
+
+        private static string UsingDirectiveSyntaxToCanonicalString(UsingDirectiveSyntax usingDirective)
+        {
+            var builder = StringBuilderPool.Allocate();
+            var insideArrayDeclaration = false;
+
+            // NOTE: this does not cover embedded comments. It is very unlikely that comments are present
+            // within a multiline using statement and handling them requires a lot more effort (and keeping of state).
+            foreach (var c in usingDirective.Name.ToString())
+            {
+                switch (c)
+                {
+                case ' ':
+                case '\t':
+                case '\r':
+                case '\n':
+                    break;
+                case '[':
+                    insideArrayDeclaration = true;
+                    builder.Append(c);
+                    break;
+                case ']':
+                    insideArrayDeclaration = false;
+                    builder.Append(c);
+                    break;
+                case ',':
+                    builder.Append(insideArrayDeclaration ? "," : ", ");
+                    break;
+                default:
+                    builder.Append(c);
+                    break;
+                }
+            }
+
+            return StringBuilderPool.ReturnAndFree(builder);
         }
     }
 }
