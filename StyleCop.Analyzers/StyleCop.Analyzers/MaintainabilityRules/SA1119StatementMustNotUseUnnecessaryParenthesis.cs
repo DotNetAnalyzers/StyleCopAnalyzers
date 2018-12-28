@@ -137,6 +137,12 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                         return;
                     }
 
+                    if (node.Expression.IsKind(SyntaxKind.StackAllocArrayCreationExpression)
+                        && node.Parent.IsKind(SyntaxKind.EqualsValueClause))
+                    {
+                        return;
+                    }
+
                     ReportDiagnostic(context, node);
                 }
                 else
