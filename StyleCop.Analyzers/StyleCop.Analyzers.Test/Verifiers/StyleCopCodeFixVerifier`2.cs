@@ -45,7 +45,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
         internal static Task VerifyCSharpDiagnosticAsync(LanguageVersion? languageVersion, string source, DiagnosticResult expected, CancellationToken cancellationToken)
             => StyleCopDiagnosticVerifier<TAnalyzer>.VerifyCSharpDiagnosticAsync(languageVersion, source, expected, cancellationToken);
 
-        internal static Task VerifyCSharpDiagnosticAsync(LanguageVersion? languageVersion, string source, DiagnosticResult[] expected, CancellationToken cancellationToken = default)
+        internal static Task VerifyCSharpDiagnosticAsync(LanguageVersion? languageVersion, string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
             => StyleCopDiagnosticVerifier<TAnalyzer>.VerifyCSharpDiagnosticAsync(languageVersion, source, settings: null, expected, cancellationToken);
 
         internal static Task VerifyCSharpDiagnosticAsync(LanguageVersion? languageVersion, string source, string settings, DiagnosticResult[] expected, CancellationToken cancellationToken)

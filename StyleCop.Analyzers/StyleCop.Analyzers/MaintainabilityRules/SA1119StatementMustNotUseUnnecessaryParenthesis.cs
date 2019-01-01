@@ -137,7 +137,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                         return;
                     }
 
-                    if (node.Expression.IsKind(SyntaxKind.StackAllocArrayCreationExpression)
+                    if ((node.Expression.IsKind(SyntaxKind.StackAllocArrayCreationExpression)
+                        || node.Expression.IsKind(SyntaxKindEx.ImplicitStackAllocArrayCreationExpression))
                         && node.Parent.IsKind(SyntaxKind.EqualsValueClause))
                     {
                         return;

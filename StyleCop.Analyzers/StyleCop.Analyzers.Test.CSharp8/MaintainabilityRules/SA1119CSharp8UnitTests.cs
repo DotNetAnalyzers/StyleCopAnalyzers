@@ -160,13 +160,15 @@ public class Foo
 {
     public unsafe void TestMethod()
     {
-        var ptr = stackalloc byte[1];
-        var span = (stackalloc byte[1]);
+        var ptr1 = stackalloc byte[1];
+        var span1 = (stackalloc byte[1]);
+        var ptr2 = stackalloc[] { 0 };
+        var span2 = (stackalloc[] { 0 });
     }
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp8, testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp8, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
