@@ -13,6 +13,10 @@ namespace StyleCop.Analyzers.Lightup
 
     internal static class LightupHelpers
     {
+        internal static readonly System.Reflection.TypeInfo SeparatedSyntaxListBaseTypeInfo = typeof(SeparatedSyntaxList<>).GetTypeInfo();
+
+        internal static readonly Type SeparatedSyntaxListWithTupleElementType = (TupleElementSyntaxWrapper.WrappedType != null) ? SeparatedSyntaxListBaseTypeInfo.MakeGenericType(TupleElementSyntaxWrapper.WrappedType) : null;
+
         private static readonly ConcurrentDictionary<Type, ConcurrentDictionary<SyntaxKind, bool>> SupportedWrappers
             = new ConcurrentDictionary<Type, ConcurrentDictionary<SyntaxKind, bool>>();
 

@@ -24,10 +24,16 @@
     <PackageReference Include="xunit" Version="2.3.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" PrivateAssets="all" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <ProjectReference Include="..\StyleCop.Analyzers.CodeFixes\StyleCop.Analyzers.CodeFixes.csproj" />
     <ProjectReference Include="..\StyleCop.Analyzers\StyleCop.Analyzers.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Update="xunit.runner.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
