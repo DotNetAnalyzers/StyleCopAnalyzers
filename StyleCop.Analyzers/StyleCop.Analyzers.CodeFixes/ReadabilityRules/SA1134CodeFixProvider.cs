@@ -14,6 +14,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1134AttributesMustNotShareLine"/>.
@@ -29,7 +30,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
         {
-            return CustomFixAllProviders.BatchFixer;
+            return FixAll.Instance;
         }
 
         /// <inheritdoc/>
@@ -52,15 +53,24 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
+            var tokensToReplace = new Dictionary<SyntaxToken, SyntaxToken>();
 
+            AddTokensToReplaceToMap(tokensToReplace, syntaxRoot, diagnostic, settings);
+
+            var newSyntaxRoot = syntaxRoot.ReplaceTokens(tokensToReplace.Keys, (original, rewritten) => tokensToReplace[original]);
+            var newDocument = document.WithSyntaxRoot(newSyntaxRoot.WithoutFormatting());
+
+            return newDocument;
+        }
+
+        private static void AddTokensToReplaceToMap(Dictionary<SyntaxToken, SyntaxToken> tokensToReplace, SyntaxNode syntaxRoot, Diagnostic diagnostic, StyleCopSettings settings)
+        {
             var attributeListSyntax = (AttributeListSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
 
             // use the containing type to determine the indentation level, anything else is less reliable.
             var containingType = attributeListSyntax.Parent?.Parent;
             var indentationSteps = (containingType != null) ? IndentationHelper.GetIndentationSteps(settings.Indentation, containingType) + 1 : 0;
             var indentationTrivia = IndentationHelper.GenerateWhitespaceTrivia(settings.Indentation, indentationSteps);
-
-            var tokensToReplace = new Dictionary<SyntaxToken, SyntaxToken>();
 
             if (diagnostic.Properties.ContainsKey(SA1134AttributesMustNotShareLine.FixWithNewLineBeforeKey))
             {
@@ -83,11 +93,34 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 var newLeadingTrivia = nextToken.LeadingTrivia.Insert(0, indentationTrivia);
                 tokensToReplace[nextToken] = nextToken.WithLeadingTrivia(newLeadingTrivia);
             }
+        }
 
-            var newSyntaxRoot = syntaxRoot.ReplaceTokens(tokensToReplace.Keys, (original, rewritten) => tokensToReplace[original]);
-            var newDocument = document.WithSyntaxRoot(newSyntaxRoot.WithoutFormatting());
+        private class FixAll : DocumentBasedFixAllProvider
+        {
+            public static FixAllProvider Instance { get; } = new FixAll();
 
-            return newDocument;
+            protected override string CodeActionTitle => ReadabilityResources.SA1134CodeFix;
+
+            protected override async Task<SyntaxNode> FixAllInDocumentAsync(FixAllContext fixAllContext, Document document, ImmutableArray<Diagnostic> diagnostics)
+            {
+                if (diagnostics.IsEmpty)
+                {
+                    return null;
+                }
+
+                var syntaxRoot = await document.GetSyntaxRootAsync(fixAllContext.CancellationToken).ConfigureAwait(false);
+                var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, fixAllContext.CancellationToken);
+                var tokensToReplace = new Dictionary<SyntaxToken, SyntaxToken>();
+
+                foreach (var diagnostic in diagnostics)
+                {
+                    AddTokensToReplaceToMap(tokensToReplace, syntaxRoot, diagnostic, settings);
+                }
+
+                var newSyntaxRoot = syntaxRoot.ReplaceTokens(tokensToReplace.Keys, (original, rewritten) => tokensToReplace[original]);
+
+                return newSyntaxRoot;
+            }
         }
     }
 }
