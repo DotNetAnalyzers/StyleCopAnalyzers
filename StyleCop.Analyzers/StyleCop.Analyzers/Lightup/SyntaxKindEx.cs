@@ -18,6 +18,7 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind ConflictMarkerTrivia = (SyntaxKind)8564;
         public const SyntaxKind IsPatternExpression = (SyntaxKind)8657;
         public const SyntaxKind RangeExpression = (SyntaxKind)8658;
+        public const SyntaxKind ImplicitObjectCreationExpression = (SyntaxKind)8659;
         public const SyntaxKind CoalesceAssignmentExpression = (SyntaxKind)8725;
         public const SyntaxKind IndexExpression = (SyntaxKind)8741;
         public const SyntaxKind DefaultLiteralExpression = (SyntaxKind)8755;

@@ -293,7 +293,8 @@ namespace StyleCop.Analyzers.SpacingRules
 
             case SyntaxKind.OpenParenToken:
                 // Disallowed for new() constraint, but otherwise allowed for tuple types
-                needSpace = !token.Parent.IsKind(SyntaxKind.ConstructorConstraint);
+                needSpace = !token.Parent.IsKind(SyntaxKind.ConstructorConstraint)
+                    && !token.Parent.IsKind(SyntaxKindEx.ImplicitObjectCreationExpression);
                 break;
 
             default:
