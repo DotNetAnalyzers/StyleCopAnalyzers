@@ -1,7 +1,6 @@
 param (
 	[switch]$Debug,
 	[string]$VisualStudioVersion = '15.0',
-	[switch]$SkipKeyCheck,
 	[string]$Verbosity = 'minimal',
 	[string]$Logger,
 	[switch]$Incremental
@@ -22,12 +21,6 @@ If ($Debug) {
 	$BuildConfig = 'Debug'
 } Else {
 	$BuildConfig = 'Release'
-}
-
-If ($Version.Contains('-')) {
-	$KeyConfiguration = 'Dev'
-} Else {
-	$KeyConfiguration = 'Final'
 }
 
 # download nuget.exe if necessary
@@ -75,7 +68,7 @@ If ($Incremental) {
 	$Target = 'rebuild'
 }
 
-&$msbuild '/nologo' '/m' '/nr:false' "/t:$Target" $LoggerArgument "/verbosity:$Verbosity" "/p:Configuration=$BuildConfig" "/p:VisualStudioVersion=$VisualStudioVersion" "/p:KeyConfiguration=$KeyConfiguration" $SolutionPath
+&$msbuild '/nologo' '/m' '/nr:false' "/t:$Target" $LoggerArgument "/verbosity:$Verbosity" "/p:Configuration=$BuildConfig" "/p:VisualStudioVersion=$VisualStudioVersion" $SolutionPath
 If (-not $?) {
 	$host.ui.WriteErrorLine('Build failed, aborting!')
 	exit $LASTEXITCODE
@@ -84,29 +77,6 @@ If (-not $?) {
 if ($Incremental) {
 	# Skip NuGet validation and copying packages to the output directory
 	exit 0
-}
-
-# By default, do not create a NuGet package unless the expected strong name key files were used
-if (-not $SkipKeyCheck) {
-	. .\keys.ps1
-
-	foreach ($pair in $Keys.GetEnumerator()) {
-		$assembly = Resolve-FullPath -Path "..\StyleCop.Analyzers\StyleCop.Analyzers.CodeFixes\bin\$BuildConfig\$($pair.Key)\StyleCop.Analyzers.dll"
-		# Run the actual check in a separate process or the current process will keep the assembly file locked
-		powershell -Command ".\check-key.ps1 -Assembly '$assembly' -ExpectedKey '$($pair.Value)' -Build '$($pair.Key)'"
-		If (-not $?) {
-			$host.ui.WriteErrorLine('Failed to verify strong name key for build, aborting!')
-			exit $LASTEXITCODE
-		}
-
-		$assembly = Resolve-FullPath -Path "..\StyleCop.Analyzers\StyleCop.Analyzers.CodeFixes\bin\$BuildConfig\$($pair.Key)\StyleCop.Analyzers.CodeFixes.dll"
-		# Run the actual check in a separate process or the current process will keep the assembly file locked
-		powershell -Command ".\check-key.ps1 -Assembly '$assembly' -ExpectedKey '$($pair.Value)' -Build '$($pair.Key)'"
-		If (-not $?) {
-			$host.ui.WriteErrorLine('Failed to verify strong name key for build, aborting!')
-			exit $LASTEXITCODE
-		}
-	}
 }
 
 if (-not (Test-Path 'nuget')) {
