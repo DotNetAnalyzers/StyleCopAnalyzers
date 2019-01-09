@@ -15,8 +15,6 @@ if (!(Test-Path $SolutionPath)) {
 	exit 1
 }
 
-. .\version.ps1
-
 If ($Debug) {
 	$BuildConfig = 'Debug'
 } Else {
@@ -73,15 +71,3 @@ If (-not $?) {
 	$host.ui.WriteErrorLine('Build failed, aborting!')
 	exit $LASTEXITCODE
 }
-
-if ($Incremental) {
-	# Skip NuGet validation and copying packages to the output directory
-	exit 0
-}
-
-if (-not (Test-Path 'nuget')) {
-	mkdir "nuget"
-}
-
-Copy-Item "..\StyleCop.Analyzers\StyleCop.Analyzers.CodeFixes\bin\$BuildConfig\StyleCop.Analyzers.$Version.nupkg" 'nuget'
-Copy-Item "..\StyleCop.Analyzers\StyleCop.Analyzers.CodeFixes\bin\$BuildConfig\StyleCop.Analyzers.$Version.symbols.nupkg" 'nuget'
