@@ -20,12 +20,7 @@
 
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile Condition="'$(KeyConfiguration)' == 'Final'">..\..\build\keys\StyleCopAnalyzers.snk</AssemblyOriginatorKeyFile>
-    <AssemblyOriginatorKeyFile Condition="'$(KeyConfiguration)' != 'Final'">..\..\build\keys\StyleCopAnalyzers.dev.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(KeyConfiguration)' != 'Final'">
-    <DefineConstants>$(DefineConstants);DEVELOPMENT_KEY</DefineConstants>
+    <AssemblyOriginatorKeyFile>..\..\build\keys\StyleCopAnalyzers.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>

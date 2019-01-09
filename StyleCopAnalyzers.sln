@@ -27,13 +27,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{A0840AD0-B615-487C-AEFF-9DCB691D037B}"
 	ProjectSection(SolutionItems) = preProject
 		build\build.ps1 = build\build.ps1
-		build\check-key.ps1 = build\check-key.ps1
 		StyleCop.Analyzers\Directory.Build.props = StyleCop.Analyzers\Directory.Build.props
 		StyleCop.Analyzers\Directory.Build.targets = StyleCop.Analyzers\Directory.Build.targets
-		build\keys.ps1 = build\keys.ps1
 		build\opencover-report.ps1 = build\opencover-report.ps1
-		build\push.ps1 = build\push.ps1
-		build\version.ps1 = build\version.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "documentation", "documentation", "{19DD9E9D-877A-4492-9B7F-2E681DD58308}"
