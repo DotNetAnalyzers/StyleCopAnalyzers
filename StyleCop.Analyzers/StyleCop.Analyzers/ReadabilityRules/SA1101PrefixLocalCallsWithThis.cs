@@ -235,27 +235,26 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 case SyntaxKind.FieldDeclaration:
                 case SyntaxKind.EventFieldDeclaration:
-                case SyntaxKind.EventDeclaration:
-                case SyntaxKind.PropertyDeclaration:
-                case SyntaxKind.IndexerDeclaration:
                     return false;
+
+                case SyntaxKind.EventDeclaration:
+                case SyntaxKind.IndexerDeclaration:
+                    var basePropertySyntax = (BasePropertyDeclarationSyntax)node;
+                    return !basePropertySyntax.Modifiers.Any(SyntaxKind.StaticKeyword);
+
+                case SyntaxKind.PropertyDeclaration:
+                    var propertySyntax = (PropertyDeclarationSyntax)node;
+                    return !propertySyntax.Modifiers.Any(SyntaxKind.StaticKeyword)
+                        && propertySyntax.Initializer == null;
 
                 case SyntaxKind.MultiLineDocumentationCommentTrivia:
                 case SyntaxKind.SingleLineDocumentationCommentTrivia:
                     return false;
 
-                case SyntaxKind.GetAccessorDeclaration:
-                case SyntaxKind.SetAccessorDeclaration:
-                case SyntaxKind.AddAccessorDeclaration:
-                case SyntaxKind.RemoveAccessorDeclaration:
-                case SyntaxKind.UnknownAccessorDeclaration:
-                    BasePropertyDeclarationSyntax basePropertySyntax = (BasePropertyDeclarationSyntax)node.Parent.Parent;
-                    return !basePropertySyntax.Modifiers.Any(SyntaxKind.StaticKeyword);
-
                 case SyntaxKind.ConstructorDeclaration:
                 case SyntaxKind.DestructorDeclaration:
                 case SyntaxKind.MethodDeclaration:
-                    BaseMethodDeclarationSyntax baseMethodSyntax = (BaseMethodDeclarationSyntax)node;
+                    var baseMethodSyntax = (BaseMethodDeclarationSyntax)node;
                     return !baseMethodSyntax.Modifiers.Any(SyntaxKind.StaticKeyword);
 
                 case SyntaxKind.Attribute:
