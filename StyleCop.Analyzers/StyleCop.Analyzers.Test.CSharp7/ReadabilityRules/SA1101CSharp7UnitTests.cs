@@ -33,5 +33,83 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(2845, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2845")]
+        public async Task TestPropertyWithExpressionBodiedAccessorAsync()
+        {
+            var testCode = @"
+public class Foo
+{
+    private int bar;
+
+    public int Bar
+    {
+        get => bar;
+        set => bar = value;
+    }
+}
+";
+
+            var fixedCode = @"
+public class Foo
+{
+    private int bar;
+
+    public int Bar
+    {
+        get => this.bar;
+        set => this.bar = value;
+    }
+}
+";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(8, 16),
+                Diagnostic().WithLocation(9, 16),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2845, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2845")]
+        public async Task TestIndexerWithExpressionBodiedAccessorAsync()
+        {
+            var testCode = @"
+public class Foo<T>
+{
+   private T[] arr = new T[100];
+
+   public T this[int i]
+   {
+      get => arr[i];
+      set => arr[i] = value;
+   }
+}
+";
+
+            var fixedCode = @"
+public class Foo<T>
+{
+   private T[] arr = new T[100];
+
+   public T this[int i]
+   {
+      get => this.arr[i];
+      set => this.arr[i] = value;
+   }
+}
+";
+
+            var expected = new[]
+            {
+                Diagnostic().WithLocation(8, 14),
+                Diagnostic().WithLocation(9, 14),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
