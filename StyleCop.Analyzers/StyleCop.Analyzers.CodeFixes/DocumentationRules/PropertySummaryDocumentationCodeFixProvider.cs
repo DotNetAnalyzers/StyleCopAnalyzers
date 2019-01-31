@@ -62,7 +62,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             var documentation = node.GetDocumentationCommentTriviaSyntax();
 
             var summaryElement = (XmlElementSyntax)documentation.Content.GetFirstXmlElement(XmlCommentHelper.SummaryXmlTag);
-            var textElement = (XmlTextSyntax)summaryElement.Content.FirstOrDefault();
+            var textElement = XmlCommentHelper.TryGetFirstTextElementWithContent(summaryElement);
             if (textElement == null)
             {
                 return document;

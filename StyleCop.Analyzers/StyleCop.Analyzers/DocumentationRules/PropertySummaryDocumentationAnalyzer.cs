@@ -126,7 +126,8 @@ namespace StyleCop.Analyzers.DocumentationRules
                 diagnosticProperties.Add(NoCodeFixKey, string.Empty);
             }
 
-            var text = !(summaryElement.Content.FirstOrDefault() is XmlTextSyntax textElement) ? string.Empty : XmlCommentHelper.GetText(textElement, true).TrimStart();
+            var textElement = XmlCommentHelper.TryGetFirstTextElementWithContent(summaryElement);
+            string text = textElement is null ? string.Empty : XmlCommentHelper.GetText(textElement, normalizeWhitespace: true).TrimStart();
 
             bool prefixIsGetsOrSets = text.StartsWith(startingTextGetsOrSets, StringComparison.OrdinalIgnoreCase);
             bool prefixIsGets = !prefixIsGetsOrSets && text.StartsWith(startingTextGets, StringComparison.OrdinalIgnoreCase);

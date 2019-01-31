@@ -168,6 +168,106 @@ public class TestClass
             await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(1934, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1934")]
+        public async Task SummaryInParagraphIsAllowedAsync()
+        {
+            var testCode = @"public class ClassName
+{
+    /// <summary><para>Gets the first test value.</para></summary>
+    public int Property1
+    {
+        get;
+    }
+
+    /// <summary>
+    /// <para>Gets the second test value.</para>
+    /// </summary>
+    public int Property2
+    {
+        get;
+    }
+
+    /// <summary>
+    /// <para>
+    /// Gets the third test value.
+    /// </para>
+    /// </summary>
+    public int Property3
+    {
+        get;
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1934, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1934")]
+        public async Task SummaryInParagraphCanBeFixedAsync()
+        {
+            var testCode = @"public class ClassName
+{
+    /// <summary><para>Gets the first test value.</para></summary>
+    public int Property1
+    {
+        set { }
+    }
+
+    /// <summary>
+    /// <para>Gets the second test value.</para>
+    /// </summary>
+    public int Property2
+    {
+        set { }
+    }
+
+    /// <summary>
+    /// <para>
+    /// Gets the third test value.
+    /// </para>
+    /// </summary>
+    public int Property3
+    {
+        set { }
+    }
+}";
+            var fixedTestCode = @"public class ClassName
+{
+    /// <summary><para>Sets the first test value.</para></summary>
+    public int Property1
+    {
+        set { }
+    }
+
+    /// <summary>
+    /// <para>Sets the second test value.</para>
+    /// </summary>
+    public int Property2
+    {
+        set { }
+    }
+
+    /// <summary>
+    /// <para>
+    /// Sets the third test value.
+    /// </para>
+    /// </summary>
+    public int Property3
+    {
+        set { }
+    }
+}";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(4, 16).WithArguments("Sets"),
+                Diagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(12, 16).WithArguments("Sets"),
+                Diagnostic(PropertySummaryDocumentationAnalyzer.SA1623Descriptor).WithLocation(22, 16).WithArguments("Sets"),
+            };
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Verifies that an incorrect summary tag with a known prefix will be fixed correctly.
         /// </summary>
