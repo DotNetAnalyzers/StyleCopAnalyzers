@@ -45,9 +45,6 @@ namespace StyleCop.Analyzers.NamingRules
 
         private static readonly Action<SyntaxNodeAnalysisContext> FieldDeclarationAction = HandleFieldDeclaration;
 
-        private static readonly DiagnosticDescriptor SA1307Descriptor =
-            new SA1307AccessibleFieldsMustBeginWithUpperCaseLetter().SupportedDiagnostics.Single();
-
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
             ImmutableArray.Create(Descriptor);
@@ -87,7 +84,7 @@ namespace StyleCop.Analyzers.NamingRules
             {
                 // SA1307 is taken precedence here. SA1307 should be reported if the field is accessible.
                 // So if SA1307 is enabled this diagnostic will only be reported for internal fields.
-                if (!context.IsAnalyzerSuppressed(SA1307Descriptor))
+                if (!context.IsAnalyzerSuppressed(SA1307AccessibleFieldsMustBeginWithUpperCaseLetter.Descriptor))
                 {
                     return;
                 }
