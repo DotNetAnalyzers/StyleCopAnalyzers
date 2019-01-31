@@ -56,7 +56,7 @@ namespace StyleCop.Analyzers.Helpers
         /// <returns>True if the diagnostic is currently suppressed.</returns>
         internal static bool IsAnalyzerSuppressed(this CompilationOptions compilationOptions, DiagnosticDescriptor descriptor)
         {
-            switch (compilationOptions.SpecificDiagnosticOptions.GetValueOrDefault(descriptor.Id))
+            switch (descriptor.GetEffectiveSeverity(compilationOptions))
             {
             case ReportDiagnostic.Suppress:
                 return true;
