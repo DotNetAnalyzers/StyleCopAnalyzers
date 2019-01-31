@@ -169,20 +169,43 @@ namespace StyleCop.Analyzers.LayoutRules
         {
             var compilationUnit = (CompilationUnitSyntax)context.Node;
 
+            var externs = compilationUnit.Externs;
             var usings = compilationUnit.Usings;
+            var attributeLists = compilationUnit.AttributeLists;
             var members = compilationUnit.Members;
 
             HandleUsings(context, usings, settings);
             HandleMemberList(context, members);
 
-            if (members.Count > 0 && compilationUnit.Usings.Count > 0)
+            SyntaxNode previousItem = externs.LastOrDefault();
+            if (usings.Any())
             {
-                ReportIfThereIsNoBlankLine(context, usings[usings.Count - 1], members[0]);
+                if (previousItem != null)
+                {
+                    ReportIfThereIsNoBlankLine(context, previousItem, usings[0]);
+                }
+
+                previousItem = usings.Last();
             }
 
-            if (compilationUnit.Usings.Count > 0 && compilationUnit.Externs.Count > 0)
+            if (attributeLists.Any())
             {
-                ReportIfThereIsNoBlankLine(context, compilationUnit.Externs[compilationUnit.Externs.Count - 1], compilationUnit.Usings[0]);
+                if (previousItem != null)
+                {
+                    ReportIfThereIsNoBlankLine(context, previousItem, attributeLists[0]);
+                }
+
+                previousItem = attributeLists.Last();
+            }
+
+            if (members.Any())
+            {
+                if (previousItem != null)
+                {
+                    ReportIfThereIsNoBlankLine(context, previousItem, members[0]);
+                }
+
+                previousItem = members.Last();
             }
         }
 

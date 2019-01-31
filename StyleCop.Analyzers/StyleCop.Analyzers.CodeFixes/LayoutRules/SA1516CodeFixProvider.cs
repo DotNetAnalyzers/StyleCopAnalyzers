@@ -142,6 +142,11 @@ namespace StyleCop.Analyzers.LayoutRules
                     return currentNode;
                 }
 
+                if (currentNode is AttributeListSyntax)
+                {
+                    return currentNode;
+                }
+
                 currentNode = currentNode.Parent;
             }
 
