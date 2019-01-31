@@ -6,6 +6,7 @@
 
 namespace StyleCop.Analyzers.Helpers
 {
+    using System;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -61,7 +62,7 @@ namespace StyleCop.Analyzers.Helpers
             case ReportDiagnostic.Suppress:
                 return true;
             case ReportDiagnostic.Default:
-                return !descriptor.IsEnabledByDefault;
+                throw new InvalidOperationException("This should be unreachable.");
             default:
                 return false;
             }
