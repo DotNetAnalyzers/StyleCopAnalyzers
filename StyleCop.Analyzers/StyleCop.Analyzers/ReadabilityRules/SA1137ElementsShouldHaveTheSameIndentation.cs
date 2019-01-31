@@ -4,6 +4,7 @@
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Linq;
     using Microsoft.CodeAnalysis;
@@ -11,6 +12,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class SA1137ElementsShouldHaveTheSameIndentation : DiagnosticAnalyzer
@@ -45,6 +47,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly Action<SyntaxNodeAnalysisContext> SwitchStatementAction = HandleSwitchStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> InitializerExpressionAction = HandleInitializerExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> AnonymousObjectCreationExpressionAction = HandleAnonymousObjectCreationExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> TupleTypeAction = HandleTupleType;
+        private static readonly Action<SyntaxNodeAnalysisContext> TupleExpressionAction = HandleTupleExpression;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -72,6 +76,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.RegisterSyntaxNodeAction(SwitchStatementAction, SyntaxKind.SwitchStatement);
             context.RegisterSyntaxNodeAction(InitializerExpressionAction, SyntaxKinds.InitializerExpression);
             context.RegisterSyntaxNodeAction(AnonymousObjectCreationExpressionAction, SyntaxKind.AnonymousObjectCreationExpression);
+            context.RegisterSyntaxNodeAction(TupleTypeAction, SyntaxKindEx.TupleType);
+            context.RegisterSyntaxNodeAction(TupleExpressionAction, SyntaxKindEx.TupleExpression);
         }
 
         private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context)
@@ -262,6 +268,20 @@ namespace StyleCop.Analyzers.ReadabilityRules
             CheckElements(context, anonymousObjectCreationExpression.Initializers);
         }
 
+        private static void HandleTupleType(SyntaxNodeAnalysisContext context)
+        {
+            var tupleType = (TupleTypeSyntaxWrapper)context.Node;
+
+            CheckElements(context, tupleType.Elements);
+        }
+
+        private static void HandleTupleExpression(SyntaxNodeAnalysisContext context)
+        {
+            var tupleExpression = (TupleExpressionSyntaxWrapper)context.Node;
+
+            CheckElements(context, tupleExpression.Arguments);
+        }
+
         private static void AddMembersAndAttributes<T>(ImmutableList<SyntaxNode>.Builder elements, SeparatedSyntaxList<T> members)
             where T : SyntaxNode
         {
@@ -353,6 +373,16 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             CheckElements(context, elements.ToImmutableList());
+        }
+
+        private static void CheckElements<T>(SyntaxNodeAnalysisContext context, SeparatedSyntaxListWrapper<T> elements)
+        {
+            if (elements.Count < 2)
+            {
+                return;
+            }
+
+            CheckElements(context, ((IEnumerable<SyntaxNode>)elements.UnderlyingList).ToImmutableList());
         }
 
         // BlockSyntax is analyzed separately because it needs to check both braces.
