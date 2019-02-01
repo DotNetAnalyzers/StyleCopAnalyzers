@@ -195,22 +195,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     return;
                 }
 
-                var firstSize = arrayRankSpecifierSyntax.Sizes[0];
-
-                var firstSizeLineSpan = firstSize.GetLineSpan();
-                if (!firstSizeLineSpan.IsValid)
-                {
-                    return;
-                }
-
-                var openBracketLineSpan = openBracketToken.GetLineSpan();
-                if (!openBracketLineSpan.IsValid)
-                {
-                    return;
-                }
-
-                if (openBracketLineSpan.EndLinePosition.Line != firstSizeLineSpan.StartLinePosition.Line &&
-                    openBracketLineSpan.EndLinePosition.Line != (firstSizeLineSpan.StartLinePosition.Line - 1))
+                var firstSize = arrayRankSpecifierSyntax.Sizes.First();
+                if (SpanMultipleLines(openBracketToken, firstSize))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstSize.GetLocation()));
                 }
@@ -227,22 +213,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
-            var firstAttribute = attributesList.Attributes[0];
-
-            var firstAttributeLineSpan = firstAttribute.GetLineSpan();
-            if (!firstAttributeLineSpan.IsValid)
-            {
-                return;
-            }
-
-            var openBracketLineSpan = openBracketToken.GetLineSpan();
-            if (!openBracketLineSpan.IsValid)
-            {
-                return;
-            }
-
-            if (openBracketLineSpan.EndLinePosition.Line != firstAttributeLineSpan.StartLinePosition.Line &&
-                openBracketLineSpan.EndLinePosition.Line != (firstAttributeLineSpan.StartLinePosition.Line - 1))
+            var firstAttribute = attributesList.Attributes.First();
+            if (SpanMultipleLines(openBracketToken, firstAttribute))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstAttribute.GetLocation()));
             }
@@ -258,26 +230,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
-            var firstArgument = argumentListSyntax.Arguments[0];
-            if (firstArgument.GetLeadingTrivia().Any(SyntaxKind.PragmaWarningDirectiveTrivia))
-            {
-                return;
-            }
-
-            var firstArgumentLineSpan = firstArgument.GetLineSpan();
-            if (!firstArgumentLineSpan.IsValid)
-            {
-                return;
-            }
-
-            var openBracketLineSpan = openBracketToken.GetLineSpan();
-            if (!openBracketLineSpan.IsValid)
-            {
-                return;
-            }
-
-            if (openBracketLineSpan.EndLinePosition.Line != firstArgumentLineSpan.StartLinePosition.Line &&
-                openBracketLineSpan.EndLinePosition.Line != (firstArgumentLineSpan.StartLinePosition.Line - 1))
+            var firstArgument = argumentListSyntax.Arguments.First();
+            if (SpanMultipleLines(openBracketToken, firstArgument))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstArgument.GetLocation()));
             }
@@ -293,26 +247,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
-            var firstArgument = argumentListSyntax.Arguments[0];
-            if (firstArgument.GetLeadingTrivia().Any(SyntaxKind.PragmaWarningDirectiveTrivia))
-            {
-                return;
-            }
-
-            var firstArgumentLineSpan = firstArgument.GetLineSpan();
-            if (!firstArgumentLineSpan.IsValid)
-            {
-                return;
-            }
-
-            var openParenLineSpan = argumentListSyntax.OpenParenToken.GetLineSpan();
-            if (!openParenLineSpan.IsValid)
-            {
-                return;
-            }
-
-            if (openParenLineSpan.EndLinePosition.Line != firstArgumentLineSpan.StartLinePosition.Line &&
-                openParenLineSpan.EndLinePosition.Line != (firstArgumentLineSpan.StartLinePosition.Line - 1))
+            var firstArgument = argumentListSyntax.Arguments.First();
+            if (SpanMultipleLines(argumentListSyntax.OpenParenToken, firstArgument))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstArgument.GetLocation()));
             }
@@ -328,26 +264,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
-            var firstArgument = argumentListSyntax.Arguments[0];
-            if (firstArgument.GetLeadingTrivia().Any(SyntaxKind.PragmaWarningDirectiveTrivia))
-            {
-                return;
-            }
-
-            var firstArgumentLineSpan = firstArgument.GetLineSpan();
-            if (!firstArgumentLineSpan.IsValid)
-            {
-                return;
-            }
-
-            var openParenLineSpan = openParenToken.GetLineSpan();
-            if (!openParenLineSpan.IsValid)
-            {
-                return;
-            }
-
-            if (openParenLineSpan.EndLinePosition.Line != firstArgumentLineSpan.StartLinePosition.Line &&
-                openParenLineSpan.EndLinePosition.Line != (firstArgumentLineSpan.StartLinePosition.Line - 1))
+            var firstArgument = argumentListSyntax.Arguments.First();
+            if (SpanMultipleLines(openParenToken, firstArgument))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstArgument.GetLocation()));
             }
@@ -363,22 +281,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
-            var firstParameter = parameterListSyntax.Parameters[0];
-
-            var firstParameterLineSpan = firstParameter.GetLineSpan();
-            if (!firstParameterLineSpan.IsValid)
-            {
-                return;
-            }
-
-            var openBracketLineSpan = openBracketToken.GetLineSpan();
-            if (!openBracketLineSpan.IsValid)
-            {
-                return;
-            }
-
-            if (openBracketLineSpan.EndLinePosition.Line != firstParameterLineSpan.StartLinePosition.Line &&
-                openBracketLineSpan.EndLinePosition.Line != (firstParameterLineSpan.StartLinePosition.Line - 1))
+            var firstParameter = parameterListSyntax.Parameters.First();
+            if (SpanMultipleLines(openBracketToken, firstParameter))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstParameter.GetLocation()));
             }
@@ -394,40 +298,20 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
-            var firstParameter = parameterListSyntax.Parameters[0];
-            int firstParameterLine;
-
-            if (firstParameter.HasLeadingTrivia && firstParameter.GetLeadingTrivia().All(trivia => IsValidTrivia(trivia)))
-            {
-                firstParameterLine = firstParameter.SyntaxTree.GetLineSpan(firstParameter.FullSpan).StartLinePosition.Line;
-            }
-            else
-            {
-                firstParameterLine = firstParameter.GetLineSpan().StartLinePosition.Line;
-            }
-
-            var parenLine = parameterListSyntax.OpenParenToken.GetLineSpan().EndLinePosition.Line;
-
-            if ((firstParameterLine - parenLine) > 1)
+            var firstParameter = parameterListSyntax.Parameters.First();
+            if (SpanMultipleLines(parameterListSyntax.OpenParenToken, firstParameter))
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, firstParameter.GetLocation()));
             }
         }
 
-        private static bool IsValidTrivia(SyntaxTrivia trivia)
+        private static bool SpanMultipleLines(SyntaxToken startToken, SyntaxNode endNode)
         {
-            switch (trivia.Kind())
-            {
-            case SyntaxKind.IfDirectiveTrivia:
-            case SyntaxKind.ElseDirectiveTrivia:
-            case SyntaxKind.ElifDirectiveTrivia:
-            case SyntaxKind.EndIfDirectiveTrivia:
-            case SyntaxKind.DisabledTextTrivia:
-            case SyntaxKind.WhitespaceTrivia:
-                return true;
+            return EndOfLineTriviaCount(startToken.TrailingTrivia) + EndOfLineTriviaCount(endNode.GetLeadingTrivia()) > 1;
 
-            default:
-                return false;
+            static int EndOfLineTriviaCount(SyntaxTriviaList list)
+            {
+                return list.Count(trivia => trivia.IsKind(SyntaxKind.EndOfLineTrivia));
             }
         }
     }
