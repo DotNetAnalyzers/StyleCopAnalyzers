@@ -1,5 +1,7 @@
 ﻿# C# 7 APIs supported via light-up
 
+See [dotnet/roslyn@c2af711](https://github.com/dotnet/roslyn/commit/c2af71127234e2b6df231fad3b9f7db6cc7cb444).
+
 ## Semantics
 
 * [ ] `Microsoft.CodeAnalysis.CommandLineArguments.DisplayVersion.get -> bool`
