@@ -6,6 +6,7 @@
 
 namespace StyleCop.Analyzers.Helpers
 {
+    using System;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -56,12 +57,12 @@ namespace StyleCop.Analyzers.Helpers
         /// <returns>True if the diagnostic is currently suppressed.</returns>
         internal static bool IsAnalyzerSuppressed(this CompilationOptions compilationOptions, DiagnosticDescriptor descriptor)
         {
-            switch (compilationOptions.SpecificDiagnosticOptions.GetValueOrDefault(descriptor.Id))
+            switch (descriptor.GetEffectiveSeverity(compilationOptions))
             {
             case ReportDiagnostic.Suppress:
                 return true;
             case ReportDiagnostic.Default:
-                return !descriptor.IsEnabledByDefault;
+                throw new InvalidOperationException("This should be unreachable.");
             default:
                 return false;
             }
