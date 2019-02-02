@@ -31,6 +31,7 @@ namespace StyleCop.Analyzers.Lightup
             builder.Add(typeof(DiscardDesignationSyntaxWrapper), codeAnalysisAssembly.GetType(DiscardDesignationSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(ForEachVariableStatementSyntaxWrapper), codeAnalysisAssembly.GetType(ForEachVariableStatementSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(IsPatternExpressionSyntaxWrapper), codeAnalysisAssembly.GetType(IsPatternExpressionSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(ImplicitStackAllocArrayCreationExpressionSyntaxWrapper), codeAnalysisAssembly.GetType(ImplicitStackAllocArrayCreationExpressionSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(LocalFunctionStatementSyntaxWrapper), codeAnalysisAssembly.GetType(LocalFunctionStatementSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(ParenthesizedVariableDesignationSyntaxWrapper), codeAnalysisAssembly.GetType(ParenthesizedVariableDesignationSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(PatternSyntaxWrapper), codeAnalysisAssembly.GetType(PatternSyntaxWrapper.WrappedTypeName));
