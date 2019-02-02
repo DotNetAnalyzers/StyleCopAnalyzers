@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Helpers
 {
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Lightup;
@@ -54,6 +55,16 @@ namespace StyleCop.Analyzers.Helpers
             default:
                 return false;
             }
+        }
+
+        public static TypeSyntax StripRefFromType(this TypeSyntax syntax)
+        {
+            if (syntax.IsKind(SyntaxKindEx.RefType))
+            {
+                syntax = ((RefTypeSyntaxWrapper)syntax).Type;
+            }
+
+            return syntax;
         }
     }
 }

@@ -48,6 +48,9 @@ namespace StyleCop.Analyzers.Test.CSharp7.DocumentationRules
         [InlineData("protected internal", "int", "{ private get => 0; set => this.field = value; }", "Sets")]
         [InlineData("internal", "int", "{ get => 0; private set => this.field = value; }", "Gets")]
         [InlineData("internal", "int", "{ private get => 0; set => this.field = value; }", "Sets")]
+
+        [WorkItem(2861, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2861")]
+        [InlineData("public", "ref int", "{ get => throw null; }", "Gets")]
         public async Task VerifyDocumentationWithWrongStartingTextWillProduceDiagnosticWithExpressionBodiedAccessorsAsync(string accessibility, string type, string accessors, string expectedArgument)
         {
             var testCode = $@"
