@@ -13,8 +13,8 @@ See [dotnet/roslyn@e60c9fe](https://github.com/dotnet/roslyn/commit/e60c9fe8accc
 * [ ] `Microsoft.CodeAnalysis.Emit.EmitOptions.EmitOptions(bool metadataOnly, Microsoft.CodeAnalysis.Emit.DebugInformationFormat debugInformationFormat, string pdbFilePath, string outputNameOverride, int fileAlignment, ulong baseAddress, bool highEntropyVirtualAddressSpace, Microsoft.CodeAnalysis.SubsystemVersion subsystemVersion, string runtimeMetadataVersion, bool tolerateErrors, bool includePrivateMembers, System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.Emit.InstrumentationKind> instrumentationKinds) -> void`
 * [ ] `Microsoft.CodeAnalysis.Emit.EmitOptions.PdbChecksumAlgorithm.get -> System.Security.Cryptography.HashAlgorithmName`
 * [ ] `Microsoft.CodeAnalysis.Emit.EmitOptions.WithPdbChecksumAlgorithm(System.Security.Cryptography.HashAlgorithmName name) -> Microsoft.CodeAnalysis.Emit.EmitOptions`
-* [ ] `Microsoft.CodeAnalysis.INamedTypeSymbol.IsSerializable.get -> bool`
-* [ ] `Microsoft.CodeAnalysis.ITypeParameterSymbol.HasUnmanagedTypeConstraint.get -> bool`
+* [x] `Microsoft.CodeAnalysis.INamedTypeSymbol.IsSerializable.get -> bool`
+* [x] `Microsoft.CodeAnalysis.ITypeParameterSymbol.HasUnmanagedTypeConstraint.get -> bool`
 * [ ] `Microsoft.CodeAnalysis.MetadataImportOptions`
 * [ ] `Microsoft.CodeAnalysis.MetadataImportOptions.All = 2 -> Microsoft.CodeAnalysis.MetadataImportOptions`
 * [ ] `Microsoft.CodeAnalysis.MetadataImportOptions.Internal = 1 -> Microsoft.CodeAnalysis.MetadataImportOptions`
@@ -62,27 +62,27 @@ See [dotnet/roslyn@e60c9fe](https://github.com/dotnet/roslyn/commit/e60c9fe8accc
 
 ## Syntax
 
-* [ ] `Microsoft.CodeAnalysis.CSharp.LanguageVersion.CSharp7_3 = 703 -> Microsoft.CodeAnalysis.CSharp.LanguageVersion`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ArgumentSyntax.RefKindKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ArgumentSyntax.WithRefKindKeyword(Microsoft.CodeAnalysis.SyntaxToken refKindKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.ArgumentSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.CrefParameterSyntax.RefKindKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.CrefParameterSyntax.WithRefKindKeyword(Microsoft.CodeAnalysis.SyntaxToken refKindKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.CrefParameterSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax.AddInitializerExpressions(params Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax[] items) -> Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax.CloseBracketToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax.Initializer.get -> Microsoft.CodeAnalysis.CSharp.Syntax.InitializerExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax.OpenBracketToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax.StackAllocKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `Microsoft.CodeAnalysis.CSharp.LanguageVersion.CSharp7_3 = 703 -> Microsoft.CodeAnalysis.CSharp.LanguageVersion`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ArgumentSyntax.RefKindKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ArgumentSyntax.WithRefKindKeyword(Microsoft.CodeAnalysis.SyntaxToken refKindKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.ArgumentSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.CrefParameterSyntax.RefKindKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.CrefParameterSyntax.WithRefKindKeyword(Microsoft.CodeAnalysis.SyntaxToken refKindKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.CrefParameterSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax.AddInitializerExpressions(params Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax[] items) -> Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax.CloseBracketToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax.Initializer.get -> Microsoft.CodeAnalysis.CSharp.Syntax.InitializerExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax.OpenBracketToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax.StackAllocKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax.Update(Microsoft.CodeAnalysis.SyntaxToken stackAllocKeyword, Microsoft.CodeAnalysis.SyntaxToken openBracketToken, Microsoft.CodeAnalysis.SyntaxToken closeBracketToken, Microsoft.CodeAnalysis.CSharp.Syntax.InitializerExpressionSyntax initializer) -> Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax.WithCloseBracketToken(Microsoft.CodeAnalysis.SyntaxToken closeBracketToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax.WithInitializer(Microsoft.CodeAnalysis.CSharp.Syntax.InitializerExpressionSyntax initializer) -> Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax.WithOpenBracketToken(Microsoft.CodeAnalysis.SyntaxToken openBracketToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax.WithStackAllocKeyword(Microsoft.CodeAnalysis.SyntaxToken stackAllocKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.StackAllocArrayCreationExpressionSyntax.Initializer.get -> Microsoft.CodeAnalysis.CSharp.Syntax.InitializerExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax.WithCloseBracketToken(Microsoft.CodeAnalysis.SyntaxToken closeBracketToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax.WithInitializer(Microsoft.CodeAnalysis.CSharp.Syntax.InitializerExpressionSyntax initializer) -> Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax.WithOpenBracketToken(Microsoft.CodeAnalysis.SyntaxToken openBracketToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax.WithStackAllocKeyword(Microsoft.CodeAnalysis.SyntaxToken stackAllocKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.StackAllocArrayCreationExpressionSyntax.Initializer.get -> Microsoft.CodeAnalysis.CSharp.Syntax.InitializerExpressionSyntax`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.StackAllocArrayCreationExpressionSyntax.Update(Microsoft.CodeAnalysis.SyntaxToken stackAllocKeyword, Microsoft.CodeAnalysis.CSharp.Syntax.TypeSyntax type, Microsoft.CodeAnalysis.CSharp.Syntax.InitializerExpressionSyntax initializer) -> Microsoft.CodeAnalysis.CSharp.Syntax.StackAllocArrayCreationExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.StackAllocArrayCreationExpressionSyntax.WithInitializer(Microsoft.CodeAnalysis.CSharp.Syntax.InitializerExpressionSyntax initializer) -> Microsoft.CodeAnalysis.CSharp.Syntax.StackAllocArrayCreationExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.StackAllocArrayCreationExpressionSyntax.WithInitializer(Microsoft.CodeAnalysis.CSharp.Syntax.InitializerExpressionSyntax initializer) -> Microsoft.CodeAnalysis.CSharp.Syntax.StackAllocArrayCreationExpressionSyntax`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.TypeSyntax.IsUnmanaged.get -> bool`
-* [ ] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.ImplicitStackAllocArrayCreationExpression = 9053 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
+* [x] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.ImplicitStackAllocArrayCreationExpression = 9053 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
 * [ ] `override Microsoft.CodeAnalysis.CSharp.CSharpSyntaxRewriter.VisitImplicitStackAllocArrayCreationExpression(Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax node) -> Microsoft.CodeAnalysis.SyntaxNode`
 * [ ] `override Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax.Accept(Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor visitor) -> void`
 * [ ] `override Microsoft.CodeAnalysis.CSharp.Syntax.ImplicitStackAllocArrayCreationExpressionSyntax.Accept<TResult>(Microsoft.CodeAnalysis.CSharp.CSharpSyntaxVisitor<TResult> visitor) -> TResult`
