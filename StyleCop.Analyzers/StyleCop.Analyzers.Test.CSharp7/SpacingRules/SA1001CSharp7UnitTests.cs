@@ -5,13 +5,13 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.SpacingRules;
     using StyleCop.Analyzers.Test.SpacingRules;
-    using TestHelper;
+    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.SpacingRules.SA1001CommasMustBeSpacedCorrectly,
-        StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
+    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.SpacingRules.SA1001CommasMustBeSpacedCorrectly>;
 
     public class SA1001CSharp7UnitTests : SA1001UnitTests
     {
@@ -53,7 +53,7 @@ public class Foo
                 Diagnostic().WithLocation(7, 65).WithArguments(" not", "preceded"),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ public class Foo
 }";
 
             DiagnosticResult expected = Diagnostic().WithLocation(7, 34).WithArguments(" not", "preceded");
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -117,7 +117,122 @@ public class Foo
 }";
 
             DiagnosticResult expected = Diagnostic().WithLocation(7, 21).WithArguments(" not", "preceded");
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestStackAllocArrayCreationExpressionAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public unsafe void TestMethod()
+        {
+            int* data1 = stackalloc int[] { 1 , 1 };
+            int* data2 = stackalloc int[] { 1 ,1 };
+        }
+    }
+}
+";
+
+            var fixedCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public unsafe void TestMethod()
+        {
+            int* data1 = stackalloc int[] { 1, 1 };
+            int* data2 = stackalloc int[] { 1, 1 };
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(7, 47).WithArguments(" not", "preceded"),
+                Diagnostic().WithLocation(8, 47).WithArguments(" not", "preceded"),
+                Diagnostic().WithLocation(8, 47).WithArguments(string.Empty, "followed"),
+            };
+
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestImplicitStackAllocArrayCreationExpressionAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public unsafe void TestMethod()
+        {
+            int* data1 = stackalloc[] { 1 , 1 };
+            int* data2 = stackalloc[] { 1 ,1 };
+        }
+    }
+}
+";
+
+            var fixedCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public unsafe void TestMethod()
+        {
+            int* data1 = stackalloc[] { 1, 1 };
+            int* data2 = stackalloc[] { 1, 1 };
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(7, 43).WithArguments(" not", "preceded"),
+                Diagnostic().WithLocation(8, 43).WithArguments(" not", "preceded"),
+                Diagnostic().WithLocation(8, 43).WithArguments(string.Empty, "followed"),
+            };
+
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        private static Task VerifyCSharpFixAsync(LanguageVersion languageVersion, string source, DiagnosticResult expected, string fixedSource, CancellationToken cancellationToken)
+        {
+            return VerifyCSharpFixAsync(languageVersion, source, new[] { expected }, fixedSource, cancellationToken);
+        }
+
+        private static Task VerifyCSharpFixAsync(LanguageVersion languageVersion, string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
+        {
+            var test = new CSharpTest(languageVersion)
+            {
+                TestCode = source,
+                FixedCode = fixedSource,
+            };
+
+            if (source == fixedSource)
+            {
+                test.FixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
+                test.FixedState.MarkupHandling = MarkupMode.Allow;
+                test.BatchFixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
+                test.BatchFixedState.MarkupHandling = MarkupMode.Allow;
+            }
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test.RunAsync(cancellationToken);
+        }
+
+        private class CSharpTest : StyleCopCodeFixVerifier<SA1001CommasMustBeSpacedCorrectly, TokenSpacingCodeFixProvider>.CSharpTest
+        {
+            public CSharpTest(LanguageVersion languageVersion)
+            {
+                this.SolutionTransforms.Add((solution, projectId) =>
+                {
+                    var parseOptions = (CSharpParseOptions)solution.GetProject(projectId).ParseOptions;
+                    return solution.WithProjectParseOptions(projectId, parseOptions.WithLanguageVersion(languageVersion));
+                });
+            }
         }
     }
 }

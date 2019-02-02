@@ -5,12 +5,13 @@ namespace StyleCop.Analyzers.Test.CSharp7.LayoutRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.LayoutRules;
     using StyleCop.Analyzers.Test.LayoutRules;
+    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.LayoutRules.SA1513ClosingBraceMustBeFollowedByBlankLine,
-        StyleCop.Analyzers.LayoutRules.SA1513CodeFixProvider>;
+    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.LayoutRules.SA1513ClosingBraceMustBeFollowedByBlankLine>;
 
     public class SA1513CSharp7UnitTests : SA1513UnitTests
     {
@@ -52,7 +53,7 @@ public class Foo
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3, testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -139,7 +140,97 @@ public class Foo
                 Diagnostic().WithLocation(27, 10),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestStackAllocArrayCreationExpressionAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public unsafe void TestMethod()
+        {
+            int* v1 = stackalloc int[]
+            {
+                1,
+                2,
+                3
+            };
+            int* v2 = stackalloc int[]
+            {
+                1,
+                2,
+                3
+            };
+        }
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3, testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestImplicitStackAllocArrayCreationExpressionAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public unsafe void TestMethod()
+        {
+            int* v1 = stackalloc[]
+            {
+                1,
+                2,
+                3
+            };
+            int* v2 = stackalloc[]
+            {
+                1,
+                2,
+                3
+            };
+        }
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3, testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        private static Task VerifyCSharpFixAsync(LanguageVersion languageVersion, string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
+        {
+            var test = new CSharpTest(languageVersion)
+            {
+                TestCode = source,
+                FixedCode = fixedSource,
+            };
+
+            if (source == fixedSource)
+            {
+                test.FixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
+                test.FixedState.MarkupHandling = MarkupMode.Allow;
+                test.BatchFixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
+                test.BatchFixedState.MarkupHandling = MarkupMode.Allow;
+            }
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test.RunAsync(cancellationToken);
+        }
+
+        private class CSharpTest : StyleCopCodeFixVerifier<SA1513ClosingBraceMustBeFollowedByBlankLine, SA1513CodeFixProvider>.CSharpTest
+        {
+            public CSharpTest(LanguageVersion languageVersion)
+            {
+                this.SolutionTransforms.Add((solution, projectId) =>
+                {
+                    var parseOptions = (CSharpParseOptions)solution.GetProject(projectId).ParseOptions;
+                    return solution.WithProjectParseOptions(projectId, parseOptions.WithLanguageVersion(languageVersion));
+                });
+            }
         }
     }
 }

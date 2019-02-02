@@ -5,9 +5,9 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1000KeywordsMustBeSpacedCorrectly,
@@ -931,12 +931,12 @@ class ClassName
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected Task TestKeywordStatementAsync(string statement, DiagnosticResult expected, string fixedStatement, string returnType = "void", bool asyncMethod = false)
+        protected Task TestKeywordStatementAsync(string statement, DiagnosticResult expected, string fixedStatement, string returnType = "void", bool asyncMethod = false, LanguageVersion? languageVersion = default)
         {
-            return this.TestKeywordStatementAsync(statement, new[] { expected }, fixedStatement, returnType, asyncMethod);
+            return this.TestKeywordStatementAsync(statement, new[] { expected }, fixedStatement, returnType, asyncMethod, languageVersion);
         }
 
-        protected async Task TestKeywordStatementAsync(string statement, DiagnosticResult[] expected, string fixedStatement, string returnType = "void", bool asyncMethod = false)
+        protected async Task TestKeywordStatementAsync(string statement, DiagnosticResult[] expected, string fixedStatement, string returnType = "void", bool asyncMethod = false, LanguageVersion? languageVersion = default)
         {
             string testCodeFormat = @"
 using System;
@@ -966,6 +966,19 @@ namespace Namespace
             {
                 TestCode = testCode,
                 FixedCode = fixedTest,
+                SolutionTransforms =
+                {
+                    (solution, projectId) =>
+                    {
+                        if (languageVersion.HasValue)
+                        {
+                            var parseOptions = (CSharpParseOptions)solution.GetProject(projectId).ParseOptions;
+                            solution = solution.WithProjectParseOptions(projectId, parseOptions.WithLanguageVersion(languageVersion.Value));
+                        }
+
+                        return solution;
+                    },
+                },
             };
 
             test.ExpectedDiagnostics.AddRange(expected);

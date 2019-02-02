@@ -79,7 +79,14 @@ namespace StyleCop.Analyzers.SpacingRules
                 precededBySpace = token.IsPrecededByWhitespace(context.CancellationToken);
 
                 // ignore if handled by SA1026
-                ignorePrecedingSpaceProblem = precededBySpace && token.GetPreviousToken().IsKind(SyntaxKind.NewKeyword);
+                if (precededBySpace)
+                {
+                    var previousToken = token.GetPreviousToken();
+                    if (previousToken.IsKind(SyntaxKind.NewKeyword) || previousToken.IsKind(SyntaxKind.StackAllocKeyword))
+                    {
+                        ignorePrecedingSpaceProblem = true;
+                    }
+                }
             }
 
             bool followedBySpace = token.IsFollowedByWhitespace();

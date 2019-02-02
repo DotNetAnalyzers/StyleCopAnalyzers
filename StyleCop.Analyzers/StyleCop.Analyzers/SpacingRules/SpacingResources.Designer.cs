@@ -332,7 +332,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An implicitly typed new array allocation within a C# code file is not spaced correctly..
+        ///   Looks up a localized string similar to An implicitly typed array allocation within a C# code file is not spaced correctly..
         /// </summary>
         internal static string SA1026Description {
             get {
@@ -341,7 +341,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The keyword &apos;new&apos; should not be followed by a space or a blank line..
+        ///   Looks up a localized string similar to The keyword &apos;{0}&apos; should not be followed by a space or a blank line..
         /// </summary>
         internal static string SA1026MessageFormat {
             get {
@@ -350,7 +350,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code should not contain space after new keyword in implicitly typed array allocation.
+        ///   Looks up a localized string similar to Code should not contain space after new or stackalloc keyword in implicitly typed array allocation.
         /// </summary>
         internal static string SA1026Title {
             get {

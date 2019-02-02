@@ -208,13 +208,13 @@
     <value>Code should not contain multiple whitespace in a row</value>
   </data>
   <data name="SA1026Description" xml:space="preserve">
-    <value>An implicitly typed new array allocation within a C# code file is not spaced correctly.</value>
+    <value>An implicitly typed array allocation within a C# code file is not spaced correctly.</value>
   </data>
   <data name="SA1026MessageFormat" xml:space="preserve">
-    <value>The keyword 'new' should not be followed by a space or a blank line.</value>
+    <value>The keyword '{0}' should not be followed by a space or a blank line.</value>
   </data>
   <data name="SA1026Title" xml:space="preserve">
-    <value>Code should not contain space after new keyword in implicitly typed array allocation</value>
+    <value>Code should not contain space after new or stackalloc keyword in implicitly typed array allocation</value>
   </data>
   <data name="SA1027CodeFix" xml:space="preserve">
     <value>Replace tabs with spaces</value>

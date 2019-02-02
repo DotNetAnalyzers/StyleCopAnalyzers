@@ -7,7 +7,6 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation,
@@ -45,7 +44,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         {
             string testCode = string.Format("public class Foo {{ public Foo() {{ var ints = new{0}[] {{ 1, 2, 3 }}; }} }}", space);
             const string expectedCode = "public class Foo { public Foo() { var ints = new[] { 1, 2, 3 }; } }";
-            DiagnosticResult expected = Diagnostic().WithLocation(1, 46);
+            DiagnosticResult expected = Diagnostic().WithArguments("new").WithLocation(1, 46);
 
             await VerifyCSharpFixAsync(testCode, expected, expectedCode, CancellationToken.None).ConfigureAwait(false);
         }
