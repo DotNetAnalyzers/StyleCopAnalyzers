@@ -110,6 +110,7 @@ If ($AppVeyor) {
 
 &$opencover_console `
 	-register:user `
+	-threshold:1 -oldStyle `
 	-returntargetcode `
 	-hideskipped:All `
 	-filter:"+[StyleCop*]*" `
@@ -127,6 +128,7 @@ If ($AppVeyor -and -not $?) {
 
 &$opencover_console `
 	-register:user `
+	-threshold:1 -oldStyle `
 	-returntargetcode `
 	-hideskipped:All `
 	-filter:"+[StyleCop*]*" `
