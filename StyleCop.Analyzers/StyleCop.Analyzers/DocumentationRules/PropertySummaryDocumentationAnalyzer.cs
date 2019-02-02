@@ -12,6 +12,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// Analyzes the correct usage of property summary documentation.
@@ -60,7 +61,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, bool needsComment, XmlNodeSyntax syntax, XElement completeDocumentation, Location diagnosticLocation)
         {
             var propertyDeclaration = (PropertyDeclarationSyntax)context.Node;
-            var propertyType = context.SemanticModel.GetTypeInfo(propertyDeclaration.Type);
+            var propertyType = context.SemanticModel.GetTypeInfo(propertyDeclaration.Type.StripRefFromType());
             var settings = context.Options.GetStyleCopSettings(context.CancellationToken);
             var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
             var resourceManager = DocumentationResources.ResourceManager;
