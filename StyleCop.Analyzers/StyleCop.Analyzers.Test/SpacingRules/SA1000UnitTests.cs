@@ -962,27 +962,7 @@ namespace Namespace
             string testCode = string.Format(testCodeFormat, asyncModifier, statement, unsafeModifier, awaitMethod, returnType);
             string fixedTest = string.Format(testCodeFormat, asyncModifier, fixedStatement, unsafeModifier, awaitMethod, returnType);
 
-            var test = new CSharpTest
-            {
-                TestCode = testCode,
-                FixedCode = fixedTest,
-                SolutionTransforms =
-                {
-                    (solution, projectId) =>
-                    {
-                        if (languageVersion.HasValue)
-                        {
-                            var parseOptions = (CSharpParseOptions)solution.GetProject(projectId).ParseOptions;
-                            solution = solution.WithProjectParseOptions(projectId, parseOptions.WithLanguageVersion(languageVersion.Value));
-                        }
-
-                        return solution;
-                    },
-                },
-            };
-
-            test.ExpectedDiagnostics.AddRange(expected);
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(languageVersion, testCode, expected, fixedTest, CancellationToken.None).ConfigureAwait(false);
         }
 
         private Task TestKeywordDeclarationAsync(string statement, DiagnosticResult expected, string fixedStatement)

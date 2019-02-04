@@ -7,11 +7,11 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
-    using StyleCop.Analyzers.SpacingRules;
     using StyleCop.Analyzers.Test.SpacingRules;
-    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.SpacingRules.SA1010OpeningSquareBracketsMustBeSpacedCorrectly>;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.SpacingRules.SA1010OpeningSquareBracketsMustBeSpacedCorrectly,
+        StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
     public class SA1010CSharp7UnitTests : SA1010UnitTests
     {
@@ -101,38 +101,6 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
             };
 
             await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private static Task VerifyCSharpFixAsync(LanguageVersion languageVersion, string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
-        {
-            var test = new CSharpTest(languageVersion)
-            {
-                TestCode = source,
-                FixedCode = fixedSource,
-            };
-
-            if (source == fixedSource)
-            {
-                test.FixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
-                test.FixedState.MarkupHandling = MarkupMode.Allow;
-                test.BatchFixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
-                test.BatchFixedState.MarkupHandling = MarkupMode.Allow;
-            }
-
-            test.ExpectedDiagnostics.AddRange(expected);
-            return test.RunAsync(cancellationToken);
-        }
-
-        private class CSharpTest : StyleCopCodeFixVerifier<SA1010OpeningSquareBracketsMustBeSpacedCorrectly, TokenSpacingCodeFixProvider>.CSharpTest
-        {
-            public CSharpTest(LanguageVersion languageVersion)
-            {
-                this.SolutionTransforms.Add((solution, projectId) =>
-                {
-                    var parseOptions = (CSharpParseOptions)solution.GetProject(projectId).ParseOptions;
-                    return solution.WithProjectParseOptions(projectId, parseOptions.WithLanguageVersion(languageVersion));
-                });
-            }
         }
     }
 }

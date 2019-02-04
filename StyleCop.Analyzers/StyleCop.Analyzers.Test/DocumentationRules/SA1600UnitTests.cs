@@ -8,9 +8,10 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
-    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1600ElementsMustBeDocumented>;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.DocumentationRules.SA1600ElementsMustBeDocumented,
+        StyleCop.Analyzers.DocumentationRules.SA1600CodeFixProvider>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1600ElementsMustBeDocumented"/>.
@@ -1397,52 +1398,6 @@ public class OuterClass
             await this.TestNestedTypeDeclarationDocumentationAsync(type, "internal", false, true).ConfigureAwait(false);
             await this.TestNestedTypeDeclarationDocumentationAsync(type, "protected internal", false, true).ConfigureAwait(false);
             await this.TestNestedTypeDeclarationDocumentationAsync(type, "public", false, true).ConfigureAwait(false);
-        }
-
-        private static Task VerifyCSharpDiagnosticAsync(LanguageVersion languageVersion, string source, DiagnosticResult expected, CancellationToken cancellationToken)
-            => VerifyCSharpDiagnosticAsync(languageVersion, source, new[] { expected }, cancellationToken);
-
-        private static Task VerifyCSharpDiagnosticAsync(LanguageVersion languageVersion, string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
-        {
-            var test = new CSharpTest(languageVersion)
-            {
-                TestCode = source,
-            };
-
-            test.ExpectedDiagnostics.AddRange(expected);
-            return test.RunAsync(cancellationToken);
-        }
-
-        private static Task VerifyCSharpFixAsync(LanguageVersion languageVersion, string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
-        {
-            var test = new CSharpTest(languageVersion)
-            {
-                TestCode = source,
-                FixedCode = fixedSource,
-            };
-
-            if (source == fixedSource)
-            {
-                test.FixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
-                test.FixedState.MarkupHandling = MarkupMode.Allow;
-                test.BatchFixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
-                test.BatchFixedState.MarkupHandling = MarkupMode.Allow;
-            }
-
-            test.ExpectedDiagnostics.AddRange(expected);
-            return test.RunAsync(cancellationToken);
-        }
-
-        private class CSharpTest : StyleCopCodeFixVerifier<SA1600ElementsMustBeDocumented, SA1600CodeFixProvider>.CSharpTest
-        {
-            public CSharpTest(LanguageVersion languageVersion)
-            {
-                this.SolutionTransforms.Add((solution, projectId) =>
-                {
-                    var parseOptions = (CSharpParseOptions)solution.GetProject(projectId).ParseOptions;
-                    return solution.WithProjectParseOptions(projectId, parseOptions.WithLanguageVersion(languageVersion));
-                });
-            }
         }
     }
 }

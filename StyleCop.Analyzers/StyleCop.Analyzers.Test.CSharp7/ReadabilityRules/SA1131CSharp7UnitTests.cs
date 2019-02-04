@@ -8,7 +8,6 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.ReadabilityRules;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1131UseReadableConditions,
@@ -57,20 +56,7 @@ struct TestStruct
 }}
 ";
             DiagnosticResult expected = Diagnostic().WithLocation(8, 18);
-            await new CSharpTest
-            {
-                TestCode = testCode,
-                ExpectedDiagnostics = { expected },
-                FixedCode = fixedCode,
-                SolutionTransforms =
-                {
-                    (solution, projectId) =>
-                    {
-                        var parseOptions = (CSharpParseOptions)solution.GetProject(projectId).ParseOptions;
-                        return solution.WithProjectParseOptions(projectId, parseOptions.WithLanguageVersion(LanguageVersion.Latest));
-                    },
-                },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(LanguageVersion.Latest, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
