@@ -39,7 +39,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.LayoutRules
 }
 ";
 
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3, testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.LayoutRules
 ";
 
             var expectedDiagnostic = Diagnostic().WithLocation(10, 13);
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3, testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]

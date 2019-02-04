@@ -53,7 +53,7 @@ public class Foo
 }
 ";
 
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3, testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ public class Foo
                 Diagnostic().WithLocation(27, 10),
             };
 
-            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
