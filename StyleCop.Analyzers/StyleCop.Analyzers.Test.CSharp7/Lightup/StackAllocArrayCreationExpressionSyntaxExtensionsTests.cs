@@ -22,12 +22,8 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
         public void TestWithInitializer()
         {
             var stackAllocSyntax = SyntaxFactory.StackAllocArrayCreationExpression(SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.IntKeyword)));
-
-            // With default value is allowed
             var stackAllocWithDefaultInitializer = StackAllocArrayCreationExpressionSyntaxExtensions.WithInitializer(stackAllocSyntax, null);
             Assert.Null(StackAllocArrayCreationExpressionSyntaxExtensions.Initializer(stackAllocWithDefaultInitializer));
-
-            // Non-default throws an exception
             var initializer = SyntaxFactory.InitializerExpression(SyntaxKind.ArrayInitializerExpression);
             var stackAllocWithInitializer = StackAllocArrayCreationExpressionSyntaxExtensions.WithInitializer(stackAllocSyntax, initializer);
             Assert.NotNull(stackAllocWithInitializer.Initializer);
