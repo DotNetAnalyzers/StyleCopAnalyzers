@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.LayoutRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.LayoutRules;
     using Xunit;
@@ -52,7 +53,7 @@ public class Foo
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -140,6 +141,64 @@ public class Foo
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestStackAllocArrayCreationExpressionAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public unsafe void TestMethod()
+        {
+            int* v1 = stackalloc int[]
+            {
+                1,
+                2,
+                3
+            };
+            int* v2 = stackalloc int[]
+            {
+                1,
+                2,
+                3
+            };
+        }
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3, testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestImplicitStackAllocArrayCreationExpressionAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public unsafe void TestMethod()
+        {
+            int* v1 = stackalloc[]
+            {
+                1,
+                2,
+                3
+            };
+            int* v2 = stackalloc[]
+            {
+                1,
+                2,
+                3
+            };
+        }
+    }
+}
+";
+
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3, testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

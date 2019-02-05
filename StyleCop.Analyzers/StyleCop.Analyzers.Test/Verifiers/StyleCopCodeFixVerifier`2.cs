@@ -11,6 +11,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
     using global::LightJson.Serialization;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Testing;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Formatting;
@@ -39,12 +40,41 @@ namespace StyleCop.Analyzers.Test.Verifiers
         internal static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
             => StyleCopDiagnosticVerifier<TAnalyzer>.VerifyCSharpDiagnosticAsync(source, expected, cancellationToken);
 
+        internal static Task VerifyCSharpDiagnosticAsync(LanguageVersion? languageVersion, string source, DiagnosticResult expected, CancellationToken cancellationToken)
+            => StyleCopDiagnosticVerifier<TAnalyzer>.VerifyCSharpDiagnosticAsync(languageVersion, source, expected, cancellationToken);
+
+        internal static Task VerifyCSharpDiagnosticAsync(LanguageVersion? languageVersion, string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+            => StyleCopDiagnosticVerifier<TAnalyzer>.VerifyCSharpDiagnosticAsync(languageVersion, source, expected, cancellationToken);
+
         internal static Task VerifyCSharpFixAsync(string source, DiagnosticResult expected, string fixedSource, CancellationToken cancellationToken)
             => VerifyCSharpFixAsync(source, new[] { expected }, fixedSource, cancellationToken);
 
         internal static Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
         {
             var test = new CSharpTest
+            {
+                TestCode = source,
+                FixedCode = fixedSource,
+            };
+
+            if (source == fixedSource)
+            {
+                test.FixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
+                test.FixedState.MarkupHandling = MarkupMode.Allow;
+                test.BatchFixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
+                test.BatchFixedState.MarkupHandling = MarkupMode.Allow;
+            }
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test.RunAsync(cancellationToken);
+        }
+
+        internal static Task VerifyCSharpFixAsync(LanguageVersion? languageVersion, string source, DiagnosticResult expected, string fixedSource, CancellationToken cancellationToken)
+            => VerifyCSharpFixAsync(languageVersion, source, new[] { expected }, fixedSource, cancellationToken);
+
+        internal static Task VerifyCSharpFixAsync(LanguageVersion? languageVersion, string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
+        {
+            var test = new CSharpTest(languageVersion)
             {
                 TestCode = source,
                 FixedCode = fixedSource,
@@ -69,6 +99,11 @@ namespace StyleCop.Analyzers.Test.Verifiers
             private const bool DefaultUseTabs = false;
 
             public CSharpTest()
+                : this(languageVersion: null)
+            {
+            }
+
+            public CSharpTest(LanguageVersion? languageVersion)
             {
                 this.OptionsTransforms.Add(options =>
                     options
@@ -79,6 +114,15 @@ namespace StyleCop.Analyzers.Test.Verifiers
                 this.TestState.AdditionalReferences.Add(GenericAnalyzerTest.CSharpSymbolsReference);
                 this.TestState.AdditionalFilesFactories.Add(GenerateSettingsFile);
                 this.CodeFixValidationMode = CodeFixValidationMode.None;
+
+                if (languageVersion != null)
+                {
+                    this.SolutionTransforms.Add((solution, projectId) =>
+                    {
+                        var parseOptions = (CSharpParseOptions)solution.GetProject(projectId).ParseOptions;
+                        return solution.WithProjectParseOptions(projectId, parseOptions.WithLanguageVersion(languageVersion.Value));
+                    });
+                }
 
                 return;
 

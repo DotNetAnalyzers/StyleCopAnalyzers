@@ -17,7 +17,16 @@ namespace StyleCop.Analyzers.Lightup
             = new ConcurrentDictionary<Type, ConcurrentDictionary<SyntaxKind, bool>>();
 
         public static bool SupportsCSharp7 { get; }
-            = Enum.GetNames(typeof(SyntaxKind)).Contains(nameof(SyntaxKindEx.IsPatternExpression));
+            = Enum.GetNames(typeof(LanguageVersion)).Contains(nameof(LanguageVersionEx.CSharp7));
+
+        public static bool SupportsCSharp71 { get; }
+            = Enum.GetNames(typeof(LanguageVersion)).Contains(nameof(LanguageVersionEx.CSharp7_1));
+
+        public static bool SupportsCSharp72 { get; }
+            = Enum.GetNames(typeof(LanguageVersion)).Contains(nameof(LanguageVersionEx.CSharp7_2));
+
+        public static bool SupportsCSharp73 { get; }
+            = Enum.GetNames(typeof(LanguageVersion)).Contains(nameof(LanguageVersionEx.CSharp7_3));
 
         internal static bool CanWrapNode(SyntaxNode node, Type underlyingType)
         {

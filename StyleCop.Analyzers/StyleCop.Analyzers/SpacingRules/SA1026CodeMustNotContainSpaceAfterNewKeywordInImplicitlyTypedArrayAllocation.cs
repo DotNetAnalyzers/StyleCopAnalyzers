@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.SpacingRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// An implicitly typed new array allocation within a C# code file is not spaced correctly.
@@ -40,6 +41,7 @@ namespace StyleCop.Analyzers.SpacingRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<SyntaxNodeAnalysisContext> ImplicitArrayCreationExpressionAction = HandleImplicitArrayCreationExpression;
+        private static readonly Action<SyntaxNodeAnalysisContext> ImplicitStackAllocArrayCreationExpressionAction = HandleImplicitStackAllocArrayCreationExpression;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -52,6 +54,7 @@ namespace StyleCop.Analyzers.SpacingRules
             context.EnableConcurrentExecution();
 
             context.RegisterSyntaxNodeAction(ImplicitArrayCreationExpressionAction, SyntaxKind.ImplicitArrayCreationExpression);
+            context.RegisterSyntaxNodeAction(ImplicitStackAllocArrayCreationExpressionAction, SyntaxKindEx.ImplicitStackAllocArrayCreationExpression);
         }
 
         private static void HandleImplicitArrayCreationExpression(SyntaxNodeAnalysisContext context)
@@ -61,7 +64,18 @@ namespace StyleCop.Analyzers.SpacingRules
 
             if (newKeywordToken.IsFollowedByWhitespace() || newKeywordToken.IsLastInLine())
             {
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, newKeywordToken.GetLocation(), TokenSpacingProperties.RemoveFollowing));
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, newKeywordToken.GetLocation(), TokenSpacingProperties.RemoveFollowing, "new"));
+            }
+        }
+
+        private static void HandleImplicitStackAllocArrayCreationExpression(SyntaxNodeAnalysisContext context)
+        {
+            var arrayCreation = (ImplicitStackAllocArrayCreationExpressionSyntaxWrapper)context.Node;
+            var stackAllocKeywordToken = arrayCreation.StackAllocKeyword;
+
+            if (stackAllocKeywordToken.IsFollowedByWhitespace() || stackAllocKeywordToken.IsLastInLine())
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, stackAllocKeywordToken.GetLocation(), TokenSpacingProperties.RemoveFollowing, "stackalloc"));
             }
         }
     }

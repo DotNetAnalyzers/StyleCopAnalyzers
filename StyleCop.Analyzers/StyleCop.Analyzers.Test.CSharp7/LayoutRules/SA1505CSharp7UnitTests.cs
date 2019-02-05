@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.LayoutRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.LayoutRules;
     using Xunit;
@@ -38,7 +39,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.LayoutRules
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -85,6 +86,90 @@ namespace StyleCop.Analyzers.Test.CSharp7.LayoutRules
 
             var expectedDiagnostic = Diagnostic().WithLocation(10, 13);
             await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestStackAllocArrayCreationExpressionAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public unsafe void TestMethod()
+        {
+            int* v1 = stackalloc int[]
+            {
+
+                1,
+                2,
+                3
+            };
+        }
+    }
+}
+";
+
+            var fixedTestCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public unsafe void TestMethod()
+        {
+            int* v1 = stackalloc int[]
+            {
+                1,
+                2,
+                3
+            };
+        }
+    }
+}
+";
+
+            var expectedDiagnostic = Diagnostic().WithLocation(8, 13);
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3, testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestImplicitStackAllocArrayCreationExpressionAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public unsafe void TestMethod()
+        {
+            int* v1 = stackalloc[]
+            {
+
+                1,
+                2,
+                3
+            };
+        }
+    }
+}
+";
+
+            var fixedTestCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public unsafe void TestMethod()
+        {
+            int* v1 = stackalloc[]
+            {
+                1,
+                2,
+                3
+            };
+        }
+    }
+}
+";
+
+            var expectedDiagnostic = Diagnostic().WithLocation(8, 13);
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3, testCode, expectedDiagnostic, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

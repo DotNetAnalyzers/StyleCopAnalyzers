@@ -129,7 +129,8 @@ public class Foo
             var testCode = TestCodeTemplate.Replace("$$", invalidDeclaration);
             var fixedTestCode = TestCodeTemplate.Replace("$$", fixedDeclaration);
 
-            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(4, 4 + diagnosticColumn), fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithArguments("protected", "internal").WithLocation(4, 4 + diagnosticColumn);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

@@ -5,9 +5,9 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.SpacingRules;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1000KeywordsMustBeSpacedCorrectly,
@@ -235,6 +235,19 @@ namespace TestNamespace
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestStackAllocImplicitArrayStatementAsync()
+        {
+            string statementWithoutSpace = @"int* x = stackalloc[] { 3 };";
+
+            string statementWithSpace = @"int* x = stackalloc [] { 3 };";
+
+            await this.TestKeywordStatementAsync(statementWithoutSpace, DiagnosticResult.EmptyDiagnosticResults, statementWithoutSpace, languageVersion: LanguageVersion.CSharp7_3).ConfigureAwait(false);
+
+            // this case is handled by SA1026, so it shouldn't be reported here
+            await this.TestKeywordStatementAsync(statementWithSpace, DiagnosticResult.EmptyDiagnosticResults, statementWithSpace, languageVersion: LanguageVersion.CSharp7_3).ConfigureAwait(false);
         }
     }
 }

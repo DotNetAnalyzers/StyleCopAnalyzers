@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.Lightup
     internal static class SyntaxKindEx
     {
         public const SyntaxKind UnderscoreToken = (SyntaxKind)8491;
+        public const SyntaxKind ConflictMarkerTrivia = (SyntaxKind)8564;
         public const SyntaxKind IsPatternExpression = (SyntaxKind)8657;
         public const SyntaxKind DefaultLiteralExpression = (SyntaxKind)8755;
         public const SyntaxKind LocalFunctionStatement = (SyntaxKind)8830;
@@ -26,5 +27,6 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind RefExpression = (SyntaxKind)9050;
         public const SyntaxKind RefType = (SyntaxKind)9051;
         public const SyntaxKind ThrowExpression = (SyntaxKind)9052;
+        public const SyntaxKind ImplicitStackAllocArrayCreationExpression = (SyntaxKind)9053;
     }
 }

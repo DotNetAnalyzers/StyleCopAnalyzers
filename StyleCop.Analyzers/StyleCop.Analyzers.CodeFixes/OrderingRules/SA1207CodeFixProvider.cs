@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.OrderingRules
 {
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -59,21 +60,23 @@ namespace StyleCop.Analyzers.OrderingRules
                 return document;
             }
 
-            var newDeclarationNode = originalDeclarationNode.ReplaceTokens(childTokens, ComputeReplacementToken);
+            bool hasInternalKeyword = childTokens.Any(token => token.IsKind(SyntaxKind.InternalKeyword));
+            var newDeclarationNode = originalDeclarationNode.ReplaceTokens(childTokens, (originalToken, rewrittenToken) => ComputeReplacementToken(originalToken, rewrittenToken, hasInternalKeyword));
 
             var newSyntaxRoot = syntaxRoot.ReplaceNode(originalDeclarationNode, newDeclarationNode);
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
 
-        private static SyntaxToken ComputeReplacementToken(SyntaxToken originalToken, SyntaxToken rewrittenToken)
+        private static SyntaxToken ComputeReplacementToken(SyntaxToken originalToken, SyntaxToken rewrittenToken, bool hasInternalKeyword)
         {
-            if (originalToken.IsKind(SyntaxKind.InternalKeyword))
+            if (originalToken.IsKind(SyntaxKind.InternalKeyword)
+                || originalToken.IsKind(SyntaxKind.PrivateKeyword))
             {
                 return SyntaxFactory.Token(SyntaxKind.ProtectedKeyword).WithTriviaFrom(rewrittenToken);
             }
             else if (originalToken.IsKind(SyntaxKind.ProtectedKeyword))
             {
-                return SyntaxFactory.Token(SyntaxKind.InternalKeyword).WithTriviaFrom(rewrittenToken);
+                return SyntaxFactory.Token(hasInternalKeyword ? SyntaxKind.InternalKeyword : SyntaxKind.PrivateKeyword).WithTriviaFrom(rewrittenToken);
             }
             else
             {

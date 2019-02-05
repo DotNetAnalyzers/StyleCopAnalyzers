@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Testing;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Testing;
@@ -37,8 +38,38 @@ namespace StyleCop.Analyzers.Test.Verifiers
             return test.RunAsync(cancellationToken);
         }
 
+        internal static Task VerifyCSharpDiagnosticAsync(LanguageVersion? languageVersion, string source, DiagnosticResult expected, CancellationToken cancellationToken)
+            => VerifyCSharpDiagnosticAsync(languageVersion, source, new[] { expected }, cancellationToken);
+
+        internal static Task VerifyCSharpDiagnosticAsync(LanguageVersion? languageVersion, string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        {
+            var test = new CSharpTest(languageVersion)
+            {
+                TestCode = source,
+            };
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test.RunAsync(cancellationToken);
+        }
+
         internal class CSharpTest : StyleCopCodeFixVerifier<TAnalyzer, EmptyCodeFixProvider>.CSharpTest
         {
+            public CSharpTest()
+                : this(languageVersion: null)
+            {
+            }
+
+            public CSharpTest(LanguageVersion? languageVersion)
+            {
+                if (languageVersion != null)
+                {
+                    this.SolutionTransforms.Add((solution, projectId) =>
+                    {
+                        var parseOptions = (CSharpParseOptions)solution.GetProject(projectId).ParseOptions;
+                        return solution.WithProjectParseOptions(projectId, parseOptions.WithLanguageVersion(languageVersion.Value));
+                    });
+                }
+            }
         }
     }
 }
