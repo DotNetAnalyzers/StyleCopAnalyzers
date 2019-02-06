@@ -171,13 +171,13 @@ namespace StyleCop.Analyzers.Test.Verifiers
                 }
             }
 
-            public SourceFileList TestSources => TestState.Sources;
+            public SourceFileList TestSources => this.TestState.Sources;
 
-            public SourceFileList FixedSources => FixedState.Sources;
+            public SourceFileList FixedSources => this.FixedState.Sources;
 
-            public SourceFileCollection FixedAdditionalFiles => FixedState.AdditionalFiles;
+            public SourceFileCollection FixedAdditionalFiles => this.FixedState.AdditionalFiles;
 
-            public List<DiagnosticResult> RemainingDiagnostics => FixedState.ExpectedDiagnostics;
+            public List<DiagnosticResult> RemainingDiagnostics => this.FixedState.ExpectedDiagnostics;
 
             /// <summary>
             /// Gets or sets the value of the <see cref="FormattingOptions.IndentationSize"/> to apply to the test
