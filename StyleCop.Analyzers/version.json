@@ -5,7 +5,8 @@
     "precision": "revision"
   },
   "publicReleaseRefSpec": [
-    "^refs/heads/master$"
+    "^refs/heads/master$",
+    "^refs/heads/stabilization$"
   ],
   "nugetPackageVersion": {
     "semVer": 2

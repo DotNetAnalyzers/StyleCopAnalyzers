@@ -307,5 +307,17 @@ namespace Test
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        public async Task TestFullyQualifiedTopLevelNamespaceAsync()
+        {
+            var testCode = @"
+namespace MyNamespace {
+  using System;
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
