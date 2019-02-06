@@ -85,10 +85,14 @@ namespace StyleCop.Analyzers.Helpers
                 break;
 
             default:
-                builder
-                    .Append(symbol.ContainingNamespace.ToDisplayString())
-                    .Append(".")
-                    .Append(symbol.Name);
+                if (!symbol.ContainingNamespace.IsGlobalNamespace)
+                {
+                    builder
+                        .Append(symbol.ContainingNamespace.ToDisplayString())
+                        .Append(".");
+                }
+
+                builder.Append(symbol.Name);
                 break;
             }
         }
