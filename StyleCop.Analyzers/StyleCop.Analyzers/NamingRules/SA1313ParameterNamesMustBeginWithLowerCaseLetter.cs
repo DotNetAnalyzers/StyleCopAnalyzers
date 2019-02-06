@@ -5,11 +5,11 @@ namespace StyleCop.Analyzers.NamingRules
 {
     using System;
     using System.Collections.Immutable;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The name of a parameter in C# does not begin with a lower-case letter.
@@ -17,8 +17,8 @@ namespace StyleCop.Analyzers.NamingRules
     /// <remarks>
     /// <para>A violation of this rule occurs when the name of a parameter does not begin with a lower-case letter.</para>
     ///
-    /// <para>An exception to this rule is made for lambda parameters named <c>_</c>. These parameters are often used to
-    /// designate a placeholder parameter which is not actually used in the body of the lambda expression.</para>
+    /// <para>An exception to this rule is made for lambda parameters named <c>_</c> and <c>__</c>. These parameters are
+    /// often used to designate a placeholder parameter which is not actually used in the body of the lambda expression.</para>
     ///
     /// <para>If the parameter name is intended to match the name of an item associated with Win32 or COM, and thus
     /// needs to begin with an upper-case letter, place the parameter within a special <c>NativeMethods</c> class. A
@@ -41,7 +41,6 @@ namespace StyleCop.Analyzers.NamingRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> ParameterAction = HandleParameter;
 
         /// <inheritdoc/>
@@ -51,12 +50,10 @@ namespace StyleCop.Analyzers.NamingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(ParameterAction, SyntaxKind.Parameter);
+            context.RegisterSyntaxNodeAction(ParameterAction, SyntaxKind.Parameter);
         }
 
         private static void HandleParameter(SyntaxNodeAnalysisContext context)
@@ -79,7 +76,7 @@ namespace StyleCop.Analyzers.NamingRules
                 return;
             }
 
-            if (name == "_" && IsInLambda(syntax))
+            if ((name == "_" || name == "__") && IsInLambda(syntax))
             {
                 return;
             }
@@ -89,7 +86,7 @@ namespace StyleCop.Analyzers.NamingRules
                 return;
             }
 
-            // Parameter names must begin with lower-case letter
+            // Parameter names should begin with lower-case letter
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, identifier.GetLocation(), name));
         }
 
@@ -111,8 +108,7 @@ namespace StyleCop.Analyzers.NamingRules
 
         private static bool NameMatchesAbstraction(ParameterSyntax syntax, SemanticModel semanticModel)
         {
-            var parameterList = syntax.Parent as ParameterListSyntax;
-            if (parameterList == null)
+            if (!(syntax.Parent is ParameterListSyntax parameterList))
             {
                 // This occurs for simple lambda expressions (without parentheses)
                 return false;
@@ -131,7 +127,8 @@ namespace StyleCop.Analyzers.NamingRules
 
             if (methodSymbol.IsOverride)
             {
-                if (methodSymbol.OverriddenMethod.Parameters[index].Name == syntax.Identifier.ValueText)
+                // OverridenMethod can be null in case of an invalid method declaration -> exit because there is no meaningful analysis to be done.
+                if ((methodSymbol.OverriddenMethod == null) || (methodSymbol.OverriddenMethod.Parameters[index].Name == syntax.Identifier.ValueText))
                 {
                     return true;
                 }
@@ -149,7 +146,7 @@ namespace StyleCop.Analyzers.NamingRules
                 {
                     foreach (var member in implementedInterface.GetMembers(methodSymbol.Name).OfType<IMethodSymbol>())
                     {
-                        if (containingType.FindImplementationForInterfaceMember(member) == methodSymbol)
+                        if (methodSymbol.Equals(containingType.FindImplementationForInterfaceMember(member)))
                         {
                             return member.Parameters[index].Name == syntax.Identifier.ValueText;
                         }

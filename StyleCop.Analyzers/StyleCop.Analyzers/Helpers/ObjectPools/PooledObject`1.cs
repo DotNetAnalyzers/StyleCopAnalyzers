@@ -9,7 +9,7 @@ namespace StyleCop.Analyzers.Helpers.ObjectPools
     using System.Text;
 
     /// <summary>
-    /// this is RAII object to automatically release pooled object when its owning pool
+    /// this is RAII object to automatically release pooled object when its owning pool.
     /// </summary>
     /// <typeparam name="T">The type of the pooled object.</typeparam>
     internal struct PooledObject<T> : IDisposable

@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Helpers
     using System;
     using System.Linq;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     internal static class NamedTypeHelpers
@@ -76,6 +77,26 @@ namespace StyleCop.Analyzers.Helpers
             return false;
         }
 
+        internal static string GetNameOrIdentifier(MemberDeclarationSyntax member)
+        {
+            switch (member.Kind())
+            {
+            case SyntaxKind.ClassDeclaration:
+            case SyntaxKind.InterfaceDeclaration:
+            case SyntaxKind.StructDeclaration:
+                return ((TypeDeclarationSyntax)member).Identifier.Text;
+
+            case SyntaxKind.EnumDeclaration:
+                return ((EnumDeclarationSyntax)member).Identifier.Text;
+
+            case SyntaxKind.DelegateDeclaration:
+                return ((DelegateDeclarationSyntax)member).Identifier.Text;
+
+            default:
+                throw new ArgumentException("Unhandled declaration kind: " + member.Kind());
+            }
+        }
+
         internal static Location GetNameOrIdentifierLocation(SyntaxNode member)
         {
             Location location = null;
@@ -96,13 +117,23 @@ namespace StyleCop.Analyzers.Helpers
             return location;
         }
 
+        internal static bool IsPartialDeclaration(MemberDeclarationSyntax declaration)
+        {
+            if (declaration is TypeDeclarationSyntax typeDeclaration)
+            {
+                return typeDeclaration.Modifiers.Any(SyntaxKind.PartialKeyword);
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// Returns whether or not a member is implementing an interface member.
         /// </summary>
         /// <remarks>
-        /// This method does only check the interfaces the containing type is implementing directly.
+        /// <para>This method does only check the interfaces the containing type is implementing directly.
         /// If a derived class is implementing an interface and this member is required for it
-        /// this method will still return false.
+        /// this method will still return false.</para>
         /// </remarks>
         /// <param name="memberSymbol">The member symbol that should be analyzed.</param>
         /// <returns>true if the member is implementing an interface member, otherwise false.</returns>
@@ -113,23 +144,20 @@ namespace StyleCop.Analyzers.Helpers
                 return false;
             }
 
-            IMethodSymbol methodSymbol;
-            IPropertySymbol propertySymbol;
-            IEventSymbol eventSymbol;
             bool isImplementingExplicitly;
 
             // Only methods, properties and events can implement an interface member
-            if ((methodSymbol = memberSymbol as IMethodSymbol) != null)
+            if (memberSymbol is IMethodSymbol methodSymbol)
             {
                 // Check if the member is implementing an interface explicitly
                 isImplementingExplicitly = methodSymbol.ExplicitInterfaceImplementations.Any();
             }
-            else if ((propertySymbol = memberSymbol as IPropertySymbol) != null)
+            else if (memberSymbol is IPropertySymbol propertySymbol)
             {
                 // Check if the member is implementing an interface explicitly
                 isImplementingExplicitly = propertySymbol.ExplicitInterfaceImplementations.Any();
             }
-            else if ((eventSymbol = memberSymbol as IEventSymbol) != null)
+            else if (memberSymbol is IEventSymbol eventSymbol)
             {
                 // Check if the member is implementing an interface explicitly
                 isImplementingExplicitly = eventSymbol.ExplicitInterfaceImplementations.Any();

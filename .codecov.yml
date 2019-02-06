@@ -7,6 +7,11 @@ coverage:
       default: false
     patch:
       default: false
+  fixes:
+    - "build/StyleCop.Analyzers/::StyleCop.Analyzers/"
+
+comment:
+  layout: "diff"
 
 flags:
   production:

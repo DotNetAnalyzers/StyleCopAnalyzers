@@ -7,12 +7,12 @@ namespace StyleCop.Analyzers.LayoutRules
     using System.Composition;
     using System.Threading;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Text;
-    using Settings.ObjectModel;
+    using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1518UseLineEndingsCorrectlyAtEndOfFile"/>.
@@ -53,13 +53,13 @@ namespace StyleCop.Analyzers.LayoutRules
         /// </summary>
         /// <param name="document">The document to be changed.</param>
         /// <param name="diagnostic">The diagnostic to fix.</param>
-        /// <param name="newlineAtEndOfFile">A <see cref="EndOfFileHandling"/> value indicating the desired behavior.</param>
+        /// <param name="newlineAtEndOfFile">A <see cref="OptionSetting"/> value indicating the desired behavior.</param>
         /// <param name="cancellationToken">The cancellation token associated with the fix action.</param>
         /// <returns>The transformed document.</returns>
-        private static async Task<Document> FixEndOfFileAsync(Document document, Diagnostic diagnostic, EndOfFileHandling newlineAtEndOfFile, CancellationToken cancellationToken)
+        private static async Task<Document> FixEndOfFileAsync(Document document, Diagnostic diagnostic, OptionSetting newlineAtEndOfFile, CancellationToken cancellationToken)
         {
             var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
-            string replacement = newlineAtEndOfFile == EndOfFileHandling.Omit ? string.Empty : "\r\n";
+            string replacement = newlineAtEndOfFile == OptionSetting.Omit ? string.Empty : "\r\n";
             return document.WithText(text.WithChanges(new TextChange(diagnostic.Location.SourceSpan, replacement)));
         }
 

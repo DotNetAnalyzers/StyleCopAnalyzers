@@ -22,7 +22,8 @@ namespace StyleCop.Analyzers.Helpers
             [AccessLevel.Internal] = "internal",
             [AccessLevel.ProtectedInternal] = "protected internal",
             [AccessLevel.Protected] = "protected",
-            [AccessLevel.Private] = "private"
+            [AccessLevel.PrivateProtected] = "private protected",
+            [AccessLevel.Private] = "private",
         };
 
         /// <summary>Determines the access level for the given <paramref name="modifiers"/>.</summary>
@@ -30,6 +31,7 @@ namespace StyleCop.Analyzers.Helpers
         /// <returns>A <see cref="AccessLevel"/> value representing the access level.</returns>
         internal static AccessLevel GetAccessLevel(SyntaxTokenList modifiers)
         {
+            bool isPrivate = false;
             bool isProtected = false;
             bool isInternal = false;
             foreach (var modifier in modifiers)
@@ -39,7 +41,16 @@ namespace StyleCop.Analyzers.Helpers
                 case SyntaxKind.PublicKeyword:
                     return AccessLevel.Public;
                 case SyntaxKind.PrivateKeyword:
-                    return AccessLevel.Private;
+                    if (isProtected)
+                    {
+                        return AccessLevel.PrivateProtected;
+                    }
+                    else
+                    {
+                        isPrivate = true;
+                    }
+
+                    break;
                 case SyntaxKind.InternalKeyword:
                     if (isProtected)
                     {
@@ -56,6 +67,10 @@ namespace StyleCop.Analyzers.Helpers
                     {
                         return AccessLevel.ProtectedInternal;
                     }
+                    else if (isPrivate)
+                    {
+                        return AccessLevel.PrivateProtected;
+                    }
                     else
                     {
                         isProtected = true;
@@ -65,7 +80,11 @@ namespace StyleCop.Analyzers.Helpers
                 }
             }
 
-            if (isProtected)
+            if (isPrivate)
+            {
+                return AccessLevel.Private;
+            }
+            else if (isProtected)
             {
                 return AccessLevel.Protected;
             }
@@ -112,6 +131,9 @@ namespace StyleCop.Analyzers.Helpers
             case AccessLevel.Protected:
                 return Accessibility.Protected;
 
+            case AccessLevel.PrivateProtected:
+                return Accessibility.ProtectedAndInternal;
+
             case AccessLevel.Private:
                 return Accessibility.Private;
 
@@ -134,8 +156,7 @@ namespace StyleCop.Analyzers.Helpers
 
             if (!syntax.Modifiers.Any(SyntaxKind.PartialKeyword))
             {
-                BaseTypeDeclarationSyntax enclosingType = syntax.Parent as BaseTypeDeclarationSyntax;
-                return enclosingType == null ? Accessibility.Internal : Accessibility.Private;
+                return !(syntax.Parent is BaseTypeDeclarationSyntax) ? Accessibility.Internal : Accessibility.Private;
             }
 
             INamedTypeSymbol declaredSymbol = semanticModel.GetDeclaredSymbol(syntax, cancellationToken);
@@ -158,8 +179,7 @@ namespace StyleCop.Analyzers.Helpers
                 return Accessibility.Private;
             }
 
-            MethodDeclarationSyntax methodDeclarationSyntax = syntax as MethodDeclarationSyntax;
-            if (methodDeclarationSyntax != null)
+            if (syntax is MethodDeclarationSyntax methodDeclarationSyntax)
             {
                 if (methodDeclarationSyntax.ExplicitInterfaceSpecifier == null)
                 {
@@ -191,8 +211,7 @@ namespace StyleCop.Analyzers.Helpers
                 return accessLevel.ToAccessibility();
             }
 
-            PropertyDeclarationSyntax propertyDeclarationSyntax = syntax as PropertyDeclarationSyntax;
-            if (propertyDeclarationSyntax != null)
+            if (syntax is PropertyDeclarationSyntax propertyDeclarationSyntax)
             {
                 if (propertyDeclarationSyntax.ExplicitInterfaceSpecifier == null)
                 {
@@ -204,8 +223,7 @@ namespace StyleCop.Analyzers.Helpers
                 }
             }
 
-            IndexerDeclarationSyntax indexerDeclarationSyntax = syntax as IndexerDeclarationSyntax;
-            if (indexerDeclarationSyntax != null)
+            if (syntax is IndexerDeclarationSyntax indexerDeclarationSyntax)
             {
                 if (indexerDeclarationSyntax.ExplicitInterfaceSpecifier == null)
                 {
@@ -217,8 +235,7 @@ namespace StyleCop.Analyzers.Helpers
                 }
             }
 
-            EventDeclarationSyntax eventDeclarationSyntax = syntax as EventDeclarationSyntax;
-            if (eventDeclarationSyntax != null)
+            if (syntax is EventDeclarationSyntax eventDeclarationSyntax)
             {
                 if (eventDeclarationSyntax.ExplicitInterfaceSpecifier == null)
                 {
@@ -291,8 +308,7 @@ namespace StyleCop.Analyzers.Helpers
                 return accessLevel.ToAccessibility();
             }
 
-            BaseTypeDeclarationSyntax enclosingType = syntax.Parent as BaseTypeDeclarationSyntax;
-            return enclosingType == null ? Accessibility.Internal : Accessibility.Private;
+            return !(syntax.Parent is BaseTypeDeclarationSyntax) ? Accessibility.Internal : Accessibility.Private;
         }
 
         internal static Accessibility GetEffectiveAccessibility(this BaseTypeDeclarationSyntax syntax, SemanticModel semanticModel, CancellationToken cancellationToken)
@@ -306,8 +322,7 @@ namespace StyleCop.Analyzers.Helpers
                 return declaredAccessibility;
             }
 
-            BaseTypeDeclarationSyntax enclosingType = syntax.Parent as BaseTypeDeclarationSyntax;
-            if (enclosingType == null)
+            if (!(syntax.Parent is BaseTypeDeclarationSyntax enclosingType))
             {
                 return declaredAccessibility;
             }
@@ -327,8 +342,7 @@ namespace StyleCop.Analyzers.Helpers
                 return declaredAccessibility;
             }
 
-            BaseTypeDeclarationSyntax enclosingType = syntax.Parent as BaseTypeDeclarationSyntax;
-            if (enclosingType == null)
+            if (!(syntax.Parent is BaseTypeDeclarationSyntax enclosingType))
             {
                 return declaredAccessibility;
             }
@@ -348,8 +362,7 @@ namespace StyleCop.Analyzers.Helpers
                 return declaredAccessibility;
             }
 
-            BaseTypeDeclarationSyntax enclosingType = syntax.Parent as BaseTypeDeclarationSyntax;
-            if (enclosingType == null)
+            if (!(syntax.Parent is BaseTypeDeclarationSyntax enclosingType))
             {
                 return declaredAccessibility;
             }
@@ -369,8 +382,7 @@ namespace StyleCop.Analyzers.Helpers
                 return declaredAccessibility;
             }
 
-            BasePropertyDeclarationSyntax enclosingProperty = syntax.Parent.Parent as BasePropertyDeclarationSyntax;
-            if (enclosingProperty == null)
+            if (!(syntax.Parent.Parent is BasePropertyDeclarationSyntax enclosingProperty))
             {
                 return declaredAccessibility;
             }
@@ -390,8 +402,7 @@ namespace StyleCop.Analyzers.Helpers
                 return declaredAccessibility;
             }
 
-            BaseTypeDeclarationSyntax enclosingType = syntax.Parent as BaseTypeDeclarationSyntax;
-            if (enclosingType == null)
+            if (!(syntax.Parent is BaseTypeDeclarationSyntax enclosingType))
             {
                 return declaredAccessibility;
             }
@@ -423,8 +434,7 @@ namespace StyleCop.Analyzers.Helpers
                 return declaredAccessibility;
             }
 
-            BaseTypeDeclarationSyntax enclosingType = syntax.Parent as BaseTypeDeclarationSyntax;
-            if (enclosingType == null)
+            if (!(syntax.Parent is BaseTypeDeclarationSyntax enclosingType))
             {
                 return Accessibility.Internal;
             }

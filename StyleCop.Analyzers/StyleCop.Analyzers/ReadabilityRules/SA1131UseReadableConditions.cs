@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// A comparison was made between a variable and a literal or constant value, and the variable appeared on the
@@ -38,7 +39,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 SyntaxKind.GreaterThanOrEqualExpression,
                 SyntaxKind.LessThanOrEqualExpression);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> BinaryExpressionAction = HandleBinaryExpression;
 
         /// <inheritdoc/>
@@ -48,12 +48,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(BinaryExpressionAction, HandledBinaryExpressionKinds);
+            context.RegisterSyntaxNodeAction(BinaryExpressionAction, HandledBinaryExpressionKinds);
         }
 
         private static void HandleBinaryExpression(SyntaxNodeAnalysisContext context)
@@ -71,7 +69,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static bool IsLiteral(ExpressionSyntax expression, SemanticModel semanticModel)
         {
             // Default expressions are most of the time constants, but not for default(MyStruct).
-            if (expression.IsKind(SyntaxKind.DefaultExpression))
+            if (expression.IsKind(SyntaxKind.DefaultExpression) || expression.IsKind(SyntaxKindEx.DefaultLiteralExpression))
             {
                 return true;
             }
@@ -82,9 +80,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return true;
             }
 
-            IFieldSymbol fieldSymbol = semanticModel.GetSymbolInfo(expression).Symbol as IFieldSymbol;
-
-            if (fieldSymbol != null)
+            if (semanticModel.GetSymbolInfo(expression).Symbol is IFieldSymbol fieldSymbol)
             {
                 return fieldSymbol.IsStatic && fieldSymbol.IsReadOnly;
             }

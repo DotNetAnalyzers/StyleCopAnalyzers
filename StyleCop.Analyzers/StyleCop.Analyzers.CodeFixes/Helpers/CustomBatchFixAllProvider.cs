@@ -51,13 +51,20 @@ namespace StyleCop.Analyzers.Helpers
 
                 var documents = documentsAndDiagnosticsToFixMap.Keys.ToImmutableArray();
                 var fixesBag = new List<CodeAction>[documents.Length];
-                var options = new ParallelOptions() { CancellationToken = fixAllContext.CancellationToken };
-                Parallel.ForEach(documents, options, (document, state, index) =>
+                var fixOperations = new List<Task>(documents.Length);
+                for (int index = 0; index < documents.Length; index++)
                 {
-                    fixAllContext.CancellationToken.ThrowIfCancellationRequested();
+                    if (fixAllContext.CancellationToken.IsCancellationRequested)
+                    {
+                        break;
+                    }
+
+                    var document = documents[index];
                     fixesBag[index] = new List<CodeAction>();
-                    this.AddDocumentFixesAsync(document, documentsAndDiagnosticsToFixMap[document], fixesBag[index].Add, fixAllContext).Wait(fixAllContext.CancellationToken);
-                });
+                    fixOperations.Add(this.AddDocumentFixesAsync(document, documentsAndDiagnosticsToFixMap[document], fixesBag[index].Add, fixAllContext));
+                }
+
+                await Task.WhenAll(fixOperations).ConfigureAwait(false);
 
                 if (fixesBag.Any(fixes => fixes.Count > 0))
                 {
@@ -129,15 +136,23 @@ namespace StyleCop.Analyzers.Helpers
         {
             if (projectsAndDiagnosticsToFixMap != null && projectsAndDiagnosticsToFixMap.Any())
             {
-                var options = new ParallelOptions() { CancellationToken = fixAllContext.CancellationToken };
                 var fixesBag = new List<CodeAction>[projectsAndDiagnosticsToFixMap.Count];
-                Parallel.ForEach(projectsAndDiagnosticsToFixMap.Keys, options, (project, state, index) =>
+                var fixOperations = new List<Task>(projectsAndDiagnosticsToFixMap.Count);
+                int index = -1;
+                foreach (var project in projectsAndDiagnosticsToFixMap.Keys)
                 {
-                    fixAllContext.CancellationToken.ThrowIfCancellationRequested();
+                    if (fixAllContext.CancellationToken.IsCancellationRequested)
+                    {
+                        break;
+                    }
+
+                    index++;
                     var diagnostics = projectsAndDiagnosticsToFixMap[project];
                     fixesBag[index] = new List<CodeAction>();
-                    this.AddProjectFixesAsync(project, diagnostics, fixesBag[index].Add, fixAllContext).Wait(fixAllContext.CancellationToken);
-                });
+                    fixOperations.Add(this.AddProjectFixesAsync(project, diagnostics, fixesBag[index].Add, fixAllContext));
+                }
+
+                await Task.WhenAll(fixOperations).ConfigureAwait(false);
 
                 if (fixesBag.Any(fixes => fixes.Count > 0))
                 {
@@ -234,8 +249,7 @@ namespace StyleCop.Analyzers.Helpers
                 ApplyChangesOperation singleApplyChangesOperation = null;
                 foreach (var operation in operations)
                 {
-                    ApplyChangesOperation applyChangesOperation = operation as ApplyChangesOperation;
-                    if (applyChangesOperation == null)
+                    if (!(operation is ApplyChangesOperation applyChangesOperation))
                     {
                         continue;
                     }

@@ -3,19 +3,19 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Analyzers.DocumentationRules;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.DocumentationRules;
+    using StyleCop.Analyzers.Test.Verifiers;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.FileHeaderAnalyzers>;
 
     /// <summary>
     /// Unit tests for file header that do not follow the XML syntax.
     /// </summary>
-    public class NoXmlFileHeaderUnitTests : CodeFixVerifier
+    public class NoXmlFileHeaderUnitTests
     {
         private const string TestSettings = @"
 {
@@ -25,7 +25,23 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
       ""copyrightText"": ""Copyright (c) {companyName}. All rights reserved.\nLicensed under the {licenseName} license. See {licenseFile} file in the project root for full license information."",
       ""variables"": {
         ""licenseName"": ""???"",
-        ""licenseFile"": ""LICENSE"",
+        ""licenseFile"": ""LICENSE""
+      },
+      ""xmlHeader"": false
+    }
+  }
+}
+";
+
+        private const string TestSettingsWithEmptyLines = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""companyName"": ""FooCorp"",
+      ""copyrightText"": ""\nCopyright (c) {companyName}. All rights reserved.\n\nLicensed under the {licenseName} license. See {licenseFile} file in the project root for full license information.\n"",
+      ""variables"": {
+        ""licenseName"": ""???"",
+        ""licenseFile"": ""LICENSE""
       },
       ""xmlHeader"": false
     }
@@ -53,10 +69,176 @@ namespace Foo
 }
 ";
 
-            var expectedDiagnostic = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostic, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer will report <see cref="FileHeaderAnalyzers.SA1633DescriptorMissing"/> for
+        /// projects not using XML headers when the file is completely missing a header.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2415, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2415")]
+        public virtual async Task TestNoFileHeaderWithUsingDirectiveAsync()
+        {
+            var testCode = @"using System;
+
+namespace Foo
+{
+}
+";
+            var fixedCode = @"// Copyright (c) FooCorp. All rights reserved.
+// Licensed under the ??? license. See LICENSE file in the project root for full license information.
+
+using System;
+
+namespace Foo
+{
+}
+";
+
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer will report <see cref="FileHeaderAnalyzers.SA1633DescriptorMissing"/> for
+        /// projects not using XML headers when the file is completely missing a header.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2415, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2415")]
+        public virtual async Task TestNoFileHeaderWithBlankLineAndUsingDirectiveAsync()
+        {
+            var testCode = @"
+using System;
+
+namespace Foo
+{
+}
+";
+            var fixedCode = @"// Copyright (c) FooCorp. All rights reserved.
+// Licensed under the ??? license. See LICENSE file in the project root for full license information.
+
+using System;
+
+namespace Foo
+{
+}
+";
+
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the analyzer will report <see cref="FileHeaderAnalyzers.SA1633DescriptorMissing"/> for
+        /// projects not using XML headers when the file is completely missing a header.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2415, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2415")]
+        public virtual async Task TestNoFileHeaderWithWhitespaceLineAsync()
+        {
+            var testCode = "    " + @"
+using System;
+
+namespace Foo
+{
+}
+";
+            var fixedCode = @"// Copyright (c) FooCorp. All rights reserved.
+// Licensed under the ??? license. See LICENSE file in the project root for full license information.
+
+using System;
+
+namespace Foo
+{
+}
+";
+
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that the built-in variable <c>fileName</c> works as expected.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public virtual async Task TestFileNameBuiltInVariableAsync()
+        {
+            var testSettings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""companyName"": ""FooCorp"",
+      ""copyrightText"": ""{fileName} Copyright (c) {companyName}. All rights reserved.\nLicensed under the {licenseName} license. See {licenseFile} file in the project root for full license information."",
+      ""variables"": {
+        ""licenseName"": ""???"",
+        ""licenseFile"": ""LICENSE""
+      },
+      ""xmlHeader"": false
+    }
+  }
+}
+";
+
+            var testCode = @"namespace Foo
+{
+}
+";
+            var fixedCode = @"// Test0.cs Copyright (c) FooCorp. All rights reserved.
+// Licensed under the ??? license. See LICENSE file in the project root for full license information.
+
+namespace Foo
+{
+}
+";
+
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
+            await VerifyCSharpFixAsync(testCode, testSettings, new[] { expectedDiagnostic }, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a used-defined replacement variable <c>fileName</c> works as expected.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public virtual async Task TestFileNameUserVariableAsync()
+        {
+            var testSettings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""companyName"": ""FooCorp"",
+      ""copyrightText"": ""{fileName} Copyright (c) {companyName}. All rights reserved.\nLicensed under the {licenseName} license. See {licenseFile} file in the project root for full license information."",
+      ""variables"": {
+        ""licenseName"": ""???"",
+        ""licenseFile"": ""LICENSE"",
+        ""fileName"": ""Not a file""
+      },
+      ""xmlHeader"": false
+    }
+  }
+}
+";
+
+            var testCode = @"namespace Foo
+{
+}
+";
+            var fixedCode = @"// Not a file Copyright (c) FooCorp. All rights reserved.
+// Licensed under the ??? license. See LICENSE file in the project root for full license information.
+
+namespace Foo
+{
+}
+";
+
+            var expectedDiagnostic = Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1);
+            await VerifyCSharpFixAsync(testCode, testSettings, new[] { expectedDiagnostic }, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -73,7 +255,7 @@ namespace Bar
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -91,7 +273,7 @@ namespace Bar
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -110,7 +292,7 @@ namespace Bar
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -128,7 +310,7 @@ namespace Bar
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -155,10 +337,8 @@ namespace Bar
 }
 ";
 
-            var expected = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1635Descriptor).WithLocation(1, 1);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic(FileHeaderAnalyzers.SA1635Descriptor).WithLocation(1, 1);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -182,28 +362,56 @@ namespace Bar
 {
 }
 ";
-            var expected = this.CSharpDiagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(1, 1);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(1, 1);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override string GetSettings()
+        [Fact]
+        [WorkItem(2657, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2657")]
+        public async Task TestHeaderMissingRequiredNewLinesAsync()
         {
-            return TestSettings;
+            var testCode = @"// Copyright (c) FooCorp. All rights reserved.
+// Licensed under the ??? license. See LICENSE file in the project root for full license information.
+
+namespace Bar
+{
+}
+";
+            var fixedCode = @"//
+// Copyright (c) FooCorp. All rights reserved.
+//
+// Licensed under the ??? license. See LICENSE file in the project root for full license information.
+//
+
+namespace Bar
+{
+}
+";
+
+            var expected = Diagnostic(FileHeaderAnalyzers.SA1636Descriptor).WithLocation(1, 1);
+            await VerifyCSharpFixAsync(testCode, TestSettingsWithEmptyLines, new[] { expected }, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected sealed override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new FileHeaderAnalyzers();
-        }
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
+            => VerifyCSharpFixAsync(source, TestSettings, new[] { expected }, fixedSource: null, cancellationToken);
 
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+            => VerifyCSharpFixAsync(source, TestSettings, expected, fixedSource: null, cancellationToken);
+
+        private static Task VerifyCSharpFixAsync(string source, DiagnosticResult expected, string fixedSource, CancellationToken cancellationToken)
+            => VerifyCSharpFixAsync(source, TestSettings, new[] { expected }, fixedSource, cancellationToken);
+
+        private static Task VerifyCSharpFixAsync(string source, string testSettings, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
         {
-            return new FileHeaderCodeFixProvider();
+            var test = new StyleCopCodeFixVerifier<FileHeaderAnalyzers, FileHeaderCodeFixProvider>.CSharpTest
+            {
+                TestCode = source,
+                FixedCode = fixedSource,
+                Settings = testSettings,
+            };
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test.RunAsync(cancellationToken);
         }
     }
 }

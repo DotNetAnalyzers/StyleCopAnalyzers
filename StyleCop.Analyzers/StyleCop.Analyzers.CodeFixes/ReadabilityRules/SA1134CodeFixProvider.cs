@@ -8,12 +8,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using System.Composition;
     using System.Threading;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1134AttributesMustNotShareLine"/>.
@@ -51,14 +51,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var indentationOptions = IndentationOptions.FromDocument(document);
+            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
 
             var attributeListSyntax = (AttributeListSyntax)syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
 
             // use the containing type to determine the indentation level, anything else is less reliable.
             var containingType = attributeListSyntax.Parent?.Parent;
-            var indentationSteps = (containingType != null) ? IndentationHelper.GetIndentationSteps(indentationOptions, containingType) + 1 : 0;
-            var indentationTrivia = IndentationHelper.GenerateWhitespaceTrivia(indentationOptions, indentationSteps);
+            var indentationSteps = (containingType != null) ? IndentationHelper.GetIndentationSteps(settings.Indentation, containingType) + 1 : 0;
+            var indentationTrivia = IndentationHelper.GenerateWhitespaceTrivia(settings.Indentation, indentationSteps);
 
             var tokensToReplace = new Dictionary<SyntaxToken, SyntaxToken>();
 

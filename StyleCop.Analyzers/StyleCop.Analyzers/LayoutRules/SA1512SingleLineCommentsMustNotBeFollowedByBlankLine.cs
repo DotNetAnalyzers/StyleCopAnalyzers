@@ -78,8 +78,8 @@ namespace StyleCop.Analyzers.LayoutRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1512";
-        private const string Title = "Single-line comments must not be followed by blank line";
-        private const string MessageFormat = "Single-line comments must not be followed by blank line";
+        private const string Title = "Single-line comments should not be followed by blank line";
+        private const string MessageFormat = "Single-line comments should not be followed by blank line";
         private const string Description = "A single-line comment within C# code is followed by a blank line.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1512.md";
 
@@ -95,16 +95,18 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+
             context.RegisterCompilationStartAction(CompilationStartAction);
         }
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
-            var diagnosticOptions = context.Compilation.Options.SpecificDiagnosticOptions;
-            context.RegisterSyntaxTreeActionHonorExclusions(c => HandleSyntaxTreeAnalysis(c, diagnosticOptions));
+            context.RegisterSyntaxTreeAction(c => HandleSyntaxTreeAnalysis(c, context.Compilation));
         }
 
-        private static void HandleSyntaxTreeAnalysis(SyntaxTreeAnalysisContext context, ImmutableDictionary<string, ReportDiagnostic> specificDiagnosticOptions)
+        private static void HandleSyntaxTreeAnalysis(SyntaxTreeAnalysisContext context, Compilation compilation)
         {
             var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
 
@@ -141,7 +143,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 }
                 else if (trailingBlankLineCount > 1)
                 {
-                    if (specificDiagnosticOptions.GetValueOrDefault(SA1507CodeMustNotContainMultipleBlankLinesInARow.DiagnosticId, ReportDiagnostic.Default) != ReportDiagnostic.Suppress)
+                    if (!compilation.IsAnalyzerSuppressed(SA1507CodeMustNotContainMultipleBlankLinesInARow.Descriptor))
                     {
                         // ignore comments that are followed by multiple blank lines -> the multiple blank lines will be reported by SA1507
                         continue;

@@ -9,11 +9,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1127GenericTypeConstraintsMustBeOnOwnLine"/>.
@@ -60,8 +60,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var afterEndToken = endToken.GetNextToken();
 
             var parentIndentation = GetParentIndentation(whereToken);
-            var indentationOptions = IndentationOptions.FromDocument(document);
-            var indentationTrivia = SyntaxFactory.Whitespace(parentIndentation + IndentationHelper.GenerateIndentationString(indentationOptions, 1));
+            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
+            var indentationTrivia = SyntaxFactory.Whitespace(parentIndentation + IndentationHelper.GenerateIndentationString(settings.Indentation, 1));
 
             var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>()
             {

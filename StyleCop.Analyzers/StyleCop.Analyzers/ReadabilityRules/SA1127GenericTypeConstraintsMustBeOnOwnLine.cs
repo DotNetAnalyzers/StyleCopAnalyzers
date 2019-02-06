@@ -5,14 +5,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
     using System.Collections.Immutable;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// Generic type constraints must be on their own line.
+    /// Generic type constraints should be on their own line.
     /// </summary>
     /// <remarks>
     /// <para>A violation of this rule occurs when one or more generic type constraints following the <c>where</c>
@@ -22,7 +22,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     internal class SA1127GenericTypeConstraintsMustBeOnOwnLine : DiagnosticAnalyzer
     {
         /// <summary>
-        /// The ID for diagnostics produced by the <see cref="SA1127GenericTypeConstraintsMustBeOnOwnLine"/>
+        /// The ID for diagnostics produced by the <see cref="SA1127GenericTypeConstraintsMustBeOnOwnLine"/>.
         /// </summary>
         public const string DiagnosticId = "SA1127";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1127Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
@@ -33,7 +33,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> TypeParameterConstraintClauseAction = HandleTypeParameterConstraintClause;
 
         /// <inheritdoc/>
@@ -43,12 +42,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(TypeParameterConstraintClauseAction, SyntaxKind.TypeParameterConstraintClause);
+            context.RegisterSyntaxNodeAction(TypeParameterConstraintClauseAction, SyntaxKind.TypeParameterConstraintClause);
         }
 
         private static void HandleTypeParameterConstraintClause(SyntaxNodeAnalysisContext context)

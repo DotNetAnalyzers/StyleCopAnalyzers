@@ -39,7 +39,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     /// }
     /// </code>
     ///
-    /// <para>or</para>
+    /// <para>or:</para>
     ///
     /// <code language="csharp">
     /// if (x || (y &amp;&amp; z &amp;&amp; a) || b)
@@ -58,8 +58,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1408";
-        private const string Title = "Conditional expressions must declare precedence";
-        private const string MessageFormat = "Conditional expressions must declare precedence";
+        private const string Title = "Conditional expressions should declare precedence";
+        private const string MessageFormat = "Conditional expressions should declare precedence";
         private const string Description = "A C# statement contains a complex conditional expression which omits parenthesis around operators.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1408.md";
 
@@ -69,7 +69,6 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         private static readonly ImmutableArray<SyntaxKind> HandledBinaryExpressionKinds =
             ImmutableArray.Create(SyntaxKind.LogicalAndExpression, SyntaxKind.LogicalOrExpression);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> BinaryExpressionAction = HandleBinaryExpression;
 
         /// <inheritdoc/>
@@ -79,22 +78,19 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(BinaryExpressionAction, HandledBinaryExpressionKinds);
+            context.RegisterSyntaxNodeAction(BinaryExpressionAction, HandledBinaryExpressionKinds);
         }
 
         private static void HandleBinaryExpression(SyntaxNodeAnalysisContext context)
         {
             BinaryExpressionSyntax binSyntax = (BinaryExpressionSyntax)context.Node;
 
-            if (binSyntax.Left is BinaryExpressionSyntax)
+            if (binSyntax.Left is BinaryExpressionSyntax left)
             {
                 // Check if the operations are of the same kind
-                var left = (BinaryExpressionSyntax)binSyntax.Left;
                 if (left.OperatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken) || left.OperatorToken.IsKind(SyntaxKind.BarBarToken))
                 {
                     if (!IsSameFamily(binSyntax.OperatorToken, left.OperatorToken))
@@ -104,10 +100,9 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 }
             }
 
-            if (binSyntax.Right is BinaryExpressionSyntax)
+            if (binSyntax.Right is BinaryExpressionSyntax right)
             {
                 // Check if the operations are of the same kind
-                var right = (BinaryExpressionSyntax)binSyntax.Right;
                 if (right.OperatorToken.IsKind(SyntaxKind.AmpersandAmpersandToken) || right.OperatorToken.IsKind(SyntaxKind.BarBarToken))
                 {
                     if (!IsSameFamily(binSyntax.OperatorToken, right.OperatorToken))

@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     /// TODO.
     /// </summary>
     /// <remarks>
-    /// <para>TODO</para>
+    /// <para>TODO.</para>
     ///
     /// <para>A violation of this rule occurs when unnecessary parenthesis have been used in an attribute constructor.
     /// For example:</para>
@@ -35,15 +35,14 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// <see cref="SA1411AttributeConstructorMustNotUseUnnecessaryParenthesis"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1411";
-        private const string Title = "Attribute constructor must not use unnecessary parenthesis";
-        private const string MessageFormat = "Attribute constructor must not use unnecessary parenthesis";
+        private const string Title = "Attribute constructor should not use unnecessary parenthesis";
+        private const string MessageFormat = "Attribute constructor should not use unnecessary parenthesis";
         private const string Description = "TODO.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1411.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> AttributeArgumentListAction = HandleAttributeArgumentList;
 
         /// <inheritdoc/>
@@ -53,12 +52,10 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(AttributeArgumentListAction, SyntaxKind.AttributeArgumentList);
+            context.RegisterSyntaxNodeAction(AttributeArgumentListAction, SyntaxKind.AttributeArgumentList);
         }
 
         private static void HandleAttributeArgumentList(SyntaxNodeAnalysisContext context)
@@ -69,7 +66,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 return;
             }
 
-            // Attribute constructor must not use unnecessary parenthesis
+            // Attribute constructor should not use unnecessary parenthesis
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.GetLocation()));
         }
     }

@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.SpacingRules
 {
     using System;
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -18,11 +17,12 @@ namespace StyleCop.Analyzers.SpacingRules
     /// <remarks>
     /// <para>A violation of this rule occurs when the spacing around a closing square bracket is not correct.</para>
     ///
-    /// <para>A closing square bracket must never be preceded by whitespace, unless it is the first character on the
+    /// <para>A closing square bracket should never be preceded by whitespace, unless it is the first character on the
     /// line.</para>
     ///
-    /// <para>A closing square bracket must be followed by whitespace, unless it is the last character on the line, it
-    /// is followed by a closing bracket or an opening parenthesis, it is followed by a comma or semicolon, or it is
+    /// <para>A closing square bracket should be followed by whitespace, unless it is the last character on the line, it
+    /// is followed by a closing bracket or an opening parenthesis, it is followed by a comma or semicolon, it is
+    /// followed by a string interpolation alignment component or string interpolation formatting component, or it is
     /// followed by certain types of operator symbols.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
@@ -33,15 +33,14 @@ namespace StyleCop.Analyzers.SpacingRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1011";
-        private const string Title = "Closing square brackets must be spaced correctly";
-        private const string MessageFormat = "Closing square bracket must{0} be {1} by a space.";
+        private const string Title = "Closing square brackets should be spaced correctly";
+        private const string MessageFormat = "Closing square bracket should{0} be {1} by a space.";
         private const string Description = "A closing square bracket within a C# statement is not spaced correctly.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1011.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
 
         /// <inheritdoc/>
@@ -51,12 +50,10 @@ namespace StyleCop.Analyzers.SpacingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxTreeActionHonorExclusions(SyntaxTreeAction);
+            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
         }
 
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -85,7 +82,7 @@ namespace StyleCop.Analyzers.SpacingRules
             }
 
             bool firstInLine = token.IsFirstInLine();
-            bool precededBySpace = firstInLine || token.IsPrecededByWhitespace();
+            bool precededBySpace = firstInLine || token.IsPrecededByWhitespace(context.CancellationToken);
             bool followedBySpace = token.IsFollowedByWhitespace();
             bool lastInLine = token.IsLastInLine();
             bool precedesSpecialCharacter;
@@ -106,6 +103,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 case SyntaxKind.DotToken:
                 case SyntaxKind.OpenBracketToken:
                 case SyntaxKind.CloseParenToken:
+                case SyntaxKind.MinusGreaterThanToken:
                     precedesSpecialCharacter = true;
                     break;
                 case SyntaxKind.PlusPlusToken:
@@ -126,6 +124,11 @@ namespace StyleCop.Analyzers.SpacingRules
                     precedesSpecialCharacter = nextToken.Parent is InterpolationSyntax;
                     break;
 
+                case SyntaxKind.ColonToken:
+                    precedesSpecialCharacter = nextToken.Parent.IsKind(SyntaxKind.InterpolationFormatClause);
+                    suppressFollowingSpaceError = false;
+                    break;
+
                 default:
                     precedesSpecialCharacter = false;
                     break;
@@ -138,7 +141,7 @@ namespace StyleCop.Analyzers.SpacingRules
 
             if (!firstInLine && precededBySpace)
             {
-                // Closing square bracket must{ not} be {preceded} by a space.
+                // Closing square bracket should{ not} be {preceded} by a space.
                 var properties = TokenSpacingProperties.RemovePreceding;
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, " not", "preceded"));
             }
@@ -147,13 +150,13 @@ namespace StyleCop.Analyzers.SpacingRules
             {
                 if (!precedesSpecialCharacter && !followedBySpace)
                 {
-                    // Closing square bracket must{} be {followed} by a space.
+                    // Closing square bracket should{} be {followed} by a space.
                     var properties = TokenSpacingProperties.InsertFollowing;
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, string.Empty, "followed"));
                 }
                 else if (precedesSpecialCharacter && followedBySpace && !suppressFollowingSpaceError)
                 {
-                    // Closing square brackets must {not} be {followed} by a space
+                    // Closing square brackets should {not} be {followed} by a space
                     var properties = TokenSpacingProperties.RemoveFollowing;
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, " not", "followed"));
                 }

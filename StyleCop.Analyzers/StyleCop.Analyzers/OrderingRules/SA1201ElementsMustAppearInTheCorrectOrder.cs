@@ -6,12 +6,12 @@ namespace StyleCop.Analyzers.OrderingRules
     using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Settings.ObjectModel;
+    using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// An element within a C# code file is out of order in relation to the other elements in the code.
@@ -20,35 +20,35 @@ namespace StyleCop.Analyzers.OrderingRules
     /// <para>A violation of this rule occurs when the code elements within a file do not follow a standard ordering
     /// scheme.</para>
     ///
-    /// <para>To comply with this rule, elements at the file root level or within a namespace must be positioned in the
+    /// <para>To comply with this rule, elements at the file root level or within a namespace should be positioned in the
     /// following order:</para>
     ///
     /// <list type="bullet">
-    /// <item>Extern alias directives</item>
-    /// <item>Using directives</item>
-    /// <item>Namespaces</item>
-    /// <item>Delegates</item>
-    /// <item>Enums</item>
-    /// <item>Interfaces</item>
-    /// <item>Structs</item>
-    /// <item>Classes</item>
+    /// <item><description>Extern alias directives</description></item>
+    /// <item><description>Using directives</description></item>
+    /// <item><description>Namespaces</description></item>
+    /// <item><description>Delegates</description></item>
+    /// <item><description>Enums</description></item>
+    /// <item><description>Interfaces</description></item>
+    /// <item><description>Structs</description></item>
+    /// <item><description>Classes</description></item>
     /// </list>
     ///
-    /// <para>Within a class, struct, or interface, elements must be positioned in the following order:</para>
+    /// <para>Within a class, struct, or interface, elements should be positioned in the following order:</para>
     ///
     /// <list type="bullet">
-    /// <item>Fields</item>
-    /// <item>Constructors</item>
-    /// <item>Finalizers</item>
-    /// <item>Delegates</item>
-    /// <item>Events</item>
-    /// <item>Enums</item>
-    /// <item>Interfaces</item>
-    /// <item>Properties</item>
-    /// <item>Indexers</item>
-    /// <item>Methods</item>
-    /// <item>Structs</item>
-    /// <item>Classes</item>
+    /// <item><description>Fields</description></item>
+    /// <item><description>Constructors</description></item>
+    /// <item><description>Finalizers</description></item>
+    /// <item><description>Delegates</description></item>
+    /// <item><description>Events</description></item>
+    /// <item><description>Enums</description></item>
+    /// <item><description>Interfaces</description></item>
+    /// <item><description>Properties</description></item>
+    /// <item><description>Indexers</description></item>
+    /// <item><description>Methods</description></item>
+    /// <item><description>Structs</description></item>
+    /// <item><description>Classes</description></item>
     /// </list>
     ///
     /// <para>Complying with a standard ordering scheme based on element type can increase the readability and
@@ -59,11 +59,12 @@ namespace StyleCop.Analyzers.OrderingRules
     /// types. This problem can be solved through the use of partial classes.</para>
     ///
     /// <list type="number">
-    /// <item>Add the partial attribute to the class, if the class is not already partial.</item>
-    /// <item>Add a second partial class with the same name. It is possible to place this in the same file, just below
-    /// the original class, or within a second file.</item>
-    /// <item>Move the interface inheritance and all members of the interface implementation to the second part of the
-    /// class.</item>
+    /// <item><description>Add the partial attribute to the class, if the class is not already
+    /// partial.</description></item>
+    /// <item><description>Add a second partial class with the same name. It is possible to place this in the same file,
+    /// just below the original class, or within a second file.</description></item>
+    /// <item><description>Move the interface inheritance and all members of the interface implementation to the second
+    /// part of the class.</description></item>
     /// </list>
     ///
     /// <para>For example:</para>
@@ -166,10 +167,9 @@ namespace StyleCop.Analyzers.OrderingRules
             [SyntaxKind.IndexerDeclaration] = "indexer",
             [SyntaxKind.MethodDeclaration] = "method",
             [SyntaxKind.ConversionOperatorDeclaration] = "conversion",
-            [SyntaxKind.OperatorDeclaration] = "operator"
+            [SyntaxKind.OperatorDeclaration] = "operator",
         };
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CompilationUnitAction = HandleCompilationUnit;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> NamespaceDeclarationAction = HandleNamespaceDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> TypeDeclarationAction = HandleTypeDeclaration;
@@ -181,14 +181,12 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(CompilationUnitAction, SyntaxKind.CompilationUnit);
-            context.RegisterSyntaxNodeActionHonorExclusions(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(TypeDeclarationAction, TypeDeclarationKinds);
+            context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
+            context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeAction(TypeDeclarationAction, TypeDeclarationKinds);
         }
 
         private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)

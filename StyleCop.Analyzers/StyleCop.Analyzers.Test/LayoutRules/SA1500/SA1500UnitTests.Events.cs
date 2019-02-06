@@ -5,9 +5,13 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.LayoutRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1500BracesForMultiLineStatementsMustNotShareLine,
+        StyleCop.Analyzers.LayoutRules.SA1500CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1500BracesForMultiLineStatementsMustNotShareLine"/>.
@@ -18,7 +22,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// Verifies that no diagnostics are reported for the valid events defined in this test.
         /// </summary>
         /// <remarks>
-        /// These are valid for SA1500 only, some will report other diagnostics from the layout (SA15xx) series.
+        /// <para>These are valid for SA1500 only, some will report other diagnostics from the layout (SA15xx)
+        /// series.</para>
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -73,7 +78,7 @@ public class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -244,35 +249,33 @@ public class Foo
             DiagnosticResult[] expectedDiagnostics =
             {
                 // Invalid event #1
-                this.CSharpDiagnostic().WithLocation(10, 13),
-                this.CSharpDiagnostic().WithLocation(14, 16),
+                Diagnostic().WithLocation(10, 13),
+                Diagnostic().WithLocation(14, 16),
 
                 // Invalid event #2
-                this.CSharpDiagnostic().WithLocation(22, 13),
-                this.CSharpDiagnostic().WithLocation(23, 33),
-                this.CSharpDiagnostic().WithLocation(25, 16),
-                this.CSharpDiagnostic().WithLocation(26, 33),
+                Diagnostic().WithLocation(22, 13),
+                Diagnostic().WithLocation(23, 33),
+                Diagnostic().WithLocation(25, 16),
+                Diagnostic().WithLocation(26, 33),
 
                 // Invalid event #3
-                this.CSharpDiagnostic().WithLocation(32, 13),
-                this.CSharpDiagnostic().WithLocation(35, 16),
+                Diagnostic().WithLocation(32, 13),
+                Diagnostic().WithLocation(35, 16),
 
                 // Invalid event #4
-                this.CSharpDiagnostic().WithLocation(44, 33),
-                this.CSharpDiagnostic().WithLocation(48, 33),
+                Diagnostic().WithLocation(44, 33),
+                Diagnostic().WithLocation(48, 33),
 
                 // Invalid event #5
-                this.CSharpDiagnostic().WithLocation(55, 9),
-                this.CSharpDiagnostic().WithLocation(59, 9),
+                Diagnostic().WithLocation(55, 9),
+                Diagnostic().WithLocation(59, 9),
 
                 // Invalid event #6 (Only report once for accessor statement on a single line)
-                this.CSharpDiagnostic().WithLocation(67, 9),
-                this.CSharpDiagnostic().WithLocation(70, 9)
+                Diagnostic().WithLocation(67, 9),
+                Diagnostic().WithLocation(70, 9),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

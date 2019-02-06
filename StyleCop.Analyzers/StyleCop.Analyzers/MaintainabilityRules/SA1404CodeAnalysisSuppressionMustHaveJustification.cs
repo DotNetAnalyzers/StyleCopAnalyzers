@@ -7,11 +7,11 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using System.Collections.Concurrent;
     using System.Collections.Immutable;
     using System.Diagnostics.CodeAnalysis;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A Code Analysis SuppressMessage attribute does not include a justification.
@@ -42,8 +42,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1404";
-        private const string Title = "Code analysis suppression must have justification";
-        private const string MessageFormat = "Code analysis suppression must have justification";
+        private const string Title = "Code analysis suppression should have justification";
+        private const string MessageFormat = "Code analysis suppression should have justification";
         private const string Description = "A Code Analysis SuppressMessage attribute does not include a justification.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1404.md";
 
@@ -59,13 +59,16 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+
             context.RegisterCompilationStartAction(CompilationStartAction);
         }
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
             AnalyzerInstance instance = new AnalyzerInstance(context.Compilation.GetOrCreateUsingAliasCache());
-            context.RegisterSyntaxNodeActionHonorExclusions(instance.HandleAttributeNode, SyntaxKind.Attribute);
+            context.RegisterSyntaxNodeAction(instance.HandleAttributeNode, SyntaxKind.Attribute);
         }
 
         /// <summary>
@@ -93,8 +96,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 // Return fast if the name doesn't match and the file doesn't contain any using alias directives
                 if (!attribute.SyntaxTree.ContainsUsingAlias(this.usingAliasCache))
                 {
-                    SimpleNameSyntax simpleNameSyntax = attribute.Name as SimpleNameSyntax;
-                    if (simpleNameSyntax == null)
+                    if (!(attribute.Name is SimpleNameSyntax simpleNameSyntax))
                     {
                         QualifiedNameSyntax qualifiedNameSyntax = attribute.Name as QualifiedNameSyntax;
                         simpleNameSyntax = qualifiedNameSyntax.Right;
@@ -116,7 +118,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                         this.suppressMessageAttribute = context.SemanticModel.Compilation.GetTypeByMetadataName(typeof(SuppressMessageAttribute).FullName);
                     }
 
-                    if (symbol.ContainingType == this.suppressMessageAttribute)
+                    if (Equals(symbol.ContainingType, this.suppressMessageAttribute))
                     {
                         foreach (var attributeArgument in attribute.ArgumentList.Arguments)
                         {

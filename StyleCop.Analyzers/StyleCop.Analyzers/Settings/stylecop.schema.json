@@ -1,5 +1,5 @@
 ﻿{
-  "$schema": "http://json-schema.org/draft-04/schema",
+  "$schema": "http://json-schema.org/draft-04/schema#",
   "id": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
   "title": "StyleCop Analyzers Configuration",
   "description": "Configuration file for StyleCop Analyzers",
@@ -10,6 +10,30 @@
       "description": "The top-level object containing configuration properties for built-in rules.",
       "additionalProperties": false,
       "properties": {
+        "indentation": {
+          "type": "object",
+          "description": "Indentation configuration",
+          "additionalProperties": false,
+          "properties": {
+            "indentationSize": {
+              "description": "Specifies the indentation size.",
+              "type": "integer",
+              "minimum": 0,
+              "default": 4
+            },
+            "tabSize": {
+              "description": "Specifies the tab width.",
+              "type": "integer",
+              "minimum": 0,
+              "default": 4
+            },
+            "useTabs": {
+              "description": "Specifies whether indentation should use hard tabs instead of spaces.",
+              "type": "boolean",
+              "default": false
+            }
+          }
+        },
         "spacingRules": {
           "type": "object",
           "description": "Configuration for spacing rules (SA1000-)",
@@ -22,6 +46,11 @@
           "description": "Configuration for readability rules (SA1100-)",
           "additionalProperties": false,
           "properties": {
+            "allowBuiltInTypeAliases": {
+              "type": "boolean",
+              "description": "When true, diagnostics will not be reported for using aliases of built-in types.",
+              "default": false
+            }
           }
         },
         "orderingRules": {
@@ -54,7 +83,7 @@
             },
             "systemUsingDirectivesFirst": {
               "type": "boolean",
-              "description": "When true, System using directives must be placed before other using directives.",
+              "description": "When true, System using directives should be placed before other using directives.",
               "default": true
             },
             "usingDirectivesPlacement": {
@@ -66,6 +95,16 @@
                 "preserve"
               ],
               "default": "insideNamespace"
+            },
+            "blankLinesBetweenUsingGroups": {
+              "type": "string",
+              "description": "Specifies if using groups should be separated by a blank line.\r\nallow: A blank line is allowed, but not required\r\nrequire: A blank line is required\r\nomit: A blank line is not allowed",
+              "enum": [
+                "allow",
+                "require",
+                "omit"
+              ],
+              "default": "allow"
             }
           }
         },
@@ -96,6 +135,24 @@
           "description": "Configuration for ordering rules (SA1400-)",
           "additionalProperties": false,
           "properties": {
+            "topLevelTypes": {
+              "type": "array",
+              "description": "The set of type kinds which should be placed in separate files according to the type name.",
+              "default": [
+                "class"
+              ],
+              "items": {
+                "type": "string",
+                "enum": [
+                  "class",
+                  "interface",
+                  "struct",
+                  "delegate",
+                  "enum"
+                ]
+              },
+              "uniqueItems": true
+            }
           }
         },
         "layoutRules": {
@@ -112,6 +169,11 @@
                 "omit"
               ],
               "default": "allow"
+            },
+            "allowConsecutiveUsings": {
+              "type": "boolean",
+              "description": "Specifies if SA1519 will allow consecutive using statements without braces",
+              "default": true
             }
           }
         },
@@ -170,11 +232,28 @@
               "description": "Determines whether the file header should be wrapped in the StyleCop-standard XML structure.",
               "default": true
             },
+            "headerDecoration": {
+              "type": "string",
+              "description": "The text used as decoration for the copyright header comment.",
+              "default": null
+            },
             "fileNamingConvention": {
               "type": "string",
               "description": "Specifies the preferred naming convention for files. The default value \"stylecop\" uses the naming convention defined by StyleCop Classic, while \"metadata\" uses a file naming convention that matches the metadata names of types.",
               "default": "stylecop",
               "enum": [ "stylecop", "metadata" ]
+            },
+            "documentationCulture": {
+              "type": "string",
+              "description": "The culture that should be used for documentation comments.",
+              "default": "en-US"
+            },
+            "excludeFromPunctuationCheck": {
+              "type": "array",
+              "description": "Specifies the top-level tags within XML documentation that will be excluded from punctuation analysis.",
+              "default": [
+                "seealso"
+              ]
             }
           }
         }

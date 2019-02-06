@@ -3,16 +3,16 @@
 
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using StyleCop.Analyzers.OrderingRules;
+    using Microsoft.CodeAnalysis.Testing;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.OrderingRules.SA1209UsingAliasDirectivesMustBePlacedAfterOtherUsingDirectives,
+        StyleCop.Analyzers.OrderingRules.UsingCodeFixProvider>;
 
-    public class SA1209UnitTests : CodeFixVerifier
+    public class SA1209UnitTests
     {
         [Fact]
         public async Task TestWhenAliasUsingDirectivesArePlacedCorrectlyInCompilationAsync()
@@ -24,7 +24,7 @@ class A
 {
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(usingsInCompilationUnit, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(usingsInCompilationUnit, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -40,7 +40,7 @@ class A
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(usingsInNamespaceDeclaration, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(usingsInNamespaceDeclaration, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -51,6 +51,7 @@ using System.Net;
 using System;
 using System.IO;
 using System.Linq;
+
 class A
 {
 }";
@@ -64,11 +65,9 @@ class A
 {
 }";
 
-            DiagnosticResult expectedForCompilationUnit = this.CSharpDiagnostic().WithLocation(1, 1);
+            DiagnosticResult expectedForCompilationUnit = Diagnostic().WithLocation(1, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCodeCompilationUnit, expectedForCompilationUnit, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCodeCompilationUnit, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCodeCompilationUnit, fixedTestCodeCompilationUnit).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCodeCompilationUnit, expectedForCompilationUnit, fixedTestCodeCompilationUnit, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -81,6 +80,7 @@ class A
     using L = System.Linq;
     using System.IO;
     using P = System.Threading.Tasks;
+
     class A
     {
     }
@@ -98,11 +98,9 @@ class A
     }
 }";
 
-            DiagnosticResult expectedForNamespaceDeclaration = this.CSharpDiagnostic().WithLocation(5, 5);
+            DiagnosticResult expectedForNamespaceDeclaration = Diagnostic().WithLocation(5, 5);
 
-            await this.VerifyCSharpDiagnosticAsync(testCodeNamespace, expectedForNamespaceDeclaration, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCodeNamespace, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCodeNamespace, fixedTestCodeNamespace).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCodeNamespace, expectedForNamespaceDeclaration, fixedTestCodeNamespace, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -111,35 +109,36 @@ class A
             var testCode = @"using global::System.Threading.Tasks;
 using Name = global::System.Threading;
 using global::System.IO;
+
 namespace Test
 {
     using System.Text;
     using System.Threading;
     using global::System;
+
     class A
     {
     }
 }";
 
-            var fixedTestCode = @"namespace Test
+            var fixedTestCode = @"using global::System.IO;
+using global::System.Threading.Tasks;
+using Name = global::System.Threading;
+
+namespace Test
 {
     using System.Text;
     using System.Threading;
     using global::System;
-    using global::System.IO;
-    using global::System.Threading.Tasks;
-    using Name = global::System.Threading;
 
     class A
     {
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation("Test0.cs", 2, 1);
+            DiagnosticResult expected = Diagnostic().WithLocation("Test0.cs", 2, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -159,7 +158,7 @@ namespace Test
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(compilationUnit, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(compilationUnit, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -171,6 +170,7 @@ namespace Test
     using Threads = /* inline comment */ System.Threading;
     using System.IO;
     using /* comment */ System.Text;
+
     class A
     {
     }
@@ -188,11 +188,9 @@ namespace Test
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation("Test0.cs", 4, 5);
+            DiagnosticResult expected = Diagnostic().WithLocation("Test0.cs", 4, 5);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -205,6 +203,7 @@ namespace Test
     using System.Net;
     using Threads = System.Threading;
     using static System.Math;
+
     class A
     {
     }
@@ -223,11 +222,9 @@ namespace Test
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation("Test0.cs", 4, 5);
+            DiagnosticResult expected = Diagnostic().WithLocation("Test0.cs", 4, 5);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -235,7 +232,7 @@ namespace Test
         {
             var testCode = @"
 using System;
-using Microsoft.VisualStudio;
+using Microsoft.Win32;
 using MyList = System.Collections.Generic.List<int>;
 
 #if true
@@ -246,8 +243,9 @@ using Threads = System.Threading;
 using Microsoft.CodeAnalysis;
 #endif";
 
-            var fixedTestCode = @"using System;
-using Microsoft.VisualStudio;
+            var fixedTestCode = @"
+using System;
+using Microsoft.Win32;
 using MyList = System.Collections.Generic.List<int>;
 
 #if true
@@ -259,23 +257,9 @@ using Microsoft.CodeAnalysis;
 #endif";
 
             // else block is skipped
-            var expected = this.CSharpDiagnostic().WithLocation(7, 1);
+            var expected = Diagnostic().WithLocation(7, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1209UsingAliasDirectivesMustBePlacedAfterOtherUsingDirectives();
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new UsingCodeFixProvider();
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

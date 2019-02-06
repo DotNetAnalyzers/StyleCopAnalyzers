@@ -15,10 +15,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// <para>This diagnostic is not implemented in StyleCopAnalyzers.</para>
     ///
     /// <para>C# syntax provides a mechanism for inserting documentation for classes and elements directly into the
-    /// code, through the use of XML documentation headers. For an introduction to these headers and a description of
-    /// the header syntax, see the following article:
-    /// <see href="http://msdn.microsoft.com/en-us/magazine/cc302121.aspx">XML Comments Let You Build Documentation
-    /// Directly From Your Visual Studio .NET Source Files</see>.</para>
+    /// code, through the use of XML documentation headers.</para>
     ///
     /// <para>A violation of this rule occurs when part of the documentation does contain enough characters. This rule
     /// is calculated by counting the number of alphabetic characters and numbers within the documentation text, and
@@ -46,7 +43,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1631";
-        private const string Title = "Documentation must meet character percentage";
+        private const string Title = "Documentation should meet character percentage";
         private const string MessageFormat = "TODO: Message format";
         private const string Description = "A section of the Xml header documentation for a C# element does not contain enough alphabetic characters.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1631.md";

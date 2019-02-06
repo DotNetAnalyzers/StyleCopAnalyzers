@@ -17,8 +17,8 @@ namespace StyleCop.Analyzers.Helpers
         /// A cache of the result of computing whether a document has using alias directives.
         /// </summary>
         /// <remarks>
-        /// This allows many analyzers that run on every token in the file to avoid checking
-        /// the same state in the document repeatedly.
+        /// <para>This allows many analyzers that run on every token in the file to avoid checking
+        /// the same state in the document repeatedly.</para>
         /// </remarks>
         private static Tuple<WeakReference<Compilation>, ConcurrentDictionary<SyntaxTree, bool>> usingAliasCache
             = Tuple.Create(new WeakReference<Compilation>(null), default(ConcurrentDictionary<SyntaxTree, bool>));
@@ -49,6 +49,24 @@ namespace StyleCop.Analyzers.Helpers
             }
 
             return cache.Item2;
+        }
+
+        /// <summary>
+        /// Checks if a given <see cref="SyntaxTree"/> only contains whitespace. We don't want to analyze empty files.
+        /// </summary>
+        /// <param name="tree">The syntax tree to examine.</param>
+        /// <param name="cancellationToken">The <see cref="CancellationToken"/> that the task will observe.</param>
+        /// <returns>
+        /// <see langword="true"/> if <paramref name="tree"/> only contains whitespace; otherwise,
+        /// <see langword="false"/>.
+        /// </returns>
+        public static bool IsWhitespaceOnly(this SyntaxTree tree, CancellationToken cancellationToken)
+        {
+            var root = tree.GetRoot(cancellationToken);
+            var firstToken = root.GetFirstToken(includeZeroWidth: true);
+
+            return firstToken.IsKind(SyntaxKind.EndOfFileToken)
+                && TriviaHelper.IndexOfFirstNonWhitespaceTrivia(firstToken.LeadingTrivia) == -1;
         }
 
         internal static bool ContainsUsingAlias(this SyntaxTree tree, ConcurrentDictionary<SyntaxTree, bool> cache)

@@ -20,7 +20,7 @@ namespace StyleCop.Analyzers.SpecialRules {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class SpecialResources {
@@ -62,31 +62,58 @@ namespace StyleCop.Analyzers.SpecialRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Visual Studio 2015 Update 1 contains a bug which can cause diagnostics to occasionally not display in the Errors window. When this occurs, it is impossible to use the code fixes to address style violations reported during a build. This analyzer works around the bug (dotnet/roslyn#7446).
+        ///   Looks up a localized string similar to XML comment analysis can only be performed when the project is configured to parse documentation comments. To enable this functionality, update the project to produce an XML documentation file as part of the build..
+        /// </summary>
+        internal static string SA0001Description {
+            get {
+                return ResourceManager.GetString("SA0001Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to XML comment analysis is disabled due to project configuration.
+        /// </summary>
+        internal static string SA0001MessageFormat {
+            get {
+                return ResourceManager.GetString("SA0001MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to XML comment analysis disabled.
+        /// </summary>
+        internal static string SA0001Title {
+            get {
+                return ResourceManager.GetString("SA0001Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Various errors in the stylecop.json file can prevent the file from being loaded by the analyzers. In this case, the default settings are used instead.
         ///
-        ///When this analyzer is enabled, all diagnostics will eventually be reported in the Error window, but the performance of the analyzers is reduced. The rule is disabled for maximum performance, but can be enabled if users no [rest of string was truncated]&quot;;.
+        ///{0}.
         /// </summary>
-        internal static string SA0000Description {
+        internal static string SA0002Description {
             get {
-                return ResourceManager.GetString("SA0000Description", resourceCulture);
+                return ResourceManager.GetString("SA0002Description", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to n/a.
+        ///   Looks up a localized string similar to The stylecop.json settings file could not be loaded.
         /// </summary>
-        internal static string SA0000MessageFormat {
+        internal static string SA0002MessageFormat {
             get {
-                return ResourceManager.GetString("SA0000MessageFormat", resourceCulture);
+                return ResourceManager.GetString("SA0002MessageFormat", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Workaround incomplete diagnostics in Visual Studio 2015 Update 1.
+        ///   Looks up a localized string similar to Invalid settings file.
         /// </summary>
-        internal static string SA0000Title {
+        internal static string SA0002Title {
             get {
-                return ResourceManager.GetString("SA0000Title", resourceCulture);
+                return ResourceManager.GetString("SA0002Title", resourceCulture);
             }
         }
     }

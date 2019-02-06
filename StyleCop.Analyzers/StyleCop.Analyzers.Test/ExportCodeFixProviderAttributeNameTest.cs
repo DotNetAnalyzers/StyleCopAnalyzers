@@ -7,9 +7,9 @@ namespace StyleCop.Analyzers.Test
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-    using Analyzers.SpacingRules;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using StyleCop.Analyzers.SpacingRules;
     using Xunit;
 
     public class ExportCodeFixProviderAttributeNameTest
@@ -43,7 +43,7 @@ namespace StyleCop.Analyzers.Test
 
             Assert.NotNull(exportCodeFixProviderAttribute);
             Assert.Equal(codeFixProvider.Name, exportCodeFixProviderAttribute.Name);
-            Assert.Equal(1, exportCodeFixProviderAttribute.Languages.Length);
+            Assert.Single(exportCodeFixProviderAttribute.Languages);
             Assert.Equal(LanguageNames.CSharp, exportCodeFixProviderAttribute.Languages[0]);
         }
     }

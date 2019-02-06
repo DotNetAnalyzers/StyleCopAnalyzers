@@ -3,16 +3,16 @@
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using StyleCop.Analyzers.MaintainabilityRules;
+    using Microsoft.CodeAnalysis.Testing;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.MaintainabilityRules.SA1408ConditionalExpressionsMustDeclarePrecedence,
+        StyleCop.Analyzers.MaintainabilityRules.SA1407SA1408CodeFixProvider>;
 
-    public class SA1408UnitTests : CodeFixVerifier
+    public class SA1408UnitTests
     {
         [Fact]
         public async Task TestOrAsync()
@@ -24,7 +24,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         bool x = true || false || true || false;
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -37,7 +37,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         bool x = true && false && true && false;
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -50,9 +50,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         bool x = true || false && true;
     }
 }";
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 26);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(5, 26);
 
             var fixedCode = @"public class Foo
 {
@@ -62,7 +60,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -75,9 +73,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         bool x = true && false || true;
     }
 }";
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 18);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(5, 18);
 
             var fixedCode = @"public class Foo
 {
@@ -87,7 +83,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -100,7 +96,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         bool x = (true || false) && true;
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -113,7 +109,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         bool x = true || (false == true);
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -127,7 +123,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -140,7 +136,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         bool x = (true && false) || true;
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -155,11 +151,9 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 }";
             DiagnosticResult[] expected =
                 {
-                    this.CSharpDiagnostic().WithLocation(5, 18),
-                    this.CSharpDiagnostic().WithLocation(5, 35)
+                    Diagnostic().WithLocation(5, 18),
+                    Diagnostic().WithLocation(5, 35),
                 };
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"public class Foo
 {
@@ -169,7 +163,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -200,25 +194,13 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             DiagnosticResult[] expected =
                 {
-                    this.CSharpDiagnostic().WithLocation(6, 18),
-                    this.CSharpDiagnostic().WithLocation(6, 35),
-                    this.CSharpDiagnostic().WithLocation(7, 26),
-                    this.CSharpDiagnostic().WithLocation(9, 22),
+                    Diagnostic().WithLocation(6, 18),
+                    Diagnostic().WithLocation(6, 35),
+                    Diagnostic().WithLocation(7, 26),
+                    Diagnostic().WithLocation(9, 22),
                 };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1408ConditionalExpressionsMustDeclarePrecedence();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1407SA1408CodeFixProvider();
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

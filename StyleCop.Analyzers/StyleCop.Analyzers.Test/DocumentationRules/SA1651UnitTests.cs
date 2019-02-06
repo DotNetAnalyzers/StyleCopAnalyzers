@@ -3,19 +3,19 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
+    using StyleCop.Analyzers.Test.Verifiers;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1651DoNotUsePlaceholderElements>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1651DoNotUsePlaceholderElements"/>.
     /// </summary>
-    public class SA1651UnitTests : CodeFixVerifier
+    public class SA1651UnitTests
     {
         [Fact]
         public async Task TestEmptyDocumentationAsync()
@@ -30,7 +30,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -46,7 +46,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -72,11 +72,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 9);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(3, 9);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -93,11 +90,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             // Empty placeholders are not altered by the current code fix.
             var fixedCode = testCode;
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 9);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(3, 9);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -123,11 +117,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 9);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(4, 9);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -146,11 +137,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             // Empty placeholders are not altered by the current code fix.
             var fixedCode = testCode;
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 17);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(4, 17);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -186,11 +174,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 15);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(8, 15);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -220,23 +205,107 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(3, 9),
-                this.CSharpDiagnostic().WithLocation(4, 18)
+                Diagnostic().WithLocation(3, 9),
+                Diagnostic().WithLocation(4, 18),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        /// <summary>
+        /// Verifies that included documentation without place holders will not produce diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestNoPlaceHolderInIncludedDocumentationAsync()
         {
-            yield return new SA1651DoNotUsePlaceholderElements();
+            var testCode = @"
+/// <include file='SummaryWithoutPlaceHolder.xml' path='/TestClass/*'/>
+public class TestClass
+{
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        /// <summary>
+        /// Verifies that included documentation with place holders will not produce the expected diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestPlaceHolderInIncludedDocumentationAsync()
         {
-            return new SA1651CodeFixProvider();
+            var testCode = @"
+/// <include file='SummaryWithPlaceHolder.xml' path='/TestClass/*'/>
+public class TestClass
+{
+}
+";
+
+            var expected = Diagnostic().WithLocation(2, 5);
+            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
+            => VerifyCSharpDiagnosticAsync(source, new[] { expected }, cancellationToken);
+
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        {
+            var test = CreateTest(expected);
+            test.TestCode = source;
+
+            return test.RunAsync(cancellationToken);
+        }
+
+        private static Task VerifyCSharpFixAsync(string source, DiagnosticResult expected, string fixedSource, CancellationToken cancellationToken)
+            => VerifyCSharpFixAsync(source, new[] { expected }, fixedSource, cancellationToken);
+
+        private static Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
+        {
+            var test = CreateTest(expected);
+            test.TestCode = source;
+            test.FixedCode = fixedSource;
+
+            if (source == fixedSource)
+            {
+                test.FixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
+                test.FixedState.MarkupHandling = MarkupMode.Allow;
+                test.BatchFixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
+                test.BatchFixedState.MarkupHandling = MarkupMode.Allow;
+            }
+
+            return test.RunAsync(cancellationToken);
+        }
+
+        private static StyleCopCodeFixVerifier<SA1651DoNotUsePlaceholderElements, SA1651CodeFixProvider>.CSharpTest CreateTest(DiagnosticResult[] expected)
+        {
+            string contentSummaryWithoutPlaceHolder = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+  <summary>
+  This is a test class.
+  </summary>
+</TestClass>
+";
+            string contentSummaryWithPlaceHolder = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+  <summary>
+  <placeholder>This is a test class.</placeholder>
+  </summary>
+</TestClass>
+";
+
+            var test = new StyleCopCodeFixVerifier<SA1651DoNotUsePlaceholderElements, SA1651CodeFixProvider>.CSharpTest
+            {
+                XmlReferences =
+                {
+                    { "SummaryWithoutPlaceHolder.xml", contentSummaryWithoutPlaceHolder },
+                    { "SummaryWithPlaceHolder.xml", contentSummaryWithPlaceHolder },
+                },
+            };
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test;
         }
     }
 }

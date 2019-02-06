@@ -34,7 +34,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> RegionDirectiveTriviaAction = HandleRegionDirectiveTrivia;
 
         /// <inheritdoc/>
@@ -44,12 +43,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(RegionDirectiveTriviaAction, SyntaxKind.RegionDirectiveTrivia);
+            context.RegisterSyntaxNodeAction(RegionDirectiveTriviaAction, SyntaxKind.RegionDirectiveTrivia);
         }
 
         private static void HandleRegionDirectiveTrivia(SyntaxNodeAnalysisContext context)
@@ -59,7 +56,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             // regions that are completely inside a body are handled by SA1123.
             if (!SA1123DoNotPlaceRegionsWithinElements.IsCompletelyContainedInBody(regionSyntax))
             {
-                // Regions must not be used.
+                // Regions should not be used.
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, regionSyntax.GetLocation()));
             }
         }

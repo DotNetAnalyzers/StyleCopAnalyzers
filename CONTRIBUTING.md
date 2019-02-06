@@ -5,8 +5,6 @@ If you want to contribute code you can get started by looking for issues marked 
 We also have the [easy](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/labels/easy) tag
 for issues suitable if you are unfamiliar with roslyn.
 
-Also see the [contributing guide](CONTRIBUTING.md).
-
 You can also help by filing issues, participating in discussions and doing code review.
 
 ## Implementing a diagnostic
@@ -28,6 +26,4 @@ You can also help by filing issues, participating in discussions and doing code 
 
 ## Building
 
-Visual Studio 2015 RC is required for building this repository.
-The Visual Studio 2015 RC SDK is required for building the vsix extension project and for
-debugging in an experimental visual studio hive.
+Visual Studio 2017 (Community Edition or higher) is required for building this repository.

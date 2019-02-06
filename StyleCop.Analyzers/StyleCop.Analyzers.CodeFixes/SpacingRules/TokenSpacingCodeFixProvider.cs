@@ -3,18 +3,19 @@
 
 namespace StyleCop.Analyzers.SpacingRules
 {
+    using System;
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
-    using ReadabilityRules;
+    using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.ReadabilityRules;
 
     /// <summary>
     /// Implements a code fix for the opening and closing spacing diagnostics.
@@ -113,6 +114,7 @@ namespace StyleCop.Analyzers.SpacingRules
             }
 
             SyntaxTriviaList triviaList;
+            SyntaxToken nextToken;
             switch (location)
             {
             case TokenSpacingProperties.LocationPreceding:
@@ -122,7 +124,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 case TokenSpacingProperties.ActionInsert:
                     if (!replaceMap.ContainsKey(prevToken))
                     {
-                        replaceMap[token] = token.WithLeadingTrivia(token.LeadingTrivia.Add(SyntaxFactory.Space));
+                        UpdateReplaceMap(replaceMap, token, t => t.WithLeadingTrivia(t.LeadingTrivia.Add(SyntaxFactory.Space)));
                     }
 
                     break;
@@ -136,11 +138,12 @@ namespace StyleCop.Analyzers.SpacingRules
                         break;
                     }
 
-                    replaceMap[prevToken] = prevToken.WithTrailingTrivia();
+                    UpdateReplaceMap(replaceMap, prevToken, t => t.WithTrailingTrivia());
+
                     if ((!preserveLayout || !tokenIsFirstInLine)
                         && triviaList.All(i => i.IsKind(SyntaxKind.WhitespaceTrivia) || i.IsKind(SyntaxKind.EndOfLineTrivia)))
                     {
-                        replaceMap[token] = token.WithLeadingTrivia();
+                        UpdateReplaceMap(replaceMap, token, t => t.WithLeadingTrivia());
                     }
                     else if (tokenIsFirstInLine && token.IsLastInLine())
                     {
@@ -176,41 +179,40 @@ namespace StyleCop.Analyzers.SpacingRules
                             // firstNewLineFollowing was adjusted above to account for the missing case.
                             trailingTrivia = trailingTrivia.AddRange(token.TrailingTrivia.Take(firstNewLineFollowing));
 
-                            replaceMap[token] = token.WithLeadingTrivia().WithTrailingTrivia(trailingTrivia);
+                            UpdateReplaceMap(replaceMap, token, t => t.WithLeadingTrivia().WithTrailingTrivia(trailingTrivia));
                         }
                         else
                         {
                             // Just move the token and keep all surrounding trivia.
                             SyntaxTriviaList trailingTrivia = triviaList.AddRange(token.TrailingTrivia);
-                            replaceMap[token] = token.WithLeadingTrivia().WithTrailingTrivia(trailingTrivia);
+                            UpdateReplaceMap(replaceMap, token, t => t.WithLeadingTrivia().WithTrailingTrivia(trailingTrivia));
                         }
                     }
                     else
                     {
                         SyntaxTriviaList trailingTrivia = triviaList.AddRange(token.TrailingTrivia.WithoutLeadingWhitespace(endOfLineIsWhitespace: false));
-                        replaceMap[token] = token.WithLeadingTrivia().WithTrailingTrivia(trailingTrivia);
+
+                        nextToken = token.GetNextToken();
+                        if (nextToken.IsKind(SyntaxKind.SemicolonToken))
+                        {
+                            // make the semicolon 'sticky'
+                            UpdateReplaceMap(replaceMap, token, t => t.WithLeadingTrivia().WithTrailingTrivia());
+                            UpdateReplaceMap(replaceMap, nextToken, t => t.WithLeadingTrivia().WithTrailingTrivia(trailingTrivia.WithoutTrailingWhitespace()));
+                        }
+                        else
+                        {
+                            UpdateReplaceMap(replaceMap, token, t => t.WithLeadingTrivia().WithTrailingTrivia(trailingTrivia));
+                        }
                     }
 
                     break;
 
                 case TokenSpacingProperties.ActionRemoveImmediate:
-                    SyntaxTriviaList tokenLeadingTrivia = token.LeadingTrivia;
-                    while (tokenLeadingTrivia.Any() && tokenLeadingTrivia.Last().IsKind(SyntaxKind.WhitespaceTrivia))
+                    UpdateReplaceMap(replaceMap, token, t => t.WithLeadingTrivia(t.LeadingTrivia.WithoutTrailingWhitespace(endOfLineIsWhitespace: false)));
+
+                    if (!replaceMap[token].LeadingTrivia.Any())
                     {
-                        tokenLeadingTrivia = tokenLeadingTrivia.RemoveAt(tokenLeadingTrivia.Count - 1);
-                    }
-
-                    replaceMap[token] = token.WithLeadingTrivia(tokenLeadingTrivia);
-
-                    if (!tokenLeadingTrivia.Any())
-                    {
-                        SyntaxTriviaList previousTrailingTrivia = prevToken.TrailingTrivia;
-                        while (previousTrailingTrivia.Any() && previousTrailingTrivia.Last().IsKind(SyntaxKind.WhitespaceTrivia))
-                        {
-                            previousTrailingTrivia = previousTrailingTrivia.RemoveAt(previousTrailingTrivia.Count - 1);
-                        }
-
-                        replaceMap[prevToken] = prevToken.WithTrailingTrivia(previousTrailingTrivia);
+                        UpdateReplaceMap(replaceMap, prevToken, t => t.WithTrailingTrivia(t.TrailingTrivia.WithoutTrailingWhitespace(endOfLineIsWhitespace: false)));
                     }
 
                     break;
@@ -219,13 +221,18 @@ namespace StyleCop.Analyzers.SpacingRules
                 break;
 
             case TokenSpacingProperties.LocationFollowing:
-                var nextToken = token.GetNextToken();
+                nextToken = token.GetNextToken();
                 switch (action)
                 {
                 case TokenSpacingProperties.ActionInsert:
                     if (!replaceMap.ContainsKey(nextToken))
                     {
-                        replaceMap[token] = token.WithTrailingTrivia(token.TrailingTrivia.Insert(0, SyntaxFactory.Space));
+                        // If the token is already present in the map and it has trailing trivia, then it has already been
+                        // processed during an earlier step in the fix all process, so no additional processing is needed.
+                        if (!replaceMap.ContainsKey(token) || (replaceMap[token].TrailingTrivia.Count == 0))
+                        {
+                            UpdateReplaceMap(replaceMap, token, t => t.WithTrailingTrivia(t.TrailingTrivia.Insert(0, SyntaxFactory.Space)));
+                        }
                     }
 
                     break;
@@ -233,13 +240,30 @@ namespace StyleCop.Analyzers.SpacingRules
                 case TokenSpacingProperties.ActionRemove:
                     triviaList = token.TrailingTrivia.AddRange(nextToken.LeadingTrivia);
 
-                    replaceMap[token] = token.WithTrailingTrivia();
-                    replaceMap[nextToken] = nextToken.WithLeadingTrivia(triviaList.WithoutLeadingWhitespace(true));
+                    UpdateReplaceMap(replaceMap, token, t => t.WithTrailingTrivia());
+                    UpdateReplaceMap(replaceMap, nextToken, t => t.WithLeadingTrivia(triviaList.WithoutLeadingWhitespace(true)));
                     break;
                 }
 
                 break;
             }
+        }
+
+        private static void UpdateReplaceMap(Dictionary<SyntaxToken, SyntaxToken> replaceMap, SyntaxToken token, Func<SyntaxToken, SyntaxToken> action)
+        {
+            SyntaxToken existingReplacement;
+            SyntaxToken newReplacement;
+
+            if (replaceMap.TryGetValue(token, out existingReplacement))
+            {
+                newReplacement = action(existingReplacement);
+            }
+            else
+            {
+                newReplacement = action(token);
+            }
+
+            replaceMap[token] = newReplacement;
         }
 
         private class FixAll : DocumentBasedFixAllProvider

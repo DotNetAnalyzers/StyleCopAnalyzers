@@ -3,19 +3,19 @@
 
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.SpacingRules.SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation,
+        StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
     /// <summary>
-    /// Unit tests for <see cref="SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation"/>
+    /// Unit tests for <see cref="SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation"/>.
     /// </summary>
-    public class SA1026UnitTests : CodeFixVerifier
+    public class SA1026UnitTests
     {
         [Fact]
         public async Task TestValidSpacingOfImplicitlyTypedArrayAsync()
@@ -28,7 +28,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -44,23 +44,9 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         {
             string testCode = string.Format("public class Foo {{ public Foo() {{ var ints = new{0}[] {{ 1, 2, 3 }}; }} }}", space);
             const string expectedCode = "public class Foo { public Foo() { var ints = new[] { 1, 2, 3 }; } }";
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(1, 46);
+            DiagnosticResult expected = Diagnostic().WithArguments("new").WithLocation(1, 46);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(expectedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, expectedCode).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation();
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new TokenSpacingCodeFixProvider();
+            await VerifyCSharpFixAsync(testCode, expected, expectedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

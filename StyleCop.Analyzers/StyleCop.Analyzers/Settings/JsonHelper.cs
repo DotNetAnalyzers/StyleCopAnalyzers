@@ -28,6 +28,21 @@ namespace StyleCop.Analyzers
         }
 
         /// <summary>
+        /// Converts a JSON value to an integer.
+        /// </summary>
+        /// <param name="jsonValue">The key value pair identifying the JSON value.</param>
+        /// <returns>The integer value contained within the JSON value.</returns>
+        internal static int ToInt32Value(this KeyValuePair<string, JsonValue> jsonValue)
+        {
+            if (!jsonValue.Value.IsInteger)
+            {
+                throw new InvalidSettingsException($"{jsonValue.Key} must contain an integer value");
+            }
+
+            return jsonValue.Value.AsInteger;
+        }
+
+        /// <summary>
         /// Converts a JSON value to a string.
         /// </summary>
         /// <param name="jsonValue">The key value pair identifying the JSON value.</param>

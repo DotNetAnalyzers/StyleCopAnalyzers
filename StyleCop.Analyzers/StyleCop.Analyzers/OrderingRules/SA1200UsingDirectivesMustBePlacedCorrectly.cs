@@ -10,7 +10,7 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using Settings.ObjectModel;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// A C# using directive is placed outside of a namespace element.
@@ -51,10 +51,10 @@ namespace StyleCop.Analyzers.OrderingRules
     /// outside of the namespace, including:</para>
     ///
     /// <list type="number">
-    /// <item>Placing using-alias directives within the namespace eliminates compiler confusion between conflicting
-    /// types.</item>
-    /// <item>When multiple namespaces are defined within a single file, placing using directives within the namespace
-    /// elements scopes references and aliases.</item>
+    /// <item><description>Placing using-alias directives within the namespace eliminates compiler confusion between
+    /// conflicting types.</description></item>
+    /// <item><description>When multiple namespaces are defined within a single file, placing using directives within
+    /// the namespace elements scopes references and aliases.</description></item>
     /// </list>
     ///
     /// <h2>1. Eliminating Type Confusion</h2>
@@ -113,7 +113,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// </code>
     ///
     /// <para>The code fails on the following compiler error, found on the line containing
-    /// <c>Guid g = new Guid("hello");</c></para>
+    /// <c>Guid g = new Guid("hello");</c>:</para>
     ///
     /// <quote>CS0576: Namespace 'Microsoft.Sample' contains a definition conflicting with alias 'Guid'</quote>
     ///
@@ -163,15 +163,14 @@ namespace StyleCop.Analyzers.OrderingRules
         internal static readonly DiagnosticDescriptor DescriptorOutside =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatOutside, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, DescriptionOutside, HelpLink);
 
-        private const string Title = "Using directives must be placed correctly";
-        private const string MessageFormatInside = "Using directive must appear within a namespace declaration";
+        private const string Title = "Using directives should be placed correctly";
+        private const string MessageFormatInside = "Using directive should appear within a namespace declaration";
         private const string DescriptionInside = "A C# using directive is placed outside of a namespace element.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1200.md";
 
-        private const string MessageFormatOutside = "Using directive must appear outside a namespace declaration";
+        private const string MessageFormatOutside = "Using directive should appear outside a namespace declaration";
         private const string DescriptionOutside = "A C# using directive is placed inside of a namespace declaration.";
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CompilationUnitAction = HandleCompilationUnit;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> NamespaceDeclarationAction = HandleNamespaceDeclaration;
 
@@ -182,13 +181,11 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(CompilationUnitAction, SyntaxKind.CompilationUnit);
-            context.RegisterSyntaxNodeActionHonorExclusions(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
+            context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
         }
 
         /// <summary>
@@ -237,7 +234,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
             foreach (var directive in usingDirectives)
             {
-                // Using directive must appear within a namespace declaration
+                // Using directive should appear within a namespace declaration
                 context.ReportDiagnostic(Diagnostic.Create(DescriptorInside, directive.GetLocation()));
             }
         }
@@ -259,7 +256,7 @@ namespace StyleCop.Analyzers.OrderingRules
             NamespaceDeclarationSyntax syntax = (NamespaceDeclarationSyntax)context.Node;
             foreach (UsingDirectiveSyntax directive in syntax.Usings)
             {
-                // Using directive must appear outside a namespace declaration
+                // Using directive should appear outside a namespace declaration
                 context.ReportDiagnostic(Diagnostic.Create(DescriptorOutside, directive.GetLocation()));
             }
         }

@@ -22,5 +22,15 @@ namespace StyleCop.Analyzers.Test
             var attribute = new NoDiagnosticAttribute(reason);
             Assert.Same(reason, attribute.Reason);
         }
+
+        [Fact]
+        public void TestWorkItemAttribute()
+        {
+            int id = 1234;
+            string issueUri = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2419";
+            var attribute = new WorkItemAttribute(id, issueUri);
+            Assert.Equal(id, attribute.Id);
+            Assert.Same(issueUri, attribute.Location);
+        }
     }
 }

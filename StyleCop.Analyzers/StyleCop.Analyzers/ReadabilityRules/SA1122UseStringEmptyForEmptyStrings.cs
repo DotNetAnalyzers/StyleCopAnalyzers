@@ -42,7 +42,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> StringLiteralExpressionAction = HandleStringLiteralExpression;
 
         /// <inheritdoc/>
@@ -52,12 +51,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(StringLiteralExpressionAction, SyntaxKind.StringLiteralExpression);
+            context.RegisterSyntaxNodeAction(StringLiteralExpressionAction, SyntaxKind.StringLiteralExpression);
         }
 
         private static void HandleStringLiteralExpression(SyntaxNodeAnalysisContext context)
@@ -89,11 +86,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return true;
             }
 
-            EqualsValueClauseSyntax equalsValueClause = outermostExpression.Parent as EqualsValueClauseSyntax;
-            if (equalsValueClause != null)
+            if (outermostExpression.Parent is EqualsValueClauseSyntax equalsValueClause)
             {
-                ParameterSyntax parameterSyntax = equalsValueClause.Parent as ParameterSyntax;
-                if (parameterSyntax != null)
+                if (equalsValueClause.Parent is ParameterSyntax parameterSyntax)
                 {
                     return true;
                 }
@@ -105,14 +100,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     return false;
                 }
 
-                FieldDeclarationSyntax fieldDeclarationSyntax = variableDeclarationSyntax.Parent as FieldDeclarationSyntax;
-                if (fieldDeclarationSyntax != null && fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.ConstKeyword))
+                if (variableDeclarationSyntax.Parent is FieldDeclarationSyntax fieldDeclarationSyntax
+                    && fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.ConstKeyword))
                 {
                     return true;
                 }
 
-                LocalDeclarationStatementSyntax localDeclarationStatementSyntax = variableDeclarationSyntax.Parent as LocalDeclarationStatementSyntax;
-                if (localDeclarationStatementSyntax != null && localDeclarationStatementSyntax.Modifiers.Any(SyntaxKind.ConstKeyword))
+                if (variableDeclarationSyntax.Parent is LocalDeclarationStatementSyntax localDeclarationStatementSyntax
+                    && localDeclarationStatementSyntax.Modifiers.Any(SyntaxKind.ConstKeyword))
                 {
                     return true;
                 }
@@ -125,8 +120,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             while (true)
             {
-                ExpressionSyntax parent = node.Parent as ExpressionSyntax;
-                if (parent == null)
+                if (!(node.Parent is ExpressionSyntax parent))
                 {
                     break;
                 }

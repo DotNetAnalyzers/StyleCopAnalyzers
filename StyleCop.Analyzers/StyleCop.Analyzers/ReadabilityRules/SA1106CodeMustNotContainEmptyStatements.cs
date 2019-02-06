@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The C# code contains an extra semicolon.
@@ -32,10 +33,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);
 
-        private static readonly ImmutableArray<SyntaxKind> BaseTypeDeclarationKinds =
-            ImmutableArray.Create(SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.InterfaceDeclaration, SyntaxKind.EnumDeclaration);
-
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> EmptyStatementAction = HandleEmptyStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> BaseTypeDeclarationAction = HandleBaseTypeDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> NamespaceDeclarationAction = HandleNamespaceDeclaration;
@@ -47,14 +44,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(EmptyStatementAction, SyntaxKind.EmptyStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(BaseTypeDeclarationAction, BaseTypeDeclarationKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeAction(EmptyStatementAction, SyntaxKind.EmptyStatement);
+            context.RegisterSyntaxNodeAction(BaseTypeDeclarationAction, SyntaxKinds.BaseTypeDeclaration);
+            context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
         }
 
         private static void HandleBaseTypeDeclaration(SyntaxNodeAnalysisContext context)
@@ -81,11 +76,9 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             EmptyStatementSyntax syntax = (EmptyStatementSyntax)context.Node;
 
-            LabeledStatementSyntax labeledStatementSyntax = syntax.Parent as LabeledStatementSyntax;
-            if (labeledStatementSyntax != null)
+            if (syntax.Parent is LabeledStatementSyntax labeledStatementSyntax)
             {
-                BlockSyntax blockSyntax = labeledStatementSyntax.Parent as BlockSyntax;
-                if (blockSyntax != null)
+                if (labeledStatementSyntax.Parent is BlockSyntax blockSyntax)
                 {
                     for (int i = blockSyntax.Statements.Count - 1; i >= 0; i--)
                     {
@@ -106,7 +99,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
             }
 
-            // Code must not contain empty statements
+            // Code should not contain empty statements
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.GetLocation()));
         }
     }

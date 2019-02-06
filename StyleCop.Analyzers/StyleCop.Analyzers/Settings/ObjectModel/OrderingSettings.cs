@@ -20,17 +20,22 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// <summary>
         /// This is the backing field for the <see cref="ElementOrder"/> property.
         /// </summary>
-        private ImmutableArray<OrderingTrait>.Builder elementOrder;
+        private readonly ImmutableArray<OrderingTrait>.Builder elementOrder;
 
         /// <summary>
         /// This is the backing field for the <see cref="SystemUsingDirectivesFirst"/> property.
         /// </summary>
-        private bool systemUsingDirectivesFirst;
+        private readonly bool systemUsingDirectivesFirst;
 
         /// <summary>
         /// This is the backing field for the <see cref="UsingDirectivesPlacement"/> property.
         /// </summary>
-        private UsingDirectivesPlacement usingDirectivesPlacement;
+        private readonly UsingDirectivesPlacement usingDirectivesPlacement;
+
+        /// <summary>
+        /// This is the backing field for the <see cref="BlankLinesBetweenUsingGroups"/> property.
+        /// </summary>
+        private readonly OptionSetting blankLinesBetweenUsingGroups;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OrderingSettings"/> class.
@@ -40,6 +45,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.elementOrder = ImmutableArray.CreateBuilder<OrderingTrait>();
             this.systemUsingDirectivesFirst = true;
             this.usingDirectivesPlacement = UsingDirectivesPlacement.InsideNamespace;
+            this.blankLinesBetweenUsingGroups = OptionSetting.Allow;
         }
 
         /// <summary>
@@ -70,6 +76,10 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                     this.usingDirectivesPlacement = kvp.ToEnumValue<UsingDirectivesPlacement>();
                     break;
 
+                case "blankLinesBetweenUsingGroups":
+                    this.blankLinesBetweenUsingGroups = kvp.ToEnumValue<OptionSetting>();
+                    break;
+
                 default:
                     break;
                 }
@@ -89,5 +99,8 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
         public UsingDirectivesPlacement UsingDirectivesPlacement =>
             this.usingDirectivesPlacement;
+
+        public OptionSetting BlankLinesBetweenUsingGroups =>
+            this.blankLinesBetweenUsingGroups;
     }
 }

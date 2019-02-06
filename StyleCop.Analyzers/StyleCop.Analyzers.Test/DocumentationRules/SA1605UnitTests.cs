@@ -3,19 +3,30 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
+    using StyleCop.Analyzers.Test.Verifiers;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1605PartialElementDocumentationMustHaveSummary>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1605PartialElementDocumentationMustHaveSummary"/>.
     /// </summary>
-    public class SA1605UnitTests : DiagnosticVerifier
+    public class SA1605UnitTests
     {
+        private const string TestSettings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""documentPrivateElements"": true
+    }
+  }
+}
+";
+
         [Theory]
         [InlineData("class")]
         [InlineData("struct")]
@@ -26,7 +37,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 partial {0} TypeName
 {{
 }}";
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -42,7 +53,7 @@ partial {0} TypeName
 partial {0} TypeName
 {{
 }}";
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -58,7 +69,7 @@ partial {0} TypeName
 partial {0} TypeName
 {{
 }}";
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -72,7 +83,7 @@ partial {0} TypeName
 partial {0} TypeName
 {{
 }}";
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -88,9 +99,9 @@ TypeName
 {{
 }}";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(4, 1);
+            DiagnosticResult expected = Diagnostic().WithLocation(4, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -107,7 +118,7 @@ TypeName
 {{
 }}";
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -121,7 +132,7 @@ public partial class ClassName
 {
     partial void Test();
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -138,7 +149,7 @@ public partial class ClassName
     /// </summary>
     partial void Test();
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -155,7 +166,7 @@ public partial class ClassName
     /// </content>
     partial void Test();
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -170,7 +181,7 @@ public partial class ClassName
     /// <inheritdoc/>
     partial void Test();
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -186,9 +197,9 @@ public partial class ClassName
     partial void Test();
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 18);
+            DiagnosticResult expected = Diagnostic().WithLocation(8, 18);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -204,12 +215,139 @@ public partial class ClassName
     public void Test() { }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        [Fact]
+        public async Task TestIncludedDocumentationWithoutSummaryAsync()
         {
-            yield return new SA1605PartialElementDocumentationMustHaveSummary();
+            var testCode = @"
+/// <include file='ClassWithoutSummary.xml' path='/ClassName/*'/>
+public partial class ClassName
+{
+    ///
+    public void Test() { }
+}";
+            var expected = Diagnostic().WithLocation(3, 22);
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2450, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2450")]
+        public async Task TestIncludedNotRequiredDocumentationWithoutSummaryAsync()
+        {
+            var testCode = @"
+/// <include file='ClassWithoutSummary.xml' path='/ClassName/*'/>
+public partial class ClassName
+{
+    ///
+    public void Test() { }
+}";
+
+            // The situation is allowed if 'documentExposedElements' false
+            var testSettings = @"
+{
+  ""settings"": {
+    ""documentationRules"": {
+      ""documentExposedElements"": false
+    }
+  }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, testSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestIncludedDocumentationWithInheritdocAsync()
+        {
+            var testCode = @"
+/// <include file='ClassWithInheritdoc.xml' path='/ClassName/*'/>
+public partial class ClassName
+{
+    ///
+    public void Test() { }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestIncludedDocumentationWithSummaryAsync()
+        {
+            var testCode = @"
+/// <include file='ClassWithSummary.xml' path='/ClassName/*'/>
+public partial class ClassName
+{
+    ///
+    public void Test() { }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestIncludedDocumentationWithContentAsync()
+        {
+            var testCode = @"
+/// <include file='ClassWithContent.xml' path='/ClassName/*'/>
+public partial class ClassName
+{
+    ///
+    public void Test() { }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
+            => VerifyCSharpDiagnosticAsync(source, TestSettings, new[] { expected }, cancellationToken);
+
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+            => VerifyCSharpDiagnosticAsync(source, TestSettings, expected, cancellationToken);
+
+        private static Task VerifyCSharpDiagnosticAsync(string source, string testSettings, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        {
+            string contentWithoutSummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<ClassName>
+</ClassName>
+";
+            string contentWithInheritdoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<ClassName>
+  <inheritdoc/>
+</ClassName>
+";
+            string contentWithSummary = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<ClassName>
+  <summary>
+    Foo
+  </summary>
+</ClassName>
+";
+            string contentWithContent = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<ClassName>
+  <content>
+    Foo
+  </content>
+</ClassName>
+";
+
+            var test = new StyleCopDiagnosticVerifier<SA1605PartialElementDocumentationMustHaveSummary>.CSharpTest
+            {
+                TestCode = source,
+                Settings = testSettings,
+                XmlReferences =
+                {
+                    { "ClassWithoutSummary.xml", contentWithoutSummary },
+                    { "ClassWithInheritdoc.xml", contentWithInheritdoc },
+                    { "ClassWithSummary.xml", contentWithSummary },
+                    { "ClassWithContent.xml", contentWithContent },
+                },
+            };
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test.RunAsync(cancellationToken);
         }
     }
 }

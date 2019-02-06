@@ -44,15 +44,14 @@ namespace StyleCop.Analyzers.OrderingRules
         /// The ID for diagnostics produced by the <see cref="SA1213EventAccessorsMustFollowOrder"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1213";
-        private const string Title = "Event accessors must follow order";
-        private const string MessageFormat = "Event accessors must follow order.";
+        private const string Title = "Event accessors should follow order";
+        private const string MessageFormat = "Event accessors should follow order.";
         private const string Description = "An add accessor appears after a remove accessor within an event.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1213.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> EventDeclarationAction = HandleEventDeclaration;
 
         /// <inheritdoc/>
@@ -62,12 +61,10 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(EventDeclarationAction, SyntaxKind.EventDeclaration);
+            context.RegisterSyntaxNodeAction(EventDeclarationAction, SyntaxKind.EventDeclaration);
         }
 
         private static void HandleEventDeclaration(SyntaxNodeAnalysisContext context)

@@ -11,7 +11,7 @@ namespace LightJson.Serialization
     /// </summary>
     internal sealed class TextScanner
     {
-        private TextReader reader;
+        private readonly TextReader reader;
         private TextPosition position;
 
         /// <summary>
@@ -40,10 +40,20 @@ namespace LightJson.Serialization
         /// </summary>
         /// <returns>The next character in the stream.</returns>
         public char Peek()
+            => (char)this.Peek(throwAtEndOfFile: true);
+
+        /// <summary>
+        /// Reads the next character in the stream without changing the current position.
+        /// </summary>
+        /// <param name="throwAtEndOfFile"><see langword="true"/> to throw an exception if the end of the file is
+        /// reached; otherwise, <see langword="false"/>.</param>
+        /// <returns>The next character in the stream, or -1 if the end of the file is reached with
+        /// <paramref name="throwAtEndOfFile"/> set to <see langword="false"/>.</returns>
+        public int Peek(bool throwAtEndOfFile)
         {
             var next = this.reader.Peek();
 
-            if (next == -1)
+            if (next == -1 && throwAtEndOfFile)
             {
                 throw new JsonParseException(
                     ErrorType.IncompleteMessage,
@@ -51,7 +61,7 @@ namespace LightJson.Serialization
             }
             else
             {
-                return (char)next;
+                return next;
             }
         }
 
@@ -100,7 +110,7 @@ namespace LightJson.Serialization
                 }
                 else if (next == '/')
                 {
-                    this.SkipCommentOrInvalidSlash();
+                    this.SkipComment();
                     continue;
                 }
                 else
@@ -117,12 +127,13 @@ namespace LightJson.Serialization
         /// <param name="next">The expected character.</param>
         public void Assert(char next)
         {
+            var errorPosition = this.position;
             if (this.Read() != next)
             {
                 throw new JsonParseException(
                     string.Format("Parser expected '{0}'", next),
                     ErrorType.InvalidOrUnexpectedCharacter,
-                    this.position);
+                    errorPosition);
             }
         }
 
@@ -139,9 +150,9 @@ namespace LightJson.Serialization
             }
         }
 
-        private void SkipCommentOrInvalidSlash()
+        private void SkipComment()
         {
-            // First character is the a slash
+            // First character is the first slash
             this.Read();
             switch (this.Peek())
             {
@@ -154,7 +165,10 @@ namespace LightJson.Serialization
                 return;
 
             default:
-                return;
+                throw new JsonParseException(
+                    string.Format("Parser expected '{0}'", this.Peek()),
+                    ErrorType.InvalidOrUnexpectedCharacter,
+                    this.position);
             }
         }
 

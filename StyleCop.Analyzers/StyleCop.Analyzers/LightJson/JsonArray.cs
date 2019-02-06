@@ -3,8 +3,10 @@
 
 namespace LightJson
 {
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
     /// Represents an ordered collection of JsonValues.
@@ -13,7 +15,7 @@ namespace LightJson
     [DebuggerTypeProxy(typeof(JsonArrayDebugView))]
     internal sealed class JsonArray : IEnumerable<JsonValue>
     {
-        private IList<JsonValue> items;
+        private readonly IList<JsonValue> items;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="JsonArray"/> class.
@@ -30,6 +32,11 @@ namespace LightJson
         public JsonArray(params JsonValue[] values)
             : this()
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+
             foreach (var value in values)
             {
                 this.items.Add(value);
@@ -53,7 +60,7 @@ namespace LightJson
         /// </summary>
         /// <param name="index">The zero-based index of the value to get or set.</param>
         /// <remarks>
-        /// The getter will return JsonValue.Null if the given index is out of range.
+        /// <para>The getter will return JsonValue.Null if the given index is out of range.</para>
         /// </remarks>
         public JsonValue this[int index]
         {
@@ -157,9 +164,10 @@ namespace LightJson
             return this.GetEnumerator();
         }
 
+        [ExcludeFromCodeCoverage]
         private class JsonArrayDebugView
         {
-            private JsonArray jsonArray;
+            private readonly JsonArray jsonArray;
 
             public JsonArrayDebugView(JsonArray jsonArray)
             {

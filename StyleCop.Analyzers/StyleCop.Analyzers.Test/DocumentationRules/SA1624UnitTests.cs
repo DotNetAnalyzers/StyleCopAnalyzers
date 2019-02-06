@@ -3,19 +3,19 @@
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.DocumentationRules.PropertySummaryDocumentationAnalyzer,
+        StyleCop.Analyzers.DocumentationRules.PropertySummaryDocumentationCodeFixProvider>;
 
     /// <summary>
     /// This class contains the unit tests for SA1624.
     /// </summary>
-    public class SA1624UnitTests : CodeFixVerifier
+    public class SA1624UnitTests
     {
         /// <summary>
         /// Verifies that documentation that starts with the proper text for multiple accessors will produce a diagnostic when one of the accessors has reduced visibility.
@@ -27,7 +27,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         /// <param name="expectedArgument1">The first expected argument for the diagnostic.</param>
         /// <param name="expectedArgument2">The second expected argument for the diagnostic.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Theory]
+        [Theory(DisplayName = "Property Findings")]
         [InlineData("public", "int", "get; internal set;", "Gets or sets", "get", "Gets")]
         [InlineData("public", "int", "get; private set;", "Gets or sets", "get", "Gets")]
         [InlineData("public", "int", "internal get; set;", "Gets or sets", "set", "Sets")]
@@ -70,28 +70,25 @@ public class TestClass
 }}
 ";
 
-            var expected = this.CSharpDiagnostic(PropertySummaryDocumentationAnalyzer.SA1624Descriptor).WithLocation(7, 7 + accessibility.Length + type.Length).WithArguments(expectedArgument1, expectedArgument2);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            var expected = Diagnostic(PropertySummaryDocumentationAnalyzer.SA1624Descriptor).WithLocation(7, 7 + accessibility.Length + type.Length).WithArguments(expectedArgument1, expectedArgument2);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// Verifies that documentation that starts with the proper text for multiple accessors will not produce this
+        /// Verifies that documentation that starts with the proper text for a lone getter will not produce this
         /// diagnostic when the property has an expression body.
         /// </summary>
         /// <param name="accessibility">The accessibility of the property.</param>
         /// <param name="type">The type to use for the property.</param>
         /// <param name="summaryPrefix">The prefix to use in the summary text.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Theory]
-        [InlineData("public", "int", "Gets or sets")]
-        [InlineData("public", "bool", "Gets or sets a value indicating whether")]
-        [InlineData("protected", "int", "Gets or sets")]
-        [InlineData("protected internal", "int", "Gets or sets")]
-        [InlineData("internal", "int", "Gets or sets")]
-        public async Task VerifyThatInvalidDocumentationWillReportDiagnosticForExpressionBodyAsync(string accessibility, string type, string summaryPrefix)
+        [Theory(DisplayName = "ExpressionBody Gets")]
+        [InlineData("public", "int", "Gets")]
+        [InlineData("public", "bool", "Gets a value indicating whether")]
+        [InlineData("protected", "int", "Gets")]
+        [InlineData("protected internal", "int", "Gets")]
+        [InlineData("internal", "int", "Gets")]
+        public async Task VerifyThatValidDocumentationOnExpressionBodyIsAcceptedAsync(string accessibility, string type, string summaryPrefix)
         {
             var testCode = $@"
 public class TestClass
@@ -104,7 +101,7 @@ public class TestClass
 }}
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -112,7 +109,7 @@ public class TestClass
         /// </summary>
         /// <param name="typeKeyword">The type keyword to use.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Theory]
+        [Theory(DisplayName = "PrivateContainer Findings")]
         [InlineData("class")]
         [InlineData("struct")]
         public async Task VerifyPrivateAccessorInPrivateContainerAsync(string typeKeyword)
@@ -136,25 +133,26 @@ public class ContainerTestClass
 }}
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override IEnumerable<string> GetDisabledDiagnostics()
+        /// <summary>
+        /// Verifies that an empty tag summary is ignored (should be handled by SA1606).
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2230, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2230")]
+        public async Task VerifyEmptySummaryTagIsIgnoredAsync()
         {
-            yield return PropertySummaryDocumentationAnalyzer.SA1623Descriptor.Id;
-        }
+            var testCode = @"
+public class TestClass
+{
+    /// <summary/>
+    public int TestProperty { get; set; }
+}
+";
 
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new PropertySummaryDocumentationCodeFixProvider();
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new PropertySummaryDocumentationAnalyzer();
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

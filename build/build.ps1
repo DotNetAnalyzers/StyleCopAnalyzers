@@ -1,7 +1,6 @@
 param (
 	[switch]$Debug,
-	[string]$VisualStudioVersion = '14.0',
-	[switch]$SkipKeyCheck,
+	[string]$VisualStudioVersion = '15.0',
 	[string]$Verbosity = 'minimal',
 	[string]$Logger,
 	[switch]$Incremental
@@ -16,28 +15,20 @@ if (!(Test-Path $SolutionPath)) {
 	exit 1
 }
 
-. .\version.ps1
-
 If ($Debug) {
 	$BuildConfig = 'Debug'
 } Else {
 	$BuildConfig = 'Release'
 }
 
-If ($Version.Contains('-')) {
-	$KeyConfiguration = 'Dev'
-} Else {
-	$KeyConfiguration = 'Final'
-}
-
-# download NuGet.exe if necessary
-$nuget = '..\.nuget\NuGet.exe'
+# download nuget.exe if necessary
+$nuget = '..\.nuget\nuget.exe'
 If (-not (Test-Path $nuget)) {
 	If (-not (Test-Path '..\.nuget')) {
 		mkdir '..\.nuget'
 	}
 
-	$nugetSource = 'http://nuget.org/nuget.exe'
+	$nugetSource = 'https://dist.nuget.org/win-x86-commandline/latest/nuget.exe'
 	Invoke-WebRequest $nugetSource -OutFile $nuget
 	If (-not $?) {
 		$host.ui.WriteErrorLine('Unable to download NuGet executable, aborting!')
@@ -46,7 +37,8 @@ If (-not (Test-Path $nuget)) {
 }
 
 # build the main project
-$msbuild = "${env:ProgramFiles(x86)}\MSBuild\$VisualStudioVersion\Bin\MSBuild.exe"
+$visualStudio = (Get-ItemProperty 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\VisualStudio\SxS\VS7')."$VisualStudioVersion"
+$msbuild = "$visualStudio\MSBuild\$VisualStudioVersion\Bin\MSBuild.exe"
 If (-not (Test-Path $msbuild)) {
 	$host.UI.WriteErrorLine("Couldn't find MSBuild.exe")
 	exit 1
@@ -74,43 +66,8 @@ If ($Incremental) {
 	$Target = 'rebuild'
 }
 
-&$msbuild '/nologo' '/m' '/nr:false' "/t:$Target" $LoggerArgument "/verbosity:$Verbosity" "/p:Configuration=$BuildConfig" "/p:VisualStudioVersion=$VisualStudioVersion" "/p:KeyConfiguration=$KeyConfiguration" $SolutionPath
+&$msbuild '/nologo' '/m' '/nr:false' "/t:$Target" $LoggerArgument "/verbosity:$Verbosity" "/p:Configuration=$BuildConfig" "/p:VisualStudioVersion=$VisualStudioVersion" $SolutionPath
 If (-not $?) {
 	$host.ui.WriteErrorLine('Build failed, aborting!')
 	exit $LASTEXITCODE
 }
-
-if ($Incremental) {
-	# Skip NuGet validation and copying packages to the output directory
-	exit 0
-}
-
-# By default, do not create a NuGet package unless the expected strong name key files were used
-if (-not $SkipKeyCheck) {
-	. .\keys.ps1
-
-	foreach ($pair in $Keys.GetEnumerator()) {
-		$assembly = Resolve-FullPath -Path "..\StyleCop.Analyzers\StyleCop.Analyzers.CodeFixes\bin\$BuildConfig\StyleCop.Analyzers.dll"
-		# Run the actual check in a separate process or the current process will keep the assembly file locked
-		powershell -Command ".\check-key.ps1 -Assembly '$assembly' -ExpectedKey '$($pair.Value)' -Build '$($pair.Key)'"
-		If (-not $?) {
-			$host.ui.WriteErrorLine('Failed to verify strong name key for build, aborting!')
-			exit $LASTEXITCODE
-		}
-
-		$assembly = Resolve-FullPath -Path "..\StyleCop.Analyzers\StyleCop.Analyzers.CodeFixes\bin\$BuildConfig\StyleCop.Analyzers.CodeFixes.dll"
-		# Run the actual check in a separate process or the current process will keep the assembly file locked
-		powershell -Command ".\check-key.ps1 -Assembly '$assembly' -ExpectedKey '$($pair.Value)' -Build '$($pair.Key)'"
-		If (-not $?) {
-			$host.ui.WriteErrorLine('Failed to verify strong name key for build, aborting!')
-			exit $LASTEXITCODE
-		}
-	}
-}
-
-if (-not (Test-Path 'nuget')) {
-	mkdir "nuget"
-}
-
-Copy-Item "..\StyleCop.Analyzers\StyleCop.Analyzers.CodeFixes\bin\$BuildConfig\StyleCop.Analyzers.$Version.nupkg" 'nuget'
-Copy-Item "..\StyleCop.Analyzers\StyleCop.Analyzers.CodeFixes\bin\$BuildConfig\StyleCop.Analyzers.$Version.symbols.nupkg" 'nuget'

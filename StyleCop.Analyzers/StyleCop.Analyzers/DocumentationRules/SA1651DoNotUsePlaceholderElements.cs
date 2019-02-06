@@ -5,10 +5,13 @@ namespace StyleCop.Analyzers.DocumentationRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.Linq;
+    using System.Xml.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The documentation for the element contains one or more &lt;placeholder&gt; elements.
@@ -37,6 +40,12 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1651";
+
+        /// <summary>
+        /// The key used for signalling that no codefix should be offered.
+        /// </summary>
+        internal const string NoCodeFixKey = "NoCodeFix";
+
         private const string Title = "Do not use placeholder elements";
         private const string MessageFormat = "Do not use placeholder elements";
         private const string Description = "The element documentation contains a <placeholder> element.";
@@ -45,9 +54,10 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> XmlElementAction = HandleXmlElement;
         private static readonly Action<SyntaxNodeAnalysisContext> XmlEmptyElementAction = HandleXmlEmptyElement;
+
+        private static readonly ImmutableDictionary<string, string> NoCodeFixProperties = ImmutableDictionary.Create<string, string>().Add(NoCodeFixKey, string.Empty);
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -56,35 +66,64 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(XmlElementAction, SyntaxKind.XmlElement);
-            context.RegisterSyntaxNodeActionHonorExclusions(XmlEmptyElementAction, SyntaxKind.XmlEmptyElement);
+            context.RegisterSyntaxNodeAction(XmlElementAction, SyntaxKind.XmlElement);
+            context.RegisterSyntaxNodeAction(XmlEmptyElementAction, SyntaxKind.XmlEmptyElement);
         }
 
         private static void HandleXmlElement(SyntaxNodeAnalysisContext context)
         {
             XmlElementSyntax syntax = (XmlElementSyntax)context.Node;
-            if (!string.Equals("placeholder", syntax.StartTag?.Name?.ToString(), StringComparison.Ordinal))
-            {
-                return;
-            }
-
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.GetLocation()));
+            CheckTag(context, syntax.StartTag?.Name?.ToString());
         }
 
         private static void HandleXmlEmptyElement(SyntaxNodeAnalysisContext context)
         {
             XmlEmptyElementSyntax syntax = (XmlEmptyElementSyntax)context.Node;
-            if (!string.Equals("placeholder", syntax.Name?.ToString(), StringComparison.Ordinal))
+            CheckTag(context, syntax.Name?.ToString());
+        }
+
+        private static void CheckTag(SyntaxNodeAnalysisContext context, string tagName)
+        {
+            if (string.Equals(XmlCommentHelper.IncludeXmlTag, tagName, StringComparison.Ordinal))
             {
-                return;
+                if (!IncludedDocumentationContainsPlaceHolderTags(context))
+                {
+                    return;
+                }
+
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation(), NoCodeFixProperties));
+            }
+            else
+            {
+                if (!string.Equals(XmlCommentHelper.PlaceholderTag, tagName, StringComparison.Ordinal))
+                {
+                    return;
+                }
+
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, context.Node.GetLocation()));
+            }
+        }
+
+        private static bool IncludedDocumentationContainsPlaceHolderTags(SyntaxNodeAnalysisContext context)
+        {
+            var memberDeclaration = context.Node.FirstAncestorOrSelf<MemberDeclarationSyntax>();
+            if (memberDeclaration == null)
+            {
+                return false;
             }
 
-            context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.GetLocation()));
+            var declaration = context.SemanticModel.GetDeclaredSymbol(memberDeclaration, context.CancellationToken);
+            if (declaration == null)
+            {
+                return false;
+            }
+
+            var rawDocumentation = declaration.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
+            var completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
+            return completeDocumentation.DescendantNodesAndSelf().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.PlaceholderTag);
         }
     }
 }

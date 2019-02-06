@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Text;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The C# code contains multiple blank lines in a row.
@@ -45,15 +46,18 @@ namespace StyleCop.Analyzers.LayoutRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1507";
-        private const string Title = "Code must not contain multiple blank lines in a row";
-        private const string MessageFormat = "Code must not contain multiple blank lines in a row";
+
+        /// <summary>
+        /// The diagnostic descriptor for the <see cref="SA1507CodeMustNotContainMultipleBlankLinesInARow"/> analyzer.
+        /// </summary>
+        public static readonly DiagnosticDescriptor Descriptor =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+
+        private const string Title = "Code should not contain multiple blank lines in a row";
+        private const string MessageFormat = "Code should not contain multiple blank lines in a row";
         private const string Description = "The C# code contains multiple blank lines in a row.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1507.md";
 
-        private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
-
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
 
         /// <inheritdoc/>
@@ -63,16 +67,20 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxTreeActionHonorExclusions(SyntaxTreeAction);
+            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
         }
 
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
         {
+            if (context.Tree.IsWhitespaceOnly(context.CancellationToken))
+            {
+                // Handling of empty documents is now the responsibility of the analyzers
+                return;
+            }
+
             SyntaxNode root = context.Tree.GetRoot(context.CancellationToken);
             foreach (var token in root.DescendantTokens(descendIntoTrivia: false))
             {

@@ -12,6 +12,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// The opening and closing braces for a C# statement have been omitted.
@@ -60,15 +61,20 @@ namespace StyleCop.Analyzers.LayoutRules
         /// The ID for diagnostics produced by the <see cref="SA1503BracesMustNotBeOmitted"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1503";
-        private const string Title = "Braces must not be omitted";
-        private const string MessageFormat = "Braces must not be omitted";
+
+        /// <summary>
+        /// The diagnostic descriptor for the <see cref="SA1503BracesMustNotBeOmitted"/> analyzer.
+        /// </summary>
+        public static readonly DiagnosticDescriptor Descriptor =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+
+        private const string Title = "Braces should not be omitted";
+        private const string MessageFormat = "Braces should not be omitted";
         private const string Description = "The opening and closing braces for a C# statement have been omitted.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1503.md";
 
-        private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
-
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
+        private static readonly Action<SyntaxNodeAnalysisContext> IfStatementAction = HandleIfStatement;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> UsingStatementAction = HandleUsingStatement;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -77,19 +83,17 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(HandleIfStatement, SyntaxKind.IfStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(ctx => CheckChildStatement(ctx, ((DoStatementSyntax)ctx.Node).Statement), SyntaxKind.DoStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(ctx => CheckChildStatement(ctx, ((WhileStatementSyntax)ctx.Node).Statement), SyntaxKind.WhileStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(ctx => CheckChildStatement(ctx, ((ForStatementSyntax)ctx.Node).Statement), SyntaxKind.ForStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(ctx => CheckChildStatement(ctx, ((ForEachStatementSyntax)ctx.Node).Statement), SyntaxKind.ForEachStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(ctx => CheckChildStatement(ctx, ((FixedStatementSyntax)ctx.Node).Statement), SyntaxKind.FixedStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(ctx => CheckChildStatement(ctx, ((UsingStatementSyntax)ctx.Node).Statement), SyntaxKind.UsingStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(ctx => CheckChildStatement(ctx, ((LockStatementSyntax)ctx.Node).Statement), SyntaxKind.LockStatement);
+            context.RegisterSyntaxNodeAction(IfStatementAction, SyntaxKind.IfStatement);
+            context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ((DoStatementSyntax)ctx.Node).Statement), SyntaxKind.DoStatement);
+            context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ((WhileStatementSyntax)ctx.Node).Statement), SyntaxKind.WhileStatement);
+            context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ((ForStatementSyntax)ctx.Node).Statement), SyntaxKind.ForStatement);
+            context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ((ForEachStatementSyntax)ctx.Node).Statement), SyntaxKind.ForEachStatement);
+            context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ((FixedStatementSyntax)ctx.Node).Statement), SyntaxKind.FixedStatement);
+            context.RegisterSyntaxNodeAction(UsingStatementAction, SyntaxKind.UsingStatement);
+            context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ((LockStatementSyntax)ctx.Node).Statement), SyntaxKind.LockStatement);
         }
 
         private static void HandleIfStatement(SyntaxNodeAnalysisContext context)
@@ -111,7 +115,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 }
             }
 
-            if (context.SemanticModel.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(SA1520UseBracesConsistently.DiagnosticId, ReportDiagnostic.Default) != ReportDiagnostic.Suppress)
+            if (!context.IsAnalyzerSuppressed(SA1520UseBracesConsistently.Descriptor))
             {
                 // inconsistencies will be reported as SA1520, as long as it's not suppressed
                 if (clauses.OfType<BlockSyntax>().Any())
@@ -126,6 +130,17 @@ namespace StyleCop.Analyzers.LayoutRules
             }
         }
 
+        private static void HandleUsingStatement(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+        {
+            var usingStatement = (UsingStatementSyntax)context.Node;
+            if (settings.LayoutRules.AllowConsecutiveUsings && usingStatement.Statement.IsKind(SyntaxKind.UsingStatement))
+            {
+                return;
+            }
+
+            CheckChildStatement(context, usingStatement.Statement);
+        }
+
         private static void CheckChildStatement(SyntaxNodeAnalysisContext context, StatementSyntax childStatement)
         {
             if (childStatement is BlockSyntax)
@@ -133,7 +148,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 return;
             }
 
-            if (context.SemanticModel.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(SA1519BracesMustNotBeOmittedFromMultiLineChildStatement.DiagnosticId, ReportDiagnostic.Default) != ReportDiagnostic.Suppress)
+            if (!context.IsAnalyzerSuppressed(SA1519BracesMustNotBeOmittedFromMultiLineChildStatement.Descriptor))
             {
                 // diagnostics for multi-line statements is handled by SA1519, as long as it's not suppressed
                 FileLinePositionSpan lineSpan = childStatement.GetLineSpan();

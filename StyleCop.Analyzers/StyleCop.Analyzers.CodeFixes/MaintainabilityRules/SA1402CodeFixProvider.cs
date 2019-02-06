@@ -16,10 +16,10 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// Implements a code fix for <see cref="SA1402FileMayOnlyContainASingleClass"/>.
+    /// Implements a code fix for <see cref="SA1402FileMayOnlyContainASingleType"/>.
     /// </summary>
     /// <remarks>
-    /// <para>To fix a violation of this rule, move each class into its own file.</para>
+    /// <para>To fix a violation of this rule, move each type into its own file.</para>
     /// </remarks>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1402CodeFixProvider))]
     [Shared]
@@ -27,7 +27,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(SA1402FileMayOnlyContainASingleClass.DiagnosticId);
+            ImmutableArray.Create(SA1402FileMayOnlyContainASingleType.DiagnosticId);
 
         /// <inheritdoc/>
         public override FixAllProvider GetFixAllProvider()
@@ -56,32 +56,16 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             SyntaxNode node = root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
-            BaseTypeDeclarationSyntax baseTypeDeclarationSyntax = node as BaseTypeDeclarationSyntax;
-            DelegateDeclarationSyntax delegateDeclarationSyntax = node as DelegateDeclarationSyntax;
-            if (baseTypeDeclarationSyntax == null && delegateDeclarationSyntax == null)
+            if (!(node is MemberDeclarationSyntax memberDeclarationSyntax))
             {
                 return document.Project.Solution;
             }
 
             DocumentId extractedDocumentId = DocumentId.CreateNewId(document.Project.Id);
-            string extractedDocumentName = baseTypeDeclarationSyntax.Identifier.ValueText;
-            if (baseTypeDeclarationSyntax != null)
-            {
-                TypeDeclarationSyntax typeDeclarationSyntax = baseTypeDeclarationSyntax as TypeDeclarationSyntax;
-                if (typeDeclarationSyntax?.TypeParameterList?.Parameters.Count > 0)
-                {
-                    extractedDocumentName += "`" + typeDeclarationSyntax.TypeParameterList.Parameters.Count;
-                }
-            }
-            else
-            {
-                if (delegateDeclarationSyntax.TypeParameterList?.Parameters.Count > 0)
-                {
-                    extractedDocumentName += "`" + delegateDeclarationSyntax.TypeParameterList.Parameters.Count;
-                }
-            }
-
-            extractedDocumentName += ".cs";
+            string suffix;
+            FileNameHelpers.GetFileNameAndSuffix(document.Name, out suffix);
+            var settings = document.Project.AnalyzerOptions.GetStyleCopSettings(cancellationToken);
+            string extractedDocumentName = FileNameHelpers.GetConventionalFileName(memberDeclarationSyntax, settings.DocumentationRules.FileNamingConvention) + suffix;
 
             List<SyntaxNode> nodesToRemoveFromExtracted = new List<SyntaxNode>();
             SyntaxNode previous = node;
@@ -111,8 +95,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 }
             }
 
+            // Add the new file
             SyntaxNode extractedDocumentNode = root.RemoveNodes(nodesToRemoveFromExtracted, SyntaxRemoveOptions.KeepUnbalancedDirectives);
-
             Solution updatedSolution = document.Project.Solution.AddDocument(extractedDocumentId, extractedDocumentName, extractedDocumentNode, document.Folders);
 
             // Make sure to also add the file to linked projects

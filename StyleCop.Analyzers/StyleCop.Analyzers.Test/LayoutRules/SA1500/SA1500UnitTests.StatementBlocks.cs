@@ -6,9 +6,13 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.LayoutRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1500BracesForMultiLineStatementsMustNotShareLine,
+        StyleCop.Analyzers.LayoutRules.SA1500CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1500BracesForMultiLineStatementsMustNotShareLine"/>.
@@ -35,9 +39,9 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// Verifies that no diagnostics are reported for the valid statements defined in this test.
         /// </summary>
         /// <remarks>
-        /// These are valid for SA1500 only, some will report other diagnostics outside of the unit test scenario.
+        /// <para>These are valid for SA1500 only, some will report other diagnostics outside of the unit test scenario.
         ///
-        /// The class is marked unsafe to make testing the fixed statement possible.
+        /// The class is marked unsafe to make testing the fixed statement possible.</para>
         /// </remarks>
         /// <param name="token">The source code preceding the opening <c>{</c> of a statement block.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
@@ -76,14 +80,14 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 
             testCode = testCode.Replace("#TOKEN#", token);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Verifies that diagnostics will be reported for all invalid statements.
         /// </summary>
         /// <remarks>
-        /// The class is marked unsafe to make testing the fixed statement possible.
+        /// <para>The class is marked unsafe to make testing the fixed statement possible.</para>
         /// </remarks>
         /// <param name="token">The source code preceding the opening <c>{</c> of a statement block.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
@@ -167,25 +171,23 @@ namespace StyleCop.Analyzers.Test.LayoutRules
             DiagnosticResult[] expectedDiagnostics =
             {
                 // invalid #1
-                this.CSharpDiagnostic().WithLocation(8, 10 + tokenLength),
+                Diagnostic().WithLocation(8, 10 + tokenLength),
 
                 // invalid #2
-                this.CSharpDiagnostic().WithLocation(13, 10 + tokenLength),
-                this.CSharpDiagnostic().WithLocation(14, 25),
+                Diagnostic().WithLocation(13, 10 + tokenLength),
+                Diagnostic().WithLocation(14, 25),
 
                 // invalid #3
-                this.CSharpDiagnostic().WithLocation(17, 10 + tokenLength),
+                Diagnostic().WithLocation(17, 10 + tokenLength),
 
                 // invalid #4
-                this.CSharpDiagnostic().WithLocation(23, 25),
+                Diagnostic().WithLocation(23, 25),
 
                 // invalid #5
-                this.CSharpDiagnostic().WithLocation(27, 9)
+                Diagnostic().WithLocation(27, 9),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

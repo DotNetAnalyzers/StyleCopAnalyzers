@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// The opening and closing braces for a multi-line C# statement have been omitted.
@@ -35,20 +36,24 @@ namespace StyleCop.Analyzers.LayoutRules
         /// The ID for diagnostics produced by the <see cref="SA1519BracesMustNotBeOmittedFromMultiLineChildStatement"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1519";
-        private const string Title = "Braces must not be omitted from multi-line child statement";
-        private const string MessageFormat = "Braces must not be omitted from multi-line child statement";
+
+        /// <summary>
+        /// The diagnostic descriptor for the <see cref="SA1519BracesMustNotBeOmittedFromMultiLineChildStatement"/> analyzer.
+        /// </summary>
+        public static readonly DiagnosticDescriptor Descriptor =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+
+        private const string Title = "Braces should not be omitted from multi-line child statement";
+        private const string MessageFormat = "Braces should not be omitted from multi-line child statement";
         private const string Description = "The opening and closing braces for a multi-line C# statement have been omitted.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1519.md";
 
-        private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
-
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> IfStatementAction = HandleIfStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> DoStatementAction = HandleDoStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> WhileStatementAction = HandleWhileStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> ForStatementAction = HandleForStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> ForEachStatementAction = HandleForEachStatement;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> UsingStatementAction = HandleUsingStatement;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -57,16 +62,15 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(IfStatementAction, SyntaxKind.IfStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(DoStatementAction, SyntaxKind.DoStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(WhileStatementAction, SyntaxKind.WhileStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(ForStatementAction, SyntaxKind.ForStatement);
-            context.RegisterSyntaxNodeActionHonorExclusions(ForEachStatementAction, SyntaxKind.ForEachStatement);
+            context.RegisterSyntaxNodeAction(IfStatementAction, SyntaxKind.IfStatement);
+            context.RegisterSyntaxNodeAction(DoStatementAction, SyntaxKind.DoStatement);
+            context.RegisterSyntaxNodeAction(WhileStatementAction, SyntaxKind.WhileStatement);
+            context.RegisterSyntaxNodeAction(ForStatementAction, SyntaxKind.ForStatement);
+            context.RegisterSyntaxNodeAction(ForEachStatementAction, SyntaxKind.ForEachStatement);
+            context.RegisterSyntaxNodeAction(UsingStatementAction, SyntaxKind.UsingStatement);
         }
 
         private static void HandleIfStatement(SyntaxNodeAnalysisContext context)
@@ -107,6 +111,18 @@ namespace StyleCop.Analyzers.LayoutRules
         {
             var forEachStatement = (ForEachStatementSyntax)context.Node;
             CheckChildStatement(context, forEachStatement.Statement);
+        }
+
+        private static void HandleUsingStatement(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+        {
+            var usingStatement = (UsingStatementSyntax)context.Node;
+
+            if (settings.LayoutRules.AllowConsecutiveUsings && (usingStatement.Statement is UsingStatementSyntax))
+            {
+                return;
+            }
+
+            CheckChildStatement(context, usingStatement.Statement);
         }
 
         private static void CheckChildStatement(SyntaxNodeAnalysisContext context, StatementSyntax childStatement)

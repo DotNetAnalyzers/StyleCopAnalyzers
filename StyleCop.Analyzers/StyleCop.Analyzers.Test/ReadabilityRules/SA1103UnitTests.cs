@@ -3,19 +3,20 @@
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.ReadabilityRules.SA110xQueryClauses,
+        StyleCop.Analyzers.ReadabilityRules.SA1103CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for the SA1103 analyzer.
     /// </summary>
-    public class SA1103UnitTests : CodeFixVerifier
+    public class SA1103UnitTests
     {
         /// <summary>
         /// Verifies that a select query expression produces the expected results.
@@ -59,12 +60,10 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                this.CSharpDiagnostic(SA110xQueryClauses.SA1103Descriptor).WithLocation(11, 21)
+                Diagnostic(SA110xQueryClauses.SA1103Descriptor).WithLocation(11, 21),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, codeFixIndex: 0).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -111,12 +110,18 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                this.CSharpDiagnostic(SA110xQueryClauses.SA1103Descriptor).WithLocation(11, 21)
+                Diagnostic(SA110xQueryClauses.SA1103Descriptor).WithLocation(11, 21),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, codeFixIndex: 1).ConfigureAwait(false);
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                CodeFixIndex = 1,
+                FixedCode = fixedTestCode,
+            };
+
+            test.ExpectedDiagnostics.AddRange(expectedDiagnostics);
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -183,12 +188,18 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                this.CSharpDiagnostic(SA110xQueryClauses.SA1103Descriptor).WithLocation(12, 17)
+                Diagnostic(SA110xQueryClauses.SA1103Descriptor).WithLocation(12, 17),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, codeFixIndex: 1).ConfigureAwait(false);
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                CodeFixIndex = 1,
+                FixedCode = fixedTestCode,
+            };
+
+            test.ExpectedDiagnostics.AddRange(expectedDiagnostics);
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -233,12 +244,10 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                this.CSharpDiagnostic(SA110xQueryClauses.SA1103Descriptor).WithLocation(11, 21)
+                Diagnostic(SA110xQueryClauses.SA1103Descriptor).WithLocation(11, 21),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, codeFixIndex: 0).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -285,12 +294,18 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                this.CSharpDiagnostic(SA110xQueryClauses.SA1103Descriptor).WithLocation(11, 21)
+                Diagnostic(SA110xQueryClauses.SA1103Descriptor).WithLocation(11, 21),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, codeFixIndex: 1).ConfigureAwait(false);
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                CodeFixIndex = 1,
+                FixedCode = fixedTestCode,
+            };
+
+            test.ExpectedDiagnostics.AddRange(expectedDiagnostics);
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -345,24 +360,10 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                this.CSharpDiagnostic(SA110xQueryClauses.SA1103Descriptor).WithLocation(11, 21)
+                Diagnostic(SA110xQueryClauses.SA1103Descriptor).WithLocation(11, 21),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode, codeFixIndex: 0).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA110xQueryClauses();
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1103CodeFixProvider();
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

@@ -7,12 +7,12 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using System.Composition;
     using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1404CodeAnalysisSuppressionMustHaveJustification"/>.
@@ -43,8 +43,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             {
                 var node = root.FindNode(diagnostic.Location.SourceSpan);
 
-                var attribute = node as AttributeSyntax;
-                if (attribute != null)
+                if (node is AttributeSyntax attribute)
                 {
                     // In this case there is no justification at all
                     context.RegisterCodeFix(
@@ -55,8 +54,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                     return;
                 }
 
-                var argument = node as AttributeArgumentSyntax;
-                if (argument != null)
+                if (node is AttributeArgumentSyntax argument)
                 {
                     context.RegisterCodeFix(
                         CodeAction.Create(

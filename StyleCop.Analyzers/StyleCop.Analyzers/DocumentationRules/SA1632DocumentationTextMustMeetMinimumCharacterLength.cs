@@ -16,10 +16,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// <para>This diagnostic is not implemented in StyleCopAnalyzers.</para>
     ///
     /// <para>C# syntax provides a mechanism for inserting documentation for classes and elements directly into the
-    /// code, through the use of XML documentation headers. For an introduction to these headers and a description of
-    /// the header syntax, see the following article:
-    /// <see href="http://msdn.microsoft.com/en-us/magazine/cc302121.aspx">XML Comments Let You Build Documentation
-    /// Directly From Your Visual Studio .NET Source Files</see>.</para>
+    /// code, through the use of XML documentation headers.</para>
     ///
     /// <para>A violation of this rule occurs when part of the documentation is too short. This can often indicate that
     /// the documentation is not descriptive. For example:</para>
@@ -44,7 +41,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1632";
-        private const string Title = "Documentation text must meet minimum character length";
+        private const string Title = "Documentation text should meet minimum character length";
         private const string MessageFormat = "TODO: Message format";
         private const string Description = "A section of the Xml header documentation for a C# element is too short.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1632.md";

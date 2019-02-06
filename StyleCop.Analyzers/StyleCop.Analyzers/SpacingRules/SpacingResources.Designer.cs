@@ -20,7 +20,7 @@ namespace StyleCop.Analyzers.SpacingRules {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class SpacingResources {
@@ -89,7 +89,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Documentation line must begin with a space..
+        ///   Looks up a localized string similar to Documentation line should begin with a space..
         /// </summary>
         internal static string SA1004MessageFormat {
             get {
@@ -98,7 +98,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Documentation lines must begin with single space.
+        ///   Looks up a localized string similar to Documentation lines should begin with single space.
         /// </summary>
         internal static string SA1004Title {
             get {
@@ -125,7 +125,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Single line comment must begin with a space..
+        ///   Looks up a localized string similar to Single line comment should begin with a space..
         /// </summary>
         internal static string SA1005MessageFormat {
             get {
@@ -134,7 +134,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Single line comments must begin with single space.
+        ///   Looks up a localized string similar to Single line comments should begin with single space.
         /// </summary>
         internal static string SA1005Title {
             get {
@@ -152,7 +152,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Preprocessor keyword &apos;{0}&apos; must not be preceded by a space..
+        ///   Looks up a localized string similar to Preprocessor keyword &apos;{0}&apos; should not be preceded by a space..
         /// </summary>
         internal static string SA1006MessageFormat {
             get {
@@ -161,7 +161,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Preprocessor keywords must not be preceded by space.
+        ///   Looks up a localized string similar to Preprocessor keywords should not be preceded by space.
         /// </summary>
         internal static string SA1006Title {
             get {
@@ -179,7 +179,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Operator keyword must be followed by a space..
+        ///   Looks up a localized string similar to Operator keyword should be followed by a space..
         /// </summary>
         internal static string SA1007MessageFormat {
             get {
@@ -188,7 +188,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Operator keyword must be followed by space.
+        ///   Looks up a localized string similar to Operator keyword should be followed by space.
         /// </summary>
         internal static string SA1007Title {
             get {
@@ -215,7 +215,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Opening attribute brackets must not be followed by a space..
+        ///   Looks up a localized string similar to Opening attribute brackets should not be followed by a space..
         /// </summary>
         internal static string SA1016MessageFormat {
             get {
@@ -224,7 +224,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Opening attribute brackets must be spaced correctly.
+        ///   Looks up a localized string similar to Opening attribute brackets should be spaced correctly.
         /// </summary>
         internal static string SA1016Title {
             get {
@@ -242,7 +242,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Closing attribute brackets must not be preceded by a space..
+        ///   Looks up a localized string similar to Closing attribute brackets should not be preceded by a space..
         /// </summary>
         internal static string SA1017MessageFormat {
             get {
@@ -251,7 +251,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Closing attribute brackets must be spaced correctly.
+        ///   Looks up a localized string similar to Closing attribute brackets should be spaced correctly.
         /// </summary>
         internal static string SA1017Title {
             get {
@@ -278,7 +278,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Nullable type symbol must not be preceded by a space..
+        ///   Looks up a localized string similar to Nullable type symbol should not be preceded by a space..
         /// </summary>
         internal static string SA1018MessageFormat {
             get {
@@ -287,7 +287,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Nullable type symbols must be spaced correctly.
+        ///   Looks up a localized string similar to Nullable type symbols should be spaced correctly.
         /// </summary>
         internal static string SA1018Title {
             get {
@@ -314,7 +314,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code must not contain multiple whitespace characters in a row..
+        ///   Looks up a localized string similar to Code should not contain multiple whitespace characters in a row..
         /// </summary>
         internal static string SA1025MessageFormat {
             get {
@@ -323,7 +323,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code must not contain multiple whitespace in a row.
+        ///   Looks up a localized string similar to Code should not contain multiple whitespace in a row.
         /// </summary>
         internal static string SA1025Title {
             get {
@@ -332,7 +332,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An implicitly typed new array allocation within a C# code file is not spaced correctly..
+        ///   Looks up a localized string similar to An implicitly typed array allocation within a C# code file is not spaced correctly..
         /// </summary>
         internal static string SA1026Description {
             get {
@@ -341,7 +341,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The keyword &apos;new&apos; must not be followed by a space or a blank line..
+        ///   Looks up a localized string similar to The keyword &apos;{0}&apos; should not be followed by a space or a blank line..
         /// </summary>
         internal static string SA1026MessageFormat {
             get {
@@ -350,7 +350,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code must not contain space after new keyword in implicitly typed array allocation.
+        ///   Looks up a localized string similar to Code should not contain space after new or stackalloc keyword in implicitly typed array allocation.
         /// </summary>
         internal static string SA1026Title {
             get {
@@ -368,7 +368,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The C# code contains a tab character.
+        ///   Looks up a localized string similar to The code contains a tab or space character which is not consistent with the current project settings..
         /// </summary>
         internal static string SA1027Description {
             get {
@@ -377,7 +377,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tabs must not be used..
+        ///   Looks up a localized string similar to Tabs and spaces should be used correctly.
         /// </summary>
         internal static string SA1027MessageFormat {
             get {
@@ -386,7 +386,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tabs must not be used.
+        ///   Looks up a localized string similar to Use tabs correctly.
         /// </summary>
         internal static string SA1027Title {
             get {
@@ -413,7 +413,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code must not contain trailing whitespace.
+        ///   Looks up a localized string similar to Code should not contain trailing whitespace.
         /// </summary>
         internal static string SA1028MessageFormat {
             get {
@@ -422,7 +422,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code must not contain trailing whitespace.
+        ///   Looks up a localized string similar to Code should not contain trailing whitespace.
         /// </summary>
         internal static string SA1028Title {
             get {

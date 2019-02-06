@@ -6,18 +6,17 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Analyzers.DocumentationRules;
-    using Helpers;
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.DocumentationRules;
+    using StyleCop.Analyzers.Test.Verifiers;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1615ElementReturnValueMustBeDocumented>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1615ElementReturnValueMustBeDocumented"/>.
     /// </summary>
-    public class SA1615UnitTests : CodeFixVerifier
+    public class SA1615UnitTests
     {
         public static IEnumerable<object[]> WithReturnValue
         {
@@ -82,7 +81,7 @@ public class ClassName
 {
 $$
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -100,7 +99,7 @@ public class ClassName
     /// </summary>
 $$
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -119,7 +118,7 @@ public class ClassName
     /// <returns>Foo</returns>
 $$
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -150,11 +149,8 @@ public class ClassName
 $$
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(10, 21);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode.Replace("$$", declaration), fixedCode.Replace("$$", declaration), cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(10, 21);
+            await VerifyCSharpFixAsync(testCode.Replace("$$", declaration), expected, fixedCode.Replace("$$", declaration), CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -189,11 +185,8 @@ public class ClassName
 $$
 }";
 
-            var expected = this.CSharpDiagnostic().WithLocation(12, 21);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode.Replace("$$", declaration), fixedCode.Replace("$$", declaration), cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(12, 21);
+            await VerifyCSharpFixAsync(testCode.Replace("$$", declaration), expected, fixedCode.Replace("$$", declaration), CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -234,11 +227,8 @@ $$
 internal sealed class ##Attribute : System.Attribute { }
 ";
 
-            var expected = this.CSharpDiagnostic().WithLocation(13, 21);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration).Replace("##", testAttribute), expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode.Replace("$$", declaration).Replace("##", testAttribute), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode.Replace("$$", declaration).Replace("##", testAttribute), fixedCode.Replace("$$", declaration).Replace("##", testAttribute), cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(13, 21);
+            await VerifyCSharpFixAsync(testCode.Replace("$$", declaration).Replace("##", testAttribute), expected, fixedCode.Replace("$$", declaration).Replace("##", testAttribute), CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -257,7 +247,7 @@ public class ClassName
     /// <returns>Foo</returns>
 $$
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -274,7 +264,7 @@ public class ClassName
     /// <inheritdoc/>
     public ClassName Test() { return null; }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -291,9 +281,9 @@ class Class1
 }
 ";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 12);
+            DiagnosticResult expected = Diagnostic().WithLocation(5, 12);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -310,7 +300,7 @@ class Class1
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -327,13 +317,39 @@ class Class1
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override Project ApplyCompilationOptions(Project project)
+        [Fact]
+        [WorkItem(2445, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2445")]
+        public async Task TestPrivateMethodMissingReturnsAsync()
         {
-            var resolver = new TestXmlReferenceResolver();
+            var testCode = @"
+internal class ClassName
+{
+    ///
+    private int Test1(int arg) { throw new System.NotImplementedException(); }
+
+    /**
+     *
+     */
+    private int Test2(int arg) { throw new System.NotImplementedException(); }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
+            => VerifyCSharpFixAsync(source, new[] { expected }, fixedSource: null, cancellationToken);
+
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+            => VerifyCSharpFixAsync(source, expected, fixedSource: null, cancellationToken);
+
+        private static Task VerifyCSharpFixAsync(string source, DiagnosticResult expected, string fixedSource, CancellationToken cancellationToken)
+            => VerifyCSharpFixAsync(source, new[] { expected }, fixedSource, cancellationToken);
+
+        private static Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
+        {
             string contentWithReturns = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <Class1>
   <MethodName>
@@ -346,8 +362,6 @@ class Class1
   </MethodName>
 </Class1>
 ";
-            resolver.XmlReferences.Add("MethodWithReturns.xml", contentWithReturns);
-
             string contentWithInheritedReturns = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <Class1>
   <MethodName>
@@ -355,8 +369,6 @@ class Class1
   </MethodName>
 </Class1>
 ";
-            resolver.XmlReferences.Add("MethodWithInheritedReturns.xml", contentWithInheritedReturns);
-
             string contentWithoutReturns = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <Class1>
   <MethodName>
@@ -366,23 +378,21 @@ class Class1
   </MethodName>
 </Class1>
 ";
-            resolver.XmlReferences.Add("MethodWithoutReturns.xml", contentWithoutReturns);
 
-            project = base.ApplyCompilationOptions(project);
-            project = project.WithCompilationOptions(project.CompilationOptions.WithXmlReferenceResolver(resolver));
-            return project;
-        }
+            var test = new StyleCopCodeFixVerifier<SA1615ElementReturnValueMustBeDocumented, SA1615SA1616CodeFixProvider>.CSharpTest
+            {
+                TestCode = source,
+                FixedCode = fixedSource,
+                XmlReferences =
+                {
+                    { "MethodWithReturns.xml", contentWithReturns },
+                    { "MethodWithInheritedReturns.xml", contentWithInheritedReturns },
+                    { "MethodWithoutReturns.xml", contentWithoutReturns },
+                },
+            };
 
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1615ElementReturnValueMustBeDocumented();
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1615SA1616CodeFixProvider();
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test.RunAsync(cancellationToken);
         }
     }
 }

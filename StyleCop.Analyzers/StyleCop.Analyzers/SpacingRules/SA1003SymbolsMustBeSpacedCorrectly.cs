@@ -17,7 +17,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// <remarks>
     /// <para>A violation of this rule occurs when the spacing around an operator symbol is incorrect.</para>
     ///
-    /// <para>The following types of operator symbols must be surrounded by a single space on either side: colons,
+    /// <para>The following types of operator symbols should be surrounded by a single space on either side: colons,
     /// arithmetic operators, assignment operators, conditional operators, logical operators, relational operators,
     /// shift operators, and lambda operators. For example:</para>
     ///
@@ -25,7 +25,7 @@ namespace StyleCop.Analyzers.SpacingRules
     /// int x = 4 + y;
     /// </code>
     ///
-    /// <para>In contrast, unary operators must be preceded by a single space, but must never be followed by any space.
+    /// <para>In contrast, unary operators should be preceded by a single space, but should never be followed by any space.
     /// For example:</para>
     ///
     /// <code language="cs">
@@ -57,13 +57,13 @@ namespace StyleCop.Analyzers.SpacingRules
         internal const string RemoveEndOfLineTag = "RemoveEndOfLine";
         internal const string RemoveEndOfLineWithTrailingSpaceTag = "RemoveEndOfLineWithTrailingSpace";
 
-        private const string Title = "Symbols must be spaced correctly";
-        private const string MessageFormatNotFollowedByComment = "Operator '{0}' must not be followed by a comment.";
-        private const string MessageFormatPrecededByWhitespace = "Operator '{0}' must be preceded by whitespace.";
-        private const string MessageFormatNotPrecededByWhitespace = "Operator '{0}' must not be preceded by whitespace.";
-        private const string MessageFormatFollowedByWhitespace = "Operator '{0}' must be followed by whitespace.";
-        private const string MessageFormatNotFollowedByWhitespace = "Operator '{0}' must not be followed by whitespace.";
-        private const string MessageFormatNotAtEndOfLine = "Operator '{0}' must not appear at the end of a line.";
+        private const string Title = "Symbols should be spaced correctly";
+        private const string MessageFormatNotFollowedByComment = "Operator '{0}' should not be followed by a comment.";
+        private const string MessageFormatPrecededByWhitespace = "Operator '{0}' should be preceded by whitespace.";
+        private const string MessageFormatNotPrecededByWhitespace = "Operator '{0}' should not be preceded by whitespace.";
+        private const string MessageFormatFollowedByWhitespace = "Operator '{0}' should be followed by whitespace.";
+        private const string MessageFormatNotFollowedByWhitespace = "Operator '{0}' should not be followed by whitespace.";
+        private const string MessageFormatNotAtEndOfLine = "Operator '{0}' should not appear at the end of a line.";
         private const string Description = "The spacing around an operator symbol is incorrect, within a C# code file.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1003.md";
 
@@ -118,10 +118,6 @@ namespace StyleCop.Analyzers.SpacingRules
                 SyntaxKind.ModuloAssignmentExpression,
                 SyntaxKind.SimpleAssignmentExpression);
 
-        private static readonly ImmutableArray<SyntaxKind> LambdaExpressionKinds =
-            ImmutableArray.Create(SyntaxKind.ParenthesizedLambdaExpression, SyntaxKind.SimpleLambdaExpression);
-
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> ConstructorDeclarationAction = HandleConstructorDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> ConditionalExpressionAction = HandleConditionalExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> TypeParameterConstraintClauseAction = HandleTypeParameterConstraintClause;
@@ -132,11 +128,7 @@ namespace StyleCop.Analyzers.SpacingRules
         private static readonly Action<SyntaxNodeAnalysisContext> CastExpressionAction = HandleCastExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> EqualsValueClauseAction = HandleEqualsValueClause;
         private static readonly Action<SyntaxNodeAnalysisContext> LambdaExpressionAction = HandleLambdaExpression;
-        private static readonly Action<SyntaxNodeAnalysisContext> PropertyDeclarationAction = HandlePropertyDeclaration;
-        private static readonly Action<SyntaxNodeAnalysisContext> MethodDeclarationAction = HandleMethodDeclaration;
-        private static readonly Action<SyntaxNodeAnalysisContext> OperatorDeclarationAction = HandleOperatorDeclaration;
-        private static readonly Action<SyntaxNodeAnalysisContext> ConversionOperatorDeclarationAction = HandleConversionOperatorDeclaration;
-        private static readonly Action<SyntaxNodeAnalysisContext> IndexerDeclarationAction = HandleIndexerDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> ArrowExpressionClauseAction = HandleArrowExpressionClause;
 
         /// <summary>
         /// Gets the descriptor for prefix unary expression that may not be followed by a comment.
@@ -148,7 +140,7 @@ namespace StyleCop.Analyzers.SpacingRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatNotFollowedByComment, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         /// <summary>
-        /// Gets the descriptor indicating that an operator must be preceded by whitespace.
+        /// Gets the descriptor indicating that an operator should be preceded by whitespace.
         /// </summary>
         /// <value>
         /// A diagnostic descriptor.
@@ -157,7 +149,7 @@ namespace StyleCop.Analyzers.SpacingRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatPrecededByWhitespace, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         /// <summary>
-        /// Gets the descriptor indicating that an operator must be preceded by whitespace.
+        /// Gets the descriptor indicating that an operator should be preceded by whitespace.
         /// </summary>
         /// <value>
         /// A diagnostic descriptor.
@@ -166,7 +158,7 @@ namespace StyleCop.Analyzers.SpacingRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatNotPrecededByWhitespace, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         /// <summary>
-        /// Gets the descriptor indicating that an operator must be followed by whitespace.
+        /// Gets the descriptor indicating that an operator should be followed by whitespace.
         /// </summary>
         /// <value>
         /// A diagnostic descriptor.
@@ -175,7 +167,7 @@ namespace StyleCop.Analyzers.SpacingRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatFollowedByWhitespace, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         /// <summary>
-        /// Gets the descriptor indicating that an operator must be preceded by whitespace.
+        /// Gets the descriptor indicating that an operator should be preceded by whitespace.
         /// </summary>
         /// <value>
         /// A diagnostic descriptor.
@@ -184,7 +176,7 @@ namespace StyleCop.Analyzers.SpacingRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatNotFollowedByWhitespace, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         /// <summary>
-        /// Gets the descriptor indicating that an operator must be appear at the end of a text line.
+        /// Gets the descriptor indicating that an operator should be appear at the end of a text line.
         /// </summary>
         /// <value>
         /// A diagnostic descriptor.
@@ -199,26 +191,20 @@ namespace StyleCop.Analyzers.SpacingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(ConstructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(ConditionalExpressionAction, SyntaxKind.ConditionalExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(TypeParameterConstraintClauseAction, SyntaxKind.TypeParameterConstraintClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(BinaryExpressionAction, BinaryExpressionKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(PrefixUnaryExpressionAction, PrefixUnaryExpressionKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(PostfixUnaryExpressionAction, PostfixUnaryExpressionKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(AssignmentExpressionAction, AssignmentExpressionKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(CastExpressionAction, SyntaxKind.CastExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(EqualsValueClauseAction, SyntaxKind.EqualsValueClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(LambdaExpressionAction, LambdaExpressionKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(PropertyDeclarationAction, SyntaxKind.PropertyDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(IndexerDeclarationAction, SyntaxKind.IndexerDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(OperatorDeclarationAction, SyntaxKind.OperatorDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(ConversionOperatorDeclarationAction, SyntaxKind.ConversionOperatorDeclaration);
+            context.RegisterSyntaxNodeAction(ConstructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeAction(ConditionalExpressionAction, SyntaxKind.ConditionalExpression);
+            context.RegisterSyntaxNodeAction(TypeParameterConstraintClauseAction, SyntaxKind.TypeParameterConstraintClause);
+            context.RegisterSyntaxNodeAction(BinaryExpressionAction, BinaryExpressionKinds);
+            context.RegisterSyntaxNodeAction(PrefixUnaryExpressionAction, PrefixUnaryExpressionKinds);
+            context.RegisterSyntaxNodeAction(PostfixUnaryExpressionAction, PostfixUnaryExpressionKinds);
+            context.RegisterSyntaxNodeAction(AssignmentExpressionAction, AssignmentExpressionKinds);
+            context.RegisterSyntaxNodeAction(CastExpressionAction, SyntaxKind.CastExpression);
+            context.RegisterSyntaxNodeAction(EqualsValueClauseAction, SyntaxKind.EqualsValueClause);
+            context.RegisterSyntaxNodeAction(LambdaExpressionAction, SyntaxKinds.LambdaExpression);
+            context.RegisterSyntaxNodeAction(ArrowExpressionClauseAction, SyntaxKind.ArrowExpressionClause);
         }
 
         private static void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
@@ -306,11 +292,30 @@ namespace StyleCop.Analyzers.SpacingRules
             var unaryExpression = (PostfixUnaryExpressionSyntax)context.Node;
             var followingToken = unaryExpression.OperatorToken.GetNextToken();
 
-            var mustHaveTrailingWhitespace = !followingToken.IsKind(SyntaxKind.CloseParenToken)
-                && !followingToken.IsKind(SyntaxKind.CloseBracketToken)
-                && !followingToken.IsKind(SyntaxKind.SemicolonToken)
-                && !followingToken.IsKind(SyntaxKind.CommaToken)
-                && !(followingToken.IsKind(SyntaxKind.CloseBraceToken) && (followingToken.Parent is InterpolationSyntax));
+            bool mustHaveTrailingWhitespace;
+            switch (followingToken.Kind())
+            {
+            case SyntaxKind.CloseParenToken:
+            case SyntaxKind.CloseBracketToken:
+            case SyntaxKind.SemicolonToken:
+            case SyntaxKind.CommaToken:
+            case SyntaxKind.DotToken:
+            case SyntaxKind.MinusGreaterThanToken:
+                mustHaveTrailingWhitespace = false;
+                break;
+
+            case SyntaxKind.QuestionToken:
+                mustHaveTrailingWhitespace = !(followingToken.Parent is ConditionalAccessExpressionSyntax);
+                break;
+
+            case SyntaxKind.CloseBraceToken:
+                mustHaveTrailingWhitespace = !(followingToken.Parent is InterpolationSyntax);
+                break;
+
+            default:
+                mustHaveTrailingWhitespace = true;
+                break;
+            }
 
             // If the next token is a close brace token we are in an anonymous object creation or an initialization.
             // Then we allow a new line
@@ -356,42 +361,10 @@ namespace StyleCop.Analyzers.SpacingRules
             CheckToken(context, lambdaExpression.ArrowToken, true, true, true);
         }
 
-        private static void HandlePropertyDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleArrowExpressionClause(SyntaxNodeAnalysisContext context)
         {
-            var propertyDeclaration = (PropertyDeclarationSyntax)context.Node;
-            HandleArrowExpressionClause(context, propertyDeclaration.ExpressionBody);
-        }
-
-        private static void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            var indexerDeclaration = (IndexerDeclarationSyntax)context.Node;
-            HandleArrowExpressionClause(context, indexerDeclaration.ExpressionBody);
-        }
-
-        private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            var methodDeclaration = (MethodDeclarationSyntax)context.Node;
-            HandleArrowExpressionClause(context, methodDeclaration.ExpressionBody);
-        }
-
-        private static void HandleOperatorDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            var operatorDeclaration = (OperatorDeclarationSyntax)context.Node;
-            HandleArrowExpressionClause(context, operatorDeclaration.ExpressionBody);
-        }
-
-        private static void HandleConversionOperatorDeclaration(SyntaxNodeAnalysisContext context)
-        {
-            var conversionOperatorDeclaration = (ConversionOperatorDeclarationSyntax)context.Node;
-            HandleArrowExpressionClause(context, conversionOperatorDeclaration.ExpressionBody);
-        }
-
-        private static void HandleArrowExpressionClause(SyntaxNodeAnalysisContext context, ArrowExpressionClauseSyntax arrowExpressionClause)
-        {
-            if (arrowExpressionClause != null)
-            {
-                CheckToken(context, arrowExpressionClause.ArrowToken, true, true, true);
-            }
+            ArrowExpressionClauseSyntax arrowExpressionClause = (ArrowExpressionClauseSyntax)context.Node;
+            CheckToken(context, arrowExpressionClause.ArrowToken, true, true, true);
         }
 
         private static void CheckToken(SyntaxNodeAnalysisContext context, SyntaxToken token, bool withLeadingWhitespace, bool allowAtEndOfLine, bool withTrailingWhitespace, string tokenText = null)

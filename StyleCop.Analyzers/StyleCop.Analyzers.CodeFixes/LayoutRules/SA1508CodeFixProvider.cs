@@ -9,11 +9,11 @@ namespace StyleCop.Analyzers.LayoutRules
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1508ClosingBracesMustNotBePrecededByBlankLine"/>.
@@ -88,7 +88,7 @@ namespace StyleCop.Analyzers.LayoutRules
             var replaceMap = new Dictionary<SyntaxToken, SyntaxToken>()
             {
                 [previousToken] = previousToken.WithTrailingTrivia(triviaList.Take(lastEndOfLineIndex + 1)),
-                [closeBraceToken] = closeBraceToken.WithLeadingTrivia(triviaList.Skip(firstLeadingWhitespace))
+                [closeBraceToken] = closeBraceToken.WithLeadingTrivia(triviaList.Skip(firstLeadingWhitespace)),
             };
 
             var newSyntaxRoot = syntaxRoot.ReplaceTokens(replaceMap.Keys, (t1, t2) => replaceMap[t1]);

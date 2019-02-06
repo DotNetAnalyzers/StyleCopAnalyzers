@@ -11,6 +11,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// The code uses one of the basic C# types, but does not use the built-in alias for the type.
@@ -142,13 +143,16 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+
             context.RegisterCompilationStartAction(CompilationStartAction);
         }
 
         private static void HandleCompilationStart(CompilationStartAnalysisContext context)
         {
             Analyzer analyzer = new Analyzer(context.Compilation.GetOrCreateUsingAliasCache());
-            context.RegisterSyntaxNodeActionHonorExclusions(analyzer.HandleIdentifierNameSyntax, SyntaxKind.IdentifierName);
+            context.RegisterSyntaxNodeAction(analyzer.HandleIdentifierNameSyntax, SyntaxKind.IdentifierName);
         }
 
         private sealed class Analyzer
@@ -160,7 +164,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 this.usingAliasCache = usingAliasCache;
             }
 
-            public void HandleIdentifierNameSyntax(SyntaxNodeAnalysisContext context)
+            public void HandleIdentifierNameSyntax(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
             {
                 IdentifierNameSyntax identifierNameSyntax = (IdentifierNameSyntax)context.Node;
                 if (identifierNameSyntax.IsVar)
@@ -204,7 +208,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 // Most source files will not have any using alias directives. Then we don't have to use semantics
                 // if the identifier name doesn't match the name of a special type
-                if (!identifierNameSyntax.SyntaxTree.ContainsUsingAlias(this.usingAliasCache))
+                if (settings.ReadabilityRules.AllowBuiltInTypeAliases
+                    || !identifierNameSyntax.SyntaxTree.ContainsUsingAlias(this.usingAliasCache))
                 {
                     switch (identifierNameSyntax.Identifier.ValueText)
                     {
@@ -231,6 +236,15 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
 
                 SemanticModel semanticModel = context.SemanticModel;
+
+                // We go straight to the symbol here. We don't need to check alias information because aliases will fall
+                // into one of two categories:
+                //
+                // 1. The alias to a built-in type matches the name of a built-in type (e.g. using Int32 = Int32;). In
+                //    this case, a diagnostic is reported even if allowBuiltInTypeAliases=true.
+                // 2. The alias to a built-in type is a different name. In this case, if allowBuiltInTypeAliases is true
+                //    then the above code would have already returned due to the renamed symbol not being in the set of
+                //    strings checked by the analyzer above.
                 INamedTypeSymbol symbol = semanticModel.GetSymbolInfo(identifierNameSyntax, context.CancellationToken).Symbol as INamedTypeSymbol;
 
                 switch (symbol?.SpecialType)
@@ -292,10 +306,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     return true;
                 }
 
-                MemberAccessExpressionSyntax simpleMemberAccess = identifierNameSyntax.Parent as MemberAccessExpressionSyntax;
-
                 // This covers the case nameof(System.Int32)
-                if (simpleMemberAccess != null)
+                if (identifierNameSyntax.Parent is MemberAccessExpressionSyntax simpleMemberAccess)
                 {
                     // This final check ensures that we don't consider nameof(System.Int32.ToString) the same as
                     // nameof(System.Int32)

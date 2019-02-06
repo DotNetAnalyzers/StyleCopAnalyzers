@@ -3,16 +3,16 @@
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using StyleCop.Analyzers.ReadabilityRules;
+    using Microsoft.CodeAnalysis.Testing;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.ReadabilityRules.SA1120CommentsMustContainText,
+        StyleCop.Analyzers.ReadabilityRules.SA1120CodeFixProvider>;
 
-    public class SA1120UnitTests : CodeFixVerifier
+    public class SA1120UnitTests
     {
         [Fact]
         public async Task TestViolationWithSingleLineCommentAsync()
@@ -26,8 +26,7 @@ class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 9);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(6, 9);
 
             var expectedFixedCode = @"
 class Foo
@@ -36,7 +35,7 @@ class Foo
     {
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, expectedFixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, expectedFixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -51,8 +50,7 @@ class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 40);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(6, 40);
 
             var expectedFixedCode = @"
 class Foo
@@ -62,7 +60,7 @@ class Foo
         System.Console.WriteLine(""A"");
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, expectedFixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, expectedFixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -77,8 +75,7 @@ class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 9);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(6, 9);
 
             var expectedFixedCode = @"
 class Foo
@@ -87,7 +84,7 @@ class Foo
     {
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, expectedFixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, expectedFixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -104,8 +101,7 @@ class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 9);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(6, 9);
 
             var expectedFixedCode = @"
 class Foo
@@ -114,7 +110,7 @@ class Foo
     {
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, expectedFixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, expectedFixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -129,7 +125,7 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -145,8 +141,7 @@ class Foo
         // Bar
     }
 }";
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 9);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(6, 9);
 
             var expectedFixedCode = @"
 class Foo
@@ -157,7 +152,7 @@ class Foo
         // Bar
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, expectedFixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, expectedFixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -174,8 +169,7 @@ class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 9);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(8, 9);
 
             var expectedFixedCode = @"
 class Foo
@@ -186,7 +180,7 @@ class Foo
         // Bar
     }
 }";
-            await this.VerifyCSharpFixAsync(testCode, expectedFixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, expectedFixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -203,9 +197,8 @@ class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 9);
-            DiagnosticResult expected2 = this.CSharpDiagnostic().WithLocation(8, 9);
-            await this.VerifyCSharpDiagnosticAsync(testCode, new[] { expected, expected2 }, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(6, 9);
+            DiagnosticResult expected2 = Diagnostic().WithLocation(8, 9);
 
             var expectedFixedCode = @"
 class Foo
@@ -216,7 +209,7 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, expectedFixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, new[] { expected, expected2 }, expectedFixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -232,8 +225,7 @@ class Foo
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 9);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(7, 9);
 
             var expectedFixedCode = @"
 using System;
@@ -245,7 +237,7 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpFixAsync(testCode, expectedFixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, expectedFixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -263,7 +255,7 @@ class Foo
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -301,13 +293,11 @@ class TestClass
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(8, 9),
-                this.CSharpDiagnostic().WithLocation(11, 9)
+                Diagnostic().WithLocation(8, 9),
+                Diagnostic().WithLocation(11, 9),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -345,21 +335,19 @@ public class SomeException : Exception
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(4, 5),
-                this.CSharpDiagnostic().WithLocation(9, 5)
+                Diagnostic().WithLocation(4, 5),
+                Diagnostic().WithLocation(9, 5),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Verifies that an empty comment at the start of a source file will be handled correctly.
-        /// This is a regression test for #1708
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1708, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1708")]
         public async Task VerifyThatEmptyCommentAtFileStartWillBeHandledProperlyAsync()
         {
             var testCode = @"//
@@ -373,11 +361,9 @@ public class TestClass
 }
 ";
 
-            var expected = this.CSharpDiagnostic().WithLocation(1, 1);
+            var expected = Diagnostic().WithLocation(1, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -397,21 +383,35 @@ public class TestClass
 }
 ";
 
-            var expected = this.CSharpDiagnostic().WithLocation(4, 1);
+            var expected = Diagnostic().WithLocation(4, 1);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        /// <summary>
+        /// Verifies that an unclosed multi-line comment at the end of a source file will be handled correctly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2056, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2056")]
+        public async Task VerifyThatUnclosedCommentAtFileEndWillBeHandledProperlyAsync()
         {
-            yield return new SA1120CommentsMustContainText();
-        }
+            var testCode = @"public class TestClass
+{
+}
+[|{|CS1035:|}/*|]";
 
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new SA1120CodeFixProvider();
+            var fixedTestCode = @"public class TestClass
+{
+}
+";
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = fixedTestCode,
+                FixedState = { MarkupHandling = MarkupMode.Ignore },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

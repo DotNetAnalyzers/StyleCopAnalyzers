@@ -6,11 +6,11 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Helpers;
 
     internal sealed class SA1407SA1408FixAllProvider : DocumentBasedFixAllProvider
     {
@@ -42,8 +42,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
         private static SyntaxNode AddParentheses(SyntaxNode originalNode, SyntaxNode rewrittenNode)
         {
-            BinaryExpressionSyntax syntax = rewrittenNode as BinaryExpressionSyntax;
-            if (syntax == null)
+            if (!(rewrittenNode is BinaryExpressionSyntax syntax))
             {
                 return rewrittenNode;
             }

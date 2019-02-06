@@ -10,14 +10,20 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// <summary>
         /// This is the backing field for the <see cref="NewlineAtEndOfFile"/> property.
         /// </summary>
-        private EndOfFileHandling newlineAtEndOfFile;
+        private readonly OptionSetting newlineAtEndOfFile;
+
+        /// <summary>
+        /// This is the backing field for the <see cref="AllowConsecutiveUsings"/> property.
+        /// </summary>
+        private readonly bool allowConsecutiveUsings;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LayoutSettings"/> class.
         /// </summary>
         protected internal LayoutSettings()
         {
-            this.newlineAtEndOfFile = EndOfFileHandling.Allow;
+            this.newlineAtEndOfFile = OptionSetting.Allow;
+            this.allowConsecutiveUsings = true;
         }
 
         /// <summary>
@@ -32,7 +38,11 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                 switch (kvp.Key)
                 {
                 case "newlineAtEndOfFile":
-                    this.newlineAtEndOfFile = kvp.ToEnumValue<EndOfFileHandling>();
+                    this.newlineAtEndOfFile = kvp.ToEnumValue<OptionSetting>();
+                    break;
+
+                case "allowConsecutiveUsings":
+                    this.allowConsecutiveUsings = kvp.ToBooleanValue();
                     break;
 
                 default:
@@ -41,7 +51,10 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             }
         }
 
-        public EndOfFileHandling NewlineAtEndOfFile =>
+        public OptionSetting NewlineAtEndOfFile =>
             this.newlineAtEndOfFile;
+
+        public bool AllowConsecutiveUsings =>
+            this.allowConsecutiveUsings;
     }
 }

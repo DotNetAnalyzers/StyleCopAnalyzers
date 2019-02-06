@@ -22,7 +22,7 @@ namespace StyleCop.Analyzers.LayoutRules
     /// <para>Some types of C# statements can only be used when chained to the bottom of another statement. Examples
     /// include catch and finally statements, which must always be chained to the bottom of a try-statement. Another
     /// example is an else-statement, which must always be chained to the bottom of an if-statement, or to another
-    /// else-statement. These types of chained statements must not be separated by a blank line. For example:</para>
+    /// else-statement. These types of chained statements should not be separated by a blank line. For example:</para>
     ///
     /// <code language="csharp">
     /// try
@@ -44,15 +44,14 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <see cref="SA1510ChainedStatementBlocksMustNotBePrecededByBlankLine"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1510";
-        private const string Title = "Chained statement blocks must not be preceded by blank line";
-        private const string MessageFormat = "'{0}' statement must not be preceded by a blank line";
+        private const string Title = "Chained statement blocks should not be preceded by blank line";
+        private const string MessageFormat = "'{0}' statement should not be preceded by a blank line";
         private const string Description = "Chained C# statements are separated by a blank line.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1510.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> ElseStatementAction = HandleElseStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> CatchClauseAction = HandleCatchClause;
         private static readonly Action<SyntaxNodeAnalysisContext> FinallyClauseAction = HandleFinallyClause;
@@ -64,14 +63,12 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(ElseStatementAction, SyntaxKind.ElseClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(CatchClauseAction, SyntaxKind.CatchClause);
-            context.RegisterSyntaxNodeActionHonorExclusions(FinallyClauseAction, SyntaxKind.FinallyClause);
+            context.RegisterSyntaxNodeAction(ElseStatementAction, SyntaxKind.ElseClause);
+            context.RegisterSyntaxNodeAction(CatchClauseAction, SyntaxKind.CatchClause);
+            context.RegisterSyntaxNodeAction(FinallyClauseAction, SyntaxKind.FinallyClause);
         }
 
         private static void HandleElseStatement(SyntaxNodeAnalysisContext context)

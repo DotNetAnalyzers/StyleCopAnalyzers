@@ -4,20 +4,21 @@
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Analyzers.DocumentationRules;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using TestHelper;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.DocumentationRules;
+    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
 
     /// <summary>
     /// Base class for file header related unit tests.
     /// </summary>
-    public abstract class FileHeaderTestBase : CodeFixVerifier
+    public abstract class FileHeaderTestBase
     {
-        private const string SettingsFileName = "stylecop.json";
-        private const string TestSettings = @"
+        private const string DefaultTestSettings = @"
 {
   ""settings"": {
     ""documentationRules"": {
@@ -42,7 +43,7 @@ namespace Bar
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -62,7 +63,7 @@ namespace Bar
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -84,25 +85,47 @@ namespace Bar
 }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await this.VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override IEnumerable<string> GetDisabledDiagnostics()
-        {
-            yield return FileHeaderAnalyzers.SA1639Descriptor.Id;
-        }
+        protected static DiagnosticResult Diagnostic(DiagnosticDescriptor descriptor)
+            => StyleCopCodeFixVerifier<FileHeaderAnalyzers, FileHeaderCodeFixProvider>.Diagnostic(descriptor);
 
-        /// <inheritdoc/>
-        protected override string GetSettings()
-        {
-            return TestSettings;
-        }
+        protected virtual string GetSettings()
+            => DefaultTestSettings;
 
-        /// <inheritdoc/>
-        protected sealed override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        protected virtual IEnumerable<string> GetDisabledDiagnostics()
+            => new[] { FileHeaderAnalyzers.SA1639Descriptor.Id };
+
+        protected virtual IEnumerable<string> GetExplicitlyEnabledDiagnostics()
+            => Enumerable.Empty<string>();
+
+        protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
+            => this.VerifyCSharpFixAsync(source, new[] { expected }, fixedSource: null, cancellationToken);
+
+        protected Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+            => this.VerifyCSharpFixAsync(source, expected, fixedSource: null, cancellationToken);
+
+        protected Task VerifyCSharpFixAsync(string source, DiagnosticResult expected, string fixedSource, CancellationToken cancellationToken)
+            => this.VerifyCSharpFixAsync(source, new[] { expected }, fixedSource, cancellationToken);
+
+        protected Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
+            => this.VerifyCSharpFixAsync(source, expected, fixedSource, DiagnosticResult.EmptyDiagnosticResults, cancellationToken);
+
+        protected Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, DiagnosticResult[] remainingDiagnostics, CancellationToken cancellationToken)
         {
-            yield return new FileHeaderAnalyzers();
+            var test = new StyleCopCodeFixVerifier<FileHeaderAnalyzers, FileHeaderCodeFixProvider>.CSharpTest
+            {
+                TestCode = source,
+                FixedCode = fixedSource,
+                Settings = this.GetSettings(),
+            };
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            test.RemainingDiagnostics.AddRange(remainingDiagnostics);
+            test.DisabledDiagnostics.AddRange(this.GetDisabledDiagnostics());
+            test.ExplicitlyEnabledDiagnostics.AddRange(this.GetExplicitlyEnabledDiagnostics());
+            return test.RunAsync(cancellationToken);
         }
     }
 }

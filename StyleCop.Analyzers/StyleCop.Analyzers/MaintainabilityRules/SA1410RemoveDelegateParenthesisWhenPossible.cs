@@ -46,7 +46,6 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> AnonymousMethodExpressionAction = HandleAnonymousMethodExpression;
 
         /// <inheritdoc/>
@@ -56,21 +55,15 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(AnonymousMethodExpressionAction, SyntaxKind.AnonymousMethodExpression);
+            context.RegisterSyntaxNodeAction(AnonymousMethodExpressionAction, SyntaxKind.AnonymousMethodExpression);
         }
 
         private static void HandleAnonymousMethodExpression(SyntaxNodeAnalysisContext context)
         {
-            AnonymousMethodExpressionSyntax syntax = context.Node as AnonymousMethodExpressionSyntax;
-            if (syntax == null)
-            {
-                return;
-            }
+            var syntax = (AnonymousMethodExpressionSyntax)context.Node;
 
             // ignore if no parameter list exists
             if (syntax.ParameterList == null)
@@ -84,8 +77,34 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 return;
             }
 
+            // if the delegate is passed as a parameter, verify that there is no ambiguity.
+            if (syntax.Parent.IsKind(SyntaxKind.Argument))
+            {
+                var argumentSyntax = (ArgumentSyntax)syntax.Parent;
+                var argumentListSyntax = (ArgumentListSyntax)argumentSyntax.Parent;
+
+                switch (argumentListSyntax.Parent.Kind())
+                {
+                case SyntaxKind.ObjectCreationExpression:
+                case SyntaxKind.InvocationExpression:
+                    if (HasAmbiguousOverload(context, syntax, argumentListSyntax.Parent))
+                    {
+                        return;
+                    }
+
+                    break;
+                }
+            }
+
             // Remove delegate parenthesis when possible
             context.ReportDiagnostic(Diagnostic.Create(Descriptor, syntax.ParameterList.GetLocation()));
+        }
+
+        private static bool HasAmbiguousOverload(SyntaxNodeAnalysisContext context, AnonymousMethodExpressionSyntax anonymousMethodExpression, SyntaxNode methodCallSyntax)
+        {
+            var nodeForSpeculation = methodCallSyntax.ReplaceNode(anonymousMethodExpression, anonymousMethodExpression.WithParameterList(null));
+            var speculativeSymbolInfo = context.SemanticModel.GetSpeculativeSymbolInfo(methodCallSyntax.SpanStart, nodeForSpeculation, SpeculativeBindingOption.BindAsExpression);
+            return speculativeSymbolInfo.Symbol == null;
         }
     }
 }

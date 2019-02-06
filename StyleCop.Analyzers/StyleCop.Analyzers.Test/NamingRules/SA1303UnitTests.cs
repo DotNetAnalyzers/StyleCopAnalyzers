@@ -3,16 +3,16 @@
 
 namespace StyleCop.Analyzers.Test.NamingRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using StyleCop.Analyzers.NamingRules;
+    using Microsoft.CodeAnalysis.Testing;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.NamingRules.SA1303ConstFieldNamesMustBeginWithUpperCaseLetter,
+        StyleCop.Analyzers.NamingRules.RenameToUpperCaseCodeFixProvider>;
 
-    public class SA1303UnitTests : CodeFixVerifier
+    public class SA1303UnitTests
     {
         [Fact]
         public async Task TestConstFieldStartingWithLowerCaseAsync()
@@ -26,11 +26,8 @@ namespace StyleCop.Analyzers.Test.NamingRules
     public const string Bar = ""baz"";
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 25);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(3, 25);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -47,11 +44,8 @@ namespace StyleCop.Analyzers.Test.NamingRules
     public const int Bar = 0;
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 25);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(3, 25);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -62,7 +56,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     public const string bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -73,7 +67,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     public const string bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -87,7 +81,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -104,7 +98,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -119,11 +113,8 @@ namespace StyleCop.Analyzers.Test.NamingRules
     public const string Bar = ""baz"";
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(3, 25);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(3, 25);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -158,11 +149,8 @@ namespace Test
    }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(10, 36);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(10, 36);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -173,7 +161,7 @@ namespace Test
     public const string Bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -185,7 +173,7 @@ namespace Test
 }";
 
             // Fields starting with an underscore are reported as SA1309
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -196,13 +184,14 @@ namespace Test
     public string bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1936.
         /// </summary>
-        /// <remarks>SA1303 should not be reported on <c>enum</c> declarations. SA1300 will be reported in this case.</remarks>
+        /// <remarks><para>SA1303 should not be reported on <c>enum</c> declarations. SA1300 will be reported in this
+        /// case.</para></remarks>
         /// <returns>A <see cref="Task"/> that represents the asynchronous operation.</returns>
         [Fact]
         public async Task TestEnumDeclarationsDoNotReportAsync()
@@ -213,17 +202,7 @@ public enum SpecialFile
     iTunesMetadata
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1303ConstFieldNamesMustBeginWithUpperCaseLetter();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new RenameToUpperCaseCodeFixProvider();
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

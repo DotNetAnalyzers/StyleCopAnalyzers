@@ -13,10 +13,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     /// <remarks>
     /// <para>C# syntax provides a mechanism for inserting documentation for classes and elements directly into the
-    /// code, through the use of XML documentation headers. For an introduction to these headers and a description of
-    /// the header syntax, see the following article:
-    /// <see href="http://msdn.microsoft.com/en-us/magazine/cc302121.aspx">XML Comments Let You Build Documentation
-    /// Directly From Your Visual Studio .NET Source Files</see>.</para>
+    /// code, through the use of XML documentation headers.</para>
     ///
     /// <para>A violation of this rule occurs when the documentation XML is badly formed and cannot be parsed. This can
     /// occur if the XML contains invalid characters, or if an XML node is missing a closing tag, for example.</para>
@@ -29,7 +26,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// The ID for diagnostics produced by the <see cref="SA1603DocumentationMustContainValidXml"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1603";
-        private const string Title = "Documentation must contain valid XML";
+        private const string Title = "Documentation should contain valid XML";
         private const string MessageFormat = "The documentation header is composed of invalid XML: {0}";
         private const string Description = "The XML within a C# element’s document header is badly formed.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1603.md";

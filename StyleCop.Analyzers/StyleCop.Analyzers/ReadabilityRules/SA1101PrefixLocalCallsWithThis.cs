@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// A call to an instance member of the local class or a base class is not prefixed with ‘this.’, within a C# code
@@ -45,10 +46,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly ImmutableArray<SyntaxKind> SimpleNameKinds =
-            ImmutableArray.Create(SyntaxKind.IdentifierName, SyntaxKind.GenericName);
-
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> MemberAccessExpressionAction = HandleMemberAccessExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> SimpleNameAction = HandleSimpleName;
 
@@ -59,13 +56,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(MemberAccessExpressionAction, SyntaxKind.SimpleMemberAccessExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(SimpleNameAction, SimpleNameKinds);
+            context.RegisterSyntaxNodeAction(MemberAccessExpressionAction, SyntaxKind.SimpleMemberAccessExpression);
+            context.RegisterSyntaxNodeAction(SimpleNameAction, SyntaxKinds.SimpleName);
         }
 
         /// <summary>
@@ -88,6 +83,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 // this is handled separately
                 return;
 
+            case SyntaxKind.MemberBindingExpression:
+            case SyntaxKind.NameColon:
             case SyntaxKind.PointerMemberAccessExpression:
                 // this doesn't need to be handled
                 return;
@@ -127,8 +124,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 break;
 
-            case SyntaxKind.MemberBindingExpression:
-                // this doesn't need to be handled
+            case SyntaxKind.Argument when IsPartOfConstructorInitializer((SimpleNameSyntax)context.Node):
+                // constructor invocations cannot contain this.
                 return;
 
             default:
@@ -184,23 +181,34 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     return;
                 }
 
-                IMethodSymbol methodSymbol = symbol as IMethodSymbol;
-                if (methodSymbol != null && methodSymbol.MethodKind == MethodKind.Constructor)
+                if (symbol is IMethodSymbol methodSymbol
+                    && methodSymbol.MethodKind == MethodKind.Constructor)
                 {
                     return;
                 }
 
-                // This is a workaround for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1501 and can
-                // be removed when the underlying bug in roslyn is resolved
+                // This is a workaround for:
+                // - https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1501
+                // - https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2093
+                // and can be removed when the underlying bug in roslyn is resolved
                 if (nameExpression.Parent is MemberAccessExpressionSyntax)
                 {
-                    var parentSymbol = context.SemanticModel.GetSymbolInfo(nameExpression.Parent, context.CancellationToken).Symbol as IFieldSymbol;
+                    var memberAccessSymbol = context.SemanticModel.GetSymbolInfo(nameExpression.Parent, context.CancellationToken).Symbol;
 
-                    if (parentSymbol != null
-                        && parentSymbol.IsStatic
-                        && parentSymbol.ContainingType.Name == symbol.Name)
+                    switch (memberAccessSymbol?.Kind)
                     {
-                        return;
+                    case null:
+                        break;
+
+                    case SymbolKind.Field:
+                    case SymbolKind.Method:
+                    case SymbolKind.Property:
+                        if (memberAccessSymbol.IsStatic && (memberAccessSymbol.ContainingType.Name == symbol.Name))
+                        {
+                            return;
+                        }
+
+                        break;
                     }
                 }
 
@@ -229,20 +237,24 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 case SyntaxKind.EventFieldDeclaration:
                     return false;
 
+                case SyntaxKind.EventDeclaration:
+                case SyntaxKind.IndexerDeclaration:
+                    var basePropertySyntax = (BasePropertyDeclarationSyntax)node;
+                    return !basePropertySyntax.Modifiers.Any(SyntaxKind.StaticKeyword);
+
+                case SyntaxKind.PropertyDeclaration:
+                    var propertySyntax = (PropertyDeclarationSyntax)node;
+                    return !propertySyntax.Modifiers.Any(SyntaxKind.StaticKeyword)
+                        && propertySyntax.Initializer == null;
+
                 case SyntaxKind.MultiLineDocumentationCommentTrivia:
                 case SyntaxKind.SingleLineDocumentationCommentTrivia:
                     return false;
 
-                case SyntaxKind.EventDeclaration:
-                case SyntaxKind.PropertyDeclaration:
-                case SyntaxKind.IndexerDeclaration:
-                    BasePropertyDeclarationSyntax basePropertySyntax = (BasePropertyDeclarationSyntax)node;
-                    return !basePropertySyntax.Modifiers.Any(SyntaxKind.StaticKeyword);
-
                 case SyntaxKind.ConstructorDeclaration:
                 case SyntaxKind.DestructorDeclaration:
                 case SyntaxKind.MethodDeclaration:
-                    BaseMethodDeclarationSyntax baseMethodSyntax = (BaseMethodDeclarationSyntax)node;
+                    var baseMethodSyntax = (BaseMethodDeclarationSyntax)node;
                     return !baseMethodSyntax.Modifiers.Any(SyntaxKind.StaticKeyword);
 
                 case SyntaxKind.Attribute:
@@ -250,6 +262,21 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 default:
                     continue;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool IsPartOfConstructorInitializer(SyntaxNode node)
+        {
+            for (; node != null; node = node.Parent)
+            {
+                switch (node.Kind())
+                {
+                case SyntaxKind.ThisConstructorInitializer:
+                case SyntaxKind.BaseConstructorInitializer:
+                    return true;
                 }
             }
 

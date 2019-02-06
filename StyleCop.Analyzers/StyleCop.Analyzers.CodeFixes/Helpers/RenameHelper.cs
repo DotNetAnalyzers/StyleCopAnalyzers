@@ -12,6 +12,7 @@ namespace StyleCop.Analyzers.Helpers
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Rename;
+    using StyleCop.Analyzers.Lightup;
 
     internal static class RenameHelper
     {
@@ -52,8 +53,20 @@ namespace StyleCop.Analyzers.Helpers
 
             var containingSymbol = symbol.ContainingSymbol;
 
-            var containingNamespaceOrTypeSymbol = containingSymbol as INamespaceOrTypeSymbol;
-            if (containingNamespaceOrTypeSymbol != null)
+            if (symbol.Kind == SymbolKind.TypeParameter)
+            {
+                // If the symbol is a type parameter, the name can't be the same as any type parameters of the containing type.
+                if (containingSymbol?.ContainingSymbol is INamedTypeSymbol parentSymbol
+                    && parentSymbol.TypeParameters.Any(t => t.Name == name))
+                {
+                    return false;
+                }
+
+                // Move up one level for the next validation step.
+                containingSymbol = containingSymbol?.ContainingSymbol;
+            }
+
+            if (containingSymbol is INamespaceOrTypeSymbol containingNamespaceOrTypeSymbol)
             {
                 if (containingNamespaceOrTypeSymbol.Kind == SymbolKind.Namespace)
                 {
@@ -144,6 +157,8 @@ namespace StyleCop.Analyzers.Helpers
                 case SyntaxKind.UsingDirective:
                 case SyntaxKind.LabeledStatement:
                 case SyntaxKind.AnonymousObjectMemberDeclarator:
+                case SyntaxKindEx.LocalFunctionStatement:
+                case SyntaxKindEx.SingleVariableDesignation:
                     return parent;
 
                 default:
@@ -175,6 +190,25 @@ namespace StyleCop.Analyzers.Helpers
             {
                 get;
                 private set;
+            }
+
+            public override void Visit(SyntaxNode node)
+            {
+                switch (node.Kind())
+                {
+                case SyntaxKindEx.LocalFunctionStatement:
+                    this.Found |= ((LocalFunctionStatementSyntaxWrapper)node).Identifier.ValueText == this.name;
+                    break;
+
+                case SyntaxKindEx.SingleVariableDesignation:
+                    this.Found |= ((SingleVariableDesignationSyntaxWrapper)node).Identifier.ValueText == this.name;
+                    break;
+
+                default:
+                    break;
+                }
+
+                base.Visit(node);
             }
 
             public override void VisitVariableDeclarator(VariableDeclaratorSyntax node)

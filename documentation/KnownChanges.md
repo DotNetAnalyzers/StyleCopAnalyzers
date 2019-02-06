@@ -19,28 +19,29 @@ the same code are marked with this symbol.
 
 ## Disabled Rules
 
-Several rules present StyleCop Classic have been intentionally omitted from StyleCop Analyzers. The following table
+Several rules present in StyleCop Classic have been intentionally omitted from StyleCop Analyzers. The following table
 lists each of these issues, along with a link to the issue where the decision was made to omit the rule.
 
 | ID | Title | Issue |
 | --- | --- | --- |
-| SA1109 | Block statements must not contain embedded regions | [#998](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/998) |
+| SA1109 | Block statements should not contain embedded regions | [#998](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/998) |
 | SA1126 | Prefix calls correctly | [#59](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/59) |
-| SA1215 | Instance readonly elements must appear before instance non-readonly elements | [#1812](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/pull/1812) |
+| SA1215 | Instance readonly elements should appear before instance non-readonly elements | [#1812](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/pull/1812) |
 | SA1409 | Remove unnecessary code | [#1058](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1058) |
-| SA1603 | Documentation must contain valid XML | [#1291](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1291) |
-| SA1628 | Documentation text must begin with a capital letter | [#1057](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1057) |
-| SA1630 | Documentation text must contain whitespace | [#1057](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1057) |
-| SA1631 | Documentation must meet character percentage | [#1057](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1057) |
-| SA1632 | Documentation text must meet minimum character length | [#1057](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1057) |
+| SA1603 | Documentation should contain valid XML | [#1291](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1291) |
+| SA1628 | Documentation text should begin with a capital letter | [#1057](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1057) |
+| SA1630 | Documentation text should contain whitespace | [#1057](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1057) |
+| SA1631 | Documentation should meet character percentage | [#1057](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1057) |
+| SA1632 | Documentation text should meet minimum character length | [#1057](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1057) |
+| SA1644 | DocumentationHeadersMustNotContainBlankLines | [#164](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/164) |
 | SA1645 | Included documentation file does not exist | [#165](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/165) |
 | SA1646 | Included documentation XPath does not exist | [#166](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/166) |
 | SA1647 | Include node does not contain valid file and path | [#167](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/167) |
-| SA1650 | Element documentation must be spelled correctly | [#1057](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1057) |
+| SA1650 | Element documentation should be spelled correctly | [#1057](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1057) |
 
 ## Spacing Rules
 
-### SA1000: Keywords must be spaced correctly
+### SA1000: Keywords should be spaced correctly
 
 The following changes were made to SA1000:
 
@@ -154,8 +155,27 @@ var a = new[] { 1, 2, 3 }.ToArray();
 ### SA1208
 
 StyleCop Analyzers only considers using directives to be "System" using directives if they are not alias-qualified,
-while StyleCop Classic ignored the alias. For example, `using global::System;` would be not be considered a System using
+while StyleCop Classic ignored the alias. For example, `using global::System;` would not be considered a System using
 directive by StyleCop Analyzers, but it would be considered a System using directive by StyleCop Classic.
+
+### SA1210
+
+StyleCop Analyzers considers alias-qualifiers when sorting using directives, in order to match the default behavior of
+Visual Studio 2015. StyleCop Classic ignores alias-qualifiers when sorting using directives.
+
+Example showing sorting order for StyleCop Analyzers:
+```csharp
+using Beer;
+using global::Wine;
+using Tea;
+```
+
+Example showing sorting order for StyleCop Classic:
+```csharp
+using Beer;
+using Tea;
+using global::Wine;
+```
 
 ### SA1214
 
@@ -169,13 +189,20 @@ involving members of a type.
 
 ### SA1300
 
-StyleCop Analyzers adds enum members to the list of elements which must start with an upper-case letter, and reports
+StyleCop Analyzers adds enum members to the list of elements which should start with an upper-case letter, and reports
 SA1300 for violations. StyleCop Classic did not report any messages for enum members that did not start with an
 upper-case letter.
 
 ### SA1305
 
 This rule is disabled by default in StyleCop Analyzers, but can be enabled by users via a rule set file.
+
+:warning: StyleCop Analyzers does not report SA1305 for parameters in overriding methods and methods which implement an
+interface. StyleCop Classic reported SA1305 for all methods.
+
+### SA1313
+
+StyleCop Analyzers allows the single and double underscore (`_` and `__`) as lambda parameter names.
 
 ## Maintainability Rules
 
@@ -245,6 +272,12 @@ public class ApiStatus
     }
 }
 ```
+
+### SA1648
+
+This rule has been modified to adhere more closely to the use of `<inheritdoc>` with Sandcastle Help File Builder. As a
+result, some code which resulted in SA1648 being reported by StyleCop Classic will no longer report this warning in
+StyleCop Analyzers.
 
 ### SA1649
 

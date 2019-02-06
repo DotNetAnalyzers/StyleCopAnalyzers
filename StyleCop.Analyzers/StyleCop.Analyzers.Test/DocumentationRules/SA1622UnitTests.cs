@@ -6,15 +6,17 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Analyzers.DocumentationRules;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.DocumentationRules;
+    using StyleCop.Analyzers.Test.Verifiers;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.GenericTypeParameterDocumentationAnalyzer>;
 
     /// <summary>
-    /// This class contains unit tests for <see cref="SA1622GenericTypeParameterDocumentationMustHaveText"/>.
+    /// This class contains unit tests for SA1622.
     /// </summary>
-    public class SA1622UnitTests : DiagnosticVerifier
+    public class SA1622UnitTests
     {
         public static IEnumerable<object[]> Members
         {
@@ -53,7 +55,7 @@ public class ClassName
 {
     public ##
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -62,7 +64,7 @@ public class ClassName
         {
             var testCode = @"
 public ##";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -73,7 +75,7 @@ public ##";
 /// Foo
 /// </summary>
 public class Foo { }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -93,7 +95,7 @@ public class ClassName
     /// <typeparam name=""Tb"">Param 2</param>
     public ##
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -107,7 +109,7 @@ public class ClassName
 /// <typeparam name=""Ta"">Param 1</param>
 /// <typeparam name=""Tb"">Param 2</param>
 public ##";
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -123,8 +125,8 @@ public class ClassName
     /// <summary>
     /// Foo
     /// </summary>
-    ///<typeparam name=""foo""></typeparam>
-    ///<typeparam name=""bar"">   
+    ///<typeparam name=""Ta""></typeparam>
+    ///<typeparam name=""Tb"">   
 
     ///</typeparam>
 $$
@@ -132,11 +134,11 @@ $$
 
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(10, 8),
-                this.CSharpDiagnostic().WithLocation(11, 8)
+                Diagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(10, 8),
+                Diagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(11, 8),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -147,19 +149,19 @@ $$
 /// <summary>
 /// Foo
 /// </summary>
-///<typeparam name=""foo""></typeparam>
-///<typeparam name=""bar"">   
+///<typeparam name=""Ta""></typeparam>
+///<typeparam name=""Tb"">   
 
 ///</typeparam>
 public $$";
 
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(5, 4),
-                this.CSharpDiagnostic().WithLocation(6, 4)
+                Diagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(5, 4),
+                Diagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(6, 4),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -175,8 +177,8 @@ public class ClassName
     /// <summary>
     /// Foo
     /// </summary>
-    ///<typeparam name=""foo""/>
-    ///<typeparam name=""bar"">
+    ///<typeparam name=""Ta""/>
+    ///<typeparam name=""Tb"">
     ///<para>
     ///     
     ///</para>
@@ -186,11 +188,11 @@ $$
 
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(10, 8),
-                this.CSharpDiagnostic().WithLocation(11, 8)
+                Diagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(10, 8),
+                Diagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(11, 8),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -201,8 +203,8 @@ $$
 /// <summary>
 /// Foo
 /// </summary>
-///<typeparam name=""foo""/>
-///<typeparam name=""bar"">
+///<typeparam name=""Ta""/>
+///<typeparam name=""Tb"">
 ///<para>
 ///     
 ///</para>
@@ -210,16 +212,159 @@ public $$";
 
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(5, 4),
-                this.CSharpDiagnostic().WithLocation(6, 4)
+                Diagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(5, 4),
+                Diagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(6, 4),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        /// <summary>
+        /// Verifies that a class with valid typeparameter tags in included documentation will not produce diagnostics.
+        /// </summary>
+        /// <param name="typeText">The type specific test text.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [MemberData(nameof(Types))]
+        public async Task TestTypesWithValidTypeparameterInIncludedDocumentationAsync(string typeText)
         {
-            yield return new SA1622GenericTypeParameterDocumentationMustHaveText();
+            var testCode = @"
+/// <include file='TypeWithTypeparamsDoc.xml' path='/Foo/*'/>
+public ##
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", typeText), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a class with empty typeparameter tags in included documentation will produce diagnostics.
+        /// </summary>
+        /// <param name="typeText">The type specific test text.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [MemberData(nameof(Types))]
+        public async Task TestTypesWithEmptyTypeparameterInIncludedDocumentationAsync(string typeText)
+        {
+            var testCode = @"
+/// <include file='TypeWithEmptyTypeparamsDoc.xml' path='/Foo/*'/>
+public ##
+";
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(2, 5),
+                Diagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(2, 5),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", typeText), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a method with valid typeparameter tags in the included documentation will produce no diagnostics.
+        /// </summary>
+        /// <param name="memberText">The member declaration text that will be used.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [MemberData(nameof(Members))]
+        public async Task TestMemberWithValidTypeparameterInIncludedDocumentationAsync(string memberText)
+        {
+            var testCode = @"
+/// <summary>Test class</summary>
+public class TestClass
+{
+    /// <include file='MethodWithTypeparamsDoc.xml' path='/TestClass/Foo/*'/>
+    public ##
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", memberText), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a method with empty typeparameter tags in the included documentation will produce no diagnostics.
+        /// </summary>
+        /// <param name="memberText">The member declaration text that will be used.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [MemberData(nameof(Members))]
+        public async Task TestMemberWithEmptyTypeparameterInIncludedDocumentationAsync(string memberText)
+        {
+            var testCode = @"
+/// <summary>Test class</summary>
+public class TestClass
+{
+    /// <include file='MethodWithEmptyTypeparamsDoc.xml' path='/TestClass/Foo/*'/>
+    public ##
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(5, 9),
+                Diagnostic(GenericTypeParameterDocumentationAnalyzer.SA1622Descriptor).WithLocation(5, 9),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", memberText), expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
+            => VerifyCSharpDiagnosticAsync(source, new[] { expected }, cancellationToken);
+
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        {
+            var test = CreateTest(expected);
+            test.TestCode = source;
+
+            return test.RunAsync(cancellationToken);
+        }
+
+        private static StyleCopDiagnosticVerifier<GenericTypeParameterDocumentationAnalyzer>.CSharpTest CreateTest(DiagnosticResult[] expected)
+        {
+            string contentTypeWithTypeparamDoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<Foo>
+  <summary>Test class</summary>
+  <typeparam name=""Ta"">Param 1</typeparam>
+  <typeparam name=""Tb"">Param 2</typeparam>
+</Foo>
+";
+            string contentTypeWithEmptyTypeparamDoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<Foo>
+  <summary>Test class</summary>
+  <typeparam name=""Ta""></typeparam>
+  <typeparam name=""Tb""/>
+</Foo>
+";
+            string contentMethodWithTypeparamDoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+  <Foo>
+    <summary>Test class</summary>
+    <typeparam name=""Ta"">Param 1</typeparam>
+    <typeparam name=""Tb"">Param 2</typeparam>
+  </Foo>
+</TestClass>
+";
+            string contentMethodWithEmptyTypeparamDoc = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+  <Foo>
+    <summary>Test class</summary>
+    <typeparam name=""Ta""/>
+    <typeparam name=""Tb""></typeparam>
+  </Foo>
+</TestClass>
+";
+
+            var test = new StyleCopDiagnosticVerifier<GenericTypeParameterDocumentationAnalyzer>.CSharpTest
+            {
+                XmlReferences =
+                {
+                    { "TypeWithTypeparamsDoc.xml", contentTypeWithTypeparamDoc },
+                    { "TypeWithEmptyTypeparamsDoc.xml", contentTypeWithEmptyTypeparamDoc },
+                    { "MethodWithTypeparamsDoc.xml", contentMethodWithTypeparamDoc },
+                    { "MethodWithEmptyTypeparamsDoc.xml", contentMethodWithEmptyTypeparamDoc },
+                },
+            };
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            return test;
         }
     }
 }

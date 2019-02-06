@@ -9,12 +9,13 @@ namespace StyleCop.Analyzers.LayoutRules
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1504AllAccessorsMustBeSingleLineOrMultiLine"/>.
@@ -108,7 +109,7 @@ namespace StyleCop.Analyzers.LayoutRules
         private static async Task<Document> GetTransformedDocumentForSingleLineAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var indentationOptions = IndentationOptions.FromDocument(document);
+            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
 
             var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
             var accessorList = GetAccessorList(node);
@@ -116,14 +117,14 @@ namespace StyleCop.Analyzers.LayoutRules
 
             foreach (var accessor in accessorList.Accessors)
             {
-                replacements[accessor] = ReformatAccessorAsSingleLine(indentationOptions, accessor);
+                replacements[accessor] = ReformatAccessorAsSingleLine(settings.Indentation, accessor);
             }
 
             var newSyntaxRoot = syntaxRoot.ReplaceNodes(replacements.Keys, (original, maybeRewritten) => replacements[original]);
             return document.WithSyntaxRoot(newSyntaxRoot.WithoutFormatting());
         }
 
-        private static SyntaxNode ReformatAccessorAsSingleLine(IndentationOptions indentationOptions, AccessorDeclarationSyntax accessor)
+        private static SyntaxNode ReformatAccessorAsSingleLine(IndentationSettings indentationSettings, AccessorDeclarationSyntax accessor)
         {
             var newAccessor = accessor
                 .WithModifiers(ReformatModifiersAsSingleLine(accessor.Modifiers))
@@ -132,8 +133,8 @@ namespace StyleCop.Analyzers.LayoutRules
 
             var accessorList = (AccessorListSyntax)accessor.Parent;
 
-            var indentationSteps = IndentationHelper.GetIndentationSteps(indentationOptions, accessorList.OpenBraceToken);
-            var indentation = IndentationHelper.GenerateWhitespaceTrivia(indentationOptions, indentationSteps + 1);
+            var indentationSteps = IndentationHelper.GetIndentationSteps(indentationSettings, accessorList.OpenBraceToken);
+            var indentation = IndentationHelper.GenerateWhitespaceTrivia(indentationSettings, indentationSteps + 1);
 
             newAccessor = newAccessor.WithLeadingTrivia(newAccessor.GetLeadingTrivia().Insert(0, indentation));
             return newAccessor;
@@ -187,7 +188,7 @@ namespace StyleCop.Analyzers.LayoutRules
         private static async Task<Document> GetTransformedDocumentForMutipleLinesAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var indentationOptions = IndentationOptions.FromDocument(document);
+            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
 
             var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
             var accessorList = GetAccessorList(node);
@@ -195,7 +196,7 @@ namespace StyleCop.Analyzers.LayoutRules
 
             foreach (var accessor in accessorList.Accessors)
             {
-                var reformattedAccessor = ReformatAccessorAsMultipleLines(indentationOptions, accessor);
+                var reformattedAccessor = ReformatAccessorAsMultipleLines(settings.Indentation, accessor);
                 if (accessor != accessorList.Accessors.Last())
                 {
                     // insert an empty line between accessors
@@ -209,12 +210,12 @@ namespace StyleCop.Analyzers.LayoutRules
             return document.WithSyntaxRoot(newSyntaxRoot.WithoutFormatting());
         }
 
-        private static SyntaxNode ReformatAccessorAsMultipleLines(IndentationOptions indentationOptions, AccessorDeclarationSyntax accessor)
+        private static SyntaxNode ReformatAccessorAsMultipleLines(IndentationSettings indentationSettings, AccessorDeclarationSyntax accessor)
         {
             var accessorList = (AccessorListSyntax)accessor.Parent;
-            var indentationSteps = IndentationHelper.GetIndentationSteps(indentationOptions, accessorList.OpenBraceToken) + 1;
-            var indentation = IndentationHelper.GenerateWhitespaceTrivia(indentationOptions, indentationSteps);
-            var indentationStatements = IndentationHelper.GenerateWhitespaceTrivia(indentationOptions, indentationSteps + 1);
+            var indentationSteps = IndentationHelper.GetIndentationSteps(indentationSettings, accessorList.OpenBraceToken) + 1;
+            var indentation = IndentationHelper.GenerateWhitespaceTrivia(indentationSettings, indentationSteps);
+            var indentationStatements = IndentationHelper.GenerateWhitespaceTrivia(indentationSettings, indentationSteps + 1);
 
             var newAccessor = accessor
                 .WithModifiers(ReformatModifiersAsMultipleLines(accessor.Modifiers, indentation))

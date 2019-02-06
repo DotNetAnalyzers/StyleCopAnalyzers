@@ -23,8 +23,7 @@ namespace StyleCop.Analyzers.Settings
     [Shared]
     internal class SettingsFileCodeFixProvider : CodeFixProvider
     {
-        private const string StyleCopSettingsFileName = "stylecop.json";
-        private const string DefaultSettingsFileContent = @"{
+        internal const string DefaultSettingsFileContent = @"{
   // ACTION REQUIRED: This file was automatically added to your project, but it
   // will not take effect until additional steps are taken to enable it. See the
   // following page for additional information:
@@ -64,7 +63,7 @@ namespace StyleCop.Analyzers.Settings
             var workspace = project.Solution.Workspace;
 
             // check if the settings file already exists
-            if (project.AdditionalDocuments.Any(IsStyleCopSettingsDocument))
+            if (project.AdditionalDocuments.Any(document => SettingsHelper.IsStyleCopSettingsFile(document.Name)))
             {
                 return SpecializedTasks.CompletedTask;
             }
@@ -95,11 +94,6 @@ namespace StyleCop.Analyzers.Settings
             return null;
         }
 
-        private static bool IsStyleCopSettingsDocument(TextDocument document)
-        {
-            return string.Equals(document.Name, StyleCopSettingsFileName, StringComparison.OrdinalIgnoreCase);
-        }
-
         private static Task<Solution> GetTransformedSolutionAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var project = document.Project;
@@ -107,7 +101,7 @@ namespace StyleCop.Analyzers.Settings
 
             var newDocumentId = DocumentId.CreateNewId(project.Id);
 
-            var newSolution = solution.AddAdditionalDocument(newDocumentId, StyleCopSettingsFileName, DefaultSettingsFileContent);
+            var newSolution = solution.AddAdditionalDocument(newDocumentId, SettingsHelper.SettingsFileName, DefaultSettingsFileContent);
 
             return Task.FromResult(newSolution);
         }

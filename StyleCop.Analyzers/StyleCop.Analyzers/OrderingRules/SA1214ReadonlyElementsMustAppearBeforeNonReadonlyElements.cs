@@ -34,7 +34,6 @@ namespace StyleCop.Analyzers.OrderingRules
         private static readonly ImmutableArray<SyntaxKind> TypeDeclarationKinds =
             ImmutableArray.Create(SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> TypeDeclarationAction = HandleTypeDeclaration;
 
         /// <inheritdoc/>
@@ -44,12 +43,10 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(TypeDeclarationAction, TypeDeclarationKinds);
+            context.RegisterSyntaxNodeAction(TypeDeclarationAction, TypeDeclarationKinds);
         }
 
         private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
@@ -71,8 +68,7 @@ namespace StyleCop.Analyzers.OrderingRules
             var previousAccessLevel = AccessLevel.NotSpecified;
             foreach (var member in typeDeclaration.Members)
             {
-                FieldDeclarationSyntax field = member as FieldDeclarationSyntax;
-                if (field == null)
+                if (!(member is FieldDeclarationSyntax field))
                 {
                     previousField = null;
                     continue;

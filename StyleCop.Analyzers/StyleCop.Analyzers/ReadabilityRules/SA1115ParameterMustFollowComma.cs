@@ -5,12 +5,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
     using System.Collections.Immutable;
-    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// A parameter within a C# method or indexer call or declaration does not begin on the same line as the previous
@@ -27,7 +27,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     /// {
     /// }
     /// </code>
-    /// <para>The parameter must begin on the same line as the previous comma, or on the next line. For example:</para>
+    /// <para>The parameter should begin on the same line as the previous comma, or on the next line. For example:</para>
     /// <code language="csharp">
     /// public string JoinName(string first, string last)
     /// {
@@ -58,11 +58,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly ImmutableArray<SyntaxKind> BaseMethodDeclarationKinds =
             ImmutableArray.Create(SyntaxKind.ConstructorDeclaration, SyntaxKind.MethodDeclaration, SyntaxKind.OperatorDeclaration);
 
-        private static readonly ImmutableArray<SyntaxKind> ConstructorInitializerKinds =
-            ImmutableArray.Create(SyntaxKind.BaseConstructorInitializer, SyntaxKind.ThisConstructorInitializer);
-
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> BaseMethodDeclarationAction = HandleBaseMethodDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> LocalFunctionStatementAction = HandleLocalFunctionStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> InvocationExpressionAction = HandleInvocationExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> ObjectCreationExpressionAction = HandleObjectCreationExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> IndexerDeclarationAction = HandleIndexerDeclaration;
@@ -84,116 +81,76 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(BaseMethodDeclarationAction, BaseMethodDeclarationKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(InvocationExpressionAction, SyntaxKind.InvocationExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(ObjectCreationExpressionAction, SyntaxKind.ObjectCreationExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(IndexerDeclarationAction, SyntaxKind.IndexerDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(ElementAccessExpressionAction, SyntaxKind.ElementAccessExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(ArrayCreationExpressionAction, SyntaxKind.ArrayCreationExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(AttributeAction, SyntaxKind.Attribute);
-            context.RegisterSyntaxNodeActionHonorExclusions(AttributeListAction, SyntaxKind.AttributeList);
-            context.RegisterSyntaxNodeActionHonorExclusions(AnonymousMethodExpressionAction, SyntaxKind.AnonymousMethodExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(ParenthesizedLambdaExpressionAction, SyntaxKind.ParenthesizedLambdaExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(DelegateDeclarationAction, SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(ConstructorInitializerAction, ConstructorInitializerKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(ElementBindingExpressionAction, SyntaxKind.ElementBindingExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(ImplicitElementAccessAction, SyntaxKind.ImplicitElementAccess);
+            context.RegisterSyntaxNodeAction(BaseMethodDeclarationAction, BaseMethodDeclarationKinds);
+            context.RegisterSyntaxNodeAction(LocalFunctionStatementAction, SyntaxKindEx.LocalFunctionStatement);
+            context.RegisterSyntaxNodeAction(InvocationExpressionAction, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeAction(ObjectCreationExpressionAction, SyntaxKind.ObjectCreationExpression);
+            context.RegisterSyntaxNodeAction(IndexerDeclarationAction, SyntaxKind.IndexerDeclaration);
+            context.RegisterSyntaxNodeAction(ElementAccessExpressionAction, SyntaxKind.ElementAccessExpression);
+            context.RegisterSyntaxNodeAction(ArrayCreationExpressionAction, SyntaxKind.ArrayCreationExpression);
+            context.RegisterSyntaxNodeAction(AttributeAction, SyntaxKind.Attribute);
+            context.RegisterSyntaxNodeAction(AttributeListAction, SyntaxKind.AttributeList);
+            context.RegisterSyntaxNodeAction(AnonymousMethodExpressionAction, SyntaxKind.AnonymousMethodExpression);
+            context.RegisterSyntaxNodeAction(ParenthesizedLambdaExpressionAction, SyntaxKind.ParenthesizedLambdaExpression);
+            context.RegisterSyntaxNodeAction(DelegateDeclarationAction, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeAction(ConstructorInitializerAction, SyntaxKinds.ConstructorInitializer);
+            context.RegisterSyntaxNodeAction(ElementBindingExpressionAction, SyntaxKind.ElementBindingExpression);
+            context.RegisterSyntaxNodeAction(ImplicitElementAccessAction, SyntaxKind.ImplicitElementAccess);
         }
 
         private static void HandleImplicitElementAccess(SyntaxNodeAnalysisContext context)
         {
             var implicitElementAccess = (ImplicitElementAccessSyntax)context.Node;
 
-            AnalyzeArgumentList(context, implicitElementAccess.ArgumentList);
+            if (implicitElementAccess.ArgumentList != null)
+            {
+                AnalyzeSyntaxList(context, implicitElementAccess.ArgumentList.Arguments);
+            }
         }
 
         private static void HandleElementBindingExpression(SyntaxNodeAnalysisContext context)
         {
             var elementBinding = (ElementBindingExpressionSyntax)context.Node;
-
-            AnalyzeArgumentList(context, elementBinding.ArgumentList);
+            AnalyzeSyntaxList(context, elementBinding.ArgumentList.Arguments);
         }
 
         private static void HandleConstructorInitializer(SyntaxNodeAnalysisContext context)
         {
             var constructorInitializer = (ConstructorInitializerSyntax)context.Node;
-
-            AnalyzeArgumentList(context, constructorInitializer.ArgumentList);
+            AnalyzeSyntaxList(context, constructorInitializer.ArgumentList.Arguments);
         }
 
         private static void HandleDelegateDeclaration(SyntaxNodeAnalysisContext context)
         {
             var delegateDeclaration = (DelegateDeclarationSyntax)context.Node;
-
-            AnalyzeParameterList(context, delegateDeclaration.ParameterList);
+            AnalyzeSyntaxList(context, delegateDeclaration.ParameterList.Parameters);
         }
 
         private static void HandleParenthesizedLambdaExpression(SyntaxNodeAnalysisContext context)
         {
             var lambda = (ParenthesizedLambdaExpressionSyntax)context.Node;
-
-            AnalyzeParameterList(context, lambda.ParameterList);
+            AnalyzeSyntaxList(context, lambda.ParameterList.Parameters);
         }
 
         private static void HandleAnonymousMethodExpression(SyntaxNodeAnalysisContext context)
         {
             var anonymousMethod = (AnonymousMethodExpressionSyntax)context.Node;
-
-            AnalyzeParameterList(context, anonymousMethod.ParameterList);
+            AnalyzeSyntaxList(context, anonymousMethod.ParameterList?.Parameters ?? default(SeparatedSyntaxList<ParameterSyntax>));
         }
 
         private static void HandleAttributeList(SyntaxNodeAnalysisContext context)
         {
             var attributeList = (AttributeListSyntax)context.Node;
-
-            if (attributeList.Attributes.Count < 2)
-            {
-                return;
-            }
-
-            var previousLine = attributeList.Attributes[0].GetLineSpan().EndLinePosition.Line;
-            for (int i = 1; i < attributeList.Attributes.Count; i++)
-            {
-                var currentAttribute = attributeList.Attributes[i];
-                var lineSpan = currentAttribute.GetLineSpan();
-                var currentLine = lineSpan.StartLinePosition.Line;
-                if (currentLine - previousLine > 1)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentAttribute.GetLocation()));
-                }
-
-                previousLine = lineSpan.EndLinePosition.Line;
-            }
+            AnalyzeSyntaxList(context, attributeList.Attributes);
         }
 
         private static void HandleAttribute(SyntaxNodeAnalysisContext context)
         {
             var attribute = (AttributeSyntax)context.Node;
-
-            if (attribute.ArgumentList == null
-                || attribute.ArgumentList.Arguments.Count < 2)
-            {
-                return;
-            }
-
-            var previousLine = attribute.ArgumentList.Arguments[0].GetLineSpan().EndLinePosition.Line;
-            for (int i = 1; i < attribute.ArgumentList.Arguments.Count; i++)
-            {
-                var currentArgument = attribute.ArgumentList.Arguments[i];
-                var lineSpan = currentArgument.GetLineSpan();
-                var currentLine = lineSpan.StartLinePosition.Line;
-                if (currentLine - previousLine > 1)
-                {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentArgument.GetLocation()));
-                }
-
-                previousLine = lineSpan.EndLinePosition.Line;
-            }
+            AnalyzeSyntaxList(context, attribute.ArgumentList?.Arguments ?? default(SeparatedSyntaxList<AttributeArgumentSyntax>));
         }
 
         private static void HandleArrayCreationExpression(SyntaxNodeAnalysisContext context)
@@ -206,24 +163,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             foreach (var rankSpecifier in arrayCreation.Type.RankSpecifiers)
             {
-                if (rankSpecifier.Sizes.Count < 2)
-                {
-                    continue;
-                }
-
-                var previousLine = rankSpecifier.Sizes[0].GetLineSpan().EndLinePosition.Line;
-                for (int i = 1; i < rankSpecifier.Sizes.Count; i++)
-                {
-                    var currentSize = rankSpecifier.Sizes[i];
-                    var lineSpan = currentSize.GetLineSpan();
-                    var currentLine = lineSpan.StartLinePosition.Line;
-                    if (currentLine - previousLine > 1)
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentSize.GetLocation()));
-                    }
-
-                    previousLine = lineSpan.EndLinePosition.Line;
-                }
+                AnalyzeSyntaxList(context, rankSpecifier.Sizes);
             }
         }
 
@@ -231,122 +171,137 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var elementAccess = (ElementAccessExpressionSyntax)context.Node;
 
-            AnalyzeArgumentList(context, elementAccess.ArgumentList);
+            if (elementAccess.ArgumentList != null)
+            {
+                AnalyzeSyntaxList(context, elementAccess.ArgumentList.Arguments);
+            }
         }
 
         private static void HandleIndexerDeclaration(SyntaxNodeAnalysisContext context)
         {
             var indexerDeclaration = (IndexerDeclarationSyntax)context.Node;
 
-            AnalyzeParameterList(context, indexerDeclaration.ParameterList);
+            if (indexerDeclaration.ParameterList != null)
+            {
+                AnalyzeSyntaxList(context, indexerDeclaration.ParameterList.Parameters);
+            }
         }
 
         private static void HandleObjectCreationExpression(SyntaxNodeAnalysisContext context)
         {
             var objectCreation = (ObjectCreationExpressionSyntax)context.Node;
 
-            AnalyzeArgumentList(context, objectCreation.ArgumentList);
+            if (objectCreation.ArgumentList != null)
+            {
+                AnalyzeSyntaxList(context, objectCreation.ArgumentList.Arguments);
+            }
         }
 
         private static void HandleInvocationExpression(SyntaxNodeAnalysisContext context)
         {
             var invocation = (InvocationExpressionSyntax)context.Node;
 
-            AnalyzeArgumentList(context, invocation.ArgumentList);
+            if (invocation.ArgumentList != null)
+            {
+                AnalyzeSyntaxList(context, invocation.ArgumentList.Arguments);
+            }
         }
 
         private static void HandleBaseMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
             var constructorDeclaration = (BaseMethodDeclarationSyntax)context.Node;
 
-            AnalyzeParameterList(context, constructorDeclaration.ParameterList);
+            if (constructorDeclaration.ParameterList != null)
+            {
+                AnalyzeSyntaxList(context, constructorDeclaration.ParameterList.Parameters);
+            }
         }
 
-        private static void AnalyzeArgumentList(SyntaxNodeAnalysisContext context, BaseArgumentListSyntax argumentListSyntax)
+        private static void HandleLocalFunctionStatement(SyntaxNodeAnalysisContext context)
         {
-            if (argumentListSyntax == null
-                || argumentListSyntax.Arguments.Count < 2)
+            var localFunctionStatement = (LocalFunctionStatementSyntaxWrapper)context.Node;
+
+            if (localFunctionStatement.ParameterList != null)
+            {
+                AnalyzeSyntaxList(context, localFunctionStatement.ParameterList.Parameters);
+            }
+        }
+
+        private static void AnalyzeSyntaxList<TNode>(SyntaxNodeAnalysisContext context, SeparatedSyntaxList<TNode> syntaxList)
+            where TNode : SyntaxNode
+        {
+            if (syntaxList.Count < 2)
             {
                 return;
             }
 
-            var previousArgumentLine = argumentListSyntax.Arguments[0].GetLineSpan().EndLinePosition.Line;
-            for (int i = 1; i < argumentListSyntax.Arguments.Count; i++)
+            var previousItemEndLine = syntaxList[0].GetLineSpan().EndLinePosition.Line;
+            for (int i = 1; i < syntaxList.Count; i++)
             {
-                var currentArgument = argumentListSyntax.Arguments[i];
-                int currentArgumentStartLine;
-                int currentArgumentEndLine;
+                var currentItem = syntaxList[i];
+                FileLinePositionSpan currentSpan;
 
-                if (currentArgument.HasLeadingTrivia && currentArgument.GetLeadingTrivia().All(trivia => IsValidTrivia(trivia)))
+                if (currentItem.HasLeadingTrivia && IsValidTrivia(currentItem.GetLeadingTrivia()))
                 {
-                    var lineSpan = currentArgument.SyntaxTree.GetLineSpan(currentArgument.FullSpan);
-                    currentArgumentStartLine = lineSpan.StartLinePosition.Line;
-                    currentArgumentEndLine = lineSpan.EndLinePosition.Line;
+                    currentSpan = currentItem.SyntaxTree.GetLineSpan(currentItem.FullSpan);
                 }
                 else
                 {
-                    var lineSpan = currentArgument.GetLineSpan();
-                    currentArgumentStartLine = lineSpan.StartLinePosition.Line;
-                    currentArgumentEndLine = lineSpan.EndLinePosition.Line;
+                    currentSpan = currentItem.GetLineSpan();
                 }
 
-                if (currentArgumentStartLine - previousArgumentLine > 1)
+                int currentItemStartLine = currentSpan.StartLinePosition.Line;
+                var currentItemEndLine = currentSpan.EndLinePosition.Line;
+
+                if (currentItemStartLine - previousItemEndLine > 1)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentArgument.GetLocation()));
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentItem.GetLocation()));
                 }
 
-                previousArgumentLine = currentArgumentEndLine;
+                previousItemEndLine = currentItemEndLine;
             }
         }
 
-        private static void AnalyzeParameterList(SyntaxNodeAnalysisContext context, BaseParameterListSyntax parameterListSyntax)
+        private static bool IsValidTrivia(SyntaxTriviaList triviaList)
         {
-            if (parameterListSyntax == null
-                || parameterListSyntax.Parameters.Count < 2)
-            {
-                return;
-            }
+            var inBlankLine = true;
 
-            var previousParameterLine = parameterListSyntax.Parameters[0].GetLineSpan().EndLinePosition.Line;
-            for (int i = 1; i < parameterListSyntax.Parameters.Count; i++)
+            for (var i = 0; i < triviaList.Count; i++)
             {
-                var currentParameter = parameterListSyntax.Parameters[i];
-                int currentParameterLine;
+                var trivia = triviaList[i];
 
-                if (currentParameter.HasLeadingTrivia && currentParameter.GetLeadingTrivia().All(trivia => IsValidTrivia(trivia)))
+                if (trivia.IsDirective)
                 {
-                    currentParameterLine = currentParameter.SyntaxTree.GetLineSpan(currentParameter.FullSpan).StartLinePosition.Line;
-                }
-                else
-                {
-                    currentParameterLine = currentParameter.GetLineSpan().StartLinePosition.Line;
+                    inBlankLine = false;
+                    continue;
                 }
 
-                if (currentParameterLine - previousParameterLine > 1)
+                switch (trivia.Kind())
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, currentParameter.GetLocation()));
+                case SyntaxKind.WhitespaceTrivia:
+                    break;
+
+                case SyntaxKind.EndOfLineTrivia:
+                    if (inBlankLine)
+                    {
+                        return false;
+                    }
+
+                    inBlankLine = true;
+                    break;
+
+                case SyntaxKind.DisabledTextTrivia:
+                case SyntaxKind.SingleLineCommentTrivia:
+                case SyntaxKind.MultiLineCommentTrivia:
+                    inBlankLine = false;
+                    break;
+
+                default:
+                    return false;
                 }
-
-                previousParameterLine = currentParameterLine;
-            }
-        }
-
-        private static bool IsValidTrivia(SyntaxTrivia trivia)
-        {
-            if (trivia.IsDirective)
-            {
-                return true;
             }
 
-            switch (trivia.Kind())
-            {
-            case SyntaxKind.DisabledTextTrivia:
-            case SyntaxKind.WhitespaceTrivia:
-                return true;
-
-            default:
-                return false;
-            }
+            return true;
         }
     }
 }

@@ -7,11 +7,11 @@ namespace StyleCop.Analyzers.NamingRules
     using System.Composition;
     using System.Text;
     using System.Threading.Tasks;
-    using Helpers;
-    using Helpers.ObjectPools;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Helpers.ObjectPools;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1310FieldNamesMustNotContainUnderscore"/>.

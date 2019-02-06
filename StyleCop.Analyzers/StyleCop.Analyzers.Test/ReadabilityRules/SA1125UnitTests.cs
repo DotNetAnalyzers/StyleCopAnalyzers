@@ -8,20 +8,19 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.ReadabilityRules.SA1125UseShorthandForNullableTypes>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1125UseShorthandForNullableTypes"/>.
     /// </summary>
-    public class SA1125UnitTests : DiagnosticVerifier
+    public class SA1125UnitTests
     {
         /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#385.
-        /// <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/385">SA1125
-        /// UseShorthandForNullableTypes incorrectly reported in XML comment</see>
+        /// This is a regression test for "SA1125 UseShorthandForNullableTypes incorrectly reported in XML comment".
         /// </summary>
         /// <param name="form">The source code for the content of a <c>cref</c> attribute referencing
         /// <see cref="Nullable{T}"/> in an XML documentation comment.</param>
@@ -30,6 +29,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         [InlineData("Nullable{T}")]
         [InlineData("System.Nullable{T}")]
         [InlineData("global::System.Nullable{T}")]
+        [WorkItem(385, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/385")]
         public async Task TestSeeAlsoNullableAsync(string form)
         {
             string template = @"
@@ -42,13 +42,12 @@ namespace System
 }}
 ";
             string testCode = string.Format(template, form);
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#638.
-        /// <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/638">SA1125
-        /// UseShorthandForNullableTypes incorrectly reported for member in XML comment</see>
+        /// This is a regression test for "SA1125 UseShorthandForNullableTypes incorrectly reported for member in XML
+        /// comment".
         /// </summary>
         /// <param name="form">The source code for the content of a <c>cref</c> attribute referencing
         /// <see cref="Nullable{T}"/> in an XML documentation comment.</param>
@@ -57,6 +56,7 @@ namespace System
         [InlineData("Nullable{T}")]
         [InlineData("System.Nullable{T}")]
         [InlineData("global::System.Nullable{T}")]
+        [WorkItem(638, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/638")]
         public async Task TestSeeAlsoNullableValueAsync(string form)
         {
             string template = @"
@@ -69,13 +69,11 @@ namespace System
 }}
 ";
             string testCode = string.Format(template, form);
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#385.
-        /// <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/385">SA1125
-        /// UseShorthandForNullableTypes incorrectly reported in XML comment</see>
+        /// This is a regression test for "SA1125 UseShorthandForNullableTypes incorrectly reported in XML comment".
         /// </summary>
         /// <param name="longForm">The source code for the long form of a <c>cref</c> attribute referencing
         /// an instantiation of <see cref="Nullable{T}"/> in an XML documentation comment (e.g. for the parameter type
@@ -88,6 +86,7 @@ namespace System
         [InlineData("Nullable{int}", "int?")]
         [InlineData("System.Nullable{int}", "int?")]
         [InlineData("global::System.Nullable{int}", "int?")]
+        [WorkItem(385, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/385")]
         public async Task TestSeeAlsoNullableShorthandAsync(string longForm, string shortForm)
         {
             string template = @"
@@ -104,15 +103,13 @@ namespace System
             string testCode = string.Format(template, longForm);
             string fixedCode = string.Format(template, shortForm);
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(6, 55);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(6, 55);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(fixedCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#386.
-        /// <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/386">SA1125
-        /// UseShorthandForNullableTypes incorrectly reported in typeof()</see>
+        /// This is a regression test for "SA1125 UseShorthandForNullableTypes incorrectly reported in typeof()".
         /// </summary>
         /// <param name="longForm">The source code for the long form of a <c>cref</c> attribute referencing
         /// an instantiation of <see cref="Nullable{T}"/> in a <c>typeof</c> expression.</param>
@@ -133,6 +130,7 @@ namespace System
         [InlineData("Nullable<>", "Nullable<>")]
         [InlineData("System.Nullable<>", "System.Nullable<>")]
         [InlineData("global::System.Nullable<>", "global::System.Nullable<>")]
+        [WorkItem(386, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/386")]
         public async Task TestTypeOfNullableAsync(string longForm, string shortForm)
         {
             string template = @"
@@ -150,11 +148,11 @@ namespace System
 
             if (testCode != fixedCode)
             {
-                DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 36);
-                await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+                DiagnosticResult expected = Diagnostic().WithLocation(7, 36);
+                await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
             }
 
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(fixedCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -181,9 +179,9 @@ namespace System
             string testCode = string.Format(template, longForm);
             string fixedCode = string.Format(template, shortForm);
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(7, 9);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(7, 9);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(fixedCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -213,15 +211,14 @@ namespace System
             string testCode = string.Format(template, longForm);
             string fixedCode = string.Format(template, shortForm);
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(9, 41);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(9, 41);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(fixedCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#637.
-        /// <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/637">SA1125
-        /// UseShorthandForNullableTypes incorrectly reported in <c>nameof</c> expression</see>
+        /// This is a regression test for "SA1125 UseShorthandForNullableTypes incorrectly reported in <c>nameof</c>
+        /// expression".
         /// </summary>
         /// <param name="form">The source code for the content of a <c>nameof</c> expression referencing
         /// <see cref="Nullable{T}"/>.</param>
@@ -230,6 +227,7 @@ namespace System
         [InlineData("Nullable<int>")]
         [InlineData("System.Nullable<int>")]
         [InlineData("global::System.Nullable<int>")]
+        [WorkItem(637, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/637")]
         public async Task TestNameOfNullableAsync(string form)
         {
             string template = @"
@@ -243,13 +241,12 @@ namespace System
 }}
 ";
             string testCode = string.Format(template, form);
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#636.
-        /// <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/636">SA1125
-        /// UseShorthandForNullableTypes incorrectly reported for static access through Nullable&lt;int&gt;</see>
+        /// This is a regression test for "SA1125 UseShorthandForNullableTypes incorrectly reported for static access
+        /// through Nullable&lt;int&gt;".
         /// </summary>
         /// <remarks>
         /// <para>This special case of instance access through <c>Nullable&lt;int&gt;</c> was mentioned in a
@@ -262,6 +259,7 @@ namespace System
         [InlineData("Nullable<int>")]
         [InlineData("System.Nullable<int>")]
         [InlineData("global::System.Nullable<int>")]
+        [WorkItem(636, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/636")]
         public async Task TestNameOfNullableValueAsync(string form)
         {
             string template = @"
@@ -275,13 +273,12 @@ namespace System
 }}
 ";
             string testCode = string.Format(template, form);
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#636.
-        /// <see href="https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/636">SA1125
-        /// UseShorthandForNullableTypes incorrectly reported for static access through Nullable&lt;int&gt;</see>
+        /// This is a regression test for "SA1125 UseShorthandForNullableTypes incorrectly reported for static access
+        /// through Nullable&lt;int&gt;".
         /// </summary>
         /// <param name="form">The source code for an instantiation of <see cref="Nullable{T}"/> which does not use the
         /// shorthand syntax.</param>
@@ -290,6 +287,7 @@ namespace System
         [InlineData("Nullable<int>")]
         [InlineData("System.Nullable<int>")]
         [InlineData("global::System.Nullable<int>")]
+        [WorkItem(636, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/636")]
         public async Task TestAccessObjectEqualThroughNullableAsync(string form)
         {
             string template = @"
@@ -303,7 +301,7 @@ namespace System
 }}
 ";
             string testCode = string.Format(template, form);
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -331,14 +329,34 @@ namespace System
             string testCode = string.Format(template, longForm);
             string fixedCode = string.Format(template, shortForm);
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(8, 43);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithLocation(8, 43);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(fixedCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        // This is a regression test for issue 2284.
+        [Theory]
+        [InlineData("@Nullable<int>", "int?")]
+        [InlineData("System.@Nullable<int>", "int?")]
+        [InlineData("global::System.@Nullable<int>", "int?")]
+        public async Task TestNullableFieldWithAtSignPrefixInTypeAsync(string longForm, string shortForm)
         {
-            yield return new SA1125UseShorthandForNullableTypes();
+            string template = @"
+namespace System
+{{
+    class ClassName<T>
+        where T : struct
+    {{
+        {0} nullableField;
+    }}
+}}
+";
+            string testCode = string.Format(template, longForm);
+            string fixedCode = string.Format(template, shortForm);
+
+            DiagnosticResult expected = Diagnostic().WithLocation(7, 9);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(fixedCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

@@ -3,16 +3,16 @@
 
 namespace StyleCop.Analyzers.Test.NamingRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Analyzers.NamingRules;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.NamingRules.SA1307AccessibleFieldsMustBeginWithUpperCaseLetter,
+        StyleCop.Analyzers.NamingRules.RenameToUpperCaseCodeFixProvider>;
 
-    public class SA1307UnitTests : CodeFixVerifier
+    public class SA1307UnitTests
     {
         [Theory]
         [InlineData("")]
@@ -34,7 +34,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
 string Bar = """", car = """", Dar = """";
 }}";
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -58,11 +58,9 @@ string dar;
 
             DiagnosticResult[] expected =
                 {
-                    this.CSharpDiagnostic().WithArguments("bar").WithLocation(4, 8),
-                    this.CSharpDiagnostic().WithArguments("dar").WithLocation(8, 8),
+                    Diagnostic().WithArguments("bar").WithLocation(4, 8),
+                    Diagnostic().WithArguments("dar").WithLocation(8, 8),
                 };
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"public class Foo
 {{
@@ -74,7 +72,7 @@ string Car;
 string Dar;
 }}";
 
-            await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers)).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(string.Format(testCode, modifiers), expected, string.Format(fixedCode, modifiers), CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -91,11 +89,9 @@ string bar, Car, dar;
 
             DiagnosticResult[] expected =
                 {
-                    this.CSharpDiagnostic().WithArguments("bar").WithLocation(4, 8),
-                    this.CSharpDiagnostic().WithArguments("dar").WithLocation(4, 18),
+                    Diagnostic().WithArguments("bar").WithLocation(4, 8),
+                    Diagnostic().WithArguments("dar").WithLocation(4, 18),
                 };
-
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"public class Foo
 {{
@@ -103,7 +99,7 @@ string bar, Car, dar;
 string Bar, Car, Dar;
 }}";
 
-            await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers)).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(string.Format(testCode, modifiers), expected, string.Format(fixedCode, modifiers), CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -136,16 +132,22 @@ string CarValueValue, Car, CarValue;
 
             DiagnosticResult[] expected =
                 {
-                    this.CSharpDiagnostic().WithArguments("bar").WithLocation(4, 8),
-                    this.CSharpDiagnostic().WithArguments("barValue").WithLocation(4, 18),
-                    this.CSharpDiagnostic().WithArguments("carValue").WithLocation(6, 8),
-                    this.CSharpDiagnostic().WithArguments("car").WithLocation(6, 23),
+                    Diagnostic().WithArguments("bar").WithLocation(4, 8),
+                    Diagnostic().WithArguments("barValue").WithLocation(4, 18),
+                    Diagnostic().WithArguments("carValue").WithLocation(6, 8),
+                    Diagnostic().WithArguments("car").WithLocation(6, 23),
                 };
 
-            await this.VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(string.Format(fixedCode, modifiers), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(string.Format(batchFixedCode, modifiers), EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(string.Format(testCode, modifiers), string.Format(fixedCode, modifiers), string.Format(batchFixedCode, modifiers), numberOfFixAllIterations: 2, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            var test = new CSharpTest
+            {
+                TestCode = string.Format(testCode, modifiers),
+                FixedCode = string.Format(fixedCode, modifiers),
+                BatchFixedCode = string.Format(batchFixedCode, modifiers),
+                NumberOfFixAllIterations = 2,
+            };
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -157,7 +159,7 @@ string CarValueValue, Car, CarValue;
     public string _bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -168,17 +170,7 @@ string CarValueValue, Car, CarValue;
     public string bar = ""baz"";
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1307AccessibleFieldsMustBeginWithUpperCaseLetter();
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new RenameToUpperCaseCodeFixProvider();
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

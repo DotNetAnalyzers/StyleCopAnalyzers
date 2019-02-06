@@ -27,15 +27,14 @@ namespace StyleCop.Analyzers.SpacingRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1020";
-        private const string Title = "Increment decrement symbols must be spaced correctly";
-        private const string MessageFormat = "{0} symbol '{1}' must not be {2} by a space.";
+        private const string Title = "Increment decrement symbols should be spaced correctly";
+        private const string MessageFormat = "{0} symbol '{1}' should not be {2} by a space.";
         private const string Description = "An increment or decrement symbol within a C# element is not spaced correctly.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1020.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
 
         /// <inheritdoc/>
@@ -45,12 +44,10 @@ namespace StyleCop.Analyzers.SpacingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxTreeActionHonorExclusions(SyntaxTreeAction);
+            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
         }
 
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -94,7 +91,7 @@ namespace StyleCop.Analyzers.SpacingRules
                         symbolName = "Increment";
                     }
 
-                    // {Increment|Decrement} symbol '{++|--}' must not be {followed} by a space.
+                    // {Increment|Decrement} symbol '{++|--}' should not be {followed} by a space.
                     var properties = TokenSpacingProperties.RemoveFollowing;
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, symbolName, token.Text, "followed"));
                 }
@@ -116,7 +113,7 @@ namespace StyleCop.Analyzers.SpacingRules
                         symbolName = "Increment";
                     }
 
-                    // {Increment|Decrement} symbol '{++|--}' must not be {preceded} by a space.
+                    // {Increment|Decrement} symbol '{++|--}' should not be {preceded} by a space.
                     var properties = TokenSpacingProperties.RemovePreceding;
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, symbolName, token.Text, "preceded"));
                 }

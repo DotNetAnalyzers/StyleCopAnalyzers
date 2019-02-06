@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// The partial element does not have an access modifier defined.
@@ -24,18 +25,14 @@ namespace StyleCop.Analyzers.OrderingRules
         /// The ID for diagnostics produced by the <see cref="SA1205PartialElementsMustDeclareAccess"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1205";
-        private const string Title = "Partial elements must declare access";
-        private const string MessageFormat = "Partial elements must declare an access modifier";
+        private const string Title = "Partial elements should declare access";
+        private const string MessageFormat = "Partial elements should declare an access modifier";
         private const string Description = "The partial element does not have an access modifier defined.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1205.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly ImmutableArray<SyntaxKind> TypeDeclarationKinds =
-            ImmutableArray.Create(SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.InterfaceDeclaration);
-
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> TypeDeclarationAction = HandleTypeDeclaration;
 
         /// <inheritdoc/>
@@ -45,12 +42,10 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(TypeDeclarationAction, TypeDeclarationKinds);
+            context.RegisterSyntaxNodeAction(TypeDeclarationAction, SyntaxKinds.TypeDeclaration);
         }
 
         private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context)
@@ -60,7 +55,9 @@ namespace StyleCop.Analyzers.OrderingRules
             if (typeDeclarationNode.Modifiers.Any(SyntaxKind.PartialKeyword))
             {
                 if (!typeDeclarationNode.Modifiers.Any(SyntaxKind.PublicKeyword)
-                    && !typeDeclarationNode.Modifiers.Any(SyntaxKind.InternalKeyword))
+                    && !typeDeclarationNode.Modifiers.Any(SyntaxKind.InternalKeyword)
+                    && !typeDeclarationNode.Modifiers.Any(SyntaxKind.ProtectedKeyword)
+                    && !typeDeclarationNode.Modifiers.Any(SyntaxKind.PrivateKeyword))
                 {
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, typeDeclarationNode.Identifier.GetLocation()));
                 }

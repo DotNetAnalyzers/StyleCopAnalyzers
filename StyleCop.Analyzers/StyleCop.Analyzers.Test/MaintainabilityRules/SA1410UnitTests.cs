@@ -3,16 +3,16 @@
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using StyleCop.Analyzers.MaintainabilityRules;
+    using Microsoft.CodeAnalysis.Testing;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.MaintainabilityRules.SA1410RemoveDelegateParenthesisWhenPossible,
+        StyleCop.Analyzers.MaintainabilityRules.SA1410SA1411CodeFixProvider>;
 
-    public class SA1410UnitTests : CodeFixVerifier
+    public class SA1410UnitTests
     {
         [Fact]
         public async Task TestMissingParenthesisAsync()
@@ -24,7 +24,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         System.Func<int> getRandomNumber = delegate { return 3; };
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -37,7 +37,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         System.Func<int, int> getNumber = delegate (int i) { return i; };
     }
 }";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -50,9 +50,9 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         System.Func<int> getRandomNumber = delegate() { return 3; };
     }
 }";
-            DiagnosticResult expected = this.CSharpDiagnostic().WithLocation(5, 52);
+            DiagnosticResult expected = Diagnostic().WithLocation(5, 52);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -74,7 +74,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(oldSource, newSource, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(5, 52);
+            await VerifyCSharpFixAsync(oldSource, expected, newSource, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -96,17 +97,136 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     }
 }";
 
-            await this.VerifyCSharpFixAsync(oldSource, newSource, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(5, 59);
+            await VerifyCSharpFixAsync(oldSource, expected, newSource, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        /// <summary>
+        /// Verify that no diagnostic is produced when removing the parentheses from the delegate statement
+        /// would result in ambiguity on which method overload to call.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2572, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2572")]
+        public async Task TestMethodOverloadAmbiguityAsync()
         {
-            yield return new SA1410RemoveDelegateParenthesisWhenPossible();
+            var testCode = @"public class TestClass
+{
+    public delegate bool Delegate1();
+    public delegate bool Delegate2(int x);
+
+    public void TestMethod()
+    {
+        var thread = new System.Threading.Thread(delegate()
+        {
+            // ...
+        });
+
+        this.TestMethod2(delegate() { return true; });
+        this.TestMethod3(delegate() { return true; });
+    }
+
+    public void TestMethod2(Delegate1 d)
+    {
+    }
+
+    public void TestMethod2(Delegate2 d)
+    {
+    }
+}
+
+public static class TestClassExtensions
+{
+    public static void TestMethod3(this TestClass obj, TestClass.Delegate1 d)
+    {
+    }
+
+    public static void TestMethod3(this TestClass obj, TestClass.Delegate2 d)
+    {
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        /// <summary>
+        /// Verify that the ambiguity detection is specific enough.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2572, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2572")]
+        public async Task TestMethodOverloadNonAmbiguityAsync()
         {
-            return new SA1410SA1411CodeFixProvider();
+            var testCode = @"public class TestClass
+{
+    public delegate bool Delegate1();
+    public delegate bool Delegate2(int x);
+
+    public void TestMethod()
+    {
+        this.TestMethod2(delegate() { return true; });
+        this.TestMethod3(0, delegate() { return true; });
+        this.TestMethod4(delegate() { return true; }, 1);
+        this.TestMethod5(delegate() { return true; });
+        this.TestMethod6(delegate() { return true; });
+    }
+
+    public void TestMethod2(Delegate1 d)
+    {
+    }
+
+    public void TestMethod2(int d)
+    {
+    }
+
+    public void TestMethod3(int x, Delegate1 d)
+    {
+    }
+
+    public void TestMethod3(double x, Delegate2 d)
+    {
+    }
+
+    public void TestMethod4(Delegate1 d, int x)
+    {
+    }
+
+    public void TestMethod4(Delegate2 d, double x)
+    {
+    }
+
+    public void TestMethod5(Delegate1 d)
+    {
+    }
+
+    public void TestMethod5(Delegate2 d, double x)
+    {
+    }
+
+    public void TestMethod6(Delegate1 d)
+    {
+    }
+}
+
+public static class TestClassExtensions
+{
+    public static void TestMethod6(this TestClass obj, TestClass.Delegate2 d)
+    {
+    }
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic().WithLocation(8, 34),
+                Diagnostic().WithLocation(9, 37),
+                Diagnostic().WithLocation(10, 34),
+                Diagnostic().WithLocation(11, 34),
+                Diagnostic().WithLocation(12, 34),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expectedResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

@@ -5,9 +5,13 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.LayoutRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.LayoutRules.SA1500BracesForMultiLineStatementsMustNotShareLine,
+        StyleCop.Analyzers.LayoutRules.SA1500CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1500BracesForMultiLineStatementsMustNotShareLine"/>.
@@ -18,7 +22,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         /// Verifies that no diagnostics are reported for the valid indexers defined in this test.
         /// </summary>
         /// <remarks>
-        /// These are valid for SA1500 only, some will report other diagnostics from the layout (SA15xx) series.
+        /// <para>These are valid for SA1500 only, some will report other diagnostics from the layout (SA15xx)
+        /// series.</para>
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
@@ -79,7 +84,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     { get { return this.test; }  set { this.test = value; } }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -299,51 +304,49 @@ namespace StyleCop.Analyzers.Test.LayoutRules
             DiagnosticResult[] expectedDiagnostics =
             {
                 // Invalid indexer #1
-                this.CSharpDiagnostic().WithLocation(8, 13),
-                this.CSharpDiagnostic().WithLocation(12, 13),
+                Diagnostic().WithLocation(8, 13),
+                Diagnostic().WithLocation(12, 13),
 
                 // Invalid indexer #2
-                this.CSharpDiagnostic().WithLocation(20, 13),
-                this.CSharpDiagnostic().WithLocation(21, 31),
-                this.CSharpDiagnostic().WithLocation(23, 13),
-                this.CSharpDiagnostic().WithLocation(24, 32),
+                Diagnostic().WithLocation(20, 13),
+                Diagnostic().WithLocation(21, 31),
+                Diagnostic().WithLocation(23, 13),
+                Diagnostic().WithLocation(24, 32),
 
                 // Invalid indexer #3
-                this.CSharpDiagnostic().WithLocation(30, 13),
-                this.CSharpDiagnostic().WithLocation(33, 13),
+                Diagnostic().WithLocation(30, 13),
+                Diagnostic().WithLocation(33, 13),
 
                 // Invalid indexer #4
-                this.CSharpDiagnostic().WithLocation(42, 31),
-                this.CSharpDiagnostic().WithLocation(46, 32),
+                Diagnostic().WithLocation(42, 31),
+                Diagnostic().WithLocation(46, 32),
 
                 // Invalid indexer #5
-                this.CSharpDiagnostic().WithLocation(53, 9),
-                this.CSharpDiagnostic().WithLocation(57, 9),
+                Diagnostic().WithLocation(53, 9),
+                Diagnostic().WithLocation(57, 9),
 
                 // Invalid indexer #6 (Only report once for accessor statements on a single line)
-                this.CSharpDiagnostic().WithLocation(65, 9),
-                this.CSharpDiagnostic().WithLocation(68, 9),
+                Diagnostic().WithLocation(65, 9),
+                Diagnostic().WithLocation(68, 9),
 
                 // Invalid indexer #7
-                this.CSharpDiagnostic().WithLocation(72, 34),
+                Diagnostic().WithLocation(72, 34),
 
                 // Invalid indexer #8
-                this.CSharpDiagnostic().WithLocation(77, 35),
-                this.CSharpDiagnostic().WithLocation(78, 35),
+                Diagnostic().WithLocation(77, 35),
+                Diagnostic().WithLocation(78, 35),
 
                 // Invalid indexer #9
-                this.CSharpDiagnostic().WithLocation(81, 34),
+                Diagnostic().WithLocation(81, 34),
 
                 // Invalid indexer #10
-                this.CSharpDiagnostic().WithLocation(87, 35),
+                Diagnostic().WithLocation(87, 35),
 
                 // Invalid indexer #11
-                this.CSharpDiagnostic().WithLocation(91, 5)
+                Diagnostic().WithLocation(91, 5),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

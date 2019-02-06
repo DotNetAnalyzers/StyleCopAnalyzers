@@ -4,14 +4,14 @@
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using SpacingRules;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
+    using StyleCop.Analyzers.SpacingRules;
 
     /// <summary>
     /// The closing parenthesis or bracket in a call to a C# method or indexer, or the declaration of a method or
@@ -44,8 +44,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> MethodDeclarationAction = HandleMethodDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> LocalFunctionStatementAction = HandleLocalFunctionStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> ConstructorDeclarationAction = HandleConstructorDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> InvocationExpressionAction = HandleInvocationExpression;
         private static readonly Action<SyntaxNodeAnalysisContext> ObjectCreationExpressionAction = HandleObjectCreationExpression;
@@ -57,15 +57,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(ConstructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(InvocationExpressionAction, SyntaxKind.InvocationExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(ObjectCreationExpressionAction, SyntaxKind.ObjectCreationExpression);
+            context.RegisterSyntaxNodeAction(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
+            context.RegisterSyntaxNodeAction(LocalFunctionStatementAction, SyntaxKindEx.LocalFunctionStatement);
+            context.RegisterSyntaxNodeAction(ConstructorDeclarationAction, SyntaxKind.ConstructorDeclaration);
+            context.RegisterSyntaxNodeAction(InvocationExpressionAction, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeAction(ObjectCreationExpressionAction, SyntaxKind.ObjectCreationExpression);
         }
 
         private static void HandleObjectCreationExpression(SyntaxNodeAnalysisContext context)
@@ -111,22 +110,25 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static void HandleConstructorDeclaration(SyntaxNodeAnalysisContext context)
         {
             var constructotDeclarationSyntax = (ConstructorDeclarationSyntax)context.Node;
-            HandleBaseMethodDeclaration(context, constructotDeclarationSyntax);
+            HandleParameterList(context, constructotDeclarationSyntax.ParameterList);
         }
 
         private static void HandleMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
             var methodDeclaration = (MethodDeclarationSyntax)context.Node;
-            HandleBaseMethodDeclaration(context, methodDeclaration);
+            HandleParameterList(context, methodDeclaration.ParameterList);
         }
 
-        private static void HandleBaseMethodDeclaration(
-            SyntaxNodeAnalysisContext context,
-            BaseMethodDeclarationSyntax baseMethodDeclarationSyntax)
+        private static void HandleLocalFunctionStatement(SyntaxNodeAnalysisContext context)
         {
-            var parameterListSyntax =
-                baseMethodDeclarationSyntax.ParameterList;
+            var localFunctionStatement = (LocalFunctionStatementSyntaxWrapper)context.Node;
+            HandleParameterList(context, localFunctionStatement.ParameterList);
+        }
 
+        private static void HandleParameterList(
+            SyntaxNodeAnalysisContext context,
+            ParameterListSyntax parameterListSyntax)
+        {
             if (parameterListSyntax != null && !parameterListSyntax.Parameters.Any())
             {
                 if (!parameterListSyntax.OpenParenToken.IsMissing &&

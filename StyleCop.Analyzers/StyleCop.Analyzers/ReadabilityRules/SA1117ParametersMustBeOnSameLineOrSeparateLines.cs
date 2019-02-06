@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// The parameters to a C# method or indexer call or declaration are not all on the same line or each on a separate
@@ -64,11 +65,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly ImmutableArray<SyntaxKind> BaseMethodDeclarationKinds =
             ImmutableArray.Create(SyntaxKind.ConstructorDeclaration, SyntaxKind.MethodDeclaration);
 
-        private static readonly ImmutableArray<SyntaxKind> ConstructorInitializerKinds =
-            ImmutableArray.Create(SyntaxKind.BaseConstructorInitializer, SyntaxKind.ThisConstructorInitializer);
-
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> BaseMethodDeclarationAction = HandleBaseMethodDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> LocalFunctionStatementAction = HandleLocalFunctionStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> ConstructorInitializerAction = HandleConstructorInitializer;
         private static readonly Action<SyntaxNodeAnalysisContext> DelegateDeclarationAction = HandleDelegateDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> IndexerDeclarationAction = HandleIndexerDeclaration;
@@ -88,29 +86,34 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(BaseMethodDeclarationAction, BaseMethodDeclarationKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(ConstructorInitializerAction, ConstructorInitializerKinds);
-            context.RegisterSyntaxNodeActionHonorExclusions(DelegateDeclarationAction, SyntaxKind.DelegateDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(IndexerDeclarationAction, SyntaxKind.IndexerDeclaration);
-            context.RegisterSyntaxNodeActionHonorExclusions(InvocationExpressionAction, SyntaxKind.InvocationExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(ObjectCreationExpressionAction, SyntaxKind.ObjectCreationExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(ElementAccessExpressionAction, SyntaxKind.ElementAccessExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(ElementBindingExpressionAction, SyntaxKind.ElementBindingExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(ArrayCreationExpressionAction, SyntaxKind.ArrayCreationExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(AttributeAction, SyntaxKind.Attribute);
-            context.RegisterSyntaxNodeActionHonorExclusions(AnonymousMethodExpressionAction, SyntaxKind.AnonymousMethodExpression);
-            context.RegisterSyntaxNodeActionHonorExclusions(ParenthesizedLambdaExpressionAction, SyntaxKind.ParenthesizedLambdaExpression);
+            context.RegisterSyntaxNodeAction(BaseMethodDeclarationAction, BaseMethodDeclarationKinds);
+            context.RegisterSyntaxNodeAction(LocalFunctionStatementAction, SyntaxKindEx.LocalFunctionStatement);
+            context.RegisterSyntaxNodeAction(ConstructorInitializerAction, SyntaxKinds.ConstructorInitializer);
+            context.RegisterSyntaxNodeAction(DelegateDeclarationAction, SyntaxKind.DelegateDeclaration);
+            context.RegisterSyntaxNodeAction(IndexerDeclarationAction, SyntaxKind.IndexerDeclaration);
+            context.RegisterSyntaxNodeAction(InvocationExpressionAction, SyntaxKind.InvocationExpression);
+            context.RegisterSyntaxNodeAction(ObjectCreationExpressionAction, SyntaxKind.ObjectCreationExpression);
+            context.RegisterSyntaxNodeAction(ElementAccessExpressionAction, SyntaxKind.ElementAccessExpression);
+            context.RegisterSyntaxNodeAction(ElementBindingExpressionAction, SyntaxKind.ElementBindingExpression);
+            context.RegisterSyntaxNodeAction(ArrayCreationExpressionAction, SyntaxKind.ArrayCreationExpression);
+            context.RegisterSyntaxNodeAction(AttributeAction, SyntaxKind.Attribute);
+            context.RegisterSyntaxNodeAction(AnonymousMethodExpressionAction, SyntaxKind.AnonymousMethodExpression);
+            context.RegisterSyntaxNodeAction(ParenthesizedLambdaExpressionAction, SyntaxKind.ParenthesizedLambdaExpression);
         }
 
         private static void HandleBaseMethodDeclaration(SyntaxNodeAnalysisContext context)
         {
             var declaration = (BaseMethodDeclarationSyntax)context.Node;
             HandleParameterListSyntax(context, declaration.ParameterList);
+        }
+
+        private static void HandleLocalFunctionStatement(SyntaxNodeAnalysisContext context)
+        {
+            var statement = (LocalFunctionStatementSyntaxWrapper)context.Node;
+            HandleParameterListSyntax(context, statement.ParameterList);
         }
 
         private static void HandleInvocationExpression(SyntaxNodeAnalysisContext context)
@@ -162,12 +165,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                 if (firstParameterLine == previousLine)
                 {
-                    // arguments must be on same line
+                    // arguments should be on same line
                     lineCondition = (param1Line, param2Line) => param1Line == param2Line;
                 }
                 else
                 {
-                    // each argument must be on its own line
+                    // each argument should be on its own line
                     lineCondition = (param1Line, param2Line) => param1Line != param2Line;
                 }
 
@@ -210,12 +213,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             if (firstParameterLine == previousLine)
             {
-                // arguments must be on same line
+                // arguments should be on same line
                 lineCondition = (param1Line, param2Line) => param1Line == param2Line;
             }
             else
             {
-                // each argument must be on its own line
+                // each argument should be on its own line
                 lineCondition = (param1Line, param2Line) => param1Line != param2Line;
             }
 
@@ -311,12 +314,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             if (firstParameterLine == previousLine)
             {
-                // parameters must be on same line
+                // parameters should be on same line
                 lineCondition = (param1Line, param2Line) => param1Line == param2Line;
             }
             else
             {
-                // each parameter must be on its own line
+                // each parameter should be on its own line
                 lineCondition = (param1Line, param2Line) => param1Line != param2Line;
             }
 
@@ -345,12 +348,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             if (firstParameterLine == previousLine)
             {
-                // arguments must be on same line
+                // arguments should be on same line
                 lineCondition = (param1Line, param2Line) => param1Line == param2Line;
             }
             else
             {
-                // each argument must be on its own line
+                // each argument should be on its own line
                 lineCondition = (param1Line, param2Line) => param1Line != param2Line;
             }
 

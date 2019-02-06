@@ -67,15 +67,14 @@ namespace StyleCop.Analyzers.LayoutRules
         /// </summary>
         public const string DiagnosticId = "SA1504";
 
-        private const string Title = "All accessors must be single-line or multi-line";
-        private const string MessageFormat = "All accessors must be single-line or multi-line";
+        private const string Title = "All accessors should be single-line or multi-line";
+        private const string MessageFormat = "All accessors should be single-line or multi-line";
         private const string Description = "Within a C# property, indexer or event, at least one of the child accessors is written on a single line, and at least one of the child accessors is written across multiple lines.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1504.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> AccessorListAction = HandleAccessorList;
 
         /// <inheritdoc/>
@@ -85,12 +84,10 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(AccessorListAction, SyntaxKind.AccessorList);
+            context.RegisterSyntaxNodeAction(AccessorListAction, SyntaxKind.AccessorList);
         }
 
         private static void HandleAccessorList(SyntaxNodeAnalysisContext context)

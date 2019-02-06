@@ -4,7 +4,7 @@
 namespace StyleCop.Analyzers.Helpers
 {
     /// <summary>
-    /// Describes an element's access level
+    /// Describes an element's access level.
     /// </summary>
     internal enum AccessLevel
     {
@@ -13,6 +13,9 @@ namespace StyleCop.Analyzers.Helpers
 
         /// <summary>Private access.</summary>
         Private,
+
+        /// <summary>Private protected access.</summary>
+        PrivateProtected,
 
         /// <summary>Protected access.</summary>
         Protected,
@@ -24,6 +27,6 @@ namespace StyleCop.Analyzers.Helpers
         Internal,
 
         /// <summary>Public access.</summary>
-        Public
+        Public,
     }
 }

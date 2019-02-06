@@ -9,12 +9,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Helpers;
 
     /// <summary>
     /// This class provides a code fix for the SA1103 diagnostic.
@@ -118,8 +118,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             var nodeList = CreateQueryNodeList(queryExpression);
 
-            var indentationOptions = IndentationOptions.FromDocument(document);
-            var indentationTrivia = QueryIndentationHelpers.GetQueryIndentationTrivia(indentationOptions, queryExpression);
+            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
+            var indentationTrivia = QueryIndentationHelpers.GetQueryIndentationTrivia(settings.Indentation, queryExpression);
 
             for (var i = 1; i < nodeList.Length; i++)
             {

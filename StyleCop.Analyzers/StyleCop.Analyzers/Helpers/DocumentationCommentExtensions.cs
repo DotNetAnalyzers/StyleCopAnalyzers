@@ -9,7 +9,6 @@ namespace StyleCop.Analyzers.Helpers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using StyleCop.Analyzers.SpacingRules;
 
     internal static class DocumentationCommentExtensions
     {
@@ -22,9 +21,7 @@ namespace StyleCop.Analyzers.Helpers
 
             foreach (var leadingTrivia in node.GetLeadingTrivia())
             {
-                var structure = leadingTrivia.GetStructure() as DocumentationCommentTriviaSyntax;
-
-                if (structure != null)
+                if (leadingTrivia.GetStructure() is DocumentationCommentTriviaSyntax structure)
                 {
                     return structure;
                 }
@@ -42,8 +39,7 @@ namespace StyleCop.Analyzers.Helpers
         {
             foreach (XmlNodeSyntax syntax in content)
             {
-                XmlEmptyElementSyntax emptyElement = syntax as XmlEmptyElementSyntax;
-                if (emptyElement != null)
+                if (syntax is XmlEmptyElementSyntax emptyElement)
                 {
                     if (string.Equals(elementName, emptyElement.Name.ToString(), StringComparison.Ordinal))
                     {
@@ -53,8 +49,7 @@ namespace StyleCop.Analyzers.Helpers
                     continue;
                 }
 
-                XmlElementSyntax elementSyntax = syntax as XmlElementSyntax;
-                if (elementSyntax != null)
+                if (syntax is XmlElementSyntax elementSyntax)
                 {
                     if (string.Equals(elementName, elementSyntax.StartTag?.Name?.ToString(), StringComparison.Ordinal))
                     {
@@ -84,14 +79,12 @@ namespace StyleCop.Analyzers.Helpers
                 return summaryContent;
             }
 
-            XmlTextSyntax firstSyntax = summaryContent[0] as XmlTextSyntax;
-            if (firstSyntax == null)
+            if (!(summaryContent[0] is XmlTextSyntax firstSyntax))
             {
                 return summaryContent;
             }
 
-            XmlTextSyntax lastSyntax = summaryContent[summaryContent.Count - 1] as XmlTextSyntax;
-            if (lastSyntax == null)
+            if (!(summaryContent[summaryContent.Count - 1] is XmlTextSyntax lastSyntax))
             {
                 return summaryContent;
             }
@@ -181,8 +174,7 @@ namespace StyleCop.Analyzers.Helpers
                 summaryContent = summaryContent.Replace(summaryContent[0], summaryContent[0].WithLeadingTrivia());
 
                 // Remove leading spaces (between the <para> start tag and the start of the paragraph content)
-                XmlTextSyntax firstTextSyntax = summaryContent[0] as XmlTextSyntax;
-                if (firstTextSyntax != null && firstTextSyntax.TextTokens.Count > 0)
+                if (summaryContent[0] is XmlTextSyntax firstTextSyntax && firstTextSyntax.TextTokens.Count > 0)
                 {
                     SyntaxToken firstTextToken = firstTextSyntax.TextTokens[0];
                     string firstTokenText = firstTextToken.Text;
@@ -243,6 +235,12 @@ namespace StyleCop.Analyzers.Helpers
             }
 
             return node.ReplaceTokens(replacements.Keys, (originalToken, rewrittenToken) => replacements[originalToken]);
+        }
+
+        public static XmlNameSyntax GetName(this XmlNodeSyntax element)
+        {
+            return (element as XmlElementSyntax)?.StartTag?.Name
+                ?? (element as XmlEmptyElementSyntax)?.Name;
         }
 
         private static SyntaxTrivia SelectExteriorTrivia(SyntaxTrivia rewrittenTrivia, SyntaxTrivia trivia, SyntaxTrivia triviaWithSpace)

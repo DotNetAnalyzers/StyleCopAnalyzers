@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Helpers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// Helper class containing methods for determining query indentation.
@@ -15,13 +16,13 @@ namespace StyleCop.Analyzers.Helpers
         /// <summary>
         /// Gets a whitespace trivia containing the proper amount of indentation for new lines in the given query.
         /// </summary>
-        /// <param name="indentationOptions">The indentation options to use.</param>
+        /// <param name="indentationSettings">The indentation settings to use.</param>
         /// <param name="queryExpression">The query expression to determine indentation from.</param>
         /// <returns>A whitespace trivia containing the proper amount of indentation.</returns>
-        internal static SyntaxTrivia GetQueryIndentationTrivia(IndentationOptions indentationOptions, QueryExpressionSyntax queryExpression)
+        internal static SyntaxTrivia GetQueryIndentationTrivia(IndentationSettings indentationSettings, QueryExpressionSyntax queryExpression)
         {
             var firstTokenOnTextLine = IndentationHelper.GetFirstTokenOnTextLine(queryExpression.FromClause.FromKeyword);
-            var indentationSteps = IndentationHelper.GetIndentationSteps(indentationOptions, firstTokenOnTextLine);
+            var indentationSteps = IndentationHelper.GetIndentationSteps(indentationSettings, firstTokenOnTextLine);
 
             // add an extra indentation step when the first from clause is not properly indented yet
             if (!firstTokenOnTextLine.IsKind(SyntaxKind.OpenParenToken) && (firstTokenOnTextLine != queryExpression.FromClause.FromKeyword))
@@ -29,16 +30,16 @@ namespace StyleCop.Analyzers.Helpers
                 indentationSteps++;
             }
 
-            return IndentationHelper.GenerateWhitespaceTrivia(indentationOptions, indentationSteps);
+            return IndentationHelper.GenerateWhitespaceTrivia(indentationSettings, indentationSteps);
         }
 
         /// <summary>
         /// Gets a whitespace trivia containing the proper amount of indentation for new lines in the query of which the given token is a part.
         /// </summary>
-        /// <param name="indentationOptions">The indentation options to use.</param>
+        /// <param name="indentationSettings">The indentation settings to use.</param>
         /// <param name="token">A token within a query expression.</param>
         /// <returns>A whitespace trivia containing the proper amount of indentation.</returns>
-        internal static SyntaxTrivia GetQueryIndentationTrivia(IndentationOptions indentationOptions, SyntaxToken token)
+        internal static SyntaxTrivia GetQueryIndentationTrivia(IndentationSettings indentationSettings, SyntaxToken token)
         {
             var currentNode = token.Parent;
             while (!currentNode.IsKind(SyntaxKind.QueryExpression))
@@ -46,7 +47,7 @@ namespace StyleCop.Analyzers.Helpers
                 currentNode = currentNode.Parent;
             }
 
-            return GetQueryIndentationTrivia(indentationOptions, (QueryExpressionSyntax)currentNode);
+            return GetQueryIndentationTrivia(indentationSettings, (QueryExpressionSyntax)currentNode);
         }
     }
 }

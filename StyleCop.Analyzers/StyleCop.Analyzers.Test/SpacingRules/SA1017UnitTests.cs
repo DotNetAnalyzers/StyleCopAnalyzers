@@ -3,20 +3,21 @@
 
 namespace StyleCop.Analyzers.Test.SpacingRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.SpacingRules.SA1017ClosingAttributeBracketsMustBeSpacedCorrectly,
+        StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1017ClosingAttributeBracketsMustBeSpacedCorrectly"/>.
     /// </summary>
-    public class SA1017UnitTests : CodeFixVerifier
+    public class SA1017UnitTests
     {
         /// <summary>
         /// Verifies that the analyzer will properly valid bracket placement.
@@ -63,7 +64,7 @@ class ClassName6<[MyAttribute
 sealed class MyAttribute : System.Attribute { }
 ";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -108,14 +109,12 @@ class ClassNam3
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(2, 18),
-                this.CSharpDiagnostic().WithLocation(7, 19),
-                this.CSharpDiagnostic().WithLocation(12, 30),
+                Diagnostic().WithLocation(2, 18),
+                Diagnostic().WithLocation(7, 19),
+                Diagnostic().WithLocation(12, 30),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode, cancellationToken: CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -133,44 +132,12 @@ class ClassName
 
             DiagnosticResult[] expected =
             {
-                new DiagnosticResult()
-                {
-                    Id = "CS0443",
-                    Message = "Syntax error; value expected",
-                    Severity = DiagnosticSeverity.Error,
-                },
-                new DiagnosticResult()
-                {
-                    Id = "CS1003",
-                    Message = "Syntax error, ',' expected",
-                    Severity = DiagnosticSeverity.Error,
-                },
-                new DiagnosticResult()
-                {
-                    Id = "CS1003",
-                    Message = "Syntax error, ']' expected",
-                    Severity = DiagnosticSeverity.Error,
-                }
+                DiagnosticResult.CompilerError("CS0443").WithLocation(6, 28).WithMessage("Syntax error; value expected"),
+                DiagnosticResult.CompilerError("CS1003").WithLocation(6, 28).WithMessage("Syntax error, ',' expected"),
+                DiagnosticResult.CompilerError("CS1003").WithLocation(6, 28).WithMessage("Syntax error, ']' expected"),
             };
 
-            for (int i = 0; i < expected.Length; i++)
-            {
-                expected[i] = expected[i].WithLocation(6, 28);
-            }
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
-        {
-            yield return new SA1017ClosingAttributeBracketsMustBeSpacedCorrectly();
-        }
-
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new TokenSpacingCodeFixProvider();
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

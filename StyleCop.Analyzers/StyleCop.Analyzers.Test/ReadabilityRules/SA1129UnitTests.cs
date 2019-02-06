@@ -3,19 +3,20 @@
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Analyzers.ReadabilityRules;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
+    using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.ReadabilityRules;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.ReadabilityRules.SA1129DoNotUseDefaultValueTypeConstructor,
+        StyleCop.Analyzers.ReadabilityRules.SA1129CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for the <see cref="SA1129DoNotUseDefaultValueTypeConstructor"/> class.
     /// </summary>
-    public class SA1129UnitTests : CodeFixVerifier
+    public class SA1129UnitTests
     {
         /// <summary>
         /// Verifies that new expressions for reference types will not generate diagnostics.
@@ -44,7 +45,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     }
 }
 ";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -75,7 +76,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     }
 }
 ";
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -119,13 +120,11 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(5, 18),
-                this.CSharpDiagnostic().WithLocation(7, 34),
+                Diagnostic().WithLocation(5, 18),
+                Diagnostic().WithLocation(7, 34),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -179,13 +178,11 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(5, 27),
-                this.CSharpDiagnostic().WithLocation(9, 13)
+                Diagnostic().WithLocation(5, 27),
+                Diagnostic().WithLocation(9, 13),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -229,24 +226,330 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithLocation(6, 16)
+                Diagnostic().WithLocation(6, 16),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedTestCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedTestCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        /// <summary>
+        /// Verifies that <c>new CancellationToken()</c> is replaced by <c>CancellationToken.None</c>.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyCancellationTokenFixUsesNoneSyntaxAsync()
         {
-            yield return new SA1129DoNotUseDefaultValueTypeConstructor();
+            var testCode = @"
+using System.Threading;
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var ct = new CancellationToken();
+    }
+}
+";
+
+            var fixedTestCode = @"
+using System.Threading;
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var ct = CancellationToken.None;
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(8, 18),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <inheritdoc/>
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
+        /// <summary>
+        /// Verifies that the codefix will preserve trivia surrounding <c>new CancellationToken()</c>.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyCancellationTokenTriviaPreservationAsync()
         {
-            return new SA1129CodeFixProvider();
+            var testCode = @"
+using System.Threading;
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var ct1 = /* c1 */ new CancellationToken(); // c2
+    }
+}
+";
+
+            var fixedTestCode = @"
+using System.Threading;
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var ct1 = /* c1 */ CancellationToken.None; // c2
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(8, 28),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that <c>new CancellationToken()</c> is replaced by <c>CancellationToken.None</c>,
+        /// and a fully-qualified name is preserved correctly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyQualifiedCancellationTokenFixUsesNoneSyntaxAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var ct = new System.Threading.CancellationToken();
+    }
+}
+";
+
+            var fixedTestCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var ct = System.Threading.CancellationToken.None;
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(6, 18),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that <c>new CancellationToken()</c> is <b>not</b> replaced by <c>CancellationToken.None</c>
+        /// if the qualified name is not exactly <c>System.Threading.CancellationToken</c>.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyCustomCancellationTokenClassIsNotReplacedAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    public void TestMethod()
+    {
+        var ct = new CancellationToken();
+    }
+
+    private struct CancellationToken
+    {
+        public int TestProperty { get; set; }
+    }
+}
+";
+
+            var fixedTestCode = @"public class TestClass
+{
+    public void TestMethod()
+    {
+        var ct = default(CancellationToken);
+    }
+
+    private struct CancellationToken
+    {
+        public int TestProperty { get; set; }
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(5, 18),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that <c>new CancellationToken()</c> is replaced by <c>CancellationToken.None</c>,
+        /// even when aliased by a <c>using</c> statement.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyAliasedCancellationTokenUsesNoneSyntaxAsync()
+        {
+            var testCode = @"
+using SystemToken = System.Threading.CancellationToken;
+
+public class TestClass
+{
+    private SystemToken ct = new SystemToken();
+}
+";
+
+            var fixedTestCode = @"
+using SystemToken = System.Threading.CancellationToken;
+
+public class TestClass
+{
+    private SystemToken ct = SystemToken.None;
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(6, 30),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that <c>new MyEnum()</c> is replaced by <c>MyEnum.Member</c>
+        /// iff there is one member in <c>MyEnum</c> with a value of <c>0</c>.
+        /// </summary>
+        /// <param name="declarationBody">The injected <c>enum</c> declaration body.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("Member")]
+        [InlineData("Member = 0")]
+        [InlineData("Member = 0, Another = 1")]
+        [InlineData("Another = 1, Member = 0")]
+        [InlineData("Member, Another")]
+        public async Task VerifyEnumMemberReplacementBehaviorAsync(string declarationBody)
+        {
+            var testCode = $@"public class TestClass
+{{
+    public void TestMethod()
+    {{
+        var v1 = new MyEnum();
+    }}
+
+    private enum MyEnum {{ {declarationBody} }}
+}}";
+
+            var fixedTestCode = $@"public class TestClass
+{{
+    public void TestMethod()
+    {{
+        var v1 = MyEnum.Member;
+    }}
+
+    private enum MyEnum {{ {declarationBody} }}
+}}";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(5, 18),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that <c>new MyEnum()</c> is <b>not</b> replaced by <c>MyEnum.Member</c>
+        /// if there is no member with a value of <c>0</c>, but instead uses the default replacement behavior.
+        /// </summary>
+        /// <param name="declarationBody">The injected <c>enum</c> declaration body.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("Member = 1")]
+        [InlineData("Member = 1, Another = 2")]
+        [InlineData("FooMember = 0, BarMember = 0")]
+        [InlineData("FooMember, BarMember = 0")]
+        public async Task VerifyEnumMemberDefaultBehaviorAsync(string declarationBody)
+        {
+            var testCode = $@"public class TestClass
+{{
+    public void TestMethod()
+    {{
+        var v1 = new MyEnum();
+    }}
+
+    private enum MyEnum {{ {declarationBody} }}
+}}";
+
+            var fixedTestCode = $@"public class TestClass
+{{
+    public void TestMethod()
+    {{
+        var v1 = default(MyEnum);
+    }}
+
+    private enum MyEnum {{ {declarationBody} }}
+}}";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(5, 18),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that <c>new CancellationToken()</c> is replaced by <c>default(CancellationToken)</c> when its used for a default parameter.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2740, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2740")]
+        public async Task VerifyCancellationTokenDefaultParameterAsync()
+        {
+            var testCode = @"using System.Threading;
+
+public class TestClass
+{
+    public TestClass(CancellationToken cancellationToken = new CancellationToken())
+    {
+    }
+
+    public void TestMethod(CancellationToken cancellationToken = new CancellationToken())
+    {
+    }
+}
+";
+
+            var fixedTestCode = @"using System.Threading;
+
+public class TestClass
+{
+    public TestClass(CancellationToken cancellationToken = default(CancellationToken))
+    {
+    }
+
+    public void TestMethod(CancellationToken cancellationToken = default(CancellationToken))
+    {
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(5, 60),
+                Diagnostic().WithLocation(9, 66),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

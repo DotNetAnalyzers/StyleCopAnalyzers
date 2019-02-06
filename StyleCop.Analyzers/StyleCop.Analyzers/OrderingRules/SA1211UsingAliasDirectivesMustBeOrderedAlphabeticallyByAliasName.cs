@@ -28,15 +28,14 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <see cref="SA1211UsingAliasDirectivesMustBeOrderedAlphabeticallyByAliasName"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1211";
-        private const string Title = "Using alias directives must be ordered alphabetically by alias name";
-        private const string MessageFormat = "Using alias directive for '{0}' must appear before using alias directive for '{1}'";
+        private const string Title = "Using alias directives should be ordered alphabetically by alias name";
+        private const string MessageFormat = "Using alias directive for '{0}' should appear before using alias directive for '{1}'";
         private const string Description = "The using-alias directives within a C# code file are not sorted alphabetically by alias name.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1211.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> CompilationUnitAction = HandleCompilationUnit;
         private static readonly Action<SyntaxNodeAnalysisContext> NamespaceDeclarationAction = HandleNamespaceDeclaration;
 
@@ -47,31 +46,23 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxNodeActionHonorExclusions(CompilationUnitAction, SyntaxKind.CompilationUnit);
-            context.RegisterSyntaxNodeActionHonorExclusions(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
+            context.RegisterSyntaxNodeAction(CompilationUnitAction, SyntaxKind.CompilationUnit);
+            context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
         }
 
         private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context)
         {
-            var compilationUnit = context.Node as CompilationUnitSyntax;
-            if (compilationUnit != null)
-            {
-                HandleUsingDirectives(context, compilationUnit.Usings);
-            }
+            var compilationUnit = (CompilationUnitSyntax)context.Node;
+            HandleUsingDirectives(context, compilationUnit.Usings);
         }
 
         private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context)
         {
-            var namespaceDeclaration = context.Node as NamespaceDeclarationSyntax;
-            if (namespaceDeclaration != null)
-            {
-                HandleUsingDirectives(context, namespaceDeclaration.Usings);
-            }
+            var namespaceDeclaration = (NamespaceDeclarationSyntax)context.Node;
+            HandleUsingDirectives(context, namespaceDeclaration.Usings);
         }
 
         private static void HandleUsingDirectives(SyntaxNodeAnalysisContext context, SyntaxList<UsingDirectiveSyntax> usingDirectives)
@@ -115,7 +106,7 @@ namespace StyleCop.Analyzers.OrderingRules
                             }
                         }
 
-                        // Using alias directive for '{currentAliasName}' must appear before using alias directive for '{prevAliasName}'
+                        // Using alias directive for '{currentAliasName}' should appear before using alias directive for '{prevAliasName}'
                         context.ReportDiagnostic(Diagnostic.Create(Descriptor, usingDirective.GetLocation(), currentAliasName, prevAliasName));
                         return;
                     }

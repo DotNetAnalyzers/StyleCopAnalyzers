@@ -20,8 +20,8 @@ namespace StyleCop.Analyzers.NamingRules
         /// The ID for diagnostics produced by the <see cref="SA1301ElementMustBeginWithLowerCaseLetter"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1301";
-        private const string Title = "Element must begin with lower-case letter";
-        private const string MessageFormat = "Element must begin with lower-case letter";
+        private const string Title = "Element should begin with lower-case letter";
+        private const string MessageFormat = "Element should begin with lower-case letter";
         private const string Description = "There are currently no situations in which this rule will fire.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1301.md";
 

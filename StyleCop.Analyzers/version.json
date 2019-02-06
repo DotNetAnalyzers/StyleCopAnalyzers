@@ -1,0 +1,21 @@
+{
+  "$schema": "https://raw.githubusercontent.com/AArnott/Nerdbank.GitVersioning/master/src/NerdBank.GitVersioning/version.schema.json",
+  "version": "1.1.1-rc.{height}",
+  // The build number offset accounts for the delay in adopting Nerdbank.GitVersioning
+  "buildNumberOffset": 40,
+  "assemblyVersion": {
+    "precision": "revision"
+  },
+  "publicReleaseRefSpec": [
+    "^refs/heads/master$",
+    "^refs/heads/stabilization$"
+  ],
+  "nugetPackageVersion": {
+    "semVer": 2
+  },
+  "cloudBuild": {
+    "buildNumber": {
+      "enabled": true
+    }
+  }
+}

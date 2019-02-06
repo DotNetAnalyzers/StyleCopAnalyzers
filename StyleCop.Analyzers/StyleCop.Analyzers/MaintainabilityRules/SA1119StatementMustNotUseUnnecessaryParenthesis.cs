@@ -10,6 +10,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// A C# statement contains parenthesis which are unnecessary and should be removed.
@@ -53,8 +55,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// <see cref="WellKnownDiagnosticTags.Unnecessary"/>.
         /// </summary>
         public const string ParenthesesDiagnosticId = DiagnosticId + "_p";
-        private const string Title = "Statement must not use unnecessary parenthesis";
-        private const string MessageFormat = "Statement must not use unnecessary parenthesis";
+        private const string Title = "Statement should not use unnecessary parenthesis";
+        private const string MessageFormat = "Statement should not use unnecessary parenthesis";
         private const string Description = "A C# statement contains parenthesis which are unnecessary and should be removed.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1119.md";
 
@@ -76,6 +78,9 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+
             context.RegisterCompilationStartAction(CompilationStartAction);
         }
 
@@ -84,17 +89,17 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             // Only register the syntax node action if the diagnostic is enabled. This is important because
             // otherwise the diagnostic for fading out the parenthesis is still active, even if the main diagnostic
             // is disabled
-            if (context.Compilation.Options.SpecificDiagnosticOptions.GetValueOrDefault(Descriptor.Id) != Microsoft.CodeAnalysis.ReportDiagnostic.Suppress)
+            if (!context.IsAnalyzerSuppressed(Descriptor))
             {
-                context.RegisterSyntaxNodeActionHonorExclusions(ParenthesizedExpressionAction, SyntaxKind.ParenthesizedExpression);
+                context.RegisterSyntaxNodeAction(ParenthesizedExpressionAction, SyntaxKind.ParenthesizedExpression);
             }
         }
 
         private static void HandleParenthesizedExpression(SyntaxNodeAnalysisContext context)
         {
-            var node = context.Node as ParenthesizedExpressionSyntax;
+            var node = (ParenthesizedExpressionSyntax)context.Node;
 
-            if (node != null && node.Expression != null)
+            if (node.Expression != null)
             {
                 if (!(node.Expression is BinaryExpressionSyntax)
                     && !(node.Expression is AssignmentExpressionSyntax)
@@ -103,6 +108,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                     && !node.Expression.IsKind(SyntaxKind.CastExpression)
                     && !node.Expression.IsKind(SyntaxKind.ConditionalExpression)
                     && !node.Expression.IsKind(SyntaxKind.IsExpression)
+                    && !node.Expression.IsKind(SyntaxKindEx.IsPatternExpression)
                     && !node.Expression.IsKind(SyntaxKind.SimpleLambdaExpression)
                     && !node.Expression.IsKind(SyntaxKind.ParenthesizedLambdaExpression)
                     && !node.Expression.IsKind(SyntaxKind.ArrayCreationExpression)
@@ -134,8 +140,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                         || node.Parent is CheckedExpressionSyntax
                         || node.Parent is MemberAccessExpressionSyntax)
                     {
-                        var memberAccess = node.Parent as MemberAccessExpressionSyntax;
-                        if (memberAccess != null)
+                        if (node.Parent is MemberAccessExpressionSyntax memberAccess)
                         {
                             if (memberAccess.Expression != node)
                             {
@@ -149,15 +154,14 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                     }
                     else
                     {
-                        EqualsValueClauseSyntax equalsValue = node.Parent as EqualsValueClauseSyntax;
-                        if (equalsValue != null && equalsValue.Value == node)
+                        if (node.Parent is EqualsValueClauseSyntax equalsValue
+                            && equalsValue.Value == node)
                         {
                             ReportDiagnostic(context, node);
                         }
                         else
                         {
-                            AssignmentExpressionSyntax assignValue = node.Parent as AssignmentExpressionSyntax;
-                            if (assignValue != null)
+                            if (node.Parent is AssignmentExpressionSyntax assignValue)
                             {
                                 ReportDiagnostic(context, node);
                             }

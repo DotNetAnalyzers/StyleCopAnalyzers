@@ -44,15 +44,14 @@ namespace StyleCop.Analyzers.LayoutRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1513";
-        private const string Title = "Closing brace must be followed by blank line";
-        private const string MessageFormat = "Closing brace must be followed by blank line";
+        private const string Title = "Closing brace should be followed by blank line";
+        private const string MessageFormat = "Closing brace should be followed by blank line";
         private const string Description = "A closing brace within a C# element, statement, or expression is not followed by a blank line.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1513.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
 
         /// <inheritdoc/>
@@ -62,12 +61,10 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxTreeActionHonorExclusions(SyntaxTreeAction);
+            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
         }
 
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context)
@@ -126,6 +123,27 @@ namespace StyleCop.Analyzers.LayoutRules
                 return false;
             }
 
+            private static bool StartsWithSpecialComment(SyntaxTriviaList triviaList)
+            {
+                foreach (var trivia in triviaList)
+                {
+                    switch (trivia.Kind())
+                    {
+                    case SyntaxKind.WhitespaceTrivia:
+                        // ignore
+                        break;
+
+                    case SyntaxKind.SingleLineCommentTrivia:
+                        return trivia.ToFullString().StartsWith("////", StringComparison.Ordinal);
+
+                    default:
+                        return false;
+                    }
+                }
+
+                return false;
+            }
+
             private static bool StartsWithDirectiveTrivia(SyntaxTriviaList triviaList)
             {
                 foreach (var trivia in triviaList)
@@ -144,12 +162,6 @@ namespace StyleCop.Analyzers.LayoutRules
                 return false;
             }
 
-            private static bool IsQueryClause(SyntaxToken token)
-            {
-                return (token.Parent is FromClauseSyntax) ||
-                       (token.Parent is GroupClauseSyntax);
-            }
-
             private static bool IsPartOf<T>(SyntaxToken token)
             {
                 var result = false;
@@ -166,9 +178,10 @@ namespace StyleCop.Analyzers.LayoutRules
             {
                 var nextToken = token.GetNextToken(true, true);
 
-                if (nextToken.HasLeadingTrivia && HasLeadingBlankLine(nextToken.LeadingTrivia))
+                if (nextToken.HasLeadingTrivia
+                    && (HasLeadingBlankLine(nextToken.LeadingTrivia) || StartsWithSpecialComment(nextToken.LeadingTrivia)))
                 {
-                    // the close brace has a trailing blank line
+                    // the close brace has a trailing blank line or is followed by a single line comment that starts with 4 slashes.
                     return;
                 }
 
@@ -211,16 +224,15 @@ namespace StyleCop.Analyzers.LayoutRules
                         return;
                     }
 
-                    if (IsPartOf<QueryExpressionSyntax>(token) && ((nextToken.Parent is QueryClauseSyntax) || (nextToken.Parent is SelectOrGroupClauseSyntax)))
+                    if (IsPartOf<QueryExpressionSyntax>(token))
                     {
-                        // the close brace is part of a query expression
-                        return;
-                    }
-
-                    if (IsPartOf<ArgumentListSyntax>(token))
-                    {
-                        // the close brace is part of an object initializer, anonymous function or lambda expression within an argument list.
-                        return;
+                        if (nextToken.Parent is QueryClauseSyntax
+                            || nextToken.Parent is SelectOrGroupClauseSyntax
+                            || nextToken.Parent is QueryContinuationSyntax)
+                        {
+                            // the close brace is part of a query expression
+                            return;
+                        }
                     }
 
                     if (nextToken.IsKind(SyntaxKind.SemicolonToken) &&
@@ -236,10 +248,10 @@ namespace StyleCop.Analyzers.LayoutRules
                         return;
                     }
 
-                    if ((nextToken.IsKind(SyntaxKind.CommaToken) || nextToken.IsKind(SyntaxKind.CloseParenToken)) &&
-                        (IsPartOf<InitializerExpressionSyntax>(token) || IsPartOf<AnonymousObjectCreationExpressionSyntax>(token)))
+                    if (nextToken.IsKind(SyntaxKind.CommaToken) || nextToken.IsKind(SyntaxKind.CloseParenToken))
                     {
-                        // the close brace is part of an initializer statement.
+                        // The close brace is the end of an object initializer, anonymous function, lambda expression, etc.
+                        // Comma and close parenthesis never requires a preceeding blank line.
                         return;
                     }
 
@@ -258,10 +270,12 @@ namespace StyleCop.Analyzers.LayoutRules
                         return;
                     }
 
-                    var parenthesizedExpressionSyntax = nextToken.Parent as ParenthesizedExpressionSyntax;
-                    if (parenthesizedExpressionSyntax?.CloseParenToken == nextToken)
+                    if ((nextToken.IsKind(SyntaxKind.PrivateKeyword)
+                        || nextToken.IsKind(SyntaxKind.ProtectedKeyword)
+                        || nextToken.IsKind(SyntaxKind.InternalKeyword))
+                        && (nextToken.Parent is AccessorDeclarationSyntax))
                     {
-                        // the close brace is followed by the closing paren of a parenthesized expression.
+                        // the close brace is followed by an accessor with an accessibility restriction.
                         return;
                     }
 

@@ -3,7 +3,7 @@
 
 namespace System.Linq
 {
-    using Collections.Generic;
+    using System.Collections.Generic;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
 

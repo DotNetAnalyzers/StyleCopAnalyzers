@@ -39,7 +39,6 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1518.md";
 
-        private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxTreeAnalysisContext, StyleCopSettings> SyntaxTreeAction = HandleSyntaxTree;
 
         public static DiagnosticDescriptor DescriptorAllow { get; } =
@@ -58,12 +57,10 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
         {
-            context.RegisterCompilationStartAction(CompilationStartAction);
-        }
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
 
-        private static void HandleCompilationStart(CompilationStartAnalysisContext context)
-        {
-            context.RegisterSyntaxTreeActionHonorExclusions(SyntaxTreeAction);
+            context.RegisterSyntaxTreeAction(SyntaxTreeAction);
         }
 
         private static void HandleSyntaxTree(SyntaxTreeAnalysisContext context, StyleCopSettings settings)
@@ -124,8 +121,8 @@ namespace StyleCop.Analyzers.LayoutRules
 
             if (precedingTrivia.IsDirective)
             {
-                DirectiveTriviaSyntax directiveTriviaSyntax = precedingTrivia.GetStructure() as DirectiveTriviaSyntax;
-                if (directiveTriviaSyntax != null && directiveTriviaSyntax.EndOfDirectiveToken.HasTrailingTrivia)
+                if (precedingTrivia.GetStructure() is DirectiveTriviaSyntax directiveTriviaSyntax
+                    && directiveTriviaSyntax.EndOfDirectiveToken.HasTrailingTrivia)
                 {
                     var trailingWhitespaceIndex = TriviaHelper.IndexOfTrailingWhitespace(directiveTriviaSyntax.EndOfDirectiveToken.TrailingTrivia);
                     if (trailingWhitespaceIndex >= 0)
@@ -147,7 +144,7 @@ namespace StyleCop.Analyzers.LayoutRules
             DiagnosticDescriptor descriptorToReport;
             switch (settings.LayoutRules.NewlineAtEndOfFile)
             {
-            case EndOfFileHandling.Omit:
+            case OptionSetting.Omit:
                 if (firstNewline < 0)
                 {
                     return;
@@ -156,7 +153,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 descriptorToReport = DescriptorOmit;
                 break;
 
-            case EndOfFileHandling.Require:
+            case OptionSetting.Require:
                 if (firstNewline >= 0 && firstNewline == trailingWhitespaceText.Length - 1)
                 {
                     return;
@@ -165,7 +162,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 descriptorToReport = DescriptorRequire;
                 break;
 
-            case EndOfFileHandling.Allow:
+            case OptionSetting.Allow:
             default:
                 if (secondNewline < 0)
                 {

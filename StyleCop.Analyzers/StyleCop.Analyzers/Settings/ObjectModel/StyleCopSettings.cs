@@ -8,45 +8,52 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
     internal class StyleCopSettings
     {
         /// <summary>
+        /// This is the backing field for the <see cref="Indentation"/> property.
+        /// </summary>
+        private readonly IndentationSettings indentation;
+
+        /// <summary>
         /// This is the backing field for the <see cref="SpacingRules"/> property.
         /// </summary>
-        private SpacingSettings spacingRules;
+        private readonly SpacingSettings spacingRules;
 
         /// <summary>
         /// This is the backing field for the <see cref="ReadabilityRules"/> property.
         /// </summary>
-        private ReadabilitySettings readabilityRules;
+        private readonly ReadabilitySettings readabilityRules;
 
         /// <summary>
         /// This is the backing field for the <see cref="OrderingRules"/> property.
         /// </summary>
-        private OrderingSettings orderingRules;
+        private readonly OrderingSettings orderingRules;
 
         /// <summary>
         /// This is the backing field for the <see cref="NamingRules"/> property.
         /// </summary>
-        private NamingSettings namingRules;
+        private readonly NamingSettings namingRules;
 
         /// <summary>
         /// This is the backing field for the <see cref="MaintainabilityRules"/> property.
         /// </summary>
-        private MaintainabilitySettings maintainabilityRules;
+        private readonly MaintainabilitySettings maintainabilityRules;
 
         /// <summary>
         /// This is the backing field for the <see cref="LayoutRules"/> property.
         /// </summary>
-        private LayoutSettings layoutRules;
+        private readonly LayoutSettings layoutRules;
 
         /// <summary>
         /// This is the backing field for the <see cref="DocumentationRules"/> property.
         /// </summary>
-        private DocumentationSettings documentationRules;
+        private readonly DocumentationSettings documentationRules;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StyleCopSettings"/> class.
         /// </summary>
         protected internal StyleCopSettings()
         {
+            this.indentation = new IndentationSettings();
+
             this.spacingRules = new SpacingSettings();
             this.readabilityRules = new ReadabilitySettings();
             this.orderingRules = new OrderingSettings();
@@ -64,6 +71,11 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                 var childSettingsObject = kvp.Value.AsJsonObject;
                 switch (kvp.Key)
                 {
+                case "indentation":
+                    kvp.AssertIsObject();
+                    this.indentation = new IndentationSettings(childSettingsObject);
+                    break;
+
                 case "spacingRules":
                     kvp.AssertIsObject();
                     this.spacingRules = new SpacingSettings(childSettingsObject);
@@ -104,6 +116,9 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                 }
             }
         }
+
+        public IndentationSettings Indentation =>
+            this.indentation;
 
         public SpacingSettings SpacingRules =>
             this.spacingRules;

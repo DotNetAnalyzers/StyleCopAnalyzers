@@ -8,12 +8,14 @@ namespace StyleCop.Analyzers.LayoutRules
     using System.Composition;
     using System.Threading;
     using System.Threading.Tasks;
-    using Helpers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+    using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// Implements a code fix for <see cref="SA1502ElementMustNotBeOnASingleLine"/>.
@@ -48,19 +50,19 @@ namespace StyleCop.Analyzers.LayoutRules
             return SpecializedTasks.CompletedTask;
         }
 
-        private async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken token)
+        private async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
-            var syntaxRoot = await document.GetSyntaxRootAsync(token).ConfigureAwait(false);
-            var newDocument = this.CreateCodeFix(document, diagnostic, syntaxRoot);
+            var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
+            var newDocument = this.CreateCodeFix(document, settings.Indentation, diagnostic, syntaxRoot);
 
             return newDocument;
         }
 
-        private Document CreateCodeFix(Document document, Diagnostic diagnostic, SyntaxNode syntaxRoot)
+        private Document CreateCodeFix(Document document, IndentationSettings indentationSettings, Diagnostic diagnostic, SyntaxNode syntaxRoot)
         {
             SyntaxNode newSyntaxRoot = syntaxRoot;
             var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan);
-            var indentationOptions = IndentationOptions.FromDocument(document);
 
             switch (node.Kind())
             {
@@ -68,51 +70,64 @@ namespace StyleCop.Analyzers.LayoutRules
             case SyntaxKind.InterfaceDeclaration:
             case SyntaxKind.StructDeclaration:
             case SyntaxKind.EnumDeclaration:
-                newSyntaxRoot = this.RegisterBaseTypeDeclarationCodeFix(syntaxRoot, (BaseTypeDeclarationSyntax)node, indentationOptions);
+                newSyntaxRoot = this.RegisterBaseTypeDeclarationCodeFix(syntaxRoot, (BaseTypeDeclarationSyntax)node, indentationSettings);
                 break;
 
             case SyntaxKind.AccessorList:
-                newSyntaxRoot = this.RegisterPropertyLikeDeclarationCodeFix(syntaxRoot, (BasePropertyDeclarationSyntax)node.Parent, indentationOptions);
+                newSyntaxRoot = this.RegisterPropertyLikeDeclarationCodeFix(syntaxRoot, (BasePropertyDeclarationSyntax)node.Parent, indentationSettings);
                 break;
 
             case SyntaxKind.Block:
-                newSyntaxRoot = this.RegisterMethodLikeDeclarationCodeFix(syntaxRoot, (BaseMethodDeclarationSyntax)node.Parent, indentationOptions);
+                if (node.Parent.IsKind(SyntaxKindEx.LocalFunctionStatement))
+                {
+                    newSyntaxRoot = this.RegisterLocalFunctionStatementCodeFix(syntaxRoot, (LocalFunctionStatementSyntaxWrapper)node.Parent, indentationSettings);
+                }
+                else
+                {
+                    newSyntaxRoot = this.RegisterMethodLikeDeclarationCodeFix(syntaxRoot, (BaseMethodDeclarationSyntax)node.Parent, indentationSettings);
+                }
+
                 break;
 
             case SyntaxKind.NamespaceDeclaration:
-                newSyntaxRoot = this.RegisterNamespaceDeclarationCodeFix(syntaxRoot, (NamespaceDeclarationSyntax)node, indentationOptions);
+                newSyntaxRoot = this.RegisterNamespaceDeclarationCodeFix(syntaxRoot, (NamespaceDeclarationSyntax)node, indentationSettings);
                 break;
             }
 
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
 
-        private SyntaxNode RegisterBaseTypeDeclarationCodeFix(SyntaxNode syntaxRoot, BaseTypeDeclarationSyntax node, IndentationOptions indentationOptions)
+        private SyntaxNode RegisterBaseTypeDeclarationCodeFix(SyntaxNode syntaxRoot, BaseTypeDeclarationSyntax node, IndentationSettings indentationSettings)
         {
-            return this.ReformatElement(syntaxRoot, node, node.OpenBraceToken, node.CloseBraceToken, indentationOptions);
+            return this.ReformatElement(syntaxRoot, node, node.OpenBraceToken, node.CloseBraceToken, indentationSettings);
         }
 
-        private SyntaxNode RegisterPropertyLikeDeclarationCodeFix(SyntaxNode syntaxRoot, BasePropertyDeclarationSyntax node, IndentationOptions indentationOptions)
+        private SyntaxNode RegisterPropertyLikeDeclarationCodeFix(SyntaxNode syntaxRoot, BasePropertyDeclarationSyntax node, IndentationSettings indentationSettings)
         {
-            return this.ReformatElement(syntaxRoot, node, node.AccessorList.OpenBraceToken, node.AccessorList.CloseBraceToken, indentationOptions);
+            return this.ReformatElement(syntaxRoot, node, node.AccessorList.OpenBraceToken, node.AccessorList.CloseBraceToken, indentationSettings);
         }
 
-        private SyntaxNode RegisterMethodLikeDeclarationCodeFix(SyntaxNode syntaxRoot, BaseMethodDeclarationSyntax node, IndentationOptions indentationOptions)
+        private SyntaxNode RegisterMethodLikeDeclarationCodeFix(SyntaxNode syntaxRoot, BaseMethodDeclarationSyntax node, IndentationSettings indentationSettings)
         {
-            return this.ReformatElement(syntaxRoot, node, node.Body.OpenBraceToken, node.Body.CloseBraceToken, indentationOptions);
+            return this.ReformatElement(syntaxRoot, node, node.Body.OpenBraceToken, node.Body.CloseBraceToken, indentationSettings);
         }
 
-        private SyntaxNode RegisterEnumDeclarationCodeFix(SyntaxNode syntaxRoot, EnumDeclarationSyntax node, IndentationOptions indentationOptions)
+        private SyntaxNode RegisterLocalFunctionStatementCodeFix(SyntaxNode syntaxRoot, LocalFunctionStatementSyntaxWrapper node, IndentationSettings indentationSettings)
         {
-            return this.ReformatElement(syntaxRoot, node, node.OpenBraceToken, node.CloseBraceToken, indentationOptions);
+            return this.ReformatElement(syntaxRoot, node, node.Body.OpenBraceToken, node.Body.CloseBraceToken, indentationSettings);
         }
 
-        private SyntaxNode RegisterNamespaceDeclarationCodeFix(SyntaxNode syntaxRoot, NamespaceDeclarationSyntax node, IndentationOptions indentationOptions)
+        private SyntaxNode RegisterEnumDeclarationCodeFix(SyntaxNode syntaxRoot, EnumDeclarationSyntax node, IndentationSettings indentationSettings)
         {
-            return this.ReformatElement(syntaxRoot, node, node.OpenBraceToken, node.CloseBraceToken, indentationOptions);
+            return this.ReformatElement(syntaxRoot, node, node.OpenBraceToken, node.CloseBraceToken, indentationSettings);
         }
 
-        private SyntaxNode ReformatElement(SyntaxNode syntaxRoot, SyntaxNode element, SyntaxToken openBraceToken, SyntaxToken closeBraceToken, IndentationOptions indentationOptions)
+        private SyntaxNode RegisterNamespaceDeclarationCodeFix(SyntaxNode syntaxRoot, NamespaceDeclarationSyntax node, IndentationSettings indentationSettings)
+        {
+            return this.ReformatElement(syntaxRoot, node, node.OpenBraceToken, node.CloseBraceToken, indentationSettings);
+        }
+
+        private SyntaxNode ReformatElement(SyntaxNode syntaxRoot, SyntaxNode element, SyntaxToken openBraceToken, SyntaxToken closeBraceToken, IndentationSettings indentationSettings)
         {
             var tokenSubstitutions = new Dictionary<SyntaxToken, SyntaxToken>();
 
@@ -130,9 +145,9 @@ namespace StyleCop.Analyzers.LayoutRules
                 tokenSubstitutions.Add(parentLastToken, parentLastToken.WithTrailingTrivia(newTrailingTrivia));
             }
 
-            var parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationOptions, element);
-            var indentationString = IndentationHelper.GenerateIndentationString(indentationOptions, parentIndentationLevel);
-            var contentIndentationString = IndentationHelper.GenerateIndentationString(indentationOptions, parentIndentationLevel + 1);
+            var parentIndentationLevel = IndentationHelper.GetIndentationSteps(indentationSettings, element);
+            var indentationString = IndentationHelper.GenerateIndentationString(indentationSettings, parentIndentationLevel);
+            var contentIndentationString = IndentationHelper.GenerateIndentationString(indentationSettings, parentIndentationLevel + 1);
 
             // reformat opening brace
             tokenSubstitutions.Add(openBraceToken, this.FormatBraceToken(openBraceToken, indentationString));

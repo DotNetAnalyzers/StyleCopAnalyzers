@@ -3,16 +3,18 @@
 
 namespace StyleCop.Analyzers.Test.NamingRules
 {
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
-    using StyleCop.Analyzers.NamingRules;
+    using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.Test.Helpers;
     using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.NamingRules.SA1313ParameterNamesMustBeginWithLowerCaseLetter,
+        StyleCop.Analyzers.NamingRules.RenameToLowerCaseCodeFixProvider>;
 
-    public class SA1313UnitTests : CodeFixVerifier
+    [UseCulture("en-US")]
+    public class SA1313UnitTests
     {
         [Fact]
         public async Task TestThatDiagnosticIsNotReportedForFieldsAsync()
@@ -25,7 +27,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
     string Car = nameof(Car);
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -40,7 +42,7 @@ public class TypeName
     event EventHandler Car;
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -57,7 +59,7 @@ public class TypeName
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -70,9 +72,7 @@ public class TypeName
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("Bar").WithLocation(3, 35);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithArguments("Bar").WithLocation(3, 35);
 
             var fixedCode = @"public class TypeName
 {
@@ -81,8 +81,7 @@ public class TypeName
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -97,11 +96,9 @@ public class TypeName
 
             DiagnosticResult[] expected =
             {
-                this.CSharpDiagnostic().WithArguments("Bar").WithLocation(3, 35),
-                this.CSharpDiagnostic().WithArguments("Par").WithLocation(3, 59)
+                Diagnostic().WithArguments("Bar").WithLocation(3, 35),
+                Diagnostic().WithArguments("Par").WithLocation(3, 59),
             };
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
 
             var fixedCode = @"public class TypeName
 {
@@ -110,8 +107,7 @@ public class TypeName
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -124,7 +120,7 @@ public class TypeName
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -137,7 +133,7 @@ public class TypeName
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -151,9 +147,7 @@ public class TypeName
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("Parameter").WithLocation(3, 35);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithArguments("Parameter").WithLocation(3, 35);
 
             var fixedCode = @"public class TypeName
 {
@@ -163,8 +157,7 @@ public class TypeName
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -177,9 +170,7 @@ public class TypeName
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("Int").WithLocation(3, 35);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithArguments("Int").WithLocation(3, 35);
 
             var fixedCode = @"public class TypeName
 {
@@ -188,8 +179,7 @@ public class TypeName
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -202,9 +192,7 @@ public class TypeName
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("Parameter").WithLocation(3, 35);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithArguments("Parameter").WithLocation(3, 35);
 
             var fixedCode = @"public class TypeName
 {
@@ -213,8 +201,7 @@ public class TypeName
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -227,9 +214,7 @@ public class TypeName
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("Parameter").WithLocation(3, 50);
-
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithArguments("Parameter").WithLocation(3, 50);
 
             var fixedCode = @"public class TypeName
 {
@@ -238,8 +223,7 @@ public class TypeName
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -259,11 +243,11 @@ public class Test : ITest
 }";
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(4, 21).WithArguments("Param1"),
-                this.CSharpDiagnostic().WithLocation(4, 45).WithArguments("Param3"),
+                Diagnostic().WithLocation(4, 21).WithArguments("Param1"),
+                Diagnostic().WithLocation(4, 45).WithArguments("Param3"),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -284,12 +268,12 @@ public class Test : ITest
 
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(4, 21).WithArguments("Param1"),
-                this.CSharpDiagnostic().WithLocation(4, 45).WithArguments("Param3"),
-                this.CSharpDiagnostic().WithLocation(9, 52).WithArguments("Other")
+                Diagnostic().WithLocation(4, 21).WithArguments("Param1"),
+                Diagnostic().WithLocation(4, 45).WithArguments("Param3"),
+                Diagnostic().WithLocation(9, 52).WithArguments("Other"),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -310,11 +294,11 @@ public class Test : TestBase
 
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(4, 37).WithArguments("Param1"),
-                this.CSharpDiagnostic().WithLocation(4, 61).WithArguments("Param3"),
+                Diagnostic().WithLocation(4, 37).WithArguments("Param1"),
+                Diagnostic().WithLocation(4, 61).WithArguments("Param3"),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -335,20 +319,16 @@ public class Test : Testbase
 
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(4, 37).WithArguments("Param1"),
-                this.CSharpDiagnostic().WithLocation(4, 61).WithArguments("Param3"),
-                this.CSharpDiagnostic().WithLocation(9, 61).WithArguments("Other")
+                Diagnostic().WithLocation(4, 37).WithArguments("Param1"),
+                Diagnostic().WithLocation(4, 61).WithArguments("Param3"),
+                Diagnostic().WithLocation(9, 61).WithArguments("Other"),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1442:
-        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1442
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [Fact]
+        [WorkItem(1442, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1442")]
         public async Task TestSimpleLambaExpressionAsync()
         {
             var testCode = @"public class TypeName
@@ -359,17 +339,13 @@ public class Test : Testbase
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("Ignored").WithLocation(5, 37);
+            DiagnosticResult expected = Diagnostic().WithArguments("Ignored").WithLocation(5, 37);
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1343:
-        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1343
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [Fact]
+        [WorkItem(1343, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1343")]
         public async Task TestLambdaParameterNamedUnderscoreAsync()
         {
             var testCode = @"public class TypeName
@@ -382,18 +358,15 @@ public class Test : Testbase
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1343:
-        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1343
+        /// Verifies this diagnostic does not check whether or not a parameter named <c>_</c> is being used.
         /// </summary>
-        /// <remarks>
-        /// <para>This diagnostic does not check whether or not a parameter named <c>_</c> is being used.</para>
-        /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [Fact]
+        [WorkItem(1343, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1343")]
         public async Task TestLambdaParameterNamedUnderscoreUsageAsync()
         {
             var testCode = @"public class TypeName
@@ -406,16 +379,12 @@ public class Test : Testbase
     }
 }";
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1343:
-        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1343
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [Fact]
-        public async Task TestLambdaParameterMultipleUnderscoresAsync()
+        [WorkItem(1606, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1606")]
+        public async Task TestLambdaParameterNamedDoubleUnderscoreAsync()
         {
             var testCode = @"public class TypeName
 {
@@ -427,22 +396,55 @@ public class Test : Testbase
     }
 }";
 
-            DiagnosticResult[] expected =
-            {
-                this.CSharpDiagnostic().WithArguments("__").WithLocation(5, 38),
-                this.CSharpDiagnostic().WithArguments("__").WithLocation(6, 39),
-                this.CSharpDiagnostic().WithArguments("__").WithLocation(7, 51)
-            };
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, testCode).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1343:
-        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1343
+        /// Verifies this diagnostic does not check whether or not a parameter named <c>__</c> is being used.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
         [Fact]
+        [WorkItem(1606, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1606")]
+        public async Task TestLambdaParameterNamedDoubleUnderscoreUsageAsync()
+        {
+            var testCode = @"public class TypeName
+{
+    public void MethodName()
+    {
+        System.Func<int, int> function1 = __ => __;
+        System.Func<int, int> function2 = (__) => __;
+        System.Func<int, int> function3 = delegate(int __) { return __; };
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1343, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1343")]
+        public async Task TestLambdaParameterWithThreeUnderscoresAsync()
+        {
+            var testCode = @"public class TypeName
+{
+    public void MethodName()
+    {
+        System.Action<int> action1 = ___ => { };
+        System.Action<int> action2 = (___) => { };
+        System.Action<int> action3 = delegate(int ___) { };
+    }
+}";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithArguments("___").WithLocation(5, 38),
+                Diagnostic().WithArguments("___").WithLocation(6, 39),
+                Diagnostic().WithArguments("___").WithLocation(7, 51),
+            };
+            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1343, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1343")]
         public async Task TestMethodParameterNamedUnderscoreAsync()
         {
             var testCode = @"public class TypeName
@@ -452,16 +454,27 @@ public class Test : Testbase
     }
 }";
 
-            DiagnosticResult expected = this.CSharpDiagnostic().WithArguments("_").WithLocation(3, 32);
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            DiagnosticResult expected = Diagnostic().WithArguments("_").WithLocation(3, 32);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1529:
-        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1529
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1606, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1606")]
+        public async Task TestMethodParameterNamedDoubleUnderscoreAsync()
+        {
+            var testCode = @"public class TypeName
+{
+    public void MethodName(int __)
+    {
+    }
+}";
+
+            DiagnosticResult expected = Diagnostic().WithArguments("__").WithLocation(3, 32);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(1529, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1529")]
         public async Task TestInheritedInterfacesWithOverloadedMembersAsync()
         {
             var testCode = @"
@@ -479,20 +492,16 @@ public interface IDerivedTest : ITest, IEmptyInterface
 }";
             var expected = new[]
             {
-                this.CSharpDiagnostic().WithLocation(4, 21).WithArguments("Param1"),
-                this.CSharpDiagnostic().WithLocation(4, 45).WithArguments("Param3"),
-                this.CSharpDiagnostic().WithLocation(12, 21).WithArguments("Param1"),
+                Diagnostic().WithLocation(4, 21).WithArguments("Param1"),
+                Diagnostic().WithLocation(4, 45).WithArguments("Param3"),
+                Diagnostic().WithLocation(12, 21).WithArguments("Param1"),
             };
 
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// This is a regression test for DotNetAnalyzers/StyleCopAnalyzers#1604:
-        /// https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1604
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(1604, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1604")]
         public async Task TestCodeFixProperlyRemovesUnderscoreAsync()
         {
             var testCode = @"
@@ -523,20 +532,44 @@ public class TestClass
 }
 ";
 
-            var expected = this.CSharpDiagnostic().WithLocation(4, 29).WithArguments("_text");
-            await this.VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpDiagnosticAsync(fixedCode, EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await this.VerifyCSharpFixAsync(testCode, fixedCode).ConfigureAwait(false);
+            var expected = Diagnostic().WithLocation(4, 29).WithArguments("_text");
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        protected override IEnumerable<DiagnosticAnalyzer> GetCSharpDiagnosticAnalyzers()
+        /// <summary>
+        /// Verify that an invalid method override will not produce a diagnostic nor crash the analyzer.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2189, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2189")]
+        public async Task InvalidMethodOverrideShouldNotProduceDiagnosticAsync()
         {
-            yield return new SA1313ParameterNamesMustBeginWithLowerCaseLetter();
-        }
+            var testCode = @"
+namespace TestNamespace
+{
+    public abstract class BaseClass
+    {
+        public abstract void TestMethod(int p1, int p2);
+    }
 
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
+    public class TestClass : BaseClass
+    {
+        public override void TestMethod(int p1, X int P2)
         {
-            return new RenameToLowerCaseCodeFixProvider();
+        }
+    }
+}
+";
+            DiagnosticResult[] expected =
+            {
+                DiagnosticResult.CompilerError("CS0534").WithLocation(9, 18).WithMessage("'TestClass' does not implement inherited abstract member 'BaseClass.TestMethod(int, int)'"),
+                DiagnosticResult.CompilerError("CS0115").WithLocation(11, 30).WithMessage("'TestClass.TestMethod(int, X, int)': no suitable method found to override"),
+                DiagnosticResult.CompilerError("CS0246").WithLocation(11, 49).WithMessage("The type or namespace name 'X' could not be found (are you missing a using directive or an assembly reference?)"),
+                DiagnosticResult.CompilerError("CS1001").WithLocation(11, 51).WithMessage("Identifier expected"),
+                DiagnosticResult.CompilerError("CS1003").WithLocation(11, 51).WithMessage("Syntax error, ',' expected"),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

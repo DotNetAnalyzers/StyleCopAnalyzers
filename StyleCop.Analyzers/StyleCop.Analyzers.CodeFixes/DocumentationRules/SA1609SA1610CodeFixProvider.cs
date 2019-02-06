@@ -44,12 +44,15 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                context.RegisterCodeFix(
-                    CodeAction.Create(
-                        DocumentationResources.SA1609SA1610CodeFix,
-                        cancellationToken => this.GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
-                        nameof(SA1609SA1610CodeFixProvider)),
-                    diagnostic);
+                if (!diagnostic.Properties.ContainsKey(PropertyDocumentationBase.NoCodeFixKey))
+                {
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            DocumentationResources.SA1609SA1610CodeFix,
+                            cancellationToken => this.GetTransformedDocumentAsync(context.Document, diagnostic, cancellationToken),
+                            nameof(SA1609SA1610CodeFixProvider)),
+                        diagnostic);
+                }
             }
 
             return SpecializedTasks.CompletedTask;
@@ -98,8 +101,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return document;
             }
 
-            XmlElementSyntax summaryElement = documentationComment.Content.GetFirstXmlElement(XmlCommentHelper.SummaryXmlTag) as XmlElementSyntax;
-            if (summaryElement == null)
+            if (!(documentationComment.Content.GetFirstXmlElement(XmlCommentHelper.SummaryXmlTag) is XmlElementSyntax summaryElement))
             {
                 return document;
             }
@@ -160,8 +162,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         private bool TryRemoveSummaryPrefix(ref SyntaxList<XmlNodeSyntax> summaryContent, string prefix)
         {
             XmlNodeSyntax firstContent = summaryContent.FirstOrDefault(IsContentElement);
-            XmlTextSyntax firstText = firstContent as XmlTextSyntax;
-            if (firstText == null)
+            if (!(firstContent is XmlTextSyntax firstText))
             {
                 return false;
             }
