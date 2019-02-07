@@ -133,7 +133,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
                 DiagnosticResult.CompilerError("CS1031").WithMessage("Type expected").WithLocation(10, 2),
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
     }
 }

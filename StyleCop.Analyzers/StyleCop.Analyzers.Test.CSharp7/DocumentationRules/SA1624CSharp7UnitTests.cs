@@ -73,7 +73,7 @@ public class TestClass
 ";
 
             var expected = Diagnostic(PropertySummaryDocumentationAnalyzer.SA1624Descriptor).WithLocation(9, 7 + accessibility.Length + type.Length).WithArguments(expectedArgument1, expectedArgument2);
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
     }
 }

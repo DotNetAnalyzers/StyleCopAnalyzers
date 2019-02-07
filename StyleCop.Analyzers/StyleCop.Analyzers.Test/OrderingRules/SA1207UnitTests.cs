@@ -111,7 +111,7 @@ public class Foo
         public async Task TestValidDeclarationAsync(string declaration)
         {
             var testCode = TestCodeTemplate.Replace("$$", declaration);
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -129,7 +129,7 @@ public class Foo
             var testCode = TestCodeTemplate.Replace("$$", invalidDeclaration);
             var fixedTestCode = TestCodeTemplate.Replace("$$", fixedDeclaration);
 
-            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(4, 4 + diagnosticColumn), fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, Diagnostic().WithLocation(4, 4 + diagnosticColumn), fixedTestCode).ConfigureAwait(false);
         }
     }
 }

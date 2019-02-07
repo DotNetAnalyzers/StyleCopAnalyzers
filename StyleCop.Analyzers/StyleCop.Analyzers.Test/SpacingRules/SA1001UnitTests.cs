@@ -272,7 +272,7 @@ class ClassName
 ";
 
             DiagnosticResult expected = DiagnosticResult.CompilerError("CS1003").WithMessage("Syntax error, ',' expected").WithLocation(6, 25);
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -298,7 +298,7 @@ class ClassName
 ";
 
             DiagnosticResult expected = Diagnostic().WithArguments(string.Empty, "followed").WithLocation(6, 24);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -345,7 +345,7 @@ public class TestClass
                 Diagnostic().WithArguments(string.Empty, "followed").WithLocation(11, 12),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         private Task TestCommaInStatementOrDeclAsync(string originalStatement, DiagnosticResult expected, string fixedStatement)

@@ -29,7 +29,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
             var fixedTestCode = @"public abstract class FooBar {}";
 
             var expected = Diagnostic().WithLocation(1, 10).WithArguments("public", "abstract");
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
             var fixedTestCode = @"public unsafe struct FooBar {}";
 
             var expected = Diagnostic().WithLocation(1, 8).WithArguments("public", "unsafe");
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ public class ExtendedTestClass : TestClass
 }";
 
             var expected = Diagnostic().WithLocation(10, 9).WithArguments("protected", "new");
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ public class ExtendedTestClass : TestClass
             var fixedTestCode = @"namespace N1 { public class C1 { public static int P { get; } } }";
 
             var expected = Diagnostic().WithLocation(1, 41).WithArguments("public", "static");
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -119,7 +119,7 @@ public class ExtendedTestClass : TestClass
                 Diagnostic().WithLocation(1, 45).WithArguments("public", "static"),
                 Diagnostic().WithLocation(1, 45).WithArguments("public", "new"),
             };
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -133,7 +133,7 @@ public class ExtendedTestClass : TestClass
             var fixedTestCode = @"namespace N1 { public class C1 { public static int p; } }";
 
             var expected = Diagnostic().WithLocation(1, 41).WithArguments("public", "static");
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ public class ExtendedTestClass : TestClass
                 Diagnostic().WithLocation(1, 41).WithArguments("public", "extern"),
                 Diagnostic().WithLocation(1, 48).WithArguments("static", "extern"),
             };
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -165,7 +165,7 @@ public class ExtendedTestClass : TestClass
             var fixedTestCode = @"namespace N1 { public class C1 { public extern int this[int index] { get; set; } } }";
 
             var expected = Diagnostic().WithLocation(1, 41).WithArguments("public", "extern");
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -179,7 +179,7 @@ public class ExtendedTestClass : TestClass
             var fixedTestCode = @"namespace N1 { public class C1 { public virtual event System.EventHandler Changed; } }";
 
             var expected = Diagnostic().WithLocation(1, 42).WithArguments("public", "virtual");
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -193,7 +193,7 @@ public class ExtendedTestClass : TestClass
             var fixedTestCode = @"namespace N1 { public class C1 { public static extern explicit operator C1(int n); } }";
 
             var expected = Diagnostic().WithLocation(1, 48).WithArguments("static", "extern");
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -224,7 +224,7 @@ public class ExtendedTestClass : TestClass
 }";
 
             var expected = Diagnostic().WithLocation(8, 9).WithArguments("protected", "new");
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -329,7 +329,7 @@ public class ExtendedTestClass : TestClass
 ";
 
             var expected = Diagnostic().WithLocation(5, 29).WithArguments("public", "extern");
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
     }
 }

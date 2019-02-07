@@ -83,7 +83,7 @@ public class Foo<T> : object where T/* test */ : IFormattable
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -127,7 +127,7 @@ base()
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -175,7 +175,7 @@ public class Foo<T> :object where T :IFormattable
                 Diagnostic().WithLocation(10, 30).WithArguments(string.Empty, "followed", string.Empty),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, ExpectedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, ExpectedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -223,7 +223,7 @@ public class Foo<T>: object where T: IFormattable
                 Diagnostic().WithLocation(10, 29).WithArguments(string.Empty, "preceded", string.Empty),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, ExpectedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, ExpectedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -272,7 +272,7 @@ public class Foo<T> : object where T : IFormattable
                 Diagnostic().WithLocation(24, 21).WithArguments(" not", "preceded", string.Empty),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, ExpectedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, ExpectedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -325,7 +325,7 @@ public class Foo<T>:object where T:IFormattable
                 Diagnostic().WithLocation(10, 29).WithArguments(string.Empty, "followed", string.Empty),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, ExpectedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, ExpectedCode).ConfigureAwait(false);
         }
     }
 }

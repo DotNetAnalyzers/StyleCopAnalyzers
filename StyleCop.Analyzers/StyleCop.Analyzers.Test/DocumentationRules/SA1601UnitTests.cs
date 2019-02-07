@@ -40,7 +40,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 public partial {0} TypeName
 {{
 }}";
-            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKeyword), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKeyword), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Theory]
@@ -57,7 +57,7 @@ TypeName
 
             DiagnosticResult expected = Diagnostic().WithLocation(3, 1);
 
-            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKeyword), expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKeyword), expected).ConfigureAwait(false);
 
             // The same situation is allowed if 'documentExposedElements' and 'documentInterfaces' is false
             string interfaceSettingName = typeKeyword == "interface" ? "documentInterfaces" : "ignoredProperty";
@@ -71,7 +71,7 @@ TypeName
   }}
 }}
 ";
-            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKeyword), currentTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKeyword), currentTestSettings, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Theory]
@@ -91,7 +91,7 @@ TypeName
 
             DiagnosticResult expected = Diagnostic().WithLocation(6, 1);
 
-            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKeyword), expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKeyword), expected).ConfigureAwait(false);
 
             // The same situation is allowed if 'documentExposedElements' and 'documentInterfaces' is false
             string interfaceSettingName = typeKeyword == "interface" ? "documentInterfaces" : "ignoredProperty";
@@ -105,7 +105,7 @@ TypeName
   }}
 }}
 ";
-            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKeyword), currentTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeKeyword), currentTestSettings, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -122,7 +122,7 @@ public partial class TypeName
     /// </summary>
     partial void MemberName();
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -139,10 +139,10 @@ public partial class TypeName
 
             DiagnosticResult expected = Diagnostic().WithLocation(7, 18);
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             // The same situation is allowed if 'documentPrivateElements' is false (the default)
-            await VerifyCSharpDiagnosticAsync(testCode, testSettings: null, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, testSettings: null, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -162,19 +162,19 @@ public partial class TypeName
 
             DiagnosticResult expected = Diagnostic().WithLocation(10, 18);
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expected).ConfigureAwait(false);
 
             // The same situation is allowed if 'documentPrivateElements' is false (the default)
-            await VerifyCSharpDiagnosticAsync(testCode, testSettings: null, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, testSettings: null, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
-        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken = default)
             => VerifyCSharpDiagnosticAsync(source, TestSettings, new[] { expected }, cancellationToken);
 
-        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken = default)
             => VerifyCSharpDiagnosticAsync(source, TestSettings, expected, cancellationToken);
 
-        private static Task VerifyCSharpDiagnosticAsync(string source, string testSettings, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        private static Task VerifyCSharpDiagnosticAsync(string source, string testSettings, DiagnosticResult[] expected, CancellationToken cancellationToken = default)
         {
             var test = new StyleCopDiagnosticVerifier<SA1601PartialElementsMustBeDocumented>.CSharpTest
             {

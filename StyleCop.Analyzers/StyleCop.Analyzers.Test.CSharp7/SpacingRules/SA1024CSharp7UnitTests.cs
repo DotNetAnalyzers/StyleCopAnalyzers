@@ -49,7 +49,7 @@ public class Foo
                 Diagnostic().WithLocation(7, 31).WithArguments(string.Empty, "followed", string.Empty),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -94,7 +94,7 @@ public class Foo
                 Diagnostic().WithLocation(11, 22).WithArguments(" not", "preceded", string.Empty),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

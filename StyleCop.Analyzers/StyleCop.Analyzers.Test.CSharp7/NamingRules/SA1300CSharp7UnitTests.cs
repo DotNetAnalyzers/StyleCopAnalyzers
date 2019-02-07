@@ -28,7 +28,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -54,7 +54,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
 }";
 
             DiagnosticResult expected = Diagnostic().WithArguments("localFunction").WithLocation(5, 14);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -85,7 +85,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
 }";
 
             DiagnosticResult expected = Diagnostic().WithArguments("localFunction").WithLocation(5, 14);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

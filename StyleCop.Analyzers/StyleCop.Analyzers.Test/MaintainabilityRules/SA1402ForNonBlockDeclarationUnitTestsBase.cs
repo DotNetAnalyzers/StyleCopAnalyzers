@@ -19,10 +19,10 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         protected static DiagnosticResult Diagnostic()
             => StyleCopDiagnosticVerifier<SA1402FileMayOnlyContainASingleType>.Diagnostic();
 
-        protected static Task VerifyCSharpDiagnosticAsync(string source, string testSettings, DiagnosticResult expected, CancellationToken cancellationToken)
+        protected static Task VerifyCSharpDiagnosticAsync(string source, string testSettings, DiagnosticResult expected, CancellationToken cancellationToken = default)
             => VerifyCSharpDiagnosticAsync(source, testSettings, new[] { expected }, cancellationToken);
 
-        protected static Task VerifyCSharpDiagnosticAsync(string source, string testSettings, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        protected static Task VerifyCSharpDiagnosticAsync(string source, string testSettings, DiagnosticResult[] expected, CancellationToken cancellationToken = default)
         {
             var test = new StyleCopCodeFixVerifier<SA1402FileMayOnlyContainASingleType, SA1402CodeFixProvider>.CSharpTest
             {
@@ -34,10 +34,10 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             return test.RunAsync(cancellationToken);
         }
 
-        protected static Task VerifyCSharpFixAsync(string source, string testSettings, DiagnosticResult expected, (string fileName, string content)[] fixedSources, CancellationToken cancellationToken)
+        protected static Task VerifyCSharpFixAsync(string source, string testSettings, DiagnosticResult expected, (string fileName, string content)[] fixedSources, CancellationToken cancellationToken = default)
             => VerifyCSharpFixAsync(source, testSettings, new[] { expected }, fixedSources, cancellationToken);
 
-        protected static Task VerifyCSharpFixAsync(string source, string testSettings, DiagnosticResult[] expected, (string fileName, string content)[] fixedSources, CancellationToken cancellationToken)
+        protected static Task VerifyCSharpFixAsync(string source, string testSettings, DiagnosticResult[] expected, (string fileName, string content)[] fixedSources, CancellationToken cancellationToken = default)
         {
             var test = new StyleCopCodeFixVerifier<SA1402FileMayOnlyContainASingleType, SA1402CodeFixProvider>.CSharpTest
             {

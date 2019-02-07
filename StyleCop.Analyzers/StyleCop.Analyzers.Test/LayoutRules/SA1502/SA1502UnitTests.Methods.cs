@@ -34,7 +34,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 }";
 
             var expected = Diagnostic().WithLocation(3, 23);
-            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), expected).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 }";
 
             var expected = Diagnostic().WithLocation(3, 23);
-            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), expected).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 }";
 
             var expected = Diagnostic().WithLocation(4, 5);
-            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), expected).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
         return false; }
 }";
 
-            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     public bool Bar(int x, int y) => x > y;
 }";
 
-            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(FormatTestCode(testCode, elementType), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 }";
 
             var expected = Diagnostic().WithLocation(3, 23);
-            await VerifyCSharpFixAsync(FormatTestCode(testCode, elementType), expected, FormatTestCode(fixedTestCode, elementType), CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(FormatTestCode(testCode, elementType), expected, FormatTestCode(fixedTestCode, elementType)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 }";
 
             var expected = Diagnostic().WithLocation(3, 23);
-            await VerifyCSharpFixAsync(FormatTestCode(testCode, elementType), expected, FormatTestCode(fixedTestCode, elementType), CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(FormatTestCode(testCode, elementType), expected, FormatTestCode(fixedTestCode, elementType)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -207,7 +207,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 }";
 
             var expected = Diagnostic().WithLocation(4, 5);
-            await VerifyCSharpFixAsync(FormatTestCode(testCode, elementType), expected, FormatTestCode(fixedTestCode, elementType), CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(FormatTestCode(testCode, elementType), expected, FormatTestCode(fixedTestCode, elementType)).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
 }";
 
             var expected = Diagnostic().WithLocation(3, 33);
-            await VerifyCSharpFixAsync(FormatTestCode(testCode, elementType), expected, FormatTestCode(fixedTestCode, elementType), CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(FormatTestCode(testCode, elementType), expected, FormatTestCode(fixedTestCode, elementType)).ConfigureAwait(false);
         }
     }
 }

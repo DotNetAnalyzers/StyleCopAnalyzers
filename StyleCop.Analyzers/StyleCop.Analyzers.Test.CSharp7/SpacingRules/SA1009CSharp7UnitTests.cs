@@ -53,7 +53,7 @@ public class Foo
                 Diagnostic().WithLocation(7, 98).WithArguments(" not", "preceded"),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ public class Foo
 
             DiagnosticResult expected = Diagnostic().WithLocation(7, 47).WithArguments(" not", "preceded");
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -119,7 +119,7 @@ public class Foo
 
             DiagnosticResult expected = Diagnostic().WithLocation(7, 34).WithArguments(" not", "preceded");
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -176,7 +176,7 @@ public class Foo
                 Diagnostic().WithArguments(" not", "preceded").WithLocation(9, 37),
             };
 
-            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -259,7 +259,7 @@ public class Foo
                 Diagnostic().WithArguments(" not", "followed").WithLocation(19, 42),
             };
 
-            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -442,7 +442,7 @@ public class Foo
                 Diagnostic().WithArguments(string.Empty, "followed").WithLocation(35, 80),
             };
 
-            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -502,7 +502,7 @@ public class Foo
                 Diagnostic().WithArguments(" not", "followed").WithLocation(11, 64),
             };
 
-            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostic, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -785,7 +785,7 @@ namespace TestNamespace
                 Diagnostic().WithArguments(" not", "followed").WithLocation(81, 49),
             };
 
-            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -841,7 +841,7 @@ namespace TestNamespace
                 Diagnostic().WithArguments(" not", "followed").WithLocation(13, 42),
             };
 
-            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -905,7 +905,7 @@ namespace TestNamespace
                 Diagnostic().WithArguments(" not", "followed").WithLocation(13, 45),
             };
 
-            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -951,7 +951,7 @@ namespace TestNamespace
                 Diagnostic().WithArguments(string.Empty, "followed").WithLocation(9, 24),
             };
 
-            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -1003,7 +1003,7 @@ namespace TestNamespace
                 Diagnostic().WithArguments(" not", "followed").WithLocation(12, 35),
             };
 
-            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -1019,7 +1019,7 @@ namespace TestNamespace
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -1051,7 +1051,7 @@ namespace TestNamespace
                 Diagnostic().WithArguments(" not", "followed").WithLocation(6, 25),
             };
 
-            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode).ConfigureAwait(false);
         }
     }
 }

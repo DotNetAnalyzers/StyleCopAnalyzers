@@ -34,7 +34,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
 string Bar = """", car = """", Dar = """";
 }}";
 
-            await VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, modifiers), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Theory]
@@ -72,7 +72,7 @@ string Car;
 string Dar;
 }}";
 
-            await VerifyCSharpFixAsync(string.Format(testCode, modifiers), expected, string.Format(fixedCode, modifiers), CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(string.Format(testCode, modifiers), expected, string.Format(fixedCode, modifiers)).ConfigureAwait(false);
         }
 
         [Theory]
@@ -99,7 +99,7 @@ string bar, Car, dar;
 string Bar, Car, Dar;
 }}";
 
-            await VerifyCSharpFixAsync(string.Format(testCode, modifiers), expected, string.Format(fixedCode, modifiers), CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(string.Format(testCode, modifiers), expected, string.Format(fixedCode, modifiers)).ConfigureAwait(false);
         }
 
         [Theory]
@@ -159,7 +159,7 @@ string CarValueValue, Car, CarValue;
     public string _bar = ""baz"";
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -170,7 +170,7 @@ string CarValueValue, Car, CarValue;
     public string bar = ""baz"";
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
     }
 }

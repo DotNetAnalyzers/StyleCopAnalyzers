@@ -54,7 +54,7 @@ class ClassName
     }}
 }}
 ";
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -120,7 +120,7 @@ class ClassName
                 Diagnostic().WithLocation(4, 10 + literalType.Length),
                 Diagnostic().WithLocation(8, 17),
             };
-            await VerifyCSharpFixAsync(testCode, expectedDiagnosticResult, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expectedDiagnosticResult, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -160,7 +160,7 @@ class ClassName
     }}
 }}
 ";
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -182,7 +182,7 @@ class ClassName
     }}
 }}
 ";
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -212,7 +212,7 @@ class ClassName
                     .WithMessage($"Constant value '{literalValue}' cannot be converted to a '{type}' (use 'unchecked' syntax to override)")
                     .WithLocation(6, 17),
             };
-            await VerifyCSharpDiagnosticAsync(testCode, expectedDiagnosticResult, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, expectedDiagnosticResult).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -243,7 +243,7 @@ class ClassName
 }}
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
     }
 }

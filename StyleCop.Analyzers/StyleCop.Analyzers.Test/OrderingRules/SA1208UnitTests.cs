@@ -24,7 +24,7 @@ class A
 {
 }";
 
-            await VerifyCSharpDiagnosticAsync(usingsInCompilationUnit, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(usingsInCompilationUnit, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -40,7 +40,7 @@ class A
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(usingsInNamespaceDeclaration, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(usingsInNamespaceDeclaration, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -54,7 +54,7 @@ class A
     using System.Threading;
 }";
 
-            await VerifyCSharpDiagnosticAsync(usingsInNamespaceDeclaration, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(usingsInNamespaceDeclaration, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -204,7 +204,7 @@ namespace Test
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(compilationUnitWithoutDiagnostic, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(compilationUnitWithoutDiagnostic, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
 
             await new CSharpTest
             {
@@ -241,8 +241,8 @@ using System;
 
             DiagnosticResult expected = Diagnostic().WithLocation(2, 1).WithArguments("System", "System.IO.Path");
 
-            await VerifyCSharpDiagnosticAsync(namespaceDeclarationWithoutDiagnostic, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await VerifyCSharpDiagnosticAsync(source, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(namespaceDeclarationWithoutDiagnostic, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(source, expected).ConfigureAwait(false);
         }
 
         [Fact]
@@ -351,7 +351,7 @@ using System.Collections;
                 Diagnostic().WithLocation(9, 1).WithArguments("System.Collections", "Microsoft.CodeAnalysis.CSharp"),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -376,7 +376,7 @@ namespace Foo
     using Microsoft;
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
     }
 }

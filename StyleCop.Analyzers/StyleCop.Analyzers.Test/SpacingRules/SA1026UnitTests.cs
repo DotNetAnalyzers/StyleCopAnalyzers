@@ -29,7 +29,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Theory]
@@ -47,7 +47,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             const string expectedCode = "public class Foo { public Foo() { var ints = new[] { 1, 2, 3 }; } }";
             DiagnosticResult expected = Diagnostic().WithLocation(1, 46);
 
-            await VerifyCSharpFixAsync(testCode, expected, expectedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, expectedCode).ConfigureAwait(false);
         }
     }
 }

@@ -74,7 +74,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 ";
 
             var expectedDiagnostic = Diagnostic().WithLocation("WrongFileName.cs", 3, 13 + typeKeyword.Length);
-            await VerifyCSharpFixAsync("WrongFileName.cs", testCode, StyleCopSettings, expectedDiagnostic, "TestType.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync("WrongFileName.cs", testCode, StyleCopSettings, expectedDiagnostic, "TestType.cs", fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 ";
 
             var expectedDiagnostic = Diagnostic().WithLocation("WrongFileName.svc.cs", 3, 13 + typeKeyword.Length);
-            await VerifyCSharpFixAsync("WrongFileName.svc.cs", testCode, StyleCopSettings, expectedDiagnostic, "TestType.svc.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync("WrongFileName.svc.cs", testCode, StyleCopSettings, expectedDiagnostic, "TestType.svc.cs", fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 ";
 
             var expectedDiagnostic = Diagnostic().WithLocation("WrongFileName", 3, 13 + typeKeyword.Length);
-            await VerifyCSharpFixAsync("WrongFileName", testCode, StyleCopSettings, expectedDiagnostic, "TestType", fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync("WrongFileName", testCode, StyleCopSettings, expectedDiagnostic, "TestType", fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 }}
 ";
 
-            await VerifyCSharpDiagnosticAsync("testtype.cs", testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync("testtype.cs", testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -178,7 +178,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 }}
 ";
 
-            await VerifyCSharpDiagnosticAsync("TestType.cs", testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync("TestType.cs", testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -198,7 +198,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 }}
 ";
 
-            await VerifyCSharpDiagnosticAsync("WrongFileName.cs", testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync("WrongFileName.cs", testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -219,8 +219,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 ";
 
             var expectedDiagnostic = Diagnostic().WithLocation("TestType`3.cs", 3, 13 + typeKeyword.Length);
-            await VerifyCSharpDiagnosticAsync("TestType.cs", testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await VerifyCSharpFixAsync("TestType`3.cs", testCode, StyleCopSettings, expectedDiagnostic, "TestType{T1,T2,T3}.cs", testCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync("TestType.cs", testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
+            await VerifyCSharpFixAsync("TestType`3.cs", testCode, StyleCopSettings, expectedDiagnostic, "TestType{T1,T2,T3}.cs", testCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -241,10 +241,10 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 ";
 
             var expectedDiagnostic = Diagnostic().WithLocation("TestType{T1,T2,T3}.cs", 3, 13 + typeKeyword.Length);
-            await VerifyCSharpFixAsync("TestType{T1,T2,T3}.cs", testCode, MetadataSettings, expectedDiagnostic, "TestType`3.cs", testCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync("TestType{T1,T2,T3}.cs", testCode, MetadataSettings, expectedDiagnostic, "TestType`3.cs", testCode).ConfigureAwait(false);
 
             expectedDiagnostic = Diagnostic().WithLocation("TestType.cs", 3, 13 + typeKeyword.Length);
-            await VerifyCSharpFixAsync("TestType.cs", testCode, MetadataSettings, expectedDiagnostic, "TestType`3.cs", testCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync("TestType.cs", testCode, MetadataSettings, expectedDiagnostic, "TestType`3.cs", testCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -274,7 +274,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 ";
 
             var expectedDiagnostic = Diagnostic().WithLocation("TestType.svc.cs", 3, 13 + typeKeyword.Length);
-            await VerifyCSharpFixAsync("TestType.svc.cs", testCode, MetadataSettings, expectedDiagnostic, "TestType`1.svc.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync("TestType.svc.cs", testCode, MetadataSettings, expectedDiagnostic, "TestType`1.svc.cs", fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -289,10 +289,10 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync("Test0.cs", testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync("Test0.cs", testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
-        internal static Task VerifyCSharpDiagnosticAsync(string fileName, string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        internal static Task VerifyCSharpDiagnosticAsync(string fileName, string source, DiagnosticResult[] expected, CancellationToken cancellationToken = default)
         {
             var test = new StyleCopCodeFixVerifier<SA1649FileNameMustMatchTypeName, SA1649CodeFixProvider>.CSharpTest
             {
@@ -303,10 +303,10 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             return test.RunAsync(cancellationToken);
         }
 
-        internal static Task VerifyCSharpFixAsync(string oldFileName, string source, string testSettings, DiagnosticResult expected, string newFileName, string fixedSource, CancellationToken cancellationToken)
+        internal static Task VerifyCSharpFixAsync(string oldFileName, string source, string testSettings, DiagnosticResult expected, string newFileName, string fixedSource, CancellationToken cancellationToken = default)
             => VerifyCSharpFixAsync(oldFileName, source, testSettings, new[] { expected }, newFileName, fixedSource, cancellationToken);
 
-        internal static Task VerifyCSharpFixAsync(string oldFileName, string source, string testSettings, DiagnosticResult[] expected, string newFileName, string fixedSource, CancellationToken cancellationToken)
+        internal static Task VerifyCSharpFixAsync(string oldFileName, string source, string testSettings, DiagnosticResult[] expected, string newFileName, string fixedSource, CancellationToken cancellationToken = default)
         {
             var test = new StyleCopCodeFixVerifier<SA1649FileNameMustMatchTypeName, SA1649CodeFixProvider>.CSharpTest
             {

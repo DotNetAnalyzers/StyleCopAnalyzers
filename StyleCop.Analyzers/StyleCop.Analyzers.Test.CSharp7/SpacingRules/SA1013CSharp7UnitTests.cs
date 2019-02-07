@@ -49,7 +49,7 @@ public class Foo
                 Diagnostic().WithLocation(7, 45).WithArguments(string.Empty, "preceded"),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }

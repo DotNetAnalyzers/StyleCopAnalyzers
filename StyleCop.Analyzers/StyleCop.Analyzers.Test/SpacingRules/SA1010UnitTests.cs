@@ -40,7 +40,7 @@ public class Foo
         [Fact]
         public async Task TestValidSpacingOfOpenSquareBracketAsync()
         {
-            await VerifyCSharpDiagnosticAsync(ExpectedCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(ExpectedCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -77,7 +77,7 @@ public class Foo
                 Diagnostic().WithLocation(15, 29).WithArguments("not be preceded"),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, ExpectedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, ExpectedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -113,7 +113,7 @@ public class Foo
                 Diagnostic().WithLocation(15, 28).WithArguments("not be followed"),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, ExpectedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, ExpectedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -156,7 +156,7 @@ public class Foo
                 Diagnostic().WithLocation(15, 30).WithArguments("not be followed"),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, ExpectedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, ExpectedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -178,7 +178,7 @@ public class TestClass
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -212,7 +212,7 @@ public class TestClass
 }
 ";
             var expected = Diagnostic().WithLocation(8, 62).WithArguments("not be preceded");
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
     }
 }

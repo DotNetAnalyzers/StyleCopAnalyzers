@@ -35,7 +35,7 @@ class Foo
     {
     }
 }";
-            await VerifyCSharpFixAsync(testCode, expected, expectedFixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, expectedFixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -60,7 +60,7 @@ class Foo
         System.Console.WriteLine(""A"");
     }
 }";
-            await VerifyCSharpFixAsync(testCode, expected, expectedFixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, expectedFixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -84,7 +84,7 @@ class Foo
     {
     }
 }";
-            await VerifyCSharpFixAsync(testCode, expected, expectedFixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, expectedFixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -110,7 +110,7 @@ class Foo
     {
     }
 }";
-            await VerifyCSharpFixAsync(testCode, expected, expectedFixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, expectedFixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -125,7 +125,7 @@ class Foo
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -152,7 +152,7 @@ class Foo
         // Bar
     }
 }";
-            await VerifyCSharpFixAsync(testCode, expected, expectedFixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, expectedFixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -180,7 +180,7 @@ class Foo
         // Bar
     }
 }";
-            await VerifyCSharpFixAsync(testCode, expected, expectedFixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, expectedFixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -209,7 +209,7 @@ class Foo
     }
 }";
 
-            await VerifyCSharpFixAsync(testCode, new[] { expected, expected2 }, expectedFixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, new[] { expected, expected2 }, expectedFixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -237,7 +237,7 @@ class Foo
     }
 }";
 
-            await VerifyCSharpFixAsync(testCode, expected, expectedFixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, expectedFixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -255,7 +255,7 @@ class Foo
     }
 }";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -297,7 +297,7 @@ class TestClass
                 Diagnostic().WithLocation(11, 9),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -339,7 +339,7 @@ public class SomeException : Exception
                 Diagnostic().WithLocation(9, 5),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -363,7 +363,7 @@ public class TestClass
 
             var expected = Diagnostic().WithLocation(1, 1);
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -385,7 +385,7 @@ public class TestClass
 
             var expected = Diagnostic().WithLocation(4, 1);
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
 
         /// <summary>

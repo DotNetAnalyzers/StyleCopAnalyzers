@@ -71,7 +71,7 @@ public class ClassName
 {
 $$
 }";
-            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Theory]
@@ -89,7 +89,7 @@ public class ClassName
     /// </summary>
 $$
 }";
-            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Theory]
@@ -108,7 +108,7 @@ public class ClassName
     ///<returns>Test</returns>
 $$
 }";
-            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Theory]
@@ -133,7 +133,7 @@ $$
             var expected = Diagnostic().WithLocation(10, 8);
 
             // The code fix does not alter this case.
-            await VerifyCSharpFixAsync(testCode.Replace("$$", declaration), expected, testCode.Replace("$$", declaration), offerEmptyFixer: true, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode.Replace("$$", declaration), expected, testCode.Replace("$$", declaration), offerEmptyFixer: true).ConfigureAwait(false);
         }
 
         [Theory]
@@ -156,7 +156,7 @@ $$
             var expected = Diagnostic().WithLocation(10, 8);
 
             // The code fix does not alter this case.
-            await VerifyCSharpFixAsync(testCode.Replace("$$", declaration), expected, testCode.Replace("$$", declaration), offerEmptyFixer: true, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode.Replace("$$", declaration), expected, testCode.Replace("$$", declaration), offerEmptyFixer: true).ConfigureAwait(false);
         }
 
         [Theory]
@@ -179,7 +179,7 @@ $$
             var expected = Diagnostic().WithLocation(10, 8);
 
             // The code fix does not alter this case.
-            await VerifyCSharpFixAsync(testCode.Replace("$$", declaration), expected, testCode.Replace("$$", declaration), offerEmptyFixer: true, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode.Replace("$$", declaration), expected, testCode.Replace("$$", declaration), offerEmptyFixer: true).ConfigureAwait(false);
         }
 
         [Theory]
@@ -216,7 +216,7 @@ $$
 }";
 
             var expected = Diagnostic().WithLocation(12, 9);
-            await VerifyCSharpFixAsync(testCode.Replace("$$", declaration), expected, fixedCode.Replace("$$", declaration), offerEmptyFixer: false, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode.Replace("$$", declaration), expected, fixedCode.Replace("$$", declaration), offerEmptyFixer: false).ConfigureAwait(false);
         }
 
         [Theory]
@@ -253,7 +253,7 @@ $$
 }";
 
             var expected = Diagnostic().WithLocation(12, 9);
-            await VerifyCSharpFixAsync(testCode.Replace("$$", declaration), expected, fixedCode.Replace("$$", declaration), offerEmptyFixer: false, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode.Replace("$$", declaration), expected, fixedCode.Replace("$$", declaration), offerEmptyFixer: false).ConfigureAwait(false);
         }
 
         [Theory]
@@ -292,7 +292,7 @@ $$
 }";
 
             var expected = Diagnostic().WithLocation(12, 9);
-            await VerifyCSharpFixAsync(testCode.Replace("$$", declaration), expected, fixedCode.Replace("$$", declaration), offerEmptyFixer: false, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode.Replace("$$", declaration), expected, fixedCode.Replace("$$", declaration), offerEmptyFixer: false).ConfigureAwait(false);
         }
 
         [Theory]
@@ -336,7 +336,7 @@ internal sealed class ##Attribute : System.Attribute { }
 
             var expected = Diagnostic().WithLocation(12, 9);
 
-            await VerifyCSharpFixAsync(testCode.Replace("$$", declaration).Replace("##", testAttribute), expected, fixedCode.Replace("$$", declaration).Replace("##", testAttribute), offerEmptyFixer: false, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode.Replace("$$", declaration).Replace("##", testAttribute), expected, fixedCode.Replace("$$", declaration).Replace("##", testAttribute), offerEmptyFixer: false).ConfigureAwait(false);
         }
 
         [Theory]
@@ -380,7 +380,7 @@ internal sealed class ##Attribute : System.Attribute { }
 
             var expected = Diagnostic().WithLocation(12, 9);
 
-            await VerifyCSharpFixAsync(testCode.Replace("$$", declaration).Replace("##", testAttribute), expected, fixedCode.Replace("$$", declaration).Replace("##", testAttribute), offerEmptyFixer: false, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode.Replace("$$", declaration).Replace("##", testAttribute), expected, fixedCode.Replace("$$", declaration).Replace("##", testAttribute), offerEmptyFixer: false).ConfigureAwait(false);
         }
 
         [Theory]
@@ -426,7 +426,7 @@ internal sealed class ##Attribute : System.Attribute { }
 
             var expected = Diagnostic().WithLocation(12, 9);
 
-            await VerifyCSharpFixAsync(testCode.Replace("$$", declaration).Replace("##", testAttribute), expected, fixedCode.Replace("$$", declaration).Replace("##", testAttribute), offerEmptyFixer: false, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode.Replace("$$", declaration).Replace("##", testAttribute), expected, fixedCode.Replace("$$", declaration).Replace("##", testAttribute), offerEmptyFixer: false).ConfigureAwait(false);
         }
 
         [Fact]
@@ -441,7 +441,7 @@ public class ClassName
     /// <include file='NoDocumentation.xml' path='/ClassName/Method/*' />
     public ClassName Method(string foo, string bar) { return null; }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -456,7 +456,7 @@ public class ClassName
     /// <include file='WithoutReturns.xml' path='/ClassName/Method/*' />
     public ClassName Method(string foo, string bar) { return null; }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -471,7 +471,7 @@ public class ClassName
     /// <include file='WithReturns.xml' path='/ClassName/Method/*' />
     public ClassName Method(string foo, string bar) { return null; }
 }";
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -490,7 +490,7 @@ public class ClassName
             var expected = Diagnostic().WithLocation(8, 22);
 
             // The code fix does not alter this case.
-            await VerifyCSharpFixAsync(testCode, expected, testCode, offerEmptyFixer: true, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, testCode, offerEmptyFixer: true).ConfigureAwait(false);
         }
 
         [Fact]
@@ -509,7 +509,7 @@ public class ClassName
             var expected = Diagnostic().WithLocation(8, 22);
 
             // The code fix does not alter this case.
-            await VerifyCSharpFixAsync(testCode, expected, testCode, offerEmptyFixer: true, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, testCode, offerEmptyFixer: true).ConfigureAwait(false);
         }
 
         [Fact]
@@ -528,19 +528,19 @@ public class ClassName
             var expected = Diagnostic().WithLocation(8, 22);
 
             // The code fix does not alter this case.
-            await VerifyCSharpFixAsync(testCode, expected, testCode, offerEmptyFixer: true, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, testCode, offerEmptyFixer: true).ConfigureAwait(false);
         }
 
-        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken = default)
             => VerifyCSharpFixAsync(source, new[] { expected }, fixedSource: null, offerEmptyFixer: false, cancellationToken);
 
-        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken = default)
             => VerifyCSharpFixAsync(source, expected, fixedSource: null, offerEmptyFixer: false, cancellationToken);
 
-        private static Task VerifyCSharpFixAsync(string source, DiagnosticResult expected, string fixedSource, bool offerEmptyFixer, CancellationToken cancellationToken)
+        private static Task VerifyCSharpFixAsync(string source, DiagnosticResult expected, string fixedSource, bool offerEmptyFixer, CancellationToken cancellationToken = default)
             => VerifyCSharpFixAsync(source, new[] { expected }, fixedSource, offerEmptyFixer, cancellationToken);
 
-        private static Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, bool offerEmptyFixer, CancellationToken cancellationToken)
+        private static Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, bool offerEmptyFixer, CancellationToken cancellationToken = default)
         {
             string contentWithoutDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <ClassName>

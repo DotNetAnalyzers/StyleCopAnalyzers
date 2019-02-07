@@ -91,7 +91,7 @@ namespace N1
                 Diagnostic(DescriptorFollowedByWhitespace).WithLocation(16, 32).WithArguments("=>"),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode).ConfigureAwait(false);
         }
     }
 }

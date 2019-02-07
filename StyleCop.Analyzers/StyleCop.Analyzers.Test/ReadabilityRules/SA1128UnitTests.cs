@@ -25,7 +25,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         [MemberData(nameof(GetNullTests))]
         public async Task TestNullScenariosAsync(string declaration)
         {
-            await VerifyCSharpDiagnosticAsync(declaration, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(declaration, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
         }
 
         [Fact]
@@ -47,7 +47,7 @@ public class TypeName
     }
 }";
             var expected = Diagnostic().WithLocation(4, 23);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -77,7 +77,7 @@ public class TypeName
     }
 }";
             var expected = Diagnostic().WithLocation(4, 23);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -109,7 +109,7 @@ public class TypeName
     }
 }";
             var expected = Diagnostic().WithLocation(5, 9);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -140,7 +140,7 @@ public class TypeName
     }
 }";
             var expected = Diagnostic().WithLocation(4, 23);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
 
         [Fact]
@@ -170,7 +170,7 @@ public class TypeName
     }
 }";
             var expected = Diagnostic().WithLocation(4, 32);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode).ConfigureAwait(false);
         }
     }
 }
