@@ -7,10 +7,9 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.MaintainabilityRules;
+    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.MaintainabilityRules.SA1119StatementMustNotUseUnnecessaryParenthesis,
-        StyleCop.Analyzers.MaintainabilityRules.SA1119CodeFixProvider>;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.MaintainabilityRules.SA1119StatementMustNotUseUnnecessaryParenthesis>;
 
     public class SA1119UnitTests
     {
@@ -1040,6 +1039,14 @@ public class Foo
         string data = $""{(flag)}"";
     }
 }";
+            string fixedCode = @"class Foo
+{
+    public void Bar()
+    {
+        bool flag = false;
+        string data = $""{ flag}"";
+    }
+}";
             DiagnosticResult[] expected =
             {
                 Diagnostic(DiagnosticId).WithSpan(6, 26, 6, 32),
@@ -1047,7 +1054,7 @@ public class Foo
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 31),
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -1428,6 +1435,21 @@ public class Program
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected static async Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
+        {
+            var test = new StyleCopCodeFixVerifier<SA1119StatementMustNotUseUnnecessaryParenthesis, SA1119CodeFixProvider>.CSharpTest
+            {
+                TestCode = source,
+                FixedCode = fixedSource,
+            };
+
+            // Workaround for https://github.com/dotnet/roslyn-sdk/pull/252
+            test.Exclusions &= ~AnalysisExclusions.Suppression;
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            await test.RunAsync(cancellationToken).ConfigureAwait(false);
         }
     }
 }

@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Test
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.Testing;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<TestHelper.ExclusionTestAnalyzer>;
 
@@ -82,7 +83,7 @@ namespace StyleCop.Analyzers.Test
         {
             var result = Diagnostic().WithLocation(filename, 1, 1);
 
-            await new CSharpTest
+            var test = new CSharpTest
             {
                 TestSources =
                 {
@@ -92,7 +93,10 @@ namespace StyleCop.Analyzers.Test
                 {
                     result,
                 },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            };
+
+            test.Exclusions &= ~AnalysisExclusions.Suppression;
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

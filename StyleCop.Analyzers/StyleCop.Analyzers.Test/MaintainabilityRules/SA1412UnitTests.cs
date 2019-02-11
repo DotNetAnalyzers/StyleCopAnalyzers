@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CodeFixes;
+    using Microsoft.CodeAnalysis.Testing;
     using Microsoft.CodeAnalysis.Text;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -38,12 +39,19 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             var expected = Diagnostic().WithLocation(1, 1);
 
-            await new CSharpTest
+            var test = new CSharpTest
             {
                 TestSources = { testCode },
                 ExpectedDiagnostics = { expected },
                 FixedSources = { fixedCode },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            };
+
+            // Workaround for https://github.com/dotnet/roslyn-sdk/pull/251
+            test.FixedState.InheritanceMode = StateInheritanceMode.AutoInherit;
+            test.BatchFixedState.InheritanceMode = StateInheritanceMode.AutoInherit;
+
+            test.Exclusions &= ~AnalysisExclusions.Suppression;
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -54,12 +62,19 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             var expected = Diagnostic().WithLocation(1, 1);
 
-            await new CSharpTest
+            var test = new CSharpTest
             {
                 TestSources = { testCode },
                 ExpectedDiagnostics = { expected },
                 FixedSources = { fixedCode },
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            };
+
+            // Workaround for https://github.com/dotnet/roslyn-sdk/pull/251
+            test.FixedState.InheritanceMode = StateInheritanceMode.AutoInherit;
+            test.BatchFixedState.InheritanceMode = StateInheritanceMode.AutoInherit;
+
+            test.Exclusions &= ~AnalysisExclusions.Suppression;
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
@@ -73,7 +88,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         [Fact]
         public async Task TestFixAllWithMultipleEncodingsAsync()
         {
-            await new CSharpTest
+            var test = new CSharpTest
             {
                 TestSources =
                 {
@@ -95,12 +110,19 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 },
                 NumberOfFixAllIterations = 2,
                 NumberOfFixAllInDocumentIterations = 3,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            };
+
+            // Workaround for https://github.com/dotnet/roslyn-sdk/pull/251
+            test.FixedState.InheritanceMode = StateInheritanceMode.AutoInherit;
+            test.BatchFixedState.InheritanceMode = StateInheritanceMode.AutoInherit;
+
+            test.Exclusions &= ~AnalysisExclusions.Suppression;
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         private async Task TestFixAllExecuterAsync(int codepage, FixAllScope scope)
         {
-            await new CSharpTest
+            var test = new CSharpTest
             {
                 TestSources =
                 {
@@ -119,7 +141,14 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 },
                 NumberOfFixAllIterations = 1,
                 NumberOfFixAllInDocumentIterations = 2,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            };
+
+            // Workaround for https://github.com/dotnet/roslyn-sdk/pull/251
+            test.FixedState.InheritanceMode = StateInheritanceMode.AutoInherit;
+            test.BatchFixedState.InheritanceMode = StateInheritanceMode.AutoInherit;
+
+            test.Exclusions &= ~AnalysisExclusions.Suppression;
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
