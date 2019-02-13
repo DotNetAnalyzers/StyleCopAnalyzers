@@ -9,7 +9,6 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using Microsoft.CodeAnalysis.Testing;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.LayoutRules;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         Analyzers.LayoutRules.SA1503BracesMustNotBeOmitted,

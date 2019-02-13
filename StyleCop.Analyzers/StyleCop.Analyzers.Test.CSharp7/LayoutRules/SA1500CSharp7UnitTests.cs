@@ -8,7 +8,6 @@ namespace StyleCop.Analyzers.Test.CSharp7.LayoutRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.LayoutRules;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         Analyzers.LayoutRules.SA1500BracesForMultiLineStatementsMustNotShareLine,

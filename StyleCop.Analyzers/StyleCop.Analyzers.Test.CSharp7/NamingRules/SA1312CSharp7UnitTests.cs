@@ -8,7 +8,6 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Settings.ObjectModel;
     using StyleCop.Analyzers.Test.NamingRules;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         Analyzers.NamingRules.SA1312VariableNamesMustBeginWithLowerCaseLetter,

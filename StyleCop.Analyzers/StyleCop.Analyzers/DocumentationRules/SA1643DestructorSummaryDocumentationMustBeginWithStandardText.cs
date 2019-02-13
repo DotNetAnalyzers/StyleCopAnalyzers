@@ -8,7 +8,6 @@ namespace StyleCop.Analyzers.DocumentationRules
     using System.Globalization;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>

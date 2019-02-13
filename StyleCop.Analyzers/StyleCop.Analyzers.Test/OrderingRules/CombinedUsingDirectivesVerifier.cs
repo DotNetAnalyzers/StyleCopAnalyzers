@@ -9,7 +9,6 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.OrderingRules;
     using StyleCop.Analyzers.Test.Verifiers;
-    using TestHelper;
 
     internal static class CombinedUsingDirectivesVerifier
     {

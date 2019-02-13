@@ -12,7 +12,6 @@ namespace StyleCop.Analyzers.Helpers
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
-    using Microsoft.CodeAnalysis.Diagnostics;
 
     internal static class FixAllContextHelper
     {

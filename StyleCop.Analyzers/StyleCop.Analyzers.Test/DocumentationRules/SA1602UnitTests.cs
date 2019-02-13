@@ -7,7 +7,6 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<Analyzers.DocumentationRules.SA1602EnumerationItemsMustBeDocumented>;
 
