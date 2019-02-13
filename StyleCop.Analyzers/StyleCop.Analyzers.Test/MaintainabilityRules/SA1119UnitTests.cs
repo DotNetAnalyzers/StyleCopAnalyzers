@@ -7,9 +7,10 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.MaintainabilityRules;
-    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.MaintainabilityRules.SA1119StatementMustNotUseUnnecessaryParenthesis>;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.MaintainabilityRules.SA1119StatementMustNotUseUnnecessaryParenthesis,
+        StyleCop.Analyzers.MaintainabilityRules.SA1119CodeFixProvider>;
 
     public class SA1119UnitTests
     {
@@ -1435,21 +1436,6 @@ public class Program
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        protected static async Task VerifyCSharpFixAsync(string source, DiagnosticResult[] expected, string fixedSource, CancellationToken cancellationToken)
-        {
-            var test = new StyleCopCodeFixVerifier<SA1119StatementMustNotUseUnnecessaryParenthesis, SA1119CodeFixProvider>.CSharpTest
-            {
-                TestCode = source,
-                FixedCode = fixedSource,
-            };
-
-            // Workaround for https://github.com/dotnet/roslyn-sdk/pull/252
-            test.Exclusions &= ~AnalysisExclusions.Suppression;
-
-            test.ExpectedDiagnostics.AddRange(expected);
-            await test.RunAsync(cancellationToken).ConfigureAwait(false);
         }
     }
 }

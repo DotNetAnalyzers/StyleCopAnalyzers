@@ -41,7 +41,7 @@ class ClassName
                 {
                     await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
-            Assert.StartsWith("Mismatch between number of diagnostics returned, expected \"1\" actual \"0\"", ex.Message);
+            Assert.StartsWith($"Context: Diagnostics of test state{Environment.NewLine}Mismatch between number of diagnostics returned, expected \"1\" actual \"0\"", ex.Message);
         }
 
         [Fact]
@@ -104,7 +104,7 @@ class ClassName
                 {
                     await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
-            Assert.StartsWith("Expected:\nA project diagnostic with No location\nActual:\n", ex.Message);
+            Assert.StartsWith($"Context: Diagnostics of test state{Environment.NewLine}Expected:\nA project diagnostic with No location\nActual:\n", ex.Message);
         }
 
         [Fact]
@@ -126,7 +126,7 @@ class ClassName
                 {
                     await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
-            Assert.StartsWith("Mismatch between number of diagnostics returned, expected \"0\" actual \"1\"", ex.Message);
+            Assert.StartsWith($"Context: Diagnostics of test state{Environment.NewLine}Mismatch between number of diagnostics returned, expected \"0\" actual \"1\"", ex.Message);
             Assert.Contains("warning SA1002", ex.Message);
         }
 
@@ -148,7 +148,7 @@ class ClassName
                 {
                     await CSharpCodeFixVerifier<ErrorThrowingAnalyzer, EmptyCodeFixProvider, XUnitVerifier>.VerifyAnalyzerAsync(testCode, DiagnosticResult.EmptyDiagnosticResults).ConfigureAwait(false);
                 }).ConfigureAwait(false);
-            Assert.StartsWith("Mismatch between number of diagnostics returned, expected \"0\" actual \"2\"", ex.Message);
+            Assert.StartsWith($"Context: Diagnostics of test state{Environment.NewLine}Mismatch between number of diagnostics returned, expected \"0\" actual \"2\"", ex.Message);
             Assert.Contains("error AD0001", ex.Message);
         }
 
@@ -173,7 +173,7 @@ class ClassName
                 {
                     await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
-            Assert.StartsWith("Mismatch between number of diagnostics returned, expected \"1\" actual \"2\"", ex.Message);
+            Assert.StartsWith($"Context: Diagnostics of test state{Environment.NewLine}Mismatch between number of diagnostics returned, expected \"1\" actual \"2\"", ex.Message);
             Assert.Contains("error CS0246", ex.Message);
         }
 
@@ -199,7 +199,7 @@ class ClassName
                 {
                     await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
-            Assert.StartsWith("Mismatch between number of diagnostics returned, expected \"1\" actual \"2\"", ex.Message);
+            Assert.StartsWith($"Context: Diagnostics of test state{Environment.NewLine}Mismatch between number of diagnostics returned, expected \"1\" actual \"2\"", ex.Message);
             Assert.Contains("error CS0246", ex.Message);
         }
 
@@ -225,7 +225,7 @@ class ClassName
                 {
                     await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
-            Assert.StartsWith("Expected diagnostic id to be \"SA9999\" was \"SA1002\"", ex.Message);
+            Assert.StartsWith($"Context: Diagnostics of test state{Environment.NewLine}Expected diagnostic id to be \"SA9999\" was \"SA1002\"", ex.Message);
         }
 
         [Fact]
@@ -249,7 +249,7 @@ class ClassName
                 {
                     await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
-            Assert.StartsWith("Expected diagnostic severity to be \"Error\" was \"Warning\"", ex.Message);
+            Assert.StartsWith($"Context: Diagnostics of test state{Environment.NewLine}Expected diagnostic severity to be \"Error\" was \"Warning\"", ex.Message);
         }
 
         [Fact]
@@ -273,7 +273,7 @@ class ClassName
                 {
                     await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
-            Assert.StartsWith("Expected diagnostic to start on line \"8\" was actually on line \"7\"", ex.Message);
+            Assert.StartsWith($"Context: Diagnostics of test state{Environment.NewLine}Expected diagnostic to start on line \"8\" was actually on line \"7\"", ex.Message);
         }
 
         [Fact]
@@ -302,7 +302,7 @@ class ClassName
                 {
                     await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
-            Assert.StartsWith("Expected diagnostic to start on line \"7\" was actually on line \"8\"", ex.Message);
+            Assert.StartsWith($"Context: Diagnostics of test state{Environment.NewLine}Expected diagnostic to start on line \"7\" was actually on line \"8\"", ex.Message);
         }
 
         [Fact]
@@ -326,7 +326,7 @@ class ClassName
                 {
                     await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
-            Assert.StartsWith("Expected diagnostic to start at column \"34\" was actually at column \"33\"", ex.Message);
+            Assert.StartsWith($"Context: Diagnostics of test state{Environment.NewLine}Expected diagnostic to start at column \"34\" was actually at column \"33\"", ex.Message);
         }
 
         [Fact]
@@ -350,7 +350,7 @@ class ClassName
                 {
                     await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
-            Assert.StartsWith("Expected diagnostic to end at column \"35\" was actually at column \"34\"", ex.Message);
+            Assert.StartsWith($"Context: Diagnostics of test state{Environment.NewLine}Expected diagnostic to end at column \"35\" was actually at column \"34\"", ex.Message);
         }
 
         [Fact]
@@ -374,7 +374,7 @@ class ClassName
                 {
                     await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
-            Assert.StartsWith("Expected diagnostic message to be ", ex.Message);
+            Assert.StartsWith($"Context: Diagnostics of test state{Environment.NewLine}Expected diagnostic message to be ", ex.Message);
         }
 
         [Fact]
@@ -398,7 +398,7 @@ class ClassName
                 {
                     await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
-            Assert.StartsWith("Expected 1 additional locations but got 0 for Diagnostic", ex.Message);
+            Assert.StartsWith($"Context: Diagnostics of test state{Environment.NewLine}Expected 1 additional locations but got 0 for Diagnostic", ex.Message);
         }
 
         private class ErrorThrowingAnalyzer : SA1002SemicolonsMustBeSpacedCorrectly

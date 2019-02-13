@@ -46,10 +46,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 FixedSources = { fixedCode },
             };
 
-            // Workaround for https://github.com/dotnet/roslyn-sdk/pull/251
-            test.FixedState.InheritanceMode = StateInheritanceMode.AutoInherit;
-            test.BatchFixedState.InheritanceMode = StateInheritanceMode.AutoInherit;
-
             test.Exclusions &= ~AnalysisExclusions.Suppression;
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
@@ -68,10 +64,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 ExpectedDiagnostics = { expected },
                 FixedSources = { fixedCode },
             };
-
-            // Workaround for https://github.com/dotnet/roslyn-sdk/pull/251
-            test.FixedState.InheritanceMode = StateInheritanceMode.AutoInherit;
-            test.BatchFixedState.InheritanceMode = StateInheritanceMode.AutoInherit;
 
             test.Exclusions &= ~AnalysisExclusions.Suppression;
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
@@ -112,10 +104,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 NumberOfFixAllInDocumentIterations = 3,
             };
 
-            // Workaround for https://github.com/dotnet/roslyn-sdk/pull/251
-            test.FixedState.InheritanceMode = StateInheritanceMode.AutoInherit;
-            test.BatchFixedState.InheritanceMode = StateInheritanceMode.AutoInherit;
-
             test.Exclusions &= ~AnalysisExclusions.Suppression;
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
@@ -142,10 +130,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 NumberOfFixAllIterations = 1,
                 NumberOfFixAllInDocumentIterations = 2,
             };
-
-            // Workaround for https://github.com/dotnet/roslyn-sdk/pull/251
-            test.FixedState.InheritanceMode = StateInheritanceMode.AutoInherit;
-            test.BatchFixedState.InheritanceMode = StateInheritanceMode.AutoInherit;
 
             test.Exclusions &= ~AnalysisExclusions.Suppression;
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);

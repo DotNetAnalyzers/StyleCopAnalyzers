@@ -9,7 +9,9 @@ namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
     using StyleCop.Analyzers.Test.MaintainabilityRules;
     using TestHelper;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.MaintainabilityRules.SA1119StatementMustNotUseUnnecessaryParenthesis>;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+        StyleCop.Analyzers.MaintainabilityRules.SA1119StatementMustNotUseUnnecessaryParenthesis,
+        StyleCop.Analyzers.MaintainabilityRules.SA1119CodeFixProvider>;
 
     public class SA1119CSharp7UnitTests : SA1119UnitTests
     {
