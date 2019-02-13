@@ -31,7 +31,7 @@ namespace NamespaceName
         [Fact]
         public async Task TestMissingFileHeaderWithLeadingTriviaAsync()
         {
-            await new CSharpTest
+            var test = new CSharpTest
             {
                 TestCode = TestCode,
                 ExpectedDiagnostics = { Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1) },
@@ -42,7 +42,10 @@ namespace NamespaceName
                     (SettingsHelper.SettingsFileName, SettingsFileCodeFixProvider.DefaultSettingsFileContent),
                 },
                 Settings = null,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            };
+
+            test.Exclusions &= ~AnalysisExclusions.Suppression;
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -52,7 +55,7 @@ namespace NamespaceName
         [Fact]
         public async Task TestSettingsFileDoesNotExistAsync()
         {
-            await new CSharpTest
+            var test = new CSharpTest
             {
                 TestCode = TestCode,
                 ExpectedDiagnostics = { Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1) },
@@ -63,7 +66,10 @@ namespace NamespaceName
                     (SettingsHelper.SettingsFileName, SettingsFileCodeFixProvider.DefaultSettingsFileContent),
                 },
                 Settings = null,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            };
+
+            test.Exclusions &= ~AnalysisExclusions.Suppression;
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -73,7 +79,7 @@ namespace NamespaceName
         [Fact]
         public async Task TestSettingsFileAlreadyExistsAsync()
         {
-            await new CSharpTest
+            var test = new CSharpTest
             {
                 TestCode = TestCode,
                 ExpectedDiagnostics = { Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1) },
@@ -81,7 +87,10 @@ namespace NamespaceName
                 FixedState = { InheritanceMode = StateInheritanceMode.AutoInheritAll },
                 Settings = "{}",
                 SettingsFileName = SettingsHelper.SettingsFileName,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            };
+
+            test.Exclusions &= ~AnalysisExclusions.Suppression;
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -91,7 +100,7 @@ namespace NamespaceName
         [Fact]
         public async Task TestDotPrefixedSettingsFileAlreadyExistsAsync()
         {
-            await new CSharpTest
+            var test = new CSharpTest
             {
                 TestCode = TestCode,
                 ExpectedDiagnostics = { Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1) },
@@ -99,7 +108,10 @@ namespace NamespaceName
                 FixedState = { InheritanceMode = StateInheritanceMode.AutoInheritAll },
                 Settings = "{}",
                 SettingsFileName = SettingsHelper.AltSettingsFileName,
-            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+            };
+
+            test.Exclusions &= ~AnalysisExclusions.Suppression;
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

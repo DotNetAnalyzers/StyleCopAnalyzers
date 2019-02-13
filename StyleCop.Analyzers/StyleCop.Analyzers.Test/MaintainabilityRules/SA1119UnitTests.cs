@@ -1040,6 +1040,14 @@ public class Foo
         string data = $""{(flag)}"";
     }
 }";
+            string fixedCode = @"class Foo
+{
+    public void Bar()
+    {
+        bool flag = false;
+        string data = $""{ flag}"";
+    }
+}";
             DiagnosticResult[] expected =
             {
                 Diagnostic(DiagnosticId).WithSpan(6, 26, 6, 32),
@@ -1047,7 +1055,7 @@ public class Foo
                 Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 31),
             };
 
-            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]

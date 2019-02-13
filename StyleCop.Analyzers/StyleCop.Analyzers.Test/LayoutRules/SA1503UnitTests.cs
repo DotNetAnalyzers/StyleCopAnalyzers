@@ -350,8 +350,15 @@ public class Foo
     }
 }";
 
-            var expected = Diagnostic().WithLocation(8, 13);
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                ExpectedDiagnostics = { Diagnostic().WithLocation(8, 13) },
+                FixedCode = fixedTestCode,
+            };
+
+            test.Exclusions &= ~AnalysisExclusions.Suppression;
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
