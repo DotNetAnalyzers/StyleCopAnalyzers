@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.SpacingRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// A dereference symbol or an access-of symbol within a C# element is not spaced correctly.
@@ -113,6 +114,13 @@ namespace StyleCop.Analyzers.SpacingRules
             bool allowTrailingSpace;
             switch (token.Parent.Kind())
             {
+            case SyntaxKind.PointerType when token.Parent.Parent.IsKind(SyntaxKindEx.FunctionPointerParameter):
+                allowAtLineStart = true;
+                allowAtLineEnd = true;
+                allowPrecedingSpace = false;
+                allowTrailingSpace = false;
+                break;
+
             case SyntaxKind.PointerType:
                 allowAtLineStart = false;
                 allowAtLineEnd = true;

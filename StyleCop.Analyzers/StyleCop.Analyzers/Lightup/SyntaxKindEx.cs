@@ -49,6 +49,7 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind ImplicitStackAllocArrayCreationExpression = (SyntaxKind)9053;
         public const SyntaxKind SuppressNullableWarningExpression = (SyntaxKind)9054;
         public const SyntaxKind NullableDirectiveTrivia = (SyntaxKind)9055;
+        public const SyntaxKind FunctionPointerParameter = (SyntaxKind)9057;
         public const SyntaxKind WithInitializerExpression = (SyntaxKind)9062;
         public const SyntaxKind RecordDeclaration = (SyntaxKind)9063;
     }
