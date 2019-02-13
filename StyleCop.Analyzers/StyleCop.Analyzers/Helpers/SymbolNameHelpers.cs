@@ -39,8 +39,44 @@ namespace StyleCop.Analyzers.Helpers
                 }
 
                 AppendQualifiedSymbolName(builder, namedTypeSymbol);
+            }
+            else
+            {
+                AppendQualifiedSymbolName(builder, symbol);
+            }
 
-                if (namedTypeSymbol.IsGenericType)
+            return ObjectPools.StringBuilderPool.ReturnAndFree(builder);
+        }
+
+        private static bool AppendQualifiedSymbolName(StringBuilder builder, ISymbol symbol)
+        {
+            switch (symbol)
+            {
+            case IArrayTypeSymbol arraySymbol:
+                AppendQualifiedSymbolName(builder, arraySymbol.ElementType);
+                builder
+                    .Append("[")
+                    .Append(',', arraySymbol.Rank - 1)
+                    .Append("]");
+                return true;
+
+            case INamespaceSymbol namespaceSymbol:
+                if (namespaceSymbol.IsGlobalNamespace)
+                {
+                    return false;
+                }
+
+                builder.Append(namespaceSymbol.ToDisplayString());
+                return true;
+
+            case INamedTypeSymbol namedTypeSymbol:
+                if (AppendQualifiedSymbolName(builder, symbol.ContainingSymbol))
+                {
+                    builder.Append(".");
+                }
+
+                builder.Append(symbol.Name);
+                if (namedTypeSymbol.IsGenericType && !namedTypeSymbol.TypeArguments.IsEmpty)
                 {
                     builder.Append(GenericTypeParametersOpen);
 
@@ -61,39 +97,12 @@ namespace StyleCop.Analyzers.Helpers
                     builder.Remove(builder.Length - GenericSeparator.Length, GenericSeparator.Length);
                     builder.Append(GenericTypeParametersClose);
                 }
-            }
-            else
-            {
-                AppendQualifiedSymbolName(builder, symbol);
-            }
 
-            return ObjectPools.StringBuilderPool.ReturnAndFree(builder);
-        }
-
-        private static void AppendQualifiedSymbolName(StringBuilder builder, ISymbol symbol)
-        {
-            switch (symbol)
-            {
-            case IArrayTypeSymbol arraySymbol:
-                builder
-                    .Append(arraySymbol.ElementType.ContainingNamespace.ToDisplayString())
-                    .Append(".")
-                    .Append(arraySymbol.ElementType.Name)
-                    .Append("[")
-                    .Append(',', arraySymbol.Rank - 1)
-                    .Append("]");
-                break;
+                return true;
 
             default:
-                if (!symbol.ContainingNamespace.IsGlobalNamespace)
-                {
-                    builder
-                        .Append(symbol.ContainingNamespace.ToDisplayString())
-                        .Append(".");
-                }
-
                 builder.Append(symbol.Name);
-                break;
+                return true;
             }
         }
     }

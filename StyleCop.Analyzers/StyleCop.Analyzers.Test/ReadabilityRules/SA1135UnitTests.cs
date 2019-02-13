@@ -319,5 +319,18 @@ namespace MyNamespace {
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(2879, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2879")]
+        public async Task TestAliasTypeNestedInGenericAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    using Example = System.Collections.Immutable.ImmutableDictionary<int, int>.Builder;
+}
+";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
