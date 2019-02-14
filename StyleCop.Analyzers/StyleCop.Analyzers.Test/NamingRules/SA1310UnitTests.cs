@@ -9,8 +9,8 @@ namespace StyleCop.Analyzers.Test.NamingRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.NamingRules.SA1310FieldNamesMustNotContainUnderscore,
-        StyleCop.Analyzers.NamingRules.SA1310CodeFixProvider>;
+        Analyzers.NamingRules.SA1310FieldNamesMustNotContainUnderscore,
+        Analyzers.NamingRules.SA1310CodeFixProvider>;
 
     public class SA1310UnitTests
     {

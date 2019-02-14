@@ -9,8 +9,8 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.OrderingRules.SA1213EventAccessorsMustFollowOrder,
-        StyleCop.Analyzers.OrderingRules.SA1212SA1213CodeFixProvider>;
+        Analyzers.OrderingRules.SA1213EventAccessorsMustFollowOrder,
+        Analyzers.OrderingRules.SA1212SA1213CodeFixProvider>;
 
     public class SA1213UnitTests
     {

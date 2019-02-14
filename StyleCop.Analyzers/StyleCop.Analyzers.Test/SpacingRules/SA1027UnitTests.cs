@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.SpacingRules.SA1027UseTabsCorrectly,
-        StyleCop.Analyzers.SpacingRules.SA1027CodeFixProvider>;
+        Analyzers.SpacingRules.SA1027UseTabsCorrectly,
+        Analyzers.SpacingRules.SA1027CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1027UseTabsCorrectly"/>.

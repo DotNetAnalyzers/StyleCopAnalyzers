@@ -13,8 +13,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.LayoutRules.SA1513ClosingBraceMustBeFollowedByBlankLine,
-        StyleCop.Analyzers.LayoutRules.SA1513CodeFixProvider>;
+        Analyzers.LayoutRules.SA1513ClosingBraceMustBeFollowedByBlankLine,
+        Analyzers.LayoutRules.SA1513CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1513ClosingBraceMustBeFollowedByBlankLine"/>.

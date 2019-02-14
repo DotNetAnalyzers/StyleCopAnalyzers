@@ -11,8 +11,8 @@ namespace StyleCop.Analyzers.Test.CSharp7.LayoutRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.LayoutRules.SA1500BracesForMultiLineStatementsMustNotShareLine,
-        StyleCop.Analyzers.LayoutRules.SA1500CodeFixProvider>;
+        Analyzers.LayoutRules.SA1500BracesForMultiLineStatementsMustNotShareLine,
+        Analyzers.LayoutRules.SA1500CodeFixProvider>;
 
     public class SA1500CSharp7UnitTests : SA1500UnitTests
     {

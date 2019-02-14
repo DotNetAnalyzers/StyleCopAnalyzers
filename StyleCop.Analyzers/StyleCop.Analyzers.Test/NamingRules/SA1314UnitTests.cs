@@ -9,8 +9,8 @@ namespace StyleCop.Analyzers.Test.NamingRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.NamingRules.SA1314TypeParameterNamesMustBeginWithT,
-        StyleCop.Analyzers.NamingRules.SA1314CodeFixProvider>;
+        Analyzers.NamingRules.SA1314TypeParameterNamesMustBeginWithT,
+        Analyzers.NamingRules.SA1314CodeFixProvider>;
 
     public class SA1314UnitTests
     {

@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.Settings
     using StyleCop.Analyzers.Settings;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.DocumentationRules.FileHeaderAnalyzers,
-        StyleCop.Analyzers.Settings.SettingsFileCodeFixProvider>;
+        Analyzers.DocumentationRules.FileHeaderAnalyzers,
+        Analyzers.Settings.SettingsFileCodeFixProvider>;
 
     /// <summary>
     /// Unit tests for the <see cref="SettingsFileCodeFixProvider"/>.

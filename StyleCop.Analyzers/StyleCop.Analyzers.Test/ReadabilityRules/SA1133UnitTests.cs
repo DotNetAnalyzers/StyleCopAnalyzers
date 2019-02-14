@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.ReadabilityRules.SA1133DoNotCombineAttributes,
-        StyleCop.Analyzers.ReadabilityRules.SA1133CodeFixProvider>;
+        Analyzers.ReadabilityRules.SA1133DoNotCombineAttributes,
+        Analyzers.ReadabilityRules.SA1133CodeFixProvider>;
 
     /// <summary>
     /// This class contains unit tests for the <see cref="SA1133DoNotCombineAttributes"/> class.

@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.ReadabilityRules.SA1122UseStringEmptyForEmptyStrings,
-        StyleCop.Analyzers.ReadabilityRules.SA1122CodeFixProvider>;
+        Analyzers.ReadabilityRules.SA1122UseStringEmptyForEmptyStrings,
+        Analyzers.ReadabilityRules.SA1122CodeFixProvider>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1122UseStringEmptyForEmptyStrings"/> and

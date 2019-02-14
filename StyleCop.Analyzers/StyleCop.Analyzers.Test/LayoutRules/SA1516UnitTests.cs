@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using StyleCop.Analyzers.LayoutRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.LayoutRules.SA1516ElementsMustBeSeparatedByBlankLine,
-        StyleCop.Analyzers.LayoutRules.SA1516CodeFixProvider>;
+        Analyzers.LayoutRules.SA1516ElementsMustBeSeparatedByBlankLine,
+        Analyzers.LayoutRules.SA1516CodeFixProvider>;
 
     public class SA1516UnitTests
     {

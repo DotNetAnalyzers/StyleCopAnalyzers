@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using StyleCop.Analyzers.SpacingRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.SpacingRules.SA1000KeywordsMustBeSpacedCorrectly,
-        StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
+        Analyzers.SpacingRules.SA1000KeywordsMustBeSpacedCorrectly,
+        Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1000KeywordsMustBeSpacedCorrectly"/> and

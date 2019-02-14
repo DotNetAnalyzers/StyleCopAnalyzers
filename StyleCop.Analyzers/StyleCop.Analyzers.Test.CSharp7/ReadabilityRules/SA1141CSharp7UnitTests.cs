@@ -9,8 +9,8 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
     using StyleCop.Analyzers.ReadabilityRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.ReadabilityRules.SA1141UseTupleSyntax,
-        StyleCop.Analyzers.ReadabilityRules.SA1141CodeFixProvider>;
+        Analyzers.ReadabilityRules.SA1141UseTupleSyntax,
+        Analyzers.ReadabilityRules.SA1141CodeFixProvider>;
 
     /// <summary>
     /// This class contains the CSharp 7.x unit tests for SA1141.

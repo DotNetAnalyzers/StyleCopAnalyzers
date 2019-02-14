@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.OrderingRules.SA1200UsingDirectivesMustBePlacedCorrectly,
-        StyleCop.Analyzers.OrderingRules.UsingCodeFixProvider>;
+        Analyzers.OrderingRules.SA1200UsingDirectivesMustBePlacedCorrectly,
+        Analyzers.OrderingRules.UsingCodeFixProvider>;
 
     /// <summary>
     /// Unit tests for the <see cref="SA1200UsingDirectivesMustBePlacedCorrectly"/>.

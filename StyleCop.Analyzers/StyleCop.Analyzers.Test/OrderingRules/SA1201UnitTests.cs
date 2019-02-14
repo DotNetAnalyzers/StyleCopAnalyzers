@@ -14,8 +14,8 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using Xunit;
 
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.OrderingRules.SA1201ElementsMustAppearInTheCorrectOrder,
-        StyleCop.Analyzers.OrderingRules.ElementOrderCodeFixProvider>;
+        Analyzers.OrderingRules.SA1201ElementsMustAppearInTheCorrectOrder,
+        Analyzers.OrderingRules.ElementOrderCodeFixProvider>;
 
     public class SA1201UnitTests
     {

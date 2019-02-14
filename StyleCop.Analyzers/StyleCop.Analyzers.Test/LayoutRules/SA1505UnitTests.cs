@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using StyleCop.Analyzers.LayoutRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.LayoutRules.SA1505OpeningBracesMustNotBeFollowedByBlankLine,
-        StyleCop.Analyzers.LayoutRules.SA1505CodeFixProvider>;
+        Analyzers.LayoutRules.SA1505OpeningBracesMustNotBeFollowedByBlankLine,
+        Analyzers.LayoutRules.SA1505CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for the <see cref="SA1505OpeningBracesMustNotBeFollowedByBlankLine"/> class.

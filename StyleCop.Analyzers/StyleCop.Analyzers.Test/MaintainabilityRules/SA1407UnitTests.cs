@@ -9,8 +9,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.MaintainabilityRules.SA1407ArithmeticExpressionsMustDeclarePrecedence,
-        StyleCop.Analyzers.MaintainabilityRules.SA1407SA1408CodeFixProvider>;
+        Analyzers.MaintainabilityRules.SA1407ArithmeticExpressionsMustDeclarePrecedence,
+        Analyzers.MaintainabilityRules.SA1407SA1408CodeFixProvider>;
 
     public class SA1407UnitTests
     {

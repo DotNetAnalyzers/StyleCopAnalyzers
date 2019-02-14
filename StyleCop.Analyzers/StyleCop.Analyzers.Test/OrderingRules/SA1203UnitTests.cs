@@ -8,8 +8,8 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using Microsoft.CodeAnalysis.Testing;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.OrderingRules.SA1203ConstantsMustAppearBeforeFields,
-        StyleCop.Analyzers.OrderingRules.ElementOrderCodeFixProvider>;
+        Analyzers.OrderingRules.SA1203ConstantsMustAppearBeforeFields,
+        Analyzers.OrderingRules.ElementOrderCodeFixProvider>;
 
     public class SA1203UnitTests
     {

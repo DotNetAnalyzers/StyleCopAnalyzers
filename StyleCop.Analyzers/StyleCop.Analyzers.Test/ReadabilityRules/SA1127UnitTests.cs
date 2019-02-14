@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.ReadabilityRules.SA1127GenericTypeConstraintsMustBeOnOwnLine,
-        StyleCop.Analyzers.ReadabilityRules.SA1127CodeFixProvider>;
+        Analyzers.ReadabilityRules.SA1127GenericTypeConstraintsMustBeOnOwnLine,
+        Analyzers.ReadabilityRules.SA1127CodeFixProvider>;
 
     public class SA1127UnitTests
     {

@@ -9,8 +9,8 @@ namespace StyleCop.Analyzers.Test.CSharp7.LayoutRules
     using StyleCop.Analyzers.Test.LayoutRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.LayoutRules.SA1502ElementMustNotBeOnASingleLine,
-        StyleCop.Analyzers.LayoutRules.SA1502CodeFixProvider>;
+        Analyzers.LayoutRules.SA1502ElementMustNotBeOnASingleLine,
+        Analyzers.LayoutRules.SA1502CodeFixProvider>;
 
     public class SA1502CSharp7UnitTests : SA1502UnitTests
     {

@@ -9,8 +9,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using StyleCop.Analyzers.MaintainabilityRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.MaintainabilityRules.SA1119StatementMustNotUseUnnecessaryParenthesis,
-        StyleCop.Analyzers.MaintainabilityRules.SA1119CodeFixProvider>;
+        Analyzers.MaintainabilityRules.SA1119StatementMustNotUseUnnecessaryParenthesis,
+        Analyzers.MaintainabilityRules.SA1119CodeFixProvider>;
 
     public class SA1119UnitTests
     {

@@ -13,8 +13,8 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 
     using static StyleCop.Analyzers.SpacingRules.SA1008OpeningParenthesisMustBeSpacedCorrectly;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.SpacingRules.SA1008OpeningParenthesisMustBeSpacedCorrectly,
-        StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
+        Analyzers.SpacingRules.SA1008OpeningParenthesisMustBeSpacedCorrectly,
+        Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
     public class SA1008CSharp7UnitTests : SA1008UnitTests
     {

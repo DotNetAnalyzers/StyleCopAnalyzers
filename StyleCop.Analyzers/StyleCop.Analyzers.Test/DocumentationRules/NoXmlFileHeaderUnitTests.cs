@@ -10,7 +10,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using StyleCop.Analyzers.Test.Verifiers;
     using TestHelper;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.FileHeaderAnalyzers>;
+    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<Analyzers.DocumentationRules.FileHeaderAnalyzers>;
 
     /// <summary>
     /// Unit tests for file header that do not follow the XML syntax.

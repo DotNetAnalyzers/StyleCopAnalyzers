@@ -8,8 +8,8 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
     using StyleCop.Analyzers.Test.SpacingRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.SpacingRules.SA1018NullableTypeSymbolsMustNotBePrecededBySpace,
-        StyleCop.Analyzers.SpacingRules.SA1018CodeFixProvider>;
+        Analyzers.SpacingRules.SA1018NullableTypeSymbolsMustNotBePrecededBySpace,
+        Analyzers.SpacingRules.SA1018CodeFixProvider>;
 
     public class SA1018CSharp7UnitTests : SA1018UnitTests
     {

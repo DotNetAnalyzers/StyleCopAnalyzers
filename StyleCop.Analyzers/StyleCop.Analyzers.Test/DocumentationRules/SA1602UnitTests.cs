@@ -9,7 +9,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using StyleCop.Analyzers.DocumentationRules;
     using TestHelper;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1602EnumerationItemsMustBeDocumented>;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<Analyzers.DocumentationRules.SA1602EnumerationItemsMustBeDocumented>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1602EnumerationItemsMustBeDocumented"/>.

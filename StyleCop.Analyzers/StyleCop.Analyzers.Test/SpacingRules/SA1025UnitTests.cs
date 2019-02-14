@@ -11,8 +11,8 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.SpacingRules.SA1025CodeMustNotContainMultipleWhitespaceInARow,
-        StyleCop.Analyzers.SpacingRules.SA1025CodeFixProvider>;
+        Analyzers.SpacingRules.SA1025CodeMustNotContainMultipleWhitespaceInARow,
+        Analyzers.SpacingRules.SA1025CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1025CodeMustNotContainMultipleWhitespaceInARow"/>.

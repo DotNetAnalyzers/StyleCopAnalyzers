@@ -12,7 +12,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using StyleCop.Analyzers.ReadabilityRules;
     using TestHelper;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.ReadabilityRules.SA1125UseShorthandForNullableTypes>;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<Analyzers.ReadabilityRules.SA1125UseShorthandForNullableTypes>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1125UseShorthandForNullableTypes"/>.

@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
     using StyleCop.Analyzers.Test.SpacingRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.SpacingRules.SA1013ClosingBracesMustBeSpacedCorrectly,
-        StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
+        Analyzers.SpacingRules.SA1013ClosingBracesMustBeSpacedCorrectly,
+        Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
     public class SA1013CSharp7UnitTests : SA1013UnitTests
     {

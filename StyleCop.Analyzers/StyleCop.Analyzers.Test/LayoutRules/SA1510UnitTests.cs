@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.LayoutRules.SA1510ChainedStatementBlocksMustNotBePrecededByBlankLine,
-        StyleCop.Analyzers.LayoutRules.SA1510CodeFixProvider>;
+        Analyzers.LayoutRules.SA1510ChainedStatementBlocksMustNotBePrecededByBlankLine,
+        Analyzers.LayoutRules.SA1510CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1510ChainedStatementBlocksMustNotBePrecededByBlankLine"/>.

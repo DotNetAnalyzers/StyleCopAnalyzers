@@ -9,8 +9,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.ReadabilityRules.SA1106CodeMustNotContainEmptyStatements,
-        StyleCop.Analyzers.ReadabilityRules.SA1106CodeFixProvider>;
+        Analyzers.ReadabilityRules.SA1106CodeMustNotContainEmptyStatements,
+        Analyzers.ReadabilityRules.SA1106CodeFixProvider>;
 
     public class SA1106UnitTests
     {

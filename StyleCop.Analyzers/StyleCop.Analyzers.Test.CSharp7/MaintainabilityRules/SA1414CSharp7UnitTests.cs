@@ -13,7 +13,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
     using StyleCop.Analyzers.MaintainabilityRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<
-        StyleCop.Analyzers.MaintainabilityRules.SA1414TupleTypesInSignaturesShouldHaveElementNames>;
+        Analyzers.MaintainabilityRules.SA1414TupleTypesInSignaturesShouldHaveElementNames>;
 
     /// <summary>
     /// This class contains the CSharp 7.x unit tests for SA1414.

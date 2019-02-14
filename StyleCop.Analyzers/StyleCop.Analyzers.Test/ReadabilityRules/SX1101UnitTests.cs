@@ -9,8 +9,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.ReadabilityRules.SX1101DoNotPrefixLocalMembersWithThis,
-        StyleCop.Analyzers.ReadabilityRules.SX1101CodeFixProvider>;
+        Analyzers.ReadabilityRules.SX1101DoNotPrefixLocalMembersWithThis,
+        Analyzers.ReadabilityRules.SX1101CodeFixProvider>;
 
     public class SX1101UnitTests
     {

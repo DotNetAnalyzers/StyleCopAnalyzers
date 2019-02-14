@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.LayoutRules.SA1507CodeMustNotContainMultipleBlankLinesInARow,
-        StyleCop.Analyzers.LayoutRules.SA1507CodeFixProvider>;
+        Analyzers.LayoutRules.SA1507CodeMustNotContainMultipleBlankLinesInARow,
+        Analyzers.LayoutRules.SA1507CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1507CodeMustNotContainMultipleBlankLinesInARow"/>.

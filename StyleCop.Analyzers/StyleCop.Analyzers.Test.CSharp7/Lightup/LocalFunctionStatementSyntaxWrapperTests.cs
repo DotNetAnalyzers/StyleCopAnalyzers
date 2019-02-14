@@ -204,7 +204,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.Lightup
                 identifier: SyntaxFactory.Identifier("Identifier"),
                 typeParameterList: SyntaxFactory.TypeParameterList(SyntaxFactory.SeparatedList(ImmutableArray.Create(SyntaxFactory.TypeParameter("T1")))),
                 parameterList: SyntaxFactory.ParameterList(SyntaxFactory.SeparatedList(ImmutableArray.Create(SyntaxFactory.Parameter(SyntaxFactory.Identifier("param1"))))),
-                constraintClauses: SyntaxFactory.List<TypeParameterConstraintClauseSyntax>(ImmutableArray.Create(SyntaxFactory.TypeParameterConstraintClause(SyntaxFactory.IdentifierName("constraint1")))),
+                constraintClauses: SyntaxFactory.List(ImmutableArray.Create(SyntaxFactory.TypeParameterConstraintClause(SyntaxFactory.IdentifierName("constraint1")))),
                 body: SyntaxFactory.Block(SyntaxFactory.BreakStatement()),
                 expressionBody: SyntaxFactory.ArrowExpressionClause(SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal(0))));
         }

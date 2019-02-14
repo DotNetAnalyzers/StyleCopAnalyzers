@@ -9,8 +9,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using Microsoft.CodeAnalysis.Testing;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.ReadabilityRules.SA1128ConstructorInitializerMustBeOnOwnLine,
-        StyleCop.Analyzers.ReadabilityRules.SA1128CodeFixProvider>;
+        Analyzers.ReadabilityRules.SA1128ConstructorInitializerMustBeOnOwnLine,
+        Analyzers.ReadabilityRules.SA1128CodeFixProvider>;
 
     public class SA1128UnitTests
     {

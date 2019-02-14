@@ -9,8 +9,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.LayoutRules.SA1520UseBracesConsistently,
-        StyleCop.Analyzers.LayoutRules.SA1503CodeFixProvider>;
+        Analyzers.LayoutRules.SA1520UseBracesConsistently,
+        Analyzers.LayoutRules.SA1503CodeFixProvider>;
 
     public class SA1520UnitTests
     {

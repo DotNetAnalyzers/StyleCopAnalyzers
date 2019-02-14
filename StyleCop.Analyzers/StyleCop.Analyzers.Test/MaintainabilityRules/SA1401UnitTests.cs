@@ -9,7 +9,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using StyleCop.Analyzers.MaintainabilityRules;
     using TestHelper;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.MaintainabilityRules.SA1401FieldsMustBePrivate>;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<Analyzers.MaintainabilityRules.SA1401FieldsMustBePrivate>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1401FieldsMustBePrivate"/>.

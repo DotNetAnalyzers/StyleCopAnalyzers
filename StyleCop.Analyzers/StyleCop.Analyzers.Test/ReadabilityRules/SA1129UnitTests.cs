@@ -11,8 +11,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.ReadabilityRules.SA1129DoNotUseDefaultValueTypeConstructor,
-        StyleCop.Analyzers.ReadabilityRules.SA1129CodeFixProvider>;
+        Analyzers.ReadabilityRules.SA1129DoNotUseDefaultValueTypeConstructor,
+        Analyzers.ReadabilityRules.SA1129CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for the <see cref="SA1129DoNotUseDefaultValueTypeConstructor"/> class.

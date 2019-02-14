@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.SpacingRules.SA1018NullableTypeSymbolsMustNotBePrecededBySpace,
-        StyleCop.Analyzers.SpacingRules.SA1018CodeFixProvider>;
+        Analyzers.SpacingRules.SA1018NullableTypeSymbolsMustNotBePrecededBySpace,
+        Analyzers.SpacingRules.SA1018CodeFixProvider>;
 
     /// <summary>
     /// This class contains unit tests for the <see cref="SA1018NullableTypeSymbolsMustNotBePrecededBySpace"/> class.

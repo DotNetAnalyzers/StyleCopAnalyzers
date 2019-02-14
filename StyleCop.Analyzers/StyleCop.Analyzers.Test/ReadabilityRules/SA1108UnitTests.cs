@@ -8,7 +8,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using Microsoft.CodeAnalysis.Testing;
     using TestHelper;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.ReadabilityRules.SA1108BlockStatementsMustNotContainEmbeddedComments>;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<Analyzers.ReadabilityRules.SA1108BlockStatementsMustNotContainEmbeddedComments>;
 
     public class SA1108UnitTests
     {

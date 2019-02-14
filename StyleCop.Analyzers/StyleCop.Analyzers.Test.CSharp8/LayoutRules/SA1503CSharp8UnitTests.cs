@@ -9,8 +9,8 @@ namespace StyleCop.Analyzers.Test.CSharp8.LayoutRules
     using StyleCop.Analyzers.Test.CSharp7.LayoutRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.LayoutRules.SA1503BracesMustNotBeOmitted,
-        StyleCop.Analyzers.LayoutRules.SA1503CodeFixProvider>;
+        Analyzers.LayoutRules.SA1503BracesMustNotBeOmitted,
+        Analyzers.LayoutRules.SA1503CodeFixProvider>;
 
     public class SA1503CSharp8UnitTests : SA1503CSharp7UnitTests
     {

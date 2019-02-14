@@ -9,8 +9,8 @@ namespace StyleCop.Analyzers.Test.CSharp7.OrderingRules
     using StyleCop.Analyzers.Test.OrderingRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.OrderingRules.SA1207ProtectedMustComeBeforeInternal,
-        StyleCop.Analyzers.OrderingRules.SA1207CodeFixProvider>;
+        Analyzers.OrderingRules.SA1207ProtectedMustComeBeforeInternal,
+        Analyzers.OrderingRules.SA1207CodeFixProvider>;
 
     public class SA1207CSharp7UnitTests : SA1207UnitTests
     {

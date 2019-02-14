@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
     using StyleCop.Analyzers.Test.MaintainabilityRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.MaintainabilityRules.SA1413UseTrailingCommasInMultiLineInitializers,
-        StyleCop.Analyzers.MaintainabilityRules.SA1413CodeFixProvider>;
+        Analyzers.MaintainabilityRules.SA1413UseTrailingCommasInMultiLineInitializers,
+        Analyzers.MaintainabilityRules.SA1413CodeFixProvider>;
 
     public class SA1413CSharp7UnitTests : SA1413UnitTests
     {

@@ -8,8 +8,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using Microsoft.CodeAnalysis.Testing;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.ReadabilityRules.SA1101PrefixLocalCallsWithThis,
-        StyleCop.Analyzers.ReadabilityRules.SA1101CodeFixProvider>;
+        Analyzers.ReadabilityRules.SA1101PrefixLocalCallsWithThis,
+        Analyzers.ReadabilityRules.SA1101CodeFixProvider>;
 
     public class SA1101UnitTests
     {

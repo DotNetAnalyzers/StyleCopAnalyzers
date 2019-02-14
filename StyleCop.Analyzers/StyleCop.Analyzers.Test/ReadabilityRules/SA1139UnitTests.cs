@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.ReadabilityRules.SA1139UseLiteralSuffixNotationInsteadOfCasting,
-        StyleCop.Analyzers.ReadabilityRules.SA1139CodeFixProvider>;
+        Analyzers.ReadabilityRules.SA1139UseLiteralSuffixNotationInsteadOfCasting,
+        Analyzers.ReadabilityRules.SA1139CodeFixProvider>;
 
     /// <summary>
     /// This class contains unit tests for SA1139.

@@ -12,8 +12,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.LayoutRules.SA1501StatementMustNotBeOnASingleLine,
-        StyleCop.Analyzers.LayoutRules.SA1501CodeFixProvider>;
+        Analyzers.LayoutRules.SA1501StatementMustNotBeOnASingleLine,
+        Analyzers.LayoutRules.SA1501CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1501StatementMustNotBeOnASingleLine"/>.

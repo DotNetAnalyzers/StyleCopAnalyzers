@@ -11,7 +11,7 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using StyleCop.Analyzers.Test.Verifiers;
     using TestHelper;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.OrderingRules.SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace>;
+    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<Analyzers.OrderingRules.SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1210UsingDirectivesMustBeOrderedAlphabeticallyByNamespace"/> for the special case

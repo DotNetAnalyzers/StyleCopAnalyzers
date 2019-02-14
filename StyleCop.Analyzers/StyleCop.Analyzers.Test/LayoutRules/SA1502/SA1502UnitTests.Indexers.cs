@@ -9,8 +9,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using StyleCop.Analyzers.LayoutRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.LayoutRules.SA1502ElementMustNotBeOnASingleLine,
-        StyleCop.Analyzers.LayoutRules.SA1502CodeFixProvider>;
+        Analyzers.LayoutRules.SA1502ElementMustNotBeOnASingleLine,
+        Analyzers.LayoutRules.SA1502CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for the indexers part of <see cref="SA1502ElementMustNotBeOnASingleLine"/>.

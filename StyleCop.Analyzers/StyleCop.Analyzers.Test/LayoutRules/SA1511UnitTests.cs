@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.LayoutRules.SA1511WhileDoFooterMustNotBePrecededByBlankLine,
-        StyleCop.Analyzers.LayoutRules.SA1511CodeFixProvider>;
+        Analyzers.LayoutRules.SA1511WhileDoFooterMustNotBePrecededByBlankLine,
+        Analyzers.LayoutRules.SA1511CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1511WhileDoFooterMustNotBePrecededByBlankLine"/>.

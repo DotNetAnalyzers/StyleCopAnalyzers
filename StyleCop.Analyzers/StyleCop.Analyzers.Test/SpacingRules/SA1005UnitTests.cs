@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using StyleCop.Analyzers.SpacingRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.SpacingRules.SA1005SingleLineCommentsMustBeginWithSingleSpace,
-        StyleCop.Analyzers.SpacingRules.SA1005CodeFixProvider>;
+        Analyzers.SpacingRules.SA1005SingleLineCommentsMustBeginWithSingleSpace,
+        Analyzers.SpacingRules.SA1005CodeFixProvider>;
 
     /// <summary>
     /// Unit test for <see cref="SA1005SingleLineCommentsMustBeginWithSingleSpace"/>.

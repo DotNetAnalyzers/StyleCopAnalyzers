@@ -11,8 +11,8 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.SpacingRules.SA1028CodeMustNotContainTrailingWhitespace,
-        StyleCop.Analyzers.SpacingRules.SA1028CodeFixProvider>;
+        Analyzers.SpacingRules.SA1028CodeMustNotContainTrailingWhitespace,
+        Analyzers.SpacingRules.SA1028CodeFixProvider>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1028CodeMustNotContainTrailingWhitespace"/> and

@@ -16,7 +16,7 @@ namespace StyleCop.Analyzers.Test.SpecialRules
     using StyleCop.Analyzers.SpecialRules;
     using TestHelper;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.SpecialRules.SA0002InvalidSettingsFile>;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<Analyzers.SpecialRules.SA0002InvalidSettingsFile>;
 
     /// <summary>
     /// Unit tests for <see cref="SA0002InvalidSettingsFile"/>.

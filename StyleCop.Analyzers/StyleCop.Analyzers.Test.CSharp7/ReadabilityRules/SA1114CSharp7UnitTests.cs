@@ -9,7 +9,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
     using StyleCop.Analyzers.Test.ReadabilityRules;
     using TestHelper;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.ReadabilityRules.SA1114ParameterListMustFollowDeclaration>;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<Analyzers.ReadabilityRules.SA1114ParameterListMustFollowDeclaration>;
 
     public class SA1114CSharp7UnitTests : SA1114UnitTests
     {

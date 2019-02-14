@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.ReadabilityRules.SA1124DoNotUseRegions,
-        StyleCop.Analyzers.ReadabilityRules.RemoveRegionCodeFixProvider>;
+        Analyzers.ReadabilityRules.SA1124DoNotUseRegions,
+        Analyzers.ReadabilityRules.RemoveRegionCodeFixProvider>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1124DoNotUseRegions"/> and

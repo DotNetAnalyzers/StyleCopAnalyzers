@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.OrderingRules.SA1204StaticElementsMustAppearBeforeInstanceElements,
-        StyleCop.Analyzers.OrderingRules.ElementOrderCodeFixProvider>;
+        Analyzers.OrderingRules.SA1204StaticElementsMustAppearBeforeInstanceElements,
+        Analyzers.OrderingRules.ElementOrderCodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1204StaticElementsMustAppearBeforeInstanceElements"/>.

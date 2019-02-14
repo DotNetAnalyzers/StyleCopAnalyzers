@@ -9,8 +9,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.LayoutRules.SA1515SingleLineCommentMustBePrecededByBlankLine,
-        StyleCop.Analyzers.LayoutRules.SA1515CodeFixProvider>;
+        Analyzers.LayoutRules.SA1515SingleLineCommentMustBePrecededByBlankLine,
+        Analyzers.LayoutRules.SA1515CodeFixProvider>;
 
     public class SA1515UnitTests
     {

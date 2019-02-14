@@ -9,8 +9,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.LayoutRules.SA1504AllAccessorsMustBeSingleLineOrMultiLine,
-        StyleCop.Analyzers.LayoutRules.SA1504CodeFixProvider>;
+        Analyzers.LayoutRules.SA1504AllAccessorsMustBeSingleLineOrMultiLine,
+        Analyzers.LayoutRules.SA1504CodeFixProvider>;
 
     public class SA1504UnitTests
     {

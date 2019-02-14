@@ -9,8 +9,8 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
     using StyleCop.Analyzers.Test.ReadabilityRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.ReadabilityRules.SA1122UseStringEmptyForEmptyStrings,
-        StyleCop.Analyzers.ReadabilityRules.SA1122CodeFixProvider>;
+        Analyzers.ReadabilityRules.SA1122UseStringEmptyForEmptyStrings,
+        Analyzers.ReadabilityRules.SA1122CodeFixProvider>;
 
     public class SA1122CSharp7UnitTests : SA1122UnitTests
     {

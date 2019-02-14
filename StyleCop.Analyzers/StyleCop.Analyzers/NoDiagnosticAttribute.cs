@@ -20,7 +20,7 @@ namespace StyleCop.Analyzers
     /// <para>The <see cref="Reason"/> should be provided.</para>
     /// </remarks>
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
-    internal sealed class NoDiagnosticAttribute : System.Attribute
+    internal sealed class NoDiagnosticAttribute : Attribute
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="NoDiagnosticAttribute"/> class.

@@ -8,8 +8,8 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
     using StyleCop.Analyzers.Test.ReadabilityRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.ReadabilityRules.SA1127GenericTypeConstraintsMustBeOnOwnLine,
-        StyleCop.Analyzers.ReadabilityRules.SA1127CodeFixProvider>;
+        Analyzers.ReadabilityRules.SA1127GenericTypeConstraintsMustBeOnOwnLine,
+        Analyzers.ReadabilityRules.SA1127CodeFixProvider>;
 
     public class SA1127CSharp7UnitTests : SA1127UnitTests
     {

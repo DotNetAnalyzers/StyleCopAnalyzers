@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using StyleCop.Analyzers.ReadabilityRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.ReadabilityRules.SA1135UsingDirectivesMustBeQualified,
-        StyleCop.Analyzers.ReadabilityRules.SA1135CodeFixProvider>;
+        Analyzers.ReadabilityRules.SA1135UsingDirectivesMustBeQualified,
+        Analyzers.ReadabilityRules.SA1135CodeFixProvider>;
 
     public class SA1135UnitTests
     {

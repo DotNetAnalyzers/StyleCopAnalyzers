@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using StyleCop.Analyzers.OrderingRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.OrderingRules.SA1205PartialElementsMustDeclareAccess,
-        StyleCop.Analyzers.OrderingRules.SA1205CodeFixProvider>;
+        Analyzers.OrderingRules.SA1205PartialElementsMustDeclareAccess,
+        Analyzers.OrderingRules.SA1205CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for the <see cref="SA1205PartialElementsMustDeclareAccess"/> class.

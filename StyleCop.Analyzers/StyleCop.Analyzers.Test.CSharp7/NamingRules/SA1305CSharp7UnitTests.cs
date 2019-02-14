@@ -9,7 +9,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
     using StyleCop.Analyzers.Test.NamingRules;
     using TestHelper;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.NamingRules.SA1305FieldNamesMustNotUseHungarianNotation>;
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<Analyzers.NamingRules.SA1305FieldNamesMustNotUseHungarianNotation>;
 
     public class SA1305CSharp7UnitTests : SA1305UnitTests
     {

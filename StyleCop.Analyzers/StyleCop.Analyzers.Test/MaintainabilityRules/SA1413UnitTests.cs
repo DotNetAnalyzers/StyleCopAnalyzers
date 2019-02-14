@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.MaintainabilityRules.SA1413UseTrailingCommasInMultiLineInitializers,
-        StyleCop.Analyzers.MaintainabilityRules.SA1413CodeFixProvider>;
+        Analyzers.MaintainabilityRules.SA1413UseTrailingCommasInMultiLineInitializers,
+        Analyzers.MaintainabilityRules.SA1413CodeFixProvider>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1413UseTrailingCommasInMultiLineInitializers"/>.

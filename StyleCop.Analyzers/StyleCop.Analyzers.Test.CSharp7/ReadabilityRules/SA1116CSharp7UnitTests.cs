@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.ReadabilityRules.SA1116SplitParametersMustStartOnLineAfterDeclaration,
-        StyleCop.Analyzers.ReadabilityRules.SA1116CodeFixProvider>;
+        Analyzers.ReadabilityRules.SA1116SplitParametersMustStartOnLineAfterDeclaration,
+        Analyzers.ReadabilityRules.SA1116CodeFixProvider>;
 
     public class SA1116CSharp7UnitTests : SA1116UnitTests
     {

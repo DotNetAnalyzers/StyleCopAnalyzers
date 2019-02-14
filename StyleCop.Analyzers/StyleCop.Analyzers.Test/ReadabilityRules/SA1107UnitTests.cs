@@ -9,8 +9,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using StyleCop.Analyzers.ReadabilityRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.ReadabilityRules.SA1107CodeMustNotContainMultipleStatementsOnOneLine,
-        StyleCop.Analyzers.ReadabilityRules.SA1107CodeFixProvider>;
+        Analyzers.ReadabilityRules.SA1107CodeMustNotContainMultipleStatementsOnOneLine,
+        Analyzers.ReadabilityRules.SA1107CodeFixProvider>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1107CodeMustNotContainMultipleStatementsOnOneLine"/> and

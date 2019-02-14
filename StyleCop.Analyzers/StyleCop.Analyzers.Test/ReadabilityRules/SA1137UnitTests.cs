@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.ReadabilityRules.SA1137ElementsShouldHaveTheSameIndentation,
-        StyleCop.Analyzers.ReadabilityRules.IndentationCodeFixProvider>;
+        Analyzers.ReadabilityRules.SA1137ElementsShouldHaveTheSameIndentation,
+        Analyzers.ReadabilityRules.IndentationCodeFixProvider>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1137ElementsShouldHaveTheSameIndentation"/>.

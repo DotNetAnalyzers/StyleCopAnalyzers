@@ -9,8 +9,8 @@ namespace StyleCop.Analyzers.Test.NamingRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.NamingRules.SA1307AccessibleFieldsMustBeginWithUpperCaseLetter,
-        StyleCop.Analyzers.NamingRules.RenameToUpperCaseCodeFixProvider>;
+        Analyzers.NamingRules.SA1307AccessibleFieldsMustBeginWithUpperCaseLetter,
+        Analyzers.NamingRules.RenameToUpperCaseCodeFixProvider>;
 
     public class SA1307UnitTests
     {

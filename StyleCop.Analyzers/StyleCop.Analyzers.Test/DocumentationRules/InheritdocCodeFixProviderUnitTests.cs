@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using StyleCop.Analyzers.DocumentationRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.DocumentationRules.SA1600ElementsMustBeDocumented,
-        StyleCop.Analyzers.DocumentationRules.InheritdocCodeFixProvider>;
+        Analyzers.DocumentationRules.SA1600ElementsMustBeDocumented,
+        Analyzers.DocumentationRules.InheritdocCodeFixProvider>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="InheritdocCodeFixProvider"/>.

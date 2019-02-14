@@ -9,8 +9,8 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.OrderingRules.SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives,
-        StyleCop.Analyzers.OrderingRules.UsingCodeFixProvider>;
+        Analyzers.OrderingRules.SA1208SystemUsingDirectivesMustBePlacedBeforeOtherUsingDirectives,
+        Analyzers.OrderingRules.UsingCodeFixProvider>;
 
     public class SA1208UnitTests
     {

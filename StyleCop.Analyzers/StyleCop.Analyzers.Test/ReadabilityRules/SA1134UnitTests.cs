@@ -9,8 +9,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.ReadabilityRules.SA1134AttributesMustNotShareLine,
-        StyleCop.Analyzers.ReadabilityRules.SA1134CodeFixProvider>;
+        Analyzers.ReadabilityRules.SA1134AttributesMustNotShareLine,
+        Analyzers.ReadabilityRules.SA1134CodeFixProvider>;
 
     /// <summary>
     /// This class contains unit tests for SA1134.

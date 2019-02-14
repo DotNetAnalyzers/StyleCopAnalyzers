@@ -10,7 +10,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using StyleCop.Analyzers.Test.Verifiers;
     using TestHelper;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1609PropertyDocumentationMustHaveValue>;
+    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<Analyzers.DocumentationRules.SA1609PropertyDocumentationMustHaveValue>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1609PropertyDocumentationMustHaveValue"/>.

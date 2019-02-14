@@ -9,8 +9,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.MaintainabilityRules.SA1410RemoveDelegateParenthesisWhenPossible,
-        StyleCop.Analyzers.MaintainabilityRules.SA1410SA1411CodeFixProvider>;
+        Analyzers.MaintainabilityRules.SA1410RemoveDelegateParenthesisWhenPossible,
+        Analyzers.MaintainabilityRules.SA1410SA1411CodeFixProvider>;
 
     public class SA1410UnitTests
     {

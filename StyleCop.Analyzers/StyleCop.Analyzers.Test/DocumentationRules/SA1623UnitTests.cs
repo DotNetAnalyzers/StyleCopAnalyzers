@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.DocumentationRules.PropertySummaryDocumentationAnalyzer,
-        StyleCop.Analyzers.DocumentationRules.PropertySummaryDocumentationCodeFixProvider>;
+        Analyzers.DocumentationRules.PropertySummaryDocumentationAnalyzer,
+        Analyzers.DocumentationRules.PropertySummaryDocumentationCodeFixProvider>;
 
     /// <summary>
     /// This class contains the unit tests for SA1623.

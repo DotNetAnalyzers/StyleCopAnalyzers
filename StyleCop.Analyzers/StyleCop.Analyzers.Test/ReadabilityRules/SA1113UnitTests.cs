@@ -9,8 +9,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.ReadabilityRules.SA1113CommaMustBeOnSameLineAsPreviousParameter,
-        StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
+        Analyzers.ReadabilityRules.SA1113CommaMustBeOnSameLineAsPreviousParameter,
+        Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
     public class SA1113UnitTests
     {

@@ -12,8 +12,8 @@ namespace StyleCop.Analyzers.Test.OrderingRules
     using StyleCop.Analyzers.OrderingRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.OrderingRules.SA1207ProtectedMustComeBeforeInternal,
-        StyleCop.Analyzers.OrderingRules.SA1207CodeFixProvider>;
+        Analyzers.OrderingRules.SA1207ProtectedMustComeBeforeInternal,
+        Analyzers.OrderingRules.SA1207CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for the <see cref="SA1207ProtectedMustComeBeforeInternal"/> class.

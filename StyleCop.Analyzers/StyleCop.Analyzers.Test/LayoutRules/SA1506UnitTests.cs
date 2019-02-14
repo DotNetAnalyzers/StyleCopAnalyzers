@@ -11,8 +11,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.LayoutRules.SA1506ElementDocumentationHeadersMustNotBeFollowedByBlankLine,
-        StyleCop.Analyzers.LayoutRules.SA1506CodeFixProvider>;
+        Analyzers.LayoutRules.SA1506ElementDocumentationHeadersMustNotBeFollowedByBlankLine,
+        Analyzers.LayoutRules.SA1506CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for the <see cref="SA1506ElementDocumentationHeadersMustNotBeFollowedByBlankLine"/> class.

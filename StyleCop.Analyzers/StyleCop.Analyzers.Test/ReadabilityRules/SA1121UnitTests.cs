@@ -17,8 +17,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.ReadabilityRules.SA1121UseBuiltInTypeAlias,
-        StyleCop.Analyzers.ReadabilityRules.SA1121CodeFixProvider>;
+        Analyzers.ReadabilityRules.SA1121UseBuiltInTypeAlias,
+        Analyzers.ReadabilityRules.SA1121CodeFixProvider>;
 
     /// <summary>
     /// This class contains unit tests for <see cref="SA1121UseBuiltInTypeAlias"/>.

@@ -12,8 +12,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.LayoutRules.SA1503BracesMustNotBeOmitted,
-        StyleCop.Analyzers.LayoutRules.SA1503CodeFixProvider>;
+        Analyzers.LayoutRules.SA1503BracesMustNotBeOmitted,
+        Analyzers.LayoutRules.SA1503CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1503BracesMustNotBeOmitted"/>.

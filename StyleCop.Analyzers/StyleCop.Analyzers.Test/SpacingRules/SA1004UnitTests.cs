@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.SpacingRules.SA1004DocumentationLinesMustBeginWithSingleSpace,
-        StyleCop.Analyzers.SpacingRules.SA1004CodeFixProvider>;
+        Analyzers.SpacingRules.SA1004DocumentationLinesMustBeginWithSingleSpace,
+        Analyzers.SpacingRules.SA1004CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1004DocumentationLinesMustBeginWithSingleSpace"/>.

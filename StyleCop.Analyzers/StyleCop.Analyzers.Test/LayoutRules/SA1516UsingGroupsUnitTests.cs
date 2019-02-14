@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using StyleCop.Analyzers.Settings.ObjectModel;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.LayoutRules.SA1516ElementsMustBeSeparatedByBlankLine,
-        StyleCop.Analyzers.LayoutRules.SA1516CodeFixProvider>;
+        Analyzers.LayoutRules.SA1516ElementsMustBeSeparatedByBlankLine,
+        Analyzers.LayoutRules.SA1516CodeFixProvider>;
 
     /// <summary>
     /// Verifies the using directives functionality of <see cref="SA1516ElementsMustBeSeparatedByBlankLine"/>.

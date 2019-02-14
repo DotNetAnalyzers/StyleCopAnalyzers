@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.ReadabilityRules.SA1136EnumValuesShouldBeOnSeparateLines,
-        StyleCop.Analyzers.ReadabilityRules.SA1136CodeFixProvider>;
+        Analyzers.ReadabilityRules.SA1136EnumValuesShouldBeOnSeparateLines,
+        Analyzers.ReadabilityRules.SA1136CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for the <see cref="SA1136EnumValuesShouldBeOnSeparateLines"/> analyzer.

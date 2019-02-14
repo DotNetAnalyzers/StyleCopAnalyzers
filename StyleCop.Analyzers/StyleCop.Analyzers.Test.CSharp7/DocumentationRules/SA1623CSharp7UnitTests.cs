@@ -9,8 +9,8 @@ namespace StyleCop.Analyzers.Test.CSharp7.DocumentationRules
     using StyleCop.Analyzers.Test.DocumentationRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.DocumentationRules.PropertySummaryDocumentationAnalyzer,
-        StyleCop.Analyzers.DocumentationRules.PropertySummaryDocumentationCodeFixProvider>;
+        Analyzers.DocumentationRules.PropertySummaryDocumentationAnalyzer,
+        Analyzers.DocumentationRules.PropertySummaryDocumentationCodeFixProvider>;
 
     public class SA1623CSharp7UnitTests : SA1623UnitTests
     {

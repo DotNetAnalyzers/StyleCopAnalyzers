@@ -9,8 +9,8 @@ namespace StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules
     using StyleCop.Analyzers.Test.MaintainabilityRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.MaintainabilityRules.SA1400AccessModifierMustBeDeclared,
-        StyleCop.Analyzers.MaintainabilityRules.SA1400CodeFixProvider>;
+        Analyzers.MaintainabilityRules.SA1400AccessModifierMustBeDeclared,
+        Analyzers.MaintainabilityRules.SA1400CodeFixProvider>;
 
     public class SA1400CSharp7UnitTests : SA1400UnitTests
     {

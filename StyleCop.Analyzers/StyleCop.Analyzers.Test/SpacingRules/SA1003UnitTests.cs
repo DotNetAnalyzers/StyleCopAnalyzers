@@ -12,8 +12,8 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
     using static StyleCop.Analyzers.SpacingRules.SA1003SymbolsMustBeSpacedCorrectly;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.SpacingRules.SA1003SymbolsMustBeSpacedCorrectly,
-        StyleCop.Analyzers.SpacingRules.SA1003CodeFixProvider>;
+        Analyzers.SpacingRules.SA1003SymbolsMustBeSpacedCorrectly,
+        Analyzers.SpacingRules.SA1003CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1003SymbolsMustBeSpacedCorrectly"/>.

@@ -9,13 +9,13 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using Microsoft.CodeAnalysis.Diagnostics;
 
     /// <summary>
-    /// A base class for <see cref="System.Diagnostics.Debug"/> diagnostics.
+    /// A base class for <see cref="Debug"/> diagnostics.
     /// It is used to share code in diagnostics <see cref="SA1405DebugAssertMustProvideMessageText"/> and <see cref="SA1406DebugFailMustProvideMessageText"/>.
     /// </summary>
     internal abstract class SystemDiagnosticsDebugDiagnosticBase : DiagnosticAnalyzer
     {
         /// <summary>
-        /// Analyzes a <see cref="InvocationExpressionSyntax"/> node to add a diagnostic to static method calls in <see cref="System.Diagnostics.Debug"/>.
+        /// Analyzes a <see cref="InvocationExpressionSyntax"/> node to add a diagnostic to static method calls in <see cref="Debug"/>.
         /// The diagnostic is added if the parameter count is lower than <paramref name="parameterIndex"/> or the string given at the index can be evaluated to null, string.Empty or just whitespaces.
         /// </summary>
         /// <param name="context">The current analysis context.</param>

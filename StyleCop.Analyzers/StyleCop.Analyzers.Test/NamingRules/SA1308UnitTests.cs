@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.NamingRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.NamingRules.SA1308VariableNamesMustNotBePrefixed,
-        StyleCop.Analyzers.NamingRules.SA1308CodeFixProvider>;
+        Analyzers.NamingRules.SA1308VariableNamesMustNotBePrefixed,
+        Analyzers.NamingRules.SA1308CodeFixProvider>;
 
     public class SA1308UnitTests
     {

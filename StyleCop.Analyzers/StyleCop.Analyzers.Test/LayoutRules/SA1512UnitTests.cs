@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.LayoutRules.SA1512SingleLineCommentsMustNotBeFollowedByBlankLine,
-        StyleCop.Analyzers.LayoutRules.SA1512CodeFixProvider>;
+        Analyzers.LayoutRules.SA1512SingleLineCommentsMustNotBeFollowedByBlankLine,
+        Analyzers.LayoutRules.SA1512CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1512SingleLineCommentsMustNotBeFollowedByBlankLine"/>.

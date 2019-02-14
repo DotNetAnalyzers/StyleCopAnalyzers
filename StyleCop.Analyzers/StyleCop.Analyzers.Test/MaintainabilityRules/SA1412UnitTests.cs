@@ -12,8 +12,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using Microsoft.CodeAnalysis.Text;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.MaintainabilityRules.SA1412StoreFilesAsUtf8,
-        StyleCop.Analyzers.MaintainabilityRules.SA1412CodeFixProvider>;
+        Analyzers.MaintainabilityRules.SA1412StoreFilesAsUtf8,
+        Analyzers.MaintainabilityRules.SA1412CodeFixProvider>;
 
     public class SA1412UnitTests
     {

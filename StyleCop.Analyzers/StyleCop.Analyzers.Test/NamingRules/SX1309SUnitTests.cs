@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.NamingRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.NamingRules.SX1309SStaticFieldNamesMustBeginWithUnderscore,
-        StyleCop.Analyzers.NamingRules.SX1309CodeFixProvider>;
+        Analyzers.NamingRules.SX1309SStaticFieldNamesMustBeginWithUnderscore,
+        Analyzers.NamingRules.SX1309CodeFixProvider>;
 
     public class SX1309SUnitTests
     {

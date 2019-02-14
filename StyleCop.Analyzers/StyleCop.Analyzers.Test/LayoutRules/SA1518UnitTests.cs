@@ -12,7 +12,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using StyleCop.Analyzers.Test.Verifiers;
     using TestHelper;
     using Xunit;
-    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.LayoutRules.SA1518UseLineEndingsCorrectlyAtEndOfFile>;
+    using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<Analyzers.LayoutRules.SA1518UseLineEndingsCorrectlyAtEndOfFile>;
 
     /// <summary>
     /// Unit tests for <see cref="SA1518UseLineEndingsCorrectlyAtEndOfFile"/>.

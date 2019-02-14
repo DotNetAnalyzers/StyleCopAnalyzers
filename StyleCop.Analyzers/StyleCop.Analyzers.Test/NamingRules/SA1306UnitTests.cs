@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.NamingRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.NamingRules.SA1306FieldNamesMustBeginWithLowerCaseLetter,
-        StyleCop.Analyzers.NamingRules.RenameToLowerCaseCodeFixProvider>;
+        Analyzers.NamingRules.SA1306FieldNamesMustBeginWithLowerCaseLetter,
+        Analyzers.NamingRules.RenameToLowerCaseCodeFixProvider>;
 
     public class SA1306UnitTests
     {

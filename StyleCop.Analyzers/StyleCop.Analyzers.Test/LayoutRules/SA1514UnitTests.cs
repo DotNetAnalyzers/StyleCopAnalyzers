@@ -11,8 +11,8 @@ namespace StyleCop.Analyzers.Test.LayoutRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.LayoutRules.SA1514ElementDocumentationHeaderMustBePrecededByBlankLine,
-        StyleCop.Analyzers.LayoutRules.SA1514CodeFixProvider>;
+        Analyzers.LayoutRules.SA1514ElementDocumentationHeaderMustBePrecededByBlankLine,
+        Analyzers.LayoutRules.SA1514CodeFixProvider>;
 
     /// <summary>
     /// Unit tests for the <see cref="SA1514ElementDocumentationHeaderMustBePrecededByBlankLine"/> class.

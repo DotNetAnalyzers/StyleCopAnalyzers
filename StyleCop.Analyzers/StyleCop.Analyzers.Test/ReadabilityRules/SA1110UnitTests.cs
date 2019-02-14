@@ -9,8 +9,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.ReadabilityRules.SA1110OpeningParenthesisMustBeOnDeclarationLine,
-        StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
+        Analyzers.ReadabilityRules.SA1110OpeningParenthesisMustBeOnDeclarationLine,
+        Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
     public class SA1110UnitTests
     {

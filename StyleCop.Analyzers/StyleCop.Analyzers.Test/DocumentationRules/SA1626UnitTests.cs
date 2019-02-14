@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.DocumentationRules.SA1626SingleLineCommentsMustNotUseDocumentationStyleSlashes,
-        StyleCop.Analyzers.DocumentationRules.SA1626CodeFixProvider>;
+        Analyzers.DocumentationRules.SA1626SingleLineCommentsMustNotUseDocumentationStyleSlashes,
+        Analyzers.DocumentationRules.SA1626CodeFixProvider>;
 
     public class SA1626UnitTests
     {

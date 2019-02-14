@@ -9,8 +9,8 @@ namespace StyleCop.Analyzers.Test.NamingRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.NamingRules.SA1302InterfaceNamesMustBeginWithI,
-        StyleCop.Analyzers.NamingRules.SA1302CodeFixProvider>;
+        Analyzers.NamingRules.SA1302InterfaceNamesMustBeginWithI,
+        Analyzers.NamingRules.SA1302CodeFixProvider>;
 
     public class SA1302UnitTests
     {

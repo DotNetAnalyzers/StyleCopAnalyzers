@@ -11,8 +11,8 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.NamingRules.SA1312VariableNamesMustBeginWithLowerCaseLetter,
-        StyleCop.Analyzers.NamingRules.RenameToLowerCaseCodeFixProvider>;
+        Analyzers.NamingRules.SA1312VariableNamesMustBeginWithLowerCaseLetter,
+        Analyzers.NamingRules.RenameToLowerCaseCodeFixProvider>;
 
     public class SA1312CSharp7UnitTests : SA1312UnitTests
     {

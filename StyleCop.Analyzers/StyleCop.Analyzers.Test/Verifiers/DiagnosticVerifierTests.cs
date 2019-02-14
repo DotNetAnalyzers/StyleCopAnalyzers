@@ -15,7 +15,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
     using StyleCop.Analyzers.SpacingRules;
     using Xunit;
     using Xunit.Sdk;
-    using static StyleCopDiagnosticVerifier<StyleCop.Analyzers.SpacingRules.SA1002SemicolonsMustBeSpacedCorrectly>;
+    using static StyleCopDiagnosticVerifier<Analyzers.SpacingRules.SA1002SemicolonsMustBeSpacedCorrectly>;
 
     /// <summary>
     /// This class verifies that <see cref="CSharpCodeFixVerifier{TAnalyzer, TCodeFix, TVerifier}"/> will correctly report failing tests.

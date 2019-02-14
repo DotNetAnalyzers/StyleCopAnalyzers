@@ -453,7 +453,7 @@ namespace LightJson
         /// Gets or sets the value associated with the specified key.
         /// </summary>
         /// <param name="key">The key of the value to get or set.</param>
-        /// <exception cref="System.InvalidOperationException">
+        /// <exception cref="InvalidOperationException">
         /// Thrown when this JsonValue is not a JsonObject.
         /// </exception>
         public JsonValue this[string key]
@@ -600,7 +600,7 @@ namespace LightJson
         /// Converts the given JsonValue into a nullable Int.
         /// </summary>
         /// <param name="jsonValue">The JsonValue to be converted.</param>
-        /// <exception cref="System.InvalidCastException">
+        /// <exception cref="InvalidCastException">
         /// Throws System.InvalidCastException when the inner value type of the
         /// JsonValue is not the desired type of the conversion.
         /// </exception>
@@ -638,7 +638,7 @@ namespace LightJson
         /// Converts the given JsonValue into a nullable Bool.
         /// </summary>
         /// <param name="jsonValue">The JsonValue to be converted.</param>
-        /// <exception cref="System.InvalidCastException">
+        /// <exception cref="InvalidCastException">
         /// Throws System.InvalidCastException when the inner value type of the
         /// JsonValue is not the desired type of the conversion.
         /// </exception>
@@ -676,7 +676,7 @@ namespace LightJson
         /// Converts the given JsonValue into a nullable Double.
         /// </summary>
         /// <param name="jsonValue">The JsonValue to be converted.</param>
-        /// <exception cref="System.InvalidCastException">
+        /// <exception cref="InvalidCastException">
         /// Throws System.InvalidCastException when the inner value type of the
         /// JsonValue is not the desired type of the conversion.
         /// </exception>

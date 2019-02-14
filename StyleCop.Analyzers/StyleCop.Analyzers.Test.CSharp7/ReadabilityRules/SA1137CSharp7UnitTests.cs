@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
     using StyleCop.Analyzers.Test.ReadabilityRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.ReadabilityRules.SA1137ElementsShouldHaveTheSameIndentation,
-        StyleCop.Analyzers.ReadabilityRules.IndentationCodeFixProvider>;
+        Analyzers.ReadabilityRules.SA1137ElementsShouldHaveTheSameIndentation,
+        Analyzers.ReadabilityRules.IndentationCodeFixProvider>;
 
     public class SA1137CSharp7UnitTests : SA1137UnitTests
     {

@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.NamingRules
     using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.NamingRules.SA1300ElementMustBeginWithUpperCaseLetter,
-        StyleCop.Analyzers.NamingRules.RenameToUpperCaseCodeFixProvider>;
+        Analyzers.NamingRules.SA1300ElementMustBeginWithUpperCaseLetter,
+        Analyzers.NamingRules.RenameToUpperCaseCodeFixProvider>;
 
     [UseCulture("en-US")]
     public class SA1300UnitTests

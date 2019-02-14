@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
     using StyleCop.Analyzers.Test.SpacingRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.SpacingRules.SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation,
-        StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
+        Analyzers.SpacingRules.SA1026CodeMustNotContainSpaceAfterNewKeywordInImplicitlyTypedArrayAllocation,
+        Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
     public class SA1026CSharp7UnitTests : SA1026UnitTests
     {

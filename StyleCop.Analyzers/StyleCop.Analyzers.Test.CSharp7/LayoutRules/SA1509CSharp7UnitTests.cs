@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.CSharp7.LayoutRules
     using StyleCop.Analyzers.Test.LayoutRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.LayoutRules.SA1509OpeningBracesMustNotBePrecededByBlankLine,
-        StyleCop.Analyzers.LayoutRules.SA1509CodeFixProvider>;
+        Analyzers.LayoutRules.SA1509OpeningBracesMustNotBePrecededByBlankLine,
+        Analyzers.LayoutRules.SA1509CodeFixProvider>;
 
     public class SA1509CSharp7UnitTests : SA1509UnitTests
     {
