@@ -61,7 +61,7 @@ See [dotnet/roslyn@c2af711](https://github.com/dotnet/roslyn/commit/c2af71127234
 * [ ] `Microsoft.CodeAnalysis.IArrayTypeSymbol.Sizes.get -> System.Collections.Immutable.ImmutableArray<int>`
 * [ ] `Microsoft.CodeAnalysis.IDiscardSymbol`
 * [ ] `Microsoft.CodeAnalysis.IDiscardSymbol.Type.get -> Microsoft.CodeAnalysis.ITypeSymbol`
-* [ ] `Microsoft.CodeAnalysis.IFieldSymbol.CorrespondingTupleField.get -> Microsoft.CodeAnalysis.IFieldSymbol`
+* [x] `Microsoft.CodeAnalysis.IFieldSymbol.CorrespondingTupleField.get -> Microsoft.CodeAnalysis.IFieldSymbol`
 * [ ] `Microsoft.CodeAnalysis.ILocalSymbol.IsRef.get -> bool`
 * [ ] `Microsoft.CodeAnalysis.IMethodSymbol.RefCustomModifiers.get -> System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.CustomModifier>`
 * [ ] `Microsoft.CodeAnalysis.IMethodSymbol.ReturnsByRef.get -> bool`

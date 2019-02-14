@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
     using System.Collections.Immutable;
+    using System.Text;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -98,7 +99,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 symbol = typeSymbol.TupleUnderlyingType();
             }
 
-            string symbolString = symbol.ToQualifiedString();
+            string symbolString = symbol.ToQualifiedString(usingDirective.Name);
 
             string usingString = UsingDirectiveSyntaxToCanonicalString(usingDirective);
             if ((symbolString != usingString) && !usingDirective.StartsWithAlias(context.SemanticModel, context.CancellationToken))
@@ -124,37 +125,114 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static string UsingDirectiveSyntaxToCanonicalString(UsingDirectiveSyntax usingDirective)
         {
             var builder = StringBuilderPool.Allocate();
-            var insideArrayDeclaration = false;
+            AppendCanonicalString(builder, usingDirective.Name);
+            return StringBuilderPool.ReturnAndFree(builder);
+        }
 
-            // NOTE: this does not cover embedded comments. It is very unlikely that comments are present
-            // within a multiline using statement and handling them requires a lot more effort (and keeping of state).
-            foreach (var c in usingDirective.Name.ToString())
+        private static bool AppendCanonicalString(StringBuilder builder, TypeSyntax type)
+        {
+            switch (type)
             {
-                switch (c)
+            case AliasQualifiedNameSyntax aliasQualifiedName:
+                AppendCanonicalString(builder, aliasQualifiedName.Alias);
+                builder.Append("::");
+                AppendCanonicalString(builder, aliasQualifiedName.Name);
+                return true;
+
+            case IdentifierNameSyntax identifierName:
+                builder.Append(identifierName.Identifier.Text);
+                return true;
+
+            case GenericNameSyntax genericName:
+                builder.Append(genericName.Identifier.Text);
+                builder.Append("<");
+
+                var typeArgumentList = genericName.TypeArgumentList;
+                for (int i = 0; i < typeArgumentList.Arguments.Count; i++)
                 {
-                case ' ':
-                case '\t':
-                case '\r':
-                case '\n':
-                    break;
-                case '[':
-                    insideArrayDeclaration = true;
-                    builder.Append(c);
-                    break;
-                case ']':
-                    insideArrayDeclaration = false;
-                    builder.Append(c);
-                    break;
-                case ',':
-                    builder.Append(insideArrayDeclaration ? "," : ", ");
-                    break;
-                default:
-                    builder.Append(c);
-                    break;
+                    if (i > 0)
+                    {
+                        builder.Append(", ");
+                    }
+
+                    AppendCanonicalString(builder, typeArgumentList.Arguments[i]);
+                }
+
+                builder.Append(">");
+                return true;
+
+            case QualifiedNameSyntax qualifiedName:
+                AppendCanonicalString(builder, qualifiedName.Left);
+                builder.Append(".");
+                AppendCanonicalString(builder, qualifiedName.Right);
+                return true;
+
+            case PredefinedTypeSyntax predefinedType:
+                builder.Append(predefinedType.Keyword.Text);
+                return true;
+
+            case ArrayTypeSyntax arrayType:
+                AppendCanonicalString(builder, arrayType.ElementType);
+                foreach (var rankSpecifier in arrayType.RankSpecifiers)
+                {
+                    builder.Append("[");
+                    builder.Append(',', rankSpecifier.Rank - 1);
+                    builder.Append("]");
+                }
+
+                return true;
+
+            case NullableTypeSyntax nullableType:
+                AppendCanonicalString(builder, nullableType.ElementType);
+                builder.Append("?");
+                return true;
+
+            case OmittedTypeArgumentSyntax _:
+                return false;
+
+            default:
+                if (TupleTypeSyntaxWrapper.IsInstance(type))
+                {
+                    var tupleType = (TupleTypeSyntaxWrapper)type;
+
+                    builder.Append("(");
+
+                    var elements = tupleType.Elements;
+                    for (int i = 0; i < elements.Count; i++)
+                    {
+                        if (i > 0)
+                        {
+                            builder.Append(", ");
+                        }
+
+                        AppendCanonicalString(builder, elements[i].Type);
+                        if (!elements[i].Identifier.IsKind(SyntaxKind.None))
+                        {
+                            builder.Append(" ").Append(elements[i].Identifier.Text);
+                        }
+                    }
+
+                    builder.Append(")");
+                    return true;
+                }
+                else if (RefTypeSyntaxWrapper.IsInstance(type))
+                {
+                    var refType = (RefTypeSyntaxWrapper)type;
+                    builder.Append(refType.RefKeyword.Text);
+                    if (refType.ReadOnlyKeyword.IsKind(SyntaxKind.ReadOnlyKeyword))
+                    {
+                        builder.Append(" ").Append(refType.ReadOnlyKeyword.Text);
+                    }
+
+                    builder.Append(" ");
+                    AppendCanonicalString(builder, refType.Type);
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
             }
-
-            return StringBuilderPool.ReturnAndFree(builder);
         }
     }
 }

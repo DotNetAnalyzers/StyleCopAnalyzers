@@ -332,5 +332,26 @@ namespace TestNamespace
 ";
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(2879, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2879")]
+        public async Task TestValueTupleInUsingAliasAsync()
+        {
+            var testCode = @"
+namespace System
+{
+    using Example = System.Collections.Generic.List<ValueTuple<int, int>>;
+}
+";
+            var fixedCode = @"
+namespace System
+{
+    using Example = System.Collections.Generic.List<System.ValueTuple<int, int>>;
+}
+";
+
+            var expected = Diagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorType).WithLocation(4, 5).WithArguments("System.Collections.Generic.List<System.ValueTuple<int, int>>");
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
