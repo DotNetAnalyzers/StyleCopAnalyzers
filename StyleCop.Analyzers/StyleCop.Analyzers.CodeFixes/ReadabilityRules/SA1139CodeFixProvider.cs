@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
@@ -14,7 +13,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
-    using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>

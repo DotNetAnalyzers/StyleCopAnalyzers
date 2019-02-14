@@ -10,7 +10,6 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
-    using StyleCop.Analyzers.SpacingRules;
 
     /// <summary>
     /// An opening brace within a C# element, statement, or expression is followed by a blank line.

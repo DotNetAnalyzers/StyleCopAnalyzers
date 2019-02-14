@@ -8,7 +8,6 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.MaintainabilityRules;
     using StyleCop.Analyzers.Test.Verifiers;
-    using TestHelper;
 
     public abstract class SA1402ForNonBlockDeclarationUnitTestsBase
     {

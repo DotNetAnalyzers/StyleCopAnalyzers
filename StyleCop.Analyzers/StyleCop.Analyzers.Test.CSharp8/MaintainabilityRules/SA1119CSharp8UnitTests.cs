@@ -8,8 +8,6 @@ namespace StyleCop.Analyzers.Test.CSharp8.MaintainabilityRules
 
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
-
-    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Test.CSharp7.MaintainabilityRules;
 
     using Xunit;

@@ -4,7 +4,6 @@
 namespace StyleCop.Analyzers.Test.CSharp7.Lightup
 {
     using System;
-    using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
