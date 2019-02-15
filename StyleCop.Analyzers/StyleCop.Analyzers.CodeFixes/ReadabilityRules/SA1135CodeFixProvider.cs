@@ -65,7 +65,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static SyntaxNode GetReplacementNode(SemanticModel semanticModel, UsingDirectiveSyntax node, CancellationToken cancellationToken)
         {
             SymbolInfo symbolInfo = semanticModel.GetSymbolInfo(node.Name, cancellationToken);
-            var symbolNameSyntax = SyntaxFactory.ParseName(symbolInfo.Symbol.ToQualifiedString());
+            var symbolNameSyntax = SyntaxFactory.ParseName(symbolInfo.Symbol.ToQualifiedString(node.Name));
 
             var newName = GetReplacementName(symbolNameSyntax, node.Name);
             return node.WithName((NameSyntax)newName);

@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
     using Xunit;
@@ -318,6 +319,101 @@ namespace MyNamespace {
 ";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2879, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2879")]
+        public async Task TestOmittedTypeInGenericAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    using Example = System.Collections.Generic.List<>;
+}
+";
+
+            var expected = new DiagnosticResult("CS7003", DiagnosticSeverity.Error).WithLocation(4, 48).WithMessage("Unexpected use of an unbound generic name");
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2879, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2879")]
+        public async Task TestNullableTypeInGenericAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    using Example = System.Collections.Generic.List<int?>;
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2879, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2879")]
+        public async Task TestGlobalQualifiedTypeInGenericAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    using Example = System.Collections.Generic.List<global::System.Int32>;
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2879, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2879")]
+        public async Task TestTypeInGlobalNamespaceAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    using Example = MyClass;
+}
+
+class MyClass
+{
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2879, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2879")]
+        public async Task TestAliasTypeNestedInGenericAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    using Example = System.Collections.Immutable.ImmutableDictionary<int, int>.Builder;
+}
+";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2879, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2879")]
+        public async Task TestValueTupleInUsingAliasAsync()
+        {
+            var testCode = @"
+namespace System
+{
+    using Example = System.Collections.Generic.List<ValueTuple<int, int>>;
+}
+";
+            var fixedCode = @"
+namespace System
+{
+    using Example = System.Collections.Generic.List<System.ValueTuple<int, int>>;
+}
+";
+
+            var expected = Diagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorType).WithLocation(4, 5).WithArguments("System.Collections.Generic.List<System.ValueTuple<int, int>>");
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
