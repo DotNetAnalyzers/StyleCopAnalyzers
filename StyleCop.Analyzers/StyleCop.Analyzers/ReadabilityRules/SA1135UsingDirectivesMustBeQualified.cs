@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
-    using System;
     using System.Collections.Immutable;
     using System.Text;
     using Microsoft.CodeAnalysis;
@@ -213,19 +212,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     }
 
                     builder.Append(")");
-                    return true;
-                }
-                else if (RefTypeSyntaxWrapper.IsInstance(type))
-                {
-                    var refType = (RefTypeSyntaxWrapper)type;
-                    builder.Append(refType.RefKeyword.Text);
-                    if (refType.ReadOnlyKeyword.IsKind(SyntaxKind.ReadOnlyKeyword))
-                    {
-                        builder.Append(" ").Append(refType.ReadOnlyKeyword.Text);
-                    }
-
-                    builder.Append(" ");
-                    AppendCanonicalString(builder, refType.Type);
                     return true;
                 }
                 else

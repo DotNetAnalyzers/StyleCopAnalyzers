@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.Helpers
 {
     using System.Text;
     using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Lightup;
 
@@ -36,9 +37,10 @@ namespace StyleCop.Analyzers.Helpers
 
         private static bool AppendQualifiedSymbolName(StringBuilder builder, ISymbol symbol, TypeSyntax type)
         {
-            switch (symbol)
+            switch (symbol.Kind)
             {
-            case IArrayTypeSymbol arraySymbol:
+            case SymbolKind.ArrayType:
+                var arraySymbol = (IArrayTypeSymbol)symbol;
                 AppendQualifiedSymbolName(builder, arraySymbol.ElementType, (type as ArrayTypeSyntax)?.ElementType);
                 builder
                     .Append("[")
@@ -46,7 +48,8 @@ namespace StyleCop.Analyzers.Helpers
                     .Append("]");
                 return true;
 
-            case INamespaceSymbol namespaceSymbol:
+            case SymbolKind.Namespace:
+                var namespaceSymbol = (INamespaceSymbol)symbol;
                 if (namespaceSymbol.IsGlobalNamespace)
                 {
                     return false;
@@ -55,7 +58,8 @@ namespace StyleCop.Analyzers.Helpers
                 builder.Append(namespaceSymbol.ToDisplayString());
                 return true;
 
-            case INamedTypeSymbol namedTypeSymbol:
+            case SymbolKind.NamedType:
+                var namedTypeSymbol = (INamedTypeSymbol)symbol;
                 if (SpecialTypeHelper.TryGetPredefinedType(namedTypeSymbol.SpecialType, out var specialTypeSyntax))
                 {
                     builder.Append(specialTypeSyntax.ToFullString());
@@ -94,6 +98,12 @@ namespace StyleCop.Analyzers.Helpers
                         return AppendQualifiedSymbolName(builder, namedTypeSymbol.TupleUnderlyingType(), type);
                     }
                 }
+                else if (namedTypeSymbol.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T)
+                {
+                    AppendQualifiedSymbolName(builder, namedTypeSymbol.TypeArguments[0], (type as NullableTypeSyntax)?.ElementType);
+                    builder.Append("?");
+                    return true;
+                }
                 else
                 {
                     if (AppendQualifiedSymbolName(builder, symbol.ContainingSymbol, (type as QualifiedNameSyntax)?.Left))
@@ -113,14 +123,17 @@ namespace StyleCop.Analyzers.Helpers
                         for (int i = 0; i < arguments.Length; i++)
                         {
                             var argument = arguments[i];
-                            var argumentType = argumentTypes.Arguments.Count > i ? argumentTypes.Arguments[i] : null;
+                            var argumentType = argumentTypes != null && argumentTypes.Arguments.Count > i ? argumentTypes.Arguments[i] : null;
 
                             if (i > 0)
                             {
                                 builder.Append(GenericSeparator);
                             }
 
-                            AppendQualifiedSymbolName(builder, argument, argumentType);
+                            if (!argumentType.IsKind(SyntaxKind.OmittedTypeArgument))
+                            {
+                                AppendQualifiedSymbolName(builder, argument, argumentType);
+                            }
                         }
 
                         builder.Append(GenericTypeParametersClose);
@@ -130,8 +143,13 @@ namespace StyleCop.Analyzers.Helpers
                 }
 
             default:
-                builder.Append(symbol.Name);
-                return true;
+                if (symbol != null)
+                {
+                    builder.Append(symbol.Name);
+                    return true;
+                }
+
+                return false;
             }
         }
     }
