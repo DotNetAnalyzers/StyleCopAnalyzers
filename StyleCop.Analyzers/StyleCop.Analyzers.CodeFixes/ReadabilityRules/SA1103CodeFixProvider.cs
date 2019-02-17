@@ -153,7 +153,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static void ProcessQueryBody(QueryBodySyntax body, List<SyntaxNode> queryNodes)
         {
             queryNodes.AddRange(body.Clauses);
-            queryNodes.Add(body.SelectOrGroup);
+
+            if (!body.SelectOrGroup.IsMissing)
+            {
+                queryNodes.Add(body.SelectOrGroup);
+            }
 
             if (body.Continuation != null)
             {
