@@ -512,6 +512,24 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The parameter &apos;{0}&apos; does not exist..
+        /// </summary>
+        internal static string SA1612MissingParamForDocumentationMessageFormat {
+            get {
+                return ResourceManager.GetString("SA1612MissingParamForDocumentationMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The parameter documentation for &apos;{0}&apos; should be at position {1}..
+        /// </summary>
+        internal static string SA1612ParamWrongOrderMessageFormat {
+            get {
+                return ResourceManager.GetString("SA1612ParamWrongOrderMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Element parameter documentation should match element parameters.
         /// </summary>
         internal static string SA1612Title {

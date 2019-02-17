@@ -80,6 +80,42 @@ namespace StyleCop.Analyzers.OrderingRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A C# using directive is placed outside of a namespace element..
+        /// </summary>
+        internal static string SA1200DescriptionInside {
+            get {
+                return ResourceManager.GetString("SA1200DescriptionInside", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A C# using directive is placed inside of a namespace declaration..
+        /// </summary>
+        internal static string SA1200DescriptionOutside {
+            get {
+                return ResourceManager.GetString("SA1200DescriptionOutside", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Using directive should appear within a namespace declaration.
+        /// </summary>
+        internal static string SA1200MessageFormatInside {
+            get {
+                return ResourceManager.GetString("SA1200MessageFormatInside", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Using directive should appear outside a namespace declaration.
+        /// </summary>
+        internal static string SA1200MessageFormatOutside {
+            get {
+                return ResourceManager.GetString("SA1200MessageFormatOutside", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Using directives should be placed correctly.
         /// </summary>
         internal static string SA1200Title {

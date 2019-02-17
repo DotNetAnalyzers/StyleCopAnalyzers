@@ -123,6 +123,18 @@
   <data name="ModifierOrderCodeFix" xml:space="preserve">
     <value>Fix modifier order</value>
   </data>
+  <data name="SA1200DescriptionInside" xml:space="preserve">
+    <value>A C# using directive is placed outside of a namespace element.</value>
+  </data>
+  <data name="SA1200DescriptionOutside" xml:space="preserve">
+    <value>A C# using directive is placed inside of a namespace declaration.</value>
+  </data>
+  <data name="SA1200MessageFormatInside" xml:space="preserve">
+    <value>Using directive should appear within a namespace declaration</value>
+  </data>
+  <data name="SA1200MessageFormatOutside" xml:space="preserve">
+    <value>Using directive should appear outside a namespace declaration</value>
+  </data>
   <data name="SA1200Title" xml:space="preserve">
     <value>Using directives should be placed correctly</value>
   </data>

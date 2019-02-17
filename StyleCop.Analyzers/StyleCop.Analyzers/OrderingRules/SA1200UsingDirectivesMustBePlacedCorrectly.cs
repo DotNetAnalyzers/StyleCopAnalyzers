@@ -157,15 +157,15 @@ namespace StyleCop.Analyzers.OrderingRules
         /// </summary>
         public const string DiagnosticId = "SA1200";
 
-        private const string MessageFormatInside = "Using directive should appear within a namespace declaration";
-        private const string DescriptionInside = "A C# using directive is placed outside of a namespace element.";
-
-        private const string MessageFormatOutside = "Using directive should appear outside a namespace declaration";
-        private const string DescriptionOutside = "A C# using directive is placed inside of a namespace declaration.";
-
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1200.md";
 
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(OrderingResources.SA1200Title), OrderingResources.ResourceManager, typeof(OrderingResources));
+
+        private static readonly LocalizableString MessageFormatInside = new LocalizableResourceString(nameof(OrderingResources.SA1200MessageFormatInside), OrderingResources.ResourceManager, typeof(OrderingResources));
+        private static readonly LocalizableString DescriptionInside = new LocalizableResourceString(nameof(OrderingResources.SA1200DescriptionInside), OrderingResources.ResourceManager, typeof(OrderingResources));
+
+        private static readonly LocalizableString MessageFormatOutside = new LocalizableResourceString(nameof(OrderingResources.SA1200MessageFormatOutside), OrderingResources.ResourceManager, typeof(OrderingResources));
+        private static readonly LocalizableString DescriptionOutside = new LocalizableResourceString(nameof(OrderingResources.SA1200DescriptionOutside), OrderingResources.ResourceManager, typeof(OrderingResources));
 
 #pragma warning disable SA1202 // Elements should be ordered by access
         internal static readonly DiagnosticDescriptor DescriptorInside =

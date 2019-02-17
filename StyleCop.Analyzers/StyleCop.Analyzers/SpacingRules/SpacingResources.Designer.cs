@@ -161,6 +161,60 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Operator &apos;{0}&apos; should be followed by whitespace..
+        /// </summary>
+        internal static string SA1003MessageFormatFollowedByWhitespace {
+            get {
+                return ResourceManager.GetString("SA1003MessageFormatFollowedByWhitespace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Operator &apos;{0}&apos; should not appear at the end of a line..
+        /// </summary>
+        internal static string SA1003MessageFormatNotAtEndOfLine {
+            get {
+                return ResourceManager.GetString("SA1003MessageFormatNotAtEndOfLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Operator &apos;{0}&apos; should not be followed by a comment..
+        /// </summary>
+        internal static string SA1003MessageFormatNotFollowedByComment {
+            get {
+                return ResourceManager.GetString("SA1003MessageFormatNotFollowedByComment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Operator &apos;{0}&apos; should not be followed by whitespace..
+        /// </summary>
+        internal static string SA1003MessageFormatNotFollowedByWhitespace {
+            get {
+                return ResourceManager.GetString("SA1003MessageFormatNotFollowedByWhitespace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Operator &apos;{0}&apos; should not be preceded by whitespace..
+        /// </summary>
+        internal static string SA1003MessageFormatNotPrecededByWhitespace {
+            get {
+                return ResourceManager.GetString("SA1003MessageFormatNotPrecededByWhitespace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Operator &apos;{0}&apos; should be preceded by whitespace..
+        /// </summary>
+        internal static string SA1003MessageFormatPrecededByWhitespace {
+            get {
+                return ResourceManager.GetString("SA1003MessageFormatPrecededByWhitespace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Symbols should be spaced correctly.
         /// </summary>
         internal static string SA1003Title {
@@ -310,6 +364,33 @@ namespace StyleCop.Analyzers.SpacingRules {
         internal static string SA1008Description {
             get {
                 return ResourceManager.GetString("SA1008Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Opening parenthesis should not be followed by a space..
+        /// </summary>
+        internal static string SA1008MessageNotFollowed {
+            get {
+                return ResourceManager.GetString("SA1008MessageNotFollowed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Opening parenthesis should not be preceded by a space..
+        /// </summary>
+        internal static string SA1008MessageNotPreceded {
+            get {
+                return ResourceManager.GetString("SA1008MessageNotPreceded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Opening parenthesis should be preceded by a space..
+        /// </summary>
+        internal static string SA1008MessagePreceded {
+            get {
+                return ResourceManager.GetString("SA1008MessagePreceded", resourceCulture);
             }
         }
         
