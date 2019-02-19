@@ -5,10 +5,8 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.ReadabilityRules;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.ReadabilityRules.SA1107CodeMustNotContainMultipleStatementsOnOneLine,
@@ -141,6 +139,32 @@ class ClassName
 ";
             DiagnosticResult expected = DiagnosticResult.CompilerError("CS1002").WithLocation(7, 14).WithMessage("; expected");
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2862, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2862")]
+        public async Task TestEmptyStatementAfterBlockAsync()
+        {
+            string testCode = @"
+class Program
+{
+    static void Main(string[] args)
+    {
+        {
+        }[|;|]
+    }
+}
+";
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = testCode,
+
+                // A code fix is offered even though no changes are applied by it
+                NumberOfIncrementalIterations = 1,
+                NumberOfFixAllIterations = 1,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
