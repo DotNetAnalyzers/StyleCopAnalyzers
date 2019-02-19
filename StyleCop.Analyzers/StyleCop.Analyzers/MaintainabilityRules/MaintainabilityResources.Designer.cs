@@ -159,5 +159,32 @@ namespace StyleCop.Analyzers.MaintainabilityRules {
                 return ResourceManager.GetString("SA1413Title", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tuple types appearing in member declarations should have explicitly named tuple elements..
+        /// </summary>
+        internal static string SA1414Description {
+            get {
+                return ResourceManager.GetString("SA1414Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tuple types in signatures should have element names.
+        /// </summary>
+        internal static string SA1414MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1414MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tuple types in signatures should have element names.
+        /// </summary>
+        internal static string SA1414Title {
+            get {
+                return ResourceManager.GetString("SA1414Title", resourceCulture);
+            }
+        }
     }
 }
