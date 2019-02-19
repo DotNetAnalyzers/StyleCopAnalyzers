@@ -218,7 +218,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
             {
             case SyntaxKind.SelectClause:
                 var selectClause = (SelectClauseSyntax)selectOrGroup;
-                tokensToCheck.Add(selectClause.SelectKeyword);
+                if (!selectClause.IsMissing)
+                {
+                    tokensToCheck.Add(selectClause.SelectKeyword);
+                }
+
                 break;
             case SyntaxKind.GroupClause:
                 var groupClause = (GroupClauseSyntax)selectOrGroup;
