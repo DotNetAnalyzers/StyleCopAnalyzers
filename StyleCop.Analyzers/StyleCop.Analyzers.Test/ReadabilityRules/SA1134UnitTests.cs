@@ -409,5 +409,35 @@ namespace TestNamespace
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that passing an invalid member syntax into the codefix will not change the code.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2894, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2894")]
+        public async Task VerifyInvalidMemberSyntaxInCodeFixAsync()
+        {
+            string testCode = @"class Program
+{
+    static void Main(string[] args)
+    {
+        {
+        }[;]
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                DiagnosticResult.CompilerError("CS1513").WithLocation(6, 10),
+                Diagnostic().WithLocation(6, 10),
+                DiagnosticResult.CompilerError("CS1001").WithLocation(6, 11),
+                DiagnosticResult.CompilerError("CS1001").WithLocation(6, 11),
+                DiagnosticResult.CompilerError("CS1022").WithLocation(8, 1),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
