@@ -6,7 +6,7 @@
     <title>$id$</title>
     <authors>Sam Harwell et. al.</authors>
     <owners>Sam Harwell</owners>
-    <licenseUrl>https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/$GitCommitIdShort$/LICENSE</licenseUrl>
+    <license type="expression">Apache-2.0</license>
     <projectUrl>https://github.com/DotNetAnalyzers/StyleCopAnalyzers</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>An implementation of StyleCop's rules using Roslyn analyzers and code fixes</description>
