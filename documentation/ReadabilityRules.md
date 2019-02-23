@@ -42,3 +42,4 @@ Identifier | Name | Description
 [SA1137](SA1137.md) | ElementsShouldHaveTheSameIndentation | Two sibling elements which each start on their own line have different levels of indentation.
 [SA1139](SA1139.md) | UseLiteralsSuffixNotationInsteadOfCasting | Use literal suffix notation instead of casting. 
 [SA1141](SA1141.md) | UseTupleSyntax | Use tuple syntax instead of the underlying ValueTuple implementation type.
+[SA1142](SA1142.md) | ReferToTupleFieldsByName | A field of a tuple was referenced by its metadata name when a field name is available.

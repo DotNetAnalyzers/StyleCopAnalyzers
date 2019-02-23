@@ -1358,6 +1358,42 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Use tuple field name.
+        /// </summary>
+        internal static string SA1142CodeFix {
+            get {
+                return ResourceManager.GetString("SA1142CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A field of a tuple was referenced by its metadata name when a field name is available..
+        /// </summary>
+        internal static string SA1142Description {
+            get {
+                return ResourceManager.GetString("SA1142Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Refer to tuple fields by name.
+        /// </summary>
+        internal static string SA1142MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1142MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Refer to tuple fields by name.
+        /// </summary>
+        internal static string SA1142Title {
+            get {
+                return ResourceManager.GetString("SA1142Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove &apos;this.&apos; prefix.
         /// </summary>
         internal static string SX1101CodeFix {
