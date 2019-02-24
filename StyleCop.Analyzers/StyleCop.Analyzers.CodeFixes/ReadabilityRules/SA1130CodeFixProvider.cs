@@ -72,6 +72,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var parameterList = anonymousMethod.ParameterList;
             SyntaxNode lambdaExpression;
+            SyntaxToken arrowToken;
 
             if (parameterList == null)
             {
@@ -98,6 +99,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
                     argumentList = list.Value;
                     break;
+
+                case SyntaxKind.ArrowExpressionClause:
+                case SyntaxKind.ReturnStatement:
+                    argumentList = GetMemberReturnTypeArgumentList(semanticModel, anonymousMethod);
+                    break;
                 }
 
                 List<ParameterSyntax> parameters = GenerateUniqueParameterNames(semanticModel, anonymousMethod, argumentList);
@@ -107,12 +113,17 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     : SyntaxFactory.SeparatedList<ParameterSyntax>();
 
                 parameterList = SyntaxFactory.ParameterList(newList)
-                    .WithLeadingTrivia(anonymousMethod.DelegateKeyword.LeadingTrivia)
+                    .WithLeadingTrivia(anonymousMethod.DelegateKeyword.LeadingTrivia);
+
+                arrowToken = SyntaxFactory.Token(SyntaxKind.EqualsGreaterThanToken)
                     .WithTrailingTrivia(anonymousMethod.DelegateKeyword.TrailingTrivia);
             }
             else
             {
                 parameterList = parameterList.WithLeadingTrivia(anonymousMethod.DelegateKeyword.TrailingTrivia);
+
+                arrowToken = SyntaxFactory.Token(SyntaxKind.EqualsGreaterThanToken)
+                    .WithTrailingTrivia(SyntaxFactory.ElasticSpace);
             }
 
             foreach (var parameter in parameterList.Parameters)
@@ -122,9 +133,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     return anonymousMethod;
                 }
             }
-
-            var arrowToken = SyntaxFactory.Token(SyntaxKind.EqualsGreaterThanToken)
-                .WithTrailingTrivia(SyntaxFactory.ElasticSpace);
 
             if (parameterList.Parameters.Count == 1)
             {
@@ -191,6 +199,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var eventSymbol = (IEventSymbol)symbol.Symbol;
             var namedTypeSymbol = (INamedTypeSymbol)eventSymbol.Type;
             return namedTypeSymbol.DelegateInvokeMethod.Parameters.Select(ps => ps.Name).ToImmutableArray();
+        }
+
+        private static ImmutableArray<string> GetMemberReturnTypeArgumentList(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod)
+        {
+            var enclosingSymbol = semanticModel.GetEnclosingSymbol(anonymousMethod.Parent.SpanStart);
+            var returnType = (INamedTypeSymbol)((IMethodSymbol)enclosingSymbol).ReturnType;
+
+            return returnType.DelegateInvokeMethod.Parameters.Select(ps => ps.Name).ToImmutableArray();
         }
 
         private static List<ParameterSyntax> GenerateUniqueParameterNames(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod, ImmutableArray<string> argumentNames)

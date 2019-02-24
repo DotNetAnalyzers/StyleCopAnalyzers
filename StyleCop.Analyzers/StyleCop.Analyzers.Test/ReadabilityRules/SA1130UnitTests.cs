@@ -276,7 +276,7 @@ public class TypeName
 {
     public void Test()
     {
-        Action action1 = /*a*/()/*b*/ => { };
+        Action action1 = /*a*/() =>/*b*/{ };
         Action action2 = /*a*//*b*/(/*c*/)/*d*/ => { };
         Action<int> action3 = /*a*//*b*//*c*//*d*/i/*e*//*f*/ => { };
         Action<List<int>> action4 = i => { };
@@ -709,6 +709,79 @@ namespace StyleCopDemo
             };
 
             await VerifyCSharpFixAsync(testCode, expected, testCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2902, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2902")]
+        public async Task VerifyThatCodeFixDoesNotCrashOnDelegateReturnAsync()
+        {
+            var testCode = @"using System;
+public class TestClass
+{
+    public static EventHandler TestMethod1()
+    {
+        return delegate
+        {
+        };
+    }
+
+    public static EventHandler TestMethod2() => delegate
+    {
+    };
+
+    public static EventHandler TestProperty1
+    {
+        get
+        {
+            return delegate
+            {
+            };
+        }
+    }
+
+    public static EventHandler TestProperty2 => delegate
+    {
+    };
+}";
+
+            var fixedCode = @"using System;
+public class TestClass
+{
+    public static EventHandler TestMethod1()
+    {
+        return (sender, e) =>
+        {
+        };
+    }
+
+    public static EventHandler TestMethod2() => (sender, e) =>
+    {
+    };
+
+    public static EventHandler TestProperty1
+    {
+        get
+        {
+            return (sender, e) =>
+            {
+            };
+        }
+    }
+
+    public static EventHandler TestProperty2 => (sender, e) =>
+    {
+    };
+}";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(6, 16),
+                Diagnostic().WithLocation(11, 49),
+                Diagnostic().WithLocation(19, 20),
+                Diagnostic().WithLocation(25, 49),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
