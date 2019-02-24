@@ -114,6 +114,25 @@ namespace StyleCop.Analyzers.SpacingRules
             bool allowTrailingSpace;
             switch (token.Parent.Kind())
             {
+            case SyntaxKindEx.FunctionPointerType:
+                allowAtLineStart = true;
+                allowAtLineEnd = true;
+                allowPrecedingSpace = false;
+                var nextToken = token.GetNextToken();
+                switch (nextToken.Kind())
+                {
+                case SyntaxKindEx.ManagedKeyword:
+                case SyntaxKindEx.UnmanagedKeyword:
+                    allowTrailingSpace = true;
+                    break;
+
+                default:
+                    allowTrailingSpace = false;
+                    break;
+                }
+
+                break;
+
             case SyntaxKind.PointerType when token.Parent.Parent.IsKind(SyntaxKindEx.FunctionPointerParameter):
                 allowAtLineStart = true;
                 allowAtLineEnd = true;
@@ -125,7 +144,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 allowAtLineStart = false;
                 allowAtLineEnd = true;
                 allowPrecedingSpace = false;
-                var nextToken = token.GetNextToken();
+                nextToken = token.GetNextToken();
                 switch (nextToken.Kind())
                 {
                 case SyntaxKind.OpenBracketToken:

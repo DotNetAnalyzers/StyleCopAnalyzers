@@ -32,7 +32,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
         {
             var testCode = @"public class TestClass
 {
-    unsafe delegate*<int *> FuncPtr;
+    unsafe delegate*<int {|#0:*|}> FuncPtr;
 }
 ";
 
@@ -42,7 +42,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
 }
 ";
 
-            var expected = Diagnostic(DescriptorNotPreceded).WithLocation(3, 26);
+            var expected = Diagnostic(DescriptorNotPreceded).WithLocation(0);
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -51,7 +51,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
         {
             var testCode = @"public class TestClass
 {
-    unsafe delegate*<int* > FuncPtr;
+    unsafe delegate*<int{|#0:*|} > FuncPtr;
 }
 ";
 
@@ -61,7 +61,107 @@ namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
 }
 ";
 
-            var expected = Diagnostic(DescriptorNotFollowed).WithLocation(3, 25);
+            var expected = Diagnostic(DescriptorNotFollowed).WithLocation(0);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestFunctionPointerTypeValidSpacingAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    unsafe delegate*<int*> FuncPtr;
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestFunctionPointerTypeInvalidPrecedingSpaceAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    unsafe delegate {|#0:*|}<int*> FuncPtr;
+}
+";
+
+            var fixedCode = @"public class TestClass
+{
+    unsafe delegate*<int*> FuncPtr;
+}
+";
+
+            var expected = Diagnostic(DescriptorNotPreceded).WithLocation(0);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestFunctionPointerTypeInvalidTrailingSpaceAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    unsafe delegate{|#0:*|} <int*> FuncPtr;
+}
+";
+
+            var fixedCode = @"public class TestClass
+{
+    unsafe delegate*<int*> FuncPtr;
+}
+";
+
+            var expected = Diagnostic(DescriptorNotFollowed).WithLocation(0);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestFunctionPointerTypeWithCallingConventionValidSpacingAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    unsafe delegate* managed<int*> FuncPtr;
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestFunctionPointerTypeWithCallingConventionInvalidPrecedingSpaceAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    unsafe delegate {|#0:*|} managed<int*> FuncPtr;
+}
+";
+
+            var fixedCode = @"public class TestClass
+{
+    unsafe delegate* managed<int*> FuncPtr;
+}
+";
+
+            var expected = Diagnostic(DescriptorNotPreceded).WithLocation(0);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestFunctionPointerTypeWithCallingConventionMissingTrailingSpaceAsync()
+        {
+            var testCode = @"public class TestClass
+{
+    unsafe delegate{|#0:*|}managed<int*> FuncPtr;
+}
+";
+
+            var fixedCode = @"public class TestClass
+{
+    unsafe delegate* managed<int*> FuncPtr;
+}
+";
+
+            var expected = Diagnostic(DescriptorFollowed).WithLocation(0);
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
