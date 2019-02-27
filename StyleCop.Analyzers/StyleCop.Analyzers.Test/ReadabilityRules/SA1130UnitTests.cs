@@ -783,5 +783,34 @@ public class TestClass
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(2902, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2902")]
+        public async Task VerifyThatEventInitializersWorkAsExpectedAsync()
+        {
+            var testCode = @"using System;
+public class TestClass
+{
+    public static event EventHandler StaticEvent = delegate { };
+    public event EventHandler InstanceEvent = delegate { };
+}
+";
+
+            var fixedCode = @"using System;
+public class TestClass
+{
+    public static event EventHandler StaticEvent = (sender, e) => { };
+    public event EventHandler InstanceEvent = (sender, e) => { };
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(4, 52),
+                Diagnostic().WithLocation(5, 47),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
