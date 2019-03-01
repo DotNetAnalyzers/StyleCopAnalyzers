@@ -103,6 +103,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 case SyntaxKind.ArrowExpressionClause:
                 case SyntaxKind.ReturnStatement:
                     argumentList = GetMemberReturnTypeArgumentList(semanticModel, anonymousMethod);
+                    if (argumentList.IsEmpty)
+                    {
+                        return null;
+                    }
+
                     break;
                 }
 
@@ -204,9 +209,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static ImmutableArray<string> GetMemberReturnTypeArgumentList(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod)
         {
             var enclosingSymbol = semanticModel.GetEnclosingSymbol(anonymousMethod.Parent.SpanStart);
-            var returnType = (INamedTypeSymbol)((IMethodSymbol)enclosingSymbol).ReturnType;
-
-            return returnType.DelegateInvokeMethod.Parameters.Select(ps => ps.Name).ToImmutableArray();
+            var returnType = ((IMethodSymbol)enclosingSymbol).ReturnType as INamedTypeSymbol;
+            return (returnType == null) ? ImmutableArray<string>.Empty : returnType.DelegateInvokeMethod.Parameters.Select(ps => ps.Name).ToImmutableArray();
         }
 
         private static List<ParameterSyntax> GenerateUniqueParameterNames(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod, ImmutableArray<string> argumentNames)

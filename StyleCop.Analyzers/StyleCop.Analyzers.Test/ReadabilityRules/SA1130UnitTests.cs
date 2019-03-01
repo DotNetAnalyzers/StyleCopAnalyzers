@@ -812,5 +812,33 @@ public class TestClass
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(2902, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2902")]
+        public async Task VerifyInvalidCodeConstructionsAsync()
+        {
+            var testCode = @"using System;
+public class TestClass
+{
+    public static EventHandler[] TestMethod() => delegate { };
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithSpan(4, 50, 4, 58),
+                DiagnosticResult.CompilerError("CS1660").WithMessage("Cannot convert anonymous method to type 'EventHandler[]' because it is not a delegate type").WithSpan(4, 50, 4, 62),
+            };
+
+            var test = new CSharpTest
+            {
+                TestCode = testCode,
+                FixedCode = testCode,
+            };
+
+            test.ExpectedDiagnostics.AddRange(expected);
+            test.RemainingDiagnostics.AddRange(expected);
+            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
