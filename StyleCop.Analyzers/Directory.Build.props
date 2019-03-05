@@ -61,4 +61,14 @@
     </AdditionalFiles>
   </ItemGroup>
 
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug' AND '$(AppVeyor)' == 'true'">
+    <CollectCoverage Condition="'$(CollectCoverage)' == ''">true</CollectCoverage>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(CollectCoverage)' == 'true'">
+    <SingleHit>True</SingleHit>
+    <Include>[StyleCop*]*</Include>
+    <CoverletOutputFormat>opencover</CoverletOutputFormat>
+    <ExcludeByAttribute>ExcludeFromCodeCoverage</ExcludeByAttribute>
+  </PropertyGroup>
 </Project>

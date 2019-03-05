@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>net461</TargetFramework>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
@@ -21,6 +21,7 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.XUnit" Version="1.0.0-beta1-63812-02" />
     <PackageReference Include="Microsoft.VisualStudio.Composition" Version="15.6.36" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+    <PackageReference Include="coverlet.msbuild" Version="2.6.0" PrivateAssets="all" />
     <PackageReference Include="xunit" Version="2.3.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" PrivateAssets="all" />
   </ItemGroup>
