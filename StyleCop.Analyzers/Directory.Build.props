@@ -69,6 +69,7 @@
     <SingleHit>True</SingleHit>
     <Include>[StyleCop*]*</Include>
     <CoverletOutputFormat>opencover</CoverletOutputFormat>
+    <CoverletOutput>$(MSBuildThisFileDirectory)build\OpenCover.Reports\</CoverletOutput>
     <ExcludeByAttribute>ExcludeFromCodeCoverage</ExcludeByAttribute>
   </PropertyGroup>
 </Project>
