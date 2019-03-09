@@ -10,11 +10,6 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
     internal class NamingSettings
     {
         /// <summary>
-        /// This is the backing field for the <see cref="AllowCommonHungarianPrefixes"/> property.
-        /// </summary>
-        private readonly bool allowCommonHungarianPrefixes;
-
-        /// <summary>
         /// This is the backing field for the <see cref="AllowedHungarianPrefixes"/> property.
         /// </summary>
         private readonly ImmutableArray<string>.Builder allowedHungarianPrefixes;
@@ -24,8 +19,11 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// </summary>
         protected internal NamingSettings()
         {
-            this.allowCommonHungarianPrefixes = true;
+            this.AllowCommonHungarianPrefixes = true;
             this.allowedHungarianPrefixes = ImmutableArray.CreateBuilder<string>();
+
+            this.IncludeInferredTupleFieldNames = false;
+            this.TupleFieldNameCasing = TupleFieldNameCase.CamelCase;
         }
 
         /// <summary>
@@ -40,7 +38,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                 switch (kvp.Key)
                 {
                 case "allowCommonHungarianPrefixes":
-                    this.allowCommonHungarianPrefixes = kvp.ToBooleanValue();
+                    this.AllowCommonHungarianPrefixes = kvp.ToBooleanValue();
                     break;
 
                 case "allowedHungarianPrefixes":
@@ -59,21 +57,27 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
                     break;
 
+                case "includeInferredTupleFieldNames":
+                    this.IncludeInferredTupleFieldNames = kvp.ToBooleanValue();
+                    break;
+
+                case "tupleFieldNameCasing":
+                    this.TupleFieldNameCasing = kvp.ToEnumValue<TupleFieldNameCase>();
+                    break;
+
                 default:
                     break;
                 }
             }
         }
 
-        public bool AllowCommonHungarianPrefixes =>
-            this.allowCommonHungarianPrefixes;
+        public bool AllowCommonHungarianPrefixes { get; }
 
         public ImmutableArray<string> AllowedHungarianPrefixes
-        {
-            get
-            {
-                return this.allowedHungarianPrefixes.ToImmutable();
-            }
-        }
+            => this.allowedHungarianPrefixes.ToImmutable();
+
+        public bool IncludeInferredTupleFieldNames { get; }
+
+        public TupleFieldNameCase TupleFieldNameCasing { get; }
     }
 }

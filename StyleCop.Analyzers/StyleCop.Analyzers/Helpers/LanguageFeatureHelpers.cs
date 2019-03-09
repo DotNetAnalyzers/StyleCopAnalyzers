@@ -28,7 +28,7 @@ namespace StyleCop.Analyzers.Helpers
         /// </summary>
         /// <param name="context">The analysis context that will be checked.</param>
         /// <returns>True if inferred tuple names are supported by the compiler.</returns>
-        internal static bool SupportsInferredTupleNames(this SyntaxNodeAnalysisContext context)
+        internal static bool SupportsInferredTupleFieldNames(this SyntaxNodeAnalysisContext context)
         {
             var csharpParseOptions = context.Node.SyntaxTree.Options as CSharpParseOptions;
             return (csharpParseOptions != null) && (csharpParseOptions.LanguageVersion >= LanguageVersionEx.CSharp7_1);

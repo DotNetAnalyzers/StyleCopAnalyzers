@@ -25,5 +25,5 @@ See [dotnet/roslyn@5520eac](https://github.com/dotnet/roslyn/commit/5520eaccd5d2
 * [x] `Microsoft.CodeAnalysis.CSharp.LanguageVersion.CSharp7_1 = 701 -> Microsoft.CodeAnalysis.CSharp.LanguageVersion`
 * [x] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.ConflictMarkerTrivia = 8564 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
 * [x] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.DefaultLiteralExpression = 8755 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
-* [ ] `static Microsoft.CodeAnalysis.CSharp.SyntaxFacts.IsReservedTupleElementName(string elementName) -> bool`
-* [ ] `static Microsoft.CodeAnalysis.CSharp.SyntaxFacts.TryGetInferredMemberName(this Microsoft.CodeAnalysis.SyntaxNode syntax) -> string`
+* [x] `static Microsoft.CodeAnalysis.CSharp.SyntaxFacts.IsReservedTupleElementName(string elementName) -> bool`
+* [x] `static Microsoft.CodeAnalysis.CSharp.SyntaxFacts.TryGetInferredMemberName(this Microsoft.CodeAnalysis.SyntaxNode syntax) -> string`

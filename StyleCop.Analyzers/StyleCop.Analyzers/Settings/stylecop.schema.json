@@ -121,12 +121,26 @@
             "allowedHungarianPrefixes": {
               "type": "array",
               "description": "Allowed Hungarian notation prefixes.",
-              "default": [ ],
+              "default": [],
               "items": {
                 "type": "string",
                 "pattern": "^[a-z]{1,2}$",
                 "uniqueItems": true
               }
+            },
+            "includeInferredTupleFieldNames": {
+              "type": "boolean",
+              "description": "Specifies whether inferred tuple field names will be analyzed as well.",
+              "default": false
+            },
+            "tupleFieldNameCasing": {
+              "type": "string",
+              "description": "Specifies the casing convention used for tuple field names.",
+              "enum": [
+                "camelCase",
+                "pascalCase"
+              ],
+              "default": "camelCase"
             }
           }
         },
