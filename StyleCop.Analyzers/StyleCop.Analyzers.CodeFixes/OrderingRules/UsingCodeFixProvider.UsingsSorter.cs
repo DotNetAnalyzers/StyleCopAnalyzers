@@ -13,6 +13,7 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
@@ -365,14 +366,18 @@ namespace StyleCop.Analyzers.OrderingRules
                             rewrittenName = replacement.WithTriviaFrom(originalName);
                             break;
                         }
-                        else if (symbol is INamedTypeSymbol)
+                        else if (symbol is INamedTypeSymbol namedTypeSymbol)
                         {
                             // TODO: Preserve inner trivia
                             // TODO: simplify after qualification
                             string fullName;
-                            if (SpecialTypeHelper.IsPredefinedType(((INamedTypeSymbol)symbol).OriginalDefinition.SpecialType))
+                            if (SpecialTypeHelper.IsPredefinedType(namedTypeSymbol.OriginalDefinition.SpecialType))
                             {
                                 fullName = "global::System." + symbol.Name;
+                            }
+                            else if (namedTypeSymbol.IsTupleType())
+                            {
+                                fullName = namedTypeSymbol.TupleUnderlyingType().ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
                             }
                             else
                             {
