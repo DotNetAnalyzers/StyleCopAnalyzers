@@ -29,6 +29,9 @@
     <file src="bin\$Configuration$\netstandard1.1\**\StyleCop.Analyzers.CodeFixes.resources.dll" target="analyzers\dotnet\cs" />
     <file src="bin\$Configuration$\netstandard1.1\StyleCop.Analyzers.CodeFixes.pdb" target="analyzers\dotnet\cs" />
 
+	<!-- Rulesets -->
+	<file src="rulesets\StyleCopAnalyzersDefault.ruleset" target="rulesets\" />
+	
     <!-- Scripts -->
     <file src="tools\install.ps1" target="tools\" />
     <file src="tools\uninstall.ps1" target="tools\" />
