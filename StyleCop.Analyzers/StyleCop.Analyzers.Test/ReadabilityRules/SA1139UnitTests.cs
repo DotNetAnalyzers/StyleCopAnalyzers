@@ -266,5 +266,53 @@ class ClassName
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        /// <summary>
+        /// Verifies that the codefix will not insert extraneous spaces.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(2901, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2901")]
+        public async Task TestCodeFixDoesNotAddExtraneousSpacesAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var x = (long)64 * 1024;
+        var y = (double)64 /* test */ * 1024;
+        var z = (long) /* test */ 64 * 1024;
+        var a = (double)64 // dividend
+            / (double)4; // divisor
+    }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var x = 64L * 1024;
+        var y = 64D /* test */ * 1024;
+        var z = /* test */ 64L * 1024;
+        var a = 64D // dividend
+            / 4D; // divisor
+    }
+}
+";
+
+            DiagnosticResult[] expectedDiagnosticResult =
+            {
+                Diagnostic().WithLocation(6, 17),
+                Diagnostic().WithLocation(7, 17),
+                Diagnostic().WithLocation(8, 17),
+                Diagnostic().WithLocation(9, 17),
+                Diagnostic().WithLocation(10, 15),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedDiagnosticResult, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

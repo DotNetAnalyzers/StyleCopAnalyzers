@@ -47,7 +47,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
             var syntaxRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
-            var oldSemanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
             if (!(syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) is CastExpressionSyntax node))
             {
@@ -68,9 +67,18 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 (LiteralExpressionSyntax)plusMinusSyntax.Operand.WalkDownParentheses();
             var typeToken = node.Type.GetFirstToken();
             var replacementLiteral = literalExpressionSyntax.WithLiteralSuffix(typeToken.Kind());
+
+            var newLeadingTrivia = SyntaxFactory.TriviaList(node.GetLeadingTrivia().Concat(node.CloseParenToken.TrailingTrivia).Concat(node.Expression.GetLeadingTrivia()))
+                .WithoutLeadingWhitespace()
+                .WithoutTrailingWhitespace();
+
+            if (newLeadingTrivia.Count != 0)
+            {
+                newLeadingTrivia = newLeadingTrivia.Add(SyntaxFactory.Space);
+            }
+
             var replacementNode = node.Expression.ReplaceNode(literalExpressionSyntax, replacementLiteral)
-                .WithLeadingTrivia(node.GetLeadingTrivia().Concat(node.CloseParenToken.TrailingTrivia).Concat(node.Expression.GetLeadingTrivia()))
-                .WithTrailingTrivia(node.Expression.GetTrailingTrivia().Concat(node.GetTrailingTrivia()));
+                .WithLeadingTrivia(newLeadingTrivia);
 
             return replacementNode;
         }
