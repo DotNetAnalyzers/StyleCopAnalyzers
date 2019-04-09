@@ -298,6 +298,56 @@ namespace TestNamespace
             await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(2928, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2928")]
+        public async Task TestMovingValueTupleAliasOutsideAsync()
+        {
+            var testCode = @"using System;
+
+namespace MyNamespace
+{
+    using QuotesRange = ValueTuple<QuoteType, DateTime, DateTime>;
+
+    public class QuoteType
+    {
+    }
+
+    public class UseClass
+    {
+        private void Test()
+        {
+            QuotesRange t;
+        }
+    }
+}
+";
+            var fixedTestCode = @"using System;
+using QuotesRange = System.ValueTuple<MyNamespace.QuoteType, System.DateTime, System.DateTime>;
+
+namespace MyNamespace
+{
+    public class QuoteType
+    {
+    }
+
+    public class UseClass
+    {
+        private void Test()
+        {
+            QuotesRange t;
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(SA1200UsingDirectivesMustBePlacedCorrectly.DescriptorOutside).WithLocation(5, 5),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
         private static DiagnosticResult Diagnostic(DiagnosticDescriptor descriptor)
             => StyleCopCodeFixVerifier<SA1200UsingDirectivesMustBePlacedCorrectly, UsingCodeFixProvider>.Diagnostic(descriptor);
 
