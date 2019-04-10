@@ -68,7 +68,7 @@ namespace StyleCop.Analyzers.SpacingRules
             var root = context.Tree.GetRoot(context.CancellationToken);
             var text = context.Tree.GetText(context.CancellationToken);
 
-            SyntaxTrivia previousTrivia = default(SyntaxTrivia);
+            SyntaxTrivia previousTrivia = default;
             foreach (var trivia in root.DescendantTrivia(descendIntoTrivia: true))
             {
                 switch (trivia.Kind())
@@ -131,7 +131,7 @@ namespace StyleCop.Analyzers.SpacingRules
 
                 case SyntaxKind.SingleLineDocumentationCommentTrivia:
                 case SyntaxKind.MultiLineDocumentationCommentTrivia:
-                    SyntaxToken previousToken = default(SyntaxToken);
+                    SyntaxToken previousToken = default;
                     foreach (var token in trivia.GetStructure().DescendantTokens(descendIntoTrivia: true))
                     {
                         if (token.IsKind(SyntaxKind.XmlTextLiteralNewLineToken)

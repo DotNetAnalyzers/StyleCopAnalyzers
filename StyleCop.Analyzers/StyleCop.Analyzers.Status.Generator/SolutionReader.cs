@@ -24,7 +24,7 @@ namespace StyleCop.Analyzers.Status.Generator
     /// </summary>
     public class SolutionReader
     {
-        private static Regex diagnosticPathRegex = new Regex(@"(?<type>[A-Za-z]+)Rules\\(?<name>[A-Za-z0-9]+)\.cs$");
+        private static readonly Regex DiagnosticPathRegex = new Regex(@"(?<type>[A-Za-z]+)Rules\\(?<name>[A-Za-z0-9]+)\.cs$");
         private INamedTypeSymbol diagnosticAnalyzerTypeSymbol;
         private INamedTypeSymbol noCodeFixAttributeTypeSymbol;
 
@@ -93,7 +93,7 @@ namespace StyleCop.Analyzers.Status.Generator
 
             foreach (var syntaxTree in syntaxTrees)
             {
-                var match = diagnosticPathRegex.Match(syntaxTree.FilePath);
+                var match = DiagnosticPathRegex.Match(syntaxTree.FilePath);
                 if (!match.Success)
                 {
                     continue;

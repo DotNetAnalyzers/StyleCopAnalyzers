@@ -65,8 +65,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var symbolInfo = semanticModel.GetSymbolInfo(newExpression.Type, cancellationToken);
             var namedTypeSymbol = symbolInfo.Symbol as INamedTypeSymbol;
 
-            SyntaxNode replacement = null;
-            string memberName = null;
+            SyntaxNode replacement;
+            string memberName;
 
             if (IsType<CancellationToken>(namedTypeSymbol))
             {

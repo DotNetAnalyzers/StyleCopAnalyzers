@@ -79,7 +79,7 @@ namespace StyleCop.Analyzers.Settings
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         SettingsResources.SettingsFileCodeFix,
-                        cancellationToken => GetTransformedSolutionAsync(context.Document, diagnostic, cancellationToken),
+                        cancellationToken => GetTransformedSolutionAsync(context.Document),
                         nameof(SettingsFileCodeFixProvider)),
                     diagnostic);
             }
@@ -94,7 +94,7 @@ namespace StyleCop.Analyzers.Settings
             return null;
         }
 
-        private static Task<Solution> GetTransformedSolutionAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
+        private static Task<Solution> GetTransformedSolutionAsync(Document document)
         {
             var project = document.Project;
             var solution = project.Solution;

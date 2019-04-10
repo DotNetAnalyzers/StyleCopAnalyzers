@@ -211,9 +211,12 @@ namespace StyleCop.Analyzers.Test.HelperTests.ObjectPools
         [Fact]
         public void TestPooledObjectHandlesNullAllocation()
         {
-            Func<ObjectPool<object>, object> allocator = pool => null;
-            Action<ObjectPool<object>, object> releaser = (pool, obj) => { };
-            using (var obj = new PooledObject<object>(SharedPools.Default<object>(), allocator, releaser))
+            object Allocator(ObjectPool<object> pool) => null;
+            void Releaser(ObjectPool<object> pool, object obj)
+            {
+            }
+
+            using (var obj = new PooledObject<object>(SharedPools.Default<object>(), Allocator, Releaser))
             {
                 Assert.Null(obj.Object);
             }

@@ -58,22 +58,21 @@ namespace StyleCop.Analyzers.Lightup
 
         internal static Func<TSyntax, TProperty> CreateSyntaxPropertyAccessor<TSyntax, TProperty>(Type type, string propertyName)
         {
-            Func<TSyntax, TProperty> fallbackAccessor =
-                syntax =>
+            TProperty FallbackAccessor(TSyntax syntax)
+            {
+                if (syntax == null)
                 {
-                    if (syntax == null)
-                    {
-                        // Unlike an extension method which would throw ArgumentNullException here, the light-up
-                        // behavior needs to match behavior of the underlying property.
-                        throw new NullReferenceException();
-                    }
+                    // Unlike an extension method which would throw ArgumentNullException here, the light-up
+                    // behavior needs to match behavior of the underlying property.
+                    throw new NullReferenceException();
+                }
 
-                    return default(TProperty);
-                };
+                return default;
+            }
 
             if (type == null)
             {
-                return fallbackAccessor;
+                return FallbackAccessor;
             }
 
             if (!typeof(TSyntax).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()))
@@ -84,7 +83,7 @@ namespace StyleCop.Analyzers.Lightup
             var property = type.GetTypeInfo().GetDeclaredProperty(propertyName);
             if (property == null)
             {
-                return fallbackAccessor;
+                return FallbackAccessor;
             }
 
             if (!typeof(TProperty).GetTypeInfo().IsAssignableFrom(property.PropertyType.GetTypeInfo()))
@@ -107,22 +106,21 @@ namespace StyleCop.Analyzers.Lightup
 
         internal static Func<TSyntax, SeparatedSyntaxListWrapper<TProperty>> CreateSeparatedSyntaxListPropertyAccessor<TSyntax, TProperty>(Type type, string propertyName)
         {
-            Func<TSyntax, SeparatedSyntaxListWrapper<TProperty>> fallbackAccessor =
-                syntax =>
+            SeparatedSyntaxListWrapper<TProperty> FallbackAccessor(TSyntax syntax)
+            {
+                if (syntax == null)
                 {
-                    if (syntax == null)
-                    {
-                        // Unlike an extension method which would throw ArgumentNullException here, the light-up
-                        // behavior needs to match behavior of the underlying property.
-                        throw new NullReferenceException();
-                    }
+                    // Unlike an extension method which would throw ArgumentNullException here, the light-up
+                    // behavior needs to match behavior of the underlying property.
+                    throw new NullReferenceException();
+                }
 
-                    return SeparatedSyntaxListWrapper<TProperty>.UnsupportedEmpty;
-                };
+                return SeparatedSyntaxListWrapper<TProperty>.UnsupportedEmpty;
+            }
 
             if (type == null)
             {
-                return fallbackAccessor;
+                return FallbackAccessor;
             }
 
             if (!typeof(TSyntax).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()))
@@ -133,7 +131,7 @@ namespace StyleCop.Analyzers.Lightup
             var property = type.GetTypeInfo().GetDeclaredProperty(propertyName);
             if (property == null)
             {
-                return fallbackAccessor;
+                return FallbackAccessor;
             }
 
             if (property.PropertyType.GetGenericTypeDefinition() != typeof(SeparatedSyntaxList<>))
@@ -168,27 +166,26 @@ namespace StyleCop.Analyzers.Lightup
 
         internal static Func<TSyntax, TProperty, TSyntax> CreateSyntaxWithPropertyAccessor<TSyntax, TProperty>(Type type, string propertyName)
         {
-            Func<TSyntax, TProperty, TSyntax> fallbackAccessor =
-                (syntax, newValue) =>
+            TSyntax FallbackAccessor(TSyntax syntax, TProperty newValue)
+            {
+                if (syntax == null)
                 {
-                    if (syntax == null)
-                    {
-                        // Unlike an extension method which would throw ArgumentNullException here, the light-up
-                        // behavior needs to match behavior of the underlying property.
-                        throw new NullReferenceException();
-                    }
+                    // Unlike an extension method which would throw ArgumentNullException here, the light-up
+                    // behavior needs to match behavior of the underlying property.
+                    throw new NullReferenceException();
+                }
 
-                    if (Equals(newValue, default(TProperty)))
-                    {
-                        return syntax;
-                    }
+                if (Equals(newValue, default(TProperty)))
+                {
+                    return syntax;
+                }
 
-                    throw new NotSupportedException();
-                };
+                throw new NotSupportedException();
+            }
 
             if (type == null)
             {
-                return fallbackAccessor;
+                return FallbackAccessor;
             }
 
             if (!typeof(TSyntax).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()))
@@ -199,7 +196,7 @@ namespace StyleCop.Analyzers.Lightup
             var property = type.GetTypeInfo().GetDeclaredProperty(propertyName);
             if (property == null)
             {
-                return fallbackAccessor;
+                return FallbackAccessor;
             }
 
             if (!typeof(TProperty).GetTypeInfo().IsAssignableFrom(property.PropertyType.GetTypeInfo()))
@@ -231,27 +228,26 @@ namespace StyleCop.Analyzers.Lightup
 
         internal static Func<TSyntax, SeparatedSyntaxListWrapper<TProperty>, TSyntax> CreateSeparatedSyntaxListWithPropertyAccessor<TSyntax, TProperty>(Type type, string propertyName)
         {
-            Func<TSyntax, SeparatedSyntaxListWrapper<TProperty>, TSyntax> fallbackAccessor =
-                (syntax, newValue) =>
+            TSyntax FallbackAccessor(TSyntax syntax, SeparatedSyntaxListWrapper<TProperty> newValue)
+            {
+                if (syntax == null)
                 {
-                    if (syntax == null)
-                    {
-                        // Unlike an extension method which would throw ArgumentNullException here, the light-up
-                        // behavior needs to match behavior of the underlying property.
-                        throw new NullReferenceException();
-                    }
+                    // Unlike an extension method which would throw ArgumentNullException here, the light-up
+                    // behavior needs to match behavior of the underlying property.
+                    throw new NullReferenceException();
+                }
 
-                    if (newValue is null)
-                    {
-                        return syntax;
-                    }
+                if (newValue is null)
+                {
+                    return syntax;
+                }
 
-                    throw new NotSupportedException();
-                };
+                throw new NotSupportedException();
+            }
 
             if (type == null)
             {
-                return fallbackAccessor;
+                return FallbackAccessor;
             }
 
             if (!typeof(TSyntax).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()))
@@ -262,7 +258,7 @@ namespace StyleCop.Analyzers.Lightup
             var property = type.GetTypeInfo().GetDeclaredProperty(propertyName);
             if (property == null)
             {
-                return fallbackAccessor;
+                return FallbackAccessor;
             }
 
             if (property.PropertyType.GetGenericTypeDefinition() != typeof(SeparatedSyntaxList<>))

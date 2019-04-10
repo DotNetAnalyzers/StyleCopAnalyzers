@@ -544,7 +544,7 @@ public class Foo
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TestStatements))]
-        private async Task TestCodeFixForStatementAsync(string statementText)
+        public async Task TestCodeFixForStatementAsync(string statementText)
         {
             var expected = Diagnostic().WithLocation(7, 13);
             await VerifyCSharpFixAsync(this.GenerateTestStatement(statementText), expected, this.GenerateFixedTestStatement(statementText), CancellationToken.None).ConfigureAwait(false);

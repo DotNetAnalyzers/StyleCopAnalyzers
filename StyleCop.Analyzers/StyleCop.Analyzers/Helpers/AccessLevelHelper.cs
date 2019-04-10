@@ -297,7 +297,7 @@ namespace StyleCop.Analyzers.Helpers
             return Accessibility.Public;
         }
 
-        internal static Accessibility GetDeclaredAccessibility(this DelegateDeclarationSyntax syntax, SemanticModel semanticModel, CancellationToken cancellationToken)
+        internal static Accessibility GetDeclaredAccessibility(this DelegateDeclarationSyntax syntax, SemanticModel semanticModel)
         {
             Requires.NotNull(syntax, nameof(syntax));
             Requires.NotNull(semanticModel, nameof(semanticModel));
@@ -428,7 +428,7 @@ namespace StyleCop.Analyzers.Helpers
             Requires.NotNull(syntax, nameof(syntax));
             Requires.NotNull(semanticModel, nameof(semanticModel));
 
-            Accessibility declaredAccessibility = syntax.GetDeclaredAccessibility(semanticModel, cancellationToken);
+            Accessibility declaredAccessibility = syntax.GetDeclaredAccessibility(semanticModel);
             if (declaredAccessibility <= Accessibility.Private)
             {
                 return declaredAccessibility;

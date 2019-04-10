@@ -146,7 +146,7 @@ namespace StyleCop.Analyzers.OrderingRules
                     switch (directiveTrivia.Kind())
                     {
                     case SyntaxKind.IfDirectiveTrivia:
-                        AddNewDirectiveTriviaSpan(conditionalBuilder, conditionalStack, directiveTrivia);
+                        AddNewDirectiveTriviaSpan(conditionalStack, directiveTrivia);
                         break;
 
                     case SyntaxKind.ElifDirectiveTrivia:
@@ -154,19 +154,19 @@ namespace StyleCop.Analyzers.OrderingRules
                         var previousSpan = conditionalStack.Pop();
                         previousSpan.SetEnd(directiveTrivia.FullSpan.Start);
 
-                        AddNewDirectiveTriviaSpan(conditionalBuilder, conditionalStack, directiveTrivia);
+                        AddNewDirectiveTriviaSpan(conditionalStack, directiveTrivia);
                         break;
 
                     case SyntaxKind.EndIfDirectiveTrivia:
-                        CloseDirectiveTriviaSpan(conditionalBuilder, conditionalStack, directiveTrivia);
+                        CloseDirectiveTriviaSpan(conditionalStack, directiveTrivia);
                         break;
 
                     case SyntaxKind.RegionDirectiveTrivia:
-                        AddNewDirectiveTriviaSpan(regionBuilder, regionStack, directiveTrivia);
+                        AddNewDirectiveTriviaSpan(regionStack, directiveTrivia);
                         break;
 
                     case SyntaxKind.EndRegionDirectiveTrivia:
-                        CloseDirectiveTriviaSpan(regionBuilder, regionStack, directiveTrivia);
+                        CloseDirectiveTriviaSpan(regionStack, directiveTrivia);
                         break;
 
                     case SyntaxKind.PragmaWarningDirectiveTrivia:
@@ -192,14 +192,14 @@ namespace StyleCop.Analyzers.OrderingRules
                 return rootBuilder;
             }
 
-            private static void AddNewDirectiveTriviaSpan(TreeTextSpan.Builder spanBuilder, Stack<TreeTextSpan.Builder> spanStack, DirectiveTriviaSyntax directiveTrivia)
+            private static void AddNewDirectiveTriviaSpan(Stack<TreeTextSpan.Builder> spanStack, DirectiveTriviaSyntax directiveTrivia)
             {
                 var parent = spanStack.Peek();
                 var newDirectiveSpan = parent.AddChild(directiveTrivia.FullSpan.Start);
                 spanStack.Push(newDirectiveSpan);
             }
 
-            private static void CloseDirectiveTriviaSpan(TreeTextSpan.Builder spanBuilder, Stack<TreeTextSpan.Builder> spanStack, DirectiveTriviaSyntax directiveTrivia)
+            private static void CloseDirectiveTriviaSpan(Stack<TreeTextSpan.Builder> spanStack, DirectiveTriviaSyntax directiveTrivia)
             {
                 var previousSpan = spanStack.Pop();
                 previousSpan.SetEnd(directiveTrivia.FullSpan.End);

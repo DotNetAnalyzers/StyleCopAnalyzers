@@ -113,7 +113,7 @@ namespace StyleCop.Analyzers.OrderingRules
         private static SyntaxNode OrderMember(MemberOrderHelper memberOrder, SyntaxList<MemberDeclarationSyntax> members, ImmutableArray<OrderingTrait> elementOrder, SyntaxNode syntaxRoot, IndentationSettings indentationSettings)
         {
             var memberIndex = members.IndexOf(memberOrder.Member);
-            MemberOrderHelper target = default(MemberOrderHelper);
+            MemberOrderHelper target = default;
 
             for (var i = memberIndex - 1; i >= 0; --i)
             {

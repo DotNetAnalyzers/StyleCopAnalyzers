@@ -70,7 +70,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             var node = (DelegateDeclarationSyntax)context.Node;
 
-            Accessibility declaredAccessibility = node.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+            Accessibility declaredAccessibility = node.GetDeclaredAccessibility(context.SemanticModel);
             Accessibility effectiveAccessibility = node.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
             bool needsComment = SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, node.Kind(), node.Parent.Kind(), declaredAccessibility, effectiveAccessibility);
             HandleDeclaration(context, needsComment, node.ReturnType);

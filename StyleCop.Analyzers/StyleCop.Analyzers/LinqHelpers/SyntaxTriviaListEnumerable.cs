@@ -113,7 +113,7 @@ namespace System.Linq
                 }
             }
 
-            return default(SyntaxTrivia);
+            return default;
         }
     }
 }

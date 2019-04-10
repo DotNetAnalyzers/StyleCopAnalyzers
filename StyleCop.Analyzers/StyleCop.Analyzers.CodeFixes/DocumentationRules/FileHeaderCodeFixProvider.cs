@@ -316,7 +316,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 // Does the copyright element have leading whitespace? If so remove it.
                 if ((copyrightTriviaIndex.Value > 0) && trivia[copyrightTriviaIndex.Value - 1].IsKind(SyntaxKind.WhitespaceTrivia))
                 {
-                    copyrightTriviaIndex = copyrightTriviaIndex - 1;
+                    copyrightTriviaIndex--;
                     trivia = trivia.RemoveAt(copyrightTriviaIndex.Value);
                 }
 

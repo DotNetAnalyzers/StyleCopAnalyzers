@@ -49,7 +49,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             if (node == null)
             {
-                return default(ConstantPatternSyntaxWrapper);
+                return default;
             }
 
             if (!IsInstance(node))

@@ -88,14 +88,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             if (outermostExpression.Parent is EqualsValueClauseSyntax equalsValueClause)
             {
-                if (equalsValueClause.Parent is ParameterSyntax parameterSyntax)
+                if (equalsValueClause.Parent is ParameterSyntax)
                 {
                     return true;
                 }
 
-                VariableDeclaratorSyntax variableDeclaratorSyntax = equalsValueClause.Parent as VariableDeclaratorSyntax;
-                VariableDeclarationSyntax variableDeclarationSyntax = variableDeclaratorSyntax?.Parent as VariableDeclarationSyntax;
-                if (variableDeclaratorSyntax == null || variableDeclarationSyntax == null)
+                if (!(equalsValueClause.Parent is VariableDeclaratorSyntax variableDeclaratorSyntax)
+                    || !(variableDeclaratorSyntax?.Parent is VariableDeclarationSyntax variableDeclarationSyntax))
                 {
                     return false;
                 }

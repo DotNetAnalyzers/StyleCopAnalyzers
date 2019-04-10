@@ -15,8 +15,6 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 
     public class SA1626UnitTests
     {
-        private const string DiagnosticId = SA1626SingleLineCommentsMustNotUseDocumentationStyleSlashes.DiagnosticId;
-
         [Fact]
         public async Task TestClassWithXmlCommentAsync()
         {

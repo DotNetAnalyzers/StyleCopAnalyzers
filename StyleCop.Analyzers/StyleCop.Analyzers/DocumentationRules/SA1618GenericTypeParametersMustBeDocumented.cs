@@ -88,7 +88,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             DelegateDeclarationSyntax delegateDeclaration = (DelegateDeclarationSyntax)context.Node;
 
-            Accessibility declaredAccessibility = delegateDeclaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+            Accessibility declaredAccessibility = delegateDeclaration.GetDeclaredAccessibility(context.SemanticModel);
             Accessibility effectiveAccessibility = delegateDeclaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
             bool needsComment = SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, delegateDeclaration.Kind(), delegateDeclaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility);
             HandleMemberDeclaration(context, needsComment, delegateDeclaration, delegateDeclaration.TypeParameterList);

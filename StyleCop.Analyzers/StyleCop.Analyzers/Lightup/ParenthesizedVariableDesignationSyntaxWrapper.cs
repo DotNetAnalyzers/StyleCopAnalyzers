@@ -72,7 +72,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             if (node == null)
             {
-                return default(ParenthesizedVariableDesignationSyntaxWrapper);
+                return default;
             }
 
             if (!IsInstance(node))

@@ -97,7 +97,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             if (node == null)
             {
-                return default(CommonForEachStatementSyntaxWrapper);
+                return default;
             }
 
             if (!IsInstance(node))

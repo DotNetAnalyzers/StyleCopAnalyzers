@@ -72,7 +72,7 @@ namespace StyleCop.Analyzers.LayoutRules
         {
             var syntaxRoot = context.Tree.GetRoot(context.CancellationToken);
 
-            SyntaxToken previousToken = default(SyntaxToken);
+            SyntaxToken previousToken = default;
             foreach (var token in syntaxRoot.DescendantTokens())
             {
                 if (token.IsKind(SyntaxKind.OpenBraceToken) && !previousToken.IsKind(SyntaxKind.CloseBraceToken))

@@ -283,7 +283,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 DelegateDeclarationSyntax declaration = (DelegateDeclarationSyntax)context.Node;
 
-                Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+                Accessibility declaredAccessibility = declaration.GetDeclaredAccessibility(context.SemanticModel);
                 Accessibility effectiveAccessibility = declaration.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
                 if (NeedsComment(settings.DocumentationRules, declaration.Kind(), declaration.Parent.Kind(), declaredAccessibility, effectiveAccessibility))
                 {

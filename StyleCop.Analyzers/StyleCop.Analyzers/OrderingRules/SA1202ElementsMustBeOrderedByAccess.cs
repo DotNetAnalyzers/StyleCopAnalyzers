@@ -98,7 +98,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
             var compilationUnit = (CompilationUnitSyntax)context.Node;
 
-            HandleMemberList(context, elementOrder, accessibilityIndex, compilationUnit.Members, AccessLevel.Internal);
+            HandleMemberList(context, elementOrder, accessibilityIndex, compilationUnit.Members);
         }
 
         private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
@@ -112,7 +112,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
             var compilationUnit = (NamespaceDeclarationSyntax)context.Node;
 
-            HandleMemberList(context, elementOrder, accessibilityIndex, compilationUnit.Members, AccessLevel.Internal);
+            HandleMemberList(context, elementOrder, accessibilityIndex, compilationUnit.Members);
         }
 
         private static void HandleTypeDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
@@ -126,12 +126,11 @@ namespace StyleCop.Analyzers.OrderingRules
 
             var typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
-            HandleMemberList(context, elementOrder, accessibilityIndex, typeDeclaration.Members, AccessLevel.Private);
+            HandleMemberList(context, elementOrder, accessibilityIndex, typeDeclaration.Members);
         }
 
-        private static void HandleMemberList(SyntaxNodeAnalysisContext context, ImmutableArray<OrderingTrait> elementOrder, int accessibilityIndex, SyntaxList<MemberDeclarationSyntax> members, AccessLevel defaultAccessLevel)
+        private static void HandleMemberList(SyntaxNodeAnalysisContext context, ImmutableArray<OrderingTrait> elementOrder, int accessibilityIndex, SyntaxList<MemberDeclarationSyntax> members)
         {
-            MemberDeclarationSyntax previousMember = null;
             var previousSyntaxKind = SyntaxKind.None;
             var previousAccessLevel = AccessLevel.NotSpecified;
             bool previousIsConst = false;
@@ -212,7 +211,6 @@ namespace StyleCop.Analyzers.OrderingRules
                     }
                 }
 
-                previousMember = member;
                 previousSyntaxKind = currentSyntaxKind;
                 previousAccessLevel = currentAccessLevel;
                 previousIsConst = currentIsConst;

@@ -79,7 +79,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             if (node == null)
             {
-                return default(ImplicitStackAllocArrayCreationExpressionSyntaxWrapper);
+                return default;
             }
 
             if (!IsInstance(node))

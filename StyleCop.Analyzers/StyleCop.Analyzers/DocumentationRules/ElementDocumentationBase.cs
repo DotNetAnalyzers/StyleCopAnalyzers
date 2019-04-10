@@ -126,7 +126,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            Accessibility declaredAccessibility = node.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+            Accessibility declaredAccessibility = node.GetDeclaredAccessibility(context.SemanticModel);
             Accessibility effectiveAccessibility = node.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
             bool needsComment = SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, node.Kind(), node.Parent.Kind(), declaredAccessibility, effectiveAccessibility);
             this.HandleDeclaration(context, settings, needsComment, node, node.Identifier.GetLocation());

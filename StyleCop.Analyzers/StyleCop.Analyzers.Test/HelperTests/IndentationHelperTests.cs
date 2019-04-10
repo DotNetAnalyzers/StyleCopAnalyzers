@@ -179,7 +179,6 @@ namespace StyleCop.Analyzers.Test.HelperTests
   }}
 }}
 ";
-                var settingsDocumentId = DocumentId.CreateNewId(projectId);
                 solution = solution.AddAdditionalDocument(documentId, SettingsHelper.SettingsFileName, settings);
             }
 

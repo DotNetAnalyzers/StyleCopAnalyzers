@@ -55,7 +55,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             if (node == null)
             {
-                return default(ThrowExpressionSyntaxWrapper);
+                return default;
             }
 
             if (!IsInstance(node))

@@ -48,7 +48,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 context.RegisterCodeFix(
                     CodeAction.Create(
                         insertBlankLine.Value ? LayoutResources.SA1516CodeFixInsert : LayoutResources.SA1516CodeFixRemove,
-                        cancellationToken => GetTransformedDocumentAsync(context.Document, syntaxRoot, diagnostic, insertBlankLine.Value, context.CancellationToken),
+                        cancellationToken => GetTransformedDocumentAsync(context.Document, syntaxRoot, diagnostic, insertBlankLine.Value),
                         nameof(SA1516CodeFixProvider)),
                     diagnostic);
             }
@@ -76,7 +76,7 @@ namespace StyleCop.Analyzers.LayoutRules
             }
         }
 
-        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode syntaxRoot, Diagnostic diagnostic, bool insertBlankLine, CancellationToken cancellationToken)
+        private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode syntaxRoot, Diagnostic diagnostic, bool insertBlankLine)
         {
             var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
             node = GetRelevantNode(node);

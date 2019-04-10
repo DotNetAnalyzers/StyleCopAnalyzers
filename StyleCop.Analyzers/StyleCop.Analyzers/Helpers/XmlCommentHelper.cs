@@ -122,13 +122,13 @@ namespace StyleCop.Analyzers.Helpers
                 return true;
             }
 
-            if (xmlSyntax is XmlEmptyElementSyntax emptyElement)
+            if (xmlSyntax is XmlEmptyElementSyntax)
             {
                 // This includes <inheritdoc/>
                 return considerEmptyElements;
             }
 
-            if (xmlSyntax is XmlProcessingInstructionSyntax processingElement)
+            if (xmlSyntax is XmlProcessingInstructionSyntax)
             {
                 return false;
             }
@@ -162,12 +162,7 @@ namespace StyleCop.Analyzers.Helpers
                 return true;
             }
 
-            if (node is XProcessingInstruction processingElement)
-            {
-                return false;
-            }
-
-            return true;
+            return !(node is XProcessingInstruction);
         }
 
         /// <summary>

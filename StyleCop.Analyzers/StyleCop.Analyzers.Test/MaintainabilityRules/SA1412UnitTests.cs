@@ -73,8 +73,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         [MemberData(nameof(NonUtf8Encodings))]
         public async Task TestFixAllAsync(int codepage)
         {
-            await this.TestFixAllExecuterAsync(codepage, FixAllScope.Project).ConfigureAwait(false);
-            await this.TestFixAllExecuterAsync(codepage, FixAllScope.Solution).ConfigureAwait(false);
+            await this.TestFixAllExecuterAsync(codepage).ConfigureAwait(false);
+            await this.TestFixAllExecuterAsync(codepage).ConfigureAwait(false);
         }
 
         [Fact]
@@ -108,7 +108,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
-        private async Task TestFixAllExecuterAsync(int codepage, FixAllScope scope)
+        private async Task TestFixAllExecuterAsync(int codepage)
         {
             var test = new CSharpTest
             {

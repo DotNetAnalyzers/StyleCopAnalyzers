@@ -53,7 +53,6 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         private static async Task<Document> GetTransformedDocumentAsync(Document document, Diagnostic diagnostic, CancellationToken cancellationToken)
         {
-            var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
 
             TextChange textChange = new TextChange(new TextSpan(diagnostic.Location.SourceSpan.Start, 1), string.Empty);
