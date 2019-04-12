@@ -128,17 +128,17 @@
                 "uniqueItems": true
               }
             },
-            "includeInferredTupleFieldNames": {
+            "includeInferredTupleElementNames": {
               "type": "boolean",
-              "description": "Specifies whether inferred tuple field names will be analyzed as well.",
+              "description": "Specifies whether inferred tuple element names will be analyzed as well.",
               "default": false
             },
-            "tupleFieldNameCasing": {
+            "tupleElementNameCasing": {
               "type": "string",
-              "description": "Specifies the casing convention used for tuple field names.",
+              "description": "Specifies the casing convention used for tuple element names.",
               "enum": [
                 "camelCase",
-                "pascalCase"
+                "PascalCase"
               ],
               "default": "camelCase"
             }

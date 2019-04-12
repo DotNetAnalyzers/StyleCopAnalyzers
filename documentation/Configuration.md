@@ -314,39 +314,39 @@ The following example shows a settings file which allows the common prefixes as 
 }
 ```
 
-### Tuple field names
+### Tuple element names
 
-The following properties are used to configure the behavior of the tuple field name analyzers.
+The following properties are used to configure the behavior of the tuple element name analyzers.
 
 | Property | Default Value | Minimum Version | Summary |
 | --- | --- | --- | --- |
-| `includeInferredTupleFieldNames` | false | 1.2.0 | Specifies whether inferred tuple field names will be analyzed as well. |
-| `tupleFieldNameCasing` | "camelCase" | 1.2.0 | Specifies the casing convention used for tuple field names. |
+| `includeInferredTupleElementNames` | false | 1.2.0 | Specifies whether inferred tuple element names will be analyzed as well. |
+| `tupleElementNameCasing` | "camelCase" | 1.2.0 | Specifies the casing convention used for tuple element names. |
 
-The following example shows a settings file which requires tuple field names to use pascalCase for all tuple field names (including implicitly named tuple fields).
+The following example shows a settings file which requires tuple element names to use PascalCase for all tuple elements (including inferred element names).
 
 ```json
 {
   "settings": {
     "namingRules": {
-      "includeInferredTupleFieldNames": true,
-      "tupleFieldNameCasing" : "pascalCase"
+      "includeInferredTupleElementNames": true,
+      "tupleElementNameCasing" : "PascalCase"
     }
   }
 }
 ```
 
 
-#### Tuple Field Name Casing
-The `tupleFieldNameCasing` property affects the behavior of the [SA1316 Tuple field names must use correct casing](SA1316.md) analyzer.
+#### Tuple Element Name Casing
+The `tupleElementNameCasing` property affects the behavior of the [SA1316 Tuple element names should use correct casing](SA1316.md) analyzer.
 
 This property has two allowed values, which are described as follows.
 
 ##### `"camelCase"`
-In this mode, tuple field names must start with a lowercase letter.
+In this mode, tuple element names must start with a lowercase letter.
 
-##### `"pascalCase"`
-In this mode, tuple field names must start with an uppercase letter.
+##### `"PascalCase"`
+In this mode, tuple element names must start with an uppercase letter.
 
 
 ## Maintainability Rules

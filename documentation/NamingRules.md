@@ -18,4 +18,4 @@ Identifier | Name | Description
 [SA1312](SA1312.md) | VariableNamesMustBeginWithLowerCaseLetter | The name of a variable in C# does not begin with a lower-case letter. 
 [SA1313](SA1313.md) | ParameterNamesMustBeginWithLowerCaseLetter | The name of a parameter in C# does not begin with a lower-case letter. 
 [SA1314](SA1314.md) | TypeParameterNamesMustBeginWithT | The name of a C# type parameter does not begin with the capital letter T.
-[SA1316](SA1316.md) | TupleFieldNamesMustUseCorrectCasing | Field names within a tuple declaration should have the correct casing.
+[SA1316](SA1316.md) | TupleElementNamesShouldUseCorrectCasing | Element names within a tuple type should have the correct casing.

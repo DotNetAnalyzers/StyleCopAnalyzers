@@ -3,15 +3,15 @@
 
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
-    internal enum TupleFieldNameCase
+    internal enum TupleElementNameCase
     {
         /// <summary>
-        /// Tuple field names must use camel case.
+        /// Tuple element names must use camelCase.
         /// </summary>
         CamelCase = 0,
 
         /// <summary>
-        /// Tuple field names must use pascal case.
+        /// Tuple element names must use PascalCase.
         /// </summary>
         PascalCase,
     }

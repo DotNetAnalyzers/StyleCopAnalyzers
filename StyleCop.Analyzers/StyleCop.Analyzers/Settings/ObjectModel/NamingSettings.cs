@@ -22,8 +22,8 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.AllowCommonHungarianPrefixes = true;
             this.allowedHungarianPrefixes = ImmutableArray.CreateBuilder<string>();
 
-            this.IncludeInferredTupleFieldNames = false;
-            this.TupleFieldNameCasing = TupleFieldNameCase.CamelCase;
+            this.IncludeInferredTupleElementNames = false;
+            this.TupleElementNameCasing = TupleElementNameCase.CamelCase;
         }
 
         /// <summary>
@@ -57,12 +57,12 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
                     break;
 
-                case "includeInferredTupleFieldNames":
-                    this.IncludeInferredTupleFieldNames = kvp.ToBooleanValue();
+                case "includeInferredTupleElementNames":
+                    this.IncludeInferredTupleElementNames = kvp.ToBooleanValue();
                     break;
 
-                case "tupleFieldNameCasing":
-                    this.TupleFieldNameCasing = kvp.ToEnumValue<TupleFieldNameCase>();
+                case "tupleElementNameCasing":
+                    this.TupleElementNameCasing = kvp.ToEnumValue<TupleElementNameCase>();
                     break;
 
                 default:
