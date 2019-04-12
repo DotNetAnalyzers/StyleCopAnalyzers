@@ -14,10 +14,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using StyleCop.Analyzers.Lightup;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class SA1142ReferToTupleFieldsByName : DiagnosticAnalyzer
+    internal class SA1142ReferToTupleElementsByName : DiagnosticAnalyzer
     {
         /// <summary>
-        /// The ID for diagnostics produced by the <see cref="SA1142ReferToTupleFieldsByName"/> analyzer.
+        /// The ID for diagnostics produced by the <see cref="SA1142ReferToTupleElementsByName"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1142";
 

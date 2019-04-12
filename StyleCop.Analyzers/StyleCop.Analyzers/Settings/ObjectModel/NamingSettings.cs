@@ -76,8 +76,8 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         public ImmutableArray<string> AllowedHungarianPrefixes
             => this.allowedHungarianPrefixes.ToImmutable();
 
-        public bool IncludeInferredTupleFieldNames { get; }
+        public bool IncludeInferredTupleElementNames { get; }
 
-        public TupleFieldNameCase TupleFieldNameCasing { get; }
+        public TupleElementNameCase TupleElementNameCasing { get; }
     }
 }

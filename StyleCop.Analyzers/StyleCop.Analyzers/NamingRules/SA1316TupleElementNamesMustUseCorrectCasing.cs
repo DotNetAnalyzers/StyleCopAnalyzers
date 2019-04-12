@@ -17,17 +17,17 @@ namespace StyleCop.Analyzers.NamingRules
     /// Field names within a tuple declaration should have the correct casing.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class SA1316TupleFieldNamesMustUseCorrectCasing : DiagnosticAnalyzer
+    internal class SA1316TupleElementNamesMustUseCorrectCasing : DiagnosticAnalyzer
     {
         /// <summary>
-        /// The ID for diagnostics produced by the <see cref="SA1316TupleFieldNamesMustUseCorrectCasing"/> analyzer.
+        /// The ID for diagnostics produced by the <see cref="SA1316TupleElementNamesMustUseCorrectCasing"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1316";
 
         /// <summary>
-        /// The key used to signal the fixed tuple field name to the code fix.
+        /// The key used to signal the fixed tuple element name to the code fix.
         /// </summary>
-        internal const string ExpectedTupleFieldNameKey = "ExpectedTupleFieldName";
+        internal const string ExpectedTupleElementNameKey = "ExpectedTupleElementName";
 
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(NamingResources.SA1316Title), NamingResources.ResourceManager, typeof(NamingResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(NamingResources.SA1316MessageFormat), NamingResources.ResourceManager, typeof(NamingResources));
@@ -72,13 +72,13 @@ namespace StyleCop.Analyzers.NamingRules
 
         private static void HandleTupleExpressionAction(SyntaxNodeAnalysisContext context)
         {
-            if (!context.SupportsInferredTupleFieldNames())
+            if (!context.SupportsInferredTupleElementNames())
             {
                 return;
             }
 
             var settings = context.Options.GetStyleCopSettings(context.CancellationToken);
-            if (!settings.NamingRules.IncludeInferredTupleFieldNames)
+            if (!settings.NamingRules.IncludeInferredTupleElementNames)
             {
                 return;
             }
@@ -104,23 +104,23 @@ namespace StyleCop.Analyzers.NamingRules
             CheckName(context, settings, tupleElement.Identifier.ValueText, tupleElement.Identifier.GetLocation(), true);
         }
 
-        private static void CheckName(SyntaxNodeAnalysisContext context, StyleCopSettings settings, string tupleFieldName, Location location, bool prepareCodeFix)
+        private static void CheckName(SyntaxNodeAnalysisContext context, StyleCopSettings settings, string tupleElementName, Location location, bool prepareCodeFix)
         {
-            var firstCharacterIsLower = char.IsLower(tupleFieldName[0]);
+            var firstCharacterIsLower = char.IsLower(tupleElementName[0]);
 
             bool reportDiagnostic = false;
             string fixedName;
 
-            switch (settings.NamingRules.TupleFieldNameCasing)
+            switch (settings.NamingRules.TupleElementNameCasing)
             {
-            case TupleFieldNameCase.PascalCase:
+            case TupleElementNameCase.PascalCase:
                 reportDiagnostic = firstCharacterIsLower;
-                fixedName = char.ToUpper(tupleFieldName[0]) + tupleFieldName.Substring(1);
+                fixedName = char.ToUpper(tupleElementName[0]) + tupleElementName.Substring(1);
                 break;
 
             default:
                 reportDiagnostic = !firstCharacterIsLower;
-                fixedName = char.ToLower(tupleFieldName[0]) + tupleFieldName.Substring(1);
+                fixedName = char.ToLower(tupleElementName[0]) + tupleElementName.Substring(1);
                 break;
             }
 
@@ -130,7 +130,7 @@ namespace StyleCop.Analyzers.NamingRules
 
                 if (prepareCodeFix)
                 {
-                    diagnosticProperties.Add(ExpectedTupleFieldNameKey, fixedName);
+                    diagnosticProperties.Add(ExpectedTupleElementNameKey, fixedName);
                 }
 
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, location, diagnosticProperties.ToImmutableDictionary()));

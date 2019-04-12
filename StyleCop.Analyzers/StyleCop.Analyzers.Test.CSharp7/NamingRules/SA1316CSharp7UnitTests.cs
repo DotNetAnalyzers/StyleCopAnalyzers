@@ -10,13 +10,13 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
     using StyleCop.Analyzers.NamingRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.NamingRules.SA1316TupleFieldNamesMustUseCorrectCasing,
+        StyleCop.Analyzers.NamingRules.SA1316TupleElementNamesMustUseCorrectCasing,
         StyleCop.Analyzers.NamingRules.SA1316CodeFixProvider>;
 
     /// <summary>
     /// This class contains the CSharp 7.x unit tests for SA1316.
     /// </summary>
-    /// <seealso cref="SA1316TupleFieldNamesMustUseCorrectCasing"/>
+    /// <seealso cref="SA1316TupleElementNamesMustUseCorrectCasing"/>
     /// <seealso cref="SA1316CodeFixProvider"/>
     public class SA1316CSharp7UnitTests
     {
@@ -31,7 +31,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
 {
   ""settings"": {
     ""namingRules"": {
-      ""tupleFieldNameCasing"": ""camelCase""
+      ""tupleElementNameCasing"": ""camelCase""
     }
   }
 }
@@ -41,7 +41,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
 {
   ""settings"": {
     ""namingRules"": {
-      ""tupleFieldNameCasing"": ""pascalCase""
+      ""tupleElementNameCasing"": ""PascalCase""
     }
   }
 }
@@ -51,8 +51,8 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
 {
   ""settings"": {
     ""namingRules"": {
-      ""includeInferredTupleFieldNames"" : true,
-      ""tupleFieldNameCasing"": ""camelCase""
+      ""includeInferredTupleElementNames"" : true,
+      ""tupleElementNameCasing"": ""camelCase""
     }
   }
 }
@@ -62,8 +62,8 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
 {
   ""settings"": {
     ""namingRules"": {
-      ""includeInferredTupleFieldNames"" : true,
-      ""tupleFieldNameCasing"": ""pascalCase""
+      ""includeInferredTupleElementNames"" : true,
+      ""tupleElementNameCasing"": ""PascalCase""
     }
   }
 }
@@ -73,8 +73,8 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
 {
   ""settings"": {
     ""namingRules"": {
-      ""includeInferredTupleFieldNames"" : false,
-      ""tupleFieldNameCasing"": ""camelCase""
+      ""includeInferredTupleElementNames"" : false,
+      ""tupleElementNameCasing"": ""camelCase""
     }
   }
 }
@@ -84,30 +84,30 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
 {
   ""settings"": {
     ""namingRules"": {
-      ""includeInferredTupleFieldNames"" : false,
-      ""tupleFieldNameCasing"": ""pascalCase""
+      ""includeInferredTupleElementNames"" : false,
+      ""tupleElementNameCasing"": ""PascalCase""
     }
   }
 }
 ";
 
         /// <summary>
-        /// Validates the properly named tuple field names will not produce diagnostics.
+        /// Validates the properly named tuple element names will not produce diagnostics.
         /// </summary>
         /// <param name="settings">The test settings to use.</param>
-        /// <param name="tupleFieldName1">The expected tuple field name for the first field.</param>
-        /// <param name="tupleFieldName2">The expected tuple field name for the second field.</param>
+        /// <param name="tupleElementName1">The expected tuple element name for the first field.</param>
+        /// <param name="tupleElementName2">The expected tuple element name for the second field.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData(DefaultTestSettings, "fieldName1", "fieldName2")]
-        [InlineData(CamelCaseTestSettings, "fieldName1", "fieldName2")]
-        [InlineData(PascalCaseTestSettings, "FieldName1", "FieldName2")]
-        public async Task ValidateProperCasedTupleFieldNamesAsync(string settings, string tupleFieldName1, string tupleFieldName2)
+        [InlineData(DefaultTestSettings, "elementName1", "elementName2")]
+        [InlineData(CamelCaseTestSettings, "elementName1", "elementName2")]
+        [InlineData(PascalCaseTestSettings, "ElementName1", "ElementName2")]
+        public async Task ValidateProperCasedTupleElementNamesAsync(string settings, string tupleElementName1, string tupleElementName2)
         {
             var testCode = $@"
 public class TestClass
 {{
-    public (int {tupleFieldName1}, int {tupleFieldName2}) TestMethod()
+    public (int {tupleElementName1}, int {tupleElementName2}) TestMethod()
     {{
         return (1, 1);
     }}
@@ -122,7 +122,7 @@ public class TestClass
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task ValidateNoTupleFieldNamesAsync()
+        public async Task ValidateNoTupleElementNamesAsync()
         {
             var testCode = @"
 public class TestClass
@@ -138,30 +138,30 @@ public class TestClass
         }
 
         /// <summary>
-        /// Validates the properly named inferred tuple field names will not produce diagnostics.
+        /// Validates the properly named inferred tuple element names will not produce diagnostics.
         /// </summary>
         /// <param name="settings">The test settings to use.</param>
-        /// <param name="tupleFieldName1">The expected tuple field name for the first field.</param>
-        /// <param name="tupleFieldName2">The expected tuple field name for the second field.</param>
+        /// <param name="tupleElementName1">The expected tuple element name for the first field.</param>
+        /// <param name="tupleElementName2">The expected tuple element name for the second field.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData(DefaultTestSettings, "fieldName1", "fieldName2")]
-        [InlineData(CamelCaseTestSettings, "fieldName1", "fieldName2")]
-        [InlineData(PascalCaseTestSettings, "FieldName1", "FieldName2")]
-        [InlineData(CamelCaseInferredTestSettings, "fieldName1", "fieldName2")]
-        [InlineData(PascalCaseInferredTestSettings, "FieldName1", "FieldName2")]
-        [InlineData(CamelCaseExplicitOnlyTestSettings, "fieldName1", "fieldName2")]
-        [InlineData(PascalCaseExplicitOnlyTestSettings, "FieldName1", "FieldName2")]
-        public async Task ValidateProperCasedInferredTupleFieldNamesAsync(string settings, string tupleFieldName1, string tupleFieldName2)
+        [InlineData(DefaultTestSettings, "elementName1", "elementName2")]
+        [InlineData(CamelCaseTestSettings, "elementName1", "elementName2")]
+        [InlineData(PascalCaseTestSettings, "ElementName1", "ElementName2")]
+        [InlineData(CamelCaseInferredTestSettings, "elementName1", "elementName2")]
+        [InlineData(PascalCaseInferredTestSettings, "ElementName1", "ElementName2")]
+        [InlineData(CamelCaseExplicitOnlyTestSettings, "elementName1", "elementName2")]
+        [InlineData(PascalCaseExplicitOnlyTestSettings, "ElementName1", "ElementName2")]
+        public async Task ValidateProperCasedInferredTupleElementNamesAsync(string settings, string tupleElementName1, string tupleElementName2)
         {
             var testCode = $@"
 public class TestClass
 {{
     public void TestMethod()
     {{
-        var {tupleFieldName1} = 1;
-        var {tupleFieldName2} = ""test"";
-        var tuple = ({tupleFieldName1}, {tupleFieldName2});
+        var {tupleElementName1} = 1;
+        var {tupleElementName2} = ""test"";
+        var tuple = ({tupleElementName1}, {tupleElementName2});
     }}
 }}
 ";
@@ -170,29 +170,29 @@ public class TestClass
         }
 
         /// <summary>
-        /// Validates the improperly named tuple field names will produce the expected diagnostics.
+        /// Validates the improperly named tuple element names will produce the expected diagnostics.
         /// </summary>
         /// <param name="settings">The test settings to use.</param>
-        /// <param name="tupleFieldName1">The expected tuple field name for the first field.</param>
-        /// <param name="tupleFieldName2">The expected tuple field name for the second field.</param>
-        /// <param name="fixedTupleFieldName1">The expected fixed tuple field name for the first field.</param>
-        /// <param name="fixedTupleFieldName2">The expected fixed tuple field name for the second field.</param>
+        /// <param name="tupleElementName1">The expected tuple element name for the first field.</param>
+        /// <param name="tupleElementName2">The expected tuple element name for the second field.</param>
+        /// <param name="fixedTupleElementName1">The expected fixed tuple element name for the first field.</param>
+        /// <param name="fixedTupleElementName2">The expected fixed tuple element name for the second field.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData(DefaultTestSettings, "FieldName1", "FieldName2", "fieldName1", "fieldName2")]
-        [InlineData(CamelCaseTestSettings, "FieldName1", "FieldName2", "fieldName1", "fieldName2")]
-        [InlineData(PascalCaseTestSettings, "fieldName1", "fieldName2", "FieldName1", "FieldName2")]
-        public async Task ValidateImproperCasedTupleFieldNamesAsync(string settings, string tupleFieldName1, string tupleFieldName2, string fixedTupleFieldName1, string fixedTupleFieldName2)
+        [InlineData(DefaultTestSettings, "ElementName1", "ElementName2", "elementName1", "elementName2")]
+        [InlineData(CamelCaseTestSettings, "ElementName1", "ElementName2", "elementName1", "elementName2")]
+        [InlineData(PascalCaseTestSettings, "elementName1", "elementName2", "ElementName1", "ElementName2")]
+        public async Task ValidateImproperCasedTupleElementNamesAsync(string settings, string tupleElementName1, string tupleElementName2, string fixedTupleElementName1, string fixedTupleElementName2)
         {
             var testCode = $@"
 public class TestClass
 {{
-    public (int [|{tupleFieldName1}|], int [|{tupleFieldName2}|]) TestMethod1()
+    public (int [|{tupleElementName1}|], int [|{tupleElementName2}|]) TestMethod1()
     {{
         return (1, 1);
     }}
 
-    public (int /* 1 */ [|{tupleFieldName1}|] /* 2 */ , int /* 3 */ [|{tupleFieldName2}|] /* 4 */) TestMethod2()
+    public (int /* 1 */ [|{tupleElementName1}|] /* 2 */ , int /* 3 */ [|{tupleElementName2}|] /* 4 */) TestMethod2()
     {{
         return (1, 1);
     }}
@@ -202,12 +202,12 @@ public class TestClass
             var fixedCode = $@"
 public class TestClass
 {{
-    public (int {fixedTupleFieldName1}, int {fixedTupleFieldName2}) TestMethod1()
+    public (int {fixedTupleElementName1}, int {fixedTupleElementName2}) TestMethod1()
     {{
         return (1, 1);
     }}
 
-    public (int /* 1 */ {fixedTupleFieldName1} /* 2 */ , int /* 3 */ {fixedTupleFieldName2} /* 4 */) TestMethod2()
+    public (int /* 1 */ {fixedTupleElementName1} /* 2 */ , int /* 3 */ {fixedTupleElementName2} /* 4 */) TestMethod2()
     {{
         return (1, 1);
     }}
@@ -223,28 +223,28 @@ public class TestClass
         }
 
         /// <summary>
-        ///  Verifies that improperly named inferred tuple field names are ignored when the 'includeInferredTupleFieldNames' option is not set to true.
+        ///  Verifies that improperly named inferred tuple element names are ignored when the 'includeInferredTupleElementNames' option is not set to true.
         /// </summary>
         /// <param name="settings">The test settings to use.</param>
-        /// <param name="tupleFieldName1">The expected tuple field name for the first field.</param>
-        /// <param name="tupleFieldName2">The expected tuple field name for the second field.</param>
+        /// <param name="tupleElementName1">The expected tuple element name for the first field.</param>
+        /// <param name="tupleElementName2">The expected tuple element name for the second field.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData(DefaultTestSettings, "FieldName1", "FieldName2")]
-        [InlineData(CamelCaseTestSettings, "FieldName1", "FieldName2")]
-        [InlineData(PascalCaseTestSettings, "fieldName1", "fieldName2")]
-        [InlineData(CamelCaseExplicitOnlyTestSettings, "FieldName1", "FieldName2")]
-        [InlineData(PascalCaseExplicitOnlyTestSettings, "fieldName1", "fieldName2")]
-        public async Task ValidateImproperCasedInferredTupleFieldNamesAreIgnoredAsync(string settings, string tupleFieldName1, string tupleFieldName2)
+        [InlineData(DefaultTestSettings, "ElementName1", "ElementName2")]
+        [InlineData(CamelCaseTestSettings, "ElementName1", "ElementName2")]
+        [InlineData(PascalCaseTestSettings, "elementName1", "elementName2")]
+        [InlineData(CamelCaseExplicitOnlyTestSettings, "ElementName1", "ElementName2")]
+        [InlineData(PascalCaseExplicitOnlyTestSettings, "elementName1", "elementName2")]
+        public async Task ValidateImproperCasedInferredTupleElementNamesAreIgnoredAsync(string settings, string tupleElementName1, string tupleElementName2)
         {
             var testCode = $@"
 public class TestClass
 {{
     public void TestMethod()
     {{
-        var {tupleFieldName1} = 1;
-        var {tupleFieldName2} = ""test"";
-        var tuple = ({tupleFieldName1}, {tupleFieldName2});
+        var {tupleElementName1} = 1;
+        var {tupleElementName2} = ""test"";
+        var tuple = ({tupleElementName1}, {tupleElementName2});
     }}
 }}
 ";
@@ -253,16 +253,16 @@ public class TestClass
         }
 
         /// <summary>
-        /// Validates the improperly named inferred tuple field names will produce the expected diagnostics.
+        /// Validates the improperly named inferred tuple element names will produce the expected diagnostics.
         /// </summary>
         /// <param name="settings">The test settings to use.</param>
-        /// <param name="tupleFieldName1">The expected tuple field name for the first field.</param>
-        /// <param name="tupleFieldName2">The expected tuple field name for the second field.</param>
+        /// <param name="tupleElementName1">The expected tuple element name for the first field.</param>
+        /// <param name="tupleElementName2">The expected tuple element name for the second field.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData(CamelCaseInferredTestSettings, "FieldName1", "FieldName2")]
-        [InlineData(PascalCaseInferredTestSettings, "fieldName1", "fieldName2")]
-        public async Task ValidateImproperCasedImplicitTupleFieldNamesAsync(string settings, string tupleFieldName1, string tupleFieldName2)
+        [InlineData(CamelCaseInferredTestSettings, "ElementName1", "ElementName2")]
+        [InlineData(PascalCaseInferredTestSettings, "elementName1", "elementName2")]
+        public async Task ValidateImproperCasedImplicitTupleElementNamesAsync(string settings, string tupleElementName1, string tupleElementName2)
         {
             //// TODO: C# 7.1
             var testCode = $@"
@@ -270,16 +270,16 @@ public class TestClass
 {{
     public void TestMethod1()
     {{
-        var {tupleFieldName1} = 1;
-        var {tupleFieldName2} = ""test"";
-        var tuple = ([|{tupleFieldName1}|], [|{tupleFieldName2}|]);
+        var {tupleElementName1} = 1;
+        var {tupleElementName2} = ""test"";
+        var tuple = ([|{tupleElementName1}|], [|{tupleElementName2}|]);
     }}
 
     public void TestMethod2()
     {{
-        var {tupleFieldName1} = 1;
-        var {tupleFieldName2} = ""test"";
-        var tuple = (/* 1 */ [|{tupleFieldName1}|] /* 2 */, /* 3 */ [|{tupleFieldName2}|] /* 4 */);
+        var {tupleElementName1} = 1;
+        var {tupleElementName2} = ""test"";
+        var tuple = (/* 1 */ [|{tupleElementName1}|] /* 2 */, /* 3 */ [|{tupleElementName2}|] /* 4 */);
     }}
 }}
 ";

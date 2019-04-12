@@ -24,7 +24,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(SA1142ReferToTupleFieldsByName.DiagnosticId);
+            ImmutableArray.Create(SA1142ReferToTupleElementsByName.DiagnosticId);
 
         public override FixAllProvider GetFixAllProvider() => FixAll.Instance;
 

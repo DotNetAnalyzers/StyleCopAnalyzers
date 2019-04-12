@@ -9,13 +9,13 @@ namespace StyleCop.Analyzers.Test.CSharp7.ReadabilityRules
     using StyleCop.Analyzers.ReadabilityRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.ReadabilityRules.SA1142ReferToTupleFieldsByName,
+        StyleCop.Analyzers.ReadabilityRules.SA1142ReferToTupleElementsByName,
         StyleCop.Analyzers.ReadabilityRules.SA1142CodeFixProvider>;
 
     /// <summary>
     /// This class contains the CSharp 7.x unit tests for SA1142.
     /// </summary>
-    /// <seealso cref="SA1142ReferToTupleFieldsByName"/>
+    /// <seealso cref="SA1142ReferToTupleElementsByName"/>
     /// <seealso cref="SA1142CodeFixProvider"/>
     public class SA1142CSharp7UnitTests
     {
