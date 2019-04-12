@@ -117,7 +117,7 @@ namespace StyleCop.Analyzers.SpacingRules
                     break;
 
                 case SyntaxKind.QuestionToken:
-                    precedesSpecialCharacter = nextToken.Parent.IsKind(SyntaxKind.ConditionalAccessExpression);
+                    precedesSpecialCharacter = nextToken.Parent.IsKind(SyntaxKind.ConditionalAccessExpression) || nextToken.Parent.IsKind(SyntaxKind.NullableType);
                     break;
 
                 case SyntaxKind.CloseBraceToken:

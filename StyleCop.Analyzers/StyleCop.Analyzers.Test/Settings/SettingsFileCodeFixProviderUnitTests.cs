@@ -44,7 +44,7 @@ namespace NamespaceName
                 Settings = null,
             };
 
-            test.Exclusions &= ~AnalysisExclusions.Suppression;
+            test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -68,7 +68,7 @@ namespace NamespaceName
                 Settings = null,
             };
 
-            test.Exclusions &= ~AnalysisExclusions.Suppression;
+            test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -89,7 +89,7 @@ namespace NamespaceName
                 SettingsFileName = SettingsHelper.SettingsFileName,
             };
 
-            test.Exclusions &= ~AnalysisExclusions.Suppression;
+            test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -110,7 +110,7 @@ namespace NamespaceName
                 SettingsFileName = SettingsHelper.AltSettingsFileName,
             };
 
-            test.Exclusions &= ~AnalysisExclusions.Suppression;
+            test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }

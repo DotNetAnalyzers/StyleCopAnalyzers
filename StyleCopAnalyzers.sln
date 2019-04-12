@@ -255,6 +255,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.Status.G
 		{3B052737-06CE-4182-AE0F-08EB82DFA73E} = {3B052737-06CE-4182-AE0F-08EB82DFA73E}
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StyleCop.Analyzers.Test.CSharp8", "StyleCop.Analyzers\StyleCop.Analyzers.Test.CSharp8\StyleCop.Analyzers.Test.CSharp8.csproj", "{0F8D1A26-ACC2-42BA-9CEC-FFADBD6FB1E7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -289,6 +291,10 @@ Global
 		{80EA831D-D993-44A8-BB77-33D84BACE711}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{80EA831D-D993-44A8-BB77-33D84BACE711}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{80EA831D-D993-44A8-BB77-33D84BACE711}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F8D1A26-ACC2-42BA-9CEC-FFADBD6FB1E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F8D1A26-ACC2-42BA-9CEC-FFADBD6FB1E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F8D1A26-ACC2-42BA-9CEC-FFADBD6FB1E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F8D1A26-ACC2-42BA-9CEC-FFADBD6FB1E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

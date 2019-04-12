@@ -121,7 +121,7 @@ namespace Bar
                 Settings = this.GetSettings(),
             };
 
-            test.Exclusions &= ~AnalysisExclusions.Suppression;
+            test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
             test.ExpectedDiagnostics.AddRange(expected);
             test.RemainingDiagnostics.AddRange(remainingDiagnostics);
             test.DisabledDiagnostics.AddRange(this.GetDisabledDiagnostics());
