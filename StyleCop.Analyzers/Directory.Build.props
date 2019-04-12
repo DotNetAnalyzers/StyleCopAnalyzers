@@ -61,4 +61,15 @@
     </AdditionalFiles>
   </ItemGroup>
 
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug' AND '$(AppVeyor)' == 'true'">
+    <CollectCoverage Condition="'$(CollectCoverage)' == ''">true</CollectCoverage>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(CollectCoverage)' == 'true'">
+    <SingleHit>True</SingleHit>
+    <Include>[StyleCop*]*</Include>
+    <CoverletOutputFormat>opencover</CoverletOutputFormat>
+    <CoverletOutput>$(MSBuildThisFileDirectory)build\OpenCover.Reports\</CoverletOutput>
+    <ExcludeByAttribute>ExcludeFromCodeCoverage</ExcludeByAttribute>
+  </PropertyGroup>
 </Project>

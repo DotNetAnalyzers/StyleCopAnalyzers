@@ -20,4 +20,8 @@
     <None Include="$(MSBuildProjectFileDirectory)$(AssemblyOriginatorKeyFile)" Link="%(Filename)%(Extension)" />
   </ItemGroup>
 
+  <Target Name="AfterBuild" Condition="'$(IsTestProject)' == 'true'">
+    <CallTarget Targets="InstrumentModulesAfterBuild" Condition="'$(CollectCoverage)' == 'true'" />
+  </Target>
+
 </Project>

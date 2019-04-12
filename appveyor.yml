@@ -20,6 +20,7 @@ test_script:
       $packageConfig = [xml](Get-Content ..\.nuget\packages.config)
       $codecov_version = $packageConfig.SelectSingleNode('/packages/package[@id="Codecov"]').version
       $codecov = "..\packages\Codecov.$codecov_version\tools\codecov.exe"
+      dir OpenCover.Reports\*.*
       &$codecov -f '..\build\OpenCover.Reports\OpenCover.StyleCopAnalyzers.xml'
     } else {
       .\opencover-report.ps1 -NoBuild -NoReport -AppVeyor
