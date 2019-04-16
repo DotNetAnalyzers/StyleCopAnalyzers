@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
 {
     using System;
     using System.Collections.Generic;
+    using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
     using global::LightJson;
@@ -112,6 +113,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
                     .WithChangedOption(FormattingOptions.UseTabs, this.Language, this.UseTabs));
 
                 this.TestState.AdditionalReferences.Add(GenericAnalyzerTest.CSharpSymbolsReference);
+                this.TestState.AdditionalReferences.Add(Netstandard20Reference);
                 this.TestState.AdditionalFilesFactories.Add(GenerateSettingsFile);
                 this.CodeFixValidationMode = CodeFixValidationMode.None;
 
@@ -228,6 +230,9 @@ namespace StyleCop.Analyzers.Test.Verifiers
             /// The list of explicitly enabled diagnostic identifiers.
             /// </value>
             public List<string> ExplicitlyEnabledDiagnostics { get; } = new List<string>();
+
+            private static Assembly Netstandard20Reference
+                => Assembly.Load("netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51");
 
             protected override CompilationOptions CreateCompilationOptions()
             {
