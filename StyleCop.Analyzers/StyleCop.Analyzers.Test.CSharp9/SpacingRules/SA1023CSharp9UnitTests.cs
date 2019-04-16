@@ -16,152 +16,60 @@ namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
     public class SA1023CSharp9UnitTests : SA1023CSharp8UnitTests
     {
         [Fact]
-        public async Task TestFunctionPointerParameterValidSpacingAsync()
+        public async Task TestFunctionPointerParameterInvalidSpacingAsync()
         {
             var testCode = @"public class TestClass
 {
-    unsafe delegate*<int*> FuncPtr;
-}
-";
-
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestFunctionPointerParameterInvalidPrecedingSpaceAsync()
-        {
-            var testCode = @"public class TestClass
-{
-    unsafe delegate*<int {|#0:*|}> FuncPtr;
+    unsafe delegate*<int {|#0:*|}> FuncPtr1;
+    unsafe delegate*<int{|#1:*|} > FuncPtr2;
 }
 ";
 
             var fixedCode = @"public class TestClass
 {
-    unsafe delegate*<int*> FuncPtr;
+    unsafe delegate*<int*> FuncPtr1;
+    unsafe delegate*<int*> FuncPtr2;
 }
 ";
 
-            var expected = Diagnostic(DescriptorNotPreceded).WithLocation(0);
+            var expected = new[]
+            {
+                Diagnostic(DescriptorNotPreceded).WithLocation(0),
+                Diagnostic(DescriptorNotFollowed).WithLocation(1),
+            };
+
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
-        public async Task TestFunctionPointerParameterInvalidTrailingSpaceAsync()
+        public async Task TestFunctionPointerTypeInvalidSpacingAsync()
         {
             var testCode = @"public class TestClass
 {
-    unsafe delegate*<int{|#0:*|} > FuncPtr;
+    unsafe delegate {|#0:*|}<int*> FuncPtr1;
+    unsafe delegate{|#1:*|} <int*> FuncPtr2;
+    unsafe delegate {|#2:*|} managed<int*> FuncPtr3;
+    unsafe delegate{|#3:*|}managed<int*> FuncPtr4;
 }
 ";
 
             var fixedCode = @"public class TestClass
 {
-    unsafe delegate*<int*> FuncPtr;
+    unsafe delegate*<int*> FuncPtr1;
+    unsafe delegate*<int*> FuncPtr2;
+    unsafe delegate* managed<int*> FuncPtr3;
+    unsafe delegate* managed<int*> FuncPtr4;
 }
 ";
 
-            var expected = Diagnostic(DescriptorNotFollowed).WithLocation(0);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
-        }
+            var expected = new[]
+            {
+                Diagnostic(DescriptorNotPreceded).WithLocation(0),
+                Diagnostic(DescriptorNotFollowed).WithLocation(1),
+                Diagnostic(DescriptorNotPreceded).WithLocation(2),
+                Diagnostic(DescriptorFollowed).WithLocation(3),
+            };
 
-        [Fact]
-        public async Task TestFunctionPointerTypeValidSpacingAsync()
-        {
-            var testCode = @"public class TestClass
-{
-    unsafe delegate*<int*> FuncPtr;
-}
-";
-
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestFunctionPointerTypeInvalidPrecedingSpaceAsync()
-        {
-            var testCode = @"public class TestClass
-{
-    unsafe delegate {|#0:*|}<int*> FuncPtr;
-}
-";
-
-            var fixedCode = @"public class TestClass
-{
-    unsafe delegate*<int*> FuncPtr;
-}
-";
-
-            var expected = Diagnostic(DescriptorNotPreceded).WithLocation(0);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestFunctionPointerTypeInvalidTrailingSpaceAsync()
-        {
-            var testCode = @"public class TestClass
-{
-    unsafe delegate{|#0:*|} <int*> FuncPtr;
-}
-";
-
-            var fixedCode = @"public class TestClass
-{
-    unsafe delegate*<int*> FuncPtr;
-}
-";
-
-            var expected = Diagnostic(DescriptorNotFollowed).WithLocation(0);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestFunctionPointerTypeWithCallingConventionValidSpacingAsync()
-        {
-            var testCode = @"public class TestClass
-{
-    unsafe delegate* managed<int*> FuncPtr;
-}
-";
-
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestFunctionPointerTypeWithCallingConventionInvalidPrecedingSpaceAsync()
-        {
-            var testCode = @"public class TestClass
-{
-    unsafe delegate {|#0:*|} managed<int*> FuncPtr;
-}
-";
-
-            var fixedCode = @"public class TestClass
-{
-    unsafe delegate* managed<int*> FuncPtr;
-}
-";
-
-            var expected = Diagnostic(DescriptorNotPreceded).WithLocation(0);
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestFunctionPointerTypeWithCallingConventionMissingTrailingSpaceAsync()
-        {
-            var testCode = @"public class TestClass
-{
-    unsafe delegate{|#0:*|}managed<int*> FuncPtr;
-}
-";
-
-            var fixedCode = @"public class TestClass
-{
-    unsafe delegate* managed<int*> FuncPtr;
-}
-";
-
-            var expected = Diagnostic(DescriptorFollowed).WithLocation(0);
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
