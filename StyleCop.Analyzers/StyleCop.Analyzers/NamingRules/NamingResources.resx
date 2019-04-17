@@ -154,15 +154,15 @@
     <value>Type parameter names should begin with T</value>
   </data>
   <data name="SA1316CodeFix" xml:space="preserve">
-    <value>Correct tuple field name casing</value>
+    <value>Correct tuple element name casing</value>
   </data>
   <data name="SA1316Description" xml:space="preserve">
-    <value>Field names within a tuple declaration should have the correct casing.</value>
+    <value>Element names within a tuple type should have the correct casing.</value>
   </data>
   <data name="SA1316MessageFormat" xml:space="preserve">
-    <value>Tuple field names must use correct casing</value>
+    <value>Tuple element names should use correct casing</value>
   </data>
   <data name="SA1316Title" xml:space="preserve">
-    <value>Tuple field names must use correct casing</value>
+    <value>Tuple element names should use correct casing</value>
   </data>
 </root>

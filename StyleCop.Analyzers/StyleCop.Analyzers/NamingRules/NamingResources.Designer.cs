@@ -170,7 +170,7 @@ namespace StyleCop.Analyzers.NamingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Correct tuple field name casing.
+        ///   Looks up a localized string similar to Correct tuple element name casing.
         /// </summary>
         internal static string SA1316CodeFix {
             get {
@@ -179,7 +179,7 @@ namespace StyleCop.Analyzers.NamingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Field names within a tuple declaration should have the correct casing..
+        ///   Looks up a localized string similar to Element names within a tuple type should have the correct casing..
         /// </summary>
         internal static string SA1316Description {
             get {
@@ -188,7 +188,7 @@ namespace StyleCop.Analyzers.NamingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tuple field names must use correct casing.
+        ///   Looks up a localized string similar to Tuple element names should use correct casing.
         /// </summary>
         internal static string SA1316MessageFormat {
             get {
@@ -197,7 +197,7 @@ namespace StyleCop.Analyzers.NamingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tuple field names must use correct casing.
+        ///   Looks up a localized string similar to Tuple element names should use correct casing.
         /// </summary>
         internal static string SA1316Title {
             get {

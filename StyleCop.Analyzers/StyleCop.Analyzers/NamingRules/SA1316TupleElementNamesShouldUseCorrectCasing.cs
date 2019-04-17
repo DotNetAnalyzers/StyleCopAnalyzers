@@ -17,10 +17,10 @@ namespace StyleCop.Analyzers.NamingRules
     /// Field names within a tuple declaration should have the correct casing.
     /// </summary>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class SA1316TupleElementNamesMustUseCorrectCasing : DiagnosticAnalyzer
+    internal class SA1316TupleElementNamesShouldUseCorrectCasing : DiagnosticAnalyzer
     {
         /// <summary>
-        /// The ID for diagnostics produced by the <see cref="SA1316TupleElementNamesMustUseCorrectCasing"/> analyzer.
+        /// The ID for diagnostics produced by the <see cref="SA1316TupleElementNamesShouldUseCorrectCasing"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1316";
 

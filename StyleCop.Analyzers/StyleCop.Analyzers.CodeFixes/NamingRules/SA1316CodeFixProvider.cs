@@ -14,7 +14,7 @@ namespace StyleCop.Analyzers.NamingRules
     using StyleCop.Analyzers.Helpers;
 
     /// <summary>
-    /// Implements a code fix for <see cref="SA1316TupleElementNamesMustUseCorrectCasing"/>.
+    /// Implements a code fix for <see cref="SA1316TupleElementNamesShouldUseCorrectCasing"/>.
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SA1316CodeFixProvider))]
     [Shared]
@@ -22,14 +22,14 @@ namespace StyleCop.Analyzers.NamingRules
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
-            ImmutableArray.Create(SA1316TupleElementNamesMustUseCorrectCasing.DiagnosticId);
+            ImmutableArray.Create(SA1316TupleElementNamesShouldUseCorrectCasing.DiagnosticId);
 
         /// <inheritdoc/>
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                if (diagnostic.Properties.TryGetValue(SA1316TupleElementNamesMustUseCorrectCasing.ExpectedTupleElementNameKey, out string fixedTupleElementName))
+                if (diagnostic.Properties.TryGetValue(SA1316TupleElementNamesShouldUseCorrectCasing.ExpectedTupleElementNameKey, out string fixedTupleElementName))
                 {
                     context.RegisterCodeFix(
                         CodeAction.Create(

@@ -10,13 +10,13 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
     using StyleCop.Analyzers.NamingRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-        StyleCop.Analyzers.NamingRules.SA1316TupleElementNamesMustUseCorrectCasing,
+        StyleCop.Analyzers.NamingRules.SA1316TupleElementNamesShouldUseCorrectCasing,
         StyleCop.Analyzers.NamingRules.SA1316CodeFixProvider>;
 
     /// <summary>
     /// This class contains the CSharp 7.x unit tests for SA1316.
     /// </summary>
-    /// <seealso cref="SA1316TupleElementNamesMustUseCorrectCasing"/>
+    /// <seealso cref="SA1316TupleElementNamesShouldUseCorrectCasing"/>
     /// <seealso cref="SA1316CodeFixProvider"/>
     public class SA1316CSharp7UnitTests
     {
