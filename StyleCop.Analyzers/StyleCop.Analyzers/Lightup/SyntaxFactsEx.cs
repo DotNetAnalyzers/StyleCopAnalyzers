@@ -3,29 +3,71 @@
 
 namespace StyleCop.Analyzers.Lightup
 {
-    using System.Linq;
+    using System;
+    using System.Linq.Expressions;
     using System.Reflection;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
 
     internal static class SyntaxFactsEx
     {
-        private static readonly System.Reflection.TypeInfo SyntaxFactsTypeInfo = typeof(SyntaxFacts).GetTypeInfo();
+        private static readonly Func<SyntaxNode, string> TryGetInferredMemberNameAccessor;
+        private static readonly Func<string, bool> IsReservedTupleElementNameAccessor;
+
+        static SyntaxFactsEx()
+        {
+            Func<SyntaxNode, string> fallbackAccessor =
+                syntax =>
+                {
+                    if (syntax == null)
+                    {
+                        // Unlike an extension method which would throw ArgumentNullException here, the light-up
+                        // behavior needs to match behavior of the underlying property.
+                        throw new NullReferenceException();
+                    }
+
+                    return null;
+                };
+
+            var tryGetInferredMemberNameMethod = typeof(SyntaxFacts).GetTypeInfo().GetDeclaredMethod(nameof(TryGetInferredMemberName));
+            if (tryGetInferredMemberNameMethod is object)
+            {
+                var syntaxParameter = Expression.Parameter(typeof(SyntaxNode), "syntax");
+                Expression<Func<SyntaxNode, string>> expression =
+                    Expression.Lambda<Func<SyntaxNode, string>>(
+                        Expression.Call(tryGetInferredMemberNameMethod, syntaxParameter),
+                        syntaxParameter);
+                TryGetInferredMemberNameAccessor = expression.Compile();
+            }
+            else
+            {
+                TryGetInferredMemberNameAccessor = fallbackAccessor;
+            }
+
+            var isReservedTupleElementNameMethod = typeof(SyntaxFacts).GetTypeInfo().GetDeclaredMethod(nameof(IsReservedTupleElementName));
+            if (isReservedTupleElementNameMethod is object)
+            {
+                var elementNameParameter = Expression.Parameter(typeof(string), "elementName");
+                Expression<Func<string, bool>> expression =
+                    Expression.Lambda<Func<string, bool>>(
+                        Expression.Call(isReservedTupleElementNameMethod, elementNameParameter),
+                        elementNameParameter);
+                IsReservedTupleElementNameAccessor = expression.Compile();
+            }
+            else
+            {
+                IsReservedTupleElementNameAccessor = _ => false;
+            }
+        }
 
         public static string TryGetInferredMemberName(this SyntaxNode syntax)
         {
-            var methodInfo = SyntaxFactsTypeInfo.GetDeclaredMethods("TryGetInferredMemberName")
-                .Single();
-
-            return (string)methodInfo.Invoke(null, new object[] { syntax });
+            return TryGetInferredMemberNameAccessor(syntax);
         }
 
         public static bool IsReservedTupleElementName(string elementName)
         {
-            var methodInfo = SyntaxFactsTypeInfo.GetDeclaredMethods("IsReservedTupleElementName")
-                .Single();
-
-            return (bool)methodInfo.Invoke(null, new object[] { elementName });
+            return IsReservedTupleElementNameAccessor(elementName);
         }
     }
 }

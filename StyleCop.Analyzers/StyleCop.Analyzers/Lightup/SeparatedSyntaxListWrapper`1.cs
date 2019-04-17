@@ -9,9 +9,7 @@ namespace StyleCop.Analyzers.Lightup
     using System.Collections.Immutable;
     using System.ComponentModel;
     using System.Linq;
-    using System.Reflection;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Text;
 
     internal abstract class SeparatedSyntaxListWrapper<TNode> : IEquatable<SeparatedSyntaxListWrapper<TNode>>, IReadOnlyList<TNode>
