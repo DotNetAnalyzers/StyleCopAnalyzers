@@ -357,7 +357,7 @@ public class Foo
                 FixedCode = fixedTestCode,
             };
 
-            test.Exclusions &= ~AnalysisExclusions.Suppression;
+            test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 

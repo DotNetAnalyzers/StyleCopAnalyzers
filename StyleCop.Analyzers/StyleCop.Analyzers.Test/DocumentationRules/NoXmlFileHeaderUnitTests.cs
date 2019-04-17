@@ -410,7 +410,7 @@ namespace Bar
                 Settings = testSettings,
             };
 
-            test.Exclusions &= ~AnalysisExclusions.Suppression;
+            test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
             test.ExpectedDiagnostics.AddRange(expected);
             return test.RunAsync(cancellationToken);
         }

@@ -95,7 +95,7 @@ namespace StyleCop.Analyzers.Test
                 },
             };
 
-            test.Exclusions &= ~AnalysisExclusions.Suppression;
+            test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }

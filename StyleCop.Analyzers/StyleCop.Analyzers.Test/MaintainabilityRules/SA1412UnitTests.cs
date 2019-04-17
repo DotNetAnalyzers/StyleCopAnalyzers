@@ -46,7 +46,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 FixedSources = { fixedCode },
             };
 
-            test.Exclusions &= ~AnalysisExclusions.Suppression;
+            test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -65,7 +65,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 FixedSources = { fixedCode },
             };
 
-            test.Exclusions &= ~AnalysisExclusions.Suppression;
+            test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -104,7 +104,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 NumberOfFixAllInDocumentIterations = 3,
             };
 
-            test.Exclusions &= ~AnalysisExclusions.Suppression;
+            test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -131,7 +131,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 NumberOfFixAllInDocumentIterations = 2,
             };
 
-            test.Exclusions &= ~AnalysisExclusions.Suppression;
+            test.TestBehaviors |= TestBehaviors.SkipSuppressionCheck;
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }

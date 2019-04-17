@@ -104,7 +104,7 @@ class ClassName
                 {
                     await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
                 }).ConfigureAwait(false);
-            Assert.StartsWith($"Context: Diagnostics of test state{Environment.NewLine}Expected:\nA project diagnostic with No location\nActual:\n", ex.Message);
+            Assert.StartsWith($"Context: Diagnostics of test state{Environment.NewLine}Expected:{Environment.NewLine}A project diagnostic with No location{Environment.NewLine}Actual:{Environment.NewLine}", ex.Message);
         }
 
         [Fact]
