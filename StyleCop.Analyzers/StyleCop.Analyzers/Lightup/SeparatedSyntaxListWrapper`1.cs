@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.Lightup
     using System;
     using System.Collections;
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using System.ComponentModel;
     using System.Linq;
     using Microsoft.CodeAnalysis;
@@ -221,6 +222,11 @@ namespace StyleCop.Analyzers.Lightup
             where TSyntax : SyntaxNode
         {
             private readonly SeparatedSyntaxList<TSyntax> syntaxList;
+
+            public AutoWrapSeparatedSyntaxList()
+                : this(default)
+            {
+            }
 
             public AutoWrapSeparatedSyntaxList(SeparatedSyntaxList<TSyntax> syntaxList)
             {

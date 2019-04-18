@@ -549,4 +549,28 @@
   <data name="SX1101Title" xml:space="preserve">
     <value>Do not prefix local calls with 'this.'</value>
   </data>
+  <data name="SA1141Description" xml:space="preserve">
+    <value>Use tuple syntax instead of the underlying ValueTuple implementation type.</value>
+  </data>
+  <data name="SA1141MessageFormat" xml:space="preserve">
+    <value>Use tuple syntax</value>
+  </data>
+  <data name="SA1141Title" xml:space="preserve">
+    <value>Use tuple syntax</value>
+  </data>
+  <data name="SA1141CodeFix" xml:space="preserve">
+    <value>Replace with tuple syntax</value>
+  </data>
+  <data name="SA1142CodeFix" xml:space="preserve">
+    <value>Use tuple field name</value>
+  </data>
+  <data name="SA1142Description" xml:space="preserve">
+    <value>A field of a tuple was referenced by its metadata name when a field name is available.</value>
+  </data>
+  <data name="SA1142MessageFormat" xml:space="preserve">
+    <value>Refer to tuple fields by name</value>
+  </data>
+  <data name="SA1142Title" xml:space="preserve">
+    <value>Refer to tuple fields by name</value>
+  </data>
 </root>

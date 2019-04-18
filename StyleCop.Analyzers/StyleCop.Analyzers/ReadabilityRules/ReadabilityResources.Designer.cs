@@ -1322,6 +1322,78 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Replace with tuple syntax.
+        /// </summary>
+        internal static string SA1141CodeFix {
+            get {
+                return ResourceManager.GetString("SA1141CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use tuple syntax instead of the underlying ValueTuple implementation type..
+        /// </summary>
+        internal static string SA1141Description {
+            get {
+                return ResourceManager.GetString("SA1141Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use tuple syntax.
+        /// </summary>
+        internal static string SA1141MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1141MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use tuple syntax.
+        /// </summary>
+        internal static string SA1141Title {
+            get {
+                return ResourceManager.GetString("SA1141Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use tuple field name.
+        /// </summary>
+        internal static string SA1142CodeFix {
+            get {
+                return ResourceManager.GetString("SA1142CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A field of a tuple was referenced by its metadata name when a field name is available..
+        /// </summary>
+        internal static string SA1142Description {
+            get {
+                return ResourceManager.GetString("SA1142Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Refer to tuple fields by name.
+        /// </summary>
+        internal static string SA1142MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1142MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Refer to tuple fields by name.
+        /// </summary>
+        internal static string SA1142Title {
+            get {
+                return ResourceManager.GetString("SA1142Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remove &apos;this.&apos; prefix.
         /// </summary>
         internal static string SX1101CodeFix {

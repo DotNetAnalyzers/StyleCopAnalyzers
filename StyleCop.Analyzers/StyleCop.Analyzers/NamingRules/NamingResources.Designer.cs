@@ -168,5 +168,41 @@ namespace StyleCop.Analyzers.NamingRules {
                 return ResourceManager.GetString("SA1314Title", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Correct tuple element name casing.
+        /// </summary>
+        internal static string SA1316CodeFix {
+            get {
+                return ResourceManager.GetString("SA1316CodeFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Element names within a tuple type should have the correct casing..
+        /// </summary>
+        internal static string SA1316Description {
+            get {
+                return ResourceManager.GetString("SA1316Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tuple element names should use correct casing.
+        /// </summary>
+        internal static string SA1316MessageFormat {
+            get {
+                return ResourceManager.GetString("SA1316MessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tuple element names should use correct casing.
+        /// </summary>
+        internal static string SA1316Title {
+            get {
+                return ResourceManager.GetString("SA1316Title", resourceCulture);
+            }
+        }
     }
 }

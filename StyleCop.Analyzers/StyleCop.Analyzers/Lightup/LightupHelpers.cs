@@ -157,7 +157,7 @@ namespace StyleCop.Analyzers.Lightup
 
             var unboundWrapperType = typeof(SeparatedSyntaxListWrapper<>.AutoWrapSeparatedSyntaxList<>);
             var boundWrapperType = unboundWrapperType.MakeGenericType(typeof(TProperty), propertySyntaxType);
-            var constructorInfo = boundWrapperType.GetTypeInfo().DeclaredConstructors.Single();
+            var constructorInfo = boundWrapperType.GetTypeInfo().DeclaredConstructors.Single(constructor => constructor.GetParameters().Length == 1);
 
             Expression<Func<TSyntax, SeparatedSyntaxListWrapper<TProperty>>> expression =
                 Expression.Lambda<Func<TSyntax, SeparatedSyntaxListWrapper<TProperty>>>(

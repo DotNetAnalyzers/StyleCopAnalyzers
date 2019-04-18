@@ -314,6 +314,41 @@ The following example shows a settings file which allows the common prefixes as 
 }
 ```
 
+### Tuple element names
+
+The following properties are used to configure the behavior of the tuple element name analyzers.
+
+| Property | Default Value | Minimum Version | Summary |
+| --- | --- | --- | --- |
+| `includeInferredTupleElementNames` | false | 1.2.0 | Specifies whether inferred tuple element names will be analyzed as well. |
+| `tupleElementNameCasing` | "camelCase" | 1.2.0 | Specifies the casing convention used for tuple element names. |
+
+The following example shows a settings file which requires tuple element names to use PascalCase for all tuple elements (including inferred element names).
+
+```json
+{
+  "settings": {
+    "namingRules": {
+      "includeInferredTupleElementNames": true,
+      "tupleElementNameCasing" : "PascalCase"
+    }
+  }
+}
+```
+
+
+#### Tuple Element Name Casing
+The `tupleElementNameCasing` property affects the behavior of the [SA1316 Tuple element names should use correct casing](SA1316.md) analyzer.
+
+This property has two allowed values, which are described as follows.
+
+##### `"camelCase"`
+In this mode, tuple element names must start with a lowercase letter.
+
+##### `"PascalCase"`
+In this mode, tuple element names must start with an uppercase letter.
+
+
 ## Maintainability Rules
 
 This section describes the features of maintainability rules which can be configured in **stylecop.json**. Each of the described properties are configured in the `maintainabilityRules` object, which is shown in the following sample file.
