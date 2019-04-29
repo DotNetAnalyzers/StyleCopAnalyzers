@@ -128,9 +128,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static bool HandleMethodInvocation(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod, ArgumentSyntax argumentSyntax)
         {
             // invocation -> argument list -> argument -> anonymous method
-            var argumentListSyntax = argumentSyntax?.Parent as BaseArgumentListSyntax;
-
-            if (argumentListSyntax != null)
+            if (argumentSyntax?.Parent is BaseArgumentListSyntax argumentListSyntax)
             {
                 var originalInvocableExpression = argumentListSyntax.Parent;
                 SymbolInfo originalSymbolInfo = semanticModel.GetSymbolInfo(originalInvocableExpression);

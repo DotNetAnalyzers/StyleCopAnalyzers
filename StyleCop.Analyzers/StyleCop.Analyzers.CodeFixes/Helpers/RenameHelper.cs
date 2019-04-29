@@ -162,8 +162,7 @@ namespace StyleCop.Analyzers.Helpers
                     return parent;
 
                 default:
-                    var declarationParent = parent as MemberDeclarationSyntax;
-                    if (declarationParent != null)
+                    if (parent is MemberDeclarationSyntax declarationParent)
                     {
                         return declarationParent;
                     }

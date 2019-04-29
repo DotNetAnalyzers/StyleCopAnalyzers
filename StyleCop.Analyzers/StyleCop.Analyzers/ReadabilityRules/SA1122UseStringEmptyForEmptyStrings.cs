@@ -93,9 +93,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     return true;
                 }
 
-                VariableDeclaratorSyntax variableDeclaratorSyntax = equalsValueClause.Parent as VariableDeclaratorSyntax;
-                VariableDeclarationSyntax variableDeclarationSyntax = variableDeclaratorSyntax?.Parent as VariableDeclarationSyntax;
-                if (variableDeclaratorSyntax == null || variableDeclarationSyntax == null)
+                if (!(equalsValueClause.Parent is VariableDeclaratorSyntax variableDeclaratorSyntax) || !(variableDeclaratorSyntax?.Parent is VariableDeclarationSyntax variableDeclarationSyntax))
                 {
                     return false;
                 }
