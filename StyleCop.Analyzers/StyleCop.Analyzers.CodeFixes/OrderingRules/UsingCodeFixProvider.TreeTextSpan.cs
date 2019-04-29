@@ -158,7 +158,7 @@ namespace StyleCop.Analyzers.OrderingRules
             internal class Builder
             {
                 private readonly List<Builder> children = new List<Builder>();
-                private int start;
+                private readonly int start;
                 private int end = int.MaxValue;
 
                 /// <summary>

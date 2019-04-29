@@ -39,7 +39,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
         private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
 
-        private static byte[] utf8Preamble = Encoding.UTF8.GetPreamble();
+        private static readonly byte[] utf8Preamble = Encoding.UTF8.GetPreamble();
 
         /// <summary>
         /// Gets the key for the detected encoding name in the <see cref="Diagnostic.Properties"/> collection.
