@@ -21,8 +21,6 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     internal abstract class PartialElementDocumentationSummaryBase : DiagnosticAnalyzer
     {
-        private static readonly XElement EmptyElement = new XElement("empty");
-
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> typeDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> methodDeclarationAction;
 

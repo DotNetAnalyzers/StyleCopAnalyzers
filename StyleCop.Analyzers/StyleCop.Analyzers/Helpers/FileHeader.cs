@@ -12,7 +12,6 @@ namespace StyleCop.Analyzers.Helpers
     internal class FileHeader
     {
         private readonly int fileHeaderStart;
-        private readonly int fileHeaderEnd;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileHeader"/> class.
@@ -24,7 +23,6 @@ namespace StyleCop.Analyzers.Helpers
         {
             this.CopyrightText = copyrightText;
             this.fileHeaderStart = fileHeaderStart;
-            this.fileHeaderEnd = fileHeaderEnd;
         }
 
         /// <summary>
