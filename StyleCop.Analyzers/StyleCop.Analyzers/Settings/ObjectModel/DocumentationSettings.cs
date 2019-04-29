@@ -293,41 +293,41 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         private KeyValuePair<string, bool> BuildCopyrightText(string fileName)
         {
             bool canCache = true;
-            string pattern = Regex.Escape("{") + "(?<Property>[a-zA-Z0-9]+)" + Regex.Escape("}");
-            MatchEvaluator evaluator =
-                match =>
+
+            string Evaluator(Match match)
+            {
+                string key = match.Groups["Property"].Value;
+                switch (key)
                 {
-                    string key = match.Groups["Property"].Value;
-                    switch (key)
+                case "companyName":
+                    return this.CompanyName;
+
+                case "copyrightText":
+                    return "[CircularReference]";
+
+                default:
+                    string value;
+                    if (this.Variables.TryGetValue(key, out value))
                     {
-                    case "companyName":
-                        return this.CompanyName;
-
-                    case "copyrightText":
-                        return "[CircularReference]";
-
-                    default:
-                        string value;
-                        if (this.Variables.TryGetValue(key, out value))
-                        {
-                            return value;
-                        }
-
-                        if (key == "fileName")
-                        {
-                            // The 'fileName' built-in variable is only applied when the user did not include an
-                            // explicit value for a custom 'fileName' variable.
-                            canCache = false;
-                            return fileName;
-                        }
-
-                        break;
+                        return value;
                     }
 
-                    return "[InvalidReference]";
-                };
+                    if (key == "fileName")
+                    {
+                        // The 'fileName' built-in variable is only applied when the user did not include an
+                        // explicit value for a custom 'fileName' variable.
+                        canCache = false;
+                        return fileName;
+                    }
 
-            string expanded = Regex.Replace(this.copyrightText, pattern, evaluator);
+                    break;
+                }
+
+                return "[InvalidReference]";
+            }
+
+            string pattern = Regex.Escape("{") + "(?<Property>[a-zA-Z0-9]+)" + Regex.Escape("}");
+            string expanded = Regex.Replace(this.copyrightText, pattern, Evaluator);
             return new KeyValuePair<string, bool>(expanded, canCache);
         }
     }

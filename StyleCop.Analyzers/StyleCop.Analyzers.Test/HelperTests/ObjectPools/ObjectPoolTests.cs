@@ -13,16 +13,16 @@ namespace StyleCop.Analyzers.Test.HelperTests.ObjectPools
         [Fact]
         public void TestDefaultConstructor()
         {
-            Func<object> factory = () => new object();
-            var pool = new ObjectPool<object>(factory);
+            object Factory() => new object();
+            var pool = new ObjectPool<object>(Factory);
             Assert.IsType<object>(pool.Allocate());
         }
 
         [Fact]
         public void TestAllocateFree()
         {
-            Func<object> factory = () => new object();
-            var pool = new ObjectPool<object>(factory);
+            object Factory() => new object();
+            var pool = new ObjectPool<object>(Factory);
 
             // Covers the case where no item is in the pool
             Assert.IsType<object>(pool.Allocate());
@@ -52,8 +52,8 @@ namespace StyleCop.Analyzers.Test.HelperTests.ObjectPools
         [Fact]
         public void TestObjectCanBeDropped()
         {
-            Func<object> factory = () => new object();
-            var pool = new ObjectPool<object>(factory, 1);
+            object Factory() => new object();
+            var pool = new ObjectPool<object>(Factory, 1);
 
             var obj = new object();
             pool.Free(obj);
