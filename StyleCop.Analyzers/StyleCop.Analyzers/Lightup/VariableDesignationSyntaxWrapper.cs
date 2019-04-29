@@ -30,7 +30,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             if (node == null)
             {
-                return default(VariableDesignationSyntaxWrapper);
+                return default;
             }
 
             if (!IsInstance(node))

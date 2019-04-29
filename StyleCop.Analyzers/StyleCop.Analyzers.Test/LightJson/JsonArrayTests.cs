@@ -26,7 +26,7 @@ namespace StyleCop.Analyzers.Test.LightJson
             Assert.Equal(1, obj2[0].AsInteger);
             Assert.Equal("test2", obj2[1].AsString);
 
-            Assert.Throws<ArgumentNullException>("values", () => new JsonArray(default(JsonValue[])));
+            Assert.Throws<ArgumentNullException>("values", () => new JsonArray(default));
         }
 
         [Fact]

@@ -68,7 +68,7 @@ namespace StyleCop.Analyzers.Lightup
                         throw new NullReferenceException();
                     }
 
-                    return default(TProperty);
+                    return default;
                 };
 
             if (type == null)

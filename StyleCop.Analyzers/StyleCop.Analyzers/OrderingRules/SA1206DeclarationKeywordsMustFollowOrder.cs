@@ -88,8 +88,8 @@ namespace StyleCop.Analyzers.OrderingRules
         {
             var previousModifierType = ModifierType.None;
             var otherModifiersAppearEarlier = false;
-            SyntaxToken previousModifier = default(SyntaxToken);
-            SyntaxToken previousOtherModifier = default(SyntaxToken);
+            SyntaxToken previousModifier = default;
+            SyntaxToken previousOtherModifier = default;
 
             foreach (var modifier in modifiers)
             {

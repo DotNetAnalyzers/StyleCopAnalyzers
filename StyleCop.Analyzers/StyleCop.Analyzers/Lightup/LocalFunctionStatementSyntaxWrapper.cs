@@ -140,7 +140,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             if (node == null)
             {
-                return default(LocalFunctionStatementSyntaxWrapper);
+                return default;
             }
 
             if (!IsInstance(node))

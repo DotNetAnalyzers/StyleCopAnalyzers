@@ -369,7 +369,7 @@ namespace StyleCop.Analyzers.LayoutRules
             }
 
             var firstToken = node.ChildTokens().FirstOrDefault();
-            if (firstToken != default(SyntaxToken))
+            if (firstToken != default)
             {
                 return node.ChildTokens().First().GetLocation();
             }
@@ -381,7 +381,7 @@ namespace StyleCop.Analyzers.LayoutRules
         {
             allTrivia = allTrivia.Where(x => !x.IsKind(SyntaxKind.WhitespaceTrivia));
 
-            SyntaxTrivia previousTrivia = default(SyntaxTrivia);
+            SyntaxTrivia previousTrivia = default;
 
             foreach (var trivia in allTrivia)
             {

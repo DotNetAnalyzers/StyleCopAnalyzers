@@ -122,7 +122,7 @@ namespace StyleCop.Analyzers.Helpers
                 return ((IncompleteMemberSyntax)syntax).Modifiers;
             }
 
-            return default(SyntaxTokenList);
+            return default;
         }
 
         internal static SyntaxNode WithModifiers(this SyntaxNode node, SyntaxTokenList modifiers)

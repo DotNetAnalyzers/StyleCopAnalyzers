@@ -109,7 +109,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 return;
             }
 
-            var followingTrivia = index + 1 < list.Count ? list[index + 1] : default(SyntaxTrivia);
+            var followingTrivia = index + 1 < list.Count ? list[index + 1] : default;
 
             if (precedingToken.IsKind(SyntaxKind.CommaToken)
                 || precedingToken.IsKind(SyntaxKind.SemicolonToken)

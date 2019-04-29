@@ -61,14 +61,14 @@ namespace StyleCop.Analyzers.ReadabilityRules
             string replacement;
             if (!diagnostic.Properties.TryGetValue(SA1137ElementsShouldHaveTheSameIndentation.ExpectedIndentationKey, out replacement))
             {
-                textChange = default(TextChange);
+                textChange = default;
                 return false;
             }
 
             var trivia = syntaxRoot.FindTrivia(diagnostic.Location.SourceSpan.Start);
 
             TextSpan originalSpan;
-            if (trivia == default(SyntaxTrivia))
+            if (trivia == default)
             {
                 // The warning was reported on a token because the line is not indented
                 originalSpan = new TextSpan(diagnostic.Location.SourceSpan.Start, 0);

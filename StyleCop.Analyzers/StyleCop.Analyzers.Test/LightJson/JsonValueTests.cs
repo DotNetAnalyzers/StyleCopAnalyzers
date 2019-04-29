@@ -308,7 +308,7 @@ namespace StyleCop.Analyzers.Test.LightJson
         [Fact]
         public void TestOpInequality()
         {
-            Assert.False(JsonValue.Null != default(JsonValue));
+            Assert.False(JsonValue.Null != default);
             Assert.True(new JsonValue(true) != new JsonValue(0));
         }
 

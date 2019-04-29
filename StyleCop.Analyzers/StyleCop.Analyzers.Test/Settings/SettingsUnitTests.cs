@@ -386,7 +386,7 @@ namespace StyleCop.Analyzers.Test.Settings
 
             public override string Path { get; }
 
-            public override SourceText GetText(CancellationToken cancellationToken = default(CancellationToken))
+            public override SourceText GetText(CancellationToken cancellationToken = default)
             {
                 return this.sourceText;
             }

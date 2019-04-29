@@ -159,7 +159,7 @@ namespace StyleCop.Analyzers.Lightup
             {
                 this.wrapper = wrapper;
                 this.index = -1;
-                this.current = default(TNode);
+                this.current = default;
             }
 
             public TNode Current => this.current;
@@ -214,7 +214,7 @@ namespace StyleCop.Analyzers.Lightup
             public void Reset()
             {
                 this.index = -1;
-                this.current = default(TNode);
+                this.current = default;
             }
         }
 
@@ -323,7 +323,7 @@ namespace StyleCop.Analyzers.Lightup
 
         private sealed class UnsupportedSyntaxList : SeparatedSyntaxListWrapper<TNode>
         {
-            private static readonly SeparatedSyntaxList<SyntaxNode> SyntaxList = default(SeparatedSyntaxList<SyntaxNode>);
+            private static readonly SeparatedSyntaxList<SyntaxNode> SyntaxList = default;
 
             public UnsupportedSyntaxList()
             {
@@ -357,7 +357,7 @@ namespace StyleCop.Analyzers.Lightup
                 => SyntaxWrapper.Wrap(SyntaxList.First());
 
             public override TNode FirstOrDefault()
-                => SyntaxWrapper.Wrap(default(SyntaxNode));
+                => SyntaxWrapper.Wrap(default);
 
             public override int GetHashCode()
                 => SyntaxList.GetHashCode();
@@ -397,7 +397,7 @@ namespace StyleCop.Analyzers.Lightup
                 => SyntaxList.LastIndexOf(node => predicate(SyntaxWrapper.Wrap(node)));
 
             public override TNode LastOrDefault()
-                => SyntaxWrapper.Wrap(default(SyntaxNode));
+                => SyntaxWrapper.Wrap(default);
 
             public override SeparatedSyntaxListWrapper<TNode> Remove(TNode node)
             {

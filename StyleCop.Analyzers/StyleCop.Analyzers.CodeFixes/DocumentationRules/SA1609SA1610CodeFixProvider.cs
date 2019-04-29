@@ -174,7 +174,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             // Find the token containing the prefix, such as "Gets or sets "
-            SyntaxToken prefixToken = default(SyntaxToken);
+            SyntaxToken prefixToken = default;
             foreach (SyntaxToken textToken in firstText.TextTokens)
             {
                 if (textToken.IsMissing)

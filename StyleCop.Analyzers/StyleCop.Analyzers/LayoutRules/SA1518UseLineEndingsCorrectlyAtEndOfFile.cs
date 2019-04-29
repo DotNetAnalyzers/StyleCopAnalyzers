@@ -68,7 +68,7 @@ namespace StyleCop.Analyzers.LayoutRules
             var endOfFileToken = context.Tree.GetRoot().GetLastToken(includeZeroWidth: true);
             TextSpan reportedSpan = new TextSpan(endOfFileToken.SpanStart, 0);
 
-            SyntaxTrivia precedingTrivia = default(SyntaxTrivia);
+            SyntaxTrivia precedingTrivia = default;
             bool checkPrecedingToken;
             if (endOfFileToken.HasLeadingTrivia)
             {
@@ -108,7 +108,7 @@ namespace StyleCop.Analyzers.LayoutRules
                 else if (trailingWhitespaceIndex == 0)
                 {
                     reportedSpan = TextSpan.FromBounds(previousToken.TrailingTrivia[trailingWhitespaceIndex].SpanStart, reportedSpan.End);
-                    precedingTrivia = default(SyntaxTrivia);
+                    precedingTrivia = default;
                 }
                 else
                 {

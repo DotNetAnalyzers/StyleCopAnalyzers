@@ -67,7 +67,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             if (node == null)
             {
-                return default(TupleTypeSyntaxWrapper);
+                return default;
             }
 
             if (!IsInstance(node))
