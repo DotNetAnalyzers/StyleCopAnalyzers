@@ -155,28 +155,6 @@ namespace StyleCop.Analyzers.OrderingRules
             return result;
         }
 
-        private static string GetModifierTypeText(ModifierType modifierType)
-        {
-            var result = string.Empty;
-
-            switch (modifierType)
-            {
-            case ModifierType.Access:
-                result = "access modifier";
-                break;
-
-            case ModifierType.Static:
-                result = "static";
-                break;
-
-            case ModifierType.Other:
-                result = "other";
-                break;
-            }
-
-            return result;
-        }
-
         private static bool AccessOrStaticModifierNotFollowingOtherModifier(ModifierType current, ModifierType previous) => (current == ModifierType.Access || current == ModifierType.Static) && previous != ModifierType.Other;
     }
 }

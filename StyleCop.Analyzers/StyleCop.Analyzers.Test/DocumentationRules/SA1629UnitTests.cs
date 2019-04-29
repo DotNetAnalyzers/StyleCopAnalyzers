@@ -849,9 +849,6 @@ public interface ITest
             await VerifyCSharpDiagnosticAsync(testCode, testSettings, expectedResult, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
-            => VerifyCSharpDiagnosticAsync(source, testSettings: null, new[] { expected }, cancellationToken);
-
         private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
             => VerifyCSharpDiagnosticAsync(source, testSettings: null, expected, cancellationToken);
 

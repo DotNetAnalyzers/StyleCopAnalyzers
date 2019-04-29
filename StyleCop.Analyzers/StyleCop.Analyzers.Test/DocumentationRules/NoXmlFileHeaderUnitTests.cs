@@ -392,9 +392,6 @@ namespace Bar
             await VerifyCSharpFixAsync(testCode, TestSettingsWithEmptyLines, new[] { expected }, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken)
-            => VerifyCSharpFixAsync(source, TestSettings, new[] { expected }, fixedSource: null, cancellationToken);
-
         private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
             => VerifyCSharpFixAsync(source, TestSettings, expected, fixedSource: null, cancellationToken);
 

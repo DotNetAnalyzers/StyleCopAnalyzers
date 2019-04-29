@@ -107,11 +107,6 @@ namespace LightJson.Serialization
             }
         }
 
-        private static bool IsValidNumber(double number)
-        {
-            return !(double.IsNaN(number) || double.IsInfinity(number));
-        }
-
         private void Initialize()
         {
             this.indent = 0;

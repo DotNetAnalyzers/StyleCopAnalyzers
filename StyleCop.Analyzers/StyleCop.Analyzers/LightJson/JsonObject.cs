@@ -248,15 +248,6 @@ namespace LightJson
                         }
                     }
                 }
-
-                [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-                private JsonValueType Type
-                {
-                    get
-                    {
-                        return this.value.Type;
-                    }
-                }
             }
         }
     }

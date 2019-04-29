@@ -39,7 +39,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
         private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
 
-        private static readonly byte[] utf8Preamble = Encoding.UTF8.GetPreamble();
+        private static readonly byte[] Utf8Preamble = Encoding.UTF8.GetPreamble();
 
         /// <summary>
         /// Gets the key for the detected encoding name in the <see cref="Diagnostic.Properties"/> collection.
@@ -81,15 +81,15 @@ namespace StyleCop.Analyzers.MaintainabilityRules
 
         private static bool IsUtf8Preamble(byte[] preamble)
         {
-            if (preamble == null || preamble.Length != utf8Preamble.Length)
+            if (preamble == null || preamble.Length != Utf8Preamble.Length)
             {
                 return false;
             }
             else
             {
-                for (int i = 0; i < utf8Preamble.Length; i++)
+                for (int i = 0; i < Utf8Preamble.Length; i++)
                 {
-                    if (utf8Preamble[i] != preamble[i])
+                    if (Utf8Preamble[i] != preamble[i])
                     {
                         return false;
                     }

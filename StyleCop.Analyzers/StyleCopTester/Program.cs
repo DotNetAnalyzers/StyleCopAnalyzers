@@ -528,23 +528,6 @@ namespace StyleCopTester
             return providers.ToImmutableDictionary();
         }
 
-        private static ImmutableDictionary<FixAllProvider, ImmutableHashSet<string>> GetAllFixAllProviders(IEnumerable<CodeFixProvider> providers)
-        {
-            Dictionary<FixAllProvider, ImmutableHashSet<string>> fixAllProviders = new Dictionary<FixAllProvider, ImmutableHashSet<string>>();
-
-            foreach (var provider in providers)
-            {
-                var fixAllProvider = provider.GetFixAllProvider();
-                var supportedDiagnosticIds = fixAllProvider.GetSupportedFixAllDiagnosticIds(provider);
-                foreach (var id in supportedDiagnosticIds)
-                {
-                    fixAllProviders.AddToInnerSet(fixAllProvider, id);
-                }
-            }
-
-            return fixAllProviders.ToImmutableDictionary();
-        }
-
         private static async Task<ImmutableDictionary<ProjectId, ImmutableArray<Diagnostic>>> GetAnalyzerDiagnosticsAsync(Solution solution, string solutionPath, ImmutableArray<DiagnosticAnalyzer> analyzers, bool force, CancellationToken cancellationToken)
         {
             List<KeyValuePair<ProjectId, Task<ImmutableArray<Diagnostic>>>> projectDiagnosticTasks = new List<KeyValuePair<ProjectId, Task<ImmutableArray<Diagnostic>>>>();
