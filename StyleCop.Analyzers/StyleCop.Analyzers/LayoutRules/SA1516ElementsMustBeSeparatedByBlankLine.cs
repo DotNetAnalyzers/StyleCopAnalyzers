@@ -204,8 +204,6 @@ namespace StyleCop.Analyzers.LayoutRules
                 {
                     ReportIfThereIsNoBlankLine(context, previousItem, members[0]);
                 }
-
-                previousItem = members.Last();
             }
         }
 

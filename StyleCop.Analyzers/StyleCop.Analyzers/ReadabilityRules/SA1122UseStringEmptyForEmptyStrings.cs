@@ -88,7 +88,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             if (outermostExpression.Parent is EqualsValueClauseSyntax equalsValueClause)
             {
-                if (equalsValueClause.Parent is ParameterSyntax parameterSyntax)
+                if (equalsValueClause.Parent is ParameterSyntax)
                 {
                     return true;
                 }

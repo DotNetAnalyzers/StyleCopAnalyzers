@@ -168,8 +168,6 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             sb.AppendLine("<member>");
 
-            var documentationChildren = new List<XElement>();
-
             foreach (XmlNodeSyntax xmlNode in documentCommentTrivia.Content)
             {
                 if (xmlNode == includeTag)

@@ -65,8 +65,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             var symbolInfo = semanticModel.GetSymbolInfo(newExpression.Type, cancellationToken);
             var namedTypeSymbol = symbolInfo.Symbol as INamedTypeSymbol;
 
-            SyntaxNode replacement = null;
-            string memberName = null;
+            SyntaxNode replacement;
 
             if (IsType<CancellationToken>(namedTypeSymbol))
             {
@@ -79,7 +78,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     replacement = ConstructMemberAccessSyntax(newExpression.Type, nameof(CancellationToken.None));
                 }
             }
-            else if (IsEnumWithDefaultMember(namedTypeSymbol, out memberName))
+            else if (IsEnumWithDefaultMember(namedTypeSymbol, out string memberName))
             {
                 replacement = ConstructMemberAccessSyntax(newExpression.Type, memberName);
             }

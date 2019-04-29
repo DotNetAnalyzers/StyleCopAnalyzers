@@ -174,8 +174,6 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, XmlEmptyElementSyntax node)
         {
             var typeDeclaration = node.FirstAncestorOrSelf<BaseTypeDeclarationSyntax>();
-            var declarationSyntax = node.FirstAncestorOrSelf<BaseMethodDeclarationSyntax>();
-            bool isStruct = typeDeclaration.IsKind(SyntaxKind.StructDeclaration);
 
             TypeParameterListSyntax typeParameterList;
             if (typeDeclaration is ClassDeclarationSyntax classDeclaration)

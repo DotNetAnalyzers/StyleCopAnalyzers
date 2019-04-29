@@ -161,7 +161,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                         }
                         else
                         {
-                            if (node.Parent is AssignmentExpressionSyntax assignValue)
+                            if (node.Parent is AssignmentExpressionSyntax)
                             {
                                 ReportDiagnostic(context, node);
                             }

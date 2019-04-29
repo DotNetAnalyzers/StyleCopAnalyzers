@@ -131,7 +131,6 @@ namespace StyleCop.Analyzers.OrderingRules
 
         private static void HandleMemberList(SyntaxNodeAnalysisContext context, ImmutableArray<OrderingTrait> elementOrder, int accessibilityIndex, SyntaxList<MemberDeclarationSyntax> members, AccessLevel defaultAccessLevel)
         {
-            MemberDeclarationSyntax previousMember = null;
             var previousSyntaxKind = SyntaxKind.None;
             var previousAccessLevel = AccessLevel.NotSpecified;
             bool previousIsConst = false;
@@ -212,7 +211,6 @@ namespace StyleCop.Analyzers.OrderingRules
                     }
                 }
 
-                previousMember = member;
                 previousSyntaxKind = currentSyntaxKind;
                 previousAccessLevel = currentAccessLevel;
                 previousIsConst = currentIsConst;
