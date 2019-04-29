@@ -96,7 +96,7 @@ namespace StyleCop.Analyzers.NamingRules
                         && !await RenameHelper.IsValidNewMemberNameAsync(semanticModel, declaredSymbol, newName, context.CancellationToken).ConfigureAwait(false))
                     {
                         usedSuffix = true;
-                        newName = newName + Suffix;
+                        newName += Suffix;
                     }
 
                     int index = 0;
