@@ -129,7 +129,7 @@ namespace StyleCopTester
 
                 bool force = args.Contains("/force");
 
-                var diagnostics = await GetAnalyzerDiagnosticsAsync(solution, solutionPath, analyzers, force, cancellationToken).ConfigureAwait(true);
+                var diagnostics = await GetAnalyzerDiagnosticsAsync(solution, analyzers, force, cancellationToken).ConfigureAwait(true);
                 var allDiagnostics = diagnostics.SelectMany(i => i.Value).ToImmutableArray();
 
                 Console.WriteLine($"Found {allDiagnostics.Length} diagnostics in {stopwatch.ElapsedMilliseconds}ms");
@@ -528,7 +528,7 @@ namespace StyleCopTester
             return providers.ToImmutableDictionary();
         }
 
-        private static async Task<ImmutableDictionary<ProjectId, ImmutableArray<Diagnostic>>> GetAnalyzerDiagnosticsAsync(Solution solution, string solutionPath, ImmutableArray<DiagnosticAnalyzer> analyzers, bool force, CancellationToken cancellationToken)
+        private static async Task<ImmutableDictionary<ProjectId, ImmutableArray<Diagnostic>>> GetAnalyzerDiagnosticsAsync(Solution solution, ImmutableArray<DiagnosticAnalyzer> analyzers, bool force, CancellationToken cancellationToken)
         {
             List<KeyValuePair<ProjectId, Task<ImmutableArray<Diagnostic>>>> projectDiagnosticTasks = new List<KeyValuePair<ProjectId, Task<ImmutableArray<Diagnostic>>>>();
 

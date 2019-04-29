@@ -21,6 +21,9 @@ namespace StyleCop.Analyzers.Helpers
         /// <param name="fileHeaderEnd">The offset within the file at which the header ended.</param>
         internal FileHeader(string copyrightText, int fileHeaderStart, int fileHeaderEnd)
         {
+            // Currently unused
+            _ = fileHeaderEnd;
+
             this.CopyrightText = copyrightText;
             this.fileHeaderStart = fileHeaderStart;
         }

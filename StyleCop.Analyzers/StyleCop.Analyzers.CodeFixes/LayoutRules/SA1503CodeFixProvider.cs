@@ -64,6 +64,9 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, StatementSyntax node, CancellationToken cancellationToken)
         {
+            // Currently unused
+            _ = cancellationToken;
+
             var newSyntaxRoot = root.ReplaceNode(node, SyntaxFactory.Block(node));
             return Task.FromResult(document.WithSyntaxRoot(newSyntaxRoot));
         }

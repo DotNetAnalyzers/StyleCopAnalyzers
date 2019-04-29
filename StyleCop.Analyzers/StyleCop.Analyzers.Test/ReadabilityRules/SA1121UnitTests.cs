@@ -668,6 +668,9 @@ namespace {0}
         [MemberData(nameof(AllTypes))]
         public async Task TestNameOfAsync(string predefined, string fullName)
         {
+            // Currently unused
+            _ = predefined;
+
             string testCode = @"
 namespace System
 {{

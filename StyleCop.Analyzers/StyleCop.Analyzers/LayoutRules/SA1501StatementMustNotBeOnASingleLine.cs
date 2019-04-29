@@ -85,13 +85,13 @@ namespace StyleCop.Analyzers.LayoutRules
             if (context.IsAnalyzerSuppressed(SA1503BracesMustNotBeOmitted.Descriptor))
             {
                 context.RegisterSyntaxNodeAction(HandleIfStatement, SyntaxKind.IfStatement);
-                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ctx.Node, ((DoStatementSyntax)ctx.Node).Statement), SyntaxKind.DoStatement);
-                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ctx.Node, ((WhileStatementSyntax)ctx.Node).Statement), SyntaxKind.WhileStatement);
-                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ctx.Node, ((ForStatementSyntax)ctx.Node).Statement), SyntaxKind.ForStatement);
-                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ctx.Node, ((ForEachStatementSyntax)ctx.Node).Statement), SyntaxKind.ForEachStatement);
-                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ctx.Node, ((LockStatementSyntax)ctx.Node).Statement), SyntaxKind.LockStatement);
-                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ctx.Node, ((UsingStatementSyntax)ctx.Node).Statement), SyntaxKind.UsingStatement);
-                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ctx.Node, ((FixedStatementSyntax)ctx.Node).Statement), SyntaxKind.FixedStatement);
+                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ((DoStatementSyntax)ctx.Node).Statement), SyntaxKind.DoStatement);
+                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ((WhileStatementSyntax)ctx.Node).Statement), SyntaxKind.WhileStatement);
+                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ((ForStatementSyntax)ctx.Node).Statement), SyntaxKind.ForStatement);
+                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ((ForEachStatementSyntax)ctx.Node).Statement), SyntaxKind.ForEachStatement);
+                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ((LockStatementSyntax)ctx.Node).Statement), SyntaxKind.LockStatement);
+                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ((UsingStatementSyntax)ctx.Node).Statement), SyntaxKind.UsingStatement);
+                context.RegisterSyntaxNodeAction(ctx => CheckChildStatement(ctx, ((FixedStatementSyntax)ctx.Node).Statement), SyntaxKind.FixedStatement);
             }
         }
 
@@ -157,17 +157,11 @@ namespace StyleCop.Analyzers.LayoutRules
 
             foreach (StatementSyntax clause in clauses)
             {
-                SyntaxNode node = clause.Parent;
-                if (node.IsKind(SyntaxKind.IfStatement) && node.Parent.IsKind(SyntaxKind.ElseClause))
-                {
-                    node = node.Parent;
-                }
-
-                CheckChildStatement(context, node, clause);
+                CheckChildStatement(context, clause);
             }
         }
 
-        private static void CheckChildStatement(SyntaxNodeAnalysisContext context, SyntaxNode node, StatementSyntax childStatement)
+        private static void CheckChildStatement(SyntaxNodeAnalysisContext context, StatementSyntax childStatement)
         {
             bool reportAsHidden = false;
 

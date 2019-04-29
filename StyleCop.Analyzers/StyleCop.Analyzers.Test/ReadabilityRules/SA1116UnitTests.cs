@@ -57,6 +57,10 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         [MemberData(nameof(GetTestDeclarations), "", "")]
         public async Task TestValidDeclarationAsync(string declaration, string fixedDeclaration, int column)
         {
+            // Currently unused
+            _ = fixedDeclaration;
+            _ = column;
+
             var testCode = $@"
 class Foo
 {{
@@ -87,6 +91,9 @@ class Foo
         [MemberData(nameof(GetTestConstructorInitializers), "", "")]
         public async Task TestValidConstructorInitializerAsync(string initializer, string fixedInitializer)
         {
+            // Currently unused
+            _ = fixedInitializer;
+
             var testCode = $@"
 class Base
 {{
@@ -165,6 +172,10 @@ class Derived : Base
         [MemberData(nameof(ValidTestExpressions))]
         public async Task TestValidExpressionAsync(string expression, string fixedExpression, int column)
         {
+            // Currently unused
+            _ = fixedExpression;
+            _ = column;
+
             var testCode = $@"
 class Foo
 {{

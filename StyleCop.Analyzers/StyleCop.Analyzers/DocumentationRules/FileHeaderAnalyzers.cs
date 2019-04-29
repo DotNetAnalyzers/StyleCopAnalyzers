@@ -222,7 +222,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                     if (!compilation.IsAnalyzerSuppressed(SA1639Descriptor))
                     {
-                        CheckSummaryHeader(context, compilation, fileHeader);
+                        CheckSummaryHeader(context, fileHeader);
                     }
                 }
                 else
@@ -363,7 +363,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
             }
 
-            private static void CheckSummaryHeader(SyntaxTreeAnalysisContext context, Compilation compilation, XmlFileHeader fileHeader)
+            private static void CheckSummaryHeader(SyntaxTreeAnalysisContext context, XmlFileHeader fileHeader)
             {
                 var summaryElement = fileHeader.GetElement("summary");
                 if (summaryElement == null)

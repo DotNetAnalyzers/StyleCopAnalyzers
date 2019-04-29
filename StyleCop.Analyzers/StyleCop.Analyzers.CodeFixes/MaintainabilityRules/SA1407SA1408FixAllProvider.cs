@@ -37,14 +37,14 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                 nodes.Add(node);
             }
 
-            return root.ReplaceNodes(nodes, (originalNode, rewrittenNode) => AddParentheses(originalNode, rewrittenNode));
+            return root.ReplaceNodes(nodes, (originalNode, rewrittenNode) => AddParentheses(rewrittenNode));
         }
 
-        private static SyntaxNode AddParentheses(SyntaxNode originalNode, SyntaxNode rewrittenNode)
+        private static SyntaxNode AddParentheses(SyntaxNode node)
         {
-            if (!(rewrittenNode is BinaryExpressionSyntax syntax))
+            if (!(node is BinaryExpressionSyntax syntax))
             {
-                return rewrittenNode;
+                return node;
             }
 
             BinaryExpressionSyntax trimmedSyntax = syntax.WithoutTrivia();

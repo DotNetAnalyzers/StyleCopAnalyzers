@@ -110,6 +110,9 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
         private async Task TestFixAllExecuterAsync(int codepage, FixAllScope scope)
         {
+            // Currently unused
+            _ = scope;
+
             var test = new CSharpTest
             {
                 TestSources =

@@ -52,11 +52,19 @@ namespace StyleCop.Analyzers.Lightup
 
         public static bool operator ==(SeparatedSyntaxListWrapper<TNode> left, SeparatedSyntaxListWrapper<TNode> right)
         {
+            // Currently unused
+            _ = left;
+            _ = right;
+
             throw new NotImplementedException();
         }
 
         public static bool operator !=(SeparatedSyntaxListWrapper<TNode> left, SeparatedSyntaxListWrapper<TNode> right)
         {
+            // Currently unused
+            _ = left;
+            _ = right;
+
             throw new NotImplementedException();
         }
 
