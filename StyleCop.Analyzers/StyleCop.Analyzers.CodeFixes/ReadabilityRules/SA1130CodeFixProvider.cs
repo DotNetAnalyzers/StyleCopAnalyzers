@@ -209,8 +209,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static ImmutableArray<string> GetMemberReturnTypeArgumentList(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod)
         {
             var enclosingSymbol = semanticModel.GetEnclosingSymbol(anonymousMethod.Parent.SpanStart);
-            var returnType = ((IMethodSymbol)enclosingSymbol).ReturnType as INamedTypeSymbol;
-            return (returnType == null) ? ImmutableArray<string>.Empty : returnType.DelegateInvokeMethod.Parameters.Select(ps => ps.Name).ToImmutableArray();
+            return !(((IMethodSymbol)enclosingSymbol).ReturnType is INamedTypeSymbol returnType) ? ImmutableArray<string>.Empty : returnType.DelegateInvokeMethod.Parameters.Select(ps => ps.Name).ToImmutableArray();
         }
 
         private static List<ParameterSyntax> GenerateUniqueParameterNames(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod, ImmutableArray<string> argumentNames)

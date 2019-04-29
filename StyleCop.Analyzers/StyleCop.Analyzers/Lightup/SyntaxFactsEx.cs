@@ -16,18 +16,17 @@ namespace StyleCop.Analyzers.Lightup
 
         static SyntaxFactsEx()
         {
-            Func<SyntaxNode, string> fallbackAccessor =
-                syntax =>
+            string FallbackAccessor(SyntaxNode syntax)
+            {
+                if (syntax == null)
                 {
-                    if (syntax == null)
-                    {
-                        // Unlike an extension method which would throw ArgumentNullException here, the light-up
-                        // behavior needs to match behavior of the underlying property.
-                        throw new NullReferenceException();
-                    }
+                    // Unlike an extension method which would throw ArgumentNullException here, the light-up
+                    // behavior needs to match behavior of the underlying property.
+                    throw new NullReferenceException();
+                }
 
-                    return null;
-                };
+                return null;
+            }
 
             var tryGetInferredMemberNameMethod = typeof(SyntaxFacts).GetTypeInfo().GetDeclaredMethod(nameof(TryGetInferredMemberName));
             if (tryGetInferredMemberNameMethod is object)
@@ -41,7 +40,7 @@ namespace StyleCop.Analyzers.Lightup
             }
             else
             {
-                TryGetInferredMemberNameAccessor = fallbackAccessor;
+                TryGetInferredMemberNameAccessor = FallbackAccessor;
             }
 
             var isReservedTupleElementNameMethod = typeof(SyntaxFacts).GetTypeInfo().GetDeclaredMethod(nameof(IsReservedTupleElementName));

@@ -51,8 +51,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             var memberAccessExpression = (MemberAccessExpressionSyntax)context.Node;
 
-            var fieldSymbol = context.SemanticModel.GetSymbolInfo(memberAccessExpression).Symbol as IFieldSymbol;
-            if (fieldSymbol == null)
+            if (!(context.SemanticModel.GetSymbolInfo(memberAccessExpression).Symbol is IFieldSymbol fieldSymbol))
             {
                 return;
             }

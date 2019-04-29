@@ -108,7 +108,7 @@ namespace StyleCop.Analyzers.NamingRules
         {
             var firstCharacterIsLower = char.IsLower(tupleElementName[0]);
 
-            bool reportDiagnostic = false;
+            bool reportDiagnostic;
             string fixedName;
 
             switch (settings.NamingRules.TupleElementNameCasing)
