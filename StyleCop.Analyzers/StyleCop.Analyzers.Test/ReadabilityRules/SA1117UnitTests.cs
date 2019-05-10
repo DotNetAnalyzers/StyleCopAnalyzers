@@ -156,7 +156,7 @@ class Derived : Base
         [MemberData(nameof(ValidTestExpressions))]
         public async Task TestValidExpressionAsync(string expression, int column)
         {
-            // Currently unused
+            // Not needed for this test
             _ = column;
 
             var testCode = $@"
@@ -181,7 +181,7 @@ class Foo
         [MemberData(nameof(GetTestExpressions), "\r\n")]
         public async Task TestInvalidExpressionAsync(string expression, int column)
         {
-            // Currently unused
+            // Not needed for this test
             _ = column;
 
             var testCode = $@"
