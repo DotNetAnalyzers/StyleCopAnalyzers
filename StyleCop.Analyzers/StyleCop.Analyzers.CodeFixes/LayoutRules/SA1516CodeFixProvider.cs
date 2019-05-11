@@ -78,6 +78,9 @@ namespace StyleCop.Analyzers.LayoutRules
 
         private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode syntaxRoot, Diagnostic diagnostic, bool insertBlankLine, CancellationToken cancellationToken)
         {
+            // Currently unused
+            _ = cancellationToken;
+
             var node = syntaxRoot.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true);
             node = GetRelevantNode(node);
 

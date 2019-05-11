@@ -11,7 +11,7 @@ namespace StyleCop.Analyzers.Test.Lightup
     {
         internal override SeparatedSyntaxListWrapper<SyntaxNode> CreateList()
         {
-            return new SeparatedSyntaxListWrapper<SyntaxNode>.AutoWrapSeparatedSyntaxList<SyntaxNode>(default(SeparatedSyntaxList<SyntaxNode>));
+            return new SeparatedSyntaxListWrapper<SyntaxNode>.AutoWrapSeparatedSyntaxList<SyntaxNode>(default);
         }
 
         internal override bool TryCreateNonEmptyList(out SeparatedSyntaxListWrapper<SyntaxNode> list)

@@ -480,7 +480,7 @@ namespace StyleCop.Analyzers.OrderingRules
             {
                 if (this.fileHeader.Contains(trivia))
                 {
-                    return default(SyntaxTrivia);
+                    return default;
                 }
 
                 return base.VisitTrivia(trivia);

@@ -80,7 +80,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             // Replace all roots with an empty node
-            var newRoot = root.ReplaceTrivia(triviaToRemove, (original, rewritten) => default(SyntaxTrivia));
+            var newRoot = root.ReplaceTrivia(triviaToRemove, (original, rewritten) => default);
 
             Document updatedDocument = document.WithSyntaxRoot(newRoot);
             return updatedDocument;

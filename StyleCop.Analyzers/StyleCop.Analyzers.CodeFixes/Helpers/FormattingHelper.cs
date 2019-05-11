@@ -92,7 +92,7 @@ namespace StyleCop.Analyzers.Helpers
                 }
             }
 
-            return WithoutFormattingImpl(trivia);
+            return WithoutFormattingImpl(result);
         }
 
         /// <summary>

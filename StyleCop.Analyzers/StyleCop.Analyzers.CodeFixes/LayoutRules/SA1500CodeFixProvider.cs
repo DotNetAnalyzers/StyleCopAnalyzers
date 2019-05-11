@@ -57,13 +57,13 @@ namespace StyleCop.Analyzers.LayoutRules
 
             var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
             var braceToken = syntaxRoot.FindToken(diagnostic.Location.SourceSpan.Start);
-            var tokenReplacements = GenerateBraceFixes(document, settings.Indentation, ImmutableArray.Create(braceToken));
+            var tokenReplacements = GenerateBraceFixes(settings.Indentation, ImmutableArray.Create(braceToken));
 
             var newSyntaxRoot = syntaxRoot.ReplaceTokens(tokenReplacements.Keys, (originalToken, rewrittenToken) => tokenReplacements[originalToken]);
             return document.WithSyntaxRoot(newSyntaxRoot);
         }
 
-        private static Dictionary<SyntaxToken, SyntaxToken> GenerateBraceFixes(Document document, IndentationSettings indentationSettings, ImmutableArray<SyntaxToken> braceTokens)
+        private static Dictionary<SyntaxToken, SyntaxToken> GenerateBraceFixes(IndentationSettings indentationSettings, ImmutableArray<SyntaxToken> braceTokens)
         {
             var tokenReplacements = new Dictionary<SyntaxToken, SyntaxToken>();
 
@@ -284,7 +284,7 @@ namespace StyleCop.Analyzers.LayoutRules
 
                 var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, fixAllContext.CancellationToken);
 
-                var tokenReplacements = GenerateBraceFixes(document, settings.Indentation, tokens);
+                var tokenReplacements = GenerateBraceFixes(settings.Indentation, tokens);
 
                 return syntaxRoot.ReplaceTokens(tokenReplacements.Keys, (originalToken, rewrittenToken) => tokenReplacements[originalToken]);
             }

@@ -217,8 +217,10 @@ namespace LightJson
             [DebuggerDisplay("{value.ToString(),nq}", Name = "{key}", Type = "JsonValue({Type})")]
             public class KeyValuePair
             {
+#pragma warning disable IDE0052 // Remove unread private members
                 [DebuggerBrowsable(DebuggerBrowsableState.Never)]
                 private readonly string key;
+#pragma warning restore IDE0052 // Remove unread private members
 
                 [DebuggerBrowsable(DebuggerBrowsableState.Never)]
                 private readonly JsonValue value;
@@ -246,15 +248,6 @@ namespace LightJson
                         {
                             return this.value;
                         }
-                    }
-                }
-
-                [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-                private JsonValueType Type
-                {
-                    get
-                    {
-                        return this.value.Type;
                     }
                 }
             }

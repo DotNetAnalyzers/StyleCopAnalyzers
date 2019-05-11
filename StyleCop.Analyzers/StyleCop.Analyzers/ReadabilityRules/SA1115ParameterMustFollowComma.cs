@@ -138,7 +138,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static void HandleAnonymousMethodExpression(SyntaxNodeAnalysisContext context)
         {
             var anonymousMethod = (AnonymousMethodExpressionSyntax)context.Node;
-            AnalyzeSyntaxList(context, anonymousMethod.ParameterList?.Parameters ?? default(SeparatedSyntaxList<ParameterSyntax>));
+            AnalyzeSyntaxList(context, anonymousMethod.ParameterList?.Parameters ?? default);
         }
 
         private static void HandleAttributeList(SyntaxNodeAnalysisContext context)
@@ -150,7 +150,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static void HandleAttribute(SyntaxNodeAnalysisContext context)
         {
             var attribute = (AttributeSyntax)context.Node;
-            AnalyzeSyntaxList(context, attribute.ArgumentList?.Arguments ?? default(SeparatedSyntaxList<AttributeArgumentSyntax>));
+            AnalyzeSyntaxList(context, attribute.ArgumentList?.Arguments ?? default);
         }
 
         private static void HandleArrayCreationExpression(SyntaxNodeAnalysisContext context)

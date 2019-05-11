@@ -51,7 +51,7 @@ namespace StyleCop.Analyzers.NamingRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSymbolAction(Analyzer.HandleFieldDeclaration, SymbolKind.Field);
+            context.RegisterSymbolAction(FieldDeclarationAction, SymbolKind.Field);
         }
 
         private static class Analyzer

@@ -155,7 +155,7 @@ namespace StyleCop.Analyzers
                     throw new JsonParseException(
                         $"Settings file at '{path}' was missing or empty.",
                         JsonParseException.ErrorType.InvalidOrUnexpectedCharacter,
-                        default(TextPosition));
+                        default);
                 }
 
                 var settingsObject = rootValue.AsJsonObject["settings"];

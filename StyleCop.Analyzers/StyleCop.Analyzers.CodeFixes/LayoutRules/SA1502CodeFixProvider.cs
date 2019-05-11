@@ -117,11 +117,6 @@ namespace StyleCop.Analyzers.LayoutRules
             return this.ReformatElement(syntaxRoot, node, node.Body.OpenBraceToken, node.Body.CloseBraceToken, indentationSettings);
         }
 
-        private SyntaxNode RegisterEnumDeclarationCodeFix(SyntaxNode syntaxRoot, EnumDeclarationSyntax node, IndentationSettings indentationSettings)
-        {
-            return this.ReformatElement(syntaxRoot, node, node.OpenBraceToken, node.CloseBraceToken, indentationSettings);
-        }
-
         private SyntaxNode RegisterNamespaceDeclarationCodeFix(SyntaxNode syntaxRoot, NamespaceDeclarationSyntax node, IndentationSettings indentationSettings)
         {
             return this.ReformatElement(syntaxRoot, node, node.OpenBraceToken, node.CloseBraceToken, indentationSettings);

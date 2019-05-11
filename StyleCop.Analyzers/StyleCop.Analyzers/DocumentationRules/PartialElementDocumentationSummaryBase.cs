@@ -21,8 +21,6 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     internal abstract class PartialElementDocumentationSummaryBase : DiagnosticAnalyzer
     {
-        private static readonly XElement EmptyElement = new XElement("empty");
-
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> typeDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> methodDeclarationAction;
 
@@ -169,8 +167,6 @@ namespace StyleCop.Analyzers.DocumentationRules
             var sb = new StringBuilder();
 
             sb.AppendLine("<member>");
-
-            var documentationChildren = new List<XElement>();
 
             foreach (XmlNodeSyntax xmlNode in documentCommentTrivia.Content)
             {

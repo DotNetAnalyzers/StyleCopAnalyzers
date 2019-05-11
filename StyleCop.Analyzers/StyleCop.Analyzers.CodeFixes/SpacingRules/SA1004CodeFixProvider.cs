@@ -55,10 +55,10 @@ namespace StyleCop.Analyzers.SpacingRules
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var text = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
-            return document.WithText(text.WithChanges(GetTextChange(root, text, diagnostic)));
+            return document.WithText(text.WithChanges(GetTextChange(root, diagnostic)));
         }
 
-        private static TextChange GetTextChange(SyntaxNode root, SourceText sourceText, Diagnostic diagnostic)
+        private static TextChange GetTextChange(SyntaxNode root, Diagnostic diagnostic)
         {
             var token = root.FindToken(diagnostic.Location.SourceSpan.Start, findInsideTrivia: true);
             switch (token.Kind())
@@ -93,7 +93,7 @@ namespace StyleCop.Analyzers.SpacingRules
                 List<TextChange> changes = new List<TextChange>();
                 foreach (var diagnostic in diagnostics)
                 {
-                    changes.Add(GetTextChange(root, text, diagnostic));
+                    changes.Add(GetTextChange(root, diagnostic));
                 }
 
                 changes.Sort((left, right) => left.Span.Start.CompareTo(right.Span.Start));

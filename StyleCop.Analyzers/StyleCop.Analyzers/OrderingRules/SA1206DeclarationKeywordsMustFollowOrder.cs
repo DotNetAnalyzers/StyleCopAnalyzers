@@ -88,8 +88,8 @@ namespace StyleCop.Analyzers.OrderingRules
         {
             var previousModifierType = ModifierType.None;
             var otherModifiersAppearEarlier = false;
-            SyntaxToken previousModifier = default(SyntaxToken);
-            SyntaxToken previousOtherModifier = default(SyntaxToken);
+            SyntaxToken previousModifier = default;
+            SyntaxToken previousOtherModifier = default;
 
             foreach (var modifier in modifiers)
             {
@@ -150,28 +150,6 @@ namespace StyleCop.Analyzers.OrderingRules
             else if (first == ModifierType.Other && (second == ModifierType.Static || second == ModifierType.Access))
             {
                 result = greaterThan;
-            }
-
-            return result;
-        }
-
-        private static string GetModifierTypeText(ModifierType modifierType)
-        {
-            var result = string.Empty;
-
-            switch (modifierType)
-            {
-            case ModifierType.Access:
-                result = "access modifier";
-                break;
-
-            case ModifierType.Static:
-                result = "static";
-                break;
-
-            case ModifierType.Other:
-                result = "other";
-                break;
             }
 
             return result;

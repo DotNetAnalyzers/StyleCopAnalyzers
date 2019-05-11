@@ -86,7 +86,7 @@ namespace StyleCop.Analyzers.SpacingRules
                     {
                         if (useTabs)
                         {
-                            replacement.Length = replacement.Length - spaceCount;
+                            replacement.Length -= spaceCount;
                             replacement.Append('\t');
                             spaceCount = 0;
                         }
@@ -113,7 +113,7 @@ namespace StyleCop.Analyzers.SpacingRules
                                 if (offsetWithinTabColumn == 0)
                                 {
                                     // We reached a tab stop.
-                                    replacement.Length = replacement.Length - spaceCount;
+                                    replacement.Length -= spaceCount;
                                     replacement.Append('\t');
                                     spaceCount = 0;
                                 }

@@ -12,7 +12,6 @@ namespace StyleCop.Analyzers.Helpers
     internal class FileHeader
     {
         private readonly int fileHeaderStart;
-        private readonly int fileHeaderEnd;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileHeader"/> class.
@@ -22,9 +21,11 @@ namespace StyleCop.Analyzers.Helpers
         /// <param name="fileHeaderEnd">The offset within the file at which the header ended.</param>
         internal FileHeader(string copyrightText, int fileHeaderStart, int fileHeaderEnd)
         {
+            // Currently unused
+            _ = fileHeaderEnd;
+
             this.CopyrightText = copyrightText;
             this.fileHeaderStart = fileHeaderStart;
-            this.fileHeaderEnd = fileHeaderEnd;
         }
 
         /// <summary>

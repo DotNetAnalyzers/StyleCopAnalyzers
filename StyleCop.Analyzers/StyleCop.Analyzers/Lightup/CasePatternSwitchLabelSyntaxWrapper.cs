@@ -60,7 +60,7 @@ namespace StyleCop.Analyzers.Lightup
         {
             if (node == null)
             {
-                return default(CasePatternSwitchLabelSyntaxWrapper);
+                return default;
             }
 
             if (!IsInstance(node))

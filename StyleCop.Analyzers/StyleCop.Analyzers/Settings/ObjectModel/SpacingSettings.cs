@@ -21,6 +21,8 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         protected internal SpacingSettings(JsonObject spacingSettingsObject)
             : this()
         {
+            // Currently unused
+            _ = spacingSettingsObject;
         }
     }
 }

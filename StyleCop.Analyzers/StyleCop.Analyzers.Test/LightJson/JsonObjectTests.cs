@@ -107,6 +107,8 @@ namespace StyleCop.Analyzers.Test.LightJson
             Assert.Same(value, obj["y"].AsString);
         }
 
+#pragma warning disable IDE0060 // Remove unused parameter
         private static Type StaticType<T>(T value) => typeof(T);
+#pragma warning restore IDE0060 // Remove unused parameter
     }
 }

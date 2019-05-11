@@ -147,7 +147,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
             string trailingString = string.Empty;
 
-            var newContent = RemoveMalformattedStandardText(node.Content, typeDeclaration.Identifier, standardText[0], standardText[1], ref trailingString);
+            var newContent = RemoveMalformattedStandardText(node.Content, standardText[0], standardText[1], ref trailingString);
 
             if (newContent.Count == 1 && newContent[0] is XmlTextSyntax xmlText)
             {
@@ -174,8 +174,6 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, XmlEmptyElementSyntax node)
         {
             var typeDeclaration = node.FirstAncestorOrSelf<BaseTypeDeclarationSyntax>();
-            var declarationSyntax = node.FirstAncestorOrSelf<BaseMethodDeclarationSyntax>();
-            bool isStruct = typeDeclaration.IsKind(SyntaxKind.StructDeclaration);
 
             TypeParameterListSyntax typeParameterList;
             if (typeDeclaration is ClassDeclarationSyntax classDeclaration)
@@ -194,7 +192,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             return Task.FromResult(newDocument);
         }
 
-        private static SyntaxList<XmlNodeSyntax> RemoveMalformattedStandardText(SyntaxList<XmlNodeSyntax> content, SyntaxToken identifier, string preText, string postText, ref string trailingString)
+        private static SyntaxList<XmlNodeSyntax> RemoveMalformattedStandardText(SyntaxList<XmlNodeSyntax> content, string preText, string postText, ref string trailingString)
         {
             var regex = new Regex(@"^\s*" + Regex.Escape(preText) + "[^ ]+" + Regex.Escape(postText));
             var item = content.OfType<XmlTextSyntax>().FirstOrDefault();

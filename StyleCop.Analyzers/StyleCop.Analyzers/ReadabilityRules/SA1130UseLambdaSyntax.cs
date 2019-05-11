@@ -27,7 +27,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1130MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1130Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1130.md";
-        private static readonly ParameterListSyntax EmptyParameterList = SyntaxFactory.ParameterList();
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -128,9 +127,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static bool HandleMethodInvocation(SemanticModel semanticModel, AnonymousMethodExpressionSyntax anonymousMethod, ArgumentSyntax argumentSyntax)
         {
             // invocation -> argument list -> argument -> anonymous method
-            var argumentListSyntax = argumentSyntax?.Parent as BaseArgumentListSyntax;
-
-            if (argumentListSyntax != null)
+            if (argumentSyntax?.Parent is BaseArgumentListSyntax argumentListSyntax)
             {
                 var originalInvocableExpression = argumentListSyntax.Parent;
                 SymbolInfo originalSymbolInfo = semanticModel.GetSymbolInfo(originalInvocableExpression);

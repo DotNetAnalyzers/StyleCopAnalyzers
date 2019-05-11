@@ -292,13 +292,18 @@ namespace StyleCop.Analyzers.Helpers
             return declaredSymbol?.DeclaredAccessibility ?? Accessibility.NotApplicable;
         }
 
+#pragma warning disable IDE0060 // Remove unused parameter - false positive
         internal static Accessibility GetDeclaredAccessibility(this EnumMemberDeclarationSyntax syntax)
         {
             return Accessibility.Public;
         }
+#pragma warning restore IDE0060 // Remove unused parameter
 
         internal static Accessibility GetDeclaredAccessibility(this DelegateDeclarationSyntax syntax, SemanticModel semanticModel, CancellationToken cancellationToken)
         {
+            // Currently unused
+            _ = cancellationToken;
+
             Requires.NotNull(syntax, nameof(syntax));
             Requires.NotNull(semanticModel, nameof(semanticModel));
 
