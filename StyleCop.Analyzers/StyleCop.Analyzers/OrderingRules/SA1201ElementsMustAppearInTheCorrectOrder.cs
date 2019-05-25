@@ -123,31 +123,6 @@ namespace StyleCop.Analyzers.OrderingRules
         private static readonly ImmutableArray<SyntaxKind> TypeDeclarationKinds =
             ImmutableArray.Create(SyntaxKind.ClassDeclaration, SyntaxKind.StructDeclaration, SyntaxKind.InterfaceDeclaration);
 
-        // extern alias and usings are missing here because the compiler itself is enforcing the right order.
-        private static readonly ImmutableArray<SyntaxKind> OuterOrder = ImmutableArray.Create(
-            SyntaxKind.NamespaceDeclaration,
-            SyntaxKind.DelegateDeclaration,
-            SyntaxKind.EnumDeclaration,
-            SyntaxKind.InterfaceDeclaration,
-            SyntaxKind.StructDeclaration,
-            SyntaxKind.ClassDeclaration);
-
-        private static readonly ImmutableArray<SyntaxKind> TypeMemberOrder = ImmutableArray.Create(
-            SyntaxKind.FieldDeclaration,
-            SyntaxKind.ConstructorDeclaration,
-            SyntaxKind.DestructorDeclaration,
-            SyntaxKind.DelegateDeclaration,
-            SyntaxKind.EventDeclaration,
-            SyntaxKind.EnumDeclaration,
-            SyntaxKind.InterfaceDeclaration,
-            SyntaxKind.PropertyDeclaration,
-            SyntaxKind.IndexerDeclaration,
-            SyntaxKind.ConversionOperatorDeclaration,
-            SyntaxKind.OperatorDeclaration,
-            SyntaxKind.MethodDeclaration,
-            SyntaxKind.StructDeclaration,
-            SyntaxKind.ClassDeclaration);
-
         private static readonly Dictionary<SyntaxKind, string> MemberNames = new Dictionary<SyntaxKind, string>
         {
             [SyntaxKind.NamespaceDeclaration] = "namespace",
@@ -200,7 +175,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
             var typeDeclaration = (TypeDeclarationSyntax)context.Node;
 
-            HandleMemberList(context, elementOrder, kindIndex, typeDeclaration.Members, TypeMemberOrder);
+            HandleMemberList(context, elementOrder, kindIndex, typeDeclaration.Members, settings.OrderingRules.KindOrder.TypeDeclaration);
         }
 
         private static void HandleCompilationUnit(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
@@ -214,7 +189,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
             var compilationUnit = (CompilationUnitSyntax)context.Node;
 
-            HandleMemberList(context, elementOrder, kindIndex, compilationUnit.Members, OuterOrder);
+            HandleMemberList(context, elementOrder, kindIndex, compilationUnit.Members, settings.OrderingRules.KindOrder.CompilationUnit);
         }
 
         private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
@@ -228,7 +203,7 @@ namespace StyleCop.Analyzers.OrderingRules
 
             var compilationUnit = (NamespaceDeclarationSyntax)context.Node;
 
-            HandleMemberList(context, elementOrder, kindIndex, compilationUnit.Members, OuterOrder);
+            HandleMemberList(context, elementOrder, kindIndex, compilationUnit.Members, settings.OrderingRules.KindOrder.NamespaceDeclaration);
         }
 
         private static void HandleMemberList(SyntaxNodeAnalysisContext context, ImmutableArray<OrderingTrait> elementOrder, int kindIndex, SyntaxList<MemberDeclarationSyntax> members, ImmutableArray<SyntaxKind> order)
@@ -288,15 +263,28 @@ namespace StyleCop.Analyzers.OrderingRules
 
                 var elementSyntaxKind = members[i].Kind();
                 elementSyntaxKind = elementSyntaxKind == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : elementSyntaxKind;
-                int index = order.IndexOf(elementSyntaxKind);
-
-                var nextElementSyntaxKind = members[i + 1].Kind();
-                nextElementSyntaxKind = nextElementSyntaxKind == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : nextElementSyntaxKind;
-                int nextIndex = order.IndexOf(nextElementSyntaxKind);
-
-                if (index > nextIndex)
+                var index = order.IndexOf(elementSyntaxKind);
+                if (index < 0)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(members[i + 1]), MemberNames[nextElementSyntaxKind], MemberNames[elementSyntaxKind]));
+                    continue;
+                }
+
+                for (var j = 1; i + j < members.Count; j++)
+                {
+                    var nextElementSyntaxKind = members[i + j].Kind();
+                    nextElementSyntaxKind = nextElementSyntaxKind == SyntaxKind.EventFieldDeclaration ? SyntaxKind.EventDeclaration : nextElementSyntaxKind;
+                    var nextIndex = order.IndexOf(nextElementSyntaxKind);
+                    if (nextIndex < 0)
+                    {
+                        continue;
+                    }
+
+                    if (index > nextIndex)
+                    {
+                        context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(members[i + 1]), MemberNames[nextElementSyntaxKind], MemberNames[elementSyntaxKind]));
+                    }
+
+                    break;
                 }
             }
         }

@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
-    using System.Collections.Generic;
     using System.Collections.Immutable;
     using LightJson;
 
@@ -21,6 +20,11 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// This is the backing field for the <see cref="ElementOrder"/> property.
         /// </summary>
         private readonly ImmutableArray<OrderingTrait>.Builder elementOrder;
+
+        /// <summary>
+        /// This is the backing field for the <see cref="KindOrder"/> property.
+        /// </summary>
+        private readonly KindOrderingSettings kindOrder;
 
         /// <summary>
         /// This is the backing field for the <see cref="SystemUsingDirectivesFirst"/> property.
@@ -43,6 +47,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         protected internal OrderingSettings()
         {
             this.elementOrder = ImmutableArray.CreateBuilder<OrderingTrait>();
+            this.kindOrder = new KindOrderingSettings();
             this.systemUsingDirectivesFirst = true;
             this.usingDirectivesPlacement = UsingDirectivesPlacement.InsideNamespace;
             this.blankLinesBetweenUsingGroups = OptionSetting.Allow;
@@ -66,6 +71,11 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                         this.elementOrder.Add(value.ToEnumValue<OrderingTrait>(kvp.Key));
                     }
 
+                    break;
+
+                case "kindOrder":
+                    kvp.AssertIsObject();
+                    this.kindOrder = new KindOrderingSettings(kvp.Value.AsJsonObject);
                     break;
 
                 case "systemUsingDirectivesFirst":
@@ -93,6 +103,9 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                 return this.elementOrder.Count > 0 ? this.elementOrder.ToImmutable() : DefaultElementOrder;
             }
         }
+
+        public KindOrderingSettings KindOrder =>
+            this.kindOrder;
 
         public bool SystemUsingDirectivesFirst =>
             this.systemUsingDirectivesFirst;

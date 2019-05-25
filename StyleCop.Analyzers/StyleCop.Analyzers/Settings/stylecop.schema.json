@@ -81,6 +81,104 @@
               },
               "uniqueItems": true
             },
+            "kindOrder": {
+              "type": "object",
+              "description": "Specifies the kind ordering rules (SA1201)",
+              "additionalProperties": false,
+              "properties": {
+                "compilationUnit": {
+                  "type": "array",
+                  "description": "Specifies the kinds used for ordering elements within a document, along with their precedence.",
+                  "default": [
+                    "namespace",
+                    "delegate",
+                    "enum",
+                    "interface",
+                    "struct",
+                    "class"
+                  ],
+                  "items": {
+                    "type": "string",
+                    "description": "",
+                    "enum": [
+                      "namespace",
+                      "delegate",
+                      "enum",
+                      "interface",
+                      "struct",
+                      "class"
+                    ]
+                  },
+                  "uniqueItems": true
+                },
+                "namespaceDeclaration": {
+                  "type": "array",
+                  "description": "Specifies the kinds used for ordering elements within a namespace, along with their precedence.",
+                  "default": [
+                    "namespace",
+                    "delegate",
+                    "enum",
+                    "interface",
+                    "struct",
+                    "class"
+                  ],
+                  "items": {
+                    "type": "string",
+                    "description": "",
+                    "enum": [
+                      "namespace",
+                      "delegate",
+                      "enum",
+                      "interface",
+                      "struct",
+                      "class"
+                    ]
+                  },
+                  "uniqueItems": true
+                },
+                "typeDeclaration": {
+                  "type": "array",
+                  "description": "Specifies the kinds used for ordering elements within a type (class, struct, or interface), along with their precedence.",
+                  "default": [
+                    "field",
+                    "constructor",
+                    "destructor",
+                    "delegate",
+                    "event",
+                    "enum",
+                    "interface",
+                    "property",
+                    "indexer",
+                    "conversionOperator",
+                    "operator",
+                    "method",
+                    "struct",
+                    "class"
+                  ],
+                  "items": {
+                    "type": "string",
+                    "description": "",
+                    "enum": [
+                      "field",
+                      "constructor",
+                      "destructor",
+                      "delegate",
+                      "event",
+                      "enum",
+                      "interface",
+                      "property",
+                      "indexer",
+                      "conversionOperator",
+                      "operator",
+                      "method",
+                      "struct",
+                      "class"
+                    ]
+                  },
+                  "uniqueItems": true
+                }
+              }
+            },
             "systemUsingDirectivesFirst": {
               "type": "boolean",
               "description": "When true, System using directives should be placed before other using directives.",
