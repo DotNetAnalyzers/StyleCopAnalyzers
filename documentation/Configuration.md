@@ -202,7 +202,7 @@ The following properties are used to configure kind ordering in StyleCop Analyze
 | `kindOrder.namespaceDeclaration` | `[ "namespace", "delegate", "enum", "interface", "struct", "class" ]` | x.x.x | Specifies the kinds used for ordering elements within a namespace, along with their precedence |
 | `kindOrder.typeDeclaration` | `[ "field", "constructor", "destructor", "delegate", "event", "enum", "interface", "property", "indexer", "conversionOperator", "operator", "method", "struct", "class" ]` | x.x.x | Specifies the kinds used for ordering elements within a type (class, struct, or interface), along with their precedence |
 
-The `kindOrder` property has multiple arrays of element kinds. The ordering rule SA1201 evaluates these kinds in the order they are defined to identify ordering problems. Any kinds which are omitted from the array are ignored. The following kinds are supported:
+The `kindOrder` property has three array properties of element kinds (shown above) - one for each declaration scope. The ordering rule SA1201 evaluates these kinds in the order they are defined to identify ordering problems. Any kinds which are omitted from the array are ignored. The following kinds are supported:
 
 * `namespace`
 * `delegate`

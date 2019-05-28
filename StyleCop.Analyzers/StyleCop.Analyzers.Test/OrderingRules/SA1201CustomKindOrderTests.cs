@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
+using System.Linq;
+
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
     using System.Collections.Generic;
@@ -57,12 +59,9 @@ namespace TestNamespace
     }
 }
 ";
-            var diagnosticResult = Diagnostic()
-                .WithLocation(10, 16)
-                .WithArguments("constructor", "property");
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None, settings).ConfigureAwait(false);
-            await VerifyCSharpDiagnosticAsync(testCode, diagnosticResult, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, Diagnostic(10, 16, "constructor", "property"), CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -95,12 +94,9 @@ namespace TestNamespace
     }
 }
 ";
-            var diagnosticResult = Diagnostic()
-                .WithLocation(8, 19)
-                .WithArguments("struct", "class");
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None, settings).ConfigureAwait(false);
-            await VerifyCSharpDiagnosticAsync(testCode, diagnosticResult, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, Diagnostic(8, 19, "struct", "class"), CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -130,31 +126,93 @@ namespace TestNamespace
     {
     }
 ";
-            var diagnosticResult = Diagnostic()
-                .WithLocation(6, 19)
-                .WithArguments("struct", "class");
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None, settings).ConfigureAwait(false);
-            await VerifyCSharpDiagnosticAsync(testCode, diagnosticResult, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(testCode, Diagnostic(6, 19, "struct", "class"), CancellationToken.None).ConfigureAwait(false);
         }
 
-        public async Task Test
-
-        private static DiagnosticResult Diagnostic()
+        /// <summary>
+        /// Verifies that a custom kind order within a compilation unit produces expected diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestOmittedKindsAreIgnoredAsync()
         {
-            return StyleCopDiagnosticVerifier<SA1201ElementsMustAppearInTheCorrectOrder>.Diagnostic();
-        }
+            var settings = @"
+{
+  ""settings"": {
+    ""orderingRules"": {
+      ""kindOrder"": {
+        ""typeDeclaration"": [
+          ""constructor"",
+          ""destructor"",
+          ""delegate"",
+          ""event"",
+          ""enum"",
+          ""interface"",
+          ""property"",
+          ""indexer"",
+          ""conversionOperator"",
+          ""operator"",
+          ""method"",
+          ""struct"",
+          ""class""
+        ]
+      }
+    }
+  }
+}
+";
+            var fieldDeclaration = @"        private int intField;";
+            var testCodeFormat = @"
+namespace TestNamespace
+{{
+    public class TestClass
+    {{
+        {0}
 
-        private static Task VerifyCSharpDiagnosticAsync(string source, DiagnosticResult expected, CancellationToken cancellationToken, string settings = null)
-        {
-            var test = new StyleCopDiagnosticVerifier<SA1201ElementsMustAppearInTheCorrectOrder>.CSharpTest
+        public TestClass()
+        {{
+        }}
+
+        {1}
+
+        public int IntProperty {{ get; set; }}
+
+        {2}
+
+        public int IntMethod()
+        {{
+            return 0;
+        }}
+
+        {3}
+    }}
+}}
+";
+            var tests = new[]
             {
-                TestCode = source,
-                Settings = settings,
+                (string.Format(testCodeFormat, fieldDeclaration, string.Empty, string.Empty, string.Empty), DiagnosticResult.EmptyDiagnosticResults),
+                (string.Format(testCodeFormat, string.Empty, fieldDeclaration, string.Empty, string.Empty), Diagnostic(12, 29, "field", "constructor")),
+                (string.Format(testCodeFormat, string.Empty, string.Empty, fieldDeclaration, string.Empty), Diagnostic(16, 29, "field", "property")),
+                (string.Format(testCodeFormat, string.Empty, string.Empty, string.Empty, fieldDeclaration), Diagnostic(23, 29, "field", "method")),
             };
 
-            test.ExpectedDiagnostics.Add(expected);
-            return test.RunAsync(cancellationToken);
+            foreach (var (testCode, expectedResult) in tests)
+            {
+                await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None, settings).ConfigureAwait(false);
+                await VerifyCSharpDiagnosticAsync(testCode, expectedResult, CancellationToken.None).ConfigureAwait(false);
+            }
+        }
+
+        private static IEnumerable<DiagnosticResult> Diagnostic(int line, int column, params object[] arguments)
+        {
+            var diagnostic = StyleCopDiagnosticVerifier<SA1201ElementsMustAppearInTheCorrectOrder>
+                .Diagnostic()
+                .WithLocation(line, column)
+                .WithArguments(arguments);
+
+            return Enumerable.Repeat(diagnostic, 1);
         }
 
         private static Task VerifyCSharpDiagnosticAsync(string source, IEnumerable<DiagnosticResult> expected, CancellationToken cancellationToken, string settings = null)
