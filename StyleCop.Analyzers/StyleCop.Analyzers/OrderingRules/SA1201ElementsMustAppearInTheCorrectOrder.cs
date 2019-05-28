@@ -20,8 +20,8 @@ namespace StyleCop.Analyzers.OrderingRules
     /// <para>A violation of this rule occurs when the code elements within a file do not follow a standard ordering
     /// scheme.</para>
     ///
-    /// <para>To comply with this rule, elements at the file root level or within a namespace should be positioned in the
-    /// following order:</para>
+    /// <para>To comply with this rule, elements at the file root level or within a namespace should be (by default)
+    /// positioned in the following order:</para>
     ///
     /// <list type="bullet">
     /// <item><description>Extern alias directives</description></item>
@@ -34,7 +34,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// <item><description>Classes</description></item>
     /// </list>
     ///
-    /// <para>Within a class, struct, or interface, elements should be positioned in the following order:</para>
+    /// <para>Within a class, struct, or interface, elements should be (by default) positioned in the following order:</para>
     ///
     /// <list type="bullet">
     /// <item><description>Fields</description></item>
@@ -52,7 +52,7 @@ namespace StyleCop.Analyzers.OrderingRules
     /// </list>
     ///
     /// <para>Complying with a standard ordering scheme based on element type can increase the readability and
-    /// maintainability of the file and encourage code reuse.</para>
+    /// maintainability of the file and encourage code reuse. The ordering above can be customized with in the stylecop.json file.</para>
     ///
     /// <para>When implementing an interface, it is sometimes desirable to group all members of the interface next to
     /// one another. This will sometimes require violating this rule, if the interface contains elements of different

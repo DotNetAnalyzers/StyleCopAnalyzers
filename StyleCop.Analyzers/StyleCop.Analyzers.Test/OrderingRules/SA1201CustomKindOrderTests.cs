@@ -138,6 +138,8 @@ namespace TestNamespace
             await VerifyCSharpDiagnosticAsync(testCode, diagnosticResult, CancellationToken.None).ConfigureAwait(false);
         }
 
+        public async Task Test
+
         private static DiagnosticResult Diagnostic()
         {
             return StyleCopDiagnosticVerifier<SA1201ElementsMustAppearInTheCorrectOrder>.Diagnostic();
