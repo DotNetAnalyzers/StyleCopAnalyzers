@@ -36,3 +36,4 @@ artifacts:
 - path: 'StyleCop.Analyzers\StyleCop.Analyzers.Vsix\bin\Release\net452\*.vsix'
 - path: 'StyleCop.Analyzers\StyleCop.Analyzers.CodeFixes\bin\Release\*.nupkg'
 - path: 'StyleCop.Analyzers.Status.json'
+- path: 'build\OpenCover.Reports\OpenCover.StyleCopAnalyzers.xml'
