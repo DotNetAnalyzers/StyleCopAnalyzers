@@ -184,7 +184,6 @@ namespace StyleCop.Analyzers.DocumentationRules
                 list = BuildStandardTextSyntaxList(typeDeclaration, standardText[0], standardText[1] + trailingString);
             }
 
-            
             newContent = newContent.InsertRange(0, list);
 
             newContent = RemoveTrailingEmptyLines(newContent);
