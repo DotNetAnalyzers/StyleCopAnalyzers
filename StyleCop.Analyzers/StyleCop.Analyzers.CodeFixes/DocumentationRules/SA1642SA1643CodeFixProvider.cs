@@ -119,15 +119,7 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         internal static SyntaxList<XmlNodeSyntax> BuildStandardTextSyntaxList(BaseTypeDeclarationSyntax typeDeclaration, string preText, string postText)
         {
-            TypeParameterListSyntax typeParameterList;
-            if (typeDeclaration is ClassDeclarationSyntax classDeclaration)
-            {
-                typeParameterList = classDeclaration.TypeParameterList;
-            }
-            else
-            {
-                typeParameterList = (typeDeclaration as StructDeclarationSyntax)?.TypeParameterList;
-            }
+            TypeParameterListSyntax typeParameterList = GetTypeParameterList(typeDeclaration);
 
             return XmlSyntaxFactory.List(
                 XmlSyntaxFactory.Text(preText),
@@ -137,21 +129,23 @@ namespace StyleCop.Analyzers.DocumentationRules
 
         internal static SyntaxList<XmlNodeSyntax> BuildStandardTextSyntaxList(BaseTypeDeclarationSyntax typeDeclaration, string newLineText, string preText, string postText)
         {
-            TypeParameterListSyntax typeParameterList;
-            if (typeDeclaration is ClassDeclarationSyntax classDeclaration)
-            {
-                typeParameterList = classDeclaration.TypeParameterList;
-            }
-            else
-            {
-                typeParameterList = (typeDeclaration as StructDeclarationSyntax)?.TypeParameterList;
-            }
+            TypeParameterListSyntax typeParameterList = GetTypeParameterList(typeDeclaration);
 
             return XmlSyntaxFactory.List(
                 XmlSyntaxFactory.NewLine(newLineText),
                 XmlSyntaxFactory.Text(preText),
                 BuildSeeElement(typeDeclaration.Identifier, typeParameterList),
                 XmlSyntaxFactory.Text(postText.EndsWith(".") ? postText : (postText + ".")));
+        }
+
+        private static TypeParameterListSyntax GetTypeParameterList(BaseTypeDeclarationSyntax typeDeclaration)
+        {
+            if (typeDeclaration is ClassDeclarationSyntax classDeclaration)
+            {
+                return classDeclaration.TypeParameterList;
+            }
+
+            return (typeDeclaration as StructDeclarationSyntax)?.TypeParameterList;
         }
 
         private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, XmlElementSyntax node, CancellationToken cancellationToken)
