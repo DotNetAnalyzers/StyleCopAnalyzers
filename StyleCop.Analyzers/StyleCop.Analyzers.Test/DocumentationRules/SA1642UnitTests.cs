@@ -939,8 +939,7 @@ public class TestClass
 {{
     public class ClassName
     {{
-        /// <summary>
-        /// Initializes a new instance of the <see cref=""ClassName""/> class.</summary>
+        /// <summary>Initializes a new instance of the <see cref=""ClassName""/> class.</summary>
         public ClassName()
         {{
         }}
@@ -948,6 +947,30 @@ public class TestClass
 }}";
 
             DiagnosticResult expected = Diagnostic().WithLocation(5, 13);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2963, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2963")]
+        public async Task TestConstructorNoCRefDocumentationSingleLineAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    /// <summary>Initializes a new instance of the TestClass class.</summary>
+    public TestClass() { }
+}
+";
+
+            var fixedCode = @"
+public class TestClass
+{
+    /// <summary>Initializes a new instance of the <see cref=""TestClass""/> class.</summary>
+    public TestClass() { }
+}
+";
+
+            var expected = Diagnostic().WithLocation(4, 9);
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 

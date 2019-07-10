@@ -117,17 +117,19 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
         }
 
+        internal static SyntaxList<XmlNodeSyntax> BuildStandardTextSyntaxList(BaseTypeDeclarationSyntax typeDeclaration, string preText, string postText)
+        {
+            TypeParameterListSyntax typeParameterList = GetTypeParameterList(typeDeclaration);
+
+            return XmlSyntaxFactory.List(
+                XmlSyntaxFactory.Text(preText),
+                BuildSeeElement(typeDeclaration.Identifier, typeParameterList),
+                XmlSyntaxFactory.Text(postText.EndsWith(".") ? postText : (postText + ".")));
+        }
+
         internal static SyntaxList<XmlNodeSyntax> BuildStandardTextSyntaxList(BaseTypeDeclarationSyntax typeDeclaration, string newLineText, string preText, string postText)
         {
-            TypeParameterListSyntax typeParameterList;
-            if (typeDeclaration is ClassDeclarationSyntax classDeclaration)
-            {
-                typeParameterList = classDeclaration.TypeParameterList;
-            }
-            else
-            {
-                typeParameterList = (typeDeclaration as StructDeclarationSyntax)?.TypeParameterList;
-            }
+            TypeParameterListSyntax typeParameterList = GetTypeParameterList(typeDeclaration);
 
             return XmlSyntaxFactory.List(
                 XmlSyntaxFactory.NewLine(newLineText),
@@ -136,14 +138,22 @@ namespace StyleCop.Analyzers.DocumentationRules
                 XmlSyntaxFactory.Text(postText.EndsWith(".") ? postText : (postText + ".")));
         }
 
+        private static TypeParameterListSyntax GetTypeParameterList(BaseTypeDeclarationSyntax typeDeclaration)
+        {
+            if (typeDeclaration is ClassDeclarationSyntax classDeclaration)
+            {
+                return classDeclaration.TypeParameterList;
+            }
+
+            return (typeDeclaration as StructDeclarationSyntax)?.TypeParameterList;
+        }
+
         private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, XmlElementSyntax node, CancellationToken cancellationToken)
         {
             var typeDeclaration = node.FirstAncestorOrSelf<BaseTypeDeclarationSyntax>();
             var declarationSyntax = node.FirstAncestorOrSelf<BaseMethodDeclarationSyntax>();
 
             var standardText = GenerateStandardText(document, declarationSyntax, typeDeclaration, cancellationToken);
-
-            string newLineText = document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp);
 
             string trailingString = string.Empty;
 
@@ -157,7 +167,17 @@ namespace StyleCop.Analyzers.DocumentationRules
                 }
             }
 
-            var list = BuildStandardTextSyntaxList(typeDeclaration, newLineText, standardText[0], standardText[1] + trailingString);
+            SyntaxList<XmlNodeSyntax> list;
+            if (IsMultiLine(node))
+            {
+                string newLineText = document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp);
+                list = BuildStandardTextSyntaxList(typeDeclaration, newLineText, standardText[0], standardText[1] + trailingString);
+            }
+            else
+            {
+                list = BuildStandardTextSyntaxList(typeDeclaration, standardText[0], standardText[1] + trailingString);
+            }
+
             newContent = newContent.InsertRange(0, list);
 
             newContent = RemoveTrailingEmptyLines(newContent);
@@ -169,6 +189,12 @@ namespace StyleCop.Analyzers.DocumentationRules
             var newDocument = document.WithSyntaxRoot(newRoot);
 
             return Task.FromResult(newDocument);
+        }
+
+        private static bool IsMultiLine(XmlElementSyntax node)
+        {
+            var lineSpan = node.GetLineSpan();
+            return lineSpan.StartLinePosition.Line != lineSpan.EndLinePosition.Line;
         }
 
         private static Task<Document> GetTransformedDocumentAsync(Document document, SyntaxNode root, XmlEmptyElementSyntax node)
