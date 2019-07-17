@@ -30,9 +30,9 @@ namespace StyleCop.Analyzers.OrderingRules
         /// The ID for diagnostics produced by the <see cref="SA1217UsingStaticDirectivesMustBeOrderedAlphabetically"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1217";
-        private const string Title = "Using static directives should be ordered alphabetically";
-        private const string MessageFormat = "The using static directive for '{0}' should appear after the using static directive for '{1}'";
-        private const string Description = "All using static directives should be ordered alphabetically.";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(OrderingResources.SA1217Title), OrderingResources.ResourceManager, typeof(OrderingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(OrderingResources.SA1217MessageFormat), OrderingResources.ResourceManager, typeof(OrderingResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(OrderingResources.SA1217Description), OrderingResources.ResourceManager, typeof(OrderingResources));
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1217.md";
 
         private static readonly DiagnosticDescriptor Descriptor =

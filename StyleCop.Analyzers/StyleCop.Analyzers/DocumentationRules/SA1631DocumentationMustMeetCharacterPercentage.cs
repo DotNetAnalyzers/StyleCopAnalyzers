@@ -43,9 +43,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1631";
-        private const string Title = "Documentation should meet character percentage";
-        private const string MessageFormat = "TODO: Message format";
-        private const string Description = "A section of the Xml header documentation for a C# element does not contain enough alphabetic characters.";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1631Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1631MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1631Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1631.md";
 
         private static readonly DiagnosticDescriptor Descriptor =

@@ -72,9 +72,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1605";
-        private const string Title = "Partial element documentation should have summary";
-        private const string MessageFormat = "Partial element documentation should have summary";
-        private const string Description = "The <summary> or <content> tag within the documentation header for a C# code element is missing or empty.";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1605Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1605MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1605Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1605.md";
 
         private static readonly DiagnosticDescriptor Descriptor =

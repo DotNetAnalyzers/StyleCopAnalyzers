@@ -46,9 +46,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// </summary>
         internal const string NoCodeFixKey = "NoCodeFix";
 
-        private const string Title = "Do not use placeholder elements";
-        private const string MessageFormat = "Do not use placeholder elements";
-        private const string Description = "The element documentation contains a <placeholder> element.";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1651Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1651MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1651Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1651.md";
 
         private static readonly DiagnosticDescriptor Descriptor =

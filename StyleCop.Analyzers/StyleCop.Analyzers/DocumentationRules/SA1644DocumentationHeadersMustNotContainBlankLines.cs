@@ -60,9 +60,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1644";
-        private const string Title = "Documentation headers should not contain blank lines";
-        private const string MessageFormat = "TODO: Message format";
-        private const string Description = "A section within the XML documentation header for a C# element contains blank lines.";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1644Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1644MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1644Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1644.md";
 
         private static readonly DiagnosticDescriptor Descriptor =

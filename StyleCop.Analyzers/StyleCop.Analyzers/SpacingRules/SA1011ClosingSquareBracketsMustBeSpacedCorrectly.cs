@@ -33,9 +33,9 @@ namespace StyleCop.Analyzers.SpacingRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1011";
-        private const string Title = "Closing square brackets should be spaced correctly";
-        private const string MessageFormat = "Closing square bracket should{0} be {1} by a space";
-        private const string Description = "A closing square bracket within a C# statement is not spaced correctly.";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1011Title), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(SpacingResources.SA1011MessageFormat), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1011Description), SpacingResources.ResourceManager, typeof(SpacingResources));
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1011.md";
 
         private static readonly DiagnosticDescriptor Descriptor =

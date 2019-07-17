@@ -32,9 +32,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <see cref="SA1613ElementParameterDocumentationMustDeclareParameterName"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1613";
-        private const string Title = "Element parameter documentation should declare parameter name";
-        private const string MessageFormat = "Element parameter documentation should declare parameter name";
-        private const string Description = "A <param> tag within a C# element's documentation header is missing a name attribute containing the name of the parameter.";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1613Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1613MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1613Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1613.md";
 
         private static readonly DiagnosticDescriptor Descriptor =

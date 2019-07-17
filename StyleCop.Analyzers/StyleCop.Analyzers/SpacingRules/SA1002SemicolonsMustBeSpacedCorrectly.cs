@@ -26,9 +26,9 @@ namespace StyleCop.Analyzers.SpacingRules
         /// The ID for diagnostics produced by the <see cref="SA1002SemicolonsMustBeSpacedCorrectly"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1002";
-        private const string Title = "Semicolons should be spaced correctly";
-        private const string MessageFormat = "Semicolons should{0} be {1} by a space";
-        private const string Description = "The spacing around a semicolon is incorrect, within a C# code file.";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1002Title), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(SpacingResources.SA1002MessageFormat), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1002Description), SpacingResources.ResourceManager, typeof(SpacingResources));
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1002.md";
 
         private static readonly DiagnosticDescriptor Descriptor =

@@ -44,9 +44,9 @@ namespace StyleCop.Analyzers.OrderingRules
         /// The ID for diagnostics produced by the <see cref="SA1213EventAccessorsMustFollowOrder"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1213";
-        private const string Title = "Event accessors should follow order";
-        private const string MessageFormat = "Event accessors should follow order";
-        private const string Description = "An add accessor appears after a remove accessor within an event.";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(OrderingResources.SA1213Title), OrderingResources.ResourceManager, typeof(OrderingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(OrderingResources.SA1213MessageFormat), OrderingResources.ResourceManager, typeof(OrderingResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(OrderingResources.SA1213Description), OrderingResources.ResourceManager, typeof(OrderingResources));
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1213.md";
 
         private static readonly DiagnosticDescriptor Descriptor =

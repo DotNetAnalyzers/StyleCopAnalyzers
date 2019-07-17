@@ -53,9 +53,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <see cref="SA1626SingleLineCommentsMustNotUseDocumentationStyleSlashes"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1626";
-        private const string Title = "Single-line comments should not use documentation style slashes";
-        private const string MessageFormat = "Single-line comments should not use documentation style slashes";
-        private const string Description = "The C# code contains a single-line comment which begins with three forward slashes in a row.";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1626Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1626MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1626Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1626.md";
 
         private static readonly DiagnosticDescriptor Descriptor =

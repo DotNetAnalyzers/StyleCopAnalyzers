@@ -28,9 +28,9 @@ namespace StyleCop.Analyzers.OrderingRules
         /// <see cref="SA1209UsingAliasDirectivesMustBePlacedAfterOtherUsingDirectives"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1209";
-        private const string Title = "Using alias directives should be placed after other using directives";
-        private const string MessageFormat = "Using alias directives should be placed after all using namespace directives";
-        private const string Description = "A using-alias directive is positioned before a regular using directive.";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(OrderingResources.SA1209Title), OrderingResources.ResourceManager, typeof(OrderingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(OrderingResources.SA1209MessageFormat), OrderingResources.ResourceManager, typeof(OrderingResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(OrderingResources.SA1209Description), OrderingResources.ResourceManager, typeof(OrderingResources));
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1209.md";
 
         private static readonly DiagnosticDescriptor Descriptor =

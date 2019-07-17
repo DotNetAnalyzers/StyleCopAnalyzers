@@ -29,9 +29,9 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// <see cref="SA1412StoreFilesAsUtf8"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1412";
-        private const string Title = "Store files as UTF-8 with byte order mark";
-        private const string MessageFormat = "Store files as UTF-8 with byte order mark";
-        private const string Description = "Source files should be saved using the UTF-8 encoding with a byte order mark";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(MaintainabilityResources.SA1412Title), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(MaintainabilityResources.SA1412MessageFormat), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(MaintainabilityResources.SA1412Description), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1412.md";
 
         private static readonly DiagnosticDescriptor Descriptor =

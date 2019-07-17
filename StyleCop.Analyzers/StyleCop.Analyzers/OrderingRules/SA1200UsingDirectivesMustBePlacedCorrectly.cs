@@ -163,7 +163,7 @@ namespace StyleCop.Analyzers.OrderingRules
         internal static readonly DiagnosticDescriptor DescriptorOutside =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatOutside, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, DescriptionOutside, HelpLink);
 
-        private const string Title = "Using directives should be placed correctly";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(OrderingResources.SA1200Title), OrderingResources.ResourceManager, typeof(OrderingResources));
         private const string MessageFormatInside = "Using directive should appear within a namespace declaration";
         private const string DescriptionInside = "A C# using directive is placed outside of a namespace element.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1200.md";

@@ -32,9 +32,9 @@ namespace StyleCop.Analyzers.NamingRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1307";
-        private const string Title = "Accessible fields should begin with upper-case letter";
-        private const string MessageFormat = "Field '{0}' should begin with upper-case letter";
-        private const string Description = "The name of a public or internal field in C# does not begin with an upper-case letter.";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(NamingResources.SA1307Title), NamingResources.ResourceManager, typeof(NamingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(NamingResources.SA1307MessageFormat), NamingResources.ResourceManager, typeof(NamingResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(NamingResources.SA1307Description), NamingResources.ResourceManager, typeof(NamingResources));
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1307.md";
 
 #pragma warning disable SA1202 // Elements should be ordered by access

@@ -46,9 +46,9 @@ namespace StyleCop.Analyzers.SpacingRules
         /// <see cref="SA1023DereferenceAndAccessOfSymbolsMustBeSpacedCorrectly"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1023";
-        private const string Title = "Dereference and access of symbols should be spaced correctly";
-        private const string MessageFormat = "Dereference symbol '*' should {0}";
-        private const string Description = "A dereference symbol or an access-of symbol within a C# element is not spaced correctly.";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1023Title), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(SpacingResources.SA1023MessageFormat), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1023Description), SpacingResources.ResourceManager, typeof(SpacingResources));
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1023.md";
 
         private static readonly DiagnosticDescriptor Descriptor =

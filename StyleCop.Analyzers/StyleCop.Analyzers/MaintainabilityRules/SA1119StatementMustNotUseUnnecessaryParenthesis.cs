@@ -55,9 +55,9 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// <see cref="WellKnownDiagnosticTags.Unnecessary"/>.
         /// </summary>
         public const string ParenthesesDiagnosticId = DiagnosticId + "_p";
-        private const string Title = "Statement should not use unnecessary parenthesis";
-        private const string MessageFormat = "Statement should not use unnecessary parenthesis";
-        private const string Description = "A C# statement contains parenthesis which are unnecessary and should be removed.";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(MaintainabilityResources.SA1119Title), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(MaintainabilityResources.SA1119MessageFormat), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(MaintainabilityResources.SA1119Description), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1119.md";
 
         private static readonly DiagnosticDescriptor Descriptor =

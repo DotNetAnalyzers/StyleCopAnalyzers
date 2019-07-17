@@ -120,11 +120,29 @@
   <data name="SA1500CodeFix" xml:space="preserve">
     <value>Align braces</value>
   </data>
+  <data name="SA1500Description" xml:space="preserve">
+    <value>The opening or closing brace within a C# statement, element, or expression is not placed on its own line.</value>
+  </data>
+  <data name="SA1500MessageFormat" xml:space="preserve">
+    <value>Braces for multi-line statements should not share line</value>
+  </data>
+  <data name="SA1500Title" xml:space="preserve">
+    <value>Braces for multi-line statements should not share line</value>
+  </data>
   <data name="SA1501CodeFix" xml:space="preserve">
     <value>Expand single line block</value>
   </data>
   <data name="SA1501CodeFixAll" xml:space="preserve">
     <value>Expand all single line blocks</value>
+  </data>
+  <data name="SA1501Description" xml:space="preserve">
+    <value>A C# statement containing opening and closing braces is written completely on a single line.</value>
+  </data>
+  <data name="SA1501MessageFormat" xml:space="preserve">
+    <value>Statement should not be on a single line</value>
+  </data>
+  <data name="SA1501Title" xml:space="preserve">
+    <value>Statement should not be on a single line</value>
   </data>
   <data name="SA1502CodeFix" xml:space="preserve">
     <value>Expand element</value>
@@ -141,44 +159,161 @@
   <data name="SA1503CodeFix" xml:space="preserve">
     <value>Wrap with braces</value>
   </data>
+  <data name="SA1503Description" xml:space="preserve">
+    <value>The opening and closing braces for a C# statement have been omitted.</value>
+  </data>
+  <data name="SA1503MessageFormat" xml:space="preserve">
+    <value>Braces should not be omitted</value>
+  </data>
+  <data name="SA1503Title" xml:space="preserve">
+    <value>Braces should not be omitted</value>
+  </data>
   <data name="SA1504CodeFixMultipleLines" xml:space="preserve">
     <value>Reformat accessors to multiple lines style</value>
   </data>
   <data name="SA1504CodeFixSingleLine" xml:space="preserve">
     <value>Reformat accessors to single line style</value>
   </data>
+  <data name="SA1504Description" xml:space="preserve">
+    <value>Within a C# property, indexer or event, at least one of the child accessors is written on a single line, and at least one of the child accessors is written across multiple lines.</value>
+  </data>
+  <data name="SA1504MessageFormat" xml:space="preserve">
+    <value>All accessors should be single-line or multi-line</value>
+  </data>
+  <data name="SA1504Title" xml:space="preserve">
+    <value>All accessors should be single-line or multi-line</value>
+  </data>
   <data name="SA1505CodeFix" xml:space="preserve">
     <value>Remove blank lines following this brace</value>
+  </data>
+  <data name="SA1505Description" xml:space="preserve">
+    <value>An opening brace within a C# element, statement, or expression is followed by a blank line.</value>
+  </data>
+  <data name="SA1505MessageFormat" xml:space="preserve">
+    <value>An opening brace should not be followed by a blank line</value>
+  </data>
+  <data name="SA1505Title" xml:space="preserve">
+    <value>Opening braces should not be followed by blank line</value>
   </data>
   <data name="SA1506CodeFix" xml:space="preserve">
     <value>Remove blank line(s) after documentation header</value>
   </data>
+  <data name="SA1506Description" xml:space="preserve">
+    <value>An element documentation header above a C# element is followed by a blank line.</value>
+  </data>
+  <data name="SA1506MessageFormat" xml:space="preserve">
+    <value>Element documentation headers should not be followed by blank line</value>
+  </data>
+  <data name="SA1506Title" xml:space="preserve">
+    <value>Element documentation headers should not be followed by blank line</value>
+  </data>
   <data name="SA1507CodeFix" xml:space="preserve">
     <value>Remove multiple blank lines</value>
+  </data>
+  <data name="SA1507Description" xml:space="preserve">
+    <value>The C# code contains multiple blank lines in a row.</value>
+  </data>
+  <data name="SA1507MessageFormat" xml:space="preserve">
+    <value>Code should not contain multiple blank lines in a row</value>
+  </data>
+  <data name="SA1507Title" xml:space="preserve">
+    <value>Code should not contain multiple blank lines in a row</value>
   </data>
   <data name="SA1508CodeFix" xml:space="preserve">
     <value>Remove blank lines preceding this brace</value>
   </data>
+  <data name="SA1508Description" xml:space="preserve">
+    <value>A closing brace within a C# element, statement, or expression is preceded by a blank line.</value>
+  </data>
+  <data name="SA1508MessageFormat" xml:space="preserve">
+    <value>A closing brace should not be preceded by a blank line</value>
+  </data>
+  <data name="SA1508Title" xml:space="preserve">
+    <value>Closing braces should not be preceded by blank line</value>
+  </data>
   <data name="SA1509CodeFix" xml:space="preserve">
     <value>Remove blank lines preceding this brace</value>
+  </data>
+  <data name="SA1509Description" xml:space="preserve">
+    <value>An opening brace within a C# element, statement, or expression is preceded by a blank line.</value>
+  </data>
+  <data name="SA1509MessageFormat" xml:space="preserve">
+    <value>Opening braces should not be preceded by blank line</value>
+  </data>
+  <data name="SA1509Title" xml:space="preserve">
+    <value>Opening braces should not be preceded by blank line</value>
   </data>
   <data name="SA1510CodeFix" xml:space="preserve">
     <value>Remove blank line before chained statement</value>
   </data>
+  <data name="SA1510Description" xml:space="preserve">
+    <value>Chained C# statements are separated by a blank line.</value>
+  </data>
+  <data name="SA1510MessageFormat" xml:space="preserve">
+    <value>'{0}' statement should not be preceded by a blank line</value>
+  </data>
+  <data name="SA1510Title" xml:space="preserve">
+    <value>Chained statement blocks should not be preceded by blank line</value>
+  </data>
   <data name="SA1511CodeFix" xml:space="preserve">
     <value>Remove blank line before while</value>
+  </data>
+  <data name="SA1511Description" xml:space="preserve">
+    <value>The while footer at the bottom of a do-while statement is separated from the statement by a blank line.</value>
+  </data>
+  <data name="SA1511MessageFormat" xml:space="preserve">
+    <value>While-do footer should not be preceded by blank line</value>
+  </data>
+  <data name="SA1511Title" xml:space="preserve">
+    <value>While-do footer should not be preceded by blank line</value>
   </data>
   <data name="SA1512CodeFix" xml:space="preserve">
     <value>Remove blank line after comment</value>
   </data>
+  <data name="SA1512Description" xml:space="preserve">
+    <value>A single-line comment within C# code is followed by a blank line.</value>
+  </data>
+  <data name="SA1512MessageFormat" xml:space="preserve">
+    <value>Single-line comments should not be followed by blank line</value>
+  </data>
+  <data name="SA1512Title" xml:space="preserve">
+    <value>Single-line comments should not be followed by blank line</value>
+  </data>
   <data name="SA1513CodeFix" xml:space="preserve">
     <value>Insert blank line after brace</value>
+  </data>
+  <data name="SA1513Description" xml:space="preserve">
+    <value>A closing brace within a C# element, statement, or expression is not followed by a blank line.</value>
+  </data>
+  <data name="SA1513MessageFormat" xml:space="preserve">
+    <value>Closing brace should be followed by blank line</value>
+  </data>
+  <data name="SA1513Title" xml:space="preserve">
+    <value>Closing brace should be followed by blank line</value>
   </data>
   <data name="SA1514CodeFix" xml:space="preserve">
     <value>Insert blank line before documentation header</value>
   </data>
+  <data name="SA1514Description" xml:space="preserve">
+    <value>An element documentation header above a C# element is not preceded by a blank line.</value>
+  </data>
+  <data name="SA1514MessageFormat" xml:space="preserve">
+    <value>Element documentation header should be preceded by blank line</value>
+  </data>
+  <data name="SA1514Title" xml:space="preserve">
+    <value>Element documentation header should be preceded by blank line</value>
+  </data>
   <data name="SA1515CodeFix" xml:space="preserve">
     <value>Insert blank line before comment</value>
+  </data>
+  <data name="SA1515Description" xml:space="preserve">
+    <value>A single-line comment within C# code is not preceded by a blank line.</value>
+  </data>
+  <data name="SA1515MessageFormat" xml:space="preserve">
+    <value>Single-line comment should be preceded by blank line</value>
+  </data>
+  <data name="SA1515Title" xml:space="preserve">
+    <value>Single-line comment should be preceded by blank line</value>
   </data>
   <data name="SA1516CodeFixAll" xml:space="preserve">
     <value>Fix blank lines</value>
@@ -213,6 +348,15 @@
   <data name="SA1517CodeFix" xml:space="preserve">
     <value>Remove blank lines at the start of the file</value>
   </data>
+  <data name="SA1517Description" xml:space="preserve">
+    <value>The code file has blank lines at the start.</value>
+  </data>
+  <data name="SA1517MessageFormat" xml:space="preserve">
+    <value>Code should not contain blank lines at start of file</value>
+  </data>
+  <data name="SA1517Title" xml:space="preserve">
+    <value>Code should not contain blank lines at start of file</value>
+  </data>
   <data name="SA1518CodeFix" xml:space="preserve">
     <value>Fix whitespace at the end of the file</value>
   </data>
@@ -236,5 +380,23 @@
   </data>
   <data name="SA1518Title" xml:space="preserve">
     <value>Use line endings correctly at end of file</value>
+  </data>
+  <data name="SA1519Description" xml:space="preserve">
+    <value>The opening and closing braces for a multi-line C# statement have been omitted.</value>
+  </data>
+  <data name="SA1519MessageFormat" xml:space="preserve">
+    <value>Braces should not be omitted from multi-line child statement</value>
+  </data>
+  <data name="SA1519Title" xml:space="preserve">
+    <value>Braces should not be omitted from multi-line child statement</value>
+  </data>
+  <data name="SA1520Description" xml:space="preserve">
+    <value>The opening and closing braces of a chained if/else if/else construct were included for some clauses, but omitted for others.</value>
+  </data>
+  <data name="SA1520MessageFormat" xml:space="preserve">
+    <value>Use braces consistently</value>
+  </data>
+  <data name="SA1520Title" xml:space="preserve">
+    <value>Use braces consistently</value>
   </data>
 </root>

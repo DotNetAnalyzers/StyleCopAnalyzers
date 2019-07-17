@@ -37,9 +37,9 @@ namespace StyleCop.Analyzers.NamingRules
         /// The ID for diagnostics produced by the <see cref="SA1309FieldNamesMustNotBeginWithUnderscore"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1309";
-        private const string Title = "Field names should not begin with underscore";
-        private const string MessageFormat = "Field '{0}' should not begin with an underscore";
-        private const string Description = "A field name in C# begins with an underscore.";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(NamingResources.SA1309Title), NamingResources.ResourceManager, typeof(NamingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(NamingResources.SA1309MessageFormat), NamingResources.ResourceManager, typeof(NamingResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(NamingResources.SA1309Description), NamingResources.ResourceManager, typeof(NamingResources));
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1309.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
