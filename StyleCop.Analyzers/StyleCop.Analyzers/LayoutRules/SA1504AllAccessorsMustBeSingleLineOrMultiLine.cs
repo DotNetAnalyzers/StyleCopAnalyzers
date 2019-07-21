@@ -67,10 +67,10 @@ namespace StyleCop.Analyzers.LayoutRules
         /// </summary>
         public const string DiagnosticId = "SA1504";
 
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1504.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(LayoutResources.SA1504Title), LayoutResources.ResourceManager, typeof(LayoutResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(LayoutResources.SA1504MessageFormat), LayoutResources.ResourceManager, typeof(LayoutResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(LayoutResources.SA1504Description), LayoutResources.ResourceManager, typeof(LayoutResources));
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1504.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

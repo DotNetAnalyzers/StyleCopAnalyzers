@@ -30,10 +30,10 @@ namespace StyleCop.Analyzers.SpacingRules
         /// The ID for diagnostics produced by the <see cref="SA1028CodeMustNotContainTrailingWhitespace"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1028";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1028.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1028Title), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(SpacingResources.SA1028MessageFormat), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1028Description), SpacingResources.ResourceManager, typeof(SpacingResources));
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1028.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink, WellKnownDiagnosticTags.Unnecessary);

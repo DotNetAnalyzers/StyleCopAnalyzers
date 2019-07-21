@@ -34,10 +34,10 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         /// The ID for diagnostics produced by the <see cref="SA1402FileMayOnlyContainASingleType"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1402";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1402.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(MaintainabilityResources.SA1402Title), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(MaintainabilityResources.SA1402MessageFormat), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(MaintainabilityResources.SA1402Description), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1402.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

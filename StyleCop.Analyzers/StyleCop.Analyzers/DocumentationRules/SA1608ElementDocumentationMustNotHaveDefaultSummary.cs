@@ -37,12 +37,13 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1608";
-        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1608Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
-        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1608MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
-        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1608Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1608.md";
 
         private const string DefaultText = "Summary description for";
+
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1608Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1608MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1608Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

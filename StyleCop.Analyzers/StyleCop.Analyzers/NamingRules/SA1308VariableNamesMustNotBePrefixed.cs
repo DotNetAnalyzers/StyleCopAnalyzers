@@ -37,10 +37,10 @@ namespace StyleCop.Analyzers.NamingRules
         /// The ID for diagnostics produced by the <see cref="SA1308VariableNamesMustNotBePrefixed"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1308";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1308.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(NamingResources.SA1308Title), NamingResources.ResourceManager, typeof(NamingResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(NamingResources.SA1308MessageFormat), NamingResources.ResourceManager, typeof(NamingResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(NamingResources.SA1308Description), NamingResources.ResourceManager, typeof(NamingResources));
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1308.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

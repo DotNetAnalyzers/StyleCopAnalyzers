@@ -44,10 +44,10 @@ namespace StyleCop.Analyzers.OrderingRules
         /// The ID for diagnostics produced by the <see cref="SA1212PropertyAccessorsMustFollowOrder"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1212";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1212.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(OrderingResources.SA1212Title), OrderingResources.ResourceManager, typeof(OrderingResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(OrderingResources.SA1212MessageFormat), OrderingResources.ResourceManager, typeof(OrderingResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(OrderingResources.SA1212Description), OrderingResources.ResourceManager, typeof(OrderingResources));
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1212.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

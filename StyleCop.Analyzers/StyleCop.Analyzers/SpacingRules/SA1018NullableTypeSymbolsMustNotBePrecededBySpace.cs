@@ -28,10 +28,10 @@ namespace StyleCop.Analyzers.SpacingRules
         /// analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1018";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1018.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1018Title), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(SpacingResources.SA1018MessageFormat), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1018Description), SpacingResources.ResourceManager, typeof(SpacingResources));
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1018.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);

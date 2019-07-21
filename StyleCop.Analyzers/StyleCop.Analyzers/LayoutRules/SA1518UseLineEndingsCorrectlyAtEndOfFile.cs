@@ -28,6 +28,8 @@ namespace StyleCop.Analyzers.LayoutRules
         /// The ID for diagnostics produced by the <see cref="SA1518UseLineEndingsCorrectlyAtEndOfFile"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1518";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1518.md";
+
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(LayoutResources.SA1518Title), LayoutResources.ResourceManager, typeof(LayoutResources));
 
         private static readonly LocalizableString MessageFormatAllow = new LocalizableResourceString(nameof(LayoutResources.SA1518MessageFormatAllow), LayoutResources.ResourceManager, typeof(LayoutResources));
@@ -36,8 +38,6 @@ namespace StyleCop.Analyzers.LayoutRules
         private static readonly LocalizableString DescriptionRequire = new LocalizableResourceString(nameof(LayoutResources.SA1518DescriptionRequire), LayoutResources.ResourceManager, typeof(LayoutResources));
         private static readonly LocalizableString MessageFormatOmit = new LocalizableResourceString(nameof(LayoutResources.SA1518MessageFormatOmit), LayoutResources.ResourceManager, typeof(LayoutResources));
         private static readonly LocalizableString DescriptionOmit = new LocalizableResourceString(nameof(LayoutResources.SA1518DescriptionOmit), LayoutResources.ResourceManager, typeof(LayoutResources));
-
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1518.md";
 
         private static readonly Action<SyntaxTreeAnalysisContext, StyleCopSettings> SyntaxTreeAction = HandleSyntaxTree;
 

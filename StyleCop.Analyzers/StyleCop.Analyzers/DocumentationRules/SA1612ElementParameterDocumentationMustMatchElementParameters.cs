@@ -32,12 +32,12 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <see cref="SA1612ElementParameterDocumentationMustMatchElementParameters"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1612";
-        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1612Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
-        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1612Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1612.md";
-
         private const string MissingParamForDocumentationMessageFormat = "The parameter '{0}' does not exist.";
         private const string ParamWrongOrderMessageFormat = "The parameter documentation for '{0}' should be at position {1}.";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1612.md";
+
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1612Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1612Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
 
         private static readonly DiagnosticDescriptor MissingParameterDescriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MissingParamForDocumentationMessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
