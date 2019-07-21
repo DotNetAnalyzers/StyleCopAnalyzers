@@ -10,6 +10,7 @@
 
 namespace StyleCop.Analyzers.LayoutRules {
     using System;
+    using System.Reflection;
     
     
     /// <summary>
@@ -39,7 +40,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("StyleCop.Analyzers.LayoutRules.LayoutResources", typeof(LayoutResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("StyleCop.Analyzers.LayoutRules.LayoutResources", typeof(LayoutResources).GetTypeInfo().Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

@@ -10,6 +10,7 @@
 
 namespace StyleCop.Analyzers.DocumentationRules {
     using System;
+    using System.Reflection;
     
     
     /// <summary>
@@ -39,7 +40,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("StyleCop.Analyzers.DocumentationRules.DocumentationResources", typeof(DocumentationResources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("StyleCop.Analyzers.DocumentationRules.DocumentationResources", typeof(DocumentationResources).GetTypeInfo().Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
