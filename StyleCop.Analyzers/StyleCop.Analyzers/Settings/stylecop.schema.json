@@ -130,7 +130,7 @@
             },
             "allowedNamespaceComponentTerms": {
               "type": "array",
-              "description": "Allowed namesapce component terms, such as ones beginning with a lowercase letter.",
+              "description": "Allowed namespace component terms, such as ones beginning with a lowercase letter.",
               "default": [],
               "items": {
                 "type": "string",
