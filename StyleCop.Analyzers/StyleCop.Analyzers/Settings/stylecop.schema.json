@@ -128,6 +128,15 @@
                 "uniqueItems": true
               }
             },
+            "allowedNamespaceComponentTerms": {
+              "type": "array",
+              "description": "Allowed namesapce component terms, such as ones beginning with a lowercase letter.",
+              "default": [],
+              "items": {
+                "type": "string",
+                "uniqueItems": true
+              }
+            },
             "includeInferredTupleElementNames": {
               "type": "boolean",
               "description": "Specifies whether inferred tuple element names will be analyzed as well.",

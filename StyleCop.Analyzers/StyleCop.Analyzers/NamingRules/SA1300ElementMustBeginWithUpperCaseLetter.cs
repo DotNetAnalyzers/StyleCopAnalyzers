@@ -30,6 +30,9 @@ namespace StyleCop.Analyzers.NamingRules
     /// class. A <c>NativeMethods</c> class is any class which contains a name ending in <c>NativeMethods</c>, and is
     /// intended as a placeholder for Win32 or COM wrappers. StyleCop will ignore this violation if the item is placed
     /// within a <c>NativeMethods</c> class.</para>
+    ///
+    /// <para>For namespace components that begin with a small letter, due to branding issues or other reasons, add the
+    /// term to the <c>allowedNamespaceComponentTerms</c> list.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class SA1300ElementMustBeginWithUpperCaseLetter : DiagnosticAnalyzer
