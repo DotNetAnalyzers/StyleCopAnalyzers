@@ -45,6 +45,31 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [Fact]
+        public async Task TestAllowedLowerCaseNamespaceIsNotReportedAsync()
+        {
+            var customTestSettings = @"
+{
+  ""settings"": {
+    ""namingRules"": {
+      ""allowedNamespaceComponentTerms"": [ ""eBay"" ]
+    }
+  }
+}
+";
+
+            var testCode = @"namespace eBay
+{ 
+
+}";
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                Settings = customTestSettings,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestLowerCaseComlicatedNamespaceAsync()
         {
             var testCode = @"namespace test.foo.bar
@@ -65,6 +90,31 @@ namespace StyleCop.Analyzers.Test.NamingRules
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestAllowedLowerCaseComplicatedNamespaceIsNotReportedAsync()
+        {
+            var customTestSettings = @"
+{
+  ""settings"": {
+    ""namingRules"": {
+      ""allowedNamespaceComponentTerms"": [ ""iPod"" ]
+    }
+  }
+}
+";
+
+            var testCode = @"namespace Apple.iPod.Library
+{ 
+
+}";
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                Settings = customTestSettings,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
