@@ -28,7 +28,7 @@ namespace StyleCop.Analyzers.SpacingRules
         /// </summary>
         public const string DiagnosticId = "SA1020";
         private const string Title = "Increment decrement symbols should be spaced correctly";
-        private const string MessageFormat = "{0} symbol '{1}' should not be {2} by a space.";
+        private const string MessageFormat = "{0} symbol '{1}' should not be {2} by a space";
         private const string Description = "An increment or decrement symbol within a C# element is not spaced correctly.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1020.md";
 
