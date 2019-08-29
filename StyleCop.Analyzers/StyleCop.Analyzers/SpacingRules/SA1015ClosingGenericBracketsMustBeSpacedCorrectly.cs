@@ -31,7 +31,7 @@ namespace StyleCop.Analyzers.SpacingRules
         /// </summary>
         public const string DiagnosticId = "SA1015";
         private const string Title = "Closing generic brackets should be spaced correctly";
-        private const string MessageFormat = "Closing generic bracket should{0} be {1} by a space.";
+        private const string MessageFormat = "Closing generic bracket should{0} be {1} by a space";
         private const string Description = "A closing generic bracket within a C# element is not spaced correctly.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1015.md";
 
