@@ -35,7 +35,7 @@ namespace StyleCop.Analyzers.SpacingRules
         /// </summary>
         public const string DiagnosticId = "SA1009";
         private const string Title = "Closing parenthesis should be spaced correctly";
-        private const string MessageFormat = "Closing parenthesis should{0} be {1} by a space.";
+        private const string MessageFormat = "Closing parenthesis should{0} be {1} by a space";
         private const string Description = "A closing parenthesis within a C# statement is not spaced correctly.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1009.md";
 
