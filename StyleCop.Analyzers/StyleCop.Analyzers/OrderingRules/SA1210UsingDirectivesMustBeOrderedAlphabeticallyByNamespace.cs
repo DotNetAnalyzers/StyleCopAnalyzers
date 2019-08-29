@@ -33,7 +33,7 @@ namespace StyleCop.Analyzers.OrderingRules
         /// </summary>
         public const string DiagnosticId = "SA1210";
         private const string Title = "Using directives should be ordered alphabetically by namespace";
-        private const string MessageFormat = "Using directives should be ordered alphabetically by the namespaces.";
+        private const string MessageFormat = "Using directives should be ordered alphabetically by the namespaces";
         private const string Description = "The using directives within a C# code file are not sorted alphabetically by namespace.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1210.md";
 
