@@ -40,7 +40,7 @@ namespace StyleCop.Analyzers.SpacingRules
         /// </summary>
         public const string DiagnosticId = "SA1000";
         private const string Title = "Keywords should be spaced correctly";
-        private const string MessageFormat = "The keyword '{0}' should{1} be followed by a space.";
+        private const string MessageFormat = "The keyword '{0}' should{1} be followed by a space";
         private const string Description = "The spacing around a C# keyword is incorrect.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1000.md";
 
