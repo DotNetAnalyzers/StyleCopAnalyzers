@@ -47,7 +47,7 @@ namespace StyleCop.Analyzers.SpacingRules
         /// </summary>
         public const string DiagnosticId = "SA1023";
         private const string Title = "Dereference and access of symbols should be spaced correctly";
-        private const string MessageFormat = "Dereference symbol '*' should {0}.";
+        private const string MessageFormat = "Dereference symbol '*' should {0}";
         private const string Description = "A dereference symbol or an access-of symbol within a C# element is not spaced correctly.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1023.md";
 
