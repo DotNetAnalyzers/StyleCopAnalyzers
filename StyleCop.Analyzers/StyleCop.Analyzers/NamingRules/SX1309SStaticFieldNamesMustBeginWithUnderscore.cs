@@ -35,9 +35,9 @@ namespace StyleCop.Analyzers.NamingRules
         /// </summary>
         public const string DiagnosticId = "SX1309S";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SX1309S.md";
-        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(NamingResources.SX1309Title), NamingResources.ResourceManager, typeof(NamingResources));
-        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(NamingResources.SX1309MessageFormat), NamingResources.ResourceManager, typeof(NamingResources));
-        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(NamingResources.SX1309Description), NamingResources.ResourceManager, typeof(NamingResources));
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(NamingResources.SX1309STitle), NamingResources.ResourceManager, typeof(NamingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(NamingResources.SX1309SMessageFormat), NamingResources.ResourceManager, typeof(NamingResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(NamingResources.SX1309SDescription), NamingResources.ResourceManager, typeof(NamingResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledAlternative, Description, HelpLink);

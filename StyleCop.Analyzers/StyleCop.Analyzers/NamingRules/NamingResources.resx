@@ -274,12 +274,21 @@
     <value>Tuple element names should use correct casing</value>
   </data>
   <data name="SX1309Description" xml:space="preserve">
-    <value>A static field name in C# does not begin with an underscore.</value>
+    <value>A field name in C# does not begin with an underscore.</value>
   </data>
   <data name="SX1309MessageFormat" xml:space="preserve">
+    <value>Field '{0}' should begin with an underscore</value>
+  </data>
+  <data name="SX1309SDescription" xml:space="preserve">
+    <value>A static field name in C# does not begin with an underscore.</value>
+  </data>
+  <data name="SX1309SMessageFormat" xml:space="preserve">
     <value>Static field '{0}' should begin with an underscore</value>
   </data>
-  <data name="SX1309Title" xml:space="preserve">
+  <data name="SX1309STitle" xml:space="preserve">
     <value>Static field names should begin with underscore</value>
+  </data>
+  <data name="SX1309Title" xml:space="preserve">
+    <value>Field names should begin with underscore</value>
   </data>
 </root>

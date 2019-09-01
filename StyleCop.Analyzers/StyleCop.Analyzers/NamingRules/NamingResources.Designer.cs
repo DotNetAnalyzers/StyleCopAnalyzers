@@ -530,7 +530,7 @@ namespace StyleCop.Analyzers.NamingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A static field name in C# does not begin with an underscore..
+        ///   Looks up a localized string similar to A field name in C# does not begin with an underscore..
         /// </summary>
         internal static string SX1309Description {
             get {
@@ -539,7 +539,7 @@ namespace StyleCop.Analyzers.NamingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Static field &apos;{0}&apos; should begin with an underscore.
+        ///   Looks up a localized string similar to Field &apos;{0}&apos; should begin with an underscore.
         /// </summary>
         internal static string SX1309MessageFormat {
             get {
@@ -548,7 +548,34 @@ namespace StyleCop.Analyzers.NamingRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A static field name in C# does not begin with an underscore..
+        /// </summary>
+        internal static string SX1309SDescription {
+            get {
+                return ResourceManager.GetString("SX1309SDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Static field &apos;{0}&apos; should begin with an underscore.
+        /// </summary>
+        internal static string SX1309SMessageFormat {
+            get {
+                return ResourceManager.GetString("SX1309SMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Static field names should begin with underscore.
+        /// </summary>
+        internal static string SX1309STitle {
+            get {
+                return ResourceManager.GetString("SX1309STitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Field names should begin with underscore.
         /// </summary>
         internal static string SX1309Title {
             get {
