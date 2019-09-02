@@ -434,8 +434,8 @@ See [Microsoft.CodeAnalysis.CSharp release/dev16.3@c955f3c99b5698c906e0700ef691b
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.NullableDirectiveTriviaSyntax.Update(Microsoft.CodeAnalysis.SyntaxToken hashToken, Microsoft.CodeAnalysis.SyntaxToken nullableKeyword, Microsoft.CodeAnalysis.SyntaxToken settingToken, Microsoft.CodeAnalysis.SyntaxToken targetToken, Microsoft.CodeAnalysis.SyntaxToken endOfDirectiveToken, bool isActive) -> Microsoft.CodeAnalysis.CSharp.Syntax.NullableDirectiveTriviaSyntax`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.NullableDirectiveTriviaSyntax.WithTargetToken(Microsoft.CodeAnalysis.SyntaxToken targetToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.NullableDirectiveTriviaSyntax`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.TypeSyntax.IsNotNull.get -> bool`
-* [ ] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.AnnotationsKeyword = 8489 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
-* [ ] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.WarningsKeyword = 8488 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
+* [x] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.AnnotationsKeyword = 8489 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
+* [x] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.WarningsKeyword = 8488 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
 * [ ] `abstract Microsoft.CodeAnalysis.CSharp.Syntax.CommonForEachStatementSyntax.AwaitKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Conversion.IsSwitchExpression.get -> bool`
 * [ ] `Microsoft.CodeAnalysis.CSharp.CSharpCompilationOptions.CSharpCompilationOptions(Microsoft.CodeAnalysis.OutputKind outputKind, bool reportSuppressedDiagnostics, string moduleName, string mainTypeName, string scriptClassName, System.Collections.Generic.IEnumerable<string> usings, Microsoft.CodeAnalysis.OptimizationLevel optimizationLevel, bool checkOverflow, bool allowUnsafe, string cryptoKeyContainer, string cryptoKeyFile, System.Collections.Immutable.ImmutableArray<byte> cryptoPublicKey, bool? delaySign, Microsoft.CodeAnalysis.Platform platform, Microsoft.CodeAnalysis.ReportDiagnostic generalDiagnosticOption, int warningLevel, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, Microsoft.CodeAnalysis.ReportDiagnostic>> specificDiagnosticOptions, bool concurrentBuild, bool deterministic, Microsoft.CodeAnalysis.XmlReferenceResolver xmlReferenceResolver, Microsoft.CodeAnalysis.SourceReferenceResolver sourceReferenceResolver, Microsoft.CodeAnalysis.MetadataReferenceResolver metadataReferenceResolver, Microsoft.CodeAnalysis.AssemblyIdentityComparer assemblyIdentityComparer, Microsoft.CodeAnalysis.StrongNameProvider strongNameProvider, bool publicSign, Microsoft.CodeAnalysis.MetadataImportOptions metadataImportOptions) -> void`
@@ -625,24 +625,24 @@ See [Microsoft.CodeAnalysis.CSharp release/dev16.3@c955f3c99b5698c906e0700ef691b
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.XmlAttributeSyntax.WithEqualsToken(Microsoft.CodeAnalysis.SyntaxToken equalsToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.XmlAttributeSyntax`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.XmlAttributeSyntax.WithName(Microsoft.CodeAnalysis.CSharp.Syntax.XmlNameSyntax name) -> Microsoft.CodeAnalysis.CSharp.Syntax.XmlAttributeSyntax`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.XmlAttributeSyntax.WithStartQuoteToken(Microsoft.CodeAnalysis.SyntaxToken startQuoteToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.XmlAttributeSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.CoalesceAssignmentExpression = 8725 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
-* [ ] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.DiscardPattern = 9024 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
-* [ ] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.DotDotToken = 8222 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
-* [ ] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.EnableKeyword = 8487 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
-* [ ] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.IndexExpression = 8741 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
-* [ ] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.NullableDirectiveTrivia = 9055 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
-* [ ] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.NullableKeyword = 8486 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
-* [ ] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.PositionalPatternClause = 9023 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
-* [ ] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.PropertyPatternClause = 9021 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
-* [ ] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.QuestionQuestionEqualsToken = 8284 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
-* [ ] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.RangeExpression = 8658 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
-* [ ] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.RecursivePattern = 9020 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
-* [ ] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.Subpattern = 9022 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
-* [ ] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.SuppressNullableWarningExpression = 9054 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
-* [ ] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.SwitchExpression = 9025 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
-* [ ] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.SwitchExpressionArm = 9026 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
-* [ ] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.VarKeyword = 8490 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
-* [ ] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.VarPattern = 9027 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
+* [x] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.CoalesceAssignmentExpression = 8725 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
+* [x] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.DiscardPattern = 9024 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
+* [x] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.DotDotToken = 8222 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
+* [x] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.EnableKeyword = 8487 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
+* [x] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.IndexExpression = 8741 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
+* [x] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.NullableDirectiveTrivia = 9055 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
+* [x] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.NullableKeyword = 8486 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
+* [x] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.PositionalPatternClause = 9023 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
+* [x] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.PropertyPatternClause = 9021 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
+* [x] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.QuestionQuestionEqualsToken = 8284 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
+* [x] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.RangeExpression = 8658 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
+* [x] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.RecursivePattern = 9020 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
+* [x] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.Subpattern = 9022 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
+* [x] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.SuppressNullableWarningExpression = 9054 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
+* [x] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.SwitchExpression = 9025 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
+* [x] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.SwitchExpressionArm = 9026 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
+* [x] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.VarKeyword = 8490 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
+* [x] `Microsoft.CodeAnalysis.CSharp.SyntaxKind.VarPattern = 9027 -> Microsoft.CodeAnalysis.CSharp.SyntaxKind`
 * [ ] `override Microsoft.CodeAnalysis.CSharp.CSharpCompilation.ClassifyCommonConversion(Microsoft.CodeAnalysis.ITypeSymbol source, Microsoft.CodeAnalysis.ITypeSymbol destination) -> Microsoft.CodeAnalysis.Operations.CommonConversion`
 * [ ] `override Microsoft.CodeAnalysis.CSharp.CSharpCompilation.ContainsSymbolsWithName(string name, Microsoft.CodeAnalysis.SymbolFilter filter = Microsoft.CodeAnalysis.SymbolFilter.TypeAndMember, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> bool`
 * [ ] `override Microsoft.CodeAnalysis.CSharp.CSharpCompilation.GetSymbolsWithName(string name, Microsoft.CodeAnalysis.SymbolFilter filter = Microsoft.CodeAnalysis.SymbolFilter.TypeAndMember, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Collections.Generic.IEnumerable<Microsoft.CodeAnalysis.ISymbol>`
