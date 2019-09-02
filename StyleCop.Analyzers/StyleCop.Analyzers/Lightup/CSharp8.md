@@ -6,7 +6,7 @@
 
 ## Uncategorized
 
-See [Microsoft.CodeAnalysis release/dev16.3](https://raw.githubusercontent.com/dotnet/roslyn/release/dev16.3/src/Compilers/Core/Portable/PublicAPI.Unshipped.txt)
+See [Microsoft.CodeAnalysis release/dev16.3@c955f3c99b5698c906e0700ef691b5b1571c8136](https://raw.githubusercontent.com/dotnet/roslyn/c955f3c99b5698c906e0700ef691b5b1571c8136/src/Compilers/Core/Portable/PublicAPI.Unshipped.txt)
 
 * [ ] `*REMOVED*Microsoft.CodeAnalysis.Operations.IEventAssignmentOperation.EventReference.get -> Microsoft.CodeAnalysis.Operations.IEventReferenceOperation`
 * [ ] `*REMOVED*Microsoft.CodeAnalysis.SpecialType.Count = 43 -> Microsoft.CodeAnalysis.SpecialType`
@@ -403,7 +403,7 @@ See [Microsoft.CodeAnalysis release/dev16.3](https://raw.githubusercontent.com/d
 * [ ] `virtual Microsoft.CodeAnalysis.SyntaxTree.DiagnosticOptions.get -> System.Collections.Immutable.ImmutableDictionary<string, Microsoft.CodeAnalysis.ReportDiagnostic>`
 * [ ] `virtual Microsoft.CodeAnalysis.SyntaxTree.WithDiagnosticOptions(System.Collections.Immutable.ImmutableDictionary<string, Microsoft.CodeAnalysis.ReportDiagnostic> options) -> Microsoft.CodeAnalysis.SyntaxTree`
 
-See [Microsoft.CodeAnalysis.CSharp release/dev16.3](https://raw.githubusercontent.com/dotnet/roslyn/release/dev16.3/src/Compilers/CSharp/Portable/PublicAPI.Unshipped.txt)
+See [Microsoft.CodeAnalysis.CSharp release/dev16.3@c955f3c99b5698c906e0700ef691b5b1571c8136](https://raw.githubusercontent.com/dotnet/roslyn/c955f3c99b5698c906e0700ef691b5b1571c8136/src/Compilers/CSharp/Portable/PublicAPI.Unshipped.txt)
 
 * [ ] `*REMOVED*static Microsoft.CodeAnalysis.CSharp.CSharpSyntaxTree.Create(Microsoft.CodeAnalysis.CSharp.CSharpSyntaxNode root, Microsoft.CodeAnalysis.CSharp.CSharpParseOptions options = null, string path = "", System.Text.Encoding encoding = null) -> Microsoft.CodeAnalysis.SyntaxTree`
 * [ ] `*REMOVED*static Microsoft.CodeAnalysis.CSharp.CSharpSyntaxTree.ParseText(Microsoft.CodeAnalysis.Text.SourceText text, Microsoft.CodeAnalysis.CSharp.CSharpParseOptions options = null, string path = "", System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> Microsoft.CodeAnalysis.SyntaxTree`
