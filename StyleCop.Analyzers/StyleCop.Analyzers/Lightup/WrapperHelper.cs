@@ -29,19 +29,25 @@ namespace StyleCop.Analyzers.Lightup
             builder.Add(typeof(DeclarationExpressionSyntaxWrapper), codeAnalysisAssembly.GetType(DeclarationExpressionSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(DeclarationPatternSyntaxWrapper), codeAnalysisAssembly.GetType(DeclarationPatternSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(DiscardDesignationSyntaxWrapper), codeAnalysisAssembly.GetType(DiscardDesignationSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(DiscardPatternSyntaxWrapper), codeAnalysisAssembly.GetType(DiscardPatternSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(ForEachVariableStatementSyntaxWrapper), codeAnalysisAssembly.GetType(ForEachVariableStatementSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(IsPatternExpressionSyntaxWrapper), codeAnalysisAssembly.GetType(IsPatternExpressionSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(ImplicitStackAllocArrayCreationExpressionSyntaxWrapper), codeAnalysisAssembly.GetType(ImplicitStackAllocArrayCreationExpressionSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(LocalFunctionStatementSyntaxWrapper), codeAnalysisAssembly.GetType(LocalFunctionStatementSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(ParenthesizedVariableDesignationSyntaxWrapper), codeAnalysisAssembly.GetType(ParenthesizedVariableDesignationSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(PatternSyntaxWrapper), codeAnalysisAssembly.GetType(PatternSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(PositionalPatternClauseSyntaxWrapper), codeAnalysisAssembly.GetType(PositionalPatternClauseSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(PropertyPatternClauseSyntaxWrapper), codeAnalysisAssembly.GetType(PropertyPatternClauseSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(RecursivePatternSyntaxWrapper), codeAnalysisAssembly.GetType(RecursivePatternSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(RefExpressionSyntaxWrapper), codeAnalysisAssembly.GetType(RefExpressionSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(RefTypeSyntaxWrapper), codeAnalysisAssembly.GetType(RefTypeSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(SingleVariableDesignationSyntaxWrapper), codeAnalysisAssembly.GetType(SingleVariableDesignationSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(SubpatternSyntaxWrapper), codeAnalysisAssembly.GetType(SubpatternSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(ThrowExpressionSyntaxWrapper), codeAnalysisAssembly.GetType(ThrowExpressionSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(TupleElementSyntaxWrapper), codeAnalysisAssembly.GetType(TupleElementSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(TupleExpressionSyntaxWrapper), codeAnalysisAssembly.GetType(TupleExpressionSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(TupleTypeSyntaxWrapper), codeAnalysisAssembly.GetType(TupleTypeSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(VarPatternSyntaxWrapper), codeAnalysisAssembly.GetType(VarPatternSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(VariableDesignationSyntaxWrapper), codeAnalysisAssembly.GetType(VariableDesignationSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(WhenClauseSyntaxWrapper), codeAnalysisAssembly.GetType(WhenClauseSyntaxWrapper.WrappedTypeName));
 
