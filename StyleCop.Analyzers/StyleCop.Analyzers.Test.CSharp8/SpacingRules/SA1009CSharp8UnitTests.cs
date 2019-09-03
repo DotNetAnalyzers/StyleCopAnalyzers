@@ -42,5 +42,59 @@ public class Foo
 
             await VerifyCSharpFixAsync(LanguageVersion.CSharp8, testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(2968, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2968")]
+        public async Task TestExpressionBodyEndsWithSuppressionAsync()
+        {
+            const string testCode = @"using System;
+#nullable enable
+public class Foo
+{
+    public T? TestMethod<T>() where T : class => throw null;
+
+    public IDisposable Service => this.TestMethod<IDisposable>([|)|] !;
+}";
+            const string fixedCode = @"using System;
+#nullable enable
+public class Foo
+{
+    public T? TestMethod<T>() where T : class => throw null;
+
+    public IDisposable Service => this.TestMethod<IDisposable>()!;
+}";
+
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp8, testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2968, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2968")]
+        public async Task TestBlockBodyEndsWithSuppressionAsync()
+        {
+            const string testCode = @"using System;
+#nullable enable
+public class Foo
+{
+    public T? TestMethod<T>() where T : class => throw null;
+
+    public IDisposable Service()
+    {
+        return this.TestMethod<IDisposable>([|)|] !;
+    }
+}";
+            const string fixedCode = @"using System;
+#nullable enable
+public class Foo
+{
+    public T? TestMethod<T>() where T : class => throw null;
+
+    public IDisposable Service()
+    {
+        return this.TestMethod<IDisposable>()!;
+    }
+}";
+
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp8, testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
