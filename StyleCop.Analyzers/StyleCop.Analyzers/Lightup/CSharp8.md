@@ -488,9 +488,9 @@ See [Microsoft.CodeAnalysis.CSharp release/dev16.3@c955f3c99b5698c906e0700ef691b
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.BaseTypeSyntax.WithType(Microsoft.CodeAnalysis.CSharp.Syntax.TypeSyntax type) -> Microsoft.CodeAnalysis.CSharp.Syntax.BaseTypeSyntax`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.BranchingDirectiveTriviaSyntax.WithEndOfDirectiveToken(Microsoft.CodeAnalysis.SyntaxToken endOfDirectiveToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.BranchingDirectiveTriviaSyntax`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.BranchingDirectiveTriviaSyntax.WithHashToken(Microsoft.CodeAnalysis.SyntaxToken hashToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.BranchingDirectiveTriviaSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ClassOrStructConstraintSyntax.QuestionToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ClassOrStructConstraintSyntax.Update(Microsoft.CodeAnalysis.SyntaxToken classOrStructKeyword, Microsoft.CodeAnalysis.SyntaxToken questionToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.ClassOrStructConstraintSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.ClassOrStructConstraintSyntax.WithQuestionToken(Microsoft.CodeAnalysis.SyntaxToken questionToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.ClassOrStructConstraintSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ClassOrStructConstraintSyntax.QuestionToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] ~~`Microsoft.CodeAnalysis.CSharp.Syntax.ClassOrStructConstraintSyntax.Update(Microsoft.CodeAnalysis.SyntaxToken classOrStructKeyword, Microsoft.CodeAnalysis.SyntaxToken questionToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.ClassOrStructConstraintSyntax`~~
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.ClassOrStructConstraintSyntax.WithQuestionToken(Microsoft.CodeAnalysis.SyntaxToken questionToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.ClassOrStructConstraintSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.CommonForEachStatementSyntax.WithAwaitKeyword(Microsoft.CodeAnalysis.SyntaxToken awaitKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.CommonForEachStatementSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.CommonForEachStatementSyntax.WithCloseParenToken(Microsoft.CodeAnalysis.SyntaxToken closeParenToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.CommonForEachStatementSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.CommonForEachStatementSyntax.WithExpression(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax expression) -> Microsoft.CodeAnalysis.CSharp.Syntax.CommonForEachStatementSyntax`
