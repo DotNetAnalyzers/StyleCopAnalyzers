@@ -543,14 +543,14 @@ See [Microsoft.CodeAnalysis.CSharp release/dev16.3@c955f3c99b5698c906e0700ef691b
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.PropertyPatternClauseSyntax.WithCloseBraceToken(Microsoft.CodeAnalysis.SyntaxToken closeBraceToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.PropertyPatternClauseSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.PropertyPatternClauseSyntax.WithOpenBraceToken(Microsoft.CodeAnalysis.SyntaxToken openBraceToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.PropertyPatternClauseSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.PropertyPatternClauseSyntax.WithSubpatterns(Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.SubpatternSyntax> subpatterns) -> Microsoft.CodeAnalysis.CSharp.Syntax.PropertyPatternClauseSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.RangeExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.RangeExpressionSyntax.LeftOperand.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.RangeExpressionSyntax.OperatorToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.RangeExpressionSyntax.RightOperand.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.RangeExpressionSyntax.Update(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax leftOperand, Microsoft.CodeAnalysis.SyntaxToken operatorToken, Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax rightOperand) -> Microsoft.CodeAnalysis.CSharp.Syntax.RangeExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.RangeExpressionSyntax.WithLeftOperand(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax leftOperand) -> Microsoft.CodeAnalysis.CSharp.Syntax.RangeExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.RangeExpressionSyntax.WithOperatorToken(Microsoft.CodeAnalysis.SyntaxToken operatorToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.RangeExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.RangeExpressionSyntax.WithRightOperand(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax rightOperand) -> Microsoft.CodeAnalysis.CSharp.Syntax.RangeExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.RangeExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.RangeExpressionSyntax.LeftOperand.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.RangeExpressionSyntax.OperatorToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.RangeExpressionSyntax.RightOperand.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax`
+* [x] ~~`Microsoft.CodeAnalysis.CSharp.Syntax.RangeExpressionSyntax.Update(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax leftOperand, Microsoft.CodeAnalysis.SyntaxToken operatorToken, Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax rightOperand) -> Microsoft.CodeAnalysis.CSharp.Syntax.RangeExpressionSyntax`~~
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.RangeExpressionSyntax.WithLeftOperand(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax leftOperand) -> Microsoft.CodeAnalysis.CSharp.Syntax.RangeExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.RangeExpressionSyntax.WithOperatorToken(Microsoft.CodeAnalysis.SyntaxToken operatorToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.RangeExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.RangeExpressionSyntax.WithRightOperand(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax rightOperand) -> Microsoft.CodeAnalysis.CSharp.Syntax.RangeExpressionSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.RecursivePatternSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.RecursivePatternSyntax.AddPositionalPatternClauseSubpatterns(params Microsoft.CodeAnalysis.CSharp.Syntax.SubpatternSyntax[] items) -> Microsoft.CodeAnalysis.CSharp.Syntax.RecursivePatternSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.RecursivePatternSyntax.AddPropertyPatternClauseSubpatterns(params Microsoft.CodeAnalysis.CSharp.Syntax.SubpatternSyntax[] items) -> Microsoft.CodeAnalysis.CSharp.Syntax.RecursivePatternSyntax`

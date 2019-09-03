@@ -38,6 +38,7 @@ namespace StyleCop.Analyzers.Lightup
             builder.Add(typeof(PatternSyntaxWrapper), codeAnalysisAssembly.GetType(PatternSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(PositionalPatternClauseSyntaxWrapper), codeAnalysisAssembly.GetType(PositionalPatternClauseSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(PropertyPatternClauseSyntaxWrapper), codeAnalysisAssembly.GetType(PropertyPatternClauseSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(RangeExpressionSyntaxWrapper), codeAnalysisAssembly.GetType(RangeExpressionSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(RecursivePatternSyntaxWrapper), codeAnalysisAssembly.GetType(RecursivePatternSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(RefExpressionSyntaxWrapper), codeAnalysisAssembly.GetType(RefExpressionSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(RefTypeSyntaxWrapper), codeAnalysisAssembly.GetType(RefTypeSyntaxWrapper.WrappedTypeName));
