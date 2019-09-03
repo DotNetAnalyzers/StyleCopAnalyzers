@@ -13,6 +13,8 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Type WrappedType;
 
         private static readonly Func<StatementSyntax, ExpressionSyntax> VariableAccessor;
+
+        private static readonly Func<StatementSyntax, SyntaxToken, StatementSyntax> WithAwaitKeywordAccessor;
         private static readonly Func<StatementSyntax, SyntaxToken, StatementSyntax> WithForEachKeywordAccessor;
         private static readonly Func<StatementSyntax, SyntaxToken, StatementSyntax> WithOpenParenTokenAccessor;
         private static readonly Func<StatementSyntax, ExpressionSyntax, StatementSyntax> WithVariableAccessor;
@@ -27,6 +29,8 @@ namespace StyleCop.Analyzers.Lightup
         {
             WrappedType = WrapperHelper.GetWrappedType(typeof(ForEachVariableStatementSyntaxWrapper));
             VariableAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<StatementSyntax, ExpressionSyntax>(WrappedType, nameof(Variable));
+
+            WithAwaitKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<StatementSyntax, SyntaxToken>(WrappedType, nameof(AwaitKeyword));
             WithForEachKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<StatementSyntax, SyntaxToken>(WrappedType, nameof(ForEachKeyword));
             WithOpenParenTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<StatementSyntax, SyntaxToken>(WrappedType, nameof(OpenParenToken));
             WithVariableAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<StatementSyntax, ExpressionSyntax>(WrappedType, nameof(Variable));
@@ -42,6 +46,14 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public StatementSyntax SyntaxNode => this.node;
+
+        public SyntaxToken AwaitKeyword
+        {
+            get
+            {
+                return ((CommonForEachStatementSyntaxWrapper)this).AwaitKeyword;
+            }
+        }
 
         public SyntaxToken ForEachKeyword
         {
@@ -132,6 +144,11 @@ namespace StyleCop.Analyzers.Lightup
         public static bool IsInstance(SyntaxNode node)
         {
             return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
+        }
+
+        public ForEachVariableStatementSyntaxWrapper WithAwaitKeyword(SyntaxToken awaitKeyword)
+        {
+            return new ForEachVariableStatementSyntaxWrapper(WithAwaitKeywordAccessor(this.SyntaxNode, awaitKeyword));
         }
 
         public ForEachVariableStatementSyntaxWrapper WithForEachKeyword(SyntaxToken forEachKeyword)
