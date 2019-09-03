@@ -32,7 +32,7 @@ namespace StyleCop.Analyzers.NamingRules
         /// </summary>
         public const string DiagnosticId = "SA1303";
         private const string Title = "Const field names should begin with upper-case letter";
-        private const string MessageFormat = "Const field names should begin with upper-case letter.";
+        private const string MessageFormat = "Const field names should begin with upper-case letter";
         private const string Description = "The name of a constant C# field should begin with an upper-case letter.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1303.md";
 

@@ -30,7 +30,7 @@ namespace StyleCop.Analyzers.SpacingRules
         /// </summary>
         public const string DiagnosticId = "SA1010";
         private const string Title = "Opening square brackets should be spaced correctly";
-        private const string MessageFormat = "Opening square brackets should {0} by a space.";
+        private const string MessageFormat = "Opening square brackets should {0} by a space";
         private const string Description = "An opening square bracket within a C# statement is not spaced correctly.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1010.md";
 

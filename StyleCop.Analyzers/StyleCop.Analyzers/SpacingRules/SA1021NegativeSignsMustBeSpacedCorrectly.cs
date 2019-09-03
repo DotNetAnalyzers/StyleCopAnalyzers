@@ -31,7 +31,7 @@ namespace StyleCop.Analyzers.SpacingRules
         /// </summary>
         public const string DiagnosticId = "SA1021";
         private const string Title = "Negative signs should be spaced correctly";
-        private const string MessageFormat = "Negative sign should{0} be {1} by a space.";
+        private const string MessageFormat = "Negative sign should{0} be {1} by a space";
         private const string Description = "A negative sign within a C# element is not spaced correctly.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1021.md";
 

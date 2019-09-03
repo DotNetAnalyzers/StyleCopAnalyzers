@@ -26,7 +26,7 @@ namespace StyleCop.Analyzers.SpacingRules
         /// </summary>
         public const string DiagnosticId = "SA1019";
         private const string Title = "Member access symbols should be spaced correctly";
-        private const string MessageFormat = "Member access symbol '{0}' should not be {1} by a space.";
+        private const string MessageFormat = "Member access symbol '{0}' should not be {1} by a space";
         private const string Description = "The spacing around a member access symbol is incorrect, within a C# code file.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1019.md";
 

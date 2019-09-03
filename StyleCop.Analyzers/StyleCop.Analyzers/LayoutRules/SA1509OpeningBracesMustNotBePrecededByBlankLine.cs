@@ -46,7 +46,7 @@ namespace StyleCop.Analyzers.LayoutRules
         /// </summary>
         public const string DiagnosticId = "SA1509";
         private const string Title = "Opening braces should not be preceded by blank line";
-        private const string MessageFormat = "Opening braces should not be preceded by blank line.";
+        private const string MessageFormat = "Opening braces should not be preceded by blank line";
         private const string Description = "An opening brace within a C# element, statement, or expression is preceded by a blank line.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1509.md";
 
