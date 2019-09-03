@@ -205,7 +205,11 @@ namespace StyleCop.Analyzers.Lightup
             }
 
             var methodInfo = type.GetTypeInfo().GetDeclaredMethods("With" + propertyName)
-                .Single(m => !m.IsStatic && m.GetParameters().Length == 1 && m.GetParameters()[0].ParameterType.Equals(property.PropertyType));
+                .SingleOrDefault(m => !m.IsStatic && m.GetParameters().Length == 1 && m.GetParameters()[0].ParameterType.Equals(property.PropertyType));
+            if (methodInfo is null)
+            {
+                return FallbackAccessor;
+            }
 
             var syntaxParameter = Expression.Parameter(typeof(TSyntax), "syntax");
             var valueParameter = Expression.Parameter(typeof(TProperty), methodInfo.GetParameters()[0].Name);
