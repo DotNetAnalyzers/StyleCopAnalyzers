@@ -173,6 +173,10 @@ namespace StyleCop.Analyzers.SpacingRules
                 precedesStickyCharacter = nextToken.Parent is InterpolationSyntax;
                 break;
 
+            case SyntaxKind.ExclamationToken when nextToken.Parent.IsKind(SyntaxKindEx.SuppressNullableWarningExpression):
+                precedesStickyCharacter = true;
+                break;
+
             default:
                 precedesStickyCharacter = false;
                 break;
