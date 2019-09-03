@@ -287,7 +287,7 @@ namespace StyleCop.Analyzers.Status.Generator
             return analyzer.SupportedDiagnostics;
         }
 
-        private (CodeFixStatus, FixAllStatus) GetCodeFixAndFixAllStatus(string diagnosticId, INamedTypeSymbol classSymbol, out string noCodeFixReason)
+        private (CodeFixStatus codeFixStatus, FixAllStatus fixAllStatus) GetCodeFixAndFixAllStatus(string diagnosticId, INamedTypeSymbol classSymbol, out string noCodeFixReason)
         {
             CodeFixStatus codeFixStatus;
             FixAllStatus fixAllStatus;
