@@ -99,7 +99,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
         /// <param name="tupleElementName2">The expected tuple element name for the second field.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData(DefaultTestSettings, "elementName1", "elementName2")]
+        [InlineData(DefaultTestSettings, "ElementName1", "ElementName2")]
         [InlineData(CamelCaseTestSettings, "elementName1", "elementName2")]
         [InlineData(PascalCaseTestSettings, "ElementName1", "ElementName2")]
         public async Task ValidateProperCasedTupleElementNamesAsync(string settings, string tupleElementName1, string tupleElementName2)
@@ -179,7 +179,7 @@ public class TestClass
         /// <param name="fixedTupleElementName2">The expected fixed tuple element name for the second field.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData(DefaultTestSettings, "ElementName1", "ElementName2", "elementName1", "elementName2")]
+        [InlineData(DefaultTestSettings, "elementName1", "elementName2", "ElementName1", "ElementName2")]
         [InlineData(CamelCaseTestSettings, "ElementName1", "ElementName2", "elementName1", "elementName2")]
         [InlineData(PascalCaseTestSettings, "elementName1", "elementName2", "ElementName1", "ElementName2")]
         public async Task ValidateImproperCasedTupleElementNamesAsync(string settings, string tupleElementName1, string tupleElementName2, string fixedTupleElementName1, string fixedTupleElementName2)

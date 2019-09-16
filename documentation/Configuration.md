@@ -321,7 +321,7 @@ The following properties are used to configure the behavior of the tuple element
 | Property | Default Value | Minimum Version | Summary |
 | --- | --- | --- | --- |
 | `includeInferredTupleElementNames` | false | 1.2.0 | Specifies whether inferred tuple element names will be analyzed as well. |
-| `tupleElementNameCasing` | "camelCase" | 1.2.0 | Specifies the casing convention used for tuple element names. |
+| `tupleElementNameCasing` | "PascalCase" | 1.2.0 | Specifies the casing convention used for tuple element names. |
 
 The following example shows a settings file which requires tuple element names to use PascalCase for all tuple elements (including inferred element names).
 
@@ -330,7 +330,7 @@ The following example shows a settings file which requires tuple element names t
   "settings": {
     "namingRules": {
       "includeInferredTupleElementNames": true,
-      "tupleElementNameCasing" : "PascalCase"
+      "tupleElementNameCasing" : "camelCase"
     }
   }
 }
