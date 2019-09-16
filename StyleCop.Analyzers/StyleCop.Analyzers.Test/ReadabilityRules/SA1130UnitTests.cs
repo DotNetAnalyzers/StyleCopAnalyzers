@@ -840,5 +840,43 @@ public class TestClass
             test.RemainingDiagnostics.AddRange(expected);
             await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(2997, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2997")]
+        public async Task VerifyDelegateConstructionAsync()
+        {
+            var testCode = @"using System;
+using System.Collections.Generic;
+
+public class TestClass
+{
+    private Dictionary<string, Func<int>> items = new Dictionary<string, Func<int>>()
+    {
+        { ""a"", delegate { return 0; } },
+        { ""b"", () => 1 },
+    };
+}
+";
+
+            var fixedCode = @"using System;
+using System.Collections.Generic;
+
+public class TestClass
+{
+    private Dictionary<string, Func<int>> items = new Dictionary<string, Func<int>>()
+    {
+        { ""a"", () => { return 0; } },
+        { ""b"", () => 1 },
+    };
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(8, 16),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

@@ -216,19 +216,22 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var parameters = new List<ParameterSyntax>();
 
-            foreach (var argumentName in argumentNames)
+            if (!argumentNames.IsDefault)
             {
-                var baseName = argumentName;
-                var newName = baseName;
-                var index = 0;
-
-                while (semanticModel.LookupSymbols(anonymousMethod.SpanStart, name: newName).Length > 0)
+                foreach (var argumentName in argumentNames)
                 {
-                    index++;
-                    newName = baseName + index;
-                }
+                    var baseName = argumentName;
+                    var newName = baseName;
+                    var index = 0;
 
-                parameters.Add(SyntaxFactory.Parameter(SyntaxFactory.Identifier(newName)).WithType(null));
+                    while (semanticModel.LookupSymbols(anonymousMethod.SpanStart, name: newName).Length > 0)
+                    {
+                        index++;
+                        newName = baseName + index;
+                    }
+
+                    parameters.Add(SyntaxFactory.Parameter(SyntaxFactory.Identifier(newName)).WithType(null));
+                }
             }
 
             return parameters;
