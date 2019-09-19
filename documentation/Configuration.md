@@ -321,21 +321,20 @@ The following properties are used to configure the behavior of the tuple element
 | Property | Default Value | Minimum Version | Summary |
 | --- | --- | --- | --- |
 | `includeInferredTupleElementNames` | false | 1.2.0 | Specifies whether inferred tuple element names will be analyzed as well. |
-| `tupleElementNameCasing` | "camelCase" | 1.2.0 | Specifies the casing convention used for tuple element names. |
+| `tupleElementNameCasing` | "PascalCase" | 1.2.0 | Specifies the casing convention used for tuple element names. |
 
-The following example shows a settings file which requires tuple element names to use PascalCase for all tuple elements (including inferred element names).
+The following example shows a settings file which requires tuple element names to use camel case for all tuple elements (including inferred element names).
 
 ```json
 {
   "settings": {
     "namingRules": {
       "includeInferredTupleElementNames": true,
-      "tupleElementNameCasing" : "PascalCase"
+      "tupleElementNameCasing" : "camelCase"
     }
   }
 }
 ```
-
 
 #### Tuple Element Name Casing
 The `tupleElementNameCasing` property affects the behavior of the [SA1316 Tuple element names should use correct casing](SA1316.md) analyzer.

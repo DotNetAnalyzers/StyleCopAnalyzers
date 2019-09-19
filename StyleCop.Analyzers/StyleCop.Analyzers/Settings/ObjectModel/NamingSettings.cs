@@ -23,7 +23,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.allowedHungarianPrefixes = ImmutableArray.CreateBuilder<string>();
 
             this.IncludeInferredTupleElementNames = false;
-            this.TupleElementNameCasing = TupleElementNameCase.CamelCase;
+            this.TupleElementNameCasing = TupleElementNameCase.PascalCase;
         }
 
         /// <summary>
