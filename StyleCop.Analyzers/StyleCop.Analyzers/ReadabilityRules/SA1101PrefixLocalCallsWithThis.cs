@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// A call to an instance member of the local class or a base class is not prefixed with ‘this.’, within a C# code
@@ -181,10 +182,17 @@ namespace StyleCop.Analyzers.ReadabilityRules
                     return;
                 }
 
-                if (symbol is IMethodSymbol methodSymbol
-                    && methodSymbol.MethodKind == MethodKind.Constructor)
+                if (symbol is IMethodSymbol methodSymbol)
                 {
-                    return;
+                    switch (methodSymbol.MethodKind)
+                    {
+                    case MethodKind.Constructor:
+                    case MethodKindEx.LocalFunction:
+                        return;
+
+                    default:
+                        break;
+                    }
                 }
 
                 // This is a workaround for:

@@ -111,5 +111,25 @@ public class Foo<T>
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3018, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3018")]
+        public async Task TestGenericLocalFunctionAsync()
+        {
+            var testCode = @"
+public class TestClass
+{
+    private int foobar = 1;
+
+    public int Foo()
+    {
+        int Quux<T>() => this.foobar;
+        return Quux<int>();
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
