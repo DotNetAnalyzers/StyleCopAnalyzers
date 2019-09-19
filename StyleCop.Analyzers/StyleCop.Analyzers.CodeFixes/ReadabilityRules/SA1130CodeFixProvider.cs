@@ -76,7 +76,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             if (parameterList == null)
             {
-                ImmutableArray<string> argumentList = default;
+                ImmutableArray<string> argumentList = ImmutableArray<string>.Empty;
 
                 switch (anonymousMethod.Parent.Kind())
                 {
@@ -216,22 +216,19 @@ namespace StyleCop.Analyzers.ReadabilityRules
         {
             var parameters = new List<ParameterSyntax>();
 
-            if (!argumentNames.IsDefault)
+            foreach (var argumentName in argumentNames)
             {
-                foreach (var argumentName in argumentNames)
+                var baseName = argumentName;
+                var newName = baseName;
+                var index = 0;
+
+                while (semanticModel.LookupSymbols(anonymousMethod.SpanStart, name: newName).Length > 0)
                 {
-                    var baseName = argumentName;
-                    var newName = baseName;
-                    var index = 0;
-
-                    while (semanticModel.LookupSymbols(anonymousMethod.SpanStart, name: newName).Length > 0)
-                    {
-                        index++;
-                        newName = baseName + index;
-                    }
-
-                    parameters.Add(SyntaxFactory.Parameter(SyntaxFactory.Identifier(newName)).WithType(null));
+                    index++;
+                    newName = baseName + index;
                 }
+
+                parameters.Add(SyntaxFactory.Parameter(SyntaxFactory.Identifier(newName)).WithType(null));
             }
 
             return parameters;
