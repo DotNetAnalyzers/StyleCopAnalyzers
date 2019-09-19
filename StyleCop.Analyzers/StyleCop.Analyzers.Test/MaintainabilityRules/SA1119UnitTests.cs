@@ -1437,5 +1437,43 @@ public class Program
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(2992, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2992")]
+        public async Task VerifyCodeFixDoesNotInsertUnnecessarySpacesAsync()
+        {
+            var testCode = @"using System;
+internal class Program
+{
+    private static readonly DateTime MaxDate = new DateTime((new DateTime(2101, 1, 28, 23, 59, 59, 999)).Ticks + 9999);
+
+    private static void Main()
+    {
+        Console.WriteLine(MaxDate);
+    }
+}
+";
+
+            var fixedCode = @"using System;
+internal class Program
+{
+    private static readonly DateTime MaxDate = new DateTime(new DateTime(2101, 1, 28, 23, 59, 59, 999).Ticks + 9999);
+
+    private static void Main()
+    {
+        Console.WriteLine(MaxDate);
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DiagnosticId).WithSpan(4, 61, 4, 105),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(4, 61),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(4, 104),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
