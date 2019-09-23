@@ -157,19 +157,23 @@ namespace StyleCop.Analyzers.OrderingRules
         /// </summary>
         public const string DiagnosticId = "SA1200";
 
+        private const string MessageFormatInside = "Using directive should appear within a namespace declaration";
+        private const string DescriptionInside = "A C# using directive is placed outside of a namespace element.";
+
+        private const string MessageFormatOutside = "Using directive should appear outside a namespace declaration";
+        private const string DescriptionOutside = "A C# using directive is placed inside of a namespace declaration.";
+
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1200.md";
+
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(OrderingResources.SA1200Title), OrderingResources.ResourceManager, typeof(OrderingResources));
+
+#pragma warning disable SA1202 // Elements should be ordered by access
         internal static readonly DiagnosticDescriptor DescriptorInside =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatInside, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, DescriptionInside, HelpLink);
 
         internal static readonly DiagnosticDescriptor DescriptorOutside =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormatOutside, AnalyzerCategory.OrderingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, DescriptionOutside, HelpLink);
-
-        private const string Title = "Using directives should be placed correctly";
-        private const string MessageFormatInside = "Using directive should appear within a namespace declaration";
-        private const string DescriptionInside = "A C# using directive is placed outside of a namespace element.";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1200.md";
-
-        private const string MessageFormatOutside = "Using directive should appear outside a namespace declaration";
-        private const string DescriptionOutside = "A C# using directive is placed inside of a namespace declaration.";
+#pragma warning restore SA1202 // Elements should be ordered by access
 
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> CompilationUnitAction = HandleCompilationUnit;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> NamespaceDeclarationAction = HandleNamespaceDeclaration;

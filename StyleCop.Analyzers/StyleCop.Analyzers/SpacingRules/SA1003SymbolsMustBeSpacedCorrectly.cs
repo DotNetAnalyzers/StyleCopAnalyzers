@@ -57,15 +57,15 @@ namespace StyleCop.Analyzers.SpacingRules
         internal const string RemoveEndOfLineTag = "RemoveEndOfLine";
         internal const string RemoveEndOfLineWithTrailingSpaceTag = "RemoveEndOfLineWithTrailingSpace";
 
-        private const string Title = "Symbols should be spaced correctly";
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1003.md";
         private const string MessageFormatNotFollowedByComment = "Operator '{0}' should not be followed by a comment.";
         private const string MessageFormatPrecededByWhitespace = "Operator '{0}' should be preceded by whitespace.";
         private const string MessageFormatNotPrecededByWhitespace = "Operator '{0}' should not be preceded by whitespace.";
         private const string MessageFormatFollowedByWhitespace = "Operator '{0}' should be followed by whitespace.";
         private const string MessageFormatNotFollowedByWhitespace = "Operator '{0}' should not be followed by whitespace.";
         private const string MessageFormatNotAtEndOfLine = "Operator '{0}' should not appear at the end of a line.";
-        private const string Description = "The spacing around an operator symbol is incorrect, within a C# code file.";
-        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1003.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1003Title), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1003Description), SpacingResources.ResourceManager, typeof(SpacingResources));
 
         private static readonly ImmutableArray<SyntaxKind> BinaryExpressionKinds =
             ImmutableArray.Create(
