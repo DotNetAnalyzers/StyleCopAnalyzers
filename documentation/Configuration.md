@@ -70,7 +70,7 @@ The following properties are used to configure basic indentation in StyleCop Ana
 > :bulb: When working in Visual Studio, the IDE will not automatically adjust editor settings according to the values in
 > **stylecop.json**. To provide this functionality as well, we recommend duplicating the basic indentation settings in a
 > [**.editorconfig**](http://editorconfig.org/) file. Users of the [EditorConfig](https://visualstudiogallery.msdn.microsoft.com/c8bccfe2-650c-4b42-bc5c-845e21f96328)
-> extension for Visual Studio will no need to update their C# indentation settings in order to match your project style.
+> extension for Visual Studio will not need to update their C# indentation settings in order to match your project style.
 
 ## Spacing Rules
 
