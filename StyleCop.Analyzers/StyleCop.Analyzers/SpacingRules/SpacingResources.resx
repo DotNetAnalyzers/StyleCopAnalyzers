@@ -150,6 +150,24 @@
   <data name="SA1003Description" xml:space="preserve">
     <value>The spacing around an operator symbol is incorrect, within a C# code file.</value>
   </data>
+  <data name="SA1003MessageFormatFollowedByWhitespace" xml:space="preserve">
+    <value>Operator '{0}' should be followed by whitespace.</value>
+  </data>
+  <data name="SA1003MessageFormatNotAtEndOfLine" xml:space="preserve">
+    <value>Operator '{0}' should not appear at the end of a line.</value>
+  </data>
+  <data name="SA1003MessageFormatNotFollowedByComment" xml:space="preserve">
+    <value>Operator '{0}' should not be followed by a comment.</value>
+  </data>
+  <data name="SA1003MessageFormatNotFollowedByWhitespace" xml:space="preserve">
+    <value>Operator '{0}' should not be followed by whitespace.</value>
+  </data>
+  <data name="SA1003MessageFormatNotPrecededByWhitespace" xml:space="preserve">
+    <value>Operator '{0}' should not be preceded by whitespace.</value>
+  </data>
+  <data name="SA1003MessageFormatPrecededByWhitespace" xml:space="preserve">
+    <value>Operator '{0}' should be preceded by whitespace.</value>
+  </data>
   <data name="SA1003Title" xml:space="preserve">
     <value>Symbols should be spaced correctly</value>
   </data>
@@ -200,6 +218,15 @@
   </data>
   <data name="SA1008Description" xml:space="preserve">
     <value>An opening parenthesis within a C# statement is not spaced correctly.</value>
+  </data>
+  <data name="SA1008MessageNotFollowed" xml:space="preserve">
+    <value>Opening parenthesis should not be followed by a space.</value>
+  </data>
+  <data name="SA1008MessageNotPreceded" xml:space="preserve">
+    <value>Opening parenthesis should not be preceded by a space.</value>
+  </data>
+  <data name="SA1008MessagePreceded" xml:space="preserve">
+    <value>Opening parenthesis should be preceded by a space.</value>
   </data>
   <data name="SA1008Title" xml:space="preserve">
     <value>Opening parenthesis should be spaced correctly</value>
