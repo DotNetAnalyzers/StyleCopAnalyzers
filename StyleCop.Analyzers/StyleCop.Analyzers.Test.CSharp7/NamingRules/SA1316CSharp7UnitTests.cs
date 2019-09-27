@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.NamingRules;
+    using StyleCop.Analyzers.Settings.ObjectModel;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.NamingRules.SA1316TupleElementNamesShouldUseCorrectCasing,
@@ -290,6 +291,60 @@ public class TestClass
             };
 
             await VerifyCSharpDiagnosticAsync(LanguageVersionEx.CSharp7_1, testCode, settings, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3031, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3031")]
+        public async Task TestTupleDesconstructionCamelCaseAsync()
+        {
+            var testCode = @"
+public class TypeName
+{
+    public void MethodName((string name, string value) obj)
+    {
+        (string name, string value) = obj;
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(languageVersion: null, testCode, CamelCaseTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3031, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3031")]
+        public async Task TestTupleDesconstructionPascalCaseAsync()
+        {
+            var testCode = @"
+public class TypeName
+{
+    public void MethodName((string Name, string Value) obj)
+    {
+        (string name, string value) = obj;
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(languageVersion: null, testCode, PascalCaseTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3031, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3031")]
+        public async Task TestTupleDesconstructionPascalCaseListAsync()
+        {
+            var testCode = @"
+using System.Collections.Generic;
+public class TypeName
+{
+    public void MethodName(List<(string Name, string Value)> list)
+    {
+        foreach ((string name, string value) in list)
+        {
+        }
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(languageVersion: null, testCode, PascalCaseTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
