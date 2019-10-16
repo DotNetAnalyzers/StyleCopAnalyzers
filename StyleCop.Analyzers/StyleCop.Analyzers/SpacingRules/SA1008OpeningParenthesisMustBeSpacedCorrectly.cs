@@ -208,7 +208,8 @@ namespace StyleCop.Analyzers.SpacingRules
 
             case SyntaxKind.ParenthesizedExpression:
             case SyntaxKindEx.TupleExpression:
-                if (prevToken.Parent.IsKind(SyntaxKind.Interpolation))
+                if (prevToken.Parent.IsKind(SyntaxKind.Interpolation)
+                    || token.Parent.Parent.IsKind(SyntaxKindEx.RangeExpression))
                 {
                     haveLeadingSpace = false;
                     break;
