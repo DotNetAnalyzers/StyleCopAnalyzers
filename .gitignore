@@ -19,7 +19,3 @@ build/nuget/
 *.psess
 *.vsp
 *.vspx
-
-# NCrunch artifacts
-*.ncrunch*
-_NCrunch*/
