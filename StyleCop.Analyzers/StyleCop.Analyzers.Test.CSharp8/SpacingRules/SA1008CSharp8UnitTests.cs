@@ -5,17 +5,38 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp7.SpacingRules;
     using Xunit;
 
-    using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<
-        StyleCop.Analyzers.SpacingRules.SA1008OpeningParenthesisMustBeSpacedCorrectly>;
+    using static StyleCop.Analyzers.SpacingRules.SA1008OpeningParenthesisMustBeSpacedCorrectly;
+
+    using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
+            StyleCop.Analyzers.SpacingRules.SA1008OpeningParenthesisMustBeSpacedCorrectly,
+            StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
 
     public class SA1008CSharp8UnitTests : SA1008CSharp7UnitTests
     {
+        private const string RangePrologue = @"namespace System
+{
+    public struct Range
+    {
+        public Range(Index a, Index b)
+        {
+        }
+        public Index Start { get; }
+        public Index End { get; }
+    }
+
+    public struct Index
+    {
+        public static implicit operator Index(int value) => throw null;
+        public int GetOffset(int length) => throw null;
+    }
+}
+";
+
         /// <summary>
         /// Verifies that spacing after a range expression double dots isn't required.
         /// </summary>
@@ -27,7 +48,24 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
         [Fact]
         public async Task TestBeforeRangeExpressionAsync()
         {
-            var testCode = @"namespace TestNamespace
+            var testCode = RangePrologue + @"
+namespace TestNamespace
+{
+    using System;
+    public class TestClass
+    {
+        public string TestMethod()
+        {
+            string str = ""test"";
+            int finalLen = 4;
+            return str[.. (finalLen - 1)];
+        }
+    }
+}
+";
+
+            var fixedCode = RangePrologue + @"
+namespace TestNamespace
 {
     using System;
     public class TestClass
@@ -41,20 +79,16 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
     }
 }
 ";
-
-            DiagnosticResult[] expectedDiagnostic = new[]
+            var expectedResults = new DiagnosticResult[]
             {
-                // I couldn't remove these compiler errors, so i expect them in the output
-                // instead.
-                DiagnosticResult.CompilerError("CS0518").WithLocation(10, 24),
-                DiagnosticResult.CompilerError("CS0518").WithLocation(10, 26),
+                Diagnostic(DescriptorNotPreceded).WithLocation(28, 27),
             };
 
-            await VerifyCSharpDiagnosticAsync(
+            await VerifyCSharpFixAsync(
                 LanguageVersion.CSharp8,
                 testCode,
-                string.Empty,
-                expectedDiagnostic,
+                expectedResults,
+                fixedCode,
                 CancellationToken.None).ConfigureAwait(false);
         }
     }
