@@ -51,6 +51,7 @@ namespace StyleCop.Analyzers.Lightup
             builder.Add(typeof(VarPatternSyntaxWrapper), codeAnalysisAssembly.GetType(VarPatternSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(VariableDesignationSyntaxWrapper), codeAnalysisAssembly.GetType(VariableDesignationSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(WhenClauseSyntaxWrapper), codeAnalysisAssembly.GetType(WhenClauseSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(SwitchExpressionArmSyntaxWrapper), codeAnalysisAssembly.GetType(SwitchExpressionArmSyntaxWrapper.WrappedTypeName));
 
             WrappedTypes = builder.ToImmutable();
         }
