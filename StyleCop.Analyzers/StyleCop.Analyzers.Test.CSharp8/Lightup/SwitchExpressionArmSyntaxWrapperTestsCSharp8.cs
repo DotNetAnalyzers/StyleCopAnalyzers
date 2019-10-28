@@ -52,8 +52,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.Lightup
             var wrapperWithModifiedWhenClause = wrapper.WithWhenClause((WhenClauseSyntaxWrapper)newWhenClause);
             Assert.NotNull(wrapperWithModifiedWhenClause.SyntaxNode);
             Assert.NotSame(syntaxNode.WhenClause, wrapperWithModifiedWhenClause.WhenClause.SyntaxNode);
-            Assert.Equal(SyntaxKind.WhenClause, wrapperWithModifiedWhenClause.WhenClause.SyntaxNode.Kind());
-            Assert.Equal(SyntaxKind.TrueLiteralExpression, wrapperWithModifiedWhenClause.WhenClause.Condition.Kind());
+            Assert.True(newWhenClause.IsEquivalentTo(wrapperWithModifiedWhenClause.WhenClause));
         }
 
         [Fact]
@@ -68,7 +67,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.Lightup
             var wrapperWithModifiedExpression = wrapper.WithExpression(newExpression);
             Assert.NotNull(wrapperWithModifiedExpression.SyntaxNode);
             Assert.NotSame(syntaxNode.Expression, wrapperWithModifiedExpression.Expression);
-            Assert.Equal(SyntaxKind.NullLiteralExpression, wrapperWithModifiedExpression.Expression.Kind());
+            Assert.True(newExpression.IsEquivalentTo(wrapperWithModifiedExpression.Expression));
         }
 
         [Fact]
@@ -82,8 +81,9 @@ namespace StyleCop.Analyzers.Test.CSharp8.Lightup
 
             Assert.Throws<ArgumentException>(() => wrapper.WithEqualsGreaterThanToken(SyntaxFactory.Token(SyntaxKind.EqualsEqualsToken)));
 
-            var wrapperWithModifiedToken = wrapper.WithEqualsGreaterThanToken(SyntaxFactory.Token(SyntaxKind.EqualsGreaterThanToken));
-            Assert.Equal(SyntaxKind.EqualsGreaterThanToken, wrapperWithModifiedToken.EqualsGreaterThanToken.Kind());
+            var newToken = SyntaxFactory.Token(SyntaxKind.EqualsGreaterThanToken);
+            var wrapperWithModifiedToken = wrapper.WithEqualsGreaterThanToken(newToken);
+            Assert.True(newToken.IsEquivalentTo(wrapperWithModifiedToken.EqualsGreaterThanToken));
         }
 
         [Fact]
