@@ -81,7 +81,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.Lightup
 
             Assert.Throws<ArgumentException>(() => wrapper.WithEqualsGreaterThanToken(SyntaxFactory.Token(SyntaxKind.EqualsEqualsToken)));
 
-            var newToken = SyntaxFactory.Token(SyntaxKind.EqualsGreaterThanToken);
+            var newToken = SyntaxFactory.Token(SyntaxTriviaList.Create(SyntaxFactory.SyntaxTrivia(SyntaxKind.SingleLineCommentTrivia, "/* 1 */")), SyntaxKind.EqualsGreaterThanToken, SyntaxTriviaList.Empty);
             var wrapperWithModifiedToken = wrapper.WithEqualsGreaterThanToken(newToken);
             Assert.True(newToken.IsEquivalentTo(wrapperWithModifiedToken.EqualsGreaterThanToken));
         }
