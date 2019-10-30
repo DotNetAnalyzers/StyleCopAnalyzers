@@ -570,16 +570,16 @@ See [Microsoft.CodeAnalysis.CSharp release/dev16.3@c955f3c99b5698c906e0700ef691b
 * [x] ~~`Microsoft.CodeAnalysis.CSharp.Syntax.SubpatternSyntax.Update(Microsoft.CodeAnalysis.CSharp.Syntax.NameColonSyntax nameColon, Microsoft.CodeAnalysis.CSharp.Syntax.PatternSyntax pattern) -> Microsoft.CodeAnalysis.CSharp.Syntax.SubpatternSyntax`~~
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SubpatternSyntax.WithNameColon(Microsoft.CodeAnalysis.CSharp.Syntax.NameColonSyntax nameColon) -> Microsoft.CodeAnalysis.CSharp.Syntax.SubpatternSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SubpatternSyntax.WithPattern(Microsoft.CodeAnalysis.CSharp.Syntax.PatternSyntax pattern) -> Microsoft.CodeAnalysis.CSharp.Syntax.SubpatternSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax.EqualsGreaterThanToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax.Expression.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax.Pattern.get -> Microsoft.CodeAnalysis.CSharp.Syntax.PatternSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax.Update(Microsoft.CodeAnalysis.CSharp.Syntax.PatternSyntax pattern, Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax whenClause, Microsoft.CodeAnalysis.SyntaxToken equalsGreaterThanToken, Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax expression) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax.WhenClause.get -> Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax.WithEqualsGreaterThanToken(Microsoft.CodeAnalysis.SyntaxToken equalsGreaterThanToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax.WithExpression(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax expression) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax.WithPattern(Microsoft.CodeAnalysis.CSharp.Syntax.PatternSyntax pattern) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax.WithWhenClause(Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax whenClause) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax.EqualsGreaterThanToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax.Expression.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax.Pattern.get -> Microsoft.CodeAnalysis.CSharp.Syntax.PatternSyntax`
+* [x] ~~`Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax.Update(Microsoft.CodeAnalysis.CSharp.Syntax.PatternSyntax pattern, Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax whenClause, Microsoft.CodeAnalysis.SyntaxToken equalsGreaterThanToken, Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax expression) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax`~~
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax.WhenClause.get -> Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax.WithEqualsGreaterThanToken(Microsoft.CodeAnalysis.SyntaxToken equalsGreaterThanToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax.WithExpression(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax expression) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax.WithPattern(Microsoft.CodeAnalysis.CSharp.Syntax.PatternSyntax pattern) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax.WithWhenClause(Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax whenClause) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax.AddArms(params Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax[] items) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax.Arms.get -> Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax>`

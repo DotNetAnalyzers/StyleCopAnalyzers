@@ -44,6 +44,7 @@ namespace StyleCop.Analyzers.Lightup
             builder.Add(typeof(RefTypeSyntaxWrapper), codeAnalysisAssembly.GetType(RefTypeSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(SingleVariableDesignationSyntaxWrapper), codeAnalysisAssembly.GetType(SingleVariableDesignationSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(SubpatternSyntaxWrapper), codeAnalysisAssembly.GetType(SubpatternSyntaxWrapper.WrappedTypeName));
+            builder.Add(typeof(SwitchExpressionArmSyntaxWrapper), codeAnalysisAssembly.GetType(SwitchExpressionArmSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(ThrowExpressionSyntaxWrapper), codeAnalysisAssembly.GetType(ThrowExpressionSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(TupleElementSyntaxWrapper), codeAnalysisAssembly.GetType(TupleElementSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(TupleExpressionSyntaxWrapper), codeAnalysisAssembly.GetType(TupleExpressionSyntaxWrapper.WrappedTypeName));
