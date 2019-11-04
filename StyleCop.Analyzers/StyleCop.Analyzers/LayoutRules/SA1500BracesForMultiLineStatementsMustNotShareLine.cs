@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// The opening or closing brace within a C# statement, element, or expression is not placed on its own line.
@@ -166,6 +167,22 @@ namespace StyleCop.Analyzers.LayoutRules
 
                     case SyntaxKind.ImplicitArrayCreationExpression:
                         if (((ImplicitArrayCreationExpressionSyntax)context.Node.Parent).NewKeyword.GetLine() == openBraceTokenLine)
+                        {
+                            return;
+                        }
+
+                        break;
+
+                    case SyntaxKind.StackAllocArrayCreationExpression:
+                        if (((StackAllocArrayCreationExpressionSyntax)context.Node.Parent).StackAllocKeyword.GetLine() == openBraceTokenLine)
+                        {
+                            return;
+                        }
+
+                        break;
+
+                    case SyntaxKindEx.ImplicitStackAllocArrayCreationExpression:
+                        if (((ImplicitStackAllocArrayCreationExpressionSyntaxWrapper)context.Node.Parent).StackAllocKeyword.GetLine() == openBraceTokenLine)
                         {
                             return;
                         }
