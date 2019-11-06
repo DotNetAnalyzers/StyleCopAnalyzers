@@ -29,13 +29,13 @@ $packageConfig = [xml](Get-Content ..\.nuget\packages.config)
 $opencover_version = $packageConfig.SelectSingleNode('/packages/package[@id="OpenCover"]').version
 $reportgenerator_version = $packageConfig.SelectSingleNode('/packages/package[@id="ReportGenerator"]').version
 $xunitrunner_version = $packageConfig.SelectSingleNode('/packages/package[@id="xunit.runner.console"]').version
-$pdb2pdb_version = $packageConfig.SelectSingleNode('/packages/package[@id="Microsoft.DiaSymReader.Pdb2Pdb"]').version
+$pdb2pdb_version = $packageConfig.SelectSingleNode('/packages/package[@id="Pdb2Pdb"]').version
 
 $packages_folder = '..\packages'
 $opencover_console = "$packages_folder\OpenCover.$opencover_version\tools\OpenCover.Console.exe"
 $xunit_runner_console = "$packages_folder\xunit.runner.console.$xunitrunner_version\tools\xunit.console.x86.exe"
 $report_generator = "$packages_folder\ReportGenerator.$reportgenerator_version\tools\ReportGenerator.exe"
-$pdb2pdb = "$packages_folder\Microsoft.DiaSymReader.Pdb2Pdb.$pdb2pdb_version\tools\Pdb2Pdb.exe"
+$pdb2pdb = "$packages_folder\Pdb2Pdb.$pdb2pdb_version\tools\Pdb2Pdb.exe"
 $report_folder = '.\OpenCover.Reports'
 $symbols_folder = '.\OpenCover.Symbols'
 $target_dll = "..\StyleCop.Analyzers\StyleCop.Analyzers.Test\bin\$Configuration\net452\StyleCop.Analyzers.Test.dll"
