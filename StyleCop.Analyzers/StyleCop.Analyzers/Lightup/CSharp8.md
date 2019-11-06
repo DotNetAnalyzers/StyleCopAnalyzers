@@ -580,19 +580,19 @@ See [Microsoft.CodeAnalysis.CSharp release/dev16.3@c955f3c99b5698c906e0700ef691b
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax.WithExpression(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax expression) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax.WithPattern(Microsoft.CodeAnalysis.CSharp.Syntax.PatternSyntax pattern) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax`
 * [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax.WithWhenClause(Microsoft.CodeAnalysis.CSharp.Syntax.WhenClauseSyntax whenClause) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax.AddArms(params Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax[] items) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax.Arms.get -> Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax>`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax.CloseBraceToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax.GoverningExpression.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax.OpenBraceToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax.SwitchKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax.Update(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax governingExpression, Microsoft.CodeAnalysis.SyntaxToken switchKeyword, Microsoft.CodeAnalysis.SyntaxToken openBraceToken, Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax> arms, Microsoft.CodeAnalysis.SyntaxToken closeBraceToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax.WithArms(Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax> arms) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax.WithCloseBraceToken(Microsoft.CodeAnalysis.SyntaxToken closeBraceToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax.WithGoverningExpression(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax governingExpression) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax.WithOpenBraceToken(Microsoft.CodeAnalysis.SyntaxToken openBraceToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax`
-* [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax.WithSwitchKeyword(Microsoft.CodeAnalysis.SyntaxToken switchKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax.AddArms(params Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax[] items) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax.Arms.get -> Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax>`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax.CloseBraceToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax.GoverningExpression.get -> Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax.OpenBraceToken.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax.SwitchKeyword.get -> Microsoft.CodeAnalysis.SyntaxToken`
+* [x] ~~`Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax.Update(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax governingExpression, Microsoft.CodeAnalysis.SyntaxToken switchKeyword, Microsoft.CodeAnalysis.SyntaxToken openBraceToken, Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax> arms, Microsoft.CodeAnalysis.SyntaxToken closeBraceToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax`~~
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax.WithArms(Microsoft.CodeAnalysis.SeparatedSyntaxList<Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionArmSyntax> arms) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax.WithCloseBraceToken(Microsoft.CodeAnalysis.SyntaxToken closeBraceToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax.WithGoverningExpression(Microsoft.CodeAnalysis.CSharp.Syntax.ExpressionSyntax governingExpression) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax.WithOpenBraceToken(Microsoft.CodeAnalysis.SyntaxToken openBraceToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax`
+* [x] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax.WithSwitchKeyword(Microsoft.CodeAnalysis.SyntaxToken switchKeyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchLabelSyntax.WithColonToken(Microsoft.CodeAnalysis.SyntaxToken colonToken) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchLabelSyntax`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.SwitchLabelSyntax.WithKeyword(Microsoft.CodeAnalysis.SyntaxToken keyword) -> Microsoft.CodeAnalysis.CSharp.Syntax.SwitchLabelSyntax`
 * [ ] `Microsoft.CodeAnalysis.CSharp.Syntax.TypeDeclarationSyntax.AddAttributeLists(params Microsoft.CodeAnalysis.CSharp.Syntax.AttributeListSyntax[] items) -> Microsoft.CodeAnalysis.CSharp.Syntax.TypeDeclarationSyntax`
