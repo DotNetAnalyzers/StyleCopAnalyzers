@@ -33,7 +33,9 @@ $pdb2pdb_version = $packageConfig.SelectSingleNode('/packages/package[@id="Pdb2P
 
 $packages_folder = '..\packages'
 $opencover_console = "$packages_folder\OpenCover.$opencover_version\tools\OpenCover.Console.exe"
-$xunit_runner_console = "$packages_folder\xunit.runner.console.$xunitrunner_version\tools\xunit.console.x86.exe"
+$xunit_runner_console_net452 = "$packages_folder\xunit.runner.console.$xunitrunner_version\tools\net452\xunit.console.x86.exe"
+$xunit_runner_console_net46 = "$packages_folder\xunit.runner.console.$xunitrunner_version\tools\net46\xunit.console.x86.exe"
+$xunit_runner_console_net472 = "$packages_folder\xunit.runner.console.$xunitrunner_version\tools\net472\xunit.console.x86.exe"
 $report_generator = "$packages_folder\ReportGenerator.$reportgenerator_version\tools\ReportGenerator.exe"
 $pdb2pdb = "$packages_folder\Pdb2Pdb.$pdb2pdb_version\tools\Pdb2Pdb.exe"
 $report_folder = '.\OpenCover.Reports'
@@ -125,7 +127,7 @@ If ($AppVeyor) {
 	-excludebyfile:*\*Designer.cs `
 	-searchdirs:"$symbols_folder_csharp6" `
 	-output:"$report_folder\OpenCover.StyleCopAnalyzers.xml" `
-	-target:"$xunit_runner_console" `
+	-target:"$xunit_runner_console_net452" `
 	-targetargs:"$target_dll -noshadow $AppVeyorArg"
 
 If ($AppVeyor -and -not $?) {
@@ -144,7 +146,7 @@ If ($AppVeyor -and -not $?) {
 	-searchdirs:"$symbols_folder_csharp7" `
 	-output:"$report_folder\OpenCover.StyleCopAnalyzers.xml" `
 	-mergebyhash -mergeoutput `
-	-target:"$xunit_runner_console" `
+	-target:"$xunit_runner_console_net46" `
 	-targetargs:"$target_dll_csharp7 -noshadow $AppVeyorArg"
 
 If ($AppVeyor -and -not $?) {
@@ -163,7 +165,7 @@ If ($AppVeyor -and -not $?) {
 	-searchdirs:"$symbols_folder_csharp8" `
 	-output:"$report_folder\OpenCover.StyleCopAnalyzers.xml" `
 	-mergebyhash -mergeoutput `
-	-target:"$xunit_runner_console" `
+	-target:"$xunit_runner_console_net472" `
 	-targetargs:"$target_dll_csharp8 -noshadow $AppVeyorArg"
 
 If ($AppVeyor -and -not $?) {
