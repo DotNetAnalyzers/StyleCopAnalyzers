@@ -47,12 +47,14 @@ If (Test-Path $report_folder) {
 
 mkdir $report_folder | Out-Null
 
+$register_mode = 'user'
 If ($AppVeyor) {
 	$AppVeyorArg = '-appveyor'
+	$register_mode = 'Path32'
 }
 
 &$opencover_console `
-	-register:user `
+	-register:$register_mode `
 	-threshold:1 -oldStyle `
 	-returntargetcode `
 	-hideskipped:All `
@@ -69,7 +71,7 @@ If ($AppVeyor -and -not $?) {
 }
 
 &$opencover_console `
-	-register:user `
+	-register:$register_mode `
 	-threshold:1 -oldStyle `
 	-returntargetcode `
 	-hideskipped:All `
@@ -87,7 +89,7 @@ If ($AppVeyor -and -not $?) {
 }
 
 &$opencover_console `
-	-register:user `
+	-register:$register_mode `
 	-threshold:1 -oldStyle `
 	-returntargetcode `
 	-hideskipped:All `
