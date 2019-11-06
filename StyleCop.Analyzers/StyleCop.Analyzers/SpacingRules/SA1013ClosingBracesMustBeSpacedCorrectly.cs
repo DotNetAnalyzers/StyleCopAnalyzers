@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.SpacingRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// A closing brace within a C# element is not spaced correctly.
@@ -100,7 +101,8 @@ namespace StyleCop.Analyzers.SpacingRules
                     || nextToken.IsKind(SyntaxKind.SemicolonToken)
                     || nextToken.IsKind(SyntaxKind.DotToken)
                     || (nextToken.IsKind(SyntaxKind.QuestionToken) && nextToken.GetNextToken(includeZeroWidth: true).IsKind(SyntaxKind.DotToken))
-                    || nextToken.IsKind(SyntaxKind.CloseBracketToken);
+                    || nextToken.IsKind(SyntaxKind.CloseBracketToken)
+                    || (nextToken.IsKind(SyntaxKind.ColonToken) && nextToken.Parent.IsKind(SyntaxKindEx.CasePatternSwitchLabel));
             }
             else
             {
