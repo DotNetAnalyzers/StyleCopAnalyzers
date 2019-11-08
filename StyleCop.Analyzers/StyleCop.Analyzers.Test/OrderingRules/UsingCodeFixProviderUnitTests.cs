@@ -660,14 +660,6 @@ namespace Fish
                 Settings = testSettings,
             };
 
-            if (source == fixedSource)
-            {
-                test.FixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
-                test.FixedState.MarkupHandling = MarkupMode.Allow;
-                test.BatchFixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
-                test.BatchFixedState.MarkupHandling = MarkupMode.Allow;
-            }
-
             test.ExpectedDiagnostics.AddRange(expected);
             test.RemainingDiagnostics.AddRange(remainingDiagnostics);
             return test.RunAsync(cancellationToken);

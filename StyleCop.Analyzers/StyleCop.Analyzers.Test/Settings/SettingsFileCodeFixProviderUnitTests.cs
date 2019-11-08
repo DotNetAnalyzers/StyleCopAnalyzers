@@ -84,7 +84,6 @@ namespace NamespaceName
                 TestCode = TestCode,
                 ExpectedDiagnostics = { Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1) },
                 FixedCode = TestCode,
-                FixedState = { InheritanceMode = StateInheritanceMode.AutoInheritAll },
                 Settings = "{}",
                 SettingsFileName = SettingsHelper.SettingsFileName,
             };
@@ -105,7 +104,6 @@ namespace NamespaceName
                 TestCode = TestCode,
                 ExpectedDiagnostics = { Diagnostic(FileHeaderAnalyzers.SA1633DescriptorMissing).WithLocation(1, 1) },
                 FixedCode = TestCode,
-                FixedState = { InheritanceMode = StateInheritanceMode.AutoInheritAll },
                 Settings = "{}",
                 SettingsFileName = SettingsHelper.AltSettingsFileName,
             };
