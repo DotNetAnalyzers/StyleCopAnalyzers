@@ -297,16 +297,7 @@ public class Foo
         protected virtual string BuildTestCode(string format)
         {
             StringBuilder argumentList = new StringBuilder();
-            foreach (var argument in this.InitialArguments)
-            {
-                if (argumentList.Length > 0)
-                {
-                    argumentList.Append(", ");
-                }
-
-                argumentList.Append(argument);
-            }
-
+            argumentList.Append(string.Join(", ", this.InitialArguments));
             if (argumentList.Length > 0)
             {
                 argumentList.Append(", ");
