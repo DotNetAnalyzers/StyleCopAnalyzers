@@ -594,7 +594,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             return test.RunAsync(cancellationToken);
         }
 
-        private class CSharpTest : StyleCopCodeFixVerifier<EmptyAnalyzer, EmptyCodeFixProvider>.CSharpTest
+        private class CSharpTest : StyleCopCodeFixVerifier<EmptyDiagnosticAnalyzer, EmptyCodeFixProvider>.CSharpTest
         {
             private readonly NumberSignSpacingTestBase testFixture;
 

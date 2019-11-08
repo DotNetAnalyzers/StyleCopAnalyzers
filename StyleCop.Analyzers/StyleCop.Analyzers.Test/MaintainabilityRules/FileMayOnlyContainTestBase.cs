@@ -345,7 +345,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
         protected virtual string GetSettings() => null;
 
-        private class CSharpTest : StyleCopCodeFixVerifier<EmptyAnalyzer, EmptyCodeFixProvider>.CSharpTest
+        private class CSharpTest : StyleCopCodeFixVerifier<EmptyDiagnosticAnalyzer, EmptyCodeFixProvider>.CSharpTest
         {
             private readonly FileMayOnlyContainTestBase testFixture;
 

@@ -406,7 +406,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private class CSharpTest : StyleCopDiagnosticVerifier<EmptyAnalyzer>.CSharpTest
+        private class CSharpTest : StyleCopDiagnosticVerifier<EmptyDiagnosticAnalyzer>.CSharpTest
         {
             private readonly DebugMessagesUnitTestsBase testFixture;
 
