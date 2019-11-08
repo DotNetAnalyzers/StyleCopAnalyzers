@@ -211,17 +211,31 @@ namespace StyleCop.Analyzers.Test.HelperTests.ObjectPools
         [Fact]
         public void TestPooledObjectHandlesNullAllocation()
         {
-            object Allocator(ObjectPool<object> pool)
+            object NullAllocator(ObjectPool<object> pool)
                 => null;
 
+            object NonNullAllocator(ObjectPool<object> pool)
+                => new object();
+
+            bool releaserCalled = false;
             void Releaser(ObjectPool<object> pool, object obj)
             {
+                releaserCalled = true;
             }
 
-            using (var obj = new PooledObject<object>(SharedPools.Default<object>(), Allocator, Releaser))
+            using (var obj = new PooledObject<object>(SharedPools.Default<object>(), NullAllocator, Releaser))
             {
                 Assert.Null(obj.Object);
             }
+
+            Assert.False(releaserCalled);
+
+            using (var obj = new PooledObject<object>(SharedPools.Default<object>(), NonNullAllocator, Releaser))
+            {
+                Assert.NotNull(obj.Object);
+            }
+
+            Assert.True(releaserCalled);
         }
     }
 }
