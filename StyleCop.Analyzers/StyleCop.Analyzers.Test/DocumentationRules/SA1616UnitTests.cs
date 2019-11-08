@@ -612,18 +612,10 @@ public class ClassName
                 },
             };
 
-            if (source == fixedSource)
+            if (source == fixedSource && offerEmptyFixer)
             {
-                test.FixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
-                test.FixedState.MarkupHandling = MarkupMode.Allow;
-                test.BatchFixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
-                test.BatchFixedState.MarkupHandling = MarkupMode.Allow;
-
-                if (offerEmptyFixer)
-                {
-                    test.NumberOfIncrementalIterations = 1;
-                    test.NumberOfFixAllIterations = 1;
-                }
+                test.NumberOfIncrementalIterations = 1;
+                test.NumberOfFixAllIterations = 1;
             }
 
             test.ExpectedDiagnostics.AddRange(expected);
