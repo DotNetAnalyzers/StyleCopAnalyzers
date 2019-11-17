@@ -1,0 +1,37 @@
+pool:
+  name: Azure Pipelines
+  demands:
+  - msbuild
+  - visualstudio
+  - vstest
+
+parameters:
+  solution: StyleCopAnalyzers.sln
+
+jobs:
+- job: Build and Test
+  variables:
+    BuildPlatform: AnyCPU
+  strategy:
+    matrix:
+      Debug:
+        BuildConfiguration: Debug
+      Release:
+        BuildConfiguration: Release
+  steps:
+  - task: NuGetToolInstaller@0
+    displayName: 'Use NuGet 4.4.1'
+    inputs:
+      versionSpec: 4.4.1
+
+  - task: NuGetCommand@2
+    displayName: 'NuGet restore'
+    inputs:
+      restoreSolution: '$(Parameters.solution)'
+
+  - task: VSBuild@1
+    displayName: 'Build solution StyleCopAnalyzers.sln'
+    inputs:
+      solution: '$(Parameters.solution)'
+      platform: '$(BuildPlatform)'
+      configuration: '$(BuildConfiguration)'
