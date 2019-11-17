@@ -42,5 +42,6 @@ jobs:
   - task: PowerShell@2
     displayName: Run Tests
     inputs:
-      script: .\opencover-report.ps1
+      workingDirectory: '$(Build.SourcesDirectory)/build'
+      filePath: opencover-report.ps1
       arguments: '$(_debugArg) -NoBuild -NoReport'
