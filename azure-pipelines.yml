@@ -5,11 +5,10 @@ pool:
   - visualstudio
   - vstest
 
-parameters:
-  solution: StyleCopAnalyzers.sln
-
 jobs:
 - job: Build and Test
+  parameters:
+    solution: StyleCopAnalyzers.sln
   variables:
     BuildPlatform: AnyCPU
   strategy:
