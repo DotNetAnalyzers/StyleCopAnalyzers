@@ -7,9 +7,8 @@ pool:
 
 jobs:
 - job: Build and Test
-  parameters:
-    solution: StyleCopAnalyzers.sln
   variables:
+    BuildSolution: StyleCopAnalyzers.sln
     BuildPlatform: AnyCPU
   strategy:
     matrix:
@@ -26,11 +25,11 @@ jobs:
   - task: NuGetCommand@2
     displayName: 'NuGet restore'
     inputs:
-      restoreSolution: '$(Parameters.solution)'
+      restoreSolution: '$(BuildSolution)'
 
   - task: VSBuild@1
     displayName: 'Build solution StyleCopAnalyzers.sln'
     inputs:
-      solution: '$(Parameters.solution)'
+      solution: '$(BuildSolution)'
       platform: '$(BuildPlatform)'
       configuration: '$(BuildConfiguration)'
