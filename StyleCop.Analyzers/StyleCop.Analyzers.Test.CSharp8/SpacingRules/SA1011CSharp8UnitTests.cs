@@ -56,5 +56,64 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
 
             await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp8, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3052, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3052")]
+        public async Task TestClosingSquareBracketFollowedByExclamationAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod(object?[] arguments)
+        {
+            object o = arguments[0]!;
+            string s = arguments[0]!.ToString();
+        }
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp8, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3052, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3052")]
+        public async Task TestInvalidClosingSquareBracketFollowedByExclamationAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod(object?[] arguments)
+        {
+            object o = arguments[0] !;
+            string s = arguments[0] !.ToString();
+        }
+    }
+}
+";
+
+            var fixedCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod(object?[] arguments)
+        {
+            object o = arguments[0]!;
+            string s = arguments[0]!.ToString();
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithArguments(" not", "followed").WithLocation(7, 35),
+                Diagnostic().WithArguments(" not", "followed").WithLocation(8, 35),
+            };
+
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp8, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

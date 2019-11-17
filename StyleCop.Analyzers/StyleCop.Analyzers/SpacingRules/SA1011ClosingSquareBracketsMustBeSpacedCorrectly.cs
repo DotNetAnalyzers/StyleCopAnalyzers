@@ -106,6 +106,8 @@ namespace StyleCop.Analyzers.SpacingRules
                 case SyntaxKind.MinusGreaterThanToken:
                     precedesSpecialCharacter = true;
                     break;
+
+                case SyntaxKind.ExclamationToken:
                 case SyntaxKind.PlusPlusToken:
                 case SyntaxKind.MinusMinusToken:
                     precedesSpecialCharacter = true;
