@@ -38,10 +38,17 @@ jobs:
       solution: '$(BuildSolution)'
       platform: '$(BuildPlatform)'
       configuration: '$(BuildConfiguration)'
+      msbuildArgs: '/bl'
 
   - task: PowerShell@2
     displayName: Run Tests
     inputs:
       workingDirectory: '$(Build.SourcesDirectory)/build'
       filePath: build/opencover-report.ps1
-      arguments: '$(_debugArg) -NoBuild -NoReport'
+      arguments: '$(_debugArg) -NoBuild -NoReport -Azure'
+
+  - task: PublishBuildArtifacts@1
+    displayName: Publish build logs
+    inputs:
+      pathtoPublish: msbuild.binlog
+    condition: failed()
