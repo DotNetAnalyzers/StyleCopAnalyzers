@@ -10,7 +10,7 @@ jobs:
 - job: Build
   variables:
     BuildSolution: StyleCopAnalyzers.sln
-    BuildPlatform: AnyCPU
+    BuildPlatform: Any CPU
   strategy:
     matrix:
       Debug:
