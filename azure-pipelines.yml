@@ -53,6 +53,17 @@ jobs:
       testResultsFormat: xUnit
       testResultsFiles: 'build/*.xml'
 
+  - task: PowerShell@2
+    displayName: Upload coverage reports to codecov.io
+    condition: eq(variables['BuildConfiguration'], 'Debug')
+    inputs:
+      workingDirectory: '$(Build.SourcesDirectory)/build'
+      script: |
+        $packageConfig = [xml](Get-Content ..\.nuget\packages.config)
+        $codecov_version = $packageConfig.SelectSingleNode('/packages/package[@id="Codecov"]').version
+        $codecov = "..\packages\Codecov.$codecov_version\tools\codecov.exe"
+        &$codecov -f '..\build\OpenCover.Reports\OpenCover.StyleCopAnalyzers.xml'
+
   - task: PublishBuildArtifacts@1
     displayName: Publish build logs
     inputs:
