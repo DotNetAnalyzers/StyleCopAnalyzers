@@ -6,7 +6,7 @@ pool:
   - vstest
 
 jobs:
-- job: Build and Test
+- job: Build
   variables:
     BuildSolution: StyleCopAnalyzers.sln
     BuildPlatform: AnyCPU
