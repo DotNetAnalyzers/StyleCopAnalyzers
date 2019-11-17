@@ -43,5 +43,5 @@ jobs:
     displayName: Run Tests
     inputs:
       workingDirectory: '$(Build.SourcesDirectory)/build'
-      filePath: opencover-report.ps1
+      filePath: build/opencover-report.ps1
       arguments: '$(_debugArg) -NoBuild -NoReport'
