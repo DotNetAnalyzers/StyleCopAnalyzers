@@ -41,5 +41,6 @@ jobs:
 
   - task: PowerShell@2
     displayName: Run Tests
-    script: .\opencover-report.ps1
-    arguments: '$(_debugArg) -NoBuild -NoReport'
+    inputs:
+      script: .\opencover-report.ps1
+      arguments: '$(_debugArg) -NoBuild -NoReport'
