@@ -18,10 +18,17 @@ jobs:
       Release:
         BuildConfiguration: Release
   steps:
+  - task: NuGetToolInstaller@0
+    displayName: 'Use NuGet 5.3.1'
+    inputs:
+      versionSpec: 5.3.1
+
   - task: NuGetCommand@2
     displayName: 'NuGet restore'
     inputs:
       restoreSolution: '$(BuildSolution)'
+      feedsToUse: 'config'
+      nugetConfigPath: '$(Build.WorkingDirectory)/NuGet.config'
 
   - task: VSBuild@1
     displayName: 'Build solution StyleCopAnalyzers.sln'
