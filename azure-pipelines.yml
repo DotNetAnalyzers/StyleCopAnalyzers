@@ -47,6 +47,12 @@ jobs:
       filePath: build/opencover-report.ps1
       arguments: '$(_debugArg) -NoBuild -NoReport -Azure'
 
+  - task: PublishTestResults@2
+    displayName: Publish test results
+    inputs:
+      testResultsFormat: xUnit
+      testResultsFiles: 'build/*.xml'
+
   - task: PublishBuildArtifacts@1
     displayName: Publish build logs
     inputs:
