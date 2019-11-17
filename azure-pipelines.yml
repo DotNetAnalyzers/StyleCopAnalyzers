@@ -28,7 +28,7 @@ jobs:
     inputs:
       restoreSolution: '$(BuildSolution)'
       feedsToUse: 'config'
-      nugetConfigPath: '$(Build.WorkingDirectory)/NuGet.config'
+      nugetConfigPath: 'NuGet.config'
 
   - task: VSBuild@1
     displayName: 'Build solution StyleCopAnalyzers.sln'
