@@ -11,6 +11,7 @@ jobs:
   variables:
     BuildSolution: StyleCopAnalyzers.sln
     BuildPlatform: Any CPU
+    OriginalBuildNumber: $(Build.BuildNumber)
   strategy:
     matrix:
       Debug:
@@ -65,7 +66,7 @@ jobs:
         $packageConfig = [xml](Get-Content ..\.nuget\packages.config)
         $codecov_version = $packageConfig.SelectSingleNode('/packages/package[@id="Codecov"]').version
         $codecov = "..\packages\Codecov.$codecov_version\tools\codecov.exe"
-        &$codecov -f '..\build\OpenCover.Reports\OpenCover.StyleCopAnalyzers.xml' --required
+        &$codecov -f '..\build\OpenCover.Reports\OpenCover.StyleCopAnalyzers.xml' -b $(OriginalBuildNumber) --required
 
   - task: PublishBuildArtifacts@1
     displayName: Publish build logs
