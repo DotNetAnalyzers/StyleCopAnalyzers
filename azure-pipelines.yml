@@ -58,6 +58,7 @@ jobs:
     condition: eq(variables['BuildConfiguration'], 'Debug')
     inputs:
       workingDirectory: '$(Build.SourcesDirectory)/build'
+      targetType: inline
       script: |
         $packageConfig = [xml](Get-Content ..\.nuget\packages.config)
         $codecov_version = $packageConfig.SelectSingleNode('/packages/package[@id="Codecov"]').version
