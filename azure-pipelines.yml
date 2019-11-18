@@ -65,7 +65,7 @@ jobs:
         $packageConfig = [xml](Get-Content ..\.nuget\packages.config)
         $codecov_version = $packageConfig.SelectSingleNode('/packages/package[@id="Codecov"]').version
         $codecov = "..\packages\Codecov.$codecov_version\tools\codecov.exe"
-        &$codecov -f '..\build\OpenCover.Reports\OpenCover.StyleCopAnalyzers.xml'
+        &$codecov -f '..\build\OpenCover.Reports\OpenCover.StyleCopAnalyzers.xml' --required
 
   - task: PublishBuildArtifacts@1
     displayName: Publish build logs
