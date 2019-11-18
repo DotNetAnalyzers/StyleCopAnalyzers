@@ -20,9 +20,6 @@ jobs:
         BuildConfiguration: Release
         _debugArg: ''
   steps:
-  - powershell: Write-Host "##vso[task.setvariable variable=OriginalBuildNumber;]$(Build.BuildNumber)"
-    displayName: Set original build number
-
   - task: NuGetToolInstaller@0
     displayName: 'Use NuGet 5.3.1'
     inputs:
@@ -68,7 +65,7 @@ jobs:
         $packageConfig = [xml](Get-Content ..\.nuget\packages.config)
         $codecov_version = $packageConfig.SelectSingleNode('/packages/package[@id="Codecov"]').version
         $codecov = "..\packages\Codecov.$codecov_version\tools\codecov.exe"
-        &$codecov -f '..\build\OpenCover.Reports\OpenCover.StyleCopAnalyzers.xml' -b $(OriginalBuildNumber) --required
+        &$codecov -f '..\build\OpenCover.Reports\OpenCover.StyleCopAnalyzers.xml' --required
 
   - task: PublishBuildArtifacts@1
     displayName: Publish build logs
