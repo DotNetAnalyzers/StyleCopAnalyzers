@@ -52,6 +52,8 @@ jobs:
     inputs:
       testResultsFormat: xUnit
       testResultsFiles: 'build/*.xml'
+      mergeTestResults: true
+      testRunTitle: '$(BuildConfiguration)'
 
   - task: PowerShell@2
     displayName: Upload coverage reports to codecov.io
