@@ -38,7 +38,7 @@ jobs:
       solution: '$(BuildSolution)'
       platform: '$(BuildPlatform)'
       configuration: '$(BuildConfiguration)'
-      msbuildArgs: '/bl'
+      msbuildArgs: '/bl:$(Build.SourcesDirectory)/msbuild.binlog'
 
   - task: PowerShell@2
     displayName: Run Tests
