@@ -9,16 +9,13 @@ namespace StyleCop.Analyzers.Test.CSharp8.LayoutRules
     using StyleCop.Analyzers.Test.CSharp7.LayoutRules;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
-    StyleCop.Analyzers.LayoutRules.SA1514ElementDocumentationHeaderMustBePrecededByBlankLine,
-    StyleCop.Analyzers.LayoutRules.SA1514CodeFixProvider>;
+        StyleCop.Analyzers.LayoutRules.SA1514ElementDocumentationHeaderMustBePrecededByBlankLine,
+        StyleCop.Analyzers.LayoutRules.SA1514CodeFixProvider>;
 
     public class SA1514CSharp8UnitTests : SA1514CSharp7UnitTests
     {
-        /// <summary>
-        /// Verifies that method-like declarations with invalid documentation will produce the expected diagnostics.
-        /// </summary>
-        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
+        [WorkItem(3067, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3067")]
         public async Task TestValidPropertyDeclarationAsync()
         {
             var testCode = @"namespace TestNamespace
