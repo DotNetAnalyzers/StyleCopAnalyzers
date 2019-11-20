@@ -2,7 +2,8 @@ param (
 	[switch]$Debug,
 	[switch]$NoBuild,
 	[switch]$NoReport,
-	[switch]$AppVeyor
+	[switch]$AppVeyor,
+	[switch]$Azure
 )
 
 If (-not $NoBuild) {
@@ -51,6 +52,8 @@ $register_mode = 'user'
 If ($AppVeyor) {
 	$AppVeyorArg = '-appveyor'
 	$register_mode = 'Path32'
+} ElseIf ($Azure) {
+	$register_mode = 'Path32'
 }
 
 &$opencover_console `
@@ -63,9 +66,9 @@ If ($AppVeyor) {
 	-excludebyfile:*\*Designer.cs `
 	-output:"$report_folder\OpenCover.StyleCopAnalyzers.xml" `
 	-target:"$xunit_runner_console_net452" `
-	-targetargs:"$target_dll -noshadow $AppVeyorArg"
+	-targetargs:"$target_dll -noshadow $AppVeyorArg -xml StyleCopAnalyzers.xunit.xml"
 
-If ($AppVeyor -and -not $?) {
+If (($AppVeyor -or $Azure) -and -not $?) {
 	$host.UI.WriteErrorLine('Build failed; coverage analysis aborted.')
 	Exit $LASTEXITCODE
 }
@@ -81,9 +84,9 @@ If ($AppVeyor -and -not $?) {
 	-output:"$report_folder\OpenCover.StyleCopAnalyzers.xml" `
 	-mergebyhash -mergeoutput `
 	-target:"$xunit_runner_console_net46" `
-	-targetargs:"$target_dll_csharp7 -noshadow $AppVeyorArg"
+	-targetargs:"$target_dll_csharp7 -noshadow $AppVeyorArg -xml StyleCopAnalyzers.CSharp7.xunit.xml"
 
-If ($AppVeyor -and -not $?) {
+If (($AppVeyor -or $Azure) -and -not $?) {
 	$host.UI.WriteErrorLine('Build failed; coverage analysis aborted.')
 	Exit $LASTEXITCODE
 }
@@ -99,9 +102,9 @@ If ($AppVeyor -and -not $?) {
 	-output:"$report_folder\OpenCover.StyleCopAnalyzers.xml" `
 	-mergebyhash -mergeoutput `
 	-target:"$xunit_runner_console_net472" `
-	-targetargs:"$target_dll_csharp8 -noshadow $AppVeyorArg"
+	-targetargs:"$target_dll_csharp8 -noshadow $AppVeyorArg -xml StyleCopAnalyzers.CSharp8.xunit.xml"
 
-If ($AppVeyor -and -not $?) {
+If (($AppVeyor -or $Azure) -and -not $?) {
 	$host.UI.WriteErrorLine('Build failed; coverage analysis aborted.')
 	Exit $LASTEXITCODE
 }
