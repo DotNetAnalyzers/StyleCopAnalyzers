@@ -67,28 +67,12 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
     {
         public void TestMethod(object?[] arguments)
         {
-            object o = arguments[0]!;
-            string s = arguments[0]!.ToString();
-        }
-    }
-}
-";
-
-            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp8, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        [WorkItem(3052, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3052")]
-        public async Task TestInvalidClosingSquareBracketFollowedByExclamationAsync()
-        {
-            var testCode = @"namespace TestNamespace
-{
-    public class TestClass
-    {
-        public void TestMethod(object?[] arguments)
-        {
-            object o = arguments[0] !;
-            string s = arguments[0] !.ToString();
+            object o1 = arguments[0] !;
+            object o2 = arguments[0]! ;
+            object o3 = arguments[0] ! ;
+            string s1 = arguments[0] !.ToString();
+            string s2 = arguments[0]! .ToString();
+            string s3 = arguments[0] ! .ToString();
         }
     }
 }
@@ -100,8 +84,12 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
     {
         public void TestMethod(object?[] arguments)
         {
-            object o = arguments[0]!;
-            string s = arguments[0]!.ToString();
+            object o1 = arguments[0]!;
+            object o2 = arguments[0]! ;
+            object o3 = arguments[0]! ;
+            string s1 = arguments[0]!.ToString();
+            string s2 = arguments[0]! .ToString();
+            string s3 = arguments[0]! .ToString();
         }
     }
 }
@@ -109,8 +97,10 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithArguments(" not", "followed").WithLocation(7, 35),
-                Diagnostic().WithArguments(" not", "followed").WithLocation(8, 35),
+                Diagnostic().WithArguments(" not", "followed").WithLocation(7, 36),
+                Diagnostic().WithArguments(" not", "followed").WithLocation(9, 36),
+                Diagnostic().WithArguments(" not", "followed").WithLocation(10, 36),
+                Diagnostic().WithArguments(" not", "followed").WithLocation(12, 36),
             };
 
             await VerifyCSharpFixAsync(LanguageVersion.CSharp8, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
