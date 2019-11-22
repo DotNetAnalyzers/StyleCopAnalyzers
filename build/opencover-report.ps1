@@ -56,6 +56,8 @@ If ($AppVeyor) {
 	$register_mode = 'Path32'
 }
 
+$exitCode = 0
+
 &$opencover_console `
 	-register:$register_mode `
 	-threshold:1 -oldStyle `
@@ -69,8 +71,8 @@ If ($AppVeyor) {
 	-targetargs:"$target_dll -noshadow $AppVeyorArg -xml StyleCopAnalyzers.xunit.xml"
 
 If (($AppVeyor -or $Azure) -and -not $?) {
-	$host.UI.WriteErrorLine('Build failed; coverage analysis aborted.')
-	Exit $LASTEXITCODE
+	$host.UI.WriteErrorLine('Build failed; coverage analysis may be incomplete.')
+	$exitCode = $LASTEXITCODE
 }
 
 &$opencover_console `
@@ -87,8 +89,8 @@ If (($AppVeyor -or $Azure) -and -not $?) {
 	-targetargs:"$target_dll_csharp7 -noshadow $AppVeyorArg -xml StyleCopAnalyzers.CSharp7.xunit.xml"
 
 If (($AppVeyor -or $Azure) -and -not $?) {
-	$host.UI.WriteErrorLine('Build failed; coverage analysis aborted.')
-	Exit $LASTEXITCODE
+	$host.UI.WriteErrorLine('Build failed; coverage analysis may be incomplete.')
+	$exitCode = $LASTEXITCODE
 }
 
 &$opencover_console `
@@ -105,11 +107,13 @@ If (($AppVeyor -or $Azure) -and -not $?) {
 	-targetargs:"$target_dll_csharp8 -noshadow $AppVeyorArg -xml StyleCopAnalyzers.CSharp8.xunit.xml"
 
 If (($AppVeyor -or $Azure) -and -not $?) {
-	$host.UI.WriteErrorLine('Build failed; coverage analysis aborted.')
-	Exit $LASTEXITCODE
+	$host.UI.WriteErrorLine('Build failed; coverage analysis may be incomplete.')
+	$exitCode = $LASTEXITCODE
 }
 
 If (-not $NoReport) {
 	&$report_generator -targetdir:$report_folder -reports:$report_folder\OpenCover.*.xml
 	$host.UI.WriteLine("Open $report_folder\index.htm to see code coverage results.")
 }
+
+Exit $exitCode
