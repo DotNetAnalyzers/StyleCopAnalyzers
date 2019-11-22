@@ -28,7 +28,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
         /// </remarks>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
-        public async Task TestBeforeRangeExpressionAsync()
+        public async Task TestAfterRangeExpressionAsync()
         {
             var testCode = SpecialTypeDefinitions.IndexAndRange + @"
 namespace TestNamespace

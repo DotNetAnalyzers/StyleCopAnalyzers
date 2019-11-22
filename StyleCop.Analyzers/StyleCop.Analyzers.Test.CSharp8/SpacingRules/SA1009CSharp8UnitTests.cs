@@ -7,7 +7,9 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
+    using StyleCop.Analyzers.SpacingRules;
     using StyleCop.Analyzers.Test.CSharp7.SpacingRules;
+    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1009ClosingParenthesisMustBeSpacedCorrectly,
@@ -95,6 +97,53 @@ public class Foo
 }";
 
             await VerifyCSharpFixAsync(LanguageVersion.CSharp8, testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that spacing before a range expression double dots isn't required.
+        /// </summary>
+        /// <remarks>
+        /// <para>Double dots of range expressions already provide enough spacing for readability so there is no
+        /// need to suffix the closing parenthesis with a space.</para>
+        /// </remarks>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3064, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3064")]
+        public async Task TestBeforeRangeExpressionAsync()
+        {
+            var testCode = SpecialTypeDefinitions.IndexAndRange + @"
+namespace TestNamespace
+{
+    using System;
+    public class TestClass
+    {
+        public string TestMethod()
+        {
+            string str = ""test"";
+            int startLen = 4;
+            return str[(startLen - 1) ..];
+        }
+    }
+}
+";
+
+            var fixedCode = SpecialTypeDefinitions.IndexAndRange + @"
+namespace TestNamespace
+{
+    using System;
+    public class TestClass
+    {
+        public string TestMethod()
+        {
+            string str = ""test"";
+            int startLen = 4;
+            return str[(startLen - 1)..];
+        }
+    }
+}
+";
+            DiagnosticResult expected = Diagnostic().WithSpan(28, 37, 28, 38).WithArguments(" not", "followed");
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp8, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
