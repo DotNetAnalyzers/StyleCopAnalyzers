@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
     using System;
     using System.Collections.Immutable;
     using System.Composition;
+    using System.Diagnostics;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -67,7 +68,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             SyntaxNode replacement;
 
-            if (IsType<CancellationToken>(namedTypeSymbol))
+            if (IsType<CancellationToken>(namedTypeSymbol)
+                || namedTypeSymbol?.SpecialType == SpecialType.System_IntPtr
+                || namedTypeSymbol?.SpecialType == SpecialType.System_UIntPtr
+                || IsType<Guid>(namedTypeSymbol))
             {
                 if (IsDefaultParameterValue(newExpression))
                 {
@@ -75,7 +79,26 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
                 else
                 {
-                    replacement = ConstructMemberAccessSyntax(newExpression.Type, nameof(CancellationToken.None));
+                    string fieldName;
+                    if (IsType<CancellationToken>(namedTypeSymbol))
+                    {
+                        fieldName = nameof(CancellationToken.None);
+                    }
+                    else if (namedTypeSymbol.SpecialType == SpecialType.System_IntPtr)
+                    {
+                        fieldName = nameof(IntPtr.Zero);
+                    }
+                    else if (namedTypeSymbol.SpecialType == SpecialType.System_UIntPtr)
+                    {
+                        fieldName = nameof(IntPtr.Zero);
+                    }
+                    else
+                    {
+                        Debug.Assert(IsType<Guid>(namedTypeSymbol), "Assertion failed: IsType<Guid>(namedTypeSymbol)");
+                        fieldName = nameof(Guid.Empty);
+                    }
+
+                    replacement = ConstructMemberAccessSyntax(newExpression.Type, fieldName);
                 }
             }
             else if (IsEnumWithDefaultMember(namedTypeSymbol, out string memberName))

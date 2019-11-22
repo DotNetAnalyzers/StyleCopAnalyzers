@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
@@ -241,6 +242,9 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData("System.Threading", nameof(CancellationToken), nameof(CancellationToken.None))]
+        [InlineData("System", nameof(IntPtr), nameof(IntPtr.Zero))]
+        [InlineData("System", nameof(UIntPtr), nameof(UIntPtr.Zero))]
+        [InlineData("System", nameof(Guid), nameof(Guid.Empty))]
         public async Task VerifySpecialTypeFixUsesSpecialSyntaxAsync(string typeNamespace, string typeName, string fieldName)
         {
             var testCode = $@"
@@ -279,6 +283,9 @@ public class TestClass
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData("System.Threading", nameof(CancellationToken), nameof(CancellationToken.None))]
+        [InlineData("System", nameof(IntPtr), nameof(IntPtr.Zero))]
+        [InlineData("System", nameof(UIntPtr), nameof(UIntPtr.Zero))]
+        [InlineData("System", nameof(Guid), nameof(Guid.Empty))]
         public async Task VerifySpecialTypeTriviaPreservationAsync(string typeNamespace, string typeName, string fieldName)
         {
             var testCode = $@"
@@ -318,6 +325,9 @@ public class TestClass
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData("System.Threading", nameof(CancellationToken), nameof(CancellationToken.None))]
+        [InlineData("System", nameof(IntPtr), nameof(IntPtr.Zero))]
+        [InlineData("System", nameof(UIntPtr), nameof(UIntPtr.Zero))]
+        [InlineData("System", nameof(Guid), nameof(Guid.Empty))]
         public async Task VerifyQualifiedSpecialTypeFixUsesFieldSyntaxAsync(string typeNamespace, string typeName, string fieldName)
         {
             var testCode = $@"
@@ -351,6 +361,9 @@ public class TestClass
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData(nameof(CancellationToken))]
+        [InlineData(nameof(IntPtr))]
+        [InlineData(nameof(UIntPtr))]
+        [InlineData(nameof(Guid))]
         public async Task VerifyCustomSpecialTypeStructIsNotReplacedAsync(string typeName)
         {
             var testCode = $@"public class TestClass
@@ -394,6 +407,9 @@ public class TestClass
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData("System.Threading", nameof(CancellationToken), nameof(CancellationToken.None))]
+        [InlineData("System", nameof(IntPtr), nameof(IntPtr.Zero))]
+        [InlineData("System", nameof(UIntPtr), nameof(UIntPtr.Zero))]
+        [InlineData("System", nameof(Guid), nameof(Guid.Empty))]
         public async Task VerifyAliasedSpecialTypeUsesFieldSyntaxAsync(string typeNamespace, string typeName, string fieldName)
         {
             var testCode = $@"
@@ -508,6 +524,9 @@ public class TestClass
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData("System.Threading", nameof(CancellationToken))]
+        [InlineData("System", nameof(IntPtr))]
+        [InlineData("System", nameof(UIntPtr))]
+        [InlineData("System", nameof(Guid))]
         [WorkItem(2740, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2740")]
         public async Task VerifySpecialTypeDefaultParameterAsync(string typeNamespace, string typeName)
         {
