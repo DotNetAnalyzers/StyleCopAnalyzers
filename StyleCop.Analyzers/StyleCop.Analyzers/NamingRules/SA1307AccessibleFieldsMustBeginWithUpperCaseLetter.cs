@@ -73,7 +73,7 @@ namespace StyleCop.Analyzers.NamingRules
                 {
                     foreach (VariableDeclaratorSyntax declarator in declaration.Declaration.Variables)
                     {
-                        string name = declarator.Identifier.ToString();
+                        string name = declarator.Identifier.ValueText;
 
                         if (!string.IsNullOrEmpty(name)
                             && char.IsLower(name[0])
