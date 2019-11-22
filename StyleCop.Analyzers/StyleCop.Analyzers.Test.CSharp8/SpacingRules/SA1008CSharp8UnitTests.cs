@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp7.SpacingRules;
+    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
 
     using static StyleCop.Analyzers.SpacingRules.SA1008OpeningParenthesisMustBeSpacedCorrectly;
@@ -18,25 +19,6 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
 
     public class SA1008CSharp8UnitTests : SA1008CSharp7UnitTests
     {
-        private const string RangePrologue = @"namespace System
-{
-    public struct Range
-    {
-        public Range(Index a, Index b)
-        {
-        }
-        public Index Start { get; }
-        public Index End { get; }
-    }
-
-    public struct Index
-    {
-        public static implicit operator Index(int value) => throw null;
-        public int GetOffset(int length) => throw null;
-    }
-}
-";
-
         /// <summary>
         /// Verifies that spacing after a range expression double dots isn't required.
         /// </summary>
@@ -48,7 +30,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
         [Fact]
         public async Task TestBeforeRangeExpressionAsync()
         {
-            var testCode = RangePrologue + @"
+            var testCode = SpecialTypeDefinitions.IndexAndRange + @"
 namespace TestNamespace
 {
     using System;
@@ -64,7 +46,7 @@ namespace TestNamespace
 }
 ";
 
-            var fixedCode = RangePrologue + @"
+            var fixedCode = SpecialTypeDefinitions.IndexAndRange + @"
 namespace TestNamespace
 {
     using System;
