@@ -11,6 +11,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// A multi-line initializer should use a comma on the last item.
@@ -59,6 +60,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         private static readonly Action<SyntaxNodeAnalysisContext> HandleObjectInitializerAction = HandleObjectInitializer;
         private static readonly Action<SyntaxNodeAnalysisContext> HandleAnonymousObjectInitializerAction = HandleAnonymousObjectInitializer;
         private static readonly Action<SyntaxNodeAnalysisContext> HandleEnumDeclarationAction = HandleEnumDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> HandleSwitchExpressionAction = HandleSwitchExpression;
 
         private static readonly ImmutableArray<SyntaxKind> ObjectInitializerKinds =
             ImmutableArray.Create(SyntaxKind.ObjectInitializerExpression, SyntaxKind.ArrayInitializerExpression, SyntaxKind.CollectionInitializerExpression);
@@ -76,6 +78,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             context.RegisterSyntaxNodeAction(HandleObjectInitializerAction, ObjectInitializerKinds);
             context.RegisterSyntaxNodeAction(HandleAnonymousObjectInitializerAction, SyntaxKind.AnonymousObjectCreationExpression);
             context.RegisterSyntaxNodeAction(HandleEnumDeclarationAction, SyntaxKind.EnumDeclaration);
+            context.RegisterSyntaxNodeAction(HandleSwitchExpressionAction, SyntaxKindEx.SwitchExpression);
         }
 
         private static void HandleEnumDeclaration(SyntaxNodeAnalysisContext context)
@@ -118,6 +121,20 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             if (initializer.Initializers.SeparatorCount < initializer.Initializers.Count)
             {
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, initializer.Initializers.Last().GetLocation()));
+            }
+        }
+
+        private static void HandleSwitchExpression(SyntaxNodeAnalysisContext context)
+        {
+            var switchExpression = (SwitchExpressionSyntaxWrapper)context.Node;
+            if (switchExpression.SyntaxNode == null || !switchExpression.SyntaxNode.SpansMultipleLines())
+            {
+                return;
+            }
+
+            if (switchExpression.Arms.SeparatorCount < switchExpression.Arms.Count)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, switchExpression.Arms.Last().SyntaxNode.GetLocation()));
             }
         }
     }
