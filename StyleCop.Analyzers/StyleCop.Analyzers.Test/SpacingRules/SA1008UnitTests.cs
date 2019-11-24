@@ -137,11 +137,44 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             int z)
         {
         }
+
+        public void TestMethod2 (
+            int x,
+            int y,
+            int z)
+        {
+        }
     }
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            var fixedTestCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod1(
+            int x,
+            int y,
+            int z)
+        {
+        }
+
+        public void TestMethod2(
+            int x,
+            int y,
+            int z)
+        {
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expectedDiagnostics =
+            {
+                Diagnostic(DescriptorNotPreceded).WithLocation(12, 33),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -776,6 +809,71 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 
                 // v2
                 Diagnostic(DescriptorNotFollowed).WithLocation(15, 19),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that spacing for multiline argument lists is handled properly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task TestMultiLineArgumentListAsync()
+        {
+            var testCode = @"using System;
+
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public TestClass(int x, int y)
+        {
+            var s1 = new String(
+                'a',
+                x);
+
+            var s2 = new String (
+                'a',
+                y);
+
+            // Opening parenthesis followed by space
+            var s3 = new String( 
+                'a',
+                x);
+        }
+    }
+}
+";
+
+            var fixedTestCode = @"using System;
+
+namespace TestNamespace
+{
+    public class TestClass
+    {
+        public TestClass(int x, int y)
+        {
+            var s1 = new String(
+                'a',
+                x);
+
+            var s2 = new String(
+                'a',
+                y);
+
+            // Opening parenthesis followed by space
+            var s3 = new String('a',
+                x);
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expectedDiagnostics =
+            {
+                Diagnostic(DescriptorNotPreceded).WithLocation(13, 33),
+                Diagnostic(DescriptorNotFollowed).WithLocation(18, 32),
             };
 
             await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
