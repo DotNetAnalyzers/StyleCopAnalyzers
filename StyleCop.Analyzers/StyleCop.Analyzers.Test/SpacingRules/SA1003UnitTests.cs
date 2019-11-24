@@ -977,6 +977,142 @@ public class Foo : Exception
         }
 
         /// <summary>
+        /// Verifies that colon in a ternary operator triggers SA1003.
+        /// </summary>
+        /// <param name="postfixOperator">The postfix operator to verify.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("++")]
+        [InlineData("--")]
+        public async Task TestTernaryFollowedByColonAsync(string postfixOperator)
+        {
+            var testCode = $@"public class TestClass
+{{
+    public void TestMethod()
+    {{
+        int x = 0;
+        var y1 = x > 0 ? x{postfixOperator}:x{postfixOperator};
+        var y2 = x > 0 ? x{postfixOperator} :x{postfixOperator};
+        var y3 = x > 0 ? x{postfixOperator}: x{postfixOperator};
+        var y4 = x > 0 ? x{postfixOperator} : x{postfixOperator};
+    }}
+}}
+";
+            var fixedCode = $@"public class TestClass
+{{
+    public void TestMethod()
+    {{
+        int x = 0;
+        var y1 = x > 0 ? x{postfixOperator} : x{postfixOperator};
+        var y2 = x > 0 ? x{postfixOperator} : x{postfixOperator};
+        var y3 = x > 0 ? x{postfixOperator} : x{postfixOperator};
+        var y4 = x > 0 ? x{postfixOperator} : x{postfixOperator};
+    }}
+}}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DescriptorFollowedByWhitespace).WithSpan(6, 27, 6, 29).WithArguments(postfixOperator),
+                Diagnostic(DescriptorPrecededByWhitespace).WithSpan(6, 29, 6, 30).WithArguments(":"),
+                Diagnostic(DescriptorFollowedByWhitespace).WithSpan(6, 29, 6, 30).WithArguments(":"),
+                Diagnostic(DescriptorFollowedByWhitespace).WithSpan(7, 30, 7, 31).WithArguments(":"),
+                Diagnostic(DescriptorFollowedByWhitespace).WithSpan(8, 27, 8, 29).WithArguments(postfixOperator),
+                Diagnostic(DescriptorPrecededByWhitespace).WithSpan(8, 29, 8, 30).WithArguments(":"),
+            };
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that colon in a ternary operator triggers SA1003.
+        /// </summary>
+        /// <param name="prefixOperator">The prefix operator to verify.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("++")]
+        [InlineData("--")]
+        public async Task TestTernaryPrecededByColonAsync(string prefixOperator)
+        {
+            var testCode = $@"public class TestClass
+{{
+    public void TestMethod()
+    {{
+        int x = 0;
+        var y1 = x > 0 ? {prefixOperator}x:{prefixOperator}x;
+        var y2 = x > 0 ? {prefixOperator}x :{prefixOperator}x;
+        var y3 = x > 0 ? {prefixOperator}x: {prefixOperator}x;
+        var y4 = x > 0 ? {prefixOperator}x : {prefixOperator}x;
+    }}
+}}
+";
+            var fixedCode = $@"public class TestClass
+{{
+    public void TestMethod()
+    {{
+        int x = 0;
+        var y1 = x > 0 ? {prefixOperator}x : {prefixOperator}x;
+        var y2 = x > 0 ? {prefixOperator}x : {prefixOperator}x;
+        var y3 = x > 0 ? {prefixOperator}x : {prefixOperator}x;
+        var y4 = x > 0 ? {prefixOperator}x : {prefixOperator}x;
+    }}
+}}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DescriptorPrecededByWhitespace).WithSpan(6, 29, 6, 30).WithArguments(":"),
+                Diagnostic(DescriptorFollowedByWhitespace).WithSpan(6, 29, 6, 30).WithArguments(":"),
+                Diagnostic(DescriptorFollowedByWhitespace).WithSpan(7, 30, 7, 31).WithArguments(":"),
+                Diagnostic(DescriptorPrecededByWhitespace).WithSpan(8, 29, 8, 30).WithArguments(":"),
+            };
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that interpolated string format triggers SA1003, and does not require a preceding space.
+        /// </summary>
+        /// <param name="postfixOperator">The postfix operator to verify.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData("++")]
+        [InlineData("--")]
+        [WorkItem(3073, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3073")]
+        public async Task TestInterpolatedStringFormatAsync(string postfixOperator)
+        {
+            var testCode = $@"public class TestClass
+{{
+    public void TestMethod()
+    {{
+        int x = 0;
+        var y1 = $""{{x{postfixOperator}:N}}"";
+        var y2 = $""{{x{postfixOperator} :N}}"";
+        var y3 = $""{{x{postfixOperator}: N}}"";
+        var y4 = $""{{x{postfixOperator} : N}}"";
+    }}
+}}
+";
+            var fixedCode = $@"public class TestClass
+{{
+    public void TestMethod()
+    {{
+        int x = 0;
+        var y1 = $""{{x{postfixOperator}:N}}"";
+        var y2 = $""{{x{postfixOperator}:N}}"";
+        var y3 = $""{{x{postfixOperator}: N}}"";
+        var y4 = $""{{x{postfixOperator}: N}}"";
+    }}
+}}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DescriptorNotFollowedByWhitespace).WithSpan(7, 22, 7, 24).WithArguments(postfixOperator),
+                Diagnostic(DescriptorNotFollowedByWhitespace).WithSpan(9, 22, 9, 24).WithArguments(postfixOperator),
+            };
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that spacing errors in conditional directives are fixed correctly. This is a regression test for
         /// DotNetAnalyzers/StyleCopAnalyzers#1831.
         /// </summary>

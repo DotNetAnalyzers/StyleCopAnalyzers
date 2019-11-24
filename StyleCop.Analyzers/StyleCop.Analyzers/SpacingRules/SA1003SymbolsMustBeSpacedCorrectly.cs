@@ -312,6 +312,10 @@ namespace StyleCop.Analyzers.SpacingRules
                 mustHaveTrailingWhitespace = !(followingToken.Parent is InterpolationSyntax);
                 break;
 
+            case SyntaxKind.ColonToken:
+                mustHaveTrailingWhitespace = !(followingToken.Parent is InterpolationFormatClauseSyntax);
+                break;
+
             default:
                 mustHaveTrailingWhitespace = true;
                 break;
