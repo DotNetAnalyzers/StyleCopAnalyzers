@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
@@ -235,193 +236,201 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         /// <summary>
         /// Verifies that <c>new CancellationToken()</c> is replaced by <c>CancellationToken.None</c>.
         /// </summary>
+        /// <param name="typeNamespace">The namespace of the special type.</param>
+        /// <param name="typeName">The name of the special type.</param>
+        /// <param name="fieldName">The name of the field providing the default value for the type.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task VerifyCancellationTokenFixUsesNoneSyntaxAsync()
+        [Theory]
+        [InlineData("System.Threading", nameof(CancellationToken), nameof(CancellationToken.None))]
+        [InlineData("System", nameof(IntPtr), nameof(IntPtr.Zero))]
+        [InlineData("System", nameof(UIntPtr), nameof(UIntPtr.Zero))]
+        [InlineData("System", nameof(Guid), nameof(Guid.Empty))]
+        public async Task VerifySpecialTypeFixUsesSpecialSyntaxAsync(string typeNamespace, string typeName, string fieldName)
         {
-            var testCode = @"
-using System.Threading;
+            var testCode = $@"
+using {typeNamespace};
 
 public class TestClass
-{
+{{
     public void TestMethod()
-    {
-        var ct = new CancellationToken();
-    }
-}
+    {{
+        var value = [|new {typeName}()|];
+    }}
+}}
 ";
 
-            var fixedTestCode = @"
-using System.Threading;
+            var fixedTestCode = $@"
+using {typeNamespace};
 
 public class TestClass
-{
+{{
     public void TestMethod()
-    {
-        var ct = CancellationToken.None;
-    }
-}
+    {{
+        var value = {typeName}.{fieldName};
+    }}
+}}
 ";
 
-            DiagnosticResult[] expected =
-            {
-                Diagnostic().WithLocation(8, 18),
-            };
-
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Verifies that the codefix will preserve trivia surrounding <c>new CancellationToken()</c>.
         /// </summary>
+        /// <param name="typeNamespace">The namespace of the special type.</param>
+        /// <param name="typeName">The name of the special type.</param>
+        /// <param name="fieldName">The name of the field providing the default value for the type.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task VerifyCancellationTokenTriviaPreservationAsync()
+        [Theory]
+        [InlineData("System.Threading", nameof(CancellationToken), nameof(CancellationToken.None))]
+        [InlineData("System", nameof(IntPtr), nameof(IntPtr.Zero))]
+        [InlineData("System", nameof(UIntPtr), nameof(UIntPtr.Zero))]
+        [InlineData("System", nameof(Guid), nameof(Guid.Empty))]
+        public async Task VerifySpecialTypeTriviaPreservationAsync(string typeNamespace, string typeName, string fieldName)
         {
-            var testCode = @"
-using System.Threading;
+            var testCode = $@"
+using {typeNamespace};
 
 public class TestClass
-{
+{{
     public void TestMethod()
-    {
-        var ct1 = /* c1 */ new CancellationToken(); // c2
-    }
-}
+    {{
+        var value = /* c1 */ [|new {typeName}()|]; // c2
+    }}
+}}
 ";
 
-            var fixedTestCode = @"
-using System.Threading;
+            var fixedTestCode = $@"
+using {typeNamespace};
 
 public class TestClass
-{
+{{
     public void TestMethod()
-    {
-        var ct1 = /* c1 */ CancellationToken.None; // c2
-    }
-}
+    {{
+        var value = /* c1 */ {typeName}.{fieldName}; // c2
+    }}
+}}
 ";
 
-            DiagnosticResult[] expected =
-            {
-                Diagnostic().WithLocation(8, 28),
-            };
-
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Verifies that <c>new CancellationToken()</c> is replaced by <c>CancellationToken.None</c>,
         /// and a fully-qualified name is preserved correctly.
         /// </summary>
+        /// <param name="typeNamespace">The namespace of the special type.</param>
+        /// <param name="typeName">The name of the special type.</param>
+        /// <param name="fieldName">The name of the field providing the default value for the type.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task VerifyQualifiedCancellationTokenFixUsesNoneSyntaxAsync()
+        [Theory]
+        [InlineData("System.Threading", nameof(CancellationToken), nameof(CancellationToken.None))]
+        [InlineData("System", nameof(IntPtr), nameof(IntPtr.Zero))]
+        [InlineData("System", nameof(UIntPtr), nameof(UIntPtr.Zero))]
+        [InlineData("System", nameof(Guid), nameof(Guid.Empty))]
+        public async Task VerifyQualifiedSpecialTypeFixUsesFieldSyntaxAsync(string typeNamespace, string typeName, string fieldName)
         {
-            var testCode = @"
+            var testCode = $@"
 public class TestClass
-{
+{{
     public void TestMethod()
-    {
-        var ct = new System.Threading.CancellationToken();
-    }
-}
+    {{
+        var value = [|new {typeNamespace}.{typeName}()|];
+    }}
+}}
 ";
 
-            var fixedTestCode = @"
+            var fixedTestCode = $@"
 public class TestClass
-{
+{{
     public void TestMethod()
-    {
-        var ct = System.Threading.CancellationToken.None;
-    }
-}
+    {{
+        var value = {typeNamespace}.{typeName}.{fieldName};
+    }}
+}}
 ";
 
-            DiagnosticResult[] expected =
-            {
-                Diagnostic().WithLocation(6, 18),
-            };
-
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Verifies that <c>new CancellationToken()</c> is <b>not</b> replaced by <c>CancellationToken.None</c>
         /// if the qualified name is not exactly <c>System.Threading.CancellationToken</c>.
         /// </summary>
+        /// <param name="typeName">The name of the special type.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task VerifyCustomCancellationTokenClassIsNotReplacedAsync()
+        [Theory]
+        [InlineData(nameof(CancellationToken))]
+        [InlineData(nameof(IntPtr))]
+        [InlineData(nameof(UIntPtr))]
+        [InlineData(nameof(Guid))]
+        public async Task VerifyCustomSpecialTypeStructIsNotReplacedAsync(string typeName)
         {
-            var testCode = @"public class TestClass
-{
+            var testCode = $@"public class TestClass
+{{
     public void TestMethod()
-    {
-        var ct = new CancellationToken();
-    }
+    {{
+        var value = [|new {typeName}()|];
+    }}
 
-    private struct CancellationToken
-    {
-        public int TestProperty { get; set; }
-    }
-}
+    private struct {typeName}
+    {{
+        public int TestProperty {{ get; set; }}
+    }}
+}}
 ";
 
-            var fixedTestCode = @"public class TestClass
-{
+            var fixedTestCode = $@"public class TestClass
+{{
     public void TestMethod()
-    {
-        var ct = default(CancellationToken);
-    }
+    {{
+        var value = default({typeName});
+    }}
 
-    private struct CancellationToken
-    {
-        public int TestProperty { get; set; }
-    }
-}
+    private struct {typeName}
+    {{
+        public int TestProperty {{ get; set; }}
+    }}
+}}
 ";
 
-            DiagnosticResult[] expected =
-            {
-                Diagnostic().WithLocation(5, 18),
-            };
-
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Verifies that <c>new CancellationToken()</c> is replaced by <c>CancellationToken.None</c>,
         /// even when aliased by a <c>using</c> statement.
         /// </summary>
+        /// <param name="typeNamespace">The namespace of the special type.</param>
+        /// <param name="typeName">The name of the special type.</param>
+        /// <param name="fieldName">The name of the field providing the default value for the type.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
-        public async Task VerifyAliasedCancellationTokenUsesNoneSyntaxAsync()
+        [Theory]
+        [InlineData("System.Threading", nameof(CancellationToken), nameof(CancellationToken.None))]
+        [InlineData("System", nameof(IntPtr), nameof(IntPtr.Zero))]
+        [InlineData("System", nameof(UIntPtr), nameof(UIntPtr.Zero))]
+        [InlineData("System", nameof(Guid), nameof(Guid.Empty))]
+        public async Task VerifyAliasedSpecialTypeUsesFieldSyntaxAsync(string typeNamespace, string typeName, string fieldName)
         {
-            var testCode = @"
-using SystemToken = System.Threading.CancellationToken;
+            var testCode = $@"
+using SystemType = {typeNamespace}.{typeName};
 
 public class TestClass
-{
-    private SystemToken ct = new SystemToken();
-}
+{{
+    private SystemType value = [|new SystemType()|];
+}}
 ";
 
-            var fixedTestCode = @"
-using SystemToken = System.Threading.CancellationToken;
+            var fixedTestCode = $@"
+using SystemType = {typeNamespace}.{typeName};
 
 public class TestClass
-{
-    private SystemToken ct = SystemToken.None;
-}
+{{
+    private SystemType value = SystemType.{fieldName};
+}}
 ";
 
-            DiagnosticResult[] expected =
-            {
-                Diagnostic().WithLocation(6, 30),
-            };
-
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -510,46 +519,46 @@ public class TestClass
         /// <summary>
         /// Verifies that <c>new CancellationToken()</c> is replaced by <c>default(CancellationToken)</c> when its used for a default parameter.
         /// </summary>
+        /// <param name="typeNamespace">The namespace of the special type.</param>
+        /// <param name="typeName">The name of the special type.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
-        [Fact]
+        [Theory]
+        [InlineData("System.Threading", nameof(CancellationToken))]
+        [InlineData("System", nameof(IntPtr))]
+        [InlineData("System", nameof(UIntPtr))]
+        [InlineData("System", nameof(Guid))]
         [WorkItem(2740, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2740")]
-        public async Task VerifyCancellationTokenDefaultParameterAsync()
+        public async Task VerifySpecialTypeDefaultParameterAsync(string typeNamespace, string typeName)
         {
-            var testCode = @"using System.Threading;
+            var testCode = $@"using {typeNamespace};
 
 public class TestClass
-{
-    public TestClass(CancellationToken cancellationToken = new CancellationToken())
-    {
-    }
+{{
+    public TestClass({typeName} cancellationToken = [|new {typeName}()|])
+    {{
+    }}
 
-    public void TestMethod(CancellationToken cancellationToken = new CancellationToken())
-    {
-    }
-}
+    public void TestMethod({typeName} cancellationToken = [|new {typeName}()|])
+    {{
+    }}
+}}
 ";
 
-            var fixedTestCode = @"using System.Threading;
+            var fixedTestCode = $@"using {typeNamespace};
 
 public class TestClass
-{
-    public TestClass(CancellationToken cancellationToken = default(CancellationToken))
-    {
-    }
+{{
+    public TestClass({typeName} cancellationToken = default({typeName}))
+    {{
+    }}
 
-    public void TestMethod(CancellationToken cancellationToken = default(CancellationToken))
-    {
-    }
-}
+    public void TestMethod({typeName} cancellationToken = default({typeName}))
+    {{
+    }}
+}}
 ";
 
-            DiagnosticResult[] expected =
-            {
-                Diagnostic().WithLocation(5, 60),
-                Diagnostic().WithLocation(9, 66),
-            };
-
-            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
