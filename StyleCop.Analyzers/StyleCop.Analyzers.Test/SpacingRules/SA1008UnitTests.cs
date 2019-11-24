@@ -144,6 +144,14 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             int z)
         {
         }
+
+        // Opening parenthesis followed by space
+        public void TestMethod3( 
+            int x,
+            int y,
+            int z)
+        {
+        }
     }
 }
 ";
@@ -165,6 +173,14 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             int z)
         {
         }
+
+        // Opening parenthesis followed by space
+        public void TestMethod3(
+            int x,
+            int y,
+            int z)
+        {
+        }
     }
 }
 ";
@@ -172,6 +188,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             DiagnosticResult[] expectedDiagnostics =
             {
                 Diagnostic(DescriptorNotPreceded).WithLocation(12, 33),
+                Diagnostic(DescriptorNotFollowed).WithLocation(20, 32),
             };
 
             await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
@@ -863,7 +880,8 @@ namespace TestNamespace
                 y);
 
             // Opening parenthesis followed by space
-            var s3 = new String('a',
+            var s3 = new String(
+                'a',
                 x);
         }
     }
