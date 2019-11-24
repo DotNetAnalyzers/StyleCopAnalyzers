@@ -92,12 +92,6 @@ namespace StyleCop.Analyzers.SpacingRules
                 return;
             }
 
-            if (token.IsLastInLine())
-            {
-                // ignore open parenthesis when last on line.
-                return;
-            }
-
             var prevToken = token.GetPreviousToken();
 
             // Don't check leading spaces when preceded by a keyword that is already handled by SA1000
@@ -268,7 +262,7 @@ namespace StyleCop.Analyzers.SpacingRules
 
             if (token.IsFollowedByWhitespace())
             {
-                context.ReportDiagnostic(Diagnostic.Create(DescriptorNotFollowed, token.GetLocation(), TokenSpacingProperties.RemoveFollowing));
+                context.ReportDiagnostic(Diagnostic.Create(DescriptorNotFollowed, token.GetLocation(), TokenSpacingProperties.RemoveFollowingPreserveLayout));
             }
         }
     }
