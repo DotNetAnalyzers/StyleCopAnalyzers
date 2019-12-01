@@ -29,6 +29,7 @@ namespace StyleCop.Analyzers.Test.LayoutRules
                 yield return new[] { "while (i == 0)" };
                 yield return new[] { "for (var j = 0; j < i; j++)" };
                 yield return new[] { "foreach (var j in new[] { 1, 2, 3 })" };
+                yield return new[] { "lock (new object())" };
                 yield return new[] { "using (default(System.IDisposable))" };
             }
         }
@@ -361,6 +362,84 @@ public class Foo
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestSingleLineFixedStatementWithoutBracesAsync()
+        {
+            var testCode = @"public class C {
+    unsafe private static void TestMethod()
+    {
+        var a = new int[] { 1, 2, 3 };
+        fixed (int* n = &a[0])
+            *n = a[1] + a[2];
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMultiLineFixedStatementWithoutBracesAsync()
+        {
+            var testCode = @"public class C {
+    unsafe private static void TestMethod()
+    {
+        var a = new int[] { 1, 2, 3 };
+        fixed (int* n = &a[0])
+            *n = a[1]
+                + a[2];
+    }
+}";
+            var fixedCode = @"public class C {
+    unsafe private static void TestMethod()
+    {
+        var a = new int[] { 1, 2, 3 };
+        fixed (int* n = &a[0])
+        {
+            *n = a[1]
+                + a[2];
+        }
+    }
+}";
+
+            var expected = Diagnostic().WithLocation(6, 13);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestSingleLineFixedStatementWithBracesAsync()
+        {
+            var testCode = @"public class C {
+    unsafe private static void TestMethod()
+    {
+        var a = new int[] { 1, 2, 3 };
+        fixed (int* n = &a[0])
+        {
+            *n = a[1] + a[2];
+        }
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMultiLineFixedStatementWithBracesAsync()
+        {
+            var testCode = @"public class C {
+    unsafe private static void TestMethod()
+    {
+        var a = new int[] { 1, 2, 3 };
+        fixed (int* n = &a[0])
+        {
+            *n = a[1]
+                + a[2];
+        }
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>

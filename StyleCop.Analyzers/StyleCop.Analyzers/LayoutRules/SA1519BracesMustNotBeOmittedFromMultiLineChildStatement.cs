@@ -52,6 +52,8 @@ namespace StyleCop.Analyzers.LayoutRules
         private static readonly Action<SyntaxNodeAnalysisContext> WhileStatementAction = HandleWhileStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> ForStatementAction = HandleForStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> ForEachStatementAction = HandleForEachStatement;
+        private static readonly Action<SyntaxNodeAnalysisContext> LockStatementAction = HandleLockStatement;
+        private static readonly Action<SyntaxNodeAnalysisContext> FixedStatementAction = HandleFixedStatement;
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> UsingStatementAction = HandleUsingStatement;
 
         /// <inheritdoc/>
@@ -69,6 +71,8 @@ namespace StyleCop.Analyzers.LayoutRules
             context.RegisterSyntaxNodeAction(WhileStatementAction, SyntaxKind.WhileStatement);
             context.RegisterSyntaxNodeAction(ForStatementAction, SyntaxKind.ForStatement);
             context.RegisterSyntaxNodeAction(ForEachStatementAction, SyntaxKind.ForEachStatement);
+            context.RegisterSyntaxNodeAction(LockStatementAction, SyntaxKind.LockStatement);
+            context.RegisterSyntaxNodeAction(FixedStatementAction, SyntaxKind.FixedStatement);
             context.RegisterSyntaxNodeAction(UsingStatementAction, SyntaxKind.UsingStatement);
         }
 
@@ -110,6 +114,18 @@ namespace StyleCop.Analyzers.LayoutRules
         {
             var forEachStatement = (ForEachStatementSyntax)context.Node;
             CheckChildStatement(context, forEachStatement.Statement);
+        }
+
+        private static void HandleLockStatement(SyntaxNodeAnalysisContext context)
+        {
+            var lockStatement = (LockStatementSyntax)context.Node;
+            CheckChildStatement(context, lockStatement.Statement);
+        }
+
+        private static void HandleFixedStatement(SyntaxNodeAnalysisContext context)
+        {
+            var fixedStatement = (FixedStatementSyntax)context.Node;
+            CheckChildStatement(context, fixedStatement.Statement);
         }
 
         private static void HandleUsingStatement(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
