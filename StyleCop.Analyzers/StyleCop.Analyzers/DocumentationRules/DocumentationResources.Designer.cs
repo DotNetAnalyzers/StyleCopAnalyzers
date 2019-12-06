@@ -1718,6 +1718,24 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Returns.
+        /// </summary>
+        internal static string StartingTextReturns {
+            get {
+                return ResourceManager.GetString("StartingTextReturns", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Returns a value indicating whether.
+        /// </summary>
+        internal static string StartingTextReturnsWhether {
+            get {
+                return ResourceManager.GetString("StartingTextReturnsWhether", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sets.
         /// </summary>
         internal static string StartingTextSets {

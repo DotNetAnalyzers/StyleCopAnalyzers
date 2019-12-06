@@ -669,6 +669,12 @@
   <data name="StartingTextGetsWhether" xml:space="preserve">
     <value>Gets a value indicating whether</value>
   </data>
+  <data name="StartingTextReturns" xml:space="preserve">
+    <value>Returns</value>
+  </data>
+  <data name="StartingTextReturnsWhether" xml:space="preserve">
+    <value>Returns a value indicating whether</value>
+  </data>
   <data name="StartingTextSets" xml:space="preserve">
     <value>Sets</value>
   </data>
