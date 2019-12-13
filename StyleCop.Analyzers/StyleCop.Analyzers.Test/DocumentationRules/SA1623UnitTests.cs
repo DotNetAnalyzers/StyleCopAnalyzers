@@ -292,6 +292,10 @@ public class TestClass
         [InlineData("public", "int", "{ set {} }", "Gets or sets", "Sets")] // Regression test for #2253
         [InlineData("public", "int", "{ get; private set; }", "Sets", "Gets")] // Regression test for #2253
         [InlineData("public", "int", "{ private get; set; }", "Gets", "Sets")] // Regression test for #2253
+        [InlineData("public", "int", "{ get; }", "Returns", "Gets")]
+        [InlineData("public", "int", "{ get; set; }", "Returns", "Gets or sets")]
+        [InlineData("public", "bool", "{ get; }", "Returns a value indicating whether", "Gets a value indicating whether")]
+        [InlineData("public", "bool", "{ get; set; }", "Returns a value indicating whether", "Gets or sets a value indicating whether")]
         public async Task IncorrectSummaryTagWithKnownPrefixShouldBeFixedCorrectlyAsync(string accessibility, string type, string accessors, string summaryPrefix, string expectedArgument)
         {
             var testCode = $@"
