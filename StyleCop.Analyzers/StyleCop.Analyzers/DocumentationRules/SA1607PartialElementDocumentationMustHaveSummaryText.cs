@@ -90,6 +90,12 @@ namespace StyleCop.Analyzers.DocumentationRules
         {
             if (completeDocumentation != null)
             {
+                // This documentation rule is excluded via the <exclude /> tag
+                if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.ExcludeXmlTag))
+                {
+                    return;
+                }
+
                 var summaryTag = completeDocumentation.Nodes().OfType<XElement>().FirstOrDefault(element => element.Name == XmlCommentHelper.SummaryXmlTag);
                 var contentTag = completeDocumentation.Nodes().OfType<XElement>().FirstOrDefault(element => element.Name == XmlCommentHelper.ContentXmlTag);
 

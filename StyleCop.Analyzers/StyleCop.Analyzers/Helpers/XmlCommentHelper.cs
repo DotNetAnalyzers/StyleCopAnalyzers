@@ -41,6 +41,7 @@ namespace StyleCop.Analyzers.Helpers
         internal const string PathAttributeName = "path";
         internal const string CrefArgumentName = "cref";
         internal const string NameArgumentName = "name";
+        internal const string ExcludeXmlTag = "exclude";
 
         /// <summary>
         /// The &lt;placeholder&gt; tag is a Sandcastle Help File Builder extension to the standard XML documentation

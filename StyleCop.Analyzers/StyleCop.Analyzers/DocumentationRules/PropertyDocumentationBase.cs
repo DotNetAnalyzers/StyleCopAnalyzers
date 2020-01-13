@@ -100,6 +100,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                     var declaration = context.SemanticModel.GetDeclaredSymbol(node, context.CancellationToken);
                     var rawDocumentation = declaration?.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
                     completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
+                    if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.ExcludeXmlTag))
+                    {
+                        // Ignore nodes with an <exclude /> tag in the included XML.
+                        return;
+                    }
+
                     if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.InheritdocXmlTag))
                     {
                         // Ignore nodes with an <inheritdoc/> tag in the included XML.
