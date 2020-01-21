@@ -124,6 +124,12 @@ namespace StyleCop.Analyzers.DocumentationRules
             var culture = new CultureInfo(settings.DocumentationRules.DocumentationCulture);
             var resourceManager = DocumentationResources.ResourceManager;
 
+            // This documentation rule is excluded via the <exclude /> tag
+            if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.ExcludeXmlTag))
+            {
+                return;
+            }
+
             // Concatenate all XML node values
             var documentationElements = completeDocumentation.Nodes()
                 .OfType<XElement>()

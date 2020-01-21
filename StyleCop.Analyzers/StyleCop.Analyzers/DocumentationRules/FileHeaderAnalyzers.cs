@@ -204,22 +204,25 @@ namespace StyleCop.Analyzers.DocumentationRules
                 {
                     var fileHeader = FileHeaderHelpers.ParseXmlFileHeader(root);
 
-                    /*// Don't process documentation rules when an <exclude /> tag is present
-                    if (fileHeader.GetElement("exclude") != null)
+                    if (fileHeader != null)
                     {
-                        return;
-                    }*/
+                        // Don't process documentation rules when an <exclude /> tag is present
+                        if (fileHeader.GetElement("exclude") != null)
+                        {
+                            return;
+                        }
 
-                    if (fileHeader.IsMissing)
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(SA1633DescriptorMissing, fileHeader.GetLocation(context.Tree)));
-                        return;
-                    }
+                        if (fileHeader.IsMissing)
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(SA1633DescriptorMissing, fileHeader.GetLocation(context.Tree)));
+                            return;
+                        }
 
-                    if (fileHeader.IsMalformed)
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(SA1633DescriptorMalformed, fileHeader.GetLocation(context.Tree)));
-                        return;
+                        if (fileHeader.IsMalformed)
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(SA1633DescriptorMalformed, fileHeader.GetLocation(context.Tree)));
+                            return;
+                        }
                     }
 
                     if (!compilation.IsAnalyzerSuppressed(SA1634Descriptor))

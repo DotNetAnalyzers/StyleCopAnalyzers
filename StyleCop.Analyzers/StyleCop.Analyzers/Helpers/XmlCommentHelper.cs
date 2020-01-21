@@ -37,11 +37,11 @@ namespace StyleCop.Analyzers.Helpers
         internal const string PermissionXmlTag = "permission";
         internal const string ExceptionXmlTag = "exception";
         internal const string IncludeXmlTag = "include";
+        internal const string ExcludeXmlTag = "exclude";
         internal const string FileAttributeName = "file";
         internal const string PathAttributeName = "path";
         internal const string CrefArgumentName = "cref";
         internal const string NameArgumentName = "name";
-        internal const string ExcludeXmlTag = "exclude";
 
         /// <summary>
         /// The &lt;placeholder&gt; tag is a Sandcastle Help File Builder extension to the standard XML documentation
