@@ -80,6 +80,20 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("class")]
         [InlineData("struct")]
         [InlineData("interface")]
+        public async Task TestTypeWithExcludedDocumentationAsync(string typeName)
+        {
+            var testCode = @"
+/// <exclude/>
+{0} TypeName
+{{
+}}";
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
         public async Task TestTypeWithoutSummaryDocumentationAsync(string typeName)
         {
             var testCode = @"
