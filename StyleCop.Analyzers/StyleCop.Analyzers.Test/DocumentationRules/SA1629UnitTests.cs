@@ -476,6 +476,58 @@ public interface ITest
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Theory]
+        [InlineData(",")]
+        [InlineData(";")]
+        public async Task TestSentenceEndingWithTypoAsync(string typo)
+        {
+            var testCode = $@"
+/// <summary>
+/// Summary{typo}
+/// </summary>
+public interface ITest
+{{
+}}
+";
+            var fixedTestCode = $@"
+/// <summary>
+/// Summary.
+/// </summary>
+public interface ITest
+{{
+}}
+";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(3, 12);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, default).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData(",")]
+        [InlineData(";")]
+        public async Task TestSentenceEndingWithTypoAndParenthesisAsync(string typo)
+        {
+            var testCode = $@"
+/// <summary>
+/// Summary (for example{typo})
+/// </summary>
+public interface ITest
+{{
+}}
+";
+            var fixedTestCode = $@"
+/// <summary>
+/// Summary (for example.)
+/// </summary>
+public interface ITest
+{{
+}}
+";
+
+            DiagnosticResult expected = Diagnostic().WithLocation(3, 25);
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, default).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task TestMultipleParagraphBlocksAsync()
         {
