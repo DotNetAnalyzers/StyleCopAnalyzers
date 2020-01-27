@@ -135,7 +135,6 @@ namespace StyleCop.Analyzers.DocumentationRules
             bool prefixIsGetsOrSets = text.StartsWith(startingTextGetsOrSets, StringComparison.OrdinalIgnoreCase);
             bool prefixIsGets = !prefixIsGetsOrSets && text.StartsWith(startingTextGets, StringComparison.OrdinalIgnoreCase);
             bool prefixIsSets = text.StartsWith(startingTextSets, StringComparison.OrdinalIgnoreCase);
-            bool prefixIsReturns = text.StartsWith(startingTextReturns, StringComparison.OrdinalIgnoreCase);
 
             bool getterVisible, setterVisible;
             if (getter != null && setter != null)
