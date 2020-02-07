@@ -316,7 +316,7 @@ The following example shows a settings file which allows the common prefixes as 
 
 ### Namespace Components
 
-The following property is used to configure allowable namespace component terms (e.g. ones that start with a lowercase letter).
+The following property is used to configure allowable namespace components (e.g. ones that start with a lowercase letter).
 
 | Property | Default Value | Minimum Version | Summary |
 | --- | --- | --- | --- |
