@@ -320,7 +320,7 @@ The following property is used to configure allowable namespace component terms 
 
 | Property | Default Value | Minimum Version | Summary |
 | --- | --- | --- | --- |
-| `allowedNamespaceComponentTerms` | `[ ]` | 1.2.0 | Specifies namespace component terms that are allowed to be used. See the example below for more information. |
+| `allowedNamespaceComponents` | `[ ]` | 1.2.0 | Specifies namespace component terms that are allowed to be used. See the example below for more information. |
 
 The following example shows a settings file which allows namespaces such as `eBay` or `Apple.iPod`.
 
@@ -328,7 +328,7 @@ The following example shows a settings file which allows namespaces such as `eBa
 {
   "settings": {
     "namingRules": {
-      "allowedNamespaceComponentTerms": [
+      "allowedNamespaceComponents": [
         "eBay",
         "iPod"
       ]

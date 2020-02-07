@@ -32,7 +32,7 @@ namespace StyleCop.Analyzers.NamingRules
     /// within a <c>NativeMethods</c> class.</para>
     ///
     /// <para>For namespace components that begin with a small letter, due to branding issues or other reasons, add the
-    /// term to the <c>allowedNamespaceComponentTerms</c> list.</para>
+    /// term to the <c>allowedNamespaceComponents</c> list.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class SA1300ElementMustBeginWithUpperCaseLetter : DiagnosticAnalyzer
@@ -89,10 +89,10 @@ namespace StyleCop.Analyzers.NamingRules
         private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             NameSyntax nameSyntax = ((NamespaceDeclarationSyntax)context.Node).Name;
-            CheckNameSyntax(context, nameSyntax, settings);
+            CheckNamespaceNameSyntax(context, nameSyntax, settings);
         }
 
-        private static void CheckNameSyntax(SyntaxNodeAnalysisContext context, NameSyntax nameSyntax, StyleCopSettings settings)
+        private static void CheckNamespaceNameSyntax(SyntaxNodeAnalysisContext context, NameSyntax nameSyntax, StyleCopSettings settings)
         {
             if (nameSyntax == null || nameSyntax.IsMissing)
             {
@@ -101,13 +101,13 @@ namespace StyleCop.Analyzers.NamingRules
 
             if (nameSyntax is QualifiedNameSyntax qualifiedNameSyntax)
             {
-                CheckNameSyntax(context, qualifiedNameSyntax.Left, settings);
-                CheckNameSyntax(context, qualifiedNameSyntax.Right, settings);
+                CheckNamespaceNameSyntax(context, qualifiedNameSyntax.Left, settings);
+                CheckNamespaceNameSyntax(context, qualifiedNameSyntax.Right, settings);
                 return;
             }
 
             if (nameSyntax is SimpleNameSyntax simpleNameSyntax &&
-                !settings.NamingRules.AllowedNamespaceComponentTerms.Contains(simpleNameSyntax.Identifier.ValueText))
+                !settings.NamingRules.AllowedNamespaceComponents.Contains(simpleNameSyntax.Identifier.ValueText))
             {
                 CheckElementNameToken(context, simpleNameSyntax.Identifier);
                 return;

@@ -51,7 +51,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
 {
   ""settings"": {
     ""namingRules"": {
-      ""allowedNamespaceComponentTerms"": [ ""eBay"" ]
+      ""allowedNamespaceComponents"": [ ""eBay"" ]
     }
   }
 }
@@ -99,7 +99,7 @@ namespace StyleCop.Analyzers.Test.NamingRules
 {
   ""settings"": {
     ""namingRules"": {
-      ""allowedNamespaceComponentTerms"": [ ""iPod"" ]
+      ""allowedNamespaceComponents"": [ ""iPod"" ]
     }
   }
 }

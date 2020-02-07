@@ -128,9 +128,9 @@
                 "uniqueItems": true
               }
             },
-            "allowedNamespaceComponentTerms": {
+            "allowedNamespaceComponents": {
               "type": "array",
-              "description": "Allowed namespace component terms, such as ones beginning with a lowercase letter.",
+              "description": "Allowed namespace components, such as ones beginning with a lowercase letter.",
               "default": [],
               "items": {
                 "type": "string",
