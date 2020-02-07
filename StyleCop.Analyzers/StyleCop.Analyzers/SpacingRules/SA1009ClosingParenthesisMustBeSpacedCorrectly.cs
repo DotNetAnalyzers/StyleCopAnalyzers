@@ -34,10 +34,10 @@ namespace StyleCop.Analyzers.SpacingRules
         /// The ID for diagnostics produced by the <see cref="SA1009ClosingParenthesisMustBeSpacedCorrectly"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1009";
-        private const string Title = "Closing parenthesis should be spaced correctly";
-        private const string MessageFormat = "Closing parenthesis should{0} be {1} by a space.";
-        private const string Description = "A closing parenthesis within a C# statement is not spaced correctly.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1009.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1009Title), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(SpacingResources.SA1009MessageFormat), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1009Description), SpacingResources.ResourceManager, typeof(SpacingResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -105,6 +105,7 @@ namespace StyleCop.Analyzers.SpacingRules
             case SyntaxKind.SemicolonToken:
             case SyntaxKind.CommaToken:
             case SyntaxKind.DoubleQuoteToken:
+            case SyntaxKindEx.DotDotToken:
                 precedesStickyCharacter = true;
                 break;
 
@@ -171,6 +172,10 @@ namespace StyleCop.Analyzers.SpacingRules
 
             case SyntaxKind.CloseBraceToken:
                 precedesStickyCharacter = nextToken.Parent is InterpolationSyntax;
+                break;
+
+            case SyntaxKind.ExclamationToken when nextToken.Parent.IsKind(SyntaxKindEx.SuppressNullableWarningExpression):
+                precedesStickyCharacter = true;
                 break;
 
             default:

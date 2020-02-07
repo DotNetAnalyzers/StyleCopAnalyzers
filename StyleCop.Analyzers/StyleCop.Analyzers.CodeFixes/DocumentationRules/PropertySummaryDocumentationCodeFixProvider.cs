@@ -21,7 +21,7 @@ namespace StyleCop.Analyzers.DocumentationRules
     /// </summary>
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(PropertySummaryDocumentationCodeFixProvider))]
     [Shared]
-    public class PropertySummaryDocumentationCodeFixProvider : CodeFixProvider
+    internal class PropertySummaryDocumentationCodeFixProvider : CodeFixProvider
     {
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =

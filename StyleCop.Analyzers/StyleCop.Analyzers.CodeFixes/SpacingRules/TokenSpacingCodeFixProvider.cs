@@ -239,9 +239,10 @@ namespace StyleCop.Analyzers.SpacingRules
 
                 case TokenSpacingProperties.ActionRemove:
                     triviaList = token.TrailingTrivia.AddRange(nextToken.LeadingTrivia);
+                    bool preserveLayout = layout == TokenSpacingProperties.LayoutPreserve;
 
                     UpdateReplaceMap(replaceMap, token, t => t.WithTrailingTrivia());
-                    UpdateReplaceMap(replaceMap, nextToken, t => t.WithLeadingTrivia(triviaList.WithoutLeadingWhitespace(true)));
+                    UpdateReplaceMap(replaceMap, nextToken, t => t.WithLeadingTrivia(triviaList.WithoutLeadingWhitespace(endOfLineIsWhitespace: !preserveLayout)));
                     break;
                 }
 

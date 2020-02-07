@@ -149,7 +149,7 @@
                 "camelCase",
                 "PascalCase"
               ],
-              "default": "camelCase"
+              "default": "PascalCase"
             }
           }
         },

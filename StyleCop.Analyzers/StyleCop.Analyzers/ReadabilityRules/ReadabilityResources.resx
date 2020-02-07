@@ -489,6 +489,21 @@
   <data name="SA1134Title" xml:space="preserve">
     <value>Attributes should not share line</value>
   </data>
+  <data name="SA1135CodeFix" xml:space="preserve">
+    <value>Qualify using directive</value>
+  </data>
+  <data name="SA1135Description" xml:space="preserve">
+    <value>All using directives should be qualified.</value>
+  </data>
+  <data name="SA1135MessageFormatNamespace" xml:space="preserve">
+    <value>Using directive for namespace '{0}' should be qualified</value>
+  </data>
+  <data name="SA1135MessageFormatType" xml:space="preserve">
+    <value>Using directive for type '{0}' should be qualified</value>
+  </data>
+  <data name="SA1135Title" xml:space="preserve">
+    <value>Using directives should be qualified</value>
+  </data>
   <data name="SA1136CodeFix" xml:space="preserve">
     <value>Place enum values own their own lines</value>
   </data>
@@ -510,6 +525,9 @@
   <data name="SA1137Title" xml:space="preserve">
     <value>Elements should have the same indentation</value>
   </data>
+  <data name="SA1139CodeFix" xml:space="preserve">
+    <value>Use literal suffix notation instead of casting</value>
+  </data>
   <data name="SA1139Description" xml:space="preserve">
     <value>Use literal suffix notation instead of casting, in order to improve readability, avoid bugs related to illegal casts and ensure that optimal IL is produced.</value>
   </data>
@@ -519,35 +537,8 @@
   <data name="SA1139Title" xml:space="preserve">
     <value>Use literal suffix notation instead of casting</value>
   </data>
-  <data name="SA1139CodeFix" xml:space="preserve">
-    <value>Use literal suffix notation instead of casting</value>
-  </data>
-  <data name="SA1135CodeFix" xml:space="preserve">
-    <value>Qualify using directive</value>
-  </data>
-  <data name="SA1135Description" xml:space="preserve">
-    <value>All using directives should be qualified.</value>
-  </data>
-  <data name="SA1135MessageFormatNamespace" xml:space="preserve">
-    <value>Using directive for namespace '{0}' should be qualified</value>
-  </data>
-  <data name="SA1135MessageFormatType" xml:space="preserve">
-    <value>Using directive for type '{0}' should be qualified</value>
-  </data>
-  <data name="SA1135Title" xml:space="preserve">
-    <value>Using directives should be qualified</value>
-  </data>
-  <data name="SX1101CodeFix" xml:space="preserve">
-    <value>Remove 'this.' prefix</value>
-  </data>
-  <data name="SX1101Description" xml:space="preserve">
-    <value>A call to an instance member of the local class or a base class is prefixed with `this.`.</value>
-  </data>
-  <data name="SX1101MessageFormat" xml:space="preserve">
-    <value>Do not prefix local calls with 'this.'</value>
-  </data>
-  <data name="SX1101Title" xml:space="preserve">
-    <value>Do not prefix local calls with 'this.'</value>
+  <data name="SA1141CodeFix" xml:space="preserve">
+    <value>Replace with tuple syntax</value>
   </data>
   <data name="SA1141Description" xml:space="preserve">
     <value>Use tuple syntax instead of the underlying ValueTuple implementation type.</value>
@@ -557,9 +548,6 @@
   </data>
   <data name="SA1141Title" xml:space="preserve">
     <value>Use tuple syntax</value>
-  </data>
-  <data name="SA1141CodeFix" xml:space="preserve">
-    <value>Replace with tuple syntax</value>
   </data>
   <data name="SA1142CodeFix" xml:space="preserve">
     <value>Use tuple field name</value>
@@ -572,5 +560,17 @@
   </data>
   <data name="SA1142Title" xml:space="preserve">
     <value>Refer to tuple fields by name</value>
+  </data>
+  <data name="SX1101CodeFix" xml:space="preserve">
+    <value>Remove 'this.' prefix</value>
+  </data>
+  <data name="SX1101Description" xml:space="preserve">
+    <value>A call to an instance member of the local class or a base class is prefixed with `this.`.</value>
+  </data>
+  <data name="SX1101MessageFormat" xml:space="preserve">
+    <value>Do not prefix local calls with 'this.'</value>
+  </data>
+  <data name="SX1101Title" xml:space="preserve">
+    <value>Do not prefix local calls with 'this.'</value>
   </data>
 </root>

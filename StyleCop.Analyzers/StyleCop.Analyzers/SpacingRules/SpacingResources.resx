@@ -117,8 +117,59 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="SA1000Description" xml:space="preserve">
+    <value>The spacing around a C# keyword is incorrect.</value>
+  </data>
+  <data name="SA1000MessageFormat" xml:space="preserve">
+    <value>The keyword '{0}' should{1} be followed by a space</value>
+  </data>
+  <data name="SA1000Title" xml:space="preserve">
+    <value>Keywords should be spaced correctly</value>
+  </data>
+  <data name="SA1001Description" xml:space="preserve">
+    <value>The spacing around a comma is incorrect, within a C# code file.</value>
+  </data>
+  <data name="SA1001MessageFormat" xml:space="preserve">
+    <value>Commas should{0} be {1} by whitespace.</value>
+  </data>
+  <data name="SA1001Title" xml:space="preserve">
+    <value>Commas should be spaced correctly</value>
+  </data>
+  <data name="SA1002Description" xml:space="preserve">
+    <value>The spacing around a semicolon is incorrect, within a C# code file.</value>
+  </data>
+  <data name="SA1002MessageFormat" xml:space="preserve">
+    <value>Semicolons should{0} be {1} by a space</value>
+  </data>
+  <data name="SA1002Title" xml:space="preserve">
+    <value>Semicolons should be spaced correctly</value>
+  </data>
   <data name="SA1003CodeFix" xml:space="preserve">
     <value>Fix spacing</value>
+  </data>
+  <data name="SA1003Description" xml:space="preserve">
+    <value>The spacing around an operator symbol is incorrect, within a C# code file.</value>
+  </data>
+  <data name="SA1003MessageFormatFollowedByWhitespace" xml:space="preserve">
+    <value>Operator '{0}' should be followed by whitespace.</value>
+  </data>
+  <data name="SA1003MessageFormatNotAtEndOfLine" xml:space="preserve">
+    <value>Operator '{0}' should not appear at the end of a line.</value>
+  </data>
+  <data name="SA1003MessageFormatNotFollowedByComment" xml:space="preserve">
+    <value>Operator '{0}' should not be followed by a comment.</value>
+  </data>
+  <data name="SA1003MessageFormatNotFollowedByWhitespace" xml:space="preserve">
+    <value>Operator '{0}' should not be followed by whitespace.</value>
+  </data>
+  <data name="SA1003MessageFormatNotPrecededByWhitespace" xml:space="preserve">
+    <value>Operator '{0}' should not be preceded by whitespace.</value>
+  </data>
+  <data name="SA1003MessageFormatPrecededByWhitespace" xml:space="preserve">
+    <value>Operator '{0}' should be preceded by whitespace.</value>
+  </data>
+  <data name="SA1003Title" xml:space="preserve">
+    <value>Symbols should be spaced correctly</value>
   </data>
   <data name="SA1004CodeFix" xml:space="preserve">
     <value>Fix spacing</value>
@@ -165,6 +216,84 @@
   <data name="SA1008CodeFix" xml:space="preserve">
     <value>Fix spacing</value>
   </data>
+  <data name="SA1008Description" xml:space="preserve">
+    <value>An opening parenthesis within a C# statement is not spaced correctly.</value>
+  </data>
+  <data name="SA1008MessageNotFollowed" xml:space="preserve">
+    <value>Opening parenthesis should not be followed by a space.</value>
+  </data>
+  <data name="SA1008MessageNotPreceded" xml:space="preserve">
+    <value>Opening parenthesis should not be preceded by a space.</value>
+  </data>
+  <data name="SA1008MessagePreceded" xml:space="preserve">
+    <value>Opening parenthesis should be preceded by a space.</value>
+  </data>
+  <data name="SA1008Title" xml:space="preserve">
+    <value>Opening parenthesis should be spaced correctly</value>
+  </data>
+  <data name="SA1009Description" xml:space="preserve">
+    <value>A closing parenthesis within a C# statement is not spaced correctly.</value>
+  </data>
+  <data name="SA1009MessageFormat" xml:space="preserve">
+    <value>Closing parenthesis should{0} be {1} by a space</value>
+  </data>
+  <data name="SA1009Title" xml:space="preserve">
+    <value>Closing parenthesis should be spaced correctly</value>
+  </data>
+  <data name="SA1010Description" xml:space="preserve">
+    <value>An opening square bracket within a C# statement is not spaced correctly.</value>
+  </data>
+  <data name="SA1010MessageFormat" xml:space="preserve">
+    <value>Opening square brackets should {0} by a space</value>
+  </data>
+  <data name="SA1010Title" xml:space="preserve">
+    <value>Opening square brackets should be spaced correctly</value>
+  </data>
+  <data name="SA1011Description" xml:space="preserve">
+    <value>A closing square bracket within a C# statement is not spaced correctly.</value>
+  </data>
+  <data name="SA1011MessageFormat" xml:space="preserve">
+    <value>Closing square bracket should{0} be {1} by a space</value>
+  </data>
+  <data name="SA1011Title" xml:space="preserve">
+    <value>Closing square brackets should be spaced correctly</value>
+  </data>
+  <data name="SA1012Description" xml:space="preserve">
+    <value>An opening brace within a C# element is not spaced correctly.</value>
+  </data>
+  <data name="SA1012MessageFormat" xml:space="preserve">
+    <value>Opening brace should{0} be {1} by a space</value>
+  </data>
+  <data name="SA1012Title" xml:space="preserve">
+    <value>Opening braces should be spaced correctly</value>
+  </data>
+  <data name="SA1013Description" xml:space="preserve">
+    <value>A closing brace within a C# element is not spaced correctly.</value>
+  </data>
+  <data name="SA1013MessageFormat" xml:space="preserve">
+    <value>Closing brace should{0} be {1} by a space</value>
+  </data>
+  <data name="SA1013Title" xml:space="preserve">
+    <value>Closing braces should be spaced correctly</value>
+  </data>
+  <data name="SA1014Description" xml:space="preserve">
+    <value>An opening generic bracket within a C# element is not spaced correctly.</value>
+  </data>
+  <data name="SA1014MessageFormat" xml:space="preserve">
+    <value>Opening generic brackets should not be {0} by a space</value>
+  </data>
+  <data name="SA1014Title" xml:space="preserve">
+    <value>Opening generic brackets should be spaced correctly</value>
+  </data>
+  <data name="SA1015Description" xml:space="preserve">
+    <value>A closing generic bracket within a C# element is not spaced correctly.</value>
+  </data>
+  <data name="SA1015MessageFormat" xml:space="preserve">
+    <value>Closing generic bracket should{0} be {1} by a space</value>
+  </data>
+  <data name="SA1015Title" xml:space="preserve">
+    <value>Closing generic brackets should be spaced correctly</value>
+  </data>
   <data name="SA1016Description" xml:space="preserve">
     <value>An opening attribute bracket within a C# element is not spaced correctly.</value>
   </data>
@@ -194,6 +323,60 @@
   </data>
   <data name="SA1018Title" xml:space="preserve">
     <value>Nullable type symbols should be spaced correctly</value>
+  </data>
+  <data name="SA1019Description" xml:space="preserve">
+    <value>The spacing around a member access symbol is incorrect, within a C# code file.</value>
+  </data>
+  <data name="SA1019MessageFormat" xml:space="preserve">
+    <value>Member access symbol '{0}' should not be {1} by a space</value>
+  </data>
+  <data name="SA1019Title" xml:space="preserve">
+    <value>Member access symbols should be spaced correctly</value>
+  </data>
+  <data name="SA1020Description" xml:space="preserve">
+    <value>An increment or decrement symbol within a C# element is not spaced correctly.</value>
+  </data>
+  <data name="SA1020MessageFormat" xml:space="preserve">
+    <value>{0} symbol '{1}' should not be {2} by a space</value>
+  </data>
+  <data name="SA1020Title" xml:space="preserve">
+    <value>Increment decrement symbols should be spaced correctly</value>
+  </data>
+  <data name="SA1021Description" xml:space="preserve">
+    <value>A negative sign within a C# element is not spaced correctly.</value>
+  </data>
+  <data name="SA1021MessageFormat" xml:space="preserve">
+    <value>Negative sign should{0} be {1} by a space</value>
+  </data>
+  <data name="SA1021Title" xml:space="preserve">
+    <value>Negative signs should be spaced correctly</value>
+  </data>
+  <data name="SA1022Description" xml:space="preserve">
+    <value>A positive sign within a C# element is not spaced correctly.</value>
+  </data>
+  <data name="SA1022MessageFormat" xml:space="preserve">
+    <value>Positive sign should{0} be {1} by a space</value>
+  </data>
+  <data name="SA1022Title" xml:space="preserve">
+    <value>Positive signs should be spaced correctly</value>
+  </data>
+  <data name="SA1023Description" xml:space="preserve">
+    <value>A dereference symbol or an access-of symbol within a C# element is not spaced correctly.</value>
+  </data>
+  <data name="SA1023MessageFormat" xml:space="preserve">
+    <value>Dereference symbol '*' should {0}</value>
+  </data>
+  <data name="SA1023Title" xml:space="preserve">
+    <value>Dereference and access of symbols should be spaced correctly</value>
+  </data>
+  <data name="SA1024Description" xml:space="preserve">
+    <value>A colon within a C# element is not spaced correctly.</value>
+  </data>
+  <data name="SA1024MessageFormat" xml:space="preserve">
+    <value>Colon should{0} be {1}{2} by a space</value>
+  </data>
+  <data name="SA1024Title" xml:space="preserve">
+    <value>Colons Should Be Spaced Correctly</value>
   </data>
   <data name="SA1025CodeFix" xml:space="preserve">
     <value>Fix spacing</value>

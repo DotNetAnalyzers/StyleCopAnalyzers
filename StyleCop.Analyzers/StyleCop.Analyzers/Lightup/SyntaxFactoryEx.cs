@@ -13,6 +13,10 @@ namespace StyleCop.Analyzers.Lightup
 
     internal static class SyntaxFactoryEx
     {
+        private static readonly Func<SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>, CSharpSyntaxNode> PositionalPatternClauseAccessor1;
+        private static readonly Func<SyntaxToken, SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>, SyntaxToken, CSharpSyntaxNode> PositionalPatternClauseAccessor2;
+        private static readonly Func<SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>, CSharpSyntaxNode> PropertyPatternClauseAccessor1;
+        private static readonly Func<SyntaxToken, SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>, SyntaxToken, CSharpSyntaxNode> PropertyPatternClauseAccessor2;
         private static readonly Func<TypeSyntax, CSharpSyntaxNode> TupleElementAccessor1;
         private static readonly Func<TypeSyntax, SyntaxToken, CSharpSyntaxNode> TupleElementAccessor2;
         private static readonly Func<SeparatedSyntaxList<ArgumentSyntax>, ExpressionSyntax> TupleExpressionAccessor1;
@@ -22,6 +26,110 @@ namespace StyleCop.Analyzers.Lightup
 
         static SyntaxFactoryEx()
         {
+            var positionalPatternClauseMethods = typeof(SyntaxFactory).GetTypeInfo().GetDeclaredMethods(nameof(PositionalPatternClause));
+            var positionalPatternClauseMethod = positionalPatternClauseMethods.FirstOrDefault(method => method.GetParameters().Length == 1 && method.GetParameters()[0].ParameterType == typeof(SeparatedSyntaxList<>).MakeGenericType(WrapperHelper.GetWrappedType(typeof(SubpatternSyntaxWrapper))));
+            if (positionalPatternClauseMethod is object)
+            {
+                var subpatternsParameter = Expression.Parameter(typeof(SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>), "subpatterns");
+                var underlyingListProperty = typeof(SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>).GetTypeInfo().GetDeclaredProperty(nameof(SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>.UnderlyingList));
+                Expression<Func<SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>, CSharpSyntaxNode>> expression =
+                    Expression.Lambda<Func<SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>, CSharpSyntaxNode>>(
+                        Expression.Call(
+                            positionalPatternClauseMethod,
+                            Expression.Convert(
+                                Expression.Call(subpatternsParameter, underlyingListProperty.GetMethod),
+                                positionalPatternClauseMethod.GetParameters()[0].ParameterType)),
+                        subpatternsParameter);
+                PositionalPatternClauseAccessor1 = expression.Compile();
+            }
+            else
+            {
+                PositionalPatternClauseAccessor1 = ThrowNotSupportedOnFallback<SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>, CSharpSyntaxNode>(nameof(SyntaxFactory), nameof(PositionalPatternClause));
+            }
+
+            positionalPatternClauseMethod = positionalPatternClauseMethods.FirstOrDefault(method => method.GetParameters().Length == 3
+                && method.GetParameters()[0].ParameterType == typeof(SyntaxToken)
+                && method.GetParameters()[1].ParameterType == typeof(SeparatedSyntaxList<>).MakeGenericType(WrapperHelper.GetWrappedType(typeof(SubpatternSyntaxWrapper)))
+                && method.GetParameters()[2].ParameterType == typeof(SyntaxToken));
+            if (positionalPatternClauseMethod is object)
+            {
+                var openParenTokenParameter = Expression.Parameter(typeof(SyntaxToken), "openParenToken");
+                var subpatternsParameter = Expression.Parameter(typeof(SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>), "subpatterns");
+                var closeParenTokenParameter = Expression.Parameter(typeof(SyntaxToken), "closeParenToken");
+
+                var underlyingListProperty = typeof(SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>).GetTypeInfo().GetDeclaredProperty(nameof(SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>.UnderlyingList));
+
+                Expression<Func<SyntaxToken, SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>, SyntaxToken, CSharpSyntaxNode>> expression =
+                    Expression.Lambda<Func<SyntaxToken, SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>, SyntaxToken, CSharpSyntaxNode>>(
+                        Expression.Call(
+                            positionalPatternClauseMethod,
+                            openParenTokenParameter,
+                            Expression.Convert(
+                                Expression.Call(subpatternsParameter, underlyingListProperty.GetMethod),
+                                positionalPatternClauseMethod.GetParameters()[1].ParameterType),
+                            closeParenTokenParameter),
+                        openParenTokenParameter,
+                        subpatternsParameter,
+                        closeParenTokenParameter);
+                PositionalPatternClauseAccessor2 = expression.Compile();
+            }
+            else
+            {
+                PositionalPatternClauseAccessor2 = ThrowNotSupportedOnFallback<SyntaxToken, SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>, SyntaxToken, TypeSyntax>(nameof(SyntaxFactory), nameof(PositionalPatternClause));
+            }
+
+            var propertyPatternClauseMethods = typeof(SyntaxFactory).GetTypeInfo().GetDeclaredMethods(nameof(PropertyPatternClause));
+            var propertyPatternClauseMethod = propertyPatternClauseMethods.FirstOrDefault(method => method.GetParameters().Length == 1 && method.GetParameters()[0].ParameterType == typeof(SeparatedSyntaxList<>).MakeGenericType(WrapperHelper.GetWrappedType(typeof(SubpatternSyntaxWrapper))));
+            if (propertyPatternClauseMethod is object)
+            {
+                var subpatternsParameter = Expression.Parameter(typeof(SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>), "subpatterns");
+                var underlyingListProperty = typeof(SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>).GetTypeInfo().GetDeclaredProperty(nameof(SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>.UnderlyingList));
+                Expression<Func<SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>, CSharpSyntaxNode>> expression =
+                    Expression.Lambda<Func<SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>, CSharpSyntaxNode>>(
+                        Expression.Call(
+                            propertyPatternClauseMethod,
+                            Expression.Convert(
+                                Expression.Call(subpatternsParameter, underlyingListProperty.GetMethod),
+                                propertyPatternClauseMethod.GetParameters()[0].ParameterType)),
+                        subpatternsParameter);
+                PropertyPatternClauseAccessor1 = expression.Compile();
+            }
+            else
+            {
+                PropertyPatternClauseAccessor1 = ThrowNotSupportedOnFallback<SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>, CSharpSyntaxNode>(nameof(SyntaxFactory), nameof(PropertyPatternClause));
+            }
+
+            propertyPatternClauseMethod = propertyPatternClauseMethods.FirstOrDefault(method => method.GetParameters().Length == 3
+                && method.GetParameters()[0].ParameterType == typeof(SyntaxToken)
+                && method.GetParameters()[1].ParameterType == typeof(SeparatedSyntaxList<>).MakeGenericType(WrapperHelper.GetWrappedType(typeof(SubpatternSyntaxWrapper)))
+                && method.GetParameters()[2].ParameterType == typeof(SyntaxToken));
+            if (propertyPatternClauseMethod is object)
+            {
+                var openBraceTokenParameter = Expression.Parameter(typeof(SyntaxToken), "openBraceToken");
+                var subpatternsParameter = Expression.Parameter(typeof(SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>), "subpatterns");
+                var closeBraceTokenParameter = Expression.Parameter(typeof(SyntaxToken), "closeBraceToken");
+
+                var underlyingListProperty = typeof(SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>).GetTypeInfo().GetDeclaredProperty(nameof(SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>.UnderlyingList));
+
+                Expression<Func<SyntaxToken, SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>, SyntaxToken, CSharpSyntaxNode>> expression =
+                    Expression.Lambda<Func<SyntaxToken, SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>, SyntaxToken, CSharpSyntaxNode>>(
+                        Expression.Call(
+                            propertyPatternClauseMethod,
+                            openBraceTokenParameter,
+                            Expression.Convert(
+                                Expression.Call(subpatternsParameter, underlyingListProperty.GetMethod),
+                                propertyPatternClauseMethod.GetParameters()[1].ParameterType),
+                            closeBraceTokenParameter),
+                        openBraceTokenParameter,
+                        subpatternsParameter,
+                        closeBraceTokenParameter);
+                PropertyPatternClauseAccessor2 = expression.Compile();
+            }
+            else
+            {
+                PropertyPatternClauseAccessor2 = ThrowNotSupportedOnFallback<SyntaxToken, SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper>, SyntaxToken, TypeSyntax>(nameof(SyntaxFactory), nameof(PropertyPatternClause));
+            }
+
             var tupleElementMethods = typeof(SyntaxFactory).GetTypeInfo().GetDeclaredMethods(nameof(TupleElement));
             var tupleElementMethod = tupleElementMethods.FirstOrDefault(method => method.GetParameters().Length == 1 && method.GetParameters()[0].ParameterType == typeof(TypeSyntax));
             if (tupleElementMethod is object)
@@ -144,6 +252,26 @@ namespace StyleCop.Analyzers.Lightup
             {
                 TupleTypeAccessor2 = ThrowNotSupportedOnFallback<SyntaxToken, SeparatedSyntaxListWrapper<TupleElementSyntaxWrapper>, SyntaxToken, TypeSyntax>(nameof(SyntaxFactory), nameof(TupleType));
             }
+        }
+
+        public static PositionalPatternClauseSyntaxWrapper PositionalPatternClause(SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper> subpatterns = default)
+        {
+            return (PositionalPatternClauseSyntaxWrapper)PositionalPatternClauseAccessor1(subpatterns);
+        }
+
+        public static PositionalPatternClauseSyntaxWrapper PositionalPatternClause(SyntaxToken openParenToken, SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper> subpatterns, SyntaxToken closeParenToken)
+        {
+            return (PositionalPatternClauseSyntaxWrapper)PositionalPatternClauseAccessor2(openParenToken, subpatterns, closeParenToken);
+        }
+
+        public static PropertyPatternClauseSyntaxWrapper PropertyPatternClause(SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper> subpatterns = default)
+        {
+            return (PropertyPatternClauseSyntaxWrapper)PropertyPatternClauseAccessor1(subpatterns);
+        }
+
+        public static PropertyPatternClauseSyntaxWrapper PropertyPatternClause(SyntaxToken openBraceToken, SeparatedSyntaxListWrapper<SubpatternSyntaxWrapper> subpatterns, SyntaxToken closeBraceToken)
+        {
+            return (PropertyPatternClauseSyntaxWrapper)PropertyPatternClauseAccessor2(openBraceToken, subpatterns, closeBraceToken);
         }
 
         public static TupleElementSyntaxWrapper TupleElement(TypeSyntax type)

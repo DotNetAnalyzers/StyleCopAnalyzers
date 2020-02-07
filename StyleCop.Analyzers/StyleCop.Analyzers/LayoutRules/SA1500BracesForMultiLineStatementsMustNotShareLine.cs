@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.LayoutRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// The opening or closing brace within a C# statement, element, or expression is not placed on its own line.
@@ -60,10 +61,10 @@ namespace StyleCop.Analyzers.LayoutRules
         /// <see cref="SA1500BracesForMultiLineStatementsMustNotShareLine"/> analyzer.
         /// </summary>
         public const string DiagnosticId = "SA1500";
-        private const string Title = "Braces for multi-line statements should not share line";
-        private const string MessageFormat = "Braces for multi-line statements should not share line";
-        private const string Description = "The opening or closing brace within a C# statement, element, or expression is not placed on its own line.";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1500.md";
+        private static readonly LocalizableString Title = new LocalizableResourceString(nameof(LayoutResources.SA1500Title), LayoutResources.ResourceManager, typeof(LayoutResources));
+        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(LayoutResources.SA1500MessageFormat), LayoutResources.ResourceManager, typeof(LayoutResources));
+        private static readonly LocalizableString Description = new LocalizableResourceString(nameof(LayoutResources.SA1500Description), LayoutResources.ResourceManager, typeof(LayoutResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.LayoutRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -166,6 +167,22 @@ namespace StyleCop.Analyzers.LayoutRules
 
                     case SyntaxKind.ImplicitArrayCreationExpression:
                         if (((ImplicitArrayCreationExpressionSyntax)context.Node.Parent).NewKeyword.GetLine() == openBraceTokenLine)
+                        {
+                            return;
+                        }
+
+                        break;
+
+                    case SyntaxKind.StackAllocArrayCreationExpression:
+                        if (((StackAllocArrayCreationExpressionSyntax)context.Node.Parent).StackAllocKeyword.GetLine() == openBraceTokenLine)
+                        {
+                            return;
+                        }
+
+                        break;
+
+                    case SyntaxKindEx.ImplicitStackAllocArrayCreationExpression:
+                        if (((ImplicitStackAllocArrayCreationExpressionSyntaxWrapper)context.Node.Parent).StackAllocKeyword.GetLine() == openBraceTokenLine)
                         {
                             return;
                         }

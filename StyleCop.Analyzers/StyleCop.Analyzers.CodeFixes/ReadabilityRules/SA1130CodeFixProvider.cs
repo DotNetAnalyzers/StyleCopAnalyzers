@@ -76,7 +76,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             if (parameterList == null)
             {
-                ImmutableArray<string> argumentList = default;
+                ImmutableArray<string> argumentList = ImmutableArray<string>.Empty;
 
                 switch (anonymousMethod.Parent.Kind())
                 {

@@ -8,6 +8,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.NamingRules;
+    using StyleCop.Analyzers.Settings.ObjectModel;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.NamingRules.SA1316TupleElementNamesShouldUseCorrectCasing,
@@ -99,7 +100,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
         /// <param name="tupleElementName2">The expected tuple element name for the second field.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData(DefaultTestSettings, "elementName1", "elementName2")]
+        [InlineData(DefaultTestSettings, "ElementName1", "ElementName2")]
         [InlineData(CamelCaseTestSettings, "elementName1", "elementName2")]
         [InlineData(PascalCaseTestSettings, "ElementName1", "ElementName2")]
         public async Task ValidateProperCasedTupleElementNamesAsync(string settings, string tupleElementName1, string tupleElementName2)
@@ -179,7 +180,7 @@ public class TestClass
         /// <param name="fixedTupleElementName2">The expected fixed tuple element name for the second field.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
-        [InlineData(DefaultTestSettings, "ElementName1", "ElementName2", "elementName1", "elementName2")]
+        [InlineData(DefaultTestSettings, "elementName1", "elementName2", "ElementName1", "ElementName2")]
         [InlineData(CamelCaseTestSettings, "ElementName1", "ElementName2", "elementName1", "elementName2")]
         [InlineData(PascalCaseTestSettings, "elementName1", "elementName2", "ElementName1", "ElementName2")]
         public async Task ValidateImproperCasedTupleElementNamesAsync(string settings, string tupleElementName1, string tupleElementName2, string fixedTupleElementName1, string fixedTupleElementName2)
@@ -290,6 +291,60 @@ public class TestClass
             };
 
             await VerifyCSharpDiagnosticAsync(LanguageVersionEx.CSharp7_1, testCode, settings, expectedDiagnostics, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3031, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3031")]
+        public async Task TestTupleDesconstructionCamelCaseAsync()
+        {
+            var testCode = @"
+public class TypeName
+{
+    public void MethodName((string name, string value) obj)
+    {
+        (string name, string value) = obj;
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(languageVersion: null, testCode, CamelCaseTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3031, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3031")]
+        public async Task TestTupleDesconstructionPascalCaseAsync()
+        {
+            var testCode = @"
+public class TypeName
+{
+    public void MethodName((string Name, string Value) obj)
+    {
+        (string name, string value) = obj;
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(languageVersion: null, testCode, PascalCaseTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3031, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3031")]
+        public async Task TestTupleDesconstructionPascalCaseListAsync()
+        {
+            var testCode = @"
+using System.Collections.Generic;
+public class TypeName
+{
+    public void MethodName(List<(string Name, string Value)> list)
+    {
+        foreach ((string name, string value) in list)
+        {
+        }
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(languageVersion: null, testCode, PascalCaseTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

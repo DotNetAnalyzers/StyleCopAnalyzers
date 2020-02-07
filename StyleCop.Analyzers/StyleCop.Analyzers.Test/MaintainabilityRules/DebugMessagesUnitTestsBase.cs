@@ -297,16 +297,7 @@ public class Foo
         protected virtual string BuildTestCode(string format)
         {
             StringBuilder argumentList = new StringBuilder();
-            foreach (var argument in this.InitialArguments)
-            {
-                if (argumentList.Length > 0)
-                {
-                    argumentList.Append(", ");
-                }
-
-                argumentList.Append(argument);
-            }
-
+            argumentList.Append(string.Join(", ", this.InitialArguments));
             if (argumentList.Length > 0)
             {
                 argumentList.Append(", ");
@@ -406,7 +397,7 @@ public class Foo
             await this.VerifyCSharpDiagnosticAsync(string.Format(this.BuildTestCode(testCodeFormat), argument), expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        private class CSharpTest : StyleCopDiagnosticVerifier<EmptyAnalyzer>.CSharpTest
+        private class CSharpTest : StyleCopDiagnosticVerifier<EmptyDiagnosticAnalyzer>.CSharpTest
         {
             private readonly DebugMessagesUnitTestsBase testFixture;
 

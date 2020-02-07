@@ -151,6 +151,23 @@ string CarValueValue, Car, CarValue;
         }
 
         [Fact]
+        public async Task TestFieldStartingWithVerbatimIdentifierAsync()
+        {
+            var testCode = @"public class Foo
+{
+    public string @bar = ""baz"";
+}";
+
+            var fixedCode = @"public class Foo
+{
+    public string Bar = ""baz"";
+}";
+
+            var expected = Diagnostic().WithArguments("bar").WithLocation(3, 19);
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestFieldStartingWithAnUnderscoreAsync()
         {
             // Makes sure SA1307 is not reported for fields starting with an underscore

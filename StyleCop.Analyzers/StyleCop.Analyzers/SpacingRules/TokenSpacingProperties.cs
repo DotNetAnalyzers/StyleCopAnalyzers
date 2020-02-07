@@ -61,5 +61,11 @@ namespace StyleCop.Analyzers.SpacingRules
             ImmutableDictionary<string, string>.Empty
                 .SetItem(LocationKey, LocationFollowing)
                 .SetItem(ActionKey, ActionRemove);
+
+        internal static ImmutableDictionary<string, string> RemoveFollowingPreserveLayout { get; } =
+            ImmutableDictionary<string, string>.Empty
+                .SetItem(LocationKey, LocationFollowing)
+                .SetItem(ActionKey, ActionRemove)
+                .SetItem(LayoutKey, LayoutPreserve);
     }
 }

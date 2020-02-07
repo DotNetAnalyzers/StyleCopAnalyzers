@@ -339,23 +339,13 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 test.FixedSources.Add(fixedSource);
             }
 
-            if (fixedSources.Length == 1
-                && (fixedSources[0].fileName == string.Empty || fixedSources[0].fileName == "Test0.cs")
-                && source == fixedSources[0].content)
-            {
-                test.FixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
-                test.FixedState.MarkupHandling = MarkupMode.Allow;
-                test.BatchFixedState.InheritanceMode = StateInheritanceMode.AutoInheritAll;
-                test.BatchFixedState.MarkupHandling = MarkupMode.Allow;
-            }
-
             test.ExpectedDiagnostics.AddRange(expected);
             return test.RunAsync(cancellationToken);
         }
 
         protected virtual string GetSettings() => null;
 
-        private class CSharpTest : StyleCopCodeFixVerifier<EmptyAnalyzer, EmptyCodeFixProvider>.CSharpTest
+        private class CSharpTest : StyleCopCodeFixVerifier<EmptyDiagnosticAnalyzer, EmptyCodeFixProvider>.CSharpTest
         {
             private readonly FileMayOnlyContainTestBase testFixture;
 

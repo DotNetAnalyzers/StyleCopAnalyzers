@@ -52,10 +52,12 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// </summary>
         internal const string NoCodeFixKey = "NoCodeFix";
 
+        internal const string ReplaceCharKey = "CharToReplace";
+
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1629.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(DocumentationResources.SA1629Title), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(DocumentationResources.SA1629MessageFormat), DocumentationResources.ResourceManager, typeof(DocumentationResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1629Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
-        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1629.md";
 
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -128,8 +130,30 @@ namespace StyleCop.Analyzers.DocumentationRules
                                 && (startingWithFinalParagraph || !textWithoutTrailingWhitespace.EndsWith(":", StringComparison.Ordinal))
                                 && !textWithoutTrailingWhitespace.EndsWith("-or-", StringComparison.Ordinal))
                             {
-                                var location = Location.Create(xmlElement.SyntaxTree, new TextSpan(textToken.SpanStart + textWithoutTrailingWhitespace.Length, 1));
-                                context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+                                int spanStart = textToken.SpanStart + textWithoutTrailingWhitespace.Length;
+                                ImmutableDictionary<string, string> properties = null;
+                                if (textWithoutTrailingWhitespace.EndsWith(",", StringComparison.Ordinal)
+                                    || textWithoutTrailingWhitespace.EndsWith(";", StringComparison.Ordinal))
+                                {
+                                    spanStart -= 1;
+                                    SetReplaceChar();
+                                }
+                                else if (textWithoutTrailingWhitespace.EndsWith(",)", StringComparison.Ordinal)
+                                    || textWithoutTrailingWhitespace.EndsWith(";)", StringComparison.Ordinal))
+                                {
+                                    spanStart -= 2;
+                                    SetReplaceChar();
+                                }
+
+                                var location = Location.Create(xmlElement.SyntaxTree, new TextSpan(spanStart, 1));
+                                context.ReportDiagnostic(Diagnostic.Create(Descriptor, location, properties));
+
+                                void SetReplaceChar()
+                                {
+                                    var propertiesBuilder = ImmutableDictionary.CreateBuilder<string, string>();
+                                    propertiesBuilder.Add(ReplaceCharKey, string.Empty);
+                                    properties = propertiesBuilder.ToImmutable();
+                                }
                             }
 
                             currentParagraphDone = true;

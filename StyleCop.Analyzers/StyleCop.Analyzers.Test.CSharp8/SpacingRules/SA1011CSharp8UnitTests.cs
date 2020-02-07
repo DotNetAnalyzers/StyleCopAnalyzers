@@ -37,5 +37,73 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
 
             await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp8, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(2900, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2900")]
+        public async Task VerifyNullableContextWithArrayReturnsAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public byte[]? TestMethod()
+        {
+            return null;
+        }
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp8, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3052, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3052")]
+        public async Task TestClosingSquareBracketFollowedByExclamationAsync()
+        {
+            var testCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod(object?[] arguments)
+        {
+            object o1 = arguments[0] !;
+            object o2 = arguments[0]! ;
+            object o3 = arguments[0] ! ;
+            string s1 = arguments[0] !.ToString();
+            string s2 = arguments[0]! .ToString();
+            string s3 = arguments[0] ! .ToString();
+        }
+    }
+}
+";
+
+            var fixedCode = @"namespace TestNamespace
+{
+    public class TestClass
+    {
+        public void TestMethod(object?[] arguments)
+        {
+            object o1 = arguments[0]!;
+            object o2 = arguments[0]! ;
+            object o3 = arguments[0]! ;
+            string s1 = arguments[0]!.ToString();
+            string s2 = arguments[0]! .ToString();
+            string s3 = arguments[0]! .ToString();
+        }
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithArguments(" not", "followed").WithLocation(7, 36),
+                Diagnostic().WithArguments(" not", "followed").WithLocation(9, 36),
+                Diagnostic().WithArguments(" not", "followed").WithLocation(10, 36),
+                Diagnostic().WithArguments(" not", "followed").WithLocation(12, 36),
+            };
+
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp8, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }

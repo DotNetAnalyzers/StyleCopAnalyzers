@@ -22,10 +22,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// </summary>
         public const string DiagnosticId = "SA1141";
 
+        private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1141.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(ReadabilityResources.SA1141Title), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1141MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1141Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
-        private static readonly string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1141.md";
 
         private static readonly Action<SyntaxNodeAnalysisContext> MethodDeclarationAction = HandleMethodDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> ConversionOperatorAction = HandleConversionOperator;
@@ -121,6 +121,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             var invocationExpression = (InvocationExpressionSyntax)context.Node;
+            if (invocationExpression.ArgumentList.Arguments.Count < 2)
+            {
+                // Tuple creation with less than two elements cannot use the language syntax
+                return;
+            }
+
             if (!invocationExpression.Expression.IsKind(SyntaxKind.SimpleMemberAccessExpression))
             {
                 return;
@@ -209,7 +215,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         private static void CheckGenericName(SyntaxNodeAnalysisContext context, GenericNameSyntax genericNameSyntax, Location reportLocation)
         {
-            if (IsValueTuple(context, genericNameSyntax))
+            if (IsValueTupleWithLanguageRepresentation(context, genericNameSyntax))
             {
                 var location = reportLocation ?? genericNameSyntax.GetLocation();
                 context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
@@ -224,10 +230,12 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
         }
 
-        private static bool IsValueTuple(SyntaxNodeAnalysisContext context, ExpressionSyntax syntax)
+        private static bool IsValueTupleWithLanguageRepresentation(SyntaxNodeAnalysisContext context, ExpressionSyntax syntax)
         {
             var symbolInfo = context.SemanticModel.GetSymbolInfo(syntax, context.CancellationToken);
-            return (symbolInfo.Symbol is ITypeSymbol typeSymbol) && typeSymbol.IsTupleType();
+            return symbolInfo.Symbol is INamedTypeSymbol typeSymbol
+                && typeSymbol.IsTupleType()
+                && typeSymbol.TupleElements().Length > 1;
         }
     }
 }

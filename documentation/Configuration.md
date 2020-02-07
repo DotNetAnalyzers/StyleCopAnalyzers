@@ -70,7 +70,7 @@ The following properties are used to configure basic indentation in StyleCop Ana
 > :bulb: When working in Visual Studio, the IDE will not automatically adjust editor settings according to the values in
 > **stylecop.json**. To provide this functionality as well, we recommend duplicating the basic indentation settings in a
 > [**.editorconfig**](http://editorconfig.org/) file. Users of the [EditorConfig](https://visualstudiogallery.msdn.microsoft.com/c8bccfe2-650c-4b42-bc5c-845e21f96328)
-> extension for Visual Studio will no need to update their C# indentation settings in order to match your project style.
+> extension for Visual Studio will not need to update their C# indentation settings in order to match your project style.
 
 ## Spacing Rules
 
@@ -345,21 +345,20 @@ The following properties are used to configure the behavior of the tuple element
 | Property | Default Value | Minimum Version | Summary |
 | --- | --- | --- | --- |
 | `includeInferredTupleElementNames` | false | 1.2.0 | Specifies whether inferred tuple element names will be analyzed as well. |
-| `tupleElementNameCasing` | "camelCase" | 1.2.0 | Specifies the casing convention used for tuple element names. |
+| `tupleElementNameCasing` | "PascalCase" | 1.2.0 | Specifies the casing convention used for tuple element names. |
 
-The following example shows a settings file which requires tuple element names to use PascalCase for all tuple elements (including inferred element names).
+The following example shows a settings file which requires tuple element names to use camel case for all tuple elements (including inferred element names).
 
 ```json
 {
   "settings": {
     "namingRules": {
       "includeInferredTupleElementNames": true,
-      "tupleElementNameCasing" : "PascalCase"
+      "tupleElementNameCasing" : "camelCase"
     }
   }
 }
 ```
-
 
 #### Tuple Element Name Casing
 The `tupleElementNameCasing` property affects the behavior of the [SA1316 Tuple element names should use correct casing](SA1316.md) analyzer.

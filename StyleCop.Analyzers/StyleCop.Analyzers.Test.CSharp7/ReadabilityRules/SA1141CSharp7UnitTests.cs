@@ -218,6 +218,26 @@ public class TestClass
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Fact]
+        [WorkItem(3055, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3055")]
+        public async Task ValidateSingleElementValueTupleUsageAsync()
+        {
+            var testCode = @"using System;
+
+public class TestClass
+{
+    public void TestMethod()
+    {
+        var test1 = default(ValueTuple<int>);
+        var test2 = default(ValueTuple<ValueTuple<int>>);
+        ValueTuple<int> test3 = ValueTuple.Create(3);
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         /// <summary>
         /// Validates that the usage of <see cref="System.ValueTuple"/> within exception filtering will produce no diagnostics.
         /// </summary>
