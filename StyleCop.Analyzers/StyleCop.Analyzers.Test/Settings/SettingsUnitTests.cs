@@ -29,6 +29,7 @@ namespace StyleCop.Analyzers.Test.Settings
             Assert.Equal("Copyright (c) PlaceholderCompany. All rights reserved.", styleCopSettings.DocumentationRules.GetCopyrightText("unused"));
             Assert.True(styleCopSettings.NamingRules.AllowCommonHungarianPrefixes);
             Assert.Empty(styleCopSettings.NamingRules.AllowedHungarianPrefixes);
+            Assert.Empty(styleCopSettings.NamingRules.AllowedNamespaceComponents);
 
             Assert.NotNull(styleCopSettings.OrderingRules);
             Assert.Equal(UsingDirectivesPlacement.InsideNamespace, styleCopSettings.OrderingRules.UsingDirectivesPlacement);
@@ -61,6 +62,7 @@ namespace StyleCop.Analyzers.Test.Settings
     ""namingRules"": {
       ""allowCommonHungarianPrefixes"": false,
       ""allowedHungarianPrefixes"": [""a"", ""ab"", ""ignoredTooLong""],
+      ""allowedNamespaceComponents"": [""eBay"", ""iMac""],
       ""unrecognizedValue"": 3
     },
     ""layoutRules"": {
@@ -93,6 +95,7 @@ namespace StyleCop.Analyzers.Test.Settings
             Assert.Equal("ru-RU", styleCopSettings.DocumentationRules.DocumentationCulture);
             Assert.False(styleCopSettings.NamingRules.AllowCommonHungarianPrefixes);
             Assert.Equal(new[] { "a", "ab" }, styleCopSettings.NamingRules.AllowedHungarianPrefixes);
+            Assert.Equal(new[] { "eBay", "iMac" }, styleCopSettings.NamingRules.AllowedNamespaceComponents);
 
             Assert.NotNull(styleCopSettings.LayoutRules);
             Assert.Equal(OptionSetting.Require, styleCopSettings.LayoutRules.NewlineAtEndOfFile);

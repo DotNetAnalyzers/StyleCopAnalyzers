@@ -12,6 +12,7 @@ namespace StyleCop.Analyzers.NamingRules
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Lightup;
+    using StyleCop.Analyzers.Settings.ObjectModel;
 
     /// <summary>
     /// The name of a C# element does not begin with an upper-case letter.
@@ -29,6 +30,9 @@ namespace StyleCop.Analyzers.NamingRules
     /// class. A <c>NativeMethods</c> class is any class which contains a name ending in <c>NativeMethods</c>, and is
     /// intended as a placeholder for Win32 or COM wrappers. StyleCop will ignore this violation if the item is placed
     /// within a <c>NativeMethods</c> class.</para>
+    ///
+    /// <para>For namespace components that begin with a small letter, due to branding issues or other reasons, add the
+    /// term to the <c>allowedNamespaceComponents</c> list.</para>
     /// </remarks>
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     internal class SA1300ElementMustBeginWithUpperCaseLetter : DiagnosticAnalyzer
@@ -45,7 +49,7 @@ namespace StyleCop.Analyzers.NamingRules
         private static readonly DiagnosticDescriptor Descriptor =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        private static readonly Action<SyntaxNodeAnalysisContext> NamespaceDeclarationAction = HandleNamespaceDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> NamespaceDeclarationAction = HandleNamespaceDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> ClassDeclarationAction = HandleClassDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> EnumDeclarationAction = HandleEnumDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> EnumMemberDeclarationAction = HandleEnumMemberDeclaration;
@@ -82,13 +86,13 @@ namespace StyleCop.Analyzers.NamingRules
             context.RegisterSyntaxNodeAction(PropertyDeclarationAction, SyntaxKind.PropertyDeclaration);
         }
 
-        private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context)
+        private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
         {
             NameSyntax nameSyntax = ((NamespaceDeclarationSyntax)context.Node).Name;
-            CheckNameSyntax(context, nameSyntax);
+            CheckNamespaceNameSyntax(context, nameSyntax, settings);
         }
 
-        private static void CheckNameSyntax(SyntaxNodeAnalysisContext context, NameSyntax nameSyntax)
+        private static void CheckNamespaceNameSyntax(SyntaxNodeAnalysisContext context, NameSyntax nameSyntax, StyleCopSettings settings)
         {
             if (nameSyntax == null || nameSyntax.IsMissing)
             {
@@ -97,12 +101,13 @@ namespace StyleCop.Analyzers.NamingRules
 
             if (nameSyntax is QualifiedNameSyntax qualifiedNameSyntax)
             {
-                CheckNameSyntax(context, qualifiedNameSyntax.Left);
-                CheckNameSyntax(context, qualifiedNameSyntax.Right);
+                CheckNamespaceNameSyntax(context, qualifiedNameSyntax.Left, settings);
+                CheckNamespaceNameSyntax(context, qualifiedNameSyntax.Right, settings);
                 return;
             }
 
-            if (nameSyntax is SimpleNameSyntax simpleNameSyntax)
+            if (nameSyntax is SimpleNameSyntax simpleNameSyntax &&
+                !settings.NamingRules.AllowedNamespaceComponents.Contains(simpleNameSyntax.Identifier.ValueText))
             {
                 CheckElementNameToken(context, simpleNameSyntax.Identifier);
                 return;

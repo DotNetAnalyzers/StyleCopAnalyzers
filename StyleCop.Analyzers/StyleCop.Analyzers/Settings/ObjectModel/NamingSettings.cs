@@ -3,7 +3,9 @@
 
 namespace StyleCop.Analyzers.Settings.ObjectModel
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
+    using System.Linq;
     using System.Text.RegularExpressions;
     using LightJson;
 
@@ -15,12 +17,18 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         private readonly ImmutableArray<string>.Builder allowedHungarianPrefixes;
 
         /// <summary>
+        /// This is the backing field for the <see cref="AllowedNamespaceComponents"/> property.
+        /// </summary>
+        private readonly ImmutableArray<string>.Builder allowedNamespaceComponents;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="NamingSettings"/> class.
         /// </summary>
         protected internal NamingSettings()
         {
             this.AllowCommonHungarianPrefixes = true;
             this.allowedHungarianPrefixes = ImmutableArray.CreateBuilder<string>();
+            this.allowedNamespaceComponents = ImmutableArray.CreateBuilder<string>();
 
             this.IncludeInferredTupleElementNames = false;
             this.TupleElementNameCasing = TupleElementNameCase.PascalCase;
@@ -57,6 +65,11 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
                     break;
 
+                case "allowedNamespaceComponents":
+                    kvp.AssertIsArray();
+                    this.allowedNamespaceComponents.AddRange(kvp.Value.AsJsonArray.Select(x => x.ToStringValue(kvp.Key)));
+                    break;
+
                 case "includeInferredTupleElementNames":
                     this.IncludeInferredTupleElementNames = kvp.ToBooleanValue();
                     break;
@@ -75,6 +88,9 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
         public ImmutableArray<string> AllowedHungarianPrefixes
             => this.allowedHungarianPrefixes.ToImmutable();
+
+        public ImmutableArray<string> AllowedNamespaceComponents
+            => this.allowedNamespaceComponents.ToImmutable();
 
         public bool IncludeInferredTupleElementNames { get; }
 
