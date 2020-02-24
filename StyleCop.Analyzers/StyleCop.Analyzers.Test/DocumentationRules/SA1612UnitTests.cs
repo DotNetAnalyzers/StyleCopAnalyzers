@@ -271,6 +271,22 @@ public class ClassName
             await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
+        [Theory]
+        [MemberData(nameof(Declarations))]
+        public async Task VerifyExcludedDocumentationReportsNoDiagnosticsAsync(string declaration)
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <exclude/>
+    $$
+}";
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("$$", declaration), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
         [Fact]
         public async Task VerifyIncludedMemberWithoutParamsIsNotReportedAsync()
         {
