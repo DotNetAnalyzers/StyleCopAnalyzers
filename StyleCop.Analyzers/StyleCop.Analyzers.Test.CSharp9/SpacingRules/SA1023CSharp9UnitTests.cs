@@ -5,8 +5,10 @@ namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
 {
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp8.SpacingRules;
+    using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
     using static StyleCop.Analyzers.SpacingRules.SA1023DereferenceAndAccessOfSymbolsMustBeSpacedCorrectly;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
@@ -38,7 +40,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
                 Diagnostic(DescriptorNotFollowed).WithLocation(1),
             };
 
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp9, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -50,6 +52,8 @@ namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
     unsafe delegate{|#1:*|} <int*> FuncPtr2;
     unsafe delegate {|#2:*|} managed<int*> FuncPtr3;
     unsafe delegate{|#3:*|}managed<int*> FuncPtr4;
+    unsafe delegate {|#4:*|} unmanaged<int*> FuncPtr5;
+    unsafe delegate{|#5:*|}unmanaged<int*> FuncPtr6;
 }
 ";
 
@@ -59,18 +63,26 @@ namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
     unsafe delegate*<int*> FuncPtr2;
     unsafe delegate* managed<int*> FuncPtr3;
     unsafe delegate* managed<int*> FuncPtr4;
+    unsafe delegate* unmanaged<int*> FuncPtr5;
+    unsafe delegate* unmanaged<int*> FuncPtr6;
 }
 ";
 
-            var expected = new[]
+            await new CSharpTest(LanguageVersion.CSharp9)
             {
-                Diagnostic(DescriptorNotPreceded).WithLocation(0),
-                Diagnostic(DescriptorNotFollowed).WithLocation(1),
-                Diagnostic(DescriptorNotPreceded).WithLocation(2),
-                Diagnostic(DescriptorFollowed).WithLocation(3),
-            };
-
-            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+                ReferenceAssemblies = GenericAnalyzerTest.ReferenceAssembliesNet50,
+                TestCode = testCode,
+                FixedCode = fixedCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic(DescriptorNotPreceded).WithLocation(0),
+                    Diagnostic(DescriptorNotFollowed).WithLocation(1),
+                    Diagnostic(DescriptorNotPreceded).WithLocation(2),
+                    Diagnostic(DescriptorFollowed).WithLocation(3),
+                    Diagnostic(DescriptorNotPreceded).WithLocation(4),
+                    Diagnostic(DescriptorFollowed).WithLocation(5),
+                },
+            }.RunAsync().ConfigureAwait(false);
         }
     }
 }
