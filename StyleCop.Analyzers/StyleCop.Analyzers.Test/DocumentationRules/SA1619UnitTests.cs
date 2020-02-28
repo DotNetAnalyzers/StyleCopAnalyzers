@@ -105,6 +105,16 @@ public partial ##";
 
         [Theory]
         [MemberData(nameof(Types))]
+        public async Task TestPartialTypesExcludeAsync(string p)
+        {
+            var testCode = @"
+/// <exclude/>
+public partial ##";
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(Types))]
         public async Task TestPartialTypesWithMissingDocumentationAsync(string p)
         {
             var testCode = @"

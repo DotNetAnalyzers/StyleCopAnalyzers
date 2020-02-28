@@ -225,6 +225,32 @@ public ##";
 
         [Theory]
         [MemberData(nameof(Members))]
+        public async Task TestMembersExcludeAsync(string p)
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <exclude/>
+    public ##
+}";
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(Types))]
+        public async Task TestTypesExcludeAsync(string p)
+        {
+            var testCode = @"
+/// <exclude/>
+public ##";
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(Members))]
         public async Task TestMembersWithMissingDocumentationAsync(string p)
         {
             var testCode = @"
