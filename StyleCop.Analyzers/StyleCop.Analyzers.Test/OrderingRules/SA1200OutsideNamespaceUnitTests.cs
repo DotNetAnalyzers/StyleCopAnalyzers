@@ -235,7 +235,7 @@ namespace TestNamespace
         public async Task TestFileHeaderIsProperlyPreservedWhenMovingUsingStatementsAsync()
         {
             var testCode = @"// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace TestNamespace
 {
@@ -243,7 +243,7 @@ namespace TestNamespace
 }
 ";
             var fixedTestCode = @"// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using System;
 
@@ -264,7 +264,7 @@ namespace TestNamespace
         public async Task TestFileHeaderIsProperlyPreservedWhenMovingUsingStatementsWithCommentsAsync()
         {
             var testCode = @"// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace TestNamespace
 {
@@ -276,7 +276,7 @@ namespace TestNamespace
 }
 ";
             var fixedTestCode = @"// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 // Separated Comment
 
