@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 // Several test methods in this file use the same member data, but in some cases the test does not use all of the
 // supported parameters. See https://github.com/xunit/xunit/issues/1556.
