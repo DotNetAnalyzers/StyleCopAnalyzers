@@ -81,6 +81,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                     // Ignore nodes with an <inheritdoc/> tag.
                     return;
                 }
+
+                // This documentation rule is excluded via the <exclude /> tag
+                if (documentation?.Content.GetFirstXmlElement(XmlCommentHelper.ExcludeXmlTag) != null)
+                {
+                    return;
+                }
             }
 
             foreach (var location in diagnosticLocations)

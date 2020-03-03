@@ -122,6 +122,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
+            if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.ExcludeXmlTag) != null)
+            {
+                // Ignore nodes with an <exclude/> tag.
+                return;
+            }
+
             // Check if the return value is documented
             var includeElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag);
             if (includeElement != null)
