@@ -59,10 +59,10 @@ namespace StyleCop.Analyzers.DocumentationRules
             if (completeDocumentation != null)
             {
                 // This documentation rule is excluded via the <exclude /> tag
-                if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.ExcludeXmlTag))
+                /*if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.ExcludeXmlTag))
                 {
                     return;
-                }
+                }*/
 
                 var hasValueTag = completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.ValueXmlTag);
                 if (hasValueTag)

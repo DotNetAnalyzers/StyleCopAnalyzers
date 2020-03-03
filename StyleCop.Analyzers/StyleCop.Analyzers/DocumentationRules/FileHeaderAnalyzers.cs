@@ -207,10 +207,10 @@ namespace StyleCop.Analyzers.DocumentationRules
                     if (fileHeader != null)
                     {
                         // Don't process documentation rules when an <exclude /> tag is present
-                        if (fileHeader.GetElement("exclude") != null)
+                        /*if (fileHeader.GetElement("exclude") != null)
                         {
                             return;
-                        }
+                        }*/
 
                         if (fileHeader.IsMissing)
                         {
