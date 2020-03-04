@@ -61,12 +61,6 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         protected override void HandleXmlElement(SyntaxNodeAnalysisContext context, bool needsComment, XmlNodeSyntax syntax, XElement completeDocumentation, Location diagnosticLocation)
         {
-            if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.ExcludeXmlTag))
-            {
-                // Ignore nodes with an <exclude /> tag in the included XML.
-                return;
-            }
-
             var propertyDeclaration = (PropertyDeclarationSyntax)context.Node;
             var propertyType = context.SemanticModel.GetTypeInfo(propertyDeclaration.Type.StripRefFromType());
             var settings = context.Options.GetStyleCopSettings(context.CancellationToken);
