@@ -5,12 +5,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
     using System.Collections.Immutable;
-    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Lightup;
 
     /// <summary>
@@ -311,7 +309,16 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
             static int EndOfLineTriviaCount(SyntaxTriviaList list)
             {
-                return list.Count(trivia => trivia.IsKind(SyntaxKind.EndOfLineTrivia));
+                int count = 0;
+                foreach (var trivia in list)
+                {
+                    if (trivia.IsKind(SyntaxKind.EndOfLineTrivia))
+                    {
+                        count++;
+                    }
+                }
+
+                return count;
             }
         }
     }
