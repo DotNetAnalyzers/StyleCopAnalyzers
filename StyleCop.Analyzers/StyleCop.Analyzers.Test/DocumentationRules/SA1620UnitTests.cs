@@ -256,6 +256,7 @@ public class ClassName
 public ##";
             await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
         [Theory]
         [MemberData(nameof(Types))]
         public async Task TestTypesExcludeAsync(string p)

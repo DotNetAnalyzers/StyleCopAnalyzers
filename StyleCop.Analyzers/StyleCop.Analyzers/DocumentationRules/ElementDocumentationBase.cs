@@ -244,7 +244,7 @@ namespace StyleCop.Analyzers.DocumentationRules
                         return;
                     }
 
-                        if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.ExcludeXmlTag))
+                    if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.ExcludeXmlTag))
                     {
                         // Ignore nodes with an <exclude /> tag in the included XML
                         return;
