@@ -16,7 +16,7 @@ namespace StyleCop.Analyzers.Test.CSharp9.SpacingRules
         {
             string statementWithoutSpace = "int a = new();";
 
-            await this.TestKeywordStatementAsync(statementWithoutSpace, DiagnosticResult.EmptyDiagnosticResults, statementWithoutSpace, languageVersion: LanguageVersion.Preview).ConfigureAwait(false);
+            await this.TestKeywordStatementAsync(statementWithoutSpace, DiagnosticResult.EmptyDiagnosticResults, statementWithoutSpace, languageVersion: LanguageVersion.CSharp9).ConfigureAwait(false);
         }
     }
 }
