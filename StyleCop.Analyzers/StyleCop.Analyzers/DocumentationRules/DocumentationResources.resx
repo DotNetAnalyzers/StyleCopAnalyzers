@@ -685,7 +685,7 @@
     <value>Initializes static members of the </value>
   </data>
   <data name="StaticConstructorStandardTextSecondPart" xml:space="preserve">
-    <value> {0}.</value>
+    <value> {0}</value>
   </data>
   <data name="TaskReturnElementFirstPart" xml:space="preserve">
     <value>A </value>
