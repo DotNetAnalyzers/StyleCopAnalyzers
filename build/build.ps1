@@ -7,13 +7,7 @@ param (
 )
 
 # build the solution
-$SolutionPath = "..\StyleCopAnalyzers.sln"
-
-# make sure the script was run from the expected path
-if (!(Test-Path $SolutionPath)) {
-	$host.ui.WriteErrorLine('The script was run from an invalid working directory.')
-	exit 1
-}
+$SolutionPath = Resolve-Path "$PSScriptRoot\..\StyleCopAnalyzers.sln"
 
 If ($Debug) {
 	$BuildConfig = 'Debug'
@@ -22,10 +16,11 @@ If ($Debug) {
 }
 
 # download nuget.exe if necessary
-$nuget = '..\.nuget\nuget.exe'
+$nugetDir = "$PSScriptRoot\..\.nuget"
+$nuget = "$nugetDir\nuget.exe"
 If (-not (Test-Path $nuget)) {
-	If (-not (Test-Path '..\.nuget')) {
-		mkdir '..\.nuget'
+	If (-not (Test-Path $nugetDir)) {
+		mkdir $nugetDir
 	}
 
 	$nugetSource = 'https://dist.nuget.org/win-x86-commandline/latest/nuget.exe'
