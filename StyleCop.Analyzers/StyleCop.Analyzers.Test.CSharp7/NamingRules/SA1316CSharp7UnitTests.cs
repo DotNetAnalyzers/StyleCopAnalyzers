@@ -175,6 +175,8 @@ public class TestClass
         /// <param name="settings">The test settings to use.</param>
         /// <param name="tupleElementName1">The expected tuple element name for the first field.</param>
         /// <param name="tupleElementName2">The expected tuple element name for the second field.</param>
+        /// <param name="tupleInferred1">The name of the first tuple element that would be inferred if not given explicitly.</param>
+        /// <param name="tupleInferred2">The name of the second tuple element that would be inferred if not given explicitly.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [InlineData(CamelCaseInferredTestSettings, "elementName1", "elementName2", "ElementValue1", "ElementValue2")]
