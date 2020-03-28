@@ -6,6 +6,7 @@ configuration:
 - Debug
 - Release
 before_build:
+- ps: .\init.ps1 -NoRestore
 - nuget restore
 skip_tags: true
 build:
