@@ -75,7 +75,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         /// <summary>
         /// This is the backing field for the <see cref="DocumentInterfaces"/> property.
         /// </summary>
-        private readonly bool documentInterfaces;
+        private readonly string documentInterfaces;
 
         /// <summary>
         /// This is the backing field for the <see cref="DocumentPrivateFields"/> property.
@@ -116,7 +116,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
             this.documentExposedElements = true;
             this.documentInternalElements = true;
             this.documentPrivateElements = false;
-            this.documentInterfaces = true;
+            this.documentInterfaces = "all";
             this.documentPrivateFields = false;
 
             this.fileNamingConvention = FileNamingConvention.StyleCop;
@@ -150,7 +150,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                     break;
 
                 case "documentInterfaces":
-                    this.documentInterfaces = kvp.ToBooleanValue();
+                    this.documentInterfaces = kvp.ToStringValue();
                     break;
 
                 case "documentPrivateFields":
@@ -256,7 +256,7 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         public bool DocumentPrivateElements =>
             this.documentPrivateElements;
 
-        public bool DocumentInterfaces =>
+        public string DocumentInterfaces =>
             this.documentInterfaces;
 
         public bool DocumentPrivateFields =>
