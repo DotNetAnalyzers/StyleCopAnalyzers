@@ -116,7 +116,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             var test = new CSharpTest
             {
                 TestCode = testCode,
-                CodeFixIndex = 1,
+                CodeActionIndex = 1,
                 FixedCode = fixedTestCode,
             };
 
@@ -194,7 +194,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             var test = new CSharpTest
             {
                 TestCode = testCode,
-                CodeFixIndex = 1,
+                CodeActionIndex = 1,
                 FixedCode = fixedTestCode,
             };
 
@@ -300,7 +300,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             var test = new CSharpTest
             {
                 TestCode = testCode,
-                CodeFixIndex = 1,
+                CodeActionIndex = 1,
                 FixedCode = fixedTestCode,
             };
 
@@ -448,7 +448,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                         new DiagnosticResult("CS0742", DiagnosticSeverity.Error).WithLocation(13, 38).WithMessage("A query body must end with a select clause or a group clause"),
                     },
                 },
-                CodeFixIndex = 1,
+                CodeActionIndex = 1,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }

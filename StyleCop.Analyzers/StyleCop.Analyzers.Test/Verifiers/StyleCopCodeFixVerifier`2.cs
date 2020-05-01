@@ -106,7 +106,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
                 this.TestState.AdditionalReferences.Add(GenericAnalyzerTest.CSharpSymbolsReference);
                 this.TestState.AdditionalReferences.Add(Netstandard20Reference);
                 this.TestState.AdditionalFilesFactories.Add(GenerateSettingsFile);
-                this.CodeFixValidationMode = CodeFixValidationMode.None;
+                this.CodeActionValidationMode = CodeActionValidationMode.None;
 
                 if (languageVersion != null)
                 {
