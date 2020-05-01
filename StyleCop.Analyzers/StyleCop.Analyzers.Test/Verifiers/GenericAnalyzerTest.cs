@@ -4,21 +4,35 @@
 namespace StyleCop.Analyzers.Test.Verifiers
 {
     using System;
+    using System.Collections.Immutable;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Host.Mef;
+    using Microsoft.CodeAnalysis.Testing;
     using Microsoft.VisualStudio.Composition;
 
     internal static class GenericAnalyzerTest
     {
-        internal static readonly MetadataReference CSharpSymbolsReference = MetadataReference.CreateFromFile(typeof(CSharpCompilation).Assembly.Location);
+        internal static readonly ReferenceAssemblies ReferenceAssemblies;
 
         private static readonly Lazy<IExportProviderFactory> ExportProviderFactory;
 
         static GenericAnalyzerTest()
         {
+            string codeAnalysisTestVersion =
+                typeof(Compilation).Assembly.GetName().Version.Major switch
+                {
+                    1 => "1.2.1",
+                    2 => "2.8.2",
+                    3 => "3.3.1",
+                    _ => throw new InvalidOperationException("Unknown version."),
+                };
+
+            ReferenceAssemblies = ReferenceAssemblies.Default.AddPackages(ImmutableArray.Create(
+                new PackageIdentity("Microsoft.CodeAnalysis.CSharp", codeAnalysisTestVersion),
+                new PackageIdentity("System.ValueTuple", "4.5.0")));
+
             ExportProviderFactory = new Lazy<IExportProviderFactory>(
                 () =>
                 {
