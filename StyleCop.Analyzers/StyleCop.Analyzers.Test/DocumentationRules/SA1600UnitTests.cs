@@ -613,14 +613,18 @@ public struct Test2
 }
 ";
 
-            DiagnosticResult[] expectedResults =
+            await new CSharpTest(this.LanguageVersion)
             {
-                Diagnostic().WithLocation(7, 12),
-                Diagnostic().WithLocation(11, 12),
-                Diagnostic().WithLocation(21, 12),
-            };
-
-            await VerifyCSharpFixAsync(this.LanguageVersion, testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(7, 12),
+                    Diagnostic().WithLocation(11, 12),
+                    Diagnostic().WithLocation(21, 12),
+                },
+                FixedCode = fixedTestCode,
+                DisabledDiagnostics = { "CS1591" },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -657,12 +661,16 @@ public class TestClass
 }
 ";
 
-            DiagnosticResult[] expectedResults =
+            await new CSharpTest(this.LanguageVersion)
             {
-                Diagnostic().WithLocation(7, 6),
-            };
-
-            await VerifyCSharpFixAsync(this.LanguageVersion, testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(7, 6),
+                },
+                FixedCode = fixedTestCode,
+                DisabledDiagnostics = { "CS1591" },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -689,13 +697,17 @@ public class TestClass
 }
 ";
 
-            DiagnosticResult[] expectedResults =
+            await new CSharpTest(this.LanguageVersion)
             {
-                Diagnostic().WithLocation(7, 17),
-                Diagnostic().WithLocation(11, 16),
-            };
-
-            await VerifyCSharpFixAsync(this.LanguageVersion, testCode, expectedResults, testCode, CancellationToken.None).ConfigureAwait(false);
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(7, 17),
+                    Diagnostic().WithLocation(11, 16),
+                },
+                FixedCode = testCode,
+                DisabledDiagnostics = { "CS1591" },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -820,17 +832,21 @@ public {typeKeyword} Test
 }}
 ";
 
-            DiagnosticResult[] expectedResults =
+            await new CSharpTest(this.LanguageVersion)
             {
-                Diagnostic().WithLocation(9, 17),
-                Diagnostic().WithLocation(14, 22),
-                Diagnostic().WithLocation(19, 20),
-                Diagnostic().WithLocation(24, 17),
-                Diagnostic().WithLocation(29, 22),
-                Diagnostic().WithLocation(34, 20),
-            };
-
-            await VerifyCSharpFixAsync(this.LanguageVersion, testCode, expectedResults, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+                TestCode = testCode,
+                ExpectedDiagnostics =
+                {
+                    Diagnostic().WithLocation(9, 17),
+                    Diagnostic().WithLocation(14, 22),
+                    Diagnostic().WithLocation(19, 20),
+                    Diagnostic().WithLocation(24, 17),
+                    Diagnostic().WithLocation(29, 22),
+                    Diagnostic().WithLocation(34, 20),
+                },
+                FixedCode = fixedTestCode,
+                DisabledDiagnostics = { "CS1591" },
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         protected async Task TestTypeDeclarationDocumentationAsync(string type, string modifiers, bool requiresDiagnostic, bool hasDocumentation)
@@ -1333,6 +1349,7 @@ public class OuterClass
             {
                 TestCode = string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers),
                 Settings = testSettings,
+                DisabledDiagnostics = { "CS1591" },
             };
 
             if (requiresDiagnostic)
