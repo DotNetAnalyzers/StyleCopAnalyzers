@@ -48,7 +48,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             var fixedCode = new[]
             {
-                ("Test0.cs", @"%1 Foo
+                ("/0/Test0.cs", @"%1 Foo
 {
 }
 "),
@@ -91,7 +91,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             var fixedCode = new[]
             {
-                ("Test0.cs", @"%1 Foo
+                ("/0/Test0.cs", @"%1 Foo
 {
 }
 "),
@@ -141,7 +141,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             var fixedCode = new[]
             {
-                ("Test0.cs", @"%1 Foo
+                ("/0/Test0.cs", @"%1 Foo
 {
 }
 "),
@@ -185,7 +185,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             // See https://github.com/dotnet/roslyn/issues/3999
             var fixedCode = new[]
             {
-                ("Test0.cs", @"%1 Foo
+                ("/0/Test0.cs", @"%1 Foo
 {
 }
 "),
@@ -226,7 +226,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             var fixedCode = new[]
             {
-                ("Test0.cs", @"%1 Foo
+                ("/0/Test0.cs", @"%1 Foo
 {
 }
 "),
@@ -271,7 +271,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             // See https://github.com/dotnet/roslyn/issues/3999
             var fixedCode = new[]
             {
-                ("Test0.cs", @"%1 Foo
+                ("/0/Test0.cs", @"%1 Foo
 {
 #if true
 }

@@ -40,7 +40,7 @@ enum Bar
 
             var fixedCode = new[]
             {
-                ("Test0.cs", @"enum Foo
+                ("/0/Test0.cs", @"enum Foo
 {
     A, B, C
 }
@@ -111,7 +111,7 @@ enum FooBar
 
             var fixedCode = new[]
             {
-                ("Test0.cs", @"enum Foo
+                ("/0/Test0.cs", @"enum Foo
 {
     A, B, C
 }
@@ -152,7 +152,7 @@ enum Test0
 
             var fixedCode = new[]
             {
-                ("Test0.cs", @"enum Test0
+                ("/0/Test0.cs", @"enum Test0
 {
     D, E
 }
