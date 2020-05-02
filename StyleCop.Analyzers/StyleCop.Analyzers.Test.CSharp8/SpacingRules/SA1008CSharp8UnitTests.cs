@@ -73,5 +73,41 @@ namespace TestNamespace
                 fixedCode,
                 CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3141, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3141")]
+        public async Task TestInPropertyPatternsAsync()
+        {
+            var testCode = @"
+class C
+{
+    void M((string A, string B) tuple)
+    {
+        _ = tuple is{|#0:(|} { Length: 1 }, { Length: 2 });
+    }
+}
+";
+            var fixedCode = @"
+class C
+{
+    void M((string A, string B) tuple)
+    {
+        _ = tuple is ({ Length: 1 }, { Length: 2 });
+    }
+}
+";
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(DescriptorPreceded).WithLocation(0),
+                Diagnostic(DescriptorNotFollowed).WithLocation(0),
+            };
+
+            await VerifyCSharpFixAsync(
+                LanguageVersion.CSharp8,
+                testCode,
+                expectedResults,
+                fixedCode,
+                CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
