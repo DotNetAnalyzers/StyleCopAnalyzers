@@ -7,8 +7,8 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.SpacingRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.SpacingRules.SA1024ColonsMustBeSpacedCorrectly;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1024ColonsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
@@ -43,10 +43,10 @@ public class Foo
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(7, 25).WithArguments(" not", "preceded", string.Empty),
-                Diagnostic().WithLocation(7, 25).WithArguments(string.Empty, "followed", string.Empty),
-                Diagnostic().WithLocation(7, 31).WithArguments(" not", "preceded", string.Empty),
-                Diagnostic().WithLocation(7, 31).WithArguments(string.Empty, "followed", string.Empty),
+                Diagnostic(DescriptorNotPreceded).WithLocation(7, 25),
+                Diagnostic(DescriptorFollowed).WithLocation(7, 25),
+                Diagnostic(DescriptorNotPreceded).WithLocation(7, 31),
+                Diagnostic(DescriptorFollowed).WithLocation(7, 31),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
@@ -90,8 +90,8 @@ public class Foo
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(9, 35).WithArguments(" not", "preceded", string.Empty),
-                Diagnostic().WithLocation(11, 22).WithArguments(" not", "preceded", string.Empty),
+                Diagnostic(DescriptorNotPreceded).WithLocation(9, 35),
+                Diagnostic(DescriptorNotPreceded).WithLocation(11, 22),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);

@@ -7,10 +7,10 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
-    using StyleCop.Analyzers.SpacingRules;
     using StyleCop.Analyzers.Test.CSharp7.SpacingRules;
     using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
+    using static StyleCop.Analyzers.SpacingRules.SA1009ClosingParenthesisMustBeSpacedCorrectly;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1009ClosingParenthesisMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
@@ -142,7 +142,7 @@ namespace TestNamespace
     }
 }
 ";
-            DiagnosticResult expected = Diagnostic().WithSpan(28, 37, 28, 38).WithArguments(" not", "followed");
+            DiagnosticResult expected = Diagnostic(DescriptorNotFollowed).WithSpan(28, 37, 28, 38);
             await VerifyCSharpFixAsync(LanguageVersion.CSharp8, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }

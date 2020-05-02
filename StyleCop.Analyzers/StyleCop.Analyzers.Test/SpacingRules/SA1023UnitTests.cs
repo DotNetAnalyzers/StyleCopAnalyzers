@@ -7,8 +7,8 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.SpacingRules.SA1023DereferenceAndAccessOfSymbolsMustBeSpacedCorrectly;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1023DereferenceAndAccessOfSymbolsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
@@ -109,26 +109,26 @@ x;
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(6, 12).WithArguments("be followed by a space"),
-                Diagnostic().WithLocation(8, 13).WithArguments("not be preceded by a space"),
-                Diagnostic().WithLocation(8, 13).WithArguments("not be followed by a space"),
-                Diagnostic().WithLocation(9, 21).WithArguments("not be preceded by a space"),
-                Diagnostic().WithLocation(9, 21).WithArguments("not be followed by a space"),
-                Diagnostic().WithLocation(11, 1).WithArguments("not appear at the beginning of a line"),
-                Diagnostic().WithLocation(12, 13).WithArguments("not appear at the end of a line"),
-                Diagnostic().WithLocation(16, 18).WithArguments("not be preceded by a space"),
-                Diagnostic().WithLocation(16, 18).WithArguments("not be followed by a space"),
-                Diagnostic().WithLocation(17, 13).WithArguments("not be followed by a space"),
-                Diagnostic().WithLocation(17, 19).WithArguments("not be followed by a space"),
-                Diagnostic().WithLocation(17, 21).WithArguments("not be preceded by a space"),
-                Diagnostic().WithLocation(17, 21).WithArguments("not be followed by a space"),
-                Diagnostic().WithLocation(18, 29).WithArguments("not be preceded by a space"),
-                Diagnostic().WithLocation(19, 24).WithArguments("not be followed by a space"),
-                Diagnostic().WithLocation(19, 26).WithArguments("not be preceded by a space"),
-                Diagnostic().WithLocation(20, 30).WithArguments("not be followed by a space"),
-                Diagnostic().WithLocation(21, 31).WithArguments("not be followed by a space"),
-                Diagnostic().WithLocation(22, 13).WithArguments("not be followed by a space"),
-                Diagnostic().WithLocation(22, 17).WithArguments("not be followed by a space"),
+                Diagnostic(DescriptorFollowed).WithLocation(6, 12),
+                Diagnostic(DescriptorNotPreceded).WithLocation(8, 13),
+                Diagnostic(DescriptorNotFollowed).WithLocation(8, 13),
+                Diagnostic(DescriptorNotPreceded).WithLocation(9, 21),
+                Diagnostic(DescriptorNotFollowed).WithLocation(9, 21),
+                Diagnostic(DescriptorNotAtBeginningOfLine).WithLocation(11, 1),
+                Diagnostic(DescriptorNotAtEndOfLine).WithLocation(12, 13),
+                Diagnostic(DescriptorNotPreceded).WithLocation(16, 18),
+                Diagnostic(DescriptorNotFollowed).WithLocation(16, 18),
+                Diagnostic(DescriptorNotFollowed).WithLocation(17, 13),
+                Diagnostic(DescriptorNotFollowed).WithLocation(17, 19),
+                Diagnostic(DescriptorNotPreceded).WithLocation(17, 21),
+                Diagnostic(DescriptorNotFollowed).WithLocation(17, 21),
+                Diagnostic(DescriptorNotPreceded).WithLocation(18, 29),
+                Diagnostic(DescriptorNotFollowed).WithLocation(19, 24),
+                Diagnostic(DescriptorNotPreceded).WithLocation(19, 26),
+                Diagnostic(DescriptorNotFollowed).WithLocation(20, 30),
+                Diagnostic(DescriptorNotFollowed).WithLocation(21, 31),
+                Diagnostic(DescriptorNotFollowed).WithLocation(22, 13),
+                Diagnostic(DescriptorNotFollowed).WithLocation(22, 17),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);

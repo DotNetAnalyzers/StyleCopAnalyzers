@@ -7,8 +7,8 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.SpacingRules.SA1015ClosingGenericBracketsMustBeSpacedCorrectly;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1015ClosingGenericBracketsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
@@ -83,9 +83,9 @@ public class TestClass3<T> where T : IEnumerable<object>
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(7, 27).WithArguments(" not", "preceded"),
-                Diagnostic().WithLocation(7, 58).WithArguments(" not", "preceded"),
-                Diagnostic().WithLocation(11, 26).WithArguments(string.Empty, "followed"),
+                Diagnostic(DescriptorNotPreceded).WithLocation(7, 27),
+                Diagnostic(DescriptorNotPreceded).WithLocation(7, 58),
+                Diagnostic(DescriptorFollowed).WithLocation(11, 26),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
@@ -124,12 +124,12 @@ public class TestClass
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(6, 33).WithArguments(" not", "preceded"),
-                Diagnostic().WithLocation(7, 34).WithArguments(" not", "preceded"),
-                Diagnostic().WithLocation(8, 33).WithArguments(string.Empty, "followed"),
-                Diagnostic().WithLocation(9, 33).WithArguments(" not", "preceded"),
-                Diagnostic().WithLocation(9, 35).WithArguments(" not", "preceded"),
-                Diagnostic().WithLocation(9, 35).WithArguments(string.Empty, "followed"),
+                Diagnostic(DescriptorNotPreceded).WithLocation(6, 33),
+                Diagnostic(DescriptorNotPreceded).WithLocation(7, 34),
+                Diagnostic(DescriptorFollowed).WithLocation(8, 33),
+                Diagnostic(DescriptorNotPreceded).WithLocation(9, 33),
+                Diagnostic(DescriptorNotPreceded).WithLocation(9, 35),
+                Diagnostic(DescriptorFollowed).WithLocation(9, 35),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
@@ -206,17 +206,17 @@ public class TestClass
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(10, 33).WithArguments(" not", "preceded"),
-                Diagnostic().WithLocation(10, 51).WithArguments(" not", "preceded"),
-                Diagnostic().WithLocation(15, 34).WithArguments(" not", "preceded"),
-                Diagnostic().WithLocation(15, 34).WithArguments(string.Empty, "followed"),
-                Diagnostic().WithLocation(15, 48).WithArguments(" not", "followed"),
-                Diagnostic().WithLocation(20, 33).WithArguments(string.Empty, "followed"),
-                Diagnostic().WithLocation(25, 33).WithArguments(" not", "preceded"),
-                Diagnostic().WithLocation(25, 35).WithArguments(" not", "preceded"),
-                Diagnostic().WithLocation(25, 35).WithArguments(string.Empty, "followed"),
-                Diagnostic().WithLocation(25, 50).WithArguments(" not", "preceded"),
-                Diagnostic().WithLocation(25, 50).WithArguments(" not", "followed"),
+                Diagnostic(DescriptorNotPreceded).WithLocation(10, 33),
+                Diagnostic(DescriptorNotPreceded).WithLocation(10, 51),
+                Diagnostic(DescriptorNotPreceded).WithLocation(15, 34),
+                Diagnostic(DescriptorFollowed).WithLocation(15, 34),
+                Diagnostic(DescriptorNotFollowed).WithLocation(15, 48),
+                Diagnostic(DescriptorFollowed).WithLocation(20, 33),
+                Diagnostic(DescriptorNotPreceded).WithLocation(25, 33),
+                Diagnostic(DescriptorNotPreceded).WithLocation(25, 35),
+                Diagnostic(DescriptorFollowed).WithLocation(25, 35),
+                Diagnostic(DescriptorNotPreceded).WithLocation(25, 50),
+                Diagnostic(DescriptorNotFollowed).WithLocation(25, 50),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
@@ -285,16 +285,16 @@ public class TestClass
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(12, 29).WithArguments(" not", "preceded"),
+                Diagnostic(DescriptorNotPreceded).WithLocation(12, 29),
 
                 // 13, 29 should be reported by SA1009
-                Diagnostic().WithLocation(14, 29).WithArguments(" not", "preceded"),
+                Diagnostic(DescriptorNotPreceded).WithLocation(14, 29),
 
                 // 14, 30 should be reported by SA1009
-                Diagnostic().WithLocation(18, 28).WithArguments(" not", "preceded"),
-                Diagnostic().WithLocation(19, 27).WithArguments(" not", "followed"),
-                Diagnostic().WithLocation(20, 28).WithArguments(" not", "preceded"),
-                Diagnostic().WithLocation(20, 28).WithArguments(" not", "followed"),
+                Diagnostic(DescriptorNotPreceded).WithLocation(18, 28),
+                Diagnostic(DescriptorNotFollowed).WithLocation(19, 27),
+                Diagnostic(DescriptorNotPreceded).WithLocation(20, 28),
+                Diagnostic(DescriptorNotFollowed).WithLocation(20, 28),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);

@@ -32,17 +32,26 @@ namespace StyleCop.Analyzers.SpacingRules
         public const string DiagnosticId = "SA1015";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1015.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1015Title), SpacingResources.ResourceManager, typeof(SpacingResources));
-        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(SpacingResources.SA1015MessageFormat), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1015Description), SpacingResources.ResourceManager, typeof(SpacingResources));
 
-        private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+        private static readonly LocalizableString MessageNotPreceded = new LocalizableResourceString(nameof(SpacingResources.SA1015MessageNotPreceded), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString MessageNotFollowed = new LocalizableResourceString(nameof(SpacingResources.SA1015MessageNotFollowed), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString MessageFollowed = new LocalizableResourceString(nameof(SpacingResources.SA1015MessageFollowed), SpacingResources.ResourceManager, typeof(SpacingResources));
 
         private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
 
+        public static DiagnosticDescriptor DescriptorNotPreceded { get; } =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageNotPreceded, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+
+        public static DiagnosticDescriptor DescriptorNotFollowed { get; } =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageNotFollowed, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+
+        public static DiagnosticDescriptor DescriptorFollowed { get; } =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFollowed, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-            ImmutableArray.Create(Descriptor);
+            ImmutableArray.Create(DescriptorNotPreceded);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -136,7 +145,7 @@ namespace StyleCop.Analyzers.SpacingRules
             {
                 // Closing generic bracket should{ not} be {preceded} by a space.
                 var properties = TokenSpacingProperties.RemovePreceding;
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, " not", "preceded"));
+                context.ReportDiagnostic(Diagnostic.Create(DescriptorNotPreceded, token.GetLocation(), properties));
             }
 
             if (!lastInLine)
@@ -145,13 +154,13 @@ namespace StyleCop.Analyzers.SpacingRules
                 {
                     // Closing generic bracket should{} be {followed} by a space.
                     var properties = TokenSpacingProperties.InsertFollowing;
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, string.Empty, "followed"));
+                    context.ReportDiagnostic(Diagnostic.Create(DescriptorFollowed, token.GetLocation(), properties));
                 }
                 else if (!allowTrailingSpace && followedBySpace)
                 {
                     // Closing generic bracket should{ not} be {followed} by a space.
                     var properties = TokenSpacingProperties.RemoveFollowing;
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, " not", "followed"));
+                    context.ReportDiagnostic(Diagnostic.Create(DescriptorNotFollowed, token.GetLocation(), properties));
                 }
             }
         }
