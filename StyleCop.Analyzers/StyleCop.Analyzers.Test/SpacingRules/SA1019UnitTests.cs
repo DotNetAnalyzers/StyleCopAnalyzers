@@ -10,8 +10,8 @@ namespace StyleCop.Analyzers.Test.SpacingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.SpacingRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.SpacingRules.SA1019MemberAccessSymbolsMustBeSpacedCorrectly;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1019MemberAccessSymbolsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
@@ -46,7 +46,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             string template = this.GetTemplate($" {op}");
             var fixedCode = this.GetTemplate($"{op}");
 
-            DiagnosticResult expected = Diagnostic().WithLocation(16, 27).WithArguments(op[0], "preceded");
+            DiagnosticResult expected = Diagnostic(DescriptorNotPreceded).WithLocation(16, 27).WithArguments(op[0]);
 
             await VerifyCSharpFixAsync(template, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
@@ -63,7 +63,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
             string template = this.GetTemplate($"{op} ");
             string fixedCode = this.GetTemplate($"{op}");
 
-            DiagnosticResult expected = Diagnostic().WithLocation(16, 25 + op.Length).WithArguments(op.Last(), "followed");
+            DiagnosticResult expected = Diagnostic(DescriptorNotFollowed).WithLocation(16, 25 + op.Length).WithArguments(op.Last());
             await VerifyCSharpFixAsync(template, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -142,7 +142,7 @@ namespace StyleCop.Analyzers.Test.SpacingRules
         public async Task TestCommentOnSameLineSeparatedByWhitespaceReportsAsync(string op)
         {
             string template = this.GetTemplate($"{op} // This is a comment{Environment.NewLine}");
-            DiagnosticResult expected = Diagnostic().WithLocation(16, 25 + op.Length).WithArguments(".", "followed");
+            DiagnosticResult expected = Diagnostic(DescriptorNotFollowed).WithLocation(16, 25 + op.Length).WithArguments(".");
             await VerifyCSharpDiagnosticAsync(template, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -253,35 +253,35 @@ namespace StyleCop.Analyzers.Test.SpacingRules
 ";
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(8, 13).WithArguments(".", "preceded"),
-                Diagnostic().WithLocation(8, 13).WithArguments(".", "followed"),
-                Diagnostic().WithLocation(9, 13).WithArguments(".", "preceded"),
-                Diagnostic().WithLocation(10, 12).WithArguments(".", "followed"),
+                Diagnostic(DescriptorNotPreceded).WithLocation(8, 13).WithArguments("."),
+                Diagnostic(DescriptorNotFollowed).WithLocation(8, 13).WithArguments("."),
+                Diagnostic(DescriptorNotPreceded).WithLocation(9, 13).WithArguments("."),
+                Diagnostic(DescriptorNotFollowed).WithLocation(10, 12).WithArguments("."),
 
-                Diagnostic().WithLocation(12, 13).WithArguments(".", "preceded"),
-                Diagnostic().WithLocation(12, 13).WithArguments(".", "followed"),
-                Diagnostic().WithLocation(13, 13).WithArguments(".", "preceded"),
-                Diagnostic().WithLocation(14, 12).WithArguments(".", "followed"),
+                Diagnostic(DescriptorNotPreceded).WithLocation(12, 13).WithArguments("."),
+                Diagnostic(DescriptorNotFollowed).WithLocation(12, 13).WithArguments("."),
+                Diagnostic(DescriptorNotPreceded).WithLocation(13, 13).WithArguments("."),
+                Diagnostic(DescriptorNotFollowed).WithLocation(14, 12).WithArguments("."),
 
-                Diagnostic().WithLocation(16, 13).WithArguments("?", "preceded"),
-                Diagnostic().WithLocation(16, 14).WithArguments(".", "followed"),
-                Diagnostic().WithLocation(17, 13).WithArguments("?", "preceded"),
-                Diagnostic().WithLocation(18, 13).WithArguments(".", "followed"),
+                Diagnostic(DescriptorNotPreceded).WithLocation(16, 13).WithArguments("?"),
+                Diagnostic(DescriptorNotFollowed).WithLocation(16, 14).WithArguments("."),
+                Diagnostic(DescriptorNotPreceded).WithLocation(17, 13).WithArguments("?"),
+                Diagnostic(DescriptorNotFollowed).WithLocation(18, 13).WithArguments("."),
 
-                Diagnostic().WithLocation(20, 13).WithArguments("?", "preceded"),
-                Diagnostic().WithLocation(20, 14).WithArguments(".", "followed"),
-                Diagnostic().WithLocation(21, 13).WithArguments("?", "preceded"),
-                Diagnostic().WithLocation(22, 13).WithArguments(".", "followed"),
+                Diagnostic(DescriptorNotPreceded).WithLocation(20, 13).WithArguments("?"),
+                Diagnostic(DescriptorNotFollowed).WithLocation(20, 14).WithArguments("."),
+                Diagnostic(DescriptorNotPreceded).WithLocation(21, 13).WithArguments("?"),
+                Diagnostic(DescriptorNotFollowed).WithLocation(22, 13).WithArguments("."),
 
-                Diagnostic().WithLocation(24, 13).WithArguments("->", "preceded"),
-                Diagnostic().WithLocation(24, 13).WithArguments("->", "followed"),
-                Diagnostic().WithLocation(25, 13).WithArguments("->", "preceded"),
-                Diagnostic().WithLocation(26, 12).WithArguments("->", "followed"),
+                Diagnostic(DescriptorNotPreceded).WithLocation(24, 13).WithArguments("->"),
+                Diagnostic(DescriptorNotFollowed).WithLocation(24, 13).WithArguments("->"),
+                Diagnostic(DescriptorNotPreceded).WithLocation(25, 13).WithArguments("->"),
+                Diagnostic(DescriptorNotFollowed).WithLocation(26, 12).WithArguments("->"),
 
-                Diagnostic().WithLocation(28, 13).WithArguments("->", "preceded"),
-                Diagnostic().WithLocation(28, 13).WithArguments("->", "followed"),
-                Diagnostic().WithLocation(29, 13).WithArguments("->", "preceded"),
-                Diagnostic().WithLocation(30, 12).WithArguments("->", "followed"),
+                Diagnostic(DescriptorNotPreceded).WithLocation(28, 13).WithArguments("->"),
+                Diagnostic(DescriptorNotFollowed).WithLocation(28, 13).WithArguments("->"),
+                Diagnostic(DescriptorNotPreceded).WithLocation(29, 13).WithArguments("->"),
+                Diagnostic(DescriptorNotFollowed).WithLocation(30, 12).WithArguments("->"),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);

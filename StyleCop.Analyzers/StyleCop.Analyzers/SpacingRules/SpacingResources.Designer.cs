@@ -413,11 +413,29 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Closing parenthesis should{0} be {1} by a space.
+        ///   Looks up a localized string similar to Closing parenthesis should be followed by a space.
         /// </summary>
-        internal static string SA1009MessageFormat {
+        internal static string SA1009MessageFollowed {
             get {
-                return ResourceManager.GetString("SA1009MessageFormat", resourceCulture);
+                return ResourceManager.GetString("SA1009MessageFollowed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Closing parenthesis should not be followed by a space.
+        /// </summary>
+        internal static string SA1009MessageNotFollowed {
+            get {
+                return ResourceManager.GetString("SA1009MessageNotFollowed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Closing parenthesis should not be preceded by a space.
+        /// </summary>
+        internal static string SA1009MessageNotPreceded {
+            get {
+                return ResourceManager.GetString("SA1009MessageNotPreceded", resourceCulture);
             }
         }
         
@@ -440,11 +458,20 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Opening square brackets should {0} by a space.
+        ///   Looks up a localized string similar to Opening square brackets should not be followed by a space.
         /// </summary>
-        internal static string SA1010MessageFormat {
+        internal static string SA1010MessageNotFollowed {
             get {
-                return ResourceManager.GetString("SA1010MessageFormat", resourceCulture);
+                return ResourceManager.GetString("SA1010MessageNotFollowed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Opening square brackets should not be preceded by a space.
+        /// </summary>
+        internal static string SA1010MessageNotPreceded {
+            get {
+                return ResourceManager.GetString("SA1010MessageNotPreceded", resourceCulture);
             }
         }
         
@@ -575,11 +602,29 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Closing generic bracket should{0} be {1} by a space.
+        ///   Looks up a localized string similar to Closing generic bracket should be followed by a space.
         /// </summary>
-        internal static string SA1015MessageFormat {
+        internal static string SA1015MessageFollowed {
             get {
-                return ResourceManager.GetString("SA1015MessageFormat", resourceCulture);
+                return ResourceManager.GetString("SA1015MessageFollowed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Closing generic bracket should not be followed by a space.
+        /// </summary>
+        internal static string SA1015MessageNotFollowed {
+            get {
+                return ResourceManager.GetString("SA1015MessageNotFollowed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Closing generic bracket should not be preceded by a space.
+        /// </summary>
+        internal static string SA1015MessageNotPreceded {
+            get {
+                return ResourceManager.GetString("SA1015MessageNotPreceded", resourceCulture);
             }
         }
         
@@ -692,11 +737,20 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Member access symbol &apos;{0}&apos; should not be {1} by a space.
+        ///   Looks up a localized string similar to Member access symbol &apos;{0}&apos; should not be followed by a space.
         /// </summary>
-        internal static string SA1019MessageFormat {
+        internal static string SA1019MessageNotFollowed {
             get {
-                return ResourceManager.GetString("SA1019MessageFormat", resourceCulture);
+                return ResourceManager.GetString("SA1019MessageNotFollowed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Member access symbol &apos;{0}&apos; should not be preceded by a space.
+        /// </summary>
+        internal static string SA1019MessageNotPreceded {
+            get {
+                return ResourceManager.GetString("SA1019MessageNotPreceded", resourceCulture);
             }
         }
         
@@ -800,11 +854,47 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Dereference symbol &apos;*&apos; should {0}.
+        ///   Looks up a localized string similar to Dereference symbol &apos;*&apos; should be followed by a space.
         /// </summary>
-        internal static string SA1023MessageFormat {
+        internal static string SA1023MessageFollowed {
             get {
-                return ResourceManager.GetString("SA1023MessageFormat", resourceCulture);
+                return ResourceManager.GetString("SA1023MessageFollowed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dereference symbol &apos;*&apos; should not appear at the beginning of a line.
+        /// </summary>
+        internal static string SA1023MessageNotAtBeginningOfLine {
+            get {
+                return ResourceManager.GetString("SA1023MessageNotAtBeginningOfLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dereference symbol &apos;*&apos; should not appear at the end of a line.
+        /// </summary>
+        internal static string SA1023MessageNotAtEndOfLine {
+            get {
+                return ResourceManager.GetString("SA1023MessageNotAtEndOfLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dereference symbol &apos;*&apos; should not be followed by a space.
+        /// </summary>
+        internal static string SA1023MessageNotFollowed {
+            get {
+                return ResourceManager.GetString("SA1023MessageNotFollowed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dereference symbol &apos;*&apos; should not be preceded by a space.
+        /// </summary>
+        internal static string SA1023MessageNotPreceded {
+            get {
+                return ResourceManager.GetString("SA1023MessageNotPreceded", resourceCulture);
             }
         }
         
@@ -827,11 +917,29 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Colon should{0} be {1}{2} by a space.
+        ///   Looks up a localized string similar to Colon should be followed by a space.
         /// </summary>
-        internal static string SA1024MessageFormat {
+        internal static string SA1024MessageFollowed {
             get {
-                return ResourceManager.GetString("SA1024MessageFormat", resourceCulture);
+                return ResourceManager.GetString("SA1024MessageFollowed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Colon should not be preceded by a space.
+        /// </summary>
+        internal static string SA1024MessageNotPreceded {
+            get {
+                return ResourceManager.GetString("SA1024MessageNotPreceded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Colon should be preceded by a space.
+        /// </summary>
+        internal static string SA1024MessagePreceded {
+            get {
+                return ResourceManager.GetString("SA1024MessagePreceded", resourceCulture);
             }
         }
         

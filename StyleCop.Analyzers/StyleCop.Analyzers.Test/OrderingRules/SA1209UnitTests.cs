@@ -136,7 +136,7 @@ namespace Test
     }
 }";
 
-            DiagnosticResult expected = Diagnostic().WithLocation("Test0.cs", 2, 1);
+            DiagnosticResult expected = Diagnostic().WithLocation("/0/Test0.cs", 2, 1);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
@@ -188,7 +188,7 @@ namespace Test
     }
 }";
 
-            DiagnosticResult expected = Diagnostic().WithLocation("Test0.cs", 4, 5);
+            DiagnosticResult expected = Diagnostic().WithLocation("/0/Test0.cs", 4, 5);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
@@ -222,7 +222,7 @@ namespace Test
     }
 }";
 
-            DiagnosticResult expected = Diagnostic().WithLocation("Test0.cs", 4, 5);
+            DiagnosticResult expected = Diagnostic().WithLocation("/0/Test0.cs", 4, 5);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }

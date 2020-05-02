@@ -90,9 +90,9 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 },
                 ExpectedDiagnostics =
                 {
-                    Diagnostic().WithLocation("Test0.cs", 1, 1),
-                    Diagnostic().WithLocation("Test1.cs", 1, 1),
-                    Diagnostic().WithLocation("Test2.cs", 1, 1),
+                    Diagnostic().WithLocation("/0/Test0.cs", 1, 1),
+                    Diagnostic().WithLocation("/0/Test1.cs", 1, 1),
+                    Diagnostic().WithLocation("/0/Test2.cs", 1, 1),
                 },
                 FixedSources =
                 {
@@ -122,8 +122,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 },
                 ExpectedDiagnostics =
                 {
-                    Diagnostic().WithLocation("Test0.cs", 1, 1),
-                    Diagnostic().WithLocation("Test1.cs", 1, 1),
+                    Diagnostic().WithLocation("/0/Test0.cs", 1, 1),
+                    Diagnostic().WithLocation("/0/Test1.cs", 1, 1),
                 },
                 FixedSources =
                 {

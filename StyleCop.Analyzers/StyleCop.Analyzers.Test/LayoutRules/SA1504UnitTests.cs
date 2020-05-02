@@ -64,7 +64,7 @@ public class Foo
                 TestCode = testCode,
                 ExpectedDiagnostics = { expected },
                 FixedCode = fixedTestCodeSingle,
-                CodeFixIndex = 0,
+                CodeActionIndex = 0,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
 
             await new CSharpTest
@@ -72,7 +72,7 @@ public class Foo
                 TestCode = testCode,
                 ExpectedDiagnostics = { expected },
                 FixedCode = fixedTestCodeMultiple,
-                CodeFixIndex = 1,
+                CodeActionIndex = 1,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -252,7 +252,7 @@ public class Foo
                 TestCode = testCode,
                 ExpectedDiagnostics = { expected },
                 FixedCode = fixedTestCodeSingle,
-                CodeFixIndex = 0,
+                CodeActionIndex = 0,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
 
             await new CSharpTest
@@ -260,7 +260,7 @@ public class Foo
                 TestCode = testCode,
                 ExpectedDiagnostics = { expected },
                 FixedCode = fixedTestCodeMultiple,
-                CodeFixIndex = 1,
+                CodeActionIndex = 1,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -375,7 +375,7 @@ public class Foo
                 TestCode = testCode,
                 ExpectedDiagnostics = { expected },
                 FixedCode = fixedTestCodeSingle,
-                CodeFixIndex = 0,
+                CodeActionIndex = 0,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
 
             await new CSharpTest
@@ -383,7 +383,7 @@ public class Foo
                 TestCode = testCode,
                 ExpectedDiagnostics = { expected },
                 FixedCode = fixedTestCodeMultiple,
-                CodeFixIndex = 1,
+                CodeActionIndex = 1,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }

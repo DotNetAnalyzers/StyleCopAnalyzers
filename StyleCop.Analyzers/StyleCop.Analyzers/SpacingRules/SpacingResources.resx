@@ -234,8 +234,14 @@
   <data name="SA1009Description" xml:space="preserve">
     <value>A closing parenthesis within a C# statement is not spaced correctly.</value>
   </data>
-  <data name="SA1009MessageFormat" xml:space="preserve">
-    <value>Closing parenthesis should{0} be {1} by a space</value>
+  <data name="SA1009MessageFollowed" xml:space="preserve">
+    <value>Closing parenthesis should be followed by a space</value>
+  </data>
+  <data name="SA1009MessageNotFollowed" xml:space="preserve">
+    <value>Closing parenthesis should not be followed by a space</value>
+  </data>
+  <data name="SA1009MessageNotPreceded" xml:space="preserve">
+    <value>Closing parenthesis should not be preceded by a space</value>
   </data>
   <data name="SA1009Title" xml:space="preserve">
     <value>Closing parenthesis should be spaced correctly</value>
@@ -243,8 +249,11 @@
   <data name="SA1010Description" xml:space="preserve">
     <value>An opening square bracket within a C# statement is not spaced correctly.</value>
   </data>
-  <data name="SA1010MessageFormat" xml:space="preserve">
-    <value>Opening square brackets should {0} by a space</value>
+  <data name="SA1010MessageNotFollowed" xml:space="preserve">
+    <value>Opening square brackets should not be followed by a space</value>
+  </data>
+  <data name="SA1010MessageNotPreceded" xml:space="preserve">
+    <value>Opening square brackets should not be preceded by a space</value>
   </data>
   <data name="SA1010Title" xml:space="preserve">
     <value>Opening square brackets should be spaced correctly</value>
@@ -288,8 +297,14 @@
   <data name="SA1015Description" xml:space="preserve">
     <value>A closing generic bracket within a C# element is not spaced correctly.</value>
   </data>
-  <data name="SA1015MessageFormat" xml:space="preserve">
-    <value>Closing generic bracket should{0} be {1} by a space</value>
+  <data name="SA1015MessageFollowed" xml:space="preserve">
+    <value>Closing generic bracket should be followed by a space</value>
+  </data>
+  <data name="SA1015MessageNotFollowed" xml:space="preserve">
+    <value>Closing generic bracket should not be followed by a space</value>
+  </data>
+  <data name="SA1015MessageNotPreceded" xml:space="preserve">
+    <value>Closing generic bracket should not be preceded by a space</value>
   </data>
   <data name="SA1015Title" xml:space="preserve">
     <value>Closing generic brackets should be spaced correctly</value>
@@ -327,8 +342,11 @@
   <data name="SA1019Description" xml:space="preserve">
     <value>The spacing around a member access symbol is incorrect, within a C# code file.</value>
   </data>
-  <data name="SA1019MessageFormat" xml:space="preserve">
-    <value>Member access symbol '{0}' should not be {1} by a space</value>
+  <data name="SA1019MessageNotFollowed" xml:space="preserve">
+    <value>Member access symbol '{0}' should not be followed by a space</value>
+  </data>
+  <data name="SA1019MessageNotPreceded" xml:space="preserve">
+    <value>Member access symbol '{0}' should not be preceded by a space</value>
   </data>
   <data name="SA1019Title" xml:space="preserve">
     <value>Member access symbols should be spaced correctly</value>
@@ -363,8 +381,20 @@
   <data name="SA1023Description" xml:space="preserve">
     <value>A dereference symbol or an access-of symbol within a C# element is not spaced correctly.</value>
   </data>
-  <data name="SA1023MessageFormat" xml:space="preserve">
-    <value>Dereference symbol '*' should {0}</value>
+  <data name="SA1023MessageFollowed" xml:space="preserve">
+    <value>Dereference symbol '*' should be followed by a space</value>
+  </data>
+  <data name="SA1023MessageNotAtBeginningOfLine" xml:space="preserve">
+    <value>Dereference symbol '*' should not appear at the beginning of a line</value>
+  </data>
+  <data name="SA1023MessageNotAtEndOfLine" xml:space="preserve">
+    <value>Dereference symbol '*' should not appear at the end of a line</value>
+  </data>
+  <data name="SA1023MessageNotFollowed" xml:space="preserve">
+    <value>Dereference symbol '*' should not be followed by a space</value>
+  </data>
+  <data name="SA1023MessageNotPreceded" xml:space="preserve">
+    <value>Dereference symbol '*' should not be preceded by a space</value>
   </data>
   <data name="SA1023Title" xml:space="preserve">
     <value>Dereference and access of symbols should be spaced correctly</value>
@@ -372,8 +402,14 @@
   <data name="SA1024Description" xml:space="preserve">
     <value>A colon within a C# element is not spaced correctly.</value>
   </data>
-  <data name="SA1024MessageFormat" xml:space="preserve">
-    <value>Colon should{0} be {1}{2} by a space</value>
+  <data name="SA1024MessageFollowed" xml:space="preserve">
+    <value>Colon should be followed by a space</value>
+  </data>
+  <data name="SA1024MessageNotPreceded" xml:space="preserve">
+    <value>Colon should not be preceded by a space</value>
+  </data>
+  <data name="SA1024MessagePreceded" xml:space="preserve">
+    <value>Colon should be preceded by a space</value>
   </data>
   <data name="SA1024Title" xml:space="preserve">
     <value>Colons Should Be Spaced Correctly</value>
