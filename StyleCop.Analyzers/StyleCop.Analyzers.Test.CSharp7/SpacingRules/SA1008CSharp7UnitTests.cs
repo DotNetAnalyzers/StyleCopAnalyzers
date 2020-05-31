@@ -978,5 +978,65 @@ namespace TestNamespace
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3117, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3117")]
+        public async Task TestTupleParameterAttributesAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    class NotNullAttribute : System.Attribute { }
+    class CustomAttribute : System.Attribute { }
+
+    class TestClass
+    {
+        void TestMethod1([NotNull] (string, string) tuple) { }
+
+        void TestMethod2([NotNull, Custom] (string, string) tuple) { }
+
+        void TestMethod3([NotNull][Custom] (string, string) tuple) { }
+
+        void TestMethod4([NotNull](string, string) tuple) { }
+
+        void TestMethod5([NotNull, Custom](string, string) tuple) { }
+
+        void TestMethod6([NotNull][Custom](string, string) tuple) { }
+    }
+}
+";
+
+            var fixedCode = @"
+namespace TestNamespace
+{
+    class NotNullAttribute : System.Attribute { }
+    class CustomAttribute : System.Attribute { }
+
+    class TestClass
+    {
+        void TestMethod1([NotNull] (string, string) tuple) { }
+
+        void TestMethod2([NotNull, Custom] (string, string) tuple) { }
+
+        void TestMethod3([NotNull][Custom] (string, string) tuple) { }
+
+        void TestMethod4([NotNull] (string, string) tuple) { }
+
+        void TestMethod5([NotNull, Custom] (string, string) tuple) { }
+
+        void TestMethod6([NotNull][Custom] (string, string) tuple) { }
+    }
+}
+";
+
+            DiagnosticResult[] expectedDiagnostics =
+            {
+                Diagnostic(DescriptorPreceded).WithLocation(15, 35),
+                Diagnostic(DescriptorPreceded).WithLocation(17, 43),
+                Diagnostic(DescriptorPreceded).WithLocation(19, 43),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
