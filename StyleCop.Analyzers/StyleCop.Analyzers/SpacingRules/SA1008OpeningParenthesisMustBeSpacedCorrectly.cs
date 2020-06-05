@@ -233,9 +233,11 @@ namespace StyleCop.Analyzers.SpacingRules
             case SyntaxKindEx.TupleType:
                 // Comma covers tuple types in parameters and nested within other tuple types.
                 // 'out', 'ref', 'in', 'params' parameters are covered by IsKeywordKind.
+                // Attributes of parameters are covered by checking the previous token's parent.
                 // Return types are handled by a helper.
                 haveLeadingSpace = prevToken.IsKind(SyntaxKind.CommaToken)
                     || SyntaxFacts.IsKeywordKind(prevToken.Kind())
+                    || prevToken.Parent.IsKind(SyntaxKind.AttributeList)
                     || ((TypeSyntax)token.Parent).GetContainingNotEnclosingType().IsReturnType();
                 break;
             }
