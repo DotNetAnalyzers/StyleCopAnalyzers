@@ -997,11 +997,11 @@ namespace TestNamespace
 
         void TestMethod3([NotNull][Custom] (string, string) tuple) { }
 
-        void TestMethod4([NotNull](string, string) tuple) { }
+        void TestMethod4([NotNull]{|#0:(|}string, string) tuple) { }
 
-        void TestMethod5([NotNull, Custom](string, string) tuple) { }
+        void TestMethod5([NotNull, Custom]{|#1:(|}string, string) tuple) { }
 
-        void TestMethod6([NotNull][Custom](string, string) tuple) { }
+        void TestMethod6([NotNull][Custom]{|#2:(|}string, string) tuple) { }
     }
 }
 ";
@@ -1031,9 +1031,9 @@ namespace TestNamespace
 
             DiagnosticResult[] expectedDiagnostics =
             {
-                Diagnostic(DescriptorPreceded).WithLocation(15, 35),
-                Diagnostic(DescriptorPreceded).WithLocation(17, 43),
-                Diagnostic(DescriptorPreceded).WithLocation(19, 43),
+                Diagnostic(DescriptorPreceded).WithLocation(0),
+                Diagnostic(DescriptorPreceded).WithLocation(1),
+                Diagnostic(DescriptorPreceded).WithLocation(2),
             };
 
             await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedCode, CancellationToken.None).ConfigureAwait(false);
