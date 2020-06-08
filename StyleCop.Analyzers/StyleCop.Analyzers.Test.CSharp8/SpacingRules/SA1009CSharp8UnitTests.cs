@@ -46,6 +46,62 @@ public class Foo
         }
 
         [Fact]
+        [WorkItem(3143, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3143")]
+        public async Task TestFollowedBySuppressionOperator2Async()
+        {
+            const string testCode = @"
+using System;
+
+public class Base
+{
+    protected Base(Func<string, int> to, Func<int, string> from) => throw null;
+}
+
+public class Derived : Base
+{
+    public Derived()
+        : base(
+            (v) => int.Parse(v{|#0:)|} !,
+            (v) => v.ToString({|#1:)|} ! {|#2:)|}
+    {
+    }
+}
+";
+            const string fixedCode = @"
+using System;
+
+public class Base
+{
+    protected Base(Func<string, int> to, Func<int, string> from) => throw null;
+}
+
+public class Derived : Base
+{
+    public Derived()
+        : base(
+            (v) => int.Parse(v)!,
+            (v) => v.ToString()!)
+    {
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                // /0/Test0.cs(13,31): warning SA1009: Closing parenthesis should not be followed by a space
+                Diagnostic(DescriptorNotFollowed).WithLocation(0),
+
+                // /0/Test0.cs(14,31): warning SA1009: Closing parenthesis should not be followed by a space
+                Diagnostic(DescriptorNotFollowed).WithLocation(1),
+
+                // /0/Test0.cs(14,35): warning SA1009: Closing parenthesis should not be preceded by a space
+                Diagnostic(DescriptorNotPreceded).WithLocation(2),
+            };
+
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp8, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         [WorkItem(2968, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2968")]
         public async Task TestExpressionBodyEndsWithSuppressionAsync()
         {
