@@ -3,7 +3,6 @@ Rules which improve code maintainability.
 
 Identifier | Name | Description
 -----------|------|------------
-[SA1119](SA1119.md) | StatementMustNotUseUnnecessaryParenthesis | A C# statement contains parenthesis which are unnecessary and should be removed. 
 [SA1400](SA1400.md) | AccessModifierMustBeDeclared | The access modifier for a C# element has not been explicitly defined. 
 [SA1401](SA1401.md) | FieldsMustBePrivate | A field within a C# class has an access modifier other than private. 
 [SA1402](SA1402.md) | FileMayOnlyContainASingleType | A C# code file contains more than one unique type. 

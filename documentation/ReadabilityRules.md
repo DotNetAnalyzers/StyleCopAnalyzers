@@ -22,6 +22,7 @@ Identifier | Name | Description
 [SA1116](SA1116.md) | SplitParametersMustStartOnLineAfterDeclaration | The parameters to a C# method or indexer call or declaration span across multiple lines, but the first parameter does not start on the line after the opening bracket. 
 [SA1117](SA1117.md) | ParametersMustBeOnSameLineOrSeparateLines | The parameters to a C# method or indexer call or declaration are not all on the same line or each on a separate line. 
 [SA1118](SA1118.md) | ParameterMustNotSpanMultipleLines | A parameter to a C# method or indexer, other than the first parameter, spans across multiple lines. 
+[SA1119](SA1119.md) | StatementMustNotUseUnnecessaryParenthesis | A C# statement contains parenthesis which are unnecessary and should be removed.
 [SA1120](SA1120.md) | CommentsMustContainText | The C# comment does not contain any comment text. 
 [SA1121](SA1121.md) | UseBuiltInTypeAlias | The code uses one of the basic C# types, but does not use the built-in alias for the type. 
 [SA1122](SA1122.md) | UseStringEmptyForEmptyStrings | The C# code includes an empty string, written as `""`. 
