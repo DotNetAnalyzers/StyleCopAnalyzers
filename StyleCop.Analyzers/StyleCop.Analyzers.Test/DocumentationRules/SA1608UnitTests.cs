@@ -147,6 +147,48 @@ public class ClassName
         }
 
         [Fact]
+        public async Task TestEnumMemberWithContentDocumentationAsync()
+        {
+            var testCode = @"
+public enum EnumName
+{
+    /// <summary>
+    /// Foo.
+    /// </summary>
+    EnumMember1 = 0,
+}
+";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestEnumMemberWithDefaultDocumentationAsync()
+        {
+            var testCode = @"
+public enum EnumName
+{
+    /// <summary>
+    /// Summary description for the EnumMember1 enum member.
+    /// </summary>
+    EnumMember1 = 0,
+
+    /// <summary>
+    /// Summary           description
+    /// for the      EnumMember2 enum member.
+    /// </summary>
+    EnumMember2 = 1,
+}
+";
+            DiagnosticResult[] expected = new[]
+            {
+                Diagnostic().WithLocation(4, 9),
+                Diagnostic().WithLocation(9, 9),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestClassWithIncludedEmptyDocumentationAsync()
         {
             var testCode = @"

@@ -31,6 +31,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> baseTypeDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> fieldDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> propertyDeclarationAction;
+        private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> enumMemberDeclarationAction;
 
         protected ElementDocumentationBase(bool inheritDocSuppressesWarnings, string matchElementName = null)
         {
@@ -46,6 +47,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             this.baseTypeDeclarationAction = this.HandleBaseTypeDeclaration;
             this.fieldDeclarationAction = this.HandleFieldDeclaration;
             this.propertyDeclarationAction = this.HandlePropertyDeclaration;
+            this.enumMemberDeclarationAction = this.HandleEnumMemberDeclaration;
         }
 
         /// <inheritdoc/>
@@ -63,6 +65,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             context.RegisterSyntaxNodeAction(this.baseTypeDeclarationAction, SyntaxKinds.BaseTypeDeclaration);
             context.RegisterSyntaxNodeAction(this.fieldDeclarationAction, SyntaxKind.FieldDeclaration);
             context.RegisterSyntaxNodeAction(this.propertyDeclarationAction, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeAction(this.enumMemberDeclarationAction, SyntaxKind.EnumMemberDeclaration);
         }
 
         /// <summary>
@@ -195,6 +198,16 @@ namespace StyleCop.Analyzers.DocumentationRules
             var node = (PropertyDeclarationSyntax)context.Node;
 
             Accessibility declaredAccessibility = node.GetDeclaredAccessibility(context.SemanticModel, context.CancellationToken);
+            Accessibility effectiveAccessibility = node.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+            bool needsComment = SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, node.Kind(), node.Parent.Kind(), declaredAccessibility, effectiveAccessibility);
+            this.HandleDeclaration(context, settings, needsComment, node, node.Identifier.GetLocation());
+        }
+
+        private void HandleEnumMemberDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+        {
+            var node = (EnumMemberDeclarationSyntax)context.Node;
+
+            Accessibility declaredAccessibility = node.GetDeclaredAccessibility();
             Accessibility effectiveAccessibility = node.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
             bool needsComment = SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, node.Kind(), node.Parent.Kind(), declaredAccessibility, effectiveAccessibility);
             this.HandleDeclaration(context, settings, needsComment, node, node.Identifier.GetLocation());

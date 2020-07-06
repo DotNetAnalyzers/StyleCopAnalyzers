@@ -173,6 +173,35 @@ public class TestClass
         }
 
         [Fact]
+        [WorkItem(2950, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2950")]
+        public async Task TestEnumMemberAsync()
+        {
+            var testCode = @"
+public enum TestEnum
+{
+    /// <summary>
+    /// Enum member
+    /// </summary>
+    EnumMember = 0,
+}
+";
+
+            var fixedTestCode = @"
+public enum TestEnum
+{
+    /// <summary>
+    /// Enum member.
+    /// </summary>
+    EnumMember = 0,
+}
+";
+
+            var expected = Diagnostic().WithLocation(5, 20);
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestAugmentedInheritedDocumentationAsync()
         {
             var testCode = @"

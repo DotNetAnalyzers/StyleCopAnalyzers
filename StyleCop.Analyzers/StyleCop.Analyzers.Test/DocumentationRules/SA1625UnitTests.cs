@@ -274,6 +274,23 @@ public class TestClass
         }
 
         [Fact]
+        public async Task VerifyThatDuplicatedDocumentationForEnumMemberDoesReportADiagnosticAsync()
+        {
+            var testCode = @"
+public enum EnumName
+{
+    /// <summary>
+    /// Some documentation.
+    /// </summary>
+    /// <remark>Some documentation.</remark>
+    EnumMember = 0,
+}";
+            var expected = Diagnostic().WithLocation(7, 9);
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task VerifyThatCorrectIncludedDocumentationDoesNotReportADiagnosticAsync()
         {
             var testCode = $@"
