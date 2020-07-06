@@ -106,6 +106,11 @@ namespace StyleCop.Analyzers.NamingRules
 
         private static void CheckName(SyntaxNodeAnalysisContext context, StyleCopSettings settings, string tupleElementName, Location location, bool prepareCodeFix)
         {
+            if (tupleElementName == "_")
+            {
+                return;
+            }
+
             var firstCharacterIsLower = char.IsLower(tupleElementName[0]);
 
             bool reportDiagnostic;

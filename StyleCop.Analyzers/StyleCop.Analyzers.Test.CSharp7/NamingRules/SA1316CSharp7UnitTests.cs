@@ -346,5 +346,22 @@ public class TypeName
 
             await VerifyCSharpDiagnosticAsync(languageVersion: null, testCode, PascalCaseTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3139, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3139")]
+        public async Task TestTupleDesconstructionDiscardAsync()
+        {
+            var testCode = @"
+public class TypeName
+{
+    public void MethodName((string Name, string Value) obj)
+    {
+        (string name, _) = obj;
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(LanguageVersionEx.CSharp7, testCode, DefaultTestSettings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
