@@ -8,7 +8,6 @@ namespace StyleCop.Analyzers.Test.CSharp7.NamingRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.NamingRules;
-    using StyleCop.Analyzers.Settings.ObjectModel;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.NamingRules.SA1316TupleElementNamesShouldUseCorrectCasing,
@@ -163,6 +162,42 @@ public class TestClass
         var {tupleElementName1} = 1;
         var {tupleElementName2} = ""test"";
         var tuple = ({tupleElementName1}, {tupleElementName2});
+    }}
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(LanguageVersionEx.CSharp7_1, testCode, settings, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Validates the properly explicitly named tuple elements, even when using inferred tuple element names, will not produce diagnostics.
+        /// </summary>
+        /// <param name="settings">The test settings to use.</param>
+        /// <param name="tupleElementName1">The expected tuple element name for the first field.</param>
+        /// <param name="tupleElementName2">The expected tuple element name for the second field.</param>
+        /// <param name="tupleInferred1">The name of the first tuple element that would be inferred if not given explicitly.</param>
+        /// <param name="tupleInferred2">The name of the second tuple element that would be inferred if not given explicitly.</param>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Theory]
+        [InlineData(CamelCaseInferredTestSettings, "elementName1", "elementName2", "ElementValue1", "ElementValue2")]
+        [InlineData(PascalCaseInferredTestSettings, "ElementName1", "ElementName2", "elementValue1", "elementValue2")]
+        public async Task ValidateProperCasedExplicitNamesEvenWithInferredTupleElementNamesAsync(string settings, string tupleElementName1, string tupleElementName2, string tupleInferred1, string tupleInferred2)
+        {
+            var testCode = $@"
+public class TestClass
+{{
+    public void TestMethod1()
+    {{
+        var {tupleInferred1} = 1;
+        var {tupleInferred2} = ""test"";
+        var tuple = ({tupleElementName1}: {tupleInferred1}, {tupleElementName2}: {tupleInferred2});
+    }}
+
+    public void TestMethod2()
+    {{
+        var {tupleInferred1} = 1;
+        var {tupleElementName2} = ""test"";
+        var tuple = ({tupleElementName1}: {tupleInferred1}, {tupleElementName2});
     }}
 }}
 ";
