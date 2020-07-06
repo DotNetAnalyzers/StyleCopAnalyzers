@@ -441,5 +441,19 @@ namespace TestNamespace
 ";
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Fact]
+        [WorkItem(3166, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3166")]
+        public async Task TestAliasClrTypeAsync()
+        {
+            var testCode = @"
+namespace System
+{
+    using Float = System.Double;
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
