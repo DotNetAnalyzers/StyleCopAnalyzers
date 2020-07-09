@@ -203,16 +203,20 @@ namespace StyleCop.Analyzers.DocumentationRules
                 if (settings.DocumentationRules.XmlHeader)
                 {
                     var fileHeader = FileHeaderHelpers.ParseXmlFileHeader(root);
-                    if (fileHeader.IsMissing)
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(SA1633DescriptorMissing, fileHeader.GetLocation(context.Tree)));
-                        return;
-                    }
 
-                    if (fileHeader.IsMalformed)
+                    if (fileHeader != null)
                     {
-                        context.ReportDiagnostic(Diagnostic.Create(SA1633DescriptorMalformed, fileHeader.GetLocation(context.Tree)));
-                        return;
+                        if (fileHeader.IsMissing)
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(SA1633DescriptorMissing, fileHeader.GetLocation(context.Tree)));
+                            return;
+                        }
+
+                        if (fileHeader.IsMalformed)
+                        {
+                            context.ReportDiagnostic(Diagnostic.Create(SA1633DescriptorMalformed, fileHeader.GetLocation(context.Tree)));
+                            return;
+                        }
                     }
 
                     if (!compilation.IsAnalyzerSuppressed(SA1634Descriptor))

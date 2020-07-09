@@ -80,6 +80,20 @@ partial {0} TypeName
         [InlineData("class")]
         [InlineData("struct")]
         [InlineData("interface")]
+        public async Task TestTypeWithExcludedDocumentationAsync(string typeName)
+        {
+            var testCode = @"
+/// <exclude/>
+partial {0} TypeName
+{{
+}}";
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
         public async Task TestTypeWithoutSummaryDocumentationAsync(string typeName)
         {
             var testCode = @"
@@ -210,6 +224,21 @@ public partial class ClassName
 public partial class ClassName
 {
     /// <inheritdoc/>
+    partial void Test();
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMethodWithExcludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public partial class ClassName
+{
+    /// <exclude/>
     partial void Test();
 }";
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);

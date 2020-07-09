@@ -55,7 +55,6 @@ namespace StyleCop.Analyzers.DocumentationRules
             }
 
             var properties = ImmutableDictionary.Create<string, string>();
-
             if (completeDocumentation != null)
             {
                 var hasValueTag = completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.ValueXmlTag);

@@ -64,6 +64,12 @@ namespace StyleCop.Analyzers.DocumentationRules
         /// <inheritdoc/>
         protected override void HandleCompleteDocumentation(SyntaxNodeAnalysisContext context, bool needsComment, XElement completeDocumentation, params Location[] diagnosticLocations)
         {
+            // This documentation rule is excluded via the <exclude /> tag
+            if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.ExcludeXmlTag))
+            {
+                return;
+            }
+
             var returnsNodes = completeDocumentation.Nodes()
                 .OfType<XElement>()
                 .Where(n => n.Name == XmlCommentHelper.ReturnsXmlTag);

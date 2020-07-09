@@ -95,6 +95,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                 var rawDocumentation = declaration.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
                 var completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
 
+                // This documentation rule is excluded via the <exclude /> tag
+                if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.ExcludeXmlTag))
+                {
+                    return;
+                }
+
                 var inheritDocElement = completeDocumentation.Nodes().OfType<XElement>().FirstOrDefault(element => element.Name == XmlCommentHelper.InheritdocXmlTag);
                 if (inheritDocElement == null)
                 {

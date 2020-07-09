@@ -122,6 +122,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
+            if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.ExcludeXmlTag) != null)
+            {
+                // Ignore nodes with an <exclude/> tag.
+                return;
+            }
+
             // Check if the return value is documented
             var includeElement = documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag);
             if (includeElement != null)
@@ -135,6 +141,13 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                 rawDocumentation = declaration.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
                 var completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
+
+                // This documentation rule is excluded via the <exclude /> tag
+                if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.ExcludeXmlTag))
+                {
+                    return;
+                }
+
                 if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.InheritdocXmlTag))
                 {
                     // Ignore nodes with an <inheritdoc/> tag in the included XML.

@@ -232,11 +232,37 @@ public class ClassName
         }
 
         [Theory]
+        [MemberData(nameof(Members))]
+        public async Task TestMembersExcludeAsync(string p)
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <exclude/>
+    public ##
+}";
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
         [MemberData(nameof(Types))]
         public async Task TestTypesInheritDocAsync(string p)
         {
             var testCode = @"
 /// <inheritdoc/>
+public ##";
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(Types))]
+        public async Task TestTypesExcludeAsync(string p)
+        {
+            var testCode = @"
+/// <exclude/>
 public ##";
             await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }

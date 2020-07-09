@@ -68,6 +68,21 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         [InlineData("class")]
         [InlineData("struct")]
         [InlineData("interface")]
+        public async Task TestTypeWithExcludedDocumentationAsync(string typeName)
+        {
+            var testCode = @"
+/// <exclude/>
+{0} TypeName
+{{
+}}";
+            await VerifyCSharpDiagnosticAsync(string.Format(testCode, typeName), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [InlineData("enum")]
+        [InlineData("class")]
+        [InlineData("struct")]
+        [InlineData("interface")]
         public async Task TestTypeWithoutDocumentationAsync(string typeName)
         {
             var testCode = @"
@@ -134,6 +149,16 @@ void TypeName();";
         }
 
         [Fact]
+        public async Task TestDelegateWithExcludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <exclude/>
+public delegate
+void TypeName();";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestDelegateWithoutDocumentationAsync()
         {
             var testCode = @"
@@ -189,6 +214,21 @@ public class ClassName
 public class ClassName
 {
     /// <inheritdoc/>
+    public void Test() { }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestMethodWithExcludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <exclude/>
     public void Test() { }
 }";
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -279,6 +319,21 @@ public class ClassName
         }
 
         [Fact]
+        public async Task TestConstructorWithExcludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <excluded/>
+    public ClassName() { }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestConstructorWithoutDocumentationAsync()
         {
             var testCode = @"
@@ -345,6 +400,21 @@ public class ClassName
         }
 
         [Fact]
+        public async Task TestDestructorWithExcludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <exclude/>
+    ~ClassName() { }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestDestructorWithoutDocumentationAsync()
         {
             var testCode = @"
@@ -391,6 +461,21 @@ public class ClassName
 public class ClassName
 {
     /// <inheritdoc/>
+    public ClassName Property { get; set; }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestPropertyWithExcludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <exclude/>
     public ClassName Property { get; set; }
 }";
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -463,6 +548,21 @@ public class ClassName
         }
 
         [Fact]
+        public async Task TestIndexerWithExcludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <exclude/>
+    public ClassName this[string t] { get { return null; } }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestIndexerNoDocumentationAsync()
         {
             var testCode = @"
@@ -523,6 +623,21 @@ public class ClassName
 public class ClassName
 {
     /// <inheritdoc/>
+    public ClassName Foo;
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestFieldWithExcludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <exclude/>
     public ClassName Foo;
 }";
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -595,6 +710,21 @@ public class ClassName
         }
 
         [Fact]
+        public async Task TestEventWithExcludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <exclude/>
+    public event System.Action Foo;
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestEventNoDocumentationAsync()
         {
             var testCode = @"
@@ -655,6 +785,21 @@ public class ClassName
 public class ClassName
 {
     /// <inheritdoc/>
+    event System.Action Foo { add { } remove { } }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestEventPropertyWithExcludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <exclude/>
     event System.Action Foo { add { } remove { } }
 }";
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);

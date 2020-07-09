@@ -132,6 +132,22 @@ public class ClassName
 
         [Theory]
         [MemberData(nameof(Data))]
+        public async Task TestExcludeAsync(string p)
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <exclude/>
+    public ##
+}";
+            await VerifyCSharpDiagnosticAsync(testCode.Replace("##", p), DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(Data))]
         public async Task TestMissingParametersAsync(string p)
         {
             var testCode = @"

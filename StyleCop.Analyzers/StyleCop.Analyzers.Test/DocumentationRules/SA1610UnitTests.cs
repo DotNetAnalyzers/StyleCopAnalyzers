@@ -50,6 +50,21 @@ public class ClassName
         }
 
         [Fact]
+        public async Task TestPropertyWithExcludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <exclude/>
+    public ClassName Property { get; set; }
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestPropertyNoDocumentationAsync()
         {
             var testCode = @"

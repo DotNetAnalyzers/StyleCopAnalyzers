@@ -98,6 +98,24 @@ public class ClassName
         }
 
         [Fact]
+        public async Task TestPropertyWithExcludedDocumentationAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <exclude/>
+    public ClassName Method() { return null; }
+
+    /// <exclude/>
+    public delegate ClassName MethodDelegate();
+}";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestMethodWithoutReturnValueNoDocumentationAsync()
         {
             var testCode = @"

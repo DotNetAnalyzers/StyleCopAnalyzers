@@ -86,6 +86,20 @@ public class TestClass
 
         [Theory]
         [MemberData(nameof(Members))]
+        public async Task VerifyThatTheAnalyzerDoesNotCrashOnExcludeAsync(string member)
+        {
+            var testCode = $@"
+public class TestClass
+{{
+    /// <exclude/>
+    {member}
+}}
+";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Theory]
+        [MemberData(nameof(Members))]
         public async Task VerifyThatWhitespacesAreNormalizedForEmptyXmlElementsAsync(string member)
         {
             var testCode = $@"

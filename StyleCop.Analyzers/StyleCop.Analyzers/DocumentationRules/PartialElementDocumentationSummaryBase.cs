@@ -119,6 +119,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
+            if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.ExcludeXmlTag) != null)
+            {
+                // Ignore nodes with an <exclude/> tag.
+                return;
+            }
+
             if (documentation.Content.GetFirstXmlElement(XmlCommentHelper.InheritdocXmlTag) != null)
             {
                 // Ignore nodes with an <inheritdoc/> tag.
@@ -151,6 +157,12 @@ namespace StyleCop.Analyzers.DocumentationRules
                     }
 
                     completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
+                    if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.ExcludeXmlTag))
+                    {
+                        // Ignore nodes with an <exclude /> tag in the included XML.
+                        return;
+                    }
+
                     if (completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.InheritdocXmlTag))
                     {
                         // Ignore nodes with an <inheritdoc/> tag in the included XML.
