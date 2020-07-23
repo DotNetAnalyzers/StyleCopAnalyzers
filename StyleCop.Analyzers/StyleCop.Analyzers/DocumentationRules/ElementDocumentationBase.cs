@@ -235,28 +235,28 @@ namespace StyleCop.Analyzers.DocumentationRules
                     .Where(x => !string.Equals(x.GetName()?.ToString(), XmlCommentHelper.IncludeXmlTag, StringComparison.Ordinal))
                 : documentation.Content.GetXmlElements(this.matchElementName);
 
-            if (!matchingXmlElements.Any())
+            var isInheritingDocumentation = documentation.Content
+                .Any(x => string.Equals(x.GetName()?.ToString(), XmlCommentHelper.IncludeXmlTag, StringComparison.Ordinal));
+
+            if (isInheritingDocumentation)
             {
-                var includedDocumentation = documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag);
-                if (includedDocumentation != null)
+                var declaration = context.SemanticModel.GetDeclaredSymbol(node, context.CancellationToken);
+                var rawDocumentation = declaration?.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
+                var completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
+
+                if (this.inheritDocSuppressesWarnings &&
+                    completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.InheritdocXmlTag))
                 {
-                    var declaration = context.SemanticModel.GetDeclaredSymbol(node, context.CancellationToken);
-                    var rawDocumentation = declaration?.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
-                    var completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
-
-                    if (this.inheritDocSuppressesWarnings &&
-                        completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.InheritdocXmlTag))
-                    {
-                        // Ignore nodes with an <inheritdoc/> tag in the included XML.
-                        return;
-                    }
-
-                    this.HandleCompleteDocumentation(context, needsComment, completeDocumentation, locations);
-                    return; // done
+                    // Ignore nodes with an <inheritdoc/> tag in the included XML.
+                    return;
                 }
-            }
 
-            this.HandleXmlElement(context, settings, needsComment, matchingXmlElements, locations);
+                this.HandleCompleteDocumentation(context, needsComment, completeDocumentation, locations);
+            }
+            else
+            {
+                this.HandleXmlElement(context, settings, needsComment, matchingXmlElements, locations);
+            }
         }
     }
 }
