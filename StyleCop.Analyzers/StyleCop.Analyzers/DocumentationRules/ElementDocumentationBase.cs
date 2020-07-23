@@ -235,8 +235,8 @@ namespace StyleCop.Analyzers.DocumentationRules
                     .Where(x => !string.Equals(x.GetName()?.ToString(), XmlCommentHelper.IncludeXmlTag, StringComparison.Ordinal))
                 : documentation.Content.GetXmlElements(this.matchElementName);
 
-            var isInheritingDocumentation = documentation.Content
-                .Any(x => string.Equals(x.GetName()?.ToString(), XmlCommentHelper.IncludeXmlTag, StringComparison.Ordinal));
+            var isInheritingDocumentation =
+                documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag) is object;
 
             if (isInheritingDocumentation)
             {
