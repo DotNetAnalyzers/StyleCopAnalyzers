@@ -102,7 +102,8 @@ namespace StyleCop.Analyzers.SpacingRules
                     || nextToken.IsKind(SyntaxKind.DotToken)
                     || (nextToken.IsKind(SyntaxKind.QuestionToken) && nextToken.GetNextToken(includeZeroWidth: true).IsKind(SyntaxKind.DotToken))
                     || nextToken.IsKind(SyntaxKind.CloseBracketToken)
-                    || (nextToken.IsKind(SyntaxKind.ColonToken) && nextToken.Parent.IsKind(SyntaxKindEx.CasePatternSwitchLabel));
+                    || (nextToken.IsKind(SyntaxKind.ColonToken) && nextToken.Parent.IsKind(SyntaxKindEx.CasePatternSwitchLabel))
+                    || (nextToken.IsKind(SyntaxKind.ExclamationToken) && nextToken.Parent.IsKind(SyntaxKindEx.SuppressNullableWarningExpression));
             }
             else
             {
