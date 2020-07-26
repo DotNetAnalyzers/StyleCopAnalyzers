@@ -13,6 +13,7 @@ namespace StyleCop.Analyzers.OrderingRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Helpers.ObjectPools;
     using StyleCop.Analyzers.Lightup;
     using StyleCop.Analyzers.Settings.ObjectModel;
 
@@ -377,7 +378,7 @@ namespace StyleCop.Analyzers.OrderingRules
                             }
                             else if (namedTypeSymbol.IsTupleType())
                             {
-                                fullName = namedTypeSymbol.TupleUnderlyingType().ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+                                fullName = namedTypeSymbol.TupleUnderlyingTypeOrSelf().ToFullyQualifiedValueTupleDisplayString();
                             }
                             else
                             {

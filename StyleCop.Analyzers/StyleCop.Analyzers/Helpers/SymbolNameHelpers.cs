@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.Helpers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+
     using StyleCop.Analyzers.Lightup;
 
     /// <summary>
@@ -33,6 +34,40 @@ namespace StyleCop.Analyzers.Helpers
             var builder = ObjectPools.StringBuilderPool.Allocate();
             AppendQualifiedSymbolName(builder, symbol, name);
             return ObjectPools.StringBuilderPool.ReturnAndFree(builder);
+        }
+
+        /// <summary>
+        /// Generates the fully qualified System.ValueTuple based name for the given tuple type.
+        /// </summary>
+        /// <param name="tupleSymbol">The tuple symbol.</param>
+        /// <returns>The generated fully qualified display string.</returns>
+        public static string ToFullyQualifiedValueTupleDisplayString(this INamedTypeSymbol tupleSymbol)
+        {
+            var tupleElements = tupleSymbol.TupleElements();
+            if (tupleElements.IsDefault)
+            {
+                return tupleSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            }
+            else
+            {
+                var builder = ObjectPools.StringBuilderPool.Allocate();
+
+                builder.Append("global::System.ValueTuple<");
+
+                for (var i = 0; i < tupleElements.Length; i++)
+                {
+                    if (i > 0)
+                    {
+                        builder.Append(", ");
+                    }
+
+                    builder.Append(tupleElements[i].Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat));
+                }
+
+                builder.Append(">");
+
+                return ObjectPools.StringBuilderPool.ReturnAndFree(builder);
+            }
         }
 
         private static bool AppendQualifiedSymbolName(StringBuilder builder, ISymbol symbol, TypeSyntax type)
