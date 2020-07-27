@@ -42,7 +42,45 @@ public class Foo
         }
 
         /// <summary>
-        /// Verifies that a swith expression with unnecessary parenthesis is handled correcly.
+        /// Verifies that a type cast followed by a switch expression with unnecessary parenthesis is handled correctly.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        [WorkItem(3171, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3171")]
+        public async Task TestTypeCastFollowedBySwitchExpressionWithUnnecessaryParenthesisIsHandledCorrectlyAsync()
+        {
+            const string testCode = @"
+public class Foo
+{
+    public string TestMethod(int n, object a, object b)
+    {
+        return (string)((n switch { 1 => a, 2 => b }));
+    }
+}
+";
+
+            const string fixedCode = @"
+public class Foo
+{
+    public string TestMethod(int n, object a, object b)
+    {
+        return (string)(n switch { 1 => a, 2 => b });
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(DiagnosticId).WithSpan(6, 24, 6, 55),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 24),
+                Diagnostic(ParenthesesDiagnosticId).WithLocation(6, 54),
+            };
+
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp8, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that a switch expression with unnecessary parenthesis is handled correcly.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]

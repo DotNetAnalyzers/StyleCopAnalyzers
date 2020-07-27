@@ -210,6 +210,12 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             }
 
             var previousToken = node.OpenParenToken.GetPreviousToken();
+
+            while (previousToken.IsKind(SyntaxKind.OpenParenToken) && previousToken.Parent.IsKind(SyntaxKind.ParenthesizedExpression))
+            {
+                previousToken = previousToken.GetPreviousToken();
+            }
+
             return previousToken.IsKind(SyntaxKind.CloseParenToken) && previousToken.Parent.IsKind(SyntaxKind.CastExpression);
         }
 
