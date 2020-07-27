@@ -297,8 +297,8 @@ namespace StyleCop.Analyzers.OrderingRules
                 if (index > nextIndex)
                 {
                     // [Issue #3160] Added hardening here to make sure that this won't crash when working with invalid code.
-                    var nextElementMemberName = MemberNames.ContainsKey(nextElementSyntaxKind) ? MemberNames[nextElementSyntaxKind] : "<unknown>";
-                    var elementMemberName = MemberNames.ContainsKey(elementSyntaxKind) ? MemberNames[elementSyntaxKind] : "<unknown>";
+                    var nextElementMemberName = MemberNames.GetValueOrDefault(nextElementSyntaxKind, "<unknown>");
+                    var elementMemberName = MemberNames.GetValueOrDefault(elementSyntaxKind, "<unknown>");
 
                     context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(members[i + 1]), nextElementMemberName, elementMemberName));
                 }
