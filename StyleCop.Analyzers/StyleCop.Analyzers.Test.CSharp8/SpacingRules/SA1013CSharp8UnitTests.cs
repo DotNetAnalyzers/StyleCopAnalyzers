@@ -3,17 +3,11 @@
 
 namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
 {
-    using System;
-    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
 
-    using Microsoft.CodeAnalysis;
-    using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.CSharp;
-    using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Testing;
-    using Microsoft.CodeAnalysis.Testing.Verifiers;
 
     using StyleCop.Analyzers.Test.CSharp7.SpacingRules;
 
@@ -83,14 +77,13 @@ public class Foo
         [WorkItem(3172, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3172")]
         public async Task TestCloseBraceWithNullForgivingOperatorAsync()
         {
-            const string testCode = @"
+            const string testCode = @"#nullable enable
 public class Foo
 {
     public void TestMethod()
     {
         var test = new[]
         {
-            new { Value = default(string) },
             new { Value = ""a"" }!,
             new { Value = ""b"" } !,
         };
@@ -98,30 +91,7 @@ public class Foo
 }
 ";
 
-            var test = new NullableCSharpAnalyzerTest
-            {
-                TestCode = testCode,
-            };
-
-            await test.RunAsync(CancellationToken.None).ConfigureAwait(false);
-        }
-
-        private class NullableCSharpAnalyzerTest : AnalyzerTest<XUnitVerifier>
-        {
-            public override string Language => LanguageNames.CSharp;
-
-            protected override string DefaultFileExt => "cs";
-
-            protected override CompilationOptions CreateCompilationOptions()
-                => new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true, nullableContextOptions: NullableContextOptions.Enable);
-
-            protected override ParseOptions CreateParseOptions()
-                => new CSharpParseOptions(LanguageVersion.CSharp8);
-
-            protected override IEnumerable<DiagnosticAnalyzer> GetDiagnosticAnalyzers()
-            {
-                yield return new StyleCop.Analyzers.SpacingRules.SA1013ClosingBracesMustBeSpacedCorrectly();
-            }
+            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp8, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }
