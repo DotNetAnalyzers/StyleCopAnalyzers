@@ -3,6 +3,7 @@
 
 namespace StyleCop.Analyzers.Helpers
 {
+    using System.Reflection;
     using System.Text;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -46,10 +47,12 @@ namespace StyleCop.Analyzers.Helpers
             var tupleElements = tupleSymbol.TupleElements();
             if (tupleElements.IsDefault)
             {
+                // If the tuple elements API is not available, the default formatting will produce System.ValueTuple and not the C# tuple format.
                 return tupleSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
             }
             else
             {
+                // workaround for SymbolDisplayCompilerInternalOptions.UseValueTuple not being available to us.
                 var builder = ObjectPools.StringBuilderPool.Allocate();
 
                 builder.Append("global::System.ValueTuple<");
@@ -206,7 +209,7 @@ namespace StyleCop.Analyzers.Helpers
             }
             else
             {
-                return AppendQualifiedSymbolName(builder, namedTypeSymbol.TupleUnderlyingType(), type);
+				return AppendNamedType(builder, namedTypeSymbol.TupleUnderlyingTypeOrSelf(), type);
             }
         }
 
