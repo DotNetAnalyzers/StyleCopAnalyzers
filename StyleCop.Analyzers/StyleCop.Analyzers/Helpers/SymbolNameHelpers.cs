@@ -3,7 +3,6 @@
 
 namespace StyleCop.Analyzers.Helpers
 {
-    using System.Reflection;
     using System.Text;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
@@ -209,7 +208,7 @@ namespace StyleCop.Analyzers.Helpers
             }
             else
             {
-				return AppendNamedType(builder, namedTypeSymbol.TupleUnderlyingTypeOrSelf(), type);
+                return AppendNamedType(builder, namedTypeSymbol.TupleUnderlyingTypeOrSelf(), type);
             }
         }
 
