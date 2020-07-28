@@ -74,7 +74,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             if (!leadingTrivia.Any())
             {
                 var previousToken = oldNode.OpenParenToken.GetPreviousToken();
-                if (!previousToken.IsKind(SyntaxKind.OpenParenToken) && (TriviaHelper.IndexOfTrailingWhitespace(previousToken.TrailingTrivia) == -1))
+                if (!(previousToken.IsKind(SyntaxKind.OpenParenToken) || previousToken.IsKind(SyntaxKind.CloseParenToken))
+                    && (TriviaHelper.IndexOfTrailingWhitespace(previousToken.TrailingTrivia) == -1))
                 {
                     leadingTrivia = SyntaxFactory.TriviaList(SyntaxFactory.Space);
                 }

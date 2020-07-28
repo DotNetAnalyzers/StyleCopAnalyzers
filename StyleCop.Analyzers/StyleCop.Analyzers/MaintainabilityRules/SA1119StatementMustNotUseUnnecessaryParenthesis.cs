@@ -125,6 +125,11 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                         return;
                     }
 
+                    if (IsSwitchExpressionPrecededByTypeCast(node))
+                    {
+                        return;
+                    }
+
                     ReportDiagnostic(context, node);
                 }
                 else
@@ -195,6 +200,23 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             }
 
             return false;
+        }
+
+        private static bool IsSwitchExpressionPrecededByTypeCast(ParenthesizedExpressionSyntax node)
+        {
+            if (!node.Expression.IsKind(SyntaxKindEx.SwitchExpression))
+            {
+                return false;
+            }
+
+            var previousToken = node.OpenParenToken.GetPreviousToken();
+
+            while (previousToken.IsKind(SyntaxKind.OpenParenToken) && previousToken.Parent.IsKind(SyntaxKind.ParenthesizedExpression))
+            {
+                previousToken = previousToken.GetPreviousToken();
+            }
+
+            return previousToken.IsKind(SyntaxKind.CloseParenToken) && previousToken.Parent.IsKind(SyntaxKind.CastExpression);
         }
 
         private static void ReportDiagnostic(SyntaxNodeAnalysisContext context, ParenthesizedExpressionSyntax node)
