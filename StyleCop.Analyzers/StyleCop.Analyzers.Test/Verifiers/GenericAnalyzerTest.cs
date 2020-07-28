@@ -25,7 +25,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
                 {
                     1 => "1.2.1",
                     2 => "2.8.2",
-                    3 => "3.3.1",
+                    3 => "3.6.0",
                     _ => throw new InvalidOperationException("Unknown version."),
                 };
 

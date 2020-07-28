@@ -9,6 +9,8 @@ namespace StyleCop.Analyzers.Helpers
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
+    using StyleCop.Analyzers.Lightup;
+
     internal static class NamedTypeHelpers
     {
         internal static bool IsNativeMethodsClass(INamedTypeSymbol type)
@@ -179,5 +181,8 @@ namespace StyleCop.Analyzers.Helpers
                 .Select(typeSymbol.FindImplementationForInterfaceMember)
                 .Any(x => memberSymbol.Equals(x));
         }
+
+        internal static INamedTypeSymbol TupleUnderlyingTypeOrSelf(this INamedTypeSymbol tupleSymbol)
+            => tupleSymbol.TupleUnderlyingType() ?? tupleSymbol;
     }
 }

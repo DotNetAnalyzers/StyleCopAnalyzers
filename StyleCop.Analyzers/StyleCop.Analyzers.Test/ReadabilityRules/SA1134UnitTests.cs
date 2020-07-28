@@ -416,7 +416,7 @@ namespace TestNamespace
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         [WorkItem(2894, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2894")]
-        public async Task VerifyInvalidMemberSyntaxInCodeFixAsync()
+        public virtual async Task VerifyInvalidMemberSyntaxInCodeFixAsync()
         {
             string testCode = @"class Program
 {

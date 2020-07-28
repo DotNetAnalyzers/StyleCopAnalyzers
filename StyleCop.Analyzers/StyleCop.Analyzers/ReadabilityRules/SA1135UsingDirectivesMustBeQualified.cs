@@ -95,7 +95,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             if (symbol is INamedTypeSymbol typeSymbol
                 && typeSymbol.IsTupleType())
             {
-                symbol = typeSymbol.TupleUnderlyingType();
+                symbol = typeSymbol.TupleUnderlyingTypeOrSelf();
             }
 
             string symbolString = symbol.ToQualifiedString(usingDirective.Name);
