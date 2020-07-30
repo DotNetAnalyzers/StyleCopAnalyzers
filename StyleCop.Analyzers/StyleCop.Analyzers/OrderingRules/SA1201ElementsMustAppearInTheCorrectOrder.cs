@@ -296,7 +296,11 @@ namespace StyleCop.Analyzers.OrderingRules
 
                 if (index > nextIndex)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(members[i + 1]), MemberNames[nextElementSyntaxKind], MemberNames[elementSyntaxKind]));
+                    // [Issue #3160] Added hardening here to make sure that this won't crash when working with invalid code.
+                    var nextElementMemberName = MemberNames.GetValueOrDefault(nextElementSyntaxKind, "<unknown>");
+                    var elementMemberName = MemberNames.GetValueOrDefault(elementSyntaxKind, "<unknown>");
+
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, NamedTypeHelpers.GetNameOrIdentifierLocation(members[i + 1]), nextElementMemberName, elementMemberName));
                 }
             }
         }
