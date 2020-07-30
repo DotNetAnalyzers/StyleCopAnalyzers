@@ -104,18 +104,6 @@ namespace System.Threading
         }
 
         [Fact]
-        public async Task TestStaticUsingsAsync()
-        {
-            const string testCode = @"
-namespace System.Threading
-{
-    using static Console;
-}";
-
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
         public async Task TestFixAllAsync()
         {
             const string testCode = @"
@@ -454,6 +442,32 @@ namespace System
 ";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2618, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2618")]
+        public async Task TestUnqualifiedStaticUsingsAsync()
+        {
+            const string testCode = @"
+namespace System.Threading
+{
+    using static Console;
+}
+";
+
+            const string fixedCode = @"
+namespace System.Threading
+{
+    using static System.Console;
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorType).WithLocation(4, 5).WithArguments("System.Console"),
+            };
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }
 }

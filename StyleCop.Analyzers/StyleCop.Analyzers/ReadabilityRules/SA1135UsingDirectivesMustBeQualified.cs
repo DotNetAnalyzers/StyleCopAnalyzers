@@ -73,12 +73,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
-            if (!usingDirective.StaticKeyword.IsKind(SyntaxKind.None))
-            {
-                // using static types is not considered.
-                return;
-            }
-
             if (usingDirective.HasNamespaceAliasQualifier())
             {
                 // global qualified namespaces are OK.
