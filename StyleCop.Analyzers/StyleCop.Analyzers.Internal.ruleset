@@ -12,6 +12,7 @@
   <Rules AnalyzerId="Microsoft.CodeAnalysis.Analyzers" RuleNamespace="Microsoft.CodeAnalysis.Analyzers">
     <Rule Id="RS1001" Action="None" />
     <Rule Id="RS1004" Action="None" />
+    <Rule Id="RS1029" Action="None" /> <!-- Do not use reserved diagnostic IDs -->
     <Rule Id="RS2008" Action="None" /> <!-- Enable analyzer release tracking -->
   </Rules>
 </RuleSet>
