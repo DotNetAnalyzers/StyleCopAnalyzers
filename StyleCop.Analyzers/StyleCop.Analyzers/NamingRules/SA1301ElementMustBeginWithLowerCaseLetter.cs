@@ -38,6 +38,8 @@ namespace StyleCop.Analyzers.NamingRules
         [ExcludeFromCodeCoverage]
         public override void Initialize(AnalysisContext context)
         {
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             // Intentionally empty
         }
     }

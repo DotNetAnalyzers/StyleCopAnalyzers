@@ -425,6 +425,8 @@ class ClassName
             /// <inheritdoc/>
             public override void Initialize(AnalysisContext context)
             {
+                context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
                 context.RegisterSyntaxNodeAction(BlockAction, SyntaxKind.Block);
             }
 
