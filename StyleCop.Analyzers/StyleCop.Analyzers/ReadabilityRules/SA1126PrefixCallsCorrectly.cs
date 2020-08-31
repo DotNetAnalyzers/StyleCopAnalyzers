@@ -45,7 +45,11 @@ namespace StyleCop.Analyzers.ReadabilityRules
 
         /// <inheritdoc/>
         [ExcludeFromCodeCoverage]
+#pragma warning disable RS1025 // Configure generated code analysis
+#pragma warning disable RS1026 // Enable concurrent execution
         public override void Initialize(AnalysisContext context)
+#pragma warning restore RS1026 // Enable concurrent execution
+#pragma warning restore RS1025 // Configure generated code analysis
         {
             // This diagnostic is not implemented (by design) in StyleCopAnalyzers.
         }
