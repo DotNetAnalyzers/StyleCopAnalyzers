@@ -412,6 +412,10 @@ namespace NamespaceName { }
             public override void ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags analysisMode)
             {
             }
+
+            public override void EnableConcurrentExecution()
+            {
+            }
         }
     }
 }

@@ -70,6 +70,7 @@ class TypeName
             public override void Initialize(AnalysisContext context)
             {
                 context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+                context.EnableConcurrentExecution();
 
                 context.RegisterCompilationStartAction(
                     compilationStartContext =>
