@@ -65,7 +65,9 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(MaintainabilityResources.SA1409Description), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
+#pragma warning disable RS2000 // Add analyzer diagnostic IDs to analyzer release.
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledByDefault, Description, HelpLink, WellKnownDiagnosticTags.NotConfigurable);
+#pragma warning restore RS2000 // Add analyzer diagnostic IDs to analyzer release.
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =

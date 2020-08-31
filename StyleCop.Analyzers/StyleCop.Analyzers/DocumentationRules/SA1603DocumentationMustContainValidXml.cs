@@ -32,7 +32,9 @@ namespace StyleCop.Analyzers.DocumentationRules
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(DocumentationResources.SA1603Description), DocumentationResources.ResourceManager, typeof(DocumentationResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
+#pragma warning disable RS2000 // Add analyzer diagnostic IDs to analyzer release.
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.DocumentationRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledByDefault, Description, HelpLink, WellKnownDiagnosticTags.NotConfigurable);
+#pragma warning restore RS2000 // Add analyzer diagnostic IDs to analyzer release.
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
