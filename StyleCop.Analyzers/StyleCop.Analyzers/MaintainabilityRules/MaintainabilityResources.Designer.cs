@@ -476,7 +476,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Source files should be saved using the UTF-8 encoding with a byte order mark.
+        ///   Looks up a localized string similar to Source files should be saved using the UTF-8 encoding with a byte order mark..
         /// </summary>
         internal static string SA1412Description {
             get {
