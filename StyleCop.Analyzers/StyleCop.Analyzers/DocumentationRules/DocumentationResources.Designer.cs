@@ -512,7 +512,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The parameter &apos;{0}&apos; does not exist..
+        ///   Looks up a localized string similar to The parameter &apos;{0}&apos; does not exist.
         /// </summary>
         internal static string SA1612MissingParamForDocumentationMessageFormat {
             get {
@@ -521,7 +521,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The parameter documentation for &apos;{0}&apos; should be at position {1}..
+        ///   Looks up a localized string similar to The parameter documentation for &apos;{0}&apos; should be at position {1}.
         /// </summary>
         internal static string SA1612ParamWrongOrderMessageFormat {
             get {
@@ -962,7 +962,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The documentation text within the &apos;{0}&apos; tag should not be empty..
+        ///   Looks up a localized string similar to The documentation text within the &apos;{0}&apos; tag should not be empty.
         /// </summary>
         internal static string SA1627MessageFormat {
             get {
@@ -1601,7 +1601,7 @@ namespace StyleCop.Analyzers.DocumentationRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File name should match first type name..
+        ///   Looks up a localized string similar to File name should match first type name.
         /// </summary>
         internal static string SA1649MessageFormat {
             get {

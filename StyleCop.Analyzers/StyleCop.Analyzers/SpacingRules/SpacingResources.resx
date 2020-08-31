@@ -130,7 +130,7 @@
     <value>The spacing around a comma is incorrect, within a C# code file.</value>
   </data>
   <data name="SA1001MessageFormat" xml:space="preserve">
-    <value>Commas should{0} be {1} by whitespace.</value>
+    <value>Commas should{0} be {1} by whitespace</value>
   </data>
   <data name="SA1001Title" xml:space="preserve">
     <value>Commas should be spaced correctly</value>
@@ -178,7 +178,7 @@
     <value>A line within a documentation header above a C# element does not begin with a single space.</value>
   </data>
   <data name="SA1004MessageFormat" xml:space="preserve">
-    <value>Documentation line should begin with a space.</value>
+    <value>Documentation line should begin with a space</value>
   </data>
   <data name="SA1004Title" xml:space="preserve">
     <value>Documentation lines should begin with single space</value>
@@ -190,7 +190,7 @@
     <value>A single-line comment within a C# code file does not begin with a single space.</value>
   </data>
   <data name="SA1005MessageFormat" xml:space="preserve">
-    <value>Single line comment should begin with a space.</value>
+    <value>Single line comment should begin with a space</value>
   </data>
   <data name="SA1005Title" xml:space="preserve">
     <value>Single line comments should begin with single space</value>
@@ -199,7 +199,7 @@
     <value>A C# preprocessor-type keyword is preceded by space.</value>
   </data>
   <data name="SA1006MessageFormat" xml:space="preserve">
-    <value>Preprocessor keyword '{0}' should not be preceded by a space.</value>
+    <value>Preprocessor keyword '{0}' should not be preceded by a space</value>
   </data>
   <data name="SA1006Title" xml:space="preserve">
     <value>Preprocessor keywords should not be preceded by space</value>
@@ -208,7 +208,7 @@
     <value>The operator keyword within a C# operator overload method is not followed by any whitespace.</value>
   </data>
   <data name="SA1007MessageFormat" xml:space="preserve">
-    <value>Operator keyword should be followed by a space.</value>
+    <value>Operator keyword should be followed by a space</value>
   </data>
   <data name="SA1007Title" xml:space="preserve">
     <value>Operator keyword should be followed by space</value>
@@ -313,7 +313,7 @@
     <value>An opening attribute bracket within a C# element is not spaced correctly.</value>
   </data>
   <data name="SA1016MessageFormat" xml:space="preserve">
-    <value>Opening attribute brackets should not be followed by a space.</value>
+    <value>Opening attribute brackets should not be followed by a space</value>
   </data>
   <data name="SA1016Title" xml:space="preserve">
     <value>Opening attribute brackets should be spaced correctly</value>
@@ -322,7 +322,7 @@
     <value>A closing attribute bracket within a C# element is not spaced correctly.</value>
   </data>
   <data name="SA1017MessageFormat" xml:space="preserve">
-    <value>Closing attribute brackets should not be preceded by a space.</value>
+    <value>Closing attribute brackets should not be preceded by a space</value>
   </data>
   <data name="SA1017Title" xml:space="preserve">
     <value>Closing attribute brackets should be spaced correctly</value>
@@ -334,7 +334,7 @@
     <value>A nullable type symbol within a C# element is not spaced correctly.</value>
   </data>
   <data name="SA1018MessageFormat" xml:space="preserve">
-    <value>Nullable type symbol should not be preceded by a space.</value>
+    <value>Nullable type symbol should not be preceded by a space</value>
   </data>
   <data name="SA1018Title" xml:space="preserve">
     <value>Nullable type symbols should be spaced correctly</value>
@@ -421,7 +421,7 @@
     <value>The code contains multiple whitespace characters in a row.</value>
   </data>
   <data name="SA1025MessageFormat" xml:space="preserve">
-    <value>Code should not contain multiple whitespace characters in a row.</value>
+    <value>Code should not contain multiple whitespace characters in a row</value>
   </data>
   <data name="SA1025Title" xml:space="preserve">
     <value>Code should not contain multiple whitespace in a row</value>
@@ -430,7 +430,7 @@
     <value>An implicitly typed array allocation within a C# code file is not spaced correctly.</value>
   </data>
   <data name="SA1026MessageFormat" xml:space="preserve">
-    <value>The keyword '{0}' should not be followed by a space or a blank line.</value>
+    <value>The keyword '{0}' should not be followed by a space or a blank line</value>
   </data>
   <data name="SA1026Title" xml:space="preserve">
     <value>Code should not contain space after new or stackalloc keyword in implicitly typed array allocation</value>
