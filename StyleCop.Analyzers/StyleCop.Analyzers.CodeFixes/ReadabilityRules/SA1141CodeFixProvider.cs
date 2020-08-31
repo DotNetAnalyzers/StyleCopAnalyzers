@@ -26,6 +26,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
             ImmutableArray.Create(SA1141UseTupleSyntax.DiagnosticId);
 
         /// <inheritdoc/>
+        public override FixAllProvider GetFixAllProvider()
+        {
+            // Fix All is not yet supported
+            return null;
+        }
+
+        /// <inheritdoc/>
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             foreach (var diagnostic in context.Diagnostics)
