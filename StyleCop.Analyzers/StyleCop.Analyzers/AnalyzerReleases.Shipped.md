@@ -4,6 +4,7 @@
 ## Release 1.0
 
 ### New Rules
+
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
 SA0000 | StyleCop.CSharp.SpecialRules | Info | SA0000Roslyn7446Workaround
@@ -159,3 +160,29 @@ SA1652 | StyleCop.CSharp.DocumentationRules | Warning | SA1652EnableXmlDocumenta
 SX1101 | StyleCop.CSharp.ReadabilityRules | Warning | SX1101DoNotPrefixLocalMembersWithThis
 SX1309 | StyleCop.CSharp.NamingRules | Warning | SX1309FieldNamesMustBeginWithUnderscore, [Documentation](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SX1309.md)
 SX1309S | StyleCop.CSharp.NamingRules | Warning | SX1309SStaticFieldNamesMustBeginWithUnderscore, [Documentation](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SX1309S.md)
+
+## Release 1.1
+
+### New Rules
+
+Rule ID | Category | Severity | Notes
+--------|----------|----------|-------
+SA0001 | StyleCop.CSharp.SpecialRules | Warning | SA0001XmlCommentAnalysisDisabled, [Documentation](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA0001.md)
+SA0002 | StyleCop.CSharp.SpecialRules | Warning | SA0002InvalidSettingsFile, [Documentation](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA0002.md)
+SA1136 | StyleCop.CSharp.ReadabilityRules | Warning | SA1136EnumValuesShouldBeOnSeparateLines
+SA1137 | StyleCop.CSharp.ReadabilityRules | Warning | SA1137ElementsShouldHaveTheSameIndentation
+SA1139 | StyleCop.CSharp.ReadabilityRules | Warning | SA1139UseLiteralSuffixNotationInsteadOfCasting
+SA1314 | StyleCop.CSharp.NamingRules | Warning | SA1314TypeParameterNamesMustBeginWithT
+SA1413 | StyleCop.CSharp.ReadabilityRules | Warning | SA1413UseTrailingCommasInMultiLineInitializers
+SA1629 | StyleCop.CSharp.DocumentationRules | Warning | SA1629DocumentationTextMustEndWithAPeriod
+
+### Removed Rules
+
+Rule ID | Category | Severity | Notes
+--------|----------|----------|-------
+SA0000 | StyleCop.CSharp.SpecialRules | Info | SA0000Roslyn7446Workaround
+SA1516 | StyleCop.CSharp.LayoutRules | Warning | SA1516ElementsMustBeSeparatedByBlankLine, [Documentation](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1516.md)
+SA1620 | StyleCop.CSharp.DocumentationRules | Warning | SA1620GenericTypeParameterDocumentationMustMatchTypeParameters, [Documentation](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1620.md)
+SA1621 | StyleCop.CSharp.DocumentationRules | Warning | SA1621GenericTypeParameterDocumentationMustDeclareParameterName, [Documentation](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1621.md)
+SA1622 | StyleCop.CSharp.DocumentationRules | Warning | SA1622GenericTypeParameterDocumentationMustHaveText, [Documentation](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1622.md)
+SA1652 | StyleCop.CSharp.DocumentationRules | Warning | SA1652EnableXmlDocumentationOutput, [Documentation](https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1652.md)
