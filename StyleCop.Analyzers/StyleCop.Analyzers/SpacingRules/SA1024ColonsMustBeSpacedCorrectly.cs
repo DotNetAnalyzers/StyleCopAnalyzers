@@ -183,7 +183,9 @@ namespace StyleCop.Analyzers.SpacingRules
             if (missingFollowingSpace && checkRequireAfter)
             {
                 // colon should{} be {followed}{} by a space
+#pragma warning disable RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor (https://github.com/dotnet/roslyn-analyzers/issues/4103)
                 context.ReportDiagnostic(Diagnostic.Create(DescriptorFollowed, token.GetLocation(), TokenSpacingProperties.InsertFollowing));
+#pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
             }
         }
     }
