@@ -38,11 +38,13 @@ namespace StyleCop.Analyzers.SpacingRules
 
         private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
 
-        public static DiagnosticDescriptor DescriptorNotPreceded { get; } =
+#pragma warning disable SA1202 // Elements should be ordered by access
+        internal static readonly DiagnosticDescriptor DescriptorNotPreceded =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageNotPreceded, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
-        public static DiagnosticDescriptor DescriptorNotFollowed { get; } =
+        internal static readonly DiagnosticDescriptor DescriptorNotFollowed =
             new DiagnosticDescriptor(DiagnosticId, Title, MessageNotFollowed, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+#pragma warning restore SA1202 // Elements should be ordered by access
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
