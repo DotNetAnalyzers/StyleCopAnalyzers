@@ -34,12 +34,7 @@ using System;
 
 {code}";
 
-            DiagnosticResult[] expected =
-            {
-                DiagnosticResult.CompilerError("CS0116").WithMessage("A namespace cannot directly contain members such as fields or methods").WithLocation(4, column),
-                Diagnostic().WithLocation(4, column),
-            };
-
+            var expected = this.GetExpectedResultTestRegressionMethodGlobalNamespace(code, column);
             await VerifyCSharpDiagnosticAsync(this.LanguageVersion, testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -1387,6 +1382,15 @@ public class OuterClass
                 };
 
             await VerifyCSharpDiagnosticAsync(this.LanguageVersion, string.Format(hasDocumentation ? testCodeWithDocumentation : testCodeWithoutDocumentation, modifiers), requiresDiagnostic ? expected : DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        protected virtual DiagnosticResult[] GetExpectedResultTestRegressionMethodGlobalNamespace(string code, int column)
+        {
+            return new[]
+            {
+                DiagnosticResult.CompilerError("CS0116").WithMessage("A namespace cannot directly contain members such as fields or methods").WithLocation(4, column),
+                Diagnostic().WithLocation(4, column),
+            };
         }
 
         protected virtual async Task TestTypeWithoutDocumentationAsync(string type, bool isInterface)
