@@ -285,8 +285,11 @@ public struct FooStruct { }
             // We don't care about the syntax errors.
             var expected = new[]
             {
-                DiagnosticResult.CompilerError("CS1585").WithLocation(5, 5).WithMessage("Member modifier 'public' must precede the member type and name"),
-                DiagnosticResult.CompilerError("CS1519").WithLocation(6, 1).WithMessage("Invalid token '}' in class, struct, or interface member declaration"),
+                // /0/Test0.cs(5,5): error CS1585: Member modifier 'public' must precede the member type and name
+                DiagnosticResult.CompilerError("CS1585").WithLocation(5, 5).WithArguments("public"),
+
+                // /0/Test0.cs(6,1): error CS1519: Invalid token '}' in class, record, struct, or interface member declaration
+                DiagnosticResult.CompilerError("CS1519").WithLocation(6, 1).WithArguments("}"),
             };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
