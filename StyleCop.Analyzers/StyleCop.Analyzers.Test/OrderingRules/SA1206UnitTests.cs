@@ -40,7 +40,6 @@ namespace StyleCop.Analyzers.Test.OrderingRules
             DiagnosticResult[] expected = new[]
             {
                 Diagnostic().WithLocation(3, 11).WithArguments("static", "async"),
-                Diagnostic().WithLocation(3, 18).WithArguments("public", "static"),
                 Diagnostic().WithLocation(3, 18).WithArguments("public", "async"),
             };
 
@@ -75,7 +74,6 @@ namespace StyleCop.Analyzers.Test.OrderingRules
                 Diagnostic().WithLocation(7, 32).WithArguments("protected", "async"),
                 Diagnostic().WithLocation(8, 16).WithArguments("static", "new"),
                 Diagnostic().WithLocation(9, 9).WithArguments("static", "new"),
-                Diagnostic().WithLocation(9, 16).WithArguments("public", "static"),
                 Diagnostic().WithLocation(9, 16).WithArguments("public", "new"),
                 Diagnostic().WithLocation(10, 13).WithArguments("public", "virtual"),
                 Diagnostic().WithLocation(11, 12).WithArguments("public", "extern"),
@@ -160,7 +158,6 @@ public class ExtendedClass : TestClass
                 Diagnostic().WithLocation(3, 12).WithArguments("public", "extern"),
                 Diagnostic().WithLocation(3, 19).WithArguments("static", "extern"),
                 Diagnostic().WithLocation(4, 12).WithArguments("static", "extern"),
-                Diagnostic().WithLocation(4, 19).WithArguments("public", "static"),
                 Diagnostic().WithLocation(4, 19).WithArguments("public", "extern"),
                 Diagnostic().WithLocation(5, 19).WithArguments("static", "extern"),
             };

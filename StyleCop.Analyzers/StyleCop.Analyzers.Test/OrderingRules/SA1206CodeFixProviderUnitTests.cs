@@ -116,7 +116,6 @@ public class ExtendedTestClass : TestClass
             DiagnosticResult[] expected =
             {
                 Diagnostic().WithLocation(1, 38).WithArguments("static", "new"),
-                Diagnostic().WithLocation(1, 45).WithArguments("public", "static"),
                 Diagnostic().WithLocation(1, 45).WithArguments("public", "new"),
             };
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
