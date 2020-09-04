@@ -25,6 +25,13 @@ namespace StyleCop.Analyzers.NamingRules
             ImmutableArray.Create(SA1316TupleElementNamesShouldUseCorrectCasing.DiagnosticId);
 
         /// <inheritdoc/>
+        public override FixAllProvider GetFixAllProvider()
+        {
+            // Fix All is not yet supported
+            return null;
+        }
+
+        /// <inheritdoc/>
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             foreach (var diagnostic in context.Diagnostics)

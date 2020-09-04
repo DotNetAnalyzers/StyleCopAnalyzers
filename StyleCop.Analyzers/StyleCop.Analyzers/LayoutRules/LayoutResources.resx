@@ -361,13 +361,13 @@
     <value>Fix whitespace at the end of the file</value>
   </data>
   <data name="SA1518DescriptionAllow" xml:space="preserve">
-    <value>Code should not contain blank lines at the end of the file</value>
+    <value>Code should not contain blank lines at the end of the file.</value>
   </data>
   <data name="SA1518DescriptionOmit" xml:space="preserve">
-    <value>File may not end with a newline character</value>
+    <value>File may not end with a newline character.</value>
   </data>
   <data name="SA1518DescriptionRequire" xml:space="preserve">
-    <value>File is required to end with a single newline character</value>
+    <value>File is required to end with a single newline character.</value>
   </data>
   <data name="SA1518MessageFormatAllow" xml:space="preserve">
     <value>Code should not contain blank lines at the end of the file</value>

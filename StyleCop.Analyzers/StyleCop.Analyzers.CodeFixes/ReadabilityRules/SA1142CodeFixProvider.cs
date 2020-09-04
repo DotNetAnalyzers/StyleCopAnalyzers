@@ -59,7 +59,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static SyntaxNode GetReplacementNode(SemanticModel semanticModel, SyntaxNode fieldName)
         {
             var fieldSymbol = (IFieldSymbol)semanticModel.GetSymbolInfo(fieldName.Parent).Symbol;
-            var fieldNameSymbol = fieldSymbol.ContainingType.GetMembers().OfType<IFieldSymbol>().Single(fs => (fs != fieldSymbol) && (fs.CorrespondingTupleField() == fieldSymbol));
+            var fieldNameSymbol = fieldSymbol.ContainingType.GetMembers().OfType<IFieldSymbol>().Single(fs => !Equals(fs, fieldSymbol) && Equals(fs.CorrespondingTupleField(), fieldSymbol));
 
             return SyntaxFactory.IdentifierName(fieldNameSymbol.Name).WithTriviaFrom(fieldName);
         }

@@ -408,6 +408,14 @@ namespace NamespaceName { }
             {
                 throw new NotImplementedException();
             }
+
+            public override void ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags analysisMode)
+            {
+            }
+
+            public override void EnableConcurrentExecution()
+            {
+            }
         }
     }
 }

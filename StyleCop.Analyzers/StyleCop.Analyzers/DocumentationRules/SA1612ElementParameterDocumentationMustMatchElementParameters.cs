@@ -109,12 +109,14 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                     if (parentParameters.Length <= index || parentParameters[index] != parentParameter)
                     {
+#pragma warning disable RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor (https://github.com/dotnet/roslyn-analyzers/issues/4103)
                         context.ReportDiagnostic(
                             Diagnostic.Create(
                                 OrderDescriptor,
                                 location,
                                 nameAttributeText,
                                 parentParameters.IndexOf(parentParameter) + 1));
+#pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
                     }
                 }
 
@@ -180,12 +182,14 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                     if (parentParameters.Length <= index || parentParameters[index] != parentParameter)
                     {
+#pragma warning disable RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor (https://github.com/dotnet/roslyn-analyzers/issues/4103)
                         context.ReportDiagnostic(
                             Diagnostic.Create(
                                 OrderDescriptor,
                                 identifierLocation,
                                 nameAttributeText,
                                 parentParameters.IndexOf(parentParameter) + 1));
+#pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
                     }
                 }
 

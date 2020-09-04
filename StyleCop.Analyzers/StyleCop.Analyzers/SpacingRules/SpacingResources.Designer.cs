@@ -98,7 +98,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Commas should{0} be {1} by whitespace..
+        ///   Looks up a localized string similar to Commas should{0} be {1} by whitespace.
         /// </summary>
         internal static string SA1001MessageFormat {
             get {
@@ -242,7 +242,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Documentation line should begin with a space..
+        ///   Looks up a localized string similar to Documentation line should begin with a space.
         /// </summary>
         internal static string SA1004MessageFormat {
             get {
@@ -278,7 +278,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Single line comment should begin with a space..
+        ///   Looks up a localized string similar to Single line comment should begin with a space.
         /// </summary>
         internal static string SA1005MessageFormat {
             get {
@@ -305,7 +305,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Preprocessor keyword &apos;{0}&apos; should not be preceded by a space..
+        ///   Looks up a localized string similar to Preprocessor keyword &apos;{0}&apos; should not be preceded by a space.
         /// </summary>
         internal static string SA1006MessageFormat {
             get {
@@ -332,7 +332,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Operator keyword should be followed by a space..
+        ///   Looks up a localized string similar to Operator keyword should be followed by a space.
         /// </summary>
         internal static string SA1007MessageFormat {
             get {
@@ -647,7 +647,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Opening attribute brackets should not be followed by a space..
+        ///   Looks up a localized string similar to Opening attribute brackets should not be followed by a space.
         /// </summary>
         internal static string SA1016MessageFormat {
             get {
@@ -674,7 +674,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Closing attribute brackets should not be preceded by a space..
+        ///   Looks up a localized string similar to Closing attribute brackets should not be preceded by a space.
         /// </summary>
         internal static string SA1017MessageFormat {
             get {
@@ -710,7 +710,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Nullable type symbol should not be preceded by a space..
+        ///   Looks up a localized string similar to Nullable type symbol should not be preceded by a space.
         /// </summary>
         internal static string SA1018MessageFormat {
             get {
@@ -971,7 +971,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code should not contain multiple whitespace characters in a row..
+        ///   Looks up a localized string similar to Code should not contain multiple whitespace characters in a row.
         /// </summary>
         internal static string SA1025MessageFormat {
             get {
@@ -998,7 +998,7 @@ namespace StyleCop.Analyzers.SpacingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The keyword &apos;{0}&apos; should not be followed by a space or a blank line..
+        ///   Looks up a localized string similar to The keyword &apos;{0}&apos; should not be followed by a space or a blank line.
         /// </summary>
         internal static string SA1026MessageFormat {
             get {
