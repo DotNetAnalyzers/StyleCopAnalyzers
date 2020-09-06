@@ -18,12 +18,18 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
         private readonly bool allowConsecutiveUsings;
 
         /// <summary>
+        /// This is the backing field of the <see cref="AllowDoWhileOnClosingBrace"/> property.
+        /// </summary>
+        private readonly bool allowDoWhileOnClosingBrace;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="LayoutSettings"/> class.
         /// </summary>
         protected internal LayoutSettings()
         {
             this.newlineAtEndOfFile = OptionSetting.Allow;
             this.allowConsecutiveUsings = true;
+            this.allowDoWhileOnClosingBrace = false;
         }
 
         /// <summary>
@@ -45,6 +51,10 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
                     this.allowConsecutiveUsings = kvp.ToBooleanValue();
                     break;
 
+                case "allowDoWhileOnClosingBrace":
+                    this.allowDoWhileOnClosingBrace = kvp.ToBooleanValue();
+                    break;
+
                 default:
                     break;
                 }
@@ -56,5 +66,8 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
 
         public bool AllowConsecutiveUsings =>
             this.allowConsecutiveUsings;
+
+        public bool AllowDoWhileOnClosingBrace =>
+            this.allowDoWhileOnClosingBrace;
     }
 }

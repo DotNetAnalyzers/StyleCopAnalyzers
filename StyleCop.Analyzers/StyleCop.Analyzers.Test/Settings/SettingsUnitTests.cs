@@ -37,6 +37,8 @@ namespace StyleCop.Analyzers.Test.Settings
 
             Assert.NotNull(styleCopSettings.LayoutRules);
             Assert.Equal(OptionSetting.Allow, styleCopSettings.LayoutRules.NewlineAtEndOfFile);
+            Assert.True(styleCopSettings.LayoutRules.AllowConsecutiveUsings);
+            Assert.False(styleCopSettings.LayoutRules.AllowDoWhileOnClosingBrace);
 
             Assert.NotNull(styleCopSettings.SpacingRules);
             Assert.NotNull(styleCopSettings.ReadabilityRules);

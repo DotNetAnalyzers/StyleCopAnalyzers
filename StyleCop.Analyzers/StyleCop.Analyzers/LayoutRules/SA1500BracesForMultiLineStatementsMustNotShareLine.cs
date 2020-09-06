@@ -230,7 +230,7 @@ namespace StyleCop.Analyzers.LayoutRules
             CheckBraceToken(context, openBraceToken);
             if (checkCloseBrace)
             {
-                CheckBraceToken(context, closeBraceToken);
+                CheckBraceToken(context, closeBraceToken, openBraceToken);
             }
         }
 
@@ -242,7 +242,7 @@ namespace StyleCop.Analyzers.LayoutRules
             return (index > 0) && (parent.Expressions[index - 1].GetEndLine() == parent.Expressions[index].GetLine());
         }
 
-        private static void CheckBraceToken(SyntaxNodeAnalysisContext context, SyntaxToken token)
+        private static void CheckBraceToken(SyntaxNodeAnalysisContext context, SyntaxToken token, SyntaxToken openBraceToken = default)
         {
             if (token.IsMissing)
             {
@@ -278,6 +278,22 @@ namespace StyleCop.Analyzers.LayoutRules
                 case SyntaxKind.EndOfFileToken:
                     // last token of this file
                     return;
+
+                case SyntaxKind.WhileKeyword:
+                    // Because the default Visual Studio code completion snippet for a do-while loop
+                    // places the while expression on the same line as the closing brace, some users
+                    // may want to allow that and not have SA1500 report it as a style error.
+                    if (context.Options.GetStyleCopSettings(context.CancellationToken).LayoutRules.AllowDoWhileOnClosingBrace)
+                    {
+                        var openBracePreviousToken = openBraceToken.GetPreviousToken(includeZeroWidth: true);
+
+                        if (openBracePreviousToken.IsKind(SyntaxKind.DoKeyword))
+                        {
+                            return;
+                        }
+                    }
+
+                    break;
 
                 default:
                     break;
