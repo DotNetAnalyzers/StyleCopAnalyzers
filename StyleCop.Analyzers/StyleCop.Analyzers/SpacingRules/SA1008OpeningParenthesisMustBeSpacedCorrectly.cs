@@ -185,7 +185,8 @@ namespace StyleCop.Analyzers.SpacingRules
                 break;
 
             case SyntaxKindEx.PositionalPatternClause:
-                haveLeadingSpace = prevToken.IsKind(SyntaxKind.IsKeyword);
+                haveLeadingSpace = prevToken.IsKind(SyntaxKind.IsKeyword)
+                    || prevToken.IsKind(SyntaxKind.CommaToken);
                 break;
 
             case SyntaxKind.ArgumentList:
