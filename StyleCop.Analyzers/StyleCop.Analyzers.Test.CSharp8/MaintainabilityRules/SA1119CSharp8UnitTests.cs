@@ -116,5 +116,43 @@ public class Foo
 
             await VerifyCSharpFixAsync(LanguageVersion.CSharp8, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
+
+        [Theory]
+        [InlineData(".ToString()")]
+        [InlineData("?.ToString()")]
+        [InlineData("[0]")]
+        [InlineData("?[0]")]
+        [WorkItem(3171, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3171")]
+        public async Task TestSwitchExpressionFollowedByDereferenceAsync(string operation)
+        {
+            string testCode = $@"
+public class Foo
+{{
+    public object TestMethod(int n, string a, string b)
+    {{
+        return (n switch {{ 1 => a, 2 => b }}){operation};
+    }}
+}}
+";
+
+            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp8, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3171, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3171")]
+        public async Task TestSwitchExpressionFollowedByPointerDereferenceAsync()
+        {
+            string testCode = @"
+public class Foo
+{
+    public unsafe string TestMethod(int n, byte* a, byte* b)
+    {
+        return (n switch { 1 => a, 2 => b })->ToString();
+    }
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp8, testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
     }
 }
