@@ -14,22 +14,22 @@ namespace StyleCop.Analyzers.OrderingRules
         internal enum ModifierType
         {
             /// <summary>
-            /// Represents default value
+            /// Represents default value.
             /// </summary>
             None,
 
             /// <summary>
-            /// Represents any of access modifiers i.e public, protected, internal, private
+            /// Represents any of access modifiers, i.e <see langword="public"/>, <see langword="protected"/>, <see langword="internal"/>, <see langword="private"/>.
             /// </summary>
             Access,
 
             /// <summary>
-            /// Represents static modifier
+            /// Represents <see langword="static"/> modifier.
             /// </summary>
             Static,
 
             /// <summary>
-            /// Represents other modifiers i.e partial, virtual, abstract, override, extern, unsafe, new, async, const, sealed, readonly, volatile, fixed, ref
+            /// Represents other modifiers, i.e <see langword="partial"/>, <see langword="virtual"/>, <see langword="abstract"/>, <see langword="override"/>, <see langword="extern"/>, <see langword="unsafe"/>, <see langword="new"/>, <see langword="async"/>, <see langword="const"/>, <see langword="sealed"/>, <see langword="readonly"/>, <see langword="volatile"/>, <see langword="fixed"/>, <see langword="ref"/>.
             /// </summary>
             Other,
         }

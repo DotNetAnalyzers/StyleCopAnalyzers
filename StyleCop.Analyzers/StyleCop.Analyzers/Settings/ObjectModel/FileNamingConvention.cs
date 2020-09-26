@@ -6,12 +6,12 @@ namespace StyleCop.Analyzers.Settings.ObjectModel
     internal enum FileNamingConvention
     {
         /// <summary>
-        /// Files are named using the StyleCop convention (e.g. TypeName{T1,T2})
+        /// Files are named using the StyleCop convention (e.g. <c>TypeName{T1,T2}</c>).
         /// </summary>
         StyleCop,
 
         /// <summary>
-        /// Files are named using the metadata convention (e.g. TypeName`2)
+        /// Files are named using the metadata convention (e.g. <c>TypeName`2</c>).
         /// </summary>
         Metadata,
     }
