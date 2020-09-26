@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Lightup;
 
@@ -132,6 +133,11 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                         return;
                     }
 
+                    if (IsSwitchExpressionExpressionOfMemberAccess(node))
+                    {
+                        return;
+                    }
+
                     ReportDiagnostic(context, node);
                 }
                 else
@@ -219,6 +225,22 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             }
 
             return previousToken.IsKind(SyntaxKind.CloseParenToken) && previousToken.Parent.IsKind(SyntaxKind.CastExpression);
+        }
+
+        private static bool IsSwitchExpressionExpressionOfMemberAccess(ParenthesizedExpressionSyntax node)
+        {
+            if (!node.Expression.IsKind(SyntaxKindEx.SwitchExpression))
+            {
+                return false;
+            }
+
+            return node.Parent switch
+            {
+                MemberAccessExpressionSyntax memberAccessExpression => memberAccessExpression.Expression == node,
+                ConditionalAccessExpressionSyntax conditionalAccessExpression => conditionalAccessExpression.Expression == node,
+                ElementAccessExpressionSyntax elementAccessExpression => elementAccessExpression.Expression == node,
+                _ => false,
+            };
         }
 
         private static void ReportDiagnostic(SyntaxNodeAnalysisContext context, ParenthesizedExpressionSyntax node)
