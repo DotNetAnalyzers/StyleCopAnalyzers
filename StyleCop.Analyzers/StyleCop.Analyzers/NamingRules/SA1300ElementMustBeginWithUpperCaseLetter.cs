@@ -51,6 +51,7 @@ namespace StyleCop.Analyzers.NamingRules
 
         private static readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> NamespaceDeclarationAction = HandleNamespaceDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> ClassDeclarationAction = HandleClassDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> RecordDeclarationAction = HandleRecordDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> EnumDeclarationAction = HandleEnumDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> EnumMemberDeclarationAction = HandleEnumMemberDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> StructDeclarationAction = HandleStructDeclaration;
@@ -60,6 +61,7 @@ namespace StyleCop.Analyzers.NamingRules
         private static readonly Action<SyntaxNodeAnalysisContext> MethodDeclarationAction = HandleMethodDeclaration;
         private static readonly Action<SyntaxNodeAnalysisContext> LocalFunctionStatementAction = HandleLocalFunctionStatement;
         private static readonly Action<SyntaxNodeAnalysisContext> PropertyDeclarationAction = HandlePropertyDeclaration;
+        private static readonly Action<SyntaxNodeAnalysisContext> ParameterAction = HandleParameter;
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -75,6 +77,7 @@ namespace StyleCop.Analyzers.NamingRules
             // Note: Fields are handled by SA1303 through SA1311
             context.RegisterSyntaxNodeAction(NamespaceDeclarationAction, SyntaxKind.NamespaceDeclaration);
             context.RegisterSyntaxNodeAction(ClassDeclarationAction, SyntaxKind.ClassDeclaration);
+            context.RegisterSyntaxNodeAction(RecordDeclarationAction, SyntaxKindEx.RecordDeclaration);
             context.RegisterSyntaxNodeAction(EnumDeclarationAction, SyntaxKind.EnumDeclaration);
             context.RegisterSyntaxNodeAction(EnumMemberDeclarationAction, SyntaxKind.EnumMemberDeclaration);
             context.RegisterSyntaxNodeAction(StructDeclarationAction, SyntaxKind.StructDeclaration);
@@ -84,6 +87,7 @@ namespace StyleCop.Analyzers.NamingRules
             context.RegisterSyntaxNodeAction(MethodDeclarationAction, SyntaxKind.MethodDeclaration);
             context.RegisterSyntaxNodeAction(LocalFunctionStatementAction, SyntaxKindEx.LocalFunctionStatement);
             context.RegisterSyntaxNodeAction(PropertyDeclarationAction, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeAction(ParameterAction, SyntaxKind.Parameter);
         }
 
         private static void HandleNamespaceDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
@@ -119,6 +123,11 @@ namespace StyleCop.Analyzers.NamingRules
         private static void HandleClassDeclaration(SyntaxNodeAnalysisContext context)
         {
             CheckElementNameToken(context, ((ClassDeclarationSyntax)context.Node).Identifier);
+        }
+
+        private static void HandleRecordDeclaration(SyntaxNodeAnalysisContext context)
+        {
+            CheckElementNameToken(context, ((TypeDeclarationSyntax)context.Node).Identifier);
         }
 
         private static void HandleEnumDeclaration(SyntaxNodeAnalysisContext context)
@@ -201,6 +210,19 @@ namespace StyleCop.Analyzers.NamingRules
             }
 
             CheckElementNameToken(context, propertyDeclaration.Identifier);
+        }
+
+        private static void HandleParameter(SyntaxNodeAnalysisContext context)
+        {
+            var parameterDeclaration = (ParameterSyntax)context.Node;
+            if (!parameterDeclaration.Parent.IsKind(SyntaxKind.ParameterList)
+                || !parameterDeclaration.Parent.Parent.IsKind(SyntaxKindEx.RecordDeclaration))
+            {
+                // Only positional parameters of records are treated as properties
+                return;
+            }
+
+            CheckElementNameToken(context, parameterDeclaration.Identifier);
         }
 
         private static void CheckElementNameToken(SyntaxNodeAnalysisContext context, SyntaxToken identifier, bool allowUnderscoreDigit = false)
