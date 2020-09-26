@@ -23,8 +23,11 @@
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" PrivateAssets="all" />
+
+    <!-- Make sure NuGet can parse the 'net5.0' TFM -->
+    <PackageReference Include="NuGet.Frameworks" Version="5.6.0" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\StyleCop.Analyzers.CodeFixes\StyleCop.Analyzers.CodeFixes.csproj" />
     <ProjectReference Include="..\StyleCop.Analyzers\StyleCop.Analyzers.csproj" />

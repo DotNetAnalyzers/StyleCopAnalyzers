@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.Test.Verifiers
 {
     using System;
     using System.Collections.Immutable;
+    using System.IO;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -15,6 +16,8 @@ namespace StyleCop.Analyzers.Test.Verifiers
     internal static class GenericAnalyzerTest
     {
         internal static readonly ReferenceAssemblies ReferenceAssemblies;
+
+        internal static readonly ReferenceAssemblies ReferenceAssembliesNet50;
 
         private static readonly Lazy<IExportProviderFactory> ExportProviderFactory;
 
@@ -32,6 +35,10 @@ namespace StyleCop.Analyzers.Test.Verifiers
             ReferenceAssemblies = ReferenceAssemblies.Default.AddPackages(ImmutableArray.Create(
                 new PackageIdentity("Microsoft.CodeAnalysis.CSharp", codeAnalysisTestVersion),
                 new PackageIdentity("System.ValueTuple", "4.5.0")));
+
+            ReferenceAssembliesNet50 =
+                new ReferenceAssemblies("net5.0", new PackageIdentity("Microsoft.NETCore.App.Ref", "5.0.0-rc.1.20451.14"), Path.Combine("ref", "net5.0"))
+                    .AddPackages(ImmutableArray.Create(new PackageIdentity("Microsoft.CodeAnalysis.CSharp", codeAnalysisTestVersion)));
 
             ExportProviderFactory = new Lazy<IExportProviderFactory>(
                 () =>
