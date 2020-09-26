@@ -98,22 +98,22 @@ namespace StyleCop.Analyzers.Helpers
         private enum ModifierFlags
         {
             /// <summary>
-            /// No modifiers
+            /// No modifiers.
             /// </summary>
             None = 0,
 
             /// <summary>
-            /// Readonly modifier
+            /// Readonly modifier.
             /// </summary>
             Readonly = 1,
 
             /// <summary>
-            /// Static modifier
+            /// Static modifier.
             /// </summary>
             Static = 1 << 2,
 
             /// <summary>
-            /// Const modifier
+            /// Const modifier.
             /// </summary>
             Const = 1 << 3,
         }
