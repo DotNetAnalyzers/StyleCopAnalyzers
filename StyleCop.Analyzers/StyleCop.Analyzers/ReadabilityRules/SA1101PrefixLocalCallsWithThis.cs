@@ -96,13 +96,23 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
 
             case SyntaxKind.SimpleAssignmentExpression:
-                if (((AssignmentExpressionSyntax)context.Node.Parent).Left == context.Node
-                    && (context.Node.Parent.Parent?.IsKind(SyntaxKind.ObjectInitializerExpression) ?? true))
+                if (((AssignmentExpressionSyntax)context.Node.Parent).Left == context.Node)
                 {
-                    /* Handle 'X' in:
-                     *   new TypeName() { X = 3 }
-                     */
-                    return;
+                    if (context.Node.Parent.Parent.IsKind(SyntaxKind.ObjectInitializerExpression))
+                    {
+                        /* Handle 'X' in:
+                         *   new TypeName() { X = 3 }
+                         */
+                        return;
+                    }
+
+                    if (context.Node.Parent.Parent.IsKind(SyntaxKindEx.WithInitializerExpression))
+                    {
+                        /* Handle 'X' in:
+                         *   value with { X = 3 }
+                         */
+                        return;
+                    }
                 }
 
                 break;
