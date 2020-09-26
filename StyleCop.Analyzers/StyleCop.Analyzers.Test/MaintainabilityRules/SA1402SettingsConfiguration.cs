@@ -11,12 +11,12 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
         KeepDefaultConfiguration,
 
         /// <summary>
-        /// Provide custom settings that configure the tested type as being a top level type.
+        /// Provide custom settings that configure the tested type as being a top-level type.
         /// </summary>
         ConfigureAsTopLevelType,
 
         /// <summary>
-        /// Provide custom settings that configure the tested type as not being a top level type.
+        /// Provide custom settings that configure the tested type as not being a top-level type.
         /// </summary>
         ConfigureAsNonTopLevelType,
     }

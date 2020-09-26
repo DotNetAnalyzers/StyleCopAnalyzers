@@ -103,17 +103,17 @@ namespace StyleCop.Analyzers.Helpers
             None = 0,
 
             /// <summary>
-            /// Readonly modifier.
+            /// <see langword="readonly"/> modifier.
             /// </summary>
             Readonly = 1,
 
             /// <summary>
-            /// Static modifier.
+            /// <see langword="static"/> modifier.
             /// </summary>
             Static = 1 << 2,
 
             /// <summary>
-            /// Const modifier.
+            /// <see langword="const"/> modifier.
             /// </summary>
             Const = 1 << 3,
         }
