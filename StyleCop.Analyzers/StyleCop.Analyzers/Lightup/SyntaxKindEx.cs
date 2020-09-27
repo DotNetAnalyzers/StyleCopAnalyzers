@@ -50,5 +50,6 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind SuppressNullableWarningExpression = (SyntaxKind)9054;
         public const SyntaxKind NullableDirectiveTrivia = (SyntaxKind)9055;
         public const SyntaxKind WithInitializerExpression = (SyntaxKind)9062;
+        public const SyntaxKind RecordDeclaration = (SyntaxKind)9063;
     }
 }
