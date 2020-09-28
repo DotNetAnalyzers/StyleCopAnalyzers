@@ -20,10 +20,24 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             yield return new object[] { $"public delegate void Bar(int a, int b,{delimiter} {{|#0:string s|}});" };
         }
 
+        public static IEnumerable<object[]> GetMultilineTestDeclarations(string delimiter)
+        {
+            yield return new object[] { $"public Foo(int a,{delimiter} string\r\ns) {{ }}" };
+            yield return new object[] { $"public object Bar(int a,{delimiter} string\r\ns) => null;" };
+            yield return new object[] { $"public object this[int a,{delimiter} string\r\ns] => null;" };
+            yield return new object[] { $"public delegate void Bar(int a,{delimiter} string\r\ns);" };
+        }
+
         public static IEnumerable<object[]> GetTestConstructorInitializers(string delimiter)
         {
             yield return new object[] { $"this(42, 43, {delimiter} {{|#0:\"hello\"|}})" };
             yield return new object[] { $"base(42, 43, {delimiter} {{|#0:\"hello\"|}})" };
+        }
+
+        public static IEnumerable<object[]> GetMultilineTestConstructorInitializers(string delimiter)
+        {
+            yield return new object[] { $"this(42\r\n+ 1, {delimiter} {{|#0:43|}}, {delimiter} \"hello\")" };
+            yield return new object[] { $"base(42\r\n+ 1, {delimiter} {{|#0:43|}}, {delimiter} \"hello\")" };
         }
 
         public static IEnumerable<object[]> GetTestExpressions(string delimiter)
@@ -36,6 +50,33 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             yield return new object[] { $"char cc = (new char[3, 3, 3])[2, 2,{delimiter} {{|#0:2|}}];" };
             yield return new object[] { $"char? c = (new char[3, 3, 3])?[2, 2,{delimiter} {{|#0:2|}}];" };
             yield return new object[] { $"long ll = this[2, 2,{delimiter} {{|#0:2|}}];" };
+        }
+
+        public static IEnumerable<object[]> GetTrailingMultilineTestExpressions(string delimiter)
+        {
+            yield return new object[] { $"System.Action<int, int, int> func = (int x, {delimiter} int y, {delimiter} int\r\nz) => Bar(x, y, z)" };
+            yield return new object[] { $"System.Action<int, int, int> func = delegate(int x, {delimiter} int y, {delimiter} int\r\nz) {{ Bar(x, y, z); }}" };
+            yield return new object[] { $"var arr = new string[2, {delimiter} 2\r\n+ 2];" };
+            yield return new object[] { $"char cc = (new char[3, 3])[2, {delimiter} 2\r\n+ 2];" };
+            yield return new object[] { $"char? c = (new char[3, 3])?[2, {delimiter} 2\r\n+ 2];" };
+            yield return new object[] { $"long ll = this[2,{delimiter} 2,{delimiter} 2\r\n+ 1];" };
+            yield return new object[] { $"var str = string.Join(\r\n\"def\",{delimiter}\"abc\"\r\n + \"cba\");" };
+        }
+
+        public static IEnumerable<object[]> GetLeadingMultilineTestExpressions(string delimiter)
+        {
+            yield return new object[] { $"var str = string.Join(\r\n\"abc\"\r\n + \"cba\",{delimiter}{{|#0:\"def\"|}});" };
+            yield return new object[] { $"Bar(\r\n1\r\n + 2,{delimiter}{{|#0:3|}},\r\n 4);" };
+        }
+
+        public static IEnumerable<object[]> GetTestAttributes(string delimiter)
+        {
+            yield return new object[] { $"[MyAttribute(1, {delimiter}2, {{|#0:3|}})]" };
+        }
+
+        public static IEnumerable<object[]> GetMultilineTestAttributes(string delimiter)
+        {
+            yield return new object[] { $"[MyAttribute(1, {delimiter}2, {delimiter}3\r\n+ 5)]" };
         }
 
         public static IEnumerable<object[]> ValidTestExpressions()
@@ -62,8 +103,28 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             };
         }
 
+        public static IEnumerable<object[]> ValidTestAttribute()
+        {
+            // This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1211
+            yield return new object[] { @"[System.Obsolete]" };
+            yield return new object[]
+            {
+                @"[MyAttribute(
+    1, 2, 3)]",
+            };
+            yield return new object[]
+            {
+                @"[MyAttribute(
+    1,
+    2,
+    3)]",
+            };
+        }
+
         [Theory]
         [MemberData(nameof(GetTestDeclarations), "")]
+        [MemberData(nameof(GetMultilineTestDeclarations), "\r\n")]
+        [MemberData(nameof(GetMultilineTestDeclarations), "")]
         [MemberData(nameof(ValidTestDeclarations))]
         public async Task TestValidDeclarationAsync(string declaration)
         {
@@ -91,6 +152,7 @@ class Foo
 
         [Theory]
         [MemberData(nameof(GetTestConstructorInitializers), "")]
+        [MemberData(nameof(GetMultilineTestConstructorInitializers), "\r\n")]
         public async Task TestValidConstructorInitializerAsync(string initializer)
         {
             var testCode = $@"
@@ -119,6 +181,7 @@ class Derived : Base
 
         [Theory]
         [MemberData(nameof(GetTestConstructorInitializers), "\r\n")]
+        [MemberData(nameof(GetMultilineTestConstructorInitializers), "")]
         public async Task TestInvalidConstructorInitializerAsync(string initializer)
         {
             var testCode = $@"
@@ -148,6 +211,9 @@ class Derived : Base
 
         [Theory]
         [MemberData(nameof(GetTestExpressions), "")]
+        [MemberData(nameof(GetLeadingMultilineTestExpressions), "\r\n")]
+        [MemberData(nameof(GetTrailingMultilineTestExpressions), "\r\n")]
+        [MemberData(nameof(GetTrailingMultilineTestExpressions), "")]
         [MemberData(nameof(ValidTestExpressions))]
         public async Task TestValidExpressionAsync(string expression)
         {
@@ -171,6 +237,7 @@ class Foo
 
         [Theory]
         [MemberData(nameof(GetTestExpressions), "\r\n")]
+        [MemberData(nameof(GetLeadingMultilineTestExpressions), "")]
         public async Task TestInvalidExpressionAsync(string expression)
         {
             var testCode = $@"
@@ -192,52 +259,50 @@ class Foo
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestValidAttributeAsync()
+        [Theory]
+        [MemberData(nameof(GetTestAttributes), "")]
+        [MemberData(nameof(GetMultilineTestAttributes), "\r\n")]
+        [MemberData(nameof(GetMultilineTestAttributes), "")]
+        [MemberData(nameof(ValidTestAttribute))]
+        public async Task TestValidAttributeAsync(string attribute)
         {
-            var testCode = @"
+            var testCode = $@"
 [System.AttributeUsage(System.AttributeTargets.Class)]
 public class MyAttribute : System.Attribute
-{
+{{
     public MyAttribute(int a, int b, int c)
-    {
-    }
-}
+    {{
+    }}
+}}
 
-[MyAttribute(1, 2, 3)]
+{attribute}
 class Foo
-{
-}
-
-// This is a regression test for https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/1211
-[System.Obsolete]
-class ObsoleteType
-{
-}";
+{{
+}}";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        [Fact]
-        public async Task TestInvalidAttributeAsync()
+        [Theory]
+        [MemberData(nameof(GetTestAttributes), "\r\n")]
+        public async Task TestInvalidAttributeAsync(string attribute)
         {
-            var testCode = @"
+            var testCode = $@"
 [System.AttributeUsage(System.AttributeTargets.Class)]
 public class MyAttribute : System.Attribute
-{
+{{
     public MyAttribute(int a, int b, int c)
-    {
-    }
-}
+    {{
+    }}
+}}
 
-[MyAttribute(
-    1,
-    2, {|#0:3|})]
+{attribute}
 class Foo
-{
-}";
+{{
+}}";
 
             DiagnosticResult expected = Diagnostic().WithLocation(0);
+
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
     }
