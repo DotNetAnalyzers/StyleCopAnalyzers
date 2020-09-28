@@ -240,7 +240,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             if (firstParameter.GetLine() == secondParameter.GetLine())
             {
                 // arguments should be on same line
-                lineCondition = (param1, param2) => param1.GetLine() == param2.GetEndLine();
+                lineCondition = (param1, param2) => param1.GetLine() == param2.GetLine();
             }
             else
             {

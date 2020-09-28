@@ -22,10 +22,10 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
         public static IEnumerable<object[]> GetMultilineTestDeclarations(string delimiter)
         {
-            yield return new object[] { $"public Foo(int a,{delimiter} {{|#0:string\r\ns|}}) {{ }}" };
-            yield return new object[] { $"public object Bar(int a,{delimiter} {{|#0:string\r\ns|}}) => null;" };
-            yield return new object[] { $"public object this[int a,{delimiter} {{|#0:string\r\ns|}}] => null;" };
-            yield return new object[] { $"public delegate void Bar(int a,{delimiter} {{|#0:string\r\ns|}});" };
+            yield return new object[] { $"public Foo(int a,{delimiter} string\r\ns) {{ }}" };
+            yield return new object[] { $"public object Bar(int a,{delimiter} string\r\ns) => null;" };
+            yield return new object[] { $"public object this[int a,{delimiter} string\r\ns] => null;" };
+            yield return new object[] { $"public delegate void Bar(int a,{delimiter} string\r\ns);" };
         }
 
         public static IEnumerable<object[]> GetTestConstructorInitializers(string delimiter)
@@ -52,16 +52,20 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             yield return new object[] { $"long ll = this[2, 2,{delimiter} {{|#0:2|}}];" };
         }
 
-        public static IEnumerable<object[]> GetMultilineTestExpressions(string delimiter)
+        public static IEnumerable<object[]> GetTrailingMultilineTestExpressions(string delimiter)
         {
-            yield return new object[] { $"System.Action<int, int, int> func = (int x, {delimiter} int y, {delimiter} {{|#0:int\r\nz|}}) => Bar(x, y, z)" };
-            yield return new object[] { $"System.Action<int, int, int> func = delegate(int x, {delimiter} int y, {delimiter} {{|#0:int\r\nz|}}) {{ Bar(x, y, z); }}" };
-            yield return new object[] { $"var arr = new string[2, {delimiter} {{|#0:2\r\n+ 2|}}];" };
-            yield return new object[] { $"char cc = (new char[3, 3])[2, {delimiter} {{|#0:2\r\n+ 2|}}];" };
-            yield return new object[] { $"char? c = (new char[3, 3])?[2, {delimiter} {{|#0:2\r\n+ 2|}}];" };
-            yield return new object[] { $"long ll = this[2,{delimiter} 2,{delimiter} {{|#0:2\r\n+ 1|}}];" };
+            yield return new object[] { $"System.Action<int, int, int> func = (int x, {delimiter} int y, {delimiter} int\r\nz) => Bar(x, y, z)" };
+            yield return new object[] { $"System.Action<int, int, int> func = delegate(int x, {delimiter} int y, {delimiter} int\r\nz) {{ Bar(x, y, z); }}" };
+            yield return new object[] { $"var arr = new string[2, {delimiter} 2\r\n+ 2];" };
+            yield return new object[] { $"char cc = (new char[3, 3])[2, {delimiter} 2\r\n+ 2];" };
+            yield return new object[] { $"char? c = (new char[3, 3])?[2, {delimiter} 2\r\n+ 2];" };
+            yield return new object[] { $"long ll = this[2,{delimiter} 2,{delimiter} 2\r\n+ 1];" };
+            yield return new object[] { $"var str = string.Join(\r\n\"def\",{delimiter}\"abc\"\r\n + \"cba\");" };
+        }
+
+        public static IEnumerable<object[]> GetLeadingMultilineTestExpressions(string delimiter)
+        {
             yield return new object[] { $"var str = string.Join(\r\n\"abc\"\r\n + \"cba\",{delimiter}{{|#0:\"def\"|}});" };
-            yield return new object[] { $"var str = string.Join(\r\n\"def\",{delimiter}{{|#0:\"abc\"\r\n + \"cba\"|}});" };
             yield return new object[] { $"Bar(\r\n1\r\n + 2,{delimiter}{{|#0:3|}},\r\n 4);" };
         }
 
@@ -72,7 +76,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
         public static IEnumerable<object[]> GetMultilineTestAttributes(string delimiter)
         {
-            yield return new object[] { $"[MyAttribute(1, {delimiter}2, {delimiter}{{|#0:3\r\n+ 5|}})]" };
+            yield return new object[] { $"[MyAttribute(1, {delimiter}2, {delimiter}3\r\n+ 5)]" };
         }
 
         public static IEnumerable<object[]> ValidTestExpressions()
@@ -120,6 +124,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
         [Theory]
         [MemberData(nameof(GetTestDeclarations), "")]
         [MemberData(nameof(GetMultilineTestDeclarations), "\r\n")]
+        [MemberData(nameof(GetMultilineTestDeclarations), "")]
         [MemberData(nameof(ValidTestDeclarations))]
         public async Task TestValidDeclarationAsync(string declaration)
         {
@@ -133,7 +138,6 @@ class Foo
 
         [Theory]
         [MemberData(nameof(GetTestDeclarations), "\r\n")]
-        [MemberData(nameof(GetMultilineTestDeclarations), "")]
         public async Task TestInvalidDeclarationAsync(string declaration)
         {
             var testCode = $@"
@@ -207,7 +211,9 @@ class Derived : Base
 
         [Theory]
         [MemberData(nameof(GetTestExpressions), "")]
-        [MemberData(nameof(GetMultilineTestExpressions), "\r\n")]
+        [MemberData(nameof(GetLeadingMultilineTestExpressions), "\r\n")]
+        [MemberData(nameof(GetTrailingMultilineTestExpressions), "\r\n")]
+        [MemberData(nameof(GetTrailingMultilineTestExpressions), "")]
         [MemberData(nameof(ValidTestExpressions))]
         public async Task TestValidExpressionAsync(string expression)
         {
@@ -231,7 +237,7 @@ class Foo
 
         [Theory]
         [MemberData(nameof(GetTestExpressions), "\r\n")]
-        [MemberData(nameof(GetMultilineTestExpressions), "")]
+        [MemberData(nameof(GetLeadingMultilineTestExpressions), "")]
         public async Task TestInvalidExpressionAsync(string expression)
         {
             var testCode = $@"
@@ -256,6 +262,7 @@ class Foo
         [Theory]
         [MemberData(nameof(GetTestAttributes), "")]
         [MemberData(nameof(GetMultilineTestAttributes), "\r\n")]
+        [MemberData(nameof(GetMultilineTestAttributes), "")]
         [MemberData(nameof(ValidTestAttribute))]
         public async Task TestValidAttributeAsync(string attribute)
         {
@@ -278,7 +285,6 @@ class Foo
 
         [Theory]
         [MemberData(nameof(GetTestAttributes), "\r\n")]
-        [MemberData(nameof(GetMultilineTestAttributes), "")]
         public async Task TestInvalidAttributeAsync(string attribute)
         {
             var testCode = $@"
