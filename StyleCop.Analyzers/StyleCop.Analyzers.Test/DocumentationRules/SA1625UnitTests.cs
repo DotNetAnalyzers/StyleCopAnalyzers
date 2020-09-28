@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
@@ -270,6 +270,23 @@ public class TestClass
 }}
 ";
             var expected = Diagnostic().WithLocation(7, 7);
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task VerifyThatDuplicatedDocumentationForEnumMemberDoesReportADiagnosticAsync()
+        {
+            var testCode = @"
+public enum EnumName
+{
+    /// <summary>
+    /// Some documentation.
+    /// </summary>
+    /// <remark>Some documentation.</remark>
+    EnumMember = 0,
+}";
+            var expected = Diagnostic().WithLocation(7, 9);
+
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 

@@ -791,7 +791,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Code should not contain blank lines at the end of the file.
+        ///   Looks up a localized string similar to Code should not contain blank lines at the end of the file..
         /// </summary>
         internal static string SA1518DescriptionAllow {
             get {
@@ -800,7 +800,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File may not end with a newline character.
+        ///   Looks up a localized string similar to File may not end with a newline character..
         /// </summary>
         internal static string SA1518DescriptionOmit {
             get {
@@ -809,7 +809,7 @@ namespace StyleCop.Analyzers.LayoutRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to File is required to end with a single newline character.
+        ///   Looks up a localized string similar to File is required to end with a single newline character..
         /// </summary>
         internal static string SA1518DescriptionRequire {
             get {

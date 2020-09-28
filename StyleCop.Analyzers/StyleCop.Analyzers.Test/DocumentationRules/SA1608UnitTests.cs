@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
@@ -142,6 +142,48 @@ public class ClassName
 }";
 
             DiagnosticResult expected = Diagnostic().WithLocation(2, 5);
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestEnumMemberWithContentDocumentationAsync()
+        {
+            var testCode = @"
+public enum EnumName
+{
+    /// <summary>
+    /// Foo.
+    /// </summary>
+    EnumMember1 = 0,
+}
+";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestEnumMemberWithDefaultDocumentationAsync()
+        {
+            var testCode = @"
+public enum EnumName
+{
+    /// <summary>
+    /// Summary description for the EnumMember1 enum member.
+    /// </summary>
+    EnumMember1 = 0,
+
+    /// <summary>
+    /// Summary           description
+    /// for the      EnumMember2 enum member.
+    /// </summary>
+    EnumMember2 = 1,
+}
+";
+            DiagnosticResult[] expected = new[]
+            {
+                Diagnostic().WithLocation(4, 9),
+                Diagnostic().WithLocation(9, 9),
+            };
 
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }

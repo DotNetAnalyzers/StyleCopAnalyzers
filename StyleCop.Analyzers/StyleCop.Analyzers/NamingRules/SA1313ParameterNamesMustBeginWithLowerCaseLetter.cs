@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.NamingRules
 {
@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.NamingRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// The name of a parameter in C# does not begin with a lower-case letter.
@@ -61,6 +62,12 @@ namespace StyleCop.Analyzers.NamingRules
             ParameterSyntax syntax = (ParameterSyntax)context.Node;
             if (NamedTypeHelpers.IsContainedInNativeMethodsClass(syntax))
             {
+                return;
+            }
+
+            if (syntax.Parent.Parent.IsKind(SyntaxKindEx.RecordDeclaration))
+            {
+                // Positional parameters of a record are treated as properties for naming conventions
                 return;
             }
 

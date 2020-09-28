@@ -6,13 +6,14 @@ configuration:
 - Debug
 - Release
 before_build:
+- ps: .\init.ps1 -NoRestore
 - nuget restore
 skip_tags: true
 build:
   project: StyleCopAnalyzers.sln
   verbosity: minimal
 test_script:
-- .\StyleCop.Analyzers\StyleCop.Analyzers.Status.Generator\bin\%Configuration%\net46\StyleCop.Analyzers.Status.Generator.exe .\StyleCopAnalyzers.sln > StyleCop.Analyzers.Status.json
+- .\StyleCop.Analyzers\StyleCop.Analyzers.Status.Generator\bin\%Configuration%\net472\StyleCop.Analyzers.Status.Generator.exe .\StyleCopAnalyzers.sln > StyleCop.Analyzers.Status.json
 cache:
   - packages -> **\packages.config
   - C:\Users\appveyor\.nuget\packages -> appveyor.yml

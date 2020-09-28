@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
@@ -90,9 +90,9 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 },
                 ExpectedDiagnostics =
                 {
-                    Diagnostic().WithLocation("Test0.cs", 1, 1),
-                    Diagnostic().WithLocation("Test1.cs", 1, 1),
-                    Diagnostic().WithLocation("Test2.cs", 1, 1),
+                    Diagnostic().WithLocation("/0/Test0.cs", 1, 1),
+                    Diagnostic().WithLocation("/0/Test1.cs", 1, 1),
+                    Diagnostic().WithLocation("/0/Test2.cs", 1, 1),
                 },
                 FixedSources =
                 {
@@ -122,8 +122,8 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
                 },
                 ExpectedDiagnostics =
                 {
-                    Diagnostic().WithLocation("Test0.cs", 1, 1),
-                    Diagnostic().WithLocation("Test1.cs", 1, 1),
+                    Diagnostic().WithLocation("/0/Test0.cs", 1, 1),
+                    Diagnostic().WithLocation("/0/Test1.cs", 1, 1),
                 },
                 FixedSources =
                 {

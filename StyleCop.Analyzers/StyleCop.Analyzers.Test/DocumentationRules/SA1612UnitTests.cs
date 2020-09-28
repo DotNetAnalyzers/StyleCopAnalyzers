@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
@@ -132,7 +132,7 @@ $$
 }";
 
             var diagnostic = Diagnostic()
-                .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}.");
+                .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}");
 
             var expected = new[]
             {
@@ -215,7 +215,7 @@ public class ClassName
 }";
 
             var diagnostic = Diagnostic()
-                .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}.");
+                .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}");
 
             var expected = new[]
             {
@@ -248,7 +248,7 @@ public class ClassName
 }";
 
             var diagnostic = Diagnostic()
-                .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}.");
+                .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}");
 
             var expected = diagnostic.WithLocation(13, 22).WithArguments("bar", 2);
 
@@ -353,7 +353,7 @@ public class ClassName
 }";
 
             var diagnostic = Diagnostic()
-                .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}.");
+                .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}");
 
             var expected = new[]
             {
@@ -400,7 +400,7 @@ public class ClassName
 }";
 
             var diagnostic = Diagnostic()
-                .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}.");
+                .WithMessageFormat("The parameter documentation for '{0}' should be at position {1}");
 
             var expected = diagnostic.WithLocation(8, 22).WithArguments("bar", 2);
 

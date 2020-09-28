@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Test
 {
@@ -77,6 +77,9 @@ namespace StyleCop.Analyzers.Test
 
             protected override CompilationOptions CreateCompilationOptions()
                 => new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true);
+
+            protected override ParseOptions CreateParseOptions()
+                => new CSharpParseOptions(LanguageVersion.CSharp6);
 
             protected override IEnumerable<CodeFixProvider> GetCodeFixProviders()
                 => new CodeFixProvider[0];

@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.OrderingRules
 {
@@ -14,22 +14,22 @@ namespace StyleCop.Analyzers.OrderingRules
         internal enum ModifierType
         {
             /// <summary>
-            /// Represents default value
+            /// Represents default value.
             /// </summary>
             None,
 
             /// <summary>
-            /// Represents any of access modifiers i.e public, protected, internal, private
+            /// Represents any of access modifiers, i.e <see langword="public"/>, <see langword="protected"/>, <see langword="internal"/>, <see langword="private"/>.
             /// </summary>
             Access,
 
             /// <summary>
-            /// Represents static modifier
+            /// Represents <see langword="static"/> modifier.
             /// </summary>
             Static,
 
             /// <summary>
-            /// Represents other modifiers i.e partial, virtual, abstract, override, extern, unsafe, new, async, const, sealed, readonly, volatile, fixed, ref
+            /// Represents other modifiers, i.e <see langword="partial"/>, <see langword="virtual"/>, <see langword="abstract"/>, <see langword="override"/>, <see langword="extern"/>, <see langword="unsafe"/>, <see langword="new"/>, <see langword="async"/>, <see langword="const"/>, <see langword="sealed"/>, <see langword="readonly"/>, <see langword="volatile"/>, <see langword="fixed"/>, <see langword="ref"/>.
             /// </summary>
             Other,
         }

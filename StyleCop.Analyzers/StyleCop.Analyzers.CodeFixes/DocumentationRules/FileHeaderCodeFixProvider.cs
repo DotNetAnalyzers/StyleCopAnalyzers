@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
@@ -66,6 +66,9 @@ namespace StyleCop.Analyzers.DocumentationRules
             return SpecializedTasks.CompletedTask;
         }
 
+        private static string GetFileName(Document document)
+            => Path.GetFileName(document.FilePath ?? document.Name);
+
         private static async Task<Document> GetTransformedDocumentAsync(Document document, CancellationToken cancellationToken)
         {
             return document.WithSyntaxRoot(await GetTransformedSyntaxRootAsync(document, cancellationToken).ConfigureAwait(false));
@@ -80,7 +83,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             SyntaxNode newSyntaxRoot;
             if (fileHeader.IsMissing)
             {
-                newSyntaxRoot = AddHeader(document, root, document.Name, settings);
+                newSyntaxRoot = AddHeader(document, root, GetFileName(document), settings);
             }
             else
             {
@@ -144,9 +147,9 @@ namespace StyleCop.Analyzers.DocumentationRules
             // Pad line that used to be next to a /*
             triviaStringParts[0] = commentIndentation + interlinePadding + " " + triviaStringParts[0];
             StringBuilder sb = StringBuilderPool.Allocate();
-            string fileName = Path.GetFileName(document.FilePath);
+            string fileName = GetFileName(document);
             var copyrightText = GetCopyrightText(commentIndentation + interlinePadding, settings.DocumentationRules.GetCopyrightText(fileName), newLineText);
-            var newHeader = WrapInXmlComment(commentIndentation + interlinePadding, copyrightText, document.Name, settings, newLineText);
+            var newHeader = WrapInXmlComment(commentIndentation + interlinePadding, copyrightText, fileName, settings, newLineText);
 
             sb.Append(commentIndentation);
             sb.Append("/*");
@@ -310,7 +313,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             string newLineText = document.Project.Solution.Workspace.Options.GetOption(FormattingOptions.NewLine, LanguageNames.CSharp);
             var newLineTrivia = SyntaxFactory.EndOfLine(newLineText);
 
-            var newHeaderTrivia = CreateNewHeader(leadingSpaces + "//", document.Name, settings, newLineText);
+            var newHeaderTrivia = CreateNewHeader(leadingSpaces + "//", GetFileName(document), settings, newLineText);
             if (!isMalformedHeader && copyrightTriviaIndex.HasValue)
             {
                 // Does the copyright element have leading whitespace? If so remove it.

@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.SpacingRules
 {
@@ -293,7 +293,8 @@ namespace StyleCop.Analyzers.SpacingRules
 
             case SyntaxKind.OpenParenToken:
                 // Disallowed for new() constraint, but otherwise allowed for tuple types
-                needSpace = !token.Parent.IsKind(SyntaxKind.ConstructorConstraint);
+                needSpace = !token.Parent.IsKind(SyntaxKind.ConstructorConstraint)
+                    && !token.Parent.IsKind(SyntaxKindEx.ImplicitObjectCreationExpression);
                 break;
 
             default:

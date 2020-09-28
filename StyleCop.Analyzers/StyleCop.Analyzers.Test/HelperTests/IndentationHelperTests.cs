@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Test.HelperTests
 {
@@ -9,12 +9,9 @@ namespace StyleCop.Analyzers.Test.HelperTests
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Formatting;
-    using Microsoft.CodeAnalysis.Testing;
-    using Microsoft.CodeAnalysis.Testing.Verifiers;
     using Microsoft.CodeAnalysis.Text;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Settings.ObjectModel;
-    using StyleCop.Analyzers.Test.Helpers;
     using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
 
@@ -114,7 +111,7 @@ namespace StyleCop.Analyzers.Test.HelperTests
         public async Task VerifyGetIndentationStepsAsync(string indentationString, int expectedIndentationSteps, int indentationSize, int tabSize)
         {
             var testSource = $"{indentationString}public class TestClass {{}}";
-            var document = CreateTestDocument(testSource, indentationSize, false, tabSize);
+            var document = await CreateTestDocumentAsync(testSource, indentationSize, false, tabSize, CancellationToken.None).ConfigureAwait(false);
             StyleCopSettings settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, CancellationToken.None);
 
             var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
@@ -132,7 +129,7 @@ namespace StyleCop.Analyzers.Test.HelperTests
         public async Task VerifyGetIndentationStepsForTokenNotAtStartOfLineAsync()
         {
             var testSource = "    public class TestClass {}";
-            var document = CreateTestDocument(testSource);
+            var document = await CreateTestDocumentAsync(testSource, cancellationToken: CancellationToken.None).ConfigureAwait(false);
             StyleCopSettings settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, CancellationToken.None);
 
             var syntaxRoot = await document.GetSyntaxRootAsync().ConfigureAwait(false);
@@ -141,7 +138,7 @@ namespace StyleCop.Analyzers.Test.HelperTests
             Assert.Equal(0, IndentationHelper.GetIndentationSteps(settings.Indentation, secondToken));
         }
 
-        private static Document CreateTestDocument(string source, int indentationSize = 4, bool useTabs = false, int tabSize = 4)
+        private static async Task<Document> CreateTestDocumentAsync(string source, int indentationSize = 4, bool useTabs = false, int tabSize = 4, CancellationToken cancellationToken = default)
         {
             var workspace = GenericAnalyzerTest.CreateWorkspace();
             workspace.Options = workspace.Options
@@ -152,15 +149,12 @@ namespace StyleCop.Analyzers.Test.HelperTests
             var projectId = ProjectId.CreateNewId();
             var documentId = DocumentId.CreateNewId(projectId);
             var compilationOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary, allowUnsafe: true);
+            var references = await GenericAnalyzerTest.ReferenceAssemblies.ResolveAsync(LanguageNames.CSharp, cancellationToken).ConfigureAwait(false);
 
             var solution = workspace.CurrentSolution
                 .AddProject(projectId, TestProjectName, TestProjectName, LanguageNames.CSharp)
                 .WithProjectCompilationOptions(projectId, compilationOptions)
-                .AddMetadataReference(projectId, MetadataReferences.CorlibReference)
-                .AddMetadataReference(projectId, MetadataReferences.SystemReference)
-                .AddMetadataReference(projectId, MetadataReferences.SystemCoreReference)
-                .AddMetadataReference(projectId, GenericAnalyzerTest.CSharpSymbolsReference)
-                .AddMetadataReference(projectId, MetadataReferences.CodeAnalysisReference)
+                .AddMetadataReferences(projectId, references)
                 .AddDocument(documentId, TestFilename, SourceText.From(source));
 
             StyleCopSettings defaultSettings = new StyleCopSettings();

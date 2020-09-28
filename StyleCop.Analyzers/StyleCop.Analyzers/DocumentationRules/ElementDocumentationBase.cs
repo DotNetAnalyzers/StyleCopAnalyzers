@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
@@ -31,6 +31,7 @@ namespace StyleCop.Analyzers.DocumentationRules
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> baseTypeDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> fieldDeclarationAction;
         private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> propertyDeclarationAction;
+        private readonly Action<SyntaxNodeAnalysisContext, StyleCopSettings> enumMemberDeclarationAction;
 
         protected ElementDocumentationBase(bool inheritDocSuppressesWarnings, string matchElementName = null)
         {
@@ -46,6 +47,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             this.baseTypeDeclarationAction = this.HandleBaseTypeDeclaration;
             this.fieldDeclarationAction = this.HandleFieldDeclaration;
             this.propertyDeclarationAction = this.HandlePropertyDeclaration;
+            this.enumMemberDeclarationAction = this.HandleEnumMemberDeclaration;
         }
 
         /// <inheritdoc/>
@@ -63,6 +65,7 @@ namespace StyleCop.Analyzers.DocumentationRules
             context.RegisterSyntaxNodeAction(this.baseTypeDeclarationAction, SyntaxKinds.BaseTypeDeclaration);
             context.RegisterSyntaxNodeAction(this.fieldDeclarationAction, SyntaxKind.FieldDeclaration);
             context.RegisterSyntaxNodeAction(this.propertyDeclarationAction, SyntaxKind.PropertyDeclaration);
+            context.RegisterSyntaxNodeAction(this.enumMemberDeclarationAction, SyntaxKind.EnumMemberDeclaration);
         }
 
         /// <summary>
@@ -200,6 +203,16 @@ namespace StyleCop.Analyzers.DocumentationRules
             this.HandleDeclaration(context, settings, needsComment, node, node.Identifier.GetLocation());
         }
 
+        private void HandleEnumMemberDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings)
+        {
+            var node = (EnumMemberDeclarationSyntax)context.Node;
+
+            Accessibility declaredAccessibility = node.GetDeclaredAccessibility();
+            Accessibility effectiveAccessibility = node.GetEffectiveAccessibility(context.SemanticModel, context.CancellationToken);
+            bool needsComment = SA1600ElementsMustBeDocumented.NeedsComment(settings.DocumentationRules, node.Kind(), node.Parent.Kind(), declaredAccessibility, effectiveAccessibility);
+            this.HandleDeclaration(context, settings, needsComment, node, node.Identifier.GetLocation());
+        }
+
         private void HandleDeclaration(SyntaxNodeAnalysisContext context, StyleCopSettings settings, bool needsComment, SyntaxNode node, params Location[] locations)
         {
             var documentation = node.GetDocumentationCommentTriviaSyntax();
@@ -216,34 +229,34 @@ namespace StyleCop.Analyzers.DocumentationRules
                 return;
             }
 
-            IEnumerable<XmlNodeSyntax> matchingXmlElements = string.IsNullOrEmpty(this.matchElementName)
-                ? documentation.Content
-                    .Where(x => x is XmlElementSyntax || x is XmlEmptyElementSyntax)
-                    .Where(x => !string.Equals(x.GetName()?.ToString(), XmlCommentHelper.IncludeXmlTag, StringComparison.Ordinal))
-                : documentation.Content.GetXmlElements(this.matchElementName);
+            var hasIncludedDocumentation =
+                documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag) is object;
 
-            if (!matchingXmlElements.Any())
+            if (hasIncludedDocumentation)
             {
-                var includedDocumentation = documentation.Content.GetFirstXmlElement(XmlCommentHelper.IncludeXmlTag);
-                if (includedDocumentation != null)
+                var declaration = context.SemanticModel.GetDeclaredSymbol(node, context.CancellationToken);
+                var rawDocumentation = declaration?.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
+                var completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
+
+                if (this.inheritDocSuppressesWarnings &&
+                    completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.InheritdocXmlTag))
                 {
-                    var declaration = context.SemanticModel.GetDeclaredSymbol(node, context.CancellationToken);
-                    var rawDocumentation = declaration?.GetDocumentationCommentXml(expandIncludes: true, cancellationToken: context.CancellationToken);
-                    var completeDocumentation = XElement.Parse(rawDocumentation, LoadOptions.None);
-
-                    if (this.inheritDocSuppressesWarnings &&
-                        completeDocumentation.Nodes().OfType<XElement>().Any(element => element.Name == XmlCommentHelper.InheritdocXmlTag))
-                    {
-                        // Ignore nodes with an <inheritdoc/> tag in the included XML.
-                        return;
-                    }
-
-                    this.HandleCompleteDocumentation(context, needsComment, completeDocumentation, locations);
-                    return; // done
+                    // Ignore nodes with an <inheritdoc/> tag in the included XML.
+                    return;
                 }
-            }
 
-            this.HandleXmlElement(context, settings, needsComment, matchingXmlElements, locations);
+                this.HandleCompleteDocumentation(context, needsComment, completeDocumentation, locations);
+            }
+            else
+            {
+                IEnumerable<XmlNodeSyntax> matchingXmlElements = string.IsNullOrEmpty(this.matchElementName)
+                    ? documentation.Content
+                        .Where(x => x is XmlElementSyntax || x is XmlEmptyElementSyntax)
+                        .Where(x => !string.Equals(x.GetName()?.ToString(), XmlCommentHelper.IncludeXmlTag, StringComparison.Ordinal))
+                    : documentation.Content.GetXmlElements(this.matchElementName);
+
+                this.HandleXmlElement(context, settings, needsComment, matchingXmlElements, locations);
+            }
         }
     }
 }

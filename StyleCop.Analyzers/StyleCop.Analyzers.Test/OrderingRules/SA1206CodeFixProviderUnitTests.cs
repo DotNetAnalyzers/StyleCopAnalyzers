@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
@@ -116,7 +116,6 @@ public class ExtendedTestClass : TestClass
             DiagnosticResult[] expected =
             {
                 Diagnostic().WithLocation(1, 38).WithArguments("static", "new"),
-                Diagnostic().WithLocation(1, 45).WithArguments("public", "static"),
                 Diagnostic().WithLocation(1, 45).WithArguments("public", "new"),
             };
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);

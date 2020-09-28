@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
@@ -70,13 +70,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
             }
 
             // check if this already is a proper tuple field name
-            if (fieldSymbol.CorrespondingTupleField() != fieldSymbol)
+            if (!Equals(fieldSymbol.CorrespondingTupleField(), fieldSymbol))
             {
                 return false;
             }
 
             // check if there is a tuple field name declared.
-            return fieldSymbol.ContainingType.GetMembers().OfType<IFieldSymbol>().Count(fs => fs.CorrespondingTupleField() == fieldSymbol) > 1;
+            return fieldSymbol.ContainingType.GetMembers().OfType<IFieldSymbol>().Count(fs => Equals(fs.CorrespondingTupleField(), fieldSymbol)) > 1;
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.SpacingRules
 {
@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.SpacingRules
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
     using StyleCop.Analyzers.Helpers;
+    using StyleCop.Analyzers.Lightup;
 
     /// <summary>
     /// An opening brace within a C# element is not spaced correctly.
@@ -88,13 +89,22 @@ namespace StyleCop.Analyzers.SpacingRules
                 return;
             }
 
+            bool expectPrecedingSpace = true;
+            if (token.Parent.IsKind(SyntaxKindEx.PropertyPatternClause)
+                && token.GetPreviousToken() is { RawKind: (int)SyntaxKind.OpenParenToken, Parent: { RawKind: (int)SyntaxKindEx.PositionalPatternClause } })
+            {
+                // value is ({ P: 0 }, { P: 0 })
+                expectPrecedingSpace = false;
+            }
+
             bool precededBySpace = token.IsFirstInLine() || token.IsPrecededByWhitespace(context.CancellationToken);
 
-            if (!precededBySpace)
+            if (precededBySpace != expectPrecedingSpace)
             {
                 // Opening brace should{} be {preceded} by a space.
-                var properties = TokenSpacingProperties.InsertPreceding;
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, string.Empty, "preceded"));
+                // Opening brace should{ not} be {preceded} by a space.
+                var properties = expectPrecedingSpace ? TokenSpacingProperties.InsertPreceding : TokenSpacingProperties.RemovePrecedingPreserveLayout;
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), properties, expectPrecedingSpace ? string.Empty : " not", "preceded"));
             }
 
             if (!token.IsLastInLine() && !followedBySpace)

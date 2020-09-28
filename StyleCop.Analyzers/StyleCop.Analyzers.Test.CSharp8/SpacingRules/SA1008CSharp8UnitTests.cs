@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
 {
@@ -64,6 +64,80 @@ namespace TestNamespace
             var expectedResults = new DiagnosticResult[]
             {
                 Diagnostic(DescriptorNotPreceded).WithLocation(28, 27),
+            };
+
+            await VerifyCSharpFixAsync(
+                LanguageVersion.CSharp8,
+                testCode,
+                expectedResults,
+                fixedCode,
+                CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3141, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3141")]
+        public async Task TestInPropertyPatternsAsync()
+        {
+            var testCode = @"
+class C
+{
+    void M((string A, string B) tuple)
+    {
+        _ = tuple is{|#0:(|} { Length: 1 }, { Length: 2 });
+    }
+}
+";
+            var fixedCode = @"
+class C
+{
+    void M((string A, string B) tuple)
+    {
+        _ = tuple is ({ Length: 1 }, { Length: 2 });
+    }
+}
+";
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(DescriptorPreceded).WithLocation(0),
+                Diagnostic(DescriptorNotFollowed).WithLocation(0),
+            };
+
+            await VerifyCSharpFixAsync(
+                LanguageVersion.CSharp8,
+                testCode,
+                expectedResults,
+                fixedCode,
+                CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3198, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3198")]
+        public async Task TestInPositionalPatternAsync()
+        {
+            var testCode = @"
+class C
+{
+    void M((bool A, bool B) tuple)
+    {
+        _ = (tuple, tuple) is{|#0:(|} (true, true),{|#1:(|} true, true));
+    }
+}
+";
+            var fixedCode = @"
+class C
+{
+    void M((bool A, bool B) tuple)
+    {
+        _ = (tuple, tuple) is ((true, true), (true, true));
+    }
+}
+";
+            DiagnosticResult[] expectedResults =
+            {
+                Diagnostic(DescriptorPreceded).WithLocation(0),
+                Diagnostic(DescriptorNotFollowed).WithLocation(0),
+                Diagnostic(DescriptorPreceded).WithLocation(1),
+                Diagnostic(DescriptorNotFollowed).WithLocation(1),
             };
 
             await VerifyCSharpFixAsync(

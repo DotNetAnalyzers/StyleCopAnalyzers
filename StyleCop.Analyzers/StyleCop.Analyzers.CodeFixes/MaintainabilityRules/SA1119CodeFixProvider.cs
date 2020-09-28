@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
@@ -74,7 +74,8 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             if (!leadingTrivia.Any())
             {
                 var previousToken = oldNode.OpenParenToken.GetPreviousToken();
-                if (!previousToken.IsKind(SyntaxKind.OpenParenToken) && (TriviaHelper.IndexOfTrailingWhitespace(previousToken.TrailingTrivia) == -1))
+                if (!(previousToken.IsKind(SyntaxKind.OpenParenToken) || previousToken.IsKind(SyntaxKind.CloseParenToken))
+                    && (TriviaHelper.IndexOfTrailingWhitespace(previousToken.TrailingTrivia) == -1))
                 {
                     leadingTrivia = SyntaxFactory.TriviaList(SyntaxFactory.Space);
                 }

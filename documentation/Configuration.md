@@ -314,6 +314,30 @@ The following example shows a settings file which allows the common prefixes as 
 }
 ```
 
+### Namespace Components
+
+The following property is used to configure allowable namespace components (e.g. ones that start with a lowercase letter).
+
+| Property | Default Value | Minimum Version | Summary |
+| --- | --- | --- | --- |
+| `allowedNamespaceComponents` | `[ ]` | 1.2.0 | Specifies namespace components that are allowed to be used. See the example below for more information. |
+
+The following example shows a settings file which allows namespace components such as `eBay` or `Apple.iPod`.
+
+```json
+{
+  "settings": {
+    "namingRules": {
+      "allowedNamespaceComponents": [
+        "eBay",
+        "iPod"
+      ]
+    }
+  }
+}
+```
+
+
 ### Tuple element names
 
 The following properties are used to configure the behavior of the tuple element name analyzers.

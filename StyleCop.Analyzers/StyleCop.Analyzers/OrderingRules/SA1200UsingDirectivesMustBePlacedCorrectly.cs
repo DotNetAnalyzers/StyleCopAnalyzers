@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.OrderingRules
 {
@@ -261,7 +261,9 @@ namespace StyleCop.Analyzers.OrderingRules
             foreach (UsingDirectiveSyntax directive in syntax.Usings)
             {
                 // Using directive should appear outside a namespace declaration
+#pragma warning disable RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor (https://github.com/dotnet/roslyn-analyzers/issues/4103)
                 context.ReportDiagnostic(Diagnostic.Create(DescriptorOutside, directive.GetLocation()));
+#pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
             }
         }
     }

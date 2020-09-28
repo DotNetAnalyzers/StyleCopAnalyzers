@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
@@ -48,7 +48,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             var endLinePosition = new LinePosition(3, 28);
             DiagnosticResult[] expected =
             {
-                DiagnosticResult.CompilerError("CS0029").WithSpan(new FileLinePositionSpan("Test0.cs", startLinePosition, endLinePosition)).WithMessage("Cannot implicitly convert type 'int' to 'string'"),
+                DiagnosticResult.CompilerError("CS0029").WithSpan(new FileLinePositionSpan("/0/Test0.cs", startLinePosition, endLinePosition)).WithMessage("Cannot implicitly convert type 'int' to 'string'"),
             };
 
             await this.TestConstantMessage_Field_PassExecuterAsync("3", expected).ConfigureAwait(false);
@@ -73,7 +73,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             var endLinePosition = new LinePosition(5, 32);
             DiagnosticResult[] expected =
             {
-                DiagnosticResult.CompilerError("CS0029").WithSpan(new FileLinePositionSpan("Test0.cs", startLinePosition, endLinePosition)).WithMessage("Cannot implicitly convert type 'int' to 'string'"),
+                DiagnosticResult.CompilerError("CS0029").WithSpan(new FileLinePositionSpan("/0/Test0.cs", startLinePosition, endLinePosition)).WithMessage("Cannot implicitly convert type 'int' to 'string'"),
             };
 
             await this.TestConstantMessage_Local_PassExecuterAsync("3", expected).ConfigureAwait(false);
@@ -98,7 +98,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
             var endLinePosition = new LinePosition(startLinePosition.Line, startLinePosition.Character + 1);
             DiagnosticResult[] expected =
             {
-                DiagnosticResult.CompilerError("CS1503").WithSpan(new FileLinePositionSpan("Test0.cs", startLinePosition, endLinePosition)).WithMessage($"Argument {1 + this.InitialArguments.Count()}: cannot convert from 'int' to 'string'"),
+                DiagnosticResult.CompilerError("CS1503").WithSpan(new FileLinePositionSpan("/0/Test0.cs", startLinePosition, endLinePosition)).WithMessage($"Argument {1 + this.InitialArguments.Count()}: cannot convert from 'int' to 'string'"),
             };
 
             await this.TestConstantMessage_Inline_PassExecuterAsync("3", expected).ConfigureAwait(false);

@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
@@ -55,7 +55,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(MaintainabilityResources.SA1413Description), MaintainabilityResources.ResourceManager, typeof(MaintainabilityResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly Action<SyntaxNodeAnalysisContext> HandleObjectInitializerAction = HandleObjectInitializer;
         private static readonly Action<SyntaxNodeAnalysisContext> HandleAnonymousObjectInitializerAction = HandleAnonymousObjectInitializer;

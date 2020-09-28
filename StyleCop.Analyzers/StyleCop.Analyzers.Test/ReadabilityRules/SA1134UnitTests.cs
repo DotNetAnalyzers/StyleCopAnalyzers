@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
@@ -416,7 +416,7 @@ namespace TestNamespace
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Fact]
         [WorkItem(2894, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2894")]
-        public async Task VerifyInvalidMemberSyntaxInCodeFixAsync()
+        public virtual async Task VerifyInvalidMemberSyntaxInCodeFixAsync()
         {
             string testCode = @"class Program
 {

@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
@@ -314,6 +314,55 @@ public class ClassName
         }
 
         /// <summary>
+        /// Verifies that included documentation with missing elements documented produces the expected diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyIncludedPartialDocumentationMissingElementsAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <include file='WithPartialElementDocumentation.xml' path='/TestClass/TestMethod/*' />
+    public void TestMethod(string param1, string param2, string param3)
+    {
+    }
+}";
+            DiagnosticResult[] expected =
+            {
+                Diagnostic().WithLocation(8, 35).WithArguments("param1"),
+            };
+
+            await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Verifies that included documentation with missing elements documented produces the expected diagnostics.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
+        [Fact]
+        public async Task VerifyIncludedPartialDocumentationElementsAsync()
+        {
+            var testCode = @"
+/// <summary>
+/// Foo
+/// </summary>
+public class ClassName
+{
+    /// <param name=""param1"">Param 1</param>
+    /// <include file='WithPartialElementDocumentation.xml' path='/TestClass/TestMethod/*' />
+    public void TestMethod(string param1, string param2, string param3)
+    {
+    }
+}";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        /// <summary>
         /// Verifies that included documentation with an <c>&lt;inheritdoc&gt;</c> tag is ignored.
         /// </summary>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
@@ -357,6 +406,17 @@ public class ClassName
     </TestMethod>
 </TestClass>
 ";
+            string contentWithPartialElementDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
+<TestClass>
+    <TestMethod>
+        <summary>
+            Foo
+        </summary>
+        <param name=""param2"">Param 2</param>
+        <param name=""param3"">Param 3</param>
+    </TestMethod>
+</TestClass>
+";
             string contentWithInheritedDocumentation = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
  <TestClass>
     <TestMethod>
@@ -372,6 +432,7 @@ public class ClassName
                 {
                     { "MissingElementDocumentation.xml", contentWithoutElementDocumentation },
                     { "WithElementDocumentation.xml", contentWithElementDocumentation },
+                    { "WithPartialElementDocumentation.xml", contentWithPartialElementDocumentation },
                     { "InheritedDocumentation.xml", contentWithInheritedDocumentation },
                 },
             };

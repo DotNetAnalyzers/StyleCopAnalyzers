@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.DocumentationRules
 {
@@ -109,12 +109,14 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                     if (parentParameters.Length <= index || parentParameters[index] != parentParameter)
                     {
+#pragma warning disable RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor (https://github.com/dotnet/roslyn-analyzers/issues/4103)
                         context.ReportDiagnostic(
                             Diagnostic.Create(
                                 OrderDescriptor,
                                 location,
                                 nameAttributeText,
                                 parentParameters.IndexOf(parentParameter) + 1));
+#pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
                     }
                 }
 
@@ -180,12 +182,14 @@ namespace StyleCop.Analyzers.DocumentationRules
 
                     if (parentParameters.Length <= index || parentParameters[index] != parentParameter)
                     {
+#pragma warning disable RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor (https://github.com/dotnet/roslyn-analyzers/issues/4103)
                         context.ReportDiagnostic(
                             Diagnostic.Create(
                                 OrderDescriptor,
                                 identifierLocation,
                                 nameAttributeText,
                                 parentParameters.IndexOf(parentParameter) + 1));
+#pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
                     }
                 }
 

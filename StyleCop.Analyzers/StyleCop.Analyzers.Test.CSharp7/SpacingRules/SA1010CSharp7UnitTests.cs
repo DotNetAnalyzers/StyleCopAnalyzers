@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 {
@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.SpacingRules;
     using Xunit;
+    using static StyleCop.Analyzers.SpacingRules.SA1010OpeningSquareBracketsMustBeSpacedCorrectly;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1010OpeningSquareBracketsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
@@ -52,9 +53,9 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithArguments("not be preceded").WithLocation(7, 41),
-                Diagnostic().WithArguments("not be followed").WithLocation(7, 41),
-                Diagnostic().WithArguments("not be preceded").WithLocation(8, 41),
+                Diagnostic(DescriptorNotPreceded).WithLocation(7, 41),
+                Diagnostic(DescriptorNotFollowed).WithLocation(7, 41),
+                Diagnostic(DescriptorNotPreceded).WithLocation(8, 41),
             };
 
             await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
@@ -97,7 +98,7 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithArguments("not be followed").WithLocation(7, 37),
+                Diagnostic(DescriptorNotFollowed).WithLocation(7, 37),
             };
 
             await VerifyCSharpFixAsync(LanguageVersion.CSharp7_3, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);

@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
 {
@@ -7,8 +7,8 @@ namespace StyleCop.Analyzers.Test.CSharp7.SpacingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.SpacingRules;
-    using TestHelper;
     using Xunit;
+    using static StyleCop.Analyzers.SpacingRules.SA1015ClosingGenericBracketsMustBeSpacedCorrectly;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1015ClosingGenericBracketsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
@@ -45,9 +45,9 @@ public class Foo
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithLocation(7, 19).WithArguments(" not", "preceded"),
-                Diagnostic().WithLocation(7, 19).WithArguments(" not", "followed"),
-                Diagnostic().WithLocation(7, 32).WithArguments(" not", "preceded"),
+                Diagnostic(DescriptorNotPreceded).WithLocation(7, 19),
+                Diagnostic(DescriptorNotFollowed).WithLocation(7, 19),
+                Diagnostic(DescriptorNotPreceded).WithLocation(7, 32),
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);

@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.SpacingRules
 {
@@ -184,6 +184,11 @@ namespace StyleCop.Analyzers.SpacingRules
                 haveLeadingSpace = true;
                 break;
 
+            case SyntaxKindEx.PositionalPatternClause:
+                haveLeadingSpace = prevToken.IsKind(SyntaxKind.IsKeyword)
+                    || prevToken.IsKind(SyntaxKind.CommaToken);
+                break;
+
             case SyntaxKind.ArgumentList:
             case SyntaxKind.AttributeArgumentList:
             case SyntaxKind.CheckedExpression:
@@ -233,9 +238,11 @@ namespace StyleCop.Analyzers.SpacingRules
             case SyntaxKindEx.TupleType:
                 // Comma covers tuple types in parameters and nested within other tuple types.
                 // 'out', 'ref', 'in', 'params' parameters are covered by IsKeywordKind.
+                // Attributes of parameters are covered by checking the previous token's parent.
                 // Return types are handled by a helper.
                 haveLeadingSpace = prevToken.IsKind(SyntaxKind.CommaToken)
                     || SyntaxFacts.IsKeywordKind(prevToken.Kind())
+                    || prevToken.Parent.IsKind(SyntaxKind.AttributeList)
                     || ((TypeSyntax)token.Parent).GetContainingNotEnclosingType().IsReturnType();
                 break;
             }

@@ -20,6 +20,9 @@ jobs:
         BuildConfiguration: Release
         _debugArg: ''
   steps:
+  - powershell: .\init.ps1 -NoRestore
+    displayName: Install .NET Core SDK
+
   - task: NuGetToolInstaller@0
     displayName: 'Use NuGet 5.3.1'
     inputs:
@@ -49,6 +52,7 @@ jobs:
 
   - task: PublishTestResults@2
     displayName: Publish test results
+    condition: always()
     inputs:
       testResultsFormat: xUnit
       testResultsFiles: 'build/*.xml'

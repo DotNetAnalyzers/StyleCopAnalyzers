@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Status.Generator
 {
@@ -262,7 +262,7 @@ namespace StyleCop.Analyzers.Status.Generator
 
                 // We use the fact that the only parameter that returns a boolean is the one we are interested in
                 var enabledByDefaultParameter = from argument in initializer.ArgumentList.Arguments
-                                                where Equals(model.GetTypeInfo(argument.Expression).Type, this.booleanType)
+                                                where SymbolEqualityComparer.Default.Equals(model.GetTypeInfo(argument.Expression).Type, this.booleanType)
                                                 select argument.Expression;
                 var parameter = enabledByDefaultParameter.FirstOrDefault();
                 string parameterString = parameter.ToString();
@@ -296,7 +296,7 @@ namespace StyleCop.Analyzers.Status.Generator
 
             var noCodeFixAttribute = classSymbol
                 .GetAttributes()
-                .SingleOrDefault(x => Equals(x.AttributeClass, this.noCodeFixAttributeTypeSymbol));
+                .SingleOrDefault(x => SymbolEqualityComparer.Default.Equals(x.AttributeClass, this.noCodeFixAttributeTypeSymbol));
 
             bool hasCodeFix = noCodeFixAttribute == null;
             if (!hasCodeFix)
@@ -355,7 +355,7 @@ namespace StyleCop.Analyzers.Status.Generator
         {
             while (declaration != null)
             {
-                if (declaration.Equals(possibleBaseType))
+                if (SymbolEqualityComparer.Default.Equals(declaration, possibleBaseType))
                 {
                     return true;
                 }

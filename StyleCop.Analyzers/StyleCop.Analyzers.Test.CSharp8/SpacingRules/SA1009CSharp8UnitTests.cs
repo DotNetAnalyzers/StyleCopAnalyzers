@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
 {
@@ -7,10 +7,10 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
-    using StyleCop.Analyzers.SpacingRules;
     using StyleCop.Analyzers.Test.CSharp7.SpacingRules;
     using StyleCop.Analyzers.Test.Verifiers;
     using Xunit;
+    using static StyleCop.Analyzers.SpacingRules.SA1009ClosingParenthesisMustBeSpacedCorrectly;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1009ClosingParenthesisMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
@@ -43,6 +43,62 @@ public class Foo
 }";
 
             await VerifyCSharpFixAsync(LanguageVersion.CSharp8, testCode, DiagnosticResult.EmptyDiagnosticResults, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3143, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3143")]
+        public async Task TestFollowedBySuppressionOperator2Async()
+        {
+            const string testCode = @"
+using System;
+
+public class Base
+{
+    protected Base(Func<string, int> to, Func<int, string> from) => throw null;
+}
+
+public class Derived : Base
+{
+    public Derived()
+        : base(
+            (v) => int.Parse(v{|#0:)|} !,
+            (v) => v.ToString({|#1:)|} ! {|#2:)|}
+    {
+    }
+}
+";
+            const string fixedCode = @"
+using System;
+
+public class Base
+{
+    protected Base(Func<string, int> to, Func<int, string> from) => throw null;
+}
+
+public class Derived : Base
+{
+    public Derived()
+        : base(
+            (v) => int.Parse(v)!,
+            (v) => v.ToString()!)
+    {
+    }
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                // /0/Test0.cs(13,31): warning SA1009: Closing parenthesis should not be followed by a space
+                Diagnostic(DescriptorNotFollowed).WithLocation(0),
+
+                // /0/Test0.cs(14,31): warning SA1009: Closing parenthesis should not be followed by a space
+                Diagnostic(DescriptorNotFollowed).WithLocation(1),
+
+                // /0/Test0.cs(14,35): warning SA1009: Closing parenthesis should not be preceded by a space
+                Diagnostic(DescriptorNotPreceded).WithLocation(2),
+            };
+
+            await VerifyCSharpFixAsync(LanguageVersion.CSharp8, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]
@@ -142,7 +198,7 @@ namespace TestNamespace
     }
 }
 ";
-            DiagnosticResult expected = Diagnostic().WithSpan(28, 37, 28, 38).WithArguments(" not", "followed");
+            DiagnosticResult expected = Diagnostic(DescriptorNotFollowed).WithSpan(28, 37, 28, 38);
             await VerifyCSharpFixAsync(LanguageVersion.CSharp8, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }

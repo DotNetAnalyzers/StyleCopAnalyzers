@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Test.NamingRules
 {
@@ -45,6 +45,31 @@ namespace StyleCop.Analyzers.Test.NamingRules
         }
 
         [Fact]
+        public async Task TestAllowedLowerCaseNamespaceIsNotReportedAsync()
+        {
+            var customTestSettings = @"
+{
+  ""settings"": {
+    ""namingRules"": {
+      ""allowedNamespaceComponents"": [ ""eBay"" ]
+    }
+  }
+}
+";
+
+            var testCode = @"namespace eBay
+{ 
+
+}";
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                Settings = customTestSettings,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
         public async Task TestLowerCaseComlicatedNamespaceAsync()
         {
             var testCode = @"namespace test.foo.bar
@@ -65,6 +90,31 @@ namespace StyleCop.Analyzers.Test.NamingRules
             };
 
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        public async Task TestAllowedLowerCaseComplicatedNamespaceIsNotReportedAsync()
+        {
+            var customTestSettings = @"
+{
+  ""settings"": {
+    ""namingRules"": {
+      ""allowedNamespaceComponents"": [ ""iPod"" ]
+    }
+  }
+}
+";
+
+            var testCode = @"namespace Apple.iPod.Library
+{ 
+
+}";
+
+            await new CSharpTest
+            {
+                TestCode = testCode,
+                Settings = customTestSettings,
+            }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]

@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.SpacingRules
 {
@@ -31,17 +31,24 @@ namespace StyleCop.Analyzers.SpacingRules
         public const string DiagnosticId = "SA1010";
         private const string HelpLink = "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1010.md";
         private static readonly LocalizableString Title = new LocalizableResourceString(nameof(SpacingResources.SA1010Title), SpacingResources.ResourceManager, typeof(SpacingResources));
-        private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(SpacingResources.SA1010MessageFormat), SpacingResources.ResourceManager, typeof(SpacingResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(SpacingResources.SA1010Description), SpacingResources.ResourceManager, typeof(SpacingResources));
 
-        private static readonly DiagnosticDescriptor Descriptor =
-            new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+        private static readonly LocalizableString MessageNotPreceded = new LocalizableResourceString(nameof(SpacingResources.SA1010MessageNotPreceded), SpacingResources.ResourceManager, typeof(SpacingResources));
+        private static readonly LocalizableString MessageNotFollowed = new LocalizableResourceString(nameof(SpacingResources.SA1010MessageNotFollowed), SpacingResources.ResourceManager, typeof(SpacingResources));
 
         private static readonly Action<SyntaxTreeAnalysisContext> SyntaxTreeAction = HandleSyntaxTree;
 
+#pragma warning disable SA1202 // Elements should be ordered by access
+        internal static readonly DiagnosticDescriptor DescriptorNotPreceded =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageNotPreceded, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+
+        internal static readonly DiagnosticDescriptor DescriptorNotFollowed =
+            new DiagnosticDescriptor(DiagnosticId, Title, MessageNotFollowed, AnalyzerCategory.SpacingRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
+#pragma warning restore SA1202 // Elements should be ordered by access
+
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
-            ImmutableArray.Create(Descriptor);
+            ImmutableArray.Create(DescriptorNotPreceded);
 
         /// <inheritdoc/>
         public override void Initialize(AnalysisContext context)
@@ -95,13 +102,15 @@ namespace StyleCop.Analyzers.SpacingRules
             if (!firstInLine && precededBySpace && !ignorePrecedingSpaceProblem && !IsPartOfIndexInitializer(token))
             {
                 // Opening square bracket should {not be preceded} by a space.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemovePreceding, "not be preceded"));
+                context.ReportDiagnostic(Diagnostic.Create(DescriptorNotPreceded, token.GetLocation(), TokenSpacingProperties.RemovePreceding));
             }
 
             if (!lastInLine && followedBySpace)
             {
                 // Opening square bracket should {not be followed} by a space.
-                context.ReportDiagnostic(Diagnostic.Create(Descriptor, token.GetLocation(), TokenSpacingProperties.RemoveFollowing, "not be followed"));
+#pragma warning disable RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor (https://github.com/dotnet/roslyn-analyzers/issues/4103)
+                context.ReportDiagnostic(Diagnostic.Create(DescriptorNotFollowed, token.GetLocation(), TokenSpacingProperties.RemoveFollowing));
+#pragma warning restore RS1005 // ReportDiagnostic invoked with an unsupported DiagnosticDescriptor
             }
         }
 

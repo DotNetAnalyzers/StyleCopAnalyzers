@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
@@ -116,7 +116,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             var test = new CSharpTest
             {
                 TestCode = testCode,
-                CodeFixIndex = 1,
+                CodeActionIndex = 1,
                 FixedCode = fixedTestCode,
             };
 
@@ -194,7 +194,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             var test = new CSharpTest
             {
                 TestCode = testCode,
-                CodeFixIndex = 1,
+                CodeActionIndex = 1,
                 FixedCode = fixedTestCode,
             };
 
@@ -300,7 +300,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
             var test = new CSharpTest
             {
                 TestCode = testCode,
-                CodeFixIndex = 1,
+                CodeActionIndex = 1,
                 FixedCode = fixedTestCode,
             };
 
@@ -448,7 +448,7 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
                         new DiagnosticResult("CS0742", DiagnosticSeverity.Error).WithLocation(13, 38).WithMessage("A query body must end with a select clause or a group clause"),
                     },
                 },
-                CodeFixIndex = 1,
+                CodeActionIndex = 1,
             }.RunAsync(CancellationToken.None).ConfigureAwait(false);
         }
     }

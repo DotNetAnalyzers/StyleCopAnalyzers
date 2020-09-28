@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Helpers
 {
@@ -98,22 +98,22 @@ namespace StyleCop.Analyzers.Helpers
         private enum ModifierFlags
         {
             /// <summary>
-            /// No modifiers
+            /// No modifiers.
             /// </summary>
             None = 0,
 
             /// <summary>
-            /// Readonly modifier
+            /// <see langword="readonly"/> modifier.
             /// </summary>
             Readonly = 1,
 
             /// <summary>
-            /// Static modifier
+            /// <see langword="static"/> modifier.
             /// </summary>
             Static = 1 << 2,
 
             /// <summary>
-            /// Const modifier
+            /// <see langword="const"/> modifier.
             /// </summary>
             Const = 1 << 3,
         }

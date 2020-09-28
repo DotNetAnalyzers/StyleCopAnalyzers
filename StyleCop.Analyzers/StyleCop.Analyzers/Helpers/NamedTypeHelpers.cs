@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Helpers
 {
@@ -8,6 +8,8 @@ namespace StyleCop.Analyzers.Helpers
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
+
+    using StyleCop.Analyzers.Lightup;
 
     internal static class NamedTypeHelpers
     {
@@ -179,5 +181,8 @@ namespace StyleCop.Analyzers.Helpers
                 .Select(typeSymbol.FindImplementationForInterfaceMember)
                 .Any(x => memberSymbol.Equals(x));
         }
+
+        internal static INamedTypeSymbol TupleUnderlyingTypeOrSelf(this INamedTypeSymbol tupleSymbol)
+            => tupleSymbol.TupleUnderlyingType() ?? tupleSymbol;
     }
 }

@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.NamingRules
 {
@@ -26,7 +26,9 @@ namespace StyleCop.Analyzers.NamingRules
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(NamingResources.SA1301Description), NamingResources.ResourceManager, typeof(NamingResources));
 
         private static readonly DiagnosticDescriptor Descriptor =
+#pragma warning disable RS2000 // Add analyzer diagnostic IDs to analyzer release.
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.NamingRules, DiagnosticSeverity.Warning, AnalyzerConstants.DisabledByDefault, Description, HelpLink, WellKnownDiagnosticTags.NotConfigurable);
+#pragma warning restore RS2000 // Add analyzer diagnostic IDs to analyzer release.
 
         /// <inheritdoc/>
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } =
@@ -36,6 +38,9 @@ namespace StyleCop.Analyzers.NamingRules
         [ExcludeFromCodeCoverage]
         public override void Initialize(AnalysisContext context)
         {
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+            context.EnableConcurrentExecution();
+
             // Intentionally empty
         }
     }

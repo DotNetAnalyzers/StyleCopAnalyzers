@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
@@ -36,7 +36,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             var fixedCode = new[]
             {
-                ("Test0.cs", @"%1 Foo<T1>
+                ("/0/Test0.cs", @"%1 Foo<T1>
 {
 }
 "),
@@ -83,7 +83,7 @@ namespace StyleCop.Analyzers.Test.MaintainabilityRules
 
             var fixedCode = new[]
             {
-                ("Test0.cs", @"%1 Foo
+                ("/0/Test0.cs", @"%1 Foo
 {
 }
 "),
@@ -133,7 +133,7 @@ public partial {this.Keyword} Bar
 
             var fixedCode = new[]
             {
-                ("Test0.cs", $@"public partial {this.Keyword} Foo
+                ("/0/Test0.cs", $@"public partial {this.Keyword} Foo
 {{
 }}
 "),
@@ -159,7 +159,7 @@ public {this.Keyword} Test0
 
             var fixedCode = new[]
             {
-                ("Test0.cs", $@"public {this.Keyword} Test0
+                ("/0/Test0.cs", $@"public {this.Keyword} Test0
 {{
 }}"),
                 ("Foo.cs", $@"public {this.Keyword} Foo

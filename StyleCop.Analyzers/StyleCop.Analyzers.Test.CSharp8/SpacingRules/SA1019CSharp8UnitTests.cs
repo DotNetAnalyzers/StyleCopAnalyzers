@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
 {
@@ -9,6 +9,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.Test.CSharp7.SpacingRules;
     using Xunit;
+    using static StyleCop.Analyzers.SpacingRules.SA1019MemberAccessSymbolsMustBeSpacedCorrectly;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1019MemberAccessSymbolsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
@@ -55,10 +56,10 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
 
             DiagnosticResult[] expected =
             {
-                Diagnostic().WithArguments(".", "preceded").WithLocation(8, 39),
-                Diagnostic().WithArguments(".", "preceded").WithLocation(9, 40),
-                Diagnostic().WithArguments("?", "preceded").WithLocation(11, 39),
-                Diagnostic().WithArguments("?", "preceded").WithLocation(12, 40),
+                Diagnostic(DescriptorNotPreceded).WithArguments(".").WithLocation(8, 39),
+                Diagnostic(DescriptorNotPreceded).WithArguments(".").WithLocation(9, 40),
+                Diagnostic(DescriptorNotPreceded).WithArguments("?").WithLocation(11, 39),
+                Diagnostic(DescriptorNotPreceded).WithArguments("?").WithLocation(12, 40),
             };
 
             await VerifyCSharpFixAsync(LanguageVersion.CSharp8, testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);

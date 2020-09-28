@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Test.DocumentationRules
 {
@@ -170,6 +170,35 @@ public class TestClass
             };
 
             await VerifyCSharpFixAsync(testCode, expectedDiagnostics, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2950, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2950")]
+        public async Task TestEnumMemberAsync()
+        {
+            var testCode = @"
+public enum TestEnum
+{
+    /// <summary>
+    /// Enum member
+    /// </summary>
+    EnumMember = 0,
+}
+";
+
+            var fixedTestCode = @"
+public enum TestEnum
+{
+    /// <summary>
+    /// Enum member.
+    /// </summary>
+    EnumMember = 0,
+}
+";
+
+            var expected = Diagnostic().WithLocation(5, 20);
+
+            await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Fact]

@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Lightup
 {
@@ -18,6 +18,7 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind ConflictMarkerTrivia = (SyntaxKind)8564;
         public const SyntaxKind IsPatternExpression = (SyntaxKind)8657;
         public const SyntaxKind RangeExpression = (SyntaxKind)8658;
+        public const SyntaxKind ImplicitObjectCreationExpression = (SyntaxKind)8659;
         public const SyntaxKind CoalesceAssignmentExpression = (SyntaxKind)8725;
         public const SyntaxKind IndexExpression = (SyntaxKind)8741;
         public const SyntaxKind DefaultLiteralExpression = (SyntaxKind)8755;
@@ -48,5 +49,7 @@ namespace StyleCop.Analyzers.Lightup
         public const SyntaxKind ImplicitStackAllocArrayCreationExpression = (SyntaxKind)9053;
         public const SyntaxKind SuppressNullableWarningExpression = (SyntaxKind)9054;
         public const SyntaxKind NullableDirectiveTrivia = (SyntaxKind)9055;
+        public const SyntaxKind WithInitializerExpression = (SyntaxKind)9062;
+        public const SyntaxKind RecordDeclaration = (SyntaxKind)9063;
     }
 }

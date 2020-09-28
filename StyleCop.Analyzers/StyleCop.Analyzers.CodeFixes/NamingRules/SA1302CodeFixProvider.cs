@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.NamingRules
 {
@@ -27,6 +27,13 @@ namespace StyleCop.Analyzers.NamingRules
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(SA1302InterfaceNamesMustBeginWithI.DiagnosticId);
+
+        /// <inheritdoc/>
+        public override FixAllProvider GetFixAllProvider()
+        {
+            // Fix All is not yet supported
+            return null;
+        }
 
         /// <inheritdoc/>
         public override Task RegisterCodeFixesAsync(CodeFixContext context)

@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
 {
@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.Test.CSharp8.SpacingRules
     using System.Threading.Tasks;
     using StyleCop.Analyzers.Test.CSharp7.SpacingRules;
     using Xunit;
+    using static StyleCop.Analyzers.SpacingRules.SA1024ColonsMustBeSpacedCorrectly;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopCodeFixVerifier<
         StyleCop.Analyzers.SpacingRules.SA1024ColonsMustBeSpacedCorrectly,
         StyleCop.Analyzers.SpacingRules.TokenSpacingCodeFixProvider>;
@@ -49,7 +50,7 @@ public class Foo
     }
 }";
 
-            var expected = Diagnostic().WithSpan(9, 49, 9, 50).WithArguments(" not", "preceded", string.Empty);
+            var expected = Diagnostic(DescriptorNotPreceded).WithSpan(9, 49, 9, 50);
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }

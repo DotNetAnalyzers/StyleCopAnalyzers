@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.OrderingRules
 {
@@ -95,14 +95,26 @@ namespace StyleCop.Analyzers.OrderingRules
             {
                 var currentModifierType = GetModifierType(modifier);
 
+                bool reportPreviousModifier = false;
+                bool reportPreviousOtherModifier = false;
                 if (CompareModifiersType(currentModifierType, previousModifierType) < 0)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, modifier.GetLocation(), modifier.ValueText, previousModifier.ValueText));
+                    reportPreviousModifier = true;
                 }
 
                 if (AccessOrStaticModifierNotFollowingOtherModifier(currentModifierType, previousModifierType) && otherModifiersAppearEarlier)
                 {
-                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, modifier.GetLocation(), modifier.ValueText, previousOtherModifier.ValueText));
+                    reportPreviousOtherModifier = true;
+                }
+
+                if (reportPreviousModifier || reportPreviousOtherModifier)
+                {
+                    // Note: Only report one diagnostic per modifier. If both diagnostics apply, report the diagnostic
+                    // relative to the earlier modifier.
+                    var reportedModifier = reportPreviousModifier && (!reportPreviousOtherModifier || previousModifier.SpanStart < previousOtherModifier.SpanStart)
+                        ? previousModifier.ValueText
+                        : previousOtherModifier.ValueText;
+                    context.ReportDiagnostic(Diagnostic.Create(Descriptor, modifier.GetLocation(), modifier.ValueText, reportedModifier));
                 }
 
                 if (!otherModifiersAppearEarlier && currentModifierType == ModifierType.Other)

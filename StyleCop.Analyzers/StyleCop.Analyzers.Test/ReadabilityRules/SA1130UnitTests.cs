@@ -1,8 +1,9 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis;
@@ -15,9 +16,11 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
 
     public class SA1130UnitTests
     {
+        [SuppressMessage("MicrosoftCodeAnalysisDesign", "RS1032:Define diagnostic message correctly", Justification = "The message here matches the compiler.")]
         private static readonly DiagnosticDescriptor CS1065 =
                    new DiagnosticDescriptor(nameof(CS1065), "Title", "Default values are not valid in this context.", "Category", DiagnosticSeverity.Error, AnalyzerConstants.EnabledByDefault);
 
+        [SuppressMessage("MicrosoftCodeAnalysisDesign", "RS1032:Define diagnostic message correctly", Justification = "The message here matches the compiler.")]
         private static readonly DiagnosticDescriptor CS7014 =
                    new DiagnosticDescriptor(nameof(CS7014), "Title", "Attributes are not valid in this context.", "Category", DiagnosticSeverity.Error, AnalyzerConstants.EnabledByDefault);
 

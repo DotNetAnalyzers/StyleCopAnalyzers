@@ -1,10 +1,12 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Test.Verifiers
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
     using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
@@ -97,16 +99,16 @@ namespace StyleCop.Analyzers.Test.Verifiers
 
             public CSharpTest(LanguageVersion? languageVersion)
             {
+                this.ReferenceAssemblies = GenericAnalyzerTest.ReferenceAssemblies;
+
                 this.OptionsTransforms.Add(options =>
                     options
                     .WithChangedOption(FormattingOptions.IndentationSize, this.Language, this.IndentationSize)
                     .WithChangedOption(FormattingOptions.TabSize, this.Language, this.TabSize)
                     .WithChangedOption(FormattingOptions.UseTabs, this.Language, this.UseTabs));
 
-                this.TestState.AdditionalReferences.Add(GenericAnalyzerTest.CSharpSymbolsReference);
-                this.TestState.AdditionalReferences.Add(Netstandard20Reference);
                 this.TestState.AdditionalFilesFactories.Add(GenerateSettingsFile);
-                this.CodeFixValidationMode = CodeFixValidationMode.None;
+                this.CodeActionValidationMode = CodeActionValidationMode.None;
 
                 if (languageVersion != null)
                 {
@@ -116,6 +118,20 @@ namespace StyleCop.Analyzers.Test.Verifiers
                         return solution.WithProjectParseOptions(projectId, parseOptions.WithLanguageVersion(languageVersion.Value));
                     });
                 }
+
+                this.SolutionTransforms.Add((solution, projectId) =>
+                {
+                    var corlib = solution.GetProject(projectId).MetadataReferences.OfType<PortableExecutableReference>()
+                        .Single(reference => Path.GetFileName(reference.FilePath) == "mscorlib.dll");
+                    var system = solution.GetProject(projectId).MetadataReferences.OfType<PortableExecutableReference>()
+                        .Single(reference => Path.GetFileName(reference.FilePath) == "System.dll");
+
+                    return solution
+                        .RemoveMetadataReference(projectId, corlib)
+                        .RemoveMetadataReference(projectId, system)
+                        .AddMetadataReference(projectId, corlib.WithAliases(new[] { "global", "corlib" }))
+                        .AddMetadataReference(projectId, system.WithAliases(new[] { "global", "system" }));
+                });
 
                 return;
 
@@ -221,9 +237,6 @@ namespace StyleCop.Analyzers.Test.Verifiers
             /// The list of explicitly enabled diagnostic identifiers.
             /// </value>
             public List<string> ExplicitlyEnabledDiagnostics { get; } = new List<string>();
-
-            private static Assembly Netstandard20Reference
-                => Assembly.Load("netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51");
 
             protected override CompilationOptions CreateCompilationOptions()
             {

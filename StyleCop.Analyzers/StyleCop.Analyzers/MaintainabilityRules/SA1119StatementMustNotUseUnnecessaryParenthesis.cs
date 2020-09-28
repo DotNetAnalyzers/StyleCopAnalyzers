@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.MaintainabilityRules
 {
@@ -10,6 +10,7 @@ namespace StyleCop.Analyzers.MaintainabilityRules
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
     using Microsoft.CodeAnalysis.Diagnostics;
+    using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Helpers;
     using StyleCop.Analyzers.Lightup;
 
@@ -64,7 +65,9 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
 
         private static readonly DiagnosticDescriptor ParenthesisDescriptor =
+#pragma warning disable RS2000 // Add analyzer diagnostic IDs to analyzer release.
             new DiagnosticDescriptor(ParenthesesDiagnosticId, Title, MessageFormat, AnalyzerCategory.MaintainabilityRules, DiagnosticSeverity.Hidden, AnalyzerConstants.EnabledByDefault, Description, HelpLink, customTags: new[] { WellKnownDiagnosticTags.Unnecessary, WellKnownDiagnosticTags.NotConfigurable });
+#pragma warning restore RS2000 // Add analyzer diagnostic IDs to analyzer release.
 
         private static readonly Action<CompilationStartAnalysisContext> CompilationStartAction = HandleCompilationStart;
         private static readonly Action<SyntaxNodeAnalysisContext> ParenthesizedExpressionAction = HandleParenthesizedExpression;
@@ -121,6 +124,16 @@ namespace StyleCop.Analyzers.MaintainabilityRules
                         && (node.Parent is ElementAccessExpressionSyntax
                         || node.Parent is MemberAccessExpressionSyntax
                         || node.Parent is ConditionalAccessExpressionSyntax))
+                    {
+                        return;
+                    }
+
+                    if (IsSwitchExpressionPrecededByTypeCast(node))
+                    {
+                        return;
+                    }
+
+                    if (IsSwitchExpressionExpressionOfMemberAccess(node))
                     {
                         return;
                     }
@@ -195,6 +208,39 @@ namespace StyleCop.Analyzers.MaintainabilityRules
             }
 
             return false;
+        }
+
+        private static bool IsSwitchExpressionPrecededByTypeCast(ParenthesizedExpressionSyntax node)
+        {
+            if (!node.Expression.IsKind(SyntaxKindEx.SwitchExpression))
+            {
+                return false;
+            }
+
+            var previousToken = node.OpenParenToken.GetPreviousToken();
+
+            while (previousToken.IsKind(SyntaxKind.OpenParenToken) && previousToken.Parent.IsKind(SyntaxKind.ParenthesizedExpression))
+            {
+                previousToken = previousToken.GetPreviousToken();
+            }
+
+            return previousToken.IsKind(SyntaxKind.CloseParenToken) && previousToken.Parent.IsKind(SyntaxKind.CastExpression);
+        }
+
+        private static bool IsSwitchExpressionExpressionOfMemberAccess(ParenthesizedExpressionSyntax node)
+        {
+            if (!node.Expression.IsKind(SyntaxKindEx.SwitchExpression))
+            {
+                return false;
+            }
+
+            return node.Parent switch
+            {
+                MemberAccessExpressionSyntax memberAccessExpression => memberAccessExpression.Expression == node,
+                ConditionalAccessExpressionSyntax conditionalAccessExpression => conditionalAccessExpression.Expression == node,
+                ElementAccessExpressionSyntax elementAccessExpression => elementAccessExpression.Expression == node,
+                _ => false,
+            };
         }
 
         private static void ReportDiagnostic(SyntaxNodeAnalysisContext context, ParenthesizedExpressionSyntax node)

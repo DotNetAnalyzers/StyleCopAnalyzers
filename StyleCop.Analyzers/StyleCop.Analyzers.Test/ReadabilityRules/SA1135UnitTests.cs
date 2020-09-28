@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
@@ -98,18 +98,6 @@ namespace System.Threading
 {
     using global::System.IO;
     using global::System.Threading.Tasks;
-}";
-
-            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-        }
-
-        [Fact]
-        public async Task TestStaticUsingsAsync()
-        {
-            const string testCode = @"
-namespace System.Threading
-{
-    using static Console;
 }";
 
             await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
@@ -413,6 +401,72 @@ namespace System
 ";
 
             var expected = Diagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorType).WithLocation(4, 5).WithArguments("System.Collections.Generic.List<System.ValueTuple<int, int>>");
+            await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3149, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3149")]
+        public async Task TestAliasTypeClrTypeAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    using Example = System.Collections.Generic.List<System.Object>;
+}
+";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3149, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3149")]
+        public async Task TestAliasTypeGenericNullableAsync()
+        {
+            var testCode = @"
+namespace TestNamespace
+{
+    using Example = System.Nullable<int>;
+}
+";
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(3166, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/3166")]
+        public async Task TestAliasClrTypeAsync()
+        {
+            var testCode = @"
+namespace System
+{
+    using Float = System.Double;
+}
+";
+
+            await VerifyCSharpDiagnosticAsync(testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+        }
+
+        [Fact]
+        [WorkItem(2618, "https://github.com/DotNetAnalyzers/StyleCopAnalyzers/issues/2618")]
+        public async Task TestUnqualifiedStaticUsingsAsync()
+        {
+            const string testCode = @"
+namespace System.Threading
+{
+    using static Console;
+}
+";
+
+            const string fixedCode = @"
+namespace System.Threading
+{
+    using static System.Console;
+}
+";
+
+            DiagnosticResult[] expected =
+            {
+                Diagnostic(SA1135UsingDirectivesMustBeQualified.DescriptorType).WithLocation(4, 5).WithArguments("System.Console"),
+            };
+
             await VerifyCSharpFixAsync(testCode, expected, fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
     }

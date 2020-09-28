@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.SpacingRules
 {
@@ -102,7 +102,8 @@ namespace StyleCop.Analyzers.SpacingRules
                     || nextToken.IsKind(SyntaxKind.DotToken)
                     || (nextToken.IsKind(SyntaxKind.QuestionToken) && nextToken.GetNextToken(includeZeroWidth: true).IsKind(SyntaxKind.DotToken))
                     || nextToken.IsKind(SyntaxKind.CloseBracketToken)
-                    || (nextToken.IsKind(SyntaxKind.ColonToken) && nextToken.Parent.IsKind(SyntaxKindEx.CasePatternSwitchLabel));
+                    || (nextToken.IsKind(SyntaxKind.ColonToken) && nextToken.Parent.IsKind(SyntaxKindEx.CasePatternSwitchLabel))
+                    || (nextToken.IsKind(SyntaxKind.ExclamationToken) && nextToken.Parent.IsKind(SyntaxKindEx.SuppressNullableWarningExpression));
             }
             else
             {

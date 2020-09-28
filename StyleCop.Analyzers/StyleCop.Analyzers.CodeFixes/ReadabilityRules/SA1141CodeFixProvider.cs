@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
@@ -24,6 +24,13 @@ namespace StyleCop.Analyzers.ReadabilityRules
         /// <inheritdoc/>
         public override ImmutableArray<string> FixableDiagnosticIds { get; } =
             ImmutableArray.Create(SA1141UseTupleSyntax.DiagnosticId);
+
+        /// <inheritdoc/>
+        public override FixAllProvider GetFixAllProvider()
+        {
+            // Fix All is not yet supported
+            return null;
+        }
 
         /// <inheritdoc/>
         public override Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -125,7 +132,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 var argument = arguments[i];
 
                 var argumentTypeInfo = semanticModel.GetTypeInfo(argument.Expression);
-                if (argumentTypeInfo.Type != argumentTypeInfo.ConvertedType)
+                if (!Equals(argumentTypeInfo.Type, argumentTypeInfo.ConvertedType))
                 {
                     var expectedType = SyntaxFactory.ParseTypeName(argumentTypeInfo.ConvertedType.ToDisplayString());
                     argument = argument.WithExpression(SyntaxFactory.CastExpression(expectedType, argument.Expression));

@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Test.OrderingRules
 {
@@ -136,7 +136,7 @@ namespace Test
     }
 }";
 
-            DiagnosticResult expected = Diagnostic().WithLocation("Test0.cs", 2, 1);
+            DiagnosticResult expected = Diagnostic().WithLocation("/0/Test0.cs", 2, 1);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
@@ -188,7 +188,7 @@ namespace Test
     }
 }";
 
-            DiagnosticResult expected = Diagnostic().WithLocation("Test0.cs", 4, 5);
+            DiagnosticResult expected = Diagnostic().WithLocation("/0/Test0.cs", 4, 5);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }
@@ -222,7 +222,7 @@ namespace Test
     }
 }";
 
-            DiagnosticResult expected = Diagnostic().WithLocation("Test0.cs", 4, 5);
+            DiagnosticResult expected = Diagnostic().WithLocation("/0/Test0.cs", 4, 5);
 
             await VerifyCSharpFixAsync(testCode, expected, fixedTestCode, CancellationToken.None).ConfigureAwait(false);
         }

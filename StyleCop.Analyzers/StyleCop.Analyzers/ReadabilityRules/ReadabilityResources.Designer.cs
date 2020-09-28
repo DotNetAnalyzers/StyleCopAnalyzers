@@ -431,7 +431,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Opening parenthesis or bracket should be on declaration line..
+        ///   Looks up a localized string similar to Opening parenthesis or bracket should be on declaration line.
         /// </summary>
         internal static string SA1110MessageFormat {
             get {
@@ -512,7 +512,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Comma should be on the same line as previous parameter..
+        ///   Looks up a localized string similar to Comma should be on the same line as previous parameter.
         /// </summary>
         internal static string SA1113MessageFormat {
             get {
@@ -566,7 +566,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The parameter should begin on the line after the previous parameter..
+        ///   Looks up a localized string similar to The parameter should begin on the line after the previous parameter.
         /// </summary>
         internal static string SA1115MessageFormat {
             get {
@@ -629,7 +629,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The parameters should all be placed on the same line or each parameter should be placed on its own line..
+        ///   Looks up a localized string similar to The parameters should all be placed on the same line or each parameter should be placed on its own line.
         /// </summary>
         internal static string SA1117MessageFormat {
             get {
@@ -791,7 +791,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Region should not be located within a code element..
+        ///   Looks up a localized string similar to Region should not be located within a code element.
         /// </summary>
         internal static string SA1123MessageFormat {
             get {
@@ -1124,7 +1124,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Each attribute should be placed in its own set of square brackets..
+        ///   Looks up a localized string similar to Each attribute should be placed in its own set of square brackets.
         /// </summary>
         internal static string SA1133MessageFormat {
             get {
@@ -1160,7 +1160,7 @@ namespace StyleCop.Analyzers.ReadabilityRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Each attribute should be placed on its own line of code..
+        ///   Looks up a localized string similar to Each attribute should be placed on its own line of code.
         /// </summary>
         internal static string SA1134MessageFormat {
             get {

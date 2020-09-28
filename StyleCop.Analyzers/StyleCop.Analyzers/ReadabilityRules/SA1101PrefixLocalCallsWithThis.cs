@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
@@ -96,13 +96,23 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
 
             case SyntaxKind.SimpleAssignmentExpression:
-                if (((AssignmentExpressionSyntax)context.Node.Parent).Left == context.Node
-                    && (context.Node.Parent.Parent?.IsKind(SyntaxKind.ObjectInitializerExpression) ?? true))
+                if (((AssignmentExpressionSyntax)context.Node.Parent).Left == context.Node)
                 {
-                    /* Handle 'X' in:
-                     *   new TypeName() { X = 3 }
-                     */
-                    return;
+                    if (context.Node.Parent.Parent.IsKind(SyntaxKind.ObjectInitializerExpression))
+                    {
+                        /* Handle 'X' in:
+                         *   new TypeName() { X = 3 }
+                         */
+                        return;
+                    }
+
+                    if (context.Node.Parent.Parent.IsKind(SyntaxKindEx.WithInitializerExpression))
+                    {
+                        /* Handle 'X' in:
+                         *   value with { X = 3 }
+                         */
+                        return;
+                    }
                 }
 
                 break;

@@ -548,7 +548,7 @@ namespace StyleCop.Analyzers.OrderingRules {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Using static directives should be placed at the correct location..
+        ///   Looks up a localized string similar to Using static directives should be placed at the correct location.
         /// </summary>
         internal static string SA1216Title {
             get {

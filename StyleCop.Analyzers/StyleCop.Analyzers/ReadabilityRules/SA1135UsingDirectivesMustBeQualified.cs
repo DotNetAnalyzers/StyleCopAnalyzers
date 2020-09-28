@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.ReadabilityRules
 {
@@ -73,12 +73,6 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 return;
             }
 
-            if (!usingDirective.StaticKeyword.IsKind(SyntaxKind.None))
-            {
-                // using static types is not considered.
-                return;
-            }
-
             if (usingDirective.HasNamespaceAliasQualifier())
             {
                 // global qualified namespaces are OK.
@@ -95,7 +89,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
             if (symbol is INamedTypeSymbol typeSymbol
                 && typeSymbol.IsTupleType())
             {
-                symbol = typeSymbol.TupleUnderlyingType();
+                symbol = typeSymbol.TupleUnderlyingTypeOrSelf();
             }
 
             string symbolString = symbol.ToQualifiedString(usingDirective.Name);

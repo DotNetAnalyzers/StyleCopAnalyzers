@@ -1,5 +1,5 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace StyleCop.Analyzers.Test.MaintainabilityRules
 {
@@ -30,7 +30,7 @@ public delegate void Bar();
 
             var fixedCode = new[]
             {
-                ("Test0.cs", @"public delegate void Foo();
+                ("/0/Test0.cs", @"public delegate void Foo();
 "),
                 ("Bar.cs", @"public delegate void Bar();
 "),
@@ -49,7 +49,7 @@ public delegate void Bar<T1, T2, T3>(T1 x, T2 y, T3 z);
 
             var fixedCode = new[]
             {
-                ("Test0.cs", @"public delegate void Foo();
+                ("/0/Test0.cs", @"public delegate void Foo();
 "),
                 ("Bar.cs", @"public delegate void Bar<T1, T2, T3>(T1 x, T2 y, T3 z);
 "),
@@ -93,7 +93,7 @@ public delegate void FooBar();
 
             var fixedCode = new[]
             {
-                ("Test0.cs", @"public delegate void Foo();
+                ("/0/Test0.cs", @"public delegate void Foo();
 "),
                 ("Bar.cs", @"public delegate void Bar();
 "),
@@ -119,7 +119,7 @@ public delegate void Test0();
 
             var fixedCode = new[]
             {
-                ("Test0.cs", $@"public delegate void Test0();
+                ("/0/Test0.cs", $@"public delegate void Test0();
 "),
                 ("Foo.cs", $@"public delegate void Foo();
 "),
