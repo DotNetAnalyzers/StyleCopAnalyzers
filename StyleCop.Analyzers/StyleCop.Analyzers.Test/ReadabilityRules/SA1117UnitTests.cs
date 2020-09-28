@@ -1,17 +1,12 @@
 ﻿// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-// Several test methods in this file use the same member data, but in some cases the test does not use all of the
-// supported parameters. See https://github.com/xunit/xunit/issues/1556.
-#pragma warning disable xUnit1026 // Theory methods should use all of their parameters
-
 namespace StyleCop.Analyzers.Test.ReadabilityRules
 {
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
     using Microsoft.CodeAnalysis.Testing;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.StyleCopDiagnosticVerifier<StyleCop.Analyzers.ReadabilityRules.SA1117ParametersMustBeOnSameLineOrSeparateLines>;
 
@@ -19,36 +14,36 @@ namespace StyleCop.Analyzers.Test.ReadabilityRules
     {
         public static IEnumerable<object[]> GetTestDeclarations(string delimiter)
         {
-            yield return new object[] { $"public Foo(int a, int b,{delimiter} string s) {{ }}" };
-            yield return new object[] { $"public object Bar(int a, int b,{delimiter} string s) => null;" };
-            yield return new object[] { $"public object this[int a, int b,{delimiter} string s] => null;" };
-            yield return new object[] { $"public delegate void Bar(int a, int b,{delimiter} string s);" };
+            yield return new object[] { $"public Foo(int a, int b,{delimiter} {{|#0:string s|}}) {{ }}" };
+            yield return new object[] { $"public object Bar(int a, int b,{delimiter} {{|#0:string s|}}) => null;" };
+            yield return new object[] { $"public object this[int a, int b,{delimiter} {{|#0:string s|}}] => null;" };
+            yield return new object[] { $"public delegate void Bar(int a, int b,{delimiter} {{|#0:string s|}});" };
         }
 
         public static IEnumerable<object[]> GetTestConstructorInitializers(string delimiter)
         {
-            yield return new object[] { $"this(42, 43, {delimiter} \"hello\")" };
-            yield return new object[] { $"base(42, 43, {delimiter} \"hello\")" };
+            yield return new object[] { $"this(42, 43, {delimiter} {{|#0:\"hello\"|}})" };
+            yield return new object[] { $"base(42, 43, {delimiter} {{|#0:\"hello\"|}})" };
         }
 
         public static IEnumerable<object[]> GetTestExpressions(string delimiter)
         {
-            yield return new object[] { $"Bar(1, 2, {delimiter} 2)", 13 };
-            yield return new object[] { $"System.Action<int, int, int> func = (int x, int y, {delimiter} int z) => Bar(x, y, z)", 41 };
-            yield return new object[] { $"System.Action<int, int, int> func = delegate(int x, int y, {delimiter} int z) {{ Bar(x, y, z); }}", 49 };
-            yield return new object[] { $"new System.DateTime(2015, 9, {delimiter} 14)", 20 };
-            yield return new object[] { $"var arr = new string[2, 2, {delimiter} 2];", 30 };
-            yield return new object[] { $"char cc = (new char[3, 3, 3])[2, 2,{delimiter} 2];", 36 };
-            yield return new object[] { $"char? c = (new char[3, 3, 3])?[2, 2,{delimiter} 2];", 37 };
-            yield return new object[] { $"long ll = this[2, 2,{delimiter} 2];", 24 };
+            yield return new object[] { $"Bar(1, 2, {delimiter} {{|#0:2|}})" };
+            yield return new object[] { $"System.Action<int, int, int> func = (int x, int y, {delimiter} {{|#0:int z|}}) => Bar(x, y, z)" };
+            yield return new object[] { $"System.Action<int, int, int> func = delegate(int x, int y, {delimiter} {{|#0:int z|}}) {{ Bar(x, y, z); }}" };
+            yield return new object[] { $"new System.DateTime(2015, 9, {delimiter} {{|#0:14|}})" };
+            yield return new object[] { $"var arr = new string[2, 2, {delimiter} {{|#0:2|}}];" };
+            yield return new object[] { $"char cc = (new char[3, 3, 3])[2, 2,{delimiter} {{|#0:2|}}];" };
+            yield return new object[] { $"char? c = (new char[3, 3, 3])?[2, 2,{delimiter} {{|#0:2|}}];" };
+            yield return new object[] { $"long ll = this[2, 2,{delimiter} {{|#0:2|}}];" };
         }
 
         public static IEnumerable<object[]> ValidTestExpressions()
         {
-            yield return new object[] { $"System.Action func = () => Bar(0, 2, 3)", 0 };
-            yield return new object[] { $"System.Action<int> func = x => Bar(x, 2, 3)", 0 };
-            yield return new object[] { $"System.Action func = delegate {{ Bar(0, 0, 0); }}", 0 };
-            yield return new object[] { "var weird = new int[10][,,,];", 0 };
+            yield return new object[] { $"System.Action func = () => Bar(0, 2, 3)" };
+            yield return new object[] { $"System.Action<int> func = x => Bar(x, 2, 3)" };
+            yield return new object[] { $"System.Action func = delegate {{ Bar(0, 0, 0); }}" };
+            yield return new object[] { "var weird = new int[10][,,,];" };
         }
 
         public static IEnumerable<object[]> ValidTestDeclarations()
@@ -90,7 +85,7 @@ class Foo
     {declaration}
 }}";
 
-            DiagnosticResult expected = Diagnostic().WithLocation(5, 2);
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -147,18 +142,15 @@ class Derived : Base
     }}
 }}";
 
-            DiagnosticResult expected = Diagnostic().WithLocation(13, 2);
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
         [Theory]
         [MemberData(nameof(GetTestExpressions), "")]
         [MemberData(nameof(ValidTestExpressions))]
-        public async Task TestValidExpressionAsync(string expression, int column)
+        public async Task TestValidExpressionAsync(string expression)
         {
-            // Not needed for this test
-            _ = column;
-
             var testCode = $@"
 class Foo
 {{
@@ -179,11 +171,8 @@ class Foo
 
         [Theory]
         [MemberData(nameof(GetTestExpressions), "\r\n")]
-        public async Task TestInvalidExpressionAsync(string expression, int column)
+        public async Task TestInvalidExpressionAsync(string expression)
         {
-            // Not needed for this test
-            _ = column;
-
             var testCode = $@"
 class Foo
 {{
@@ -199,7 +188,7 @@ class Foo
     public long this[int a, int b, int s] => a + b + s;
 }}";
 
-            DiagnosticResult expected = Diagnostic().WithLocation(11, 2);
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
 
@@ -243,12 +232,12 @@ public class MyAttribute : System.Attribute
 
 [MyAttribute(
     1,
-    2, 3)]
+    2, {|#0:3|})]
 class Foo
 {
 }";
 
-            DiagnosticResult expected = Diagnostic().WithLocation(12, 8);
+            DiagnosticResult expected = Diagnostic().WithLocation(0);
             await VerifyCSharpDiagnosticAsync(testCode, expected, CancellationToken.None).ConfigureAwait(false);
         }
     }
