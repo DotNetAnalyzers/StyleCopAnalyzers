@@ -4,9 +4,7 @@
 namespace StyleCop.Analyzers.ReadabilityRules
 {
     using System;
-    using System.Collections.Generic;
     using System.Collections.Immutable;
-    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -227,7 +225,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             Analyze(context, arguments);
         }
 
-        private static void Analyze(SyntaxNodeAnalysisContext context, IReadOnlyList<SyntaxNode> arguments)
+        private static void Analyze<T>(SyntaxNodeAnalysisContext context, SeparatedSyntaxList<T> arguments)
+            where T : SyntaxNode
         {
             if (arguments.Count < 2)
             {
