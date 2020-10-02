@@ -6,10 +6,10 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
     using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.Testing;
     using StyleCop.Analyzers.DocumentationRules;
     using StyleCop.Analyzers.Test.Verifiers;
-    using TestHelper;
     using Xunit;
     using static StyleCop.Analyzers.Test.Verifiers.CustomDiagnosticVerifier<StyleCop.Analyzers.DocumentationRules.SA1649FileNameMustMatchTypeName>;
 
@@ -42,9 +42,9 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         {
             get
             {
-                yield return new object[] { "class" };
-                yield return new object[] { "struct" };
-                yield return new object[] { "interface" };
+                yield return new object[] { "class", LanguageVersion.CSharp6 };
+                yield return new object[] { "struct", LanguageVersion.CSharp6 };
+                yield return new object[] { "interface", LanguageVersion.CSharp6 };
             }
         }
 
@@ -52,10 +52,11 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         /// Verifies that a wrong file name is correctly reported.
         /// </summary>
         /// <param name="typeKeyword">The type keyword to use during the test.</param>
+        /// <param name="languageVersion">The language version to test with.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TypeKeywords))]
-        public async Task VerifyWrongFileNameAsync(string typeKeyword)
+        public virtual async Task VerifyWrongFileNameAsync(string typeKeyword, LanguageVersion languageVersion)
         {
             var testCode = $@"namespace TestNamespace
 {{
@@ -74,7 +75,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 ";
 
             var expectedDiagnostic = Diagnostic().WithLocation("WrongFileName.cs", 3, 13 + typeKeyword.Length);
-            await VerifyCSharpFixAsync("WrongFileName.cs", testCode, StyleCopSettings, expectedDiagnostic, "TestType.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(languageVersion, "WrongFileName.cs", testCode, StyleCopSettings, expectedDiagnostic, "TestType.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -82,10 +83,11 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         /// regression test for DotNetAnalyzers/StyleCopAnalyzers#1829.
         /// </summary>
         /// <param name="typeKeyword">The type keyword to use during the test.</param>
+        /// <param name="languageVersion">The language version to test with.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TypeKeywords))]
-        public async Task VerifyWrongFileNameMultipleExtensionsAsync(string typeKeyword)
+        public virtual async Task VerifyWrongFileNameMultipleExtensionsAsync(string typeKeyword, LanguageVersion languageVersion)
         {
             var testCode = $@"namespace TestNamespace
 {{
@@ -104,7 +106,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 ";
 
             var expectedDiagnostic = Diagnostic().WithLocation("WrongFileName.svc.cs", 3, 13 + typeKeyword.Length);
-            await VerifyCSharpFixAsync("WrongFileName.svc.cs", testCode, StyleCopSettings, expectedDiagnostic, "TestType.svc.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(languageVersion, "WrongFileName.svc.cs", testCode, StyleCopSettings, expectedDiagnostic, "TestType.svc.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -112,10 +114,11 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         /// for DotNetAnalyzers/StyleCopAnalyzers#1829.
         /// </summary>
         /// <param name="typeKeyword">The type keyword to use during the test.</param>
+        /// <param name="languageVersion">The language version to test with.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TypeKeywords))]
-        public async Task VerifyWrongFileNameNoExtensionAsync(string typeKeyword)
+        public virtual async Task VerifyWrongFileNameNoExtensionAsync(string typeKeyword, LanguageVersion languageVersion)
         {
             var testCode = $@"namespace TestNamespace
 {{
@@ -134,17 +137,18 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 ";
 
             var expectedDiagnostic = Diagnostic().WithLocation("WrongFileName", 3, 13 + typeKeyword.Length);
-            await VerifyCSharpFixAsync("WrongFileName", testCode, StyleCopSettings, expectedDiagnostic, "TestType", fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(languageVersion, "WrongFileName", testCode, StyleCopSettings, expectedDiagnostic, "TestType", fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Verifies that the file name is not case sensitive.
         /// </summary>
         /// <param name="typeKeyword">The type keyword to use during the test.</param>
+        /// <param name="languageVersion">The language version to test with.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TypeKeywords))]
-        public async Task VerifyCaseInsensitivityAsync(string typeKeyword)
+        public virtual async Task VerifyCaseInsensitivityAsync(string typeKeyword, LanguageVersion languageVersion)
         {
             var testCode = $@"namespace TestNamespace
 {{
@@ -154,17 +158,18 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 }}
 ";
 
-            await VerifyCSharpDiagnosticAsync("testtype.cs", testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(languageVersion, "testtype.cs", testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Verifies that the file name is based on the first type.
         /// </summary>
         /// <param name="typeKeyword">The type keyword to use during the test.</param>
+        /// <param name="languageVersion">The language version to test with.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TypeKeywords))]
-        public async Task VerifyFirstTypeIsUsedAsync(string typeKeyword)
+        public virtual async Task VerifyFirstTypeIsUsedAsync(string typeKeyword, LanguageVersion languageVersion)
         {
             var testCode = $@"namespace TestNamespace
 {{
@@ -178,17 +183,18 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 }}
 ";
 
-            await VerifyCSharpDiagnosticAsync("TestType.cs", testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(languageVersion, "TestType.cs", testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Verifies that partial types are ignored.
         /// </summary>
         /// <param name="typeKeyword">The type keyword to use during the test.</param>
+        /// <param name="languageVersion">The language version to test with.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TypeKeywords))]
-        public async Task VerifyThatPartialTypesAreIgnoredAsync(string typeKeyword)
+        public virtual async Task VerifyThatPartialTypesAreIgnoredAsync(string typeKeyword, LanguageVersion languageVersion)
         {
             var testCode = $@"namespace TestNamespace
 {{
@@ -198,17 +204,18 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 }}
 ";
 
-            await VerifyCSharpDiagnosticAsync("WrongFileName.cs", testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(languageVersion, "WrongFileName.cs", testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Verifies that the StyleCop file name convention for a generic type is handled correctly.
         /// </summary>
         /// <param name="typeKeyword">The type keyword to use during the test.</param>
+        /// <param name="languageVersion">The language version to test with.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TypeKeywords))]
-        public async Task VerifyStyleCopNamingConventionForGenericTypeAsync(string typeKeyword)
+        public virtual async Task VerifyStyleCopNamingConventionForGenericTypeAsync(string typeKeyword, LanguageVersion languageVersion)
         {
             var testCode = $@"namespace TestNamespace
 {{
@@ -219,18 +226,19 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 ";
 
             var expectedDiagnostic = Diagnostic().WithLocation("TestType`3.cs", 3, 13 + typeKeyword.Length);
-            await VerifyCSharpDiagnosticAsync("TestType.cs", testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
-            await VerifyCSharpFixAsync("TestType`3.cs", testCode, StyleCopSettings, expectedDiagnostic, "TestType{T1,T2,T3}.cs", testCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(languageVersion, "TestType.cs", testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(languageVersion, "TestType`3.cs", testCode, StyleCopSettings, expectedDiagnostic, "TestType{T1,T2,T3}.cs", testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Verifies that the metadata file name convention for a generic type is handled correctly.
         /// </summary>
         /// <param name="typeKeyword">The type keyword to use during the test.</param>
+        /// <param name="languageVersion">The language version to test with.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TypeKeywords))]
-        public async Task VerifyMetadataNamingConventionForGenericTypeAsync(string typeKeyword)
+        public virtual async Task VerifyMetadataNamingConventionForGenericTypeAsync(string typeKeyword, LanguageVersion languageVersion)
         {
             var testCode = $@"namespace TestNamespace
 {{
@@ -241,10 +249,10 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 ";
 
             var expectedDiagnostic = Diagnostic().WithLocation("TestType{T1,T2,T3}.cs", 3, 13 + typeKeyword.Length);
-            await VerifyCSharpFixAsync("TestType{T1,T2,T3}.cs", testCode, MetadataSettings, expectedDiagnostic, "TestType`3.cs", testCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(languageVersion, "TestType{T1,T2,T3}.cs", testCode, MetadataSettings, expectedDiagnostic, "TestType`3.cs", testCode, CancellationToken.None).ConfigureAwait(false);
 
             expectedDiagnostic = Diagnostic().WithLocation("TestType.cs", 3, 13 + typeKeyword.Length);
-            await VerifyCSharpFixAsync("TestType.cs", testCode, MetadataSettings, expectedDiagnostic, "TestType`3.cs", testCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(languageVersion, "TestType.cs", testCode, MetadataSettings, expectedDiagnostic, "TestType`3.cs", testCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -252,10 +260,11 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
         /// regression test for DotNetAnalyzers/StyleCopAnalyzers#1829.
         /// </summary>
         /// <param name="typeKeyword">The type keyword to use during the test.</param>
+        /// <param name="languageVersion">The language version to test with.</param>
         /// <returns>A <see cref="Task"/> representing the asynchronous unit test.</returns>
         [Theory]
         [MemberData(nameof(TypeKeywords))]
-        public async Task VerifyMetadataNamingConventionForGenericTypeMultipleExtensionsAsync(string typeKeyword)
+        public virtual async Task VerifyMetadataNamingConventionForGenericTypeMultipleExtensionsAsync(string typeKeyword, LanguageVersion languageVersion)
         {
             var testCode = $@"namespace TestNamespace
 {{
@@ -274,7 +283,7 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 ";
 
             var expectedDiagnostic = Diagnostic().WithLocation("TestType.svc.cs", 3, 13 + typeKeyword.Length);
-            await VerifyCSharpFixAsync("TestType.svc.cs", testCode, MetadataSettings, expectedDiagnostic, "TestType`1.svc.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpFixAsync(languageVersion, "TestType.svc.cs", testCode, MetadataSettings, expectedDiagnostic, "TestType`1.svc.cs", fixedCode, CancellationToken.None).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -289,12 +298,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
 }
 ";
 
-            await VerifyCSharpDiagnosticAsync("Test0.cs", testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
+            await VerifyCSharpDiagnosticAsync(LanguageVersion.CSharp6, "Test0.cs", testCode, DiagnosticResult.EmptyDiagnosticResults, CancellationToken.None).ConfigureAwait(false);
         }
 
-        internal static Task VerifyCSharpDiagnosticAsync(string fileName, string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
+        internal static Task VerifyCSharpDiagnosticAsync(LanguageVersion languageVersion, string fileName, string source, DiagnosticResult[] expected, CancellationToken cancellationToken)
         {
-            var test = new StyleCopCodeFixVerifier<SA1649FileNameMustMatchTypeName, SA1649CodeFixProvider>.CSharpTest
+            var test = new StyleCopCodeFixVerifier<SA1649FileNameMustMatchTypeName, SA1649CodeFixProvider>.CSharpTest(languageVersion)
             {
                 TestSources = { (fileName, source) },
             };
@@ -303,12 +312,12 @@ namespace StyleCop.Analyzers.Test.DocumentationRules
             return test.RunAsync(cancellationToken);
         }
 
-        internal static Task VerifyCSharpFixAsync(string oldFileName, string source, string testSettings, DiagnosticResult expected, string newFileName, string fixedSource, CancellationToken cancellationToken)
-            => VerifyCSharpFixAsync(oldFileName, source, testSettings, new[] { expected }, newFileName, fixedSource, cancellationToken);
+        internal static Task VerifyCSharpFixAsync(LanguageVersion languageVersion, string oldFileName, string source, string testSettings, DiagnosticResult expected, string newFileName, string fixedSource, CancellationToken cancellationToken)
+            => VerifyCSharpFixAsync(languageVersion, oldFileName, source, testSettings, new[] { expected }, newFileName, fixedSource, cancellationToken);
 
-        internal static Task VerifyCSharpFixAsync(string oldFileName, string source, string testSettings, DiagnosticResult[] expected, string newFileName, string fixedSource, CancellationToken cancellationToken)
+        internal static Task VerifyCSharpFixAsync(LanguageVersion languageVersion, string oldFileName, string source, string testSettings, DiagnosticResult[] expected, string newFileName, string fixedSource, CancellationToken cancellationToken)
         {
-            var test = new StyleCopCodeFixVerifier<SA1649FileNameMustMatchTypeName, SA1649CodeFixProvider>.CSharpTest
+            var test = new StyleCopCodeFixVerifier<SA1649FileNameMustMatchTypeName, SA1649CodeFixProvider>.CSharpTest(languageVersion)
             {
                 TestSources = { (oldFileName, source) },
                 FixedSources = { (newFileName, fixedSource) },
