@@ -70,7 +70,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
                 }
             }
 
-            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, cancellationToken);
+            var settings = SettingsHelper.GetStyleCopSettings(document.Project.AnalyzerOptions, tree, cancellationToken);
             SyntaxTriviaList newTrivia =
                 SyntaxFactory.TriviaList(
                     SyntaxFactory.CarriageReturnLineFeed,

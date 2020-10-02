@@ -6,6 +6,7 @@ namespace StyleCop.Analyzers.SpecialRules
     using System;
     using System.Collections.Immutable;
     using System.Globalization;
+    using System.Linq;
     using LightJson.Serialization;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.Diagnostics;
@@ -50,7 +51,7 @@ namespace StyleCop.Analyzers.SpecialRules
         {
             try
             {
-                SettingsHelper.GetStyleCopSettings(context.Options, DeserializationFailureBehavior.ThrowException, context.CancellationToken);
+                SettingsHelper.GetStyleCopSettings(context.Options, context.Compilation?.SyntaxTrees.FirstOrDefault(), DeserializationFailureBehavior.ThrowException, context.CancellationToken);
             }
             catch (Exception ex) when (ex is JsonParseException || ex is InvalidSettingsException)
             {
