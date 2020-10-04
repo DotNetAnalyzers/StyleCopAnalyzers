@@ -276,7 +276,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestLambdaCallSecondParameterIsAnonynousMethodAsync()
+        public async Task TestLambdaCallSecondParameterIsAnonymousMethodAsync()
         {
             var testCode = @"
 class Foo
@@ -341,7 +341,7 @@ class Foo
         }
 
         [Fact]
-        public async Task TestAttributeSecondParameterSpandsMultipleLinesAsync()
+        public async Task TestAttributeSecondParameterSpansMultipleLinesAsync()
         {
             var testCode = @"
 [System.AttributeUsage(System.AttributeTargets.Class,AllowMultiple = true)]
