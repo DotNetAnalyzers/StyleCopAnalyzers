@@ -80,6 +80,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             SyntaxKind.InvocationExpression,
             SyntaxKind.ObjectCreationExpression,
             SyntaxKind.AnonymousObjectCreationExpression,
+            SyntaxKind.ArrayCreationExpression,
+            SyntaxKind.ImplicitArrayCreationExpression,
         };
 
         /// <inheritdoc/>
