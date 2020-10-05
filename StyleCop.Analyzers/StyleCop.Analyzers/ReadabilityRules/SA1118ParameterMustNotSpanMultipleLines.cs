@@ -80,6 +80,8 @@ namespace StyleCop.Analyzers.ReadabilityRules
             SyntaxKind.InvocationExpression,
             SyntaxKind.ObjectCreationExpression,
             SyntaxKind.AnonymousObjectCreationExpression,
+            SyntaxKind.ArrayCreationExpression,
+            SyntaxKind.ImplicitArrayCreationExpression,
         };
 
         /// <inheritdoc/>
@@ -131,10 +133,10 @@ namespace StyleCop.Analyzers.ReadabilityRules
             return lineSpan.EndLinePosition.Line > lineSpan.StartLinePosition.Line;
         }
 
-        private static bool IsArgumentOnExceptionList(ExpressionSyntax argumentExpresson)
+        private static bool IsArgumentOnExceptionList(ExpressionSyntax argumentExpression)
         {
-            return argumentExpresson != null
-                && ArgumentExceptionSyntaxKinds.Any(argumentExpresson.IsKind);
+            return argumentExpression != null
+                && ArgumentExceptionSyntaxKinds.Any(argumentExpression.IsKind);
         }
     }
 }
