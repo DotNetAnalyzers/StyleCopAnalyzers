@@ -5,6 +5,7 @@ namespace StyleCop.Analyzers.Lightup
 {
     using System;
     using System.Collections.Concurrent;
+    using System.Collections.Immutable;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
@@ -15,6 +16,9 @@ namespace StyleCop.Analyzers.Lightup
     {
         private static readonly ConcurrentDictionary<Type, ConcurrentDictionary<SyntaxKind, bool>> SupportedWrappers
             = new ConcurrentDictionary<Type, ConcurrentDictionary<SyntaxKind, bool>>();
+
+        private static readonly ConcurrentDictionary<Type, ConcurrentDictionary<OperationKind, bool>> SupportedOperationWrappers
+            = new ConcurrentDictionary<Type, ConcurrentDictionary<OperationKind, bool>>();
 
         public static bool SupportsCSharp7 { get; }
             = Enum.GetNames(typeof(LanguageVersion)).Contains(nameof(LanguageVersionEx.CSharp7));
@@ -27,6 +31,14 @@ namespace StyleCop.Analyzers.Lightup
 
         public static bool SupportsCSharp73 { get; }
             = Enum.GetNames(typeof(LanguageVersion)).Contains(nameof(LanguageVersionEx.CSharp7_3));
+
+        public static bool SupportsCSharp8 { get; }
+            = Enum.GetNames(typeof(LanguageVersion)).Contains(nameof(LanguageVersionEx.CSharp8));
+
+        public static bool SupportsCSharp9 { get; }
+            = Enum.GetNames(typeof(LanguageVersion)).Contains(nameof(LanguageVersionEx.CSharp9));
+
+        public static bool SupportsIOperation => SupportsCSharp73;
 
         internal static bool CanWrapNode(SyntaxNode node, Type underlyingType)
         {
@@ -54,6 +66,141 @@ namespace StyleCop.Analyzers.Lightup
             }
 
             return canCast;
+        }
+
+        internal static bool CanWrapOperation(IOperation operation, Type underlyingType)
+        {
+            if (operation == null)
+            {
+                // The wrappers support a null instance
+                return true;
+            }
+
+            if (underlyingType == null)
+            {
+                // The current runtime doesn't define the target type of the conversion, so no instance of it can exist
+                return false;
+            }
+
+            ConcurrentDictionary<OperationKind, bool> wrappedSyntax = SupportedOperationWrappers.GetOrAdd(underlyingType, _ => new ConcurrentDictionary<OperationKind, bool>());
+
+            // Avoid creating the delegate if the value already exists
+            bool canCast;
+            if (!wrappedSyntax.TryGetValue(operation.Kind, out canCast))
+            {
+                canCast = wrappedSyntax.GetOrAdd(
+                    operation.Kind,
+                    kind => underlyingType.GetTypeInfo().IsAssignableFrom(operation.GetType().GetTypeInfo()));
+            }
+
+            return canCast;
+        }
+
+        internal static Func<TOperation, TProperty> CreateOperationPropertyAccessor<TOperation, TProperty>(Type type, string propertyName)
+        {
+            TProperty FallbackAccessor(TOperation syntax)
+            {
+                if (syntax == null)
+                {
+                    // Unlike an extension method which would throw ArgumentNullException here, the light-up
+                    // behavior needs to match behavior of the underlying property.
+                    throw new NullReferenceException();
+                }
+
+                return default;
+            }
+
+            if (type == null)
+            {
+                return FallbackAccessor;
+            }
+
+            if (!typeof(TOperation).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()))
+            {
+                throw new InvalidOperationException();
+            }
+
+            var property = type.GetTypeInfo().GetDeclaredProperty(propertyName);
+            if (property == null)
+            {
+                return FallbackAccessor;
+            }
+
+            if (!typeof(TProperty).GetTypeInfo().IsAssignableFrom(property.PropertyType.GetTypeInfo()))
+            {
+                throw new InvalidOperationException();
+            }
+
+            var operationParameter = Expression.Parameter(typeof(TOperation), "operation");
+            Expression instance =
+                type.GetTypeInfo().IsAssignableFrom(typeof(TOperation).GetTypeInfo())
+                ? (Expression)operationParameter
+                : Expression.Convert(operationParameter, type);
+
+            Expression<Func<TOperation, TProperty>> expression =
+                Expression.Lambda<Func<TOperation, TProperty>>(
+                    Expression.Call(instance, property.GetMethod),
+                    operationParameter);
+            return expression.Compile();
+        }
+
+        internal static Func<TOperation, ImmutableArray<IOperation>> CreateOperationListPropertyAccessor<TOperation>(Type type, string propertyName)
+        {
+            ImmutableArray<IOperation> FallbackAccessor(TOperation syntax)
+            {
+                if (syntax == null)
+                {
+                    // Unlike an extension method which would throw ArgumentNullException here, the light-up
+                    // behavior needs to match behavior of the underlying property.
+                    throw new NullReferenceException();
+                }
+
+                return ImmutableArray<IOperation>.Empty;
+            }
+
+            if (type == null)
+            {
+                return FallbackAccessor;
+            }
+
+            if (!typeof(TOperation).GetTypeInfo().IsAssignableFrom(type.GetTypeInfo()))
+            {
+                throw new InvalidOperationException();
+            }
+
+            var property = type.GetTypeInfo().GetDeclaredProperty(propertyName);
+            if (property == null)
+            {
+                return FallbackAccessor;
+            }
+
+            if (property.PropertyType.GetGenericTypeDefinition() != typeof(ImmutableArray<>))
+            {
+                throw new InvalidOperationException();
+            }
+
+            var propertyOperationType = property.PropertyType.GenericTypeArguments[0];
+
+            if (!typeof(IOperation).GetTypeInfo().IsAssignableFrom(propertyOperationType.GetTypeInfo()))
+            {
+                throw new InvalidOperationException();
+            }
+
+            var syntaxParameter = Expression.Parameter(typeof(TOperation), "syntax");
+            Expression instance =
+                type.GetTypeInfo().IsAssignableFrom(typeof(TOperation).GetTypeInfo())
+                ? (Expression)syntaxParameter
+                : Expression.Convert(syntaxParameter, type);
+            Expression propertyAccess = Expression.Call(instance, property.GetMethod);
+
+            var unboundCastUpMethod = typeof(ImmutableArray<IOperation>).GetTypeInfo().GetDeclaredMethod(nameof(ImmutableArray<IOperation>.CastUp));
+            var boundCastUpMethod = unboundCastUpMethod.MakeGenericMethod(propertyOperationType);
+
+            Expression<Func<TOperation, ImmutableArray<IOperation>>> expression =
+                Expression.Lambda<Func<TOperation, ImmutableArray<IOperation>>>(
+                    Expression.Call(boundCastUpMethod, propertyAccess),
+                    syntaxParameter);
+            return expression.Compile();
         }
 
         internal static Func<TSyntax, TProperty> CreateSyntaxPropertyAccessor<TSyntax, TProperty>(Type type, string propertyName)
