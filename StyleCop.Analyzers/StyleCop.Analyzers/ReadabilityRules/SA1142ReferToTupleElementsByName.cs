@@ -26,6 +26,7 @@ namespace StyleCop.Analyzers.ReadabilityRules
         private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(ReadabilityResources.SA1142MessageFormat), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
         private static readonly LocalizableString Description = new LocalizableResourceString(nameof(ReadabilityResources.SA1142Description), ReadabilityResources.ResourceManager, typeof(ReadabilityResources));
 
+        private static readonly Action<OperationAnalysisContext> FieldReferenceOperationAction = HandleFieldReferenceOperation;
         private static readonly Action<SyntaxNodeAnalysisContext> SimpleMemberAccessExpressionAction = HandleSimpleMemberAccessExpression;
 
         private static readonly DiagnosticDescriptor Descriptor = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, AnalyzerCategory.ReadabilityRules, DiagnosticSeverity.Warning, AnalyzerConstants.EnabledByDefault, Description, HelpLink);
@@ -39,7 +40,32 @@ namespace StyleCop.Analyzers.ReadabilityRules
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
 
-            context.RegisterSyntaxNodeAction(SimpleMemberAccessExpressionAction, SyntaxKind.SimpleMemberAccessExpression);
+            if (LightupHelpers.SupportsIOperation)
+            {
+                context.RegisterOperationAction(FieldReferenceOperationAction, OperationKindEx.FieldReference);
+            }
+            else
+            {
+                context.RegisterSyntaxNodeAction(SimpleMemberAccessExpressionAction, SyntaxKind.SimpleMemberAccessExpression);
+            }
+        }
+
+        private static void HandleFieldReferenceOperation(OperationAnalysisContext context)
+        {
+            if (!context.SupportsTuples())
+            {
+                return;
+            }
+
+            var fieldReference = IFieldReferenceOperationWrapper.FromOperation(context.Operation);
+
+            if (CheckFieldName(fieldReference.Field))
+            {
+                var location = fieldReference.WrappedOperation.Syntax is MemberAccessExpressionSyntax memberAccessExpression
+                    ? memberAccessExpression.Name.GetLocation()
+                    : fieldReference.WrappedOperation.Syntax.GetLocation();
+                context.ReportDiagnostic(Diagnostic.Create(Descriptor, location));
+            }
         }
 
         private static void HandleSimpleMemberAccessExpression(SyntaxNodeAnalysisContext context)

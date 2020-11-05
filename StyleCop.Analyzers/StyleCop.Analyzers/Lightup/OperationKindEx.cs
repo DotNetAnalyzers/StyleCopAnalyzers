@@ -8,6 +8,11 @@ namespace StyleCop.Analyzers.Lightup
     internal static class OperationKindEx
     {
         /// <summary>
+        /// Indicates an <see cref="T:Microsoft.CodeAnalysis.Operations.IFieldReferenceOperation"/>.
+        /// </summary>
+        public const OperationKind FieldReference = (OperationKind)26;
+
+        /// <summary>
         /// Indicates an <see cref="T:Microsoft.CodeAnalysis.Operations.IObjectCreationOperation"/>.
         /// </summary>
         public const OperationKind ObjectCreation = (OperationKind)36;

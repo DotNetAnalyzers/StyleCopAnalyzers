@@ -57,6 +57,8 @@ namespace StyleCop.Analyzers.Lightup
             builder.Add(typeof(WhenClauseSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(WhenClauseSyntaxWrapper.WrappedTypeName));
 
             builder.Add(typeof(IArgumentOperationWrapper), codeAnalysisAssembly.GetType(IArgumentOperationWrapper.WrappedTypeName));
+            builder.Add(typeof(IFieldReferenceOperationWrapper), codeAnalysisAssembly.GetType(IFieldReferenceOperationWrapper.WrappedTypeName));
+            builder.Add(typeof(IMemberReferenceOperationWrapper), codeAnalysisAssembly.GetType(IMemberReferenceOperationWrapper.WrappedTypeName));
             builder.Add(typeof(IObjectCreationOperationWrapper), codeAnalysisAssembly.GetType(IObjectCreationOperationWrapper.WrappedTypeName));
             builder.Add(typeof(IObjectOrCollectionInitializerOperationWrapper), codeAnalysisAssembly.GetType(IObjectOrCollectionInitializerOperationWrapper.WrappedTypeName));
             builder.Add(typeof(ITypeParameterObjectCreationOperationWrapper), codeAnalysisAssembly.GetType(ITypeParameterObjectCreationOperationWrapper.WrappedTypeName));
