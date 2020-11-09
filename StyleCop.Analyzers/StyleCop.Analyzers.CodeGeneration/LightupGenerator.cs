@@ -583,7 +583,19 @@ namespace StyleCop.Analyzers.CodeGeneration
                     .Add(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Collections.Immutable")))
                     .Add(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("Microsoft.CodeAnalysis"))),
                 members: SyntaxFactory.SingletonList<MemberDeclarationSyntax>(wrapperStruct));
-            context.AddSource(wrapperName + ".g.cs", SourceText.From(wrapperNamespace.NormalizeWhitespace().ToFullString(), Encoding.UTF8));
+
+            wrapperNamespace = wrapperNamespace
+                .NormalizeWhitespace()
+                .WithLeadingTrivia(
+                    SyntaxFactory.Comment("// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved."),
+                    SyntaxFactory.CarriageReturnLineFeed,
+                    SyntaxFactory.Comment("// Licensed under the MIT License. See LICENSE in the project root for license information."),
+                    SyntaxFactory.CarriageReturnLineFeed,
+                    SyntaxFactory.CarriageReturnLineFeed)
+                .WithTrailingTrivia(
+                    SyntaxFactory.CarriageReturnLineFeed);
+
+            context.AddSource(wrapperName + ".g.cs", SourceText.From(wrapperNamespace.ToFullString(), Encoding.UTF8));
         }
 
         private void GenerateOperationWrapperHelper(in GeneratorExecutionContext context, List<string> wrapperTypes)
@@ -754,7 +766,19 @@ namespace StyleCop.Analyzers.CodeGeneration
                     .Add(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("System.Reflection")))
                     .Add(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("Microsoft.CodeAnalysis"))),
                 members: SyntaxFactory.SingletonList<MemberDeclarationSyntax>(wrapperHelperClass));
-            context.AddSource("OperationWrapperHelper.g.cs", SourceText.From(wrapperNamespace.NormalizeWhitespace().ToFullString(), Encoding.UTF8));
+
+            wrapperNamespace = wrapperNamespace
+                .NormalizeWhitespace()
+                .WithLeadingTrivia(
+                    SyntaxFactory.Comment("// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved."),
+                    SyntaxFactory.CarriageReturnLineFeed,
+                    SyntaxFactory.Comment("// Licensed under the MIT License. See LICENSE in the project root for license information."),
+                    SyntaxFactory.CarriageReturnLineFeed,
+                    SyntaxFactory.CarriageReturnLineFeed)
+                .WithTrailingTrivia(
+                    SyntaxFactory.CarriageReturnLineFeed);
+
+            context.AddSource("OperationWrapperHelper.g.cs", SourceText.From(wrapperNamespace.ToFullString(), Encoding.UTF8));
         }
 
         private sealed class PropertyData
