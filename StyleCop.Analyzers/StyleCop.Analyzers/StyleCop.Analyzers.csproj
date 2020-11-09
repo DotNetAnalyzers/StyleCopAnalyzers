@@ -28,6 +28,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <AdditionalFiles Include="Lightup\OperationInterfaces.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference
       Include="..\StyleCop.Analyzers.CodeGeneration\StyleCop.Analyzers.CodeGeneration.csproj"
       SetTargetFramework="TargetFramework=netstandard2.0"
