@@ -818,7 +818,7 @@ public class TypeName
                     Diagnostic().WithLocation(21, 26),
                     Diagnostic().WithLocation(21, 52),
                     Diagnostic().WithLocation(21, 78),
-                    Diagnostic().WithLocation(23, 22),
+                    Diagnostic().WithLocation(23, 22).WithSeverity(DiagnosticSeverity.Hidden),
                     Diagnostic().WithLocation(23, 35),
                     Diagnostic().WithLocation(24, 18),
                     Diagnostic().WithLocation(24, 57),
@@ -826,7 +826,7 @@ public class TypeName
                 FixedCode = incrementalFixedCode,
                 RemainingDiagnostics =
                 {
-                    Diagnostic().WithLocation(50, 22),
+                    Diagnostic().WithLocation(50, 22).WithSeverity(DiagnosticSeverity.Hidden),
                 },
                 BatchFixedCode = batchFixedCode,
                 DisabledDiagnostics =
