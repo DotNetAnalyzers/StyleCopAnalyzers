@@ -7,6 +7,7 @@ namespace StyleCop.Analyzers.CodeGeneration
     using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Collections.ObjectModel;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Text;
@@ -52,6 +53,7 @@ namespace StyleCop.Analyzers.CodeGeneration
             }
 
             this.GenerateOperationWrapperHelper(in context, documentData.Interfaces.Values.ToImmutableArray());
+            this.GenerateOperationKindEx(in context, documentData.Interfaces.Values.ToImmutableArray());
         }
 
         private void GenerateOperationInterface(in GeneratorExecutionContext context, InterfaceData node)
@@ -760,10 +762,65 @@ namespace StyleCop.Analyzers.CodeGeneration
             context.AddSource("OperationWrapperHelper.g.cs", SourceText.From(wrapperNamespace.ToFullString(), Encoding.UTF8));
         }
 
+        private void GenerateOperationKindEx(in GeneratorExecutionContext context, ImmutableArray<InterfaceData> wrapperTypes)
+        {
+            var operationKinds = wrapperTypes
+                .SelectMany(type => type.OperationKinds)
+                .OrderBy(kind => kind.value)
+                .ToImmutableArray();
+
+            var members = SyntaxFactory.List<MemberDeclarationSyntax>();
+            foreach (var operationKind in operationKinds)
+            {
+                // public const OperationKind FieldReference = (OperationKind)26;
+                members = members.Add(SyntaxFactory.FieldDeclaration(
+                    attributeLists: default,
+                    modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.ConstKeyword)),
+                    declaration: SyntaxFactory.VariableDeclaration(
+                        type: SyntaxFactory.IdentifierName("OperationKind"),
+                        variables: SyntaxFactory.SingletonSeparatedList(SyntaxFactory.VariableDeclarator(
+                            identifier: SyntaxFactory.Identifier(operationKind.name),
+                            argumentList: null,
+                            initializer: SyntaxFactory.EqualsValueClause(SyntaxFactory.CastExpression(
+                                type: SyntaxFactory.IdentifierName("OperationKind"),
+                                expression: SyntaxFactory.LiteralExpression(SyntaxKind.NumericLiteralExpression, SyntaxFactory.Literal($"0x{operationKind.value:x}", operationKind.value)))))))));
+            }
+
+            var operationKindExClass = SyntaxFactory.ClassDeclaration(
+                attributeLists: default,
+                modifiers: SyntaxTokenList.Create(SyntaxFactory.Token(SyntaxKind.InternalKeyword)).Add(SyntaxFactory.Token(SyntaxKind.StaticKeyword)),
+                identifier: SyntaxFactory.Identifier("OperationKindEx"),
+                typeParameterList: null,
+                baseList: null,
+                constraintClauses: default,
+                members: members);
+            var wrapperNamespace = SyntaxFactory.NamespaceDeclaration(
+                name: SyntaxFactory.ParseName("StyleCop.Analyzers.Lightup"),
+                externs: default,
+                usings: SyntaxFactory.List<UsingDirectiveSyntax>()
+                    .Add(SyntaxFactory.UsingDirective(SyntaxFactory.ParseName("Microsoft.CodeAnalysis"))),
+                members: SyntaxFactory.SingletonList<MemberDeclarationSyntax>(operationKindExClass));
+
+            wrapperNamespace = wrapperNamespace
+                .NormalizeWhitespace()
+                .WithLeadingTrivia(
+                    SyntaxFactory.Comment("// Copyright (c) Tunnel Vision Laboratories, LLC. All Rights Reserved."),
+                    SyntaxFactory.CarriageReturnLineFeed,
+                    SyntaxFactory.Comment("// Licensed under the MIT License. See LICENSE in the project root for license information."),
+                    SyntaxFactory.CarriageReturnLineFeed,
+                    SyntaxFactory.CarriageReturnLineFeed)
+                .WithTrailingTrivia(
+                    SyntaxFactory.CarriageReturnLineFeed);
+
+            context.AddSource("OperationKindEx.g.cs", SourceText.From(wrapperNamespace.ToFullString(), Encoding.UTF8));
+        }
+
         private sealed class DocumentData
         {
             public DocumentData(XDocument document)
             {
+                var operationKinds = GetOperationKinds(document);
+
                 var interfaces = new Dictionary<string, InterfaceData>();
                 foreach (var node in document.XPathSelectElements("/Tree/AbstractNode"))
                 {
@@ -772,7 +829,12 @@ namespace StyleCop.Analyzers.CodeGeneration
                         continue;
                     }
 
-                    var interfaceData = new InterfaceData(this, node);
+                    if (!operationKinds.TryGetValue(node.Attribute("Name").Value, out var kinds))
+                    {
+                        kinds = ImmutableArray<(string name, int value, string extraDescription)>.Empty;
+                    }
+
+                    var interfaceData = new InterfaceData(this, node, kinds);
                     interfaces.Add(interfaceData.InterfaceName, interfaceData);
                 }
 
@@ -783,7 +845,12 @@ namespace StyleCop.Analyzers.CodeGeneration
                         continue;
                     }
 
-                    var interfaceData = new InterfaceData(this, node);
+                    if (!operationKinds.TryGetValue(node.Attribute("Name").Value, out var kinds))
+                    {
+                        kinds = ImmutableArray<(string name, int value, string extraDescription)>.Empty;
+                    }
+
+                    var interfaceData = new InterfaceData(this, node, kinds);
                     interfaces.Add(interfaceData.InterfaceName, interfaceData);
                 }
 
@@ -791,24 +858,121 @@ namespace StyleCop.Analyzers.CodeGeneration
             }
 
             public ReadOnlyDictionary<string, InterfaceData> Interfaces { get; }
+
+            private static ImmutableDictionary<string, ImmutableArray<(string name, int value, string extraDescription)>> GetOperationKinds(XDocument document)
+            {
+                var skippedOperationKinds = GetSkippedOperationKinds(document);
+
+                var builder = ImmutableDictionary.CreateBuilder<string, ImmutableArray<(string name, int value, string extraDescription)>>();
+
+                int operationKind = 0;
+                foreach (var node in document.XPathSelectElements("/Tree/AbstractNode|/Tree/Node"))
+                {
+                    if (node.Attribute("Internal")?.Value == "true")
+                    {
+                        continue;
+                    }
+
+                    if (node.XPathSelectElement("OperationKind") is { } explicitKind)
+                    {
+                        if (node.Name == "AbstractNode" && explicitKind.Attribute("Include")?.Value != "true")
+                        {
+                            continue;
+                        }
+                        else if (explicitKind.Attribute("Include")?.Value == "false")
+                        {
+                            // The node is explicitly excluded
+                            continue;
+                        }
+                        else if (explicitKind.XPathSelectElements("Entry").Any())
+                        {
+                            var nodeBuilder = ImmutableArray.CreateBuilder<(string name, int value, string extraDescription)>();
+                            foreach (var entry in explicitKind.XPathSelectElements("Entry"))
+                            {
+                                if (entry.Attribute("EditorBrowsable")?.Value == "false")
+                                {
+                                    // Skip code generation for this operation kind
+                                    continue;
+                                }
+
+                                int parsedValue = ParsePrefixHexValue(entry.Attribute("Value").Value);
+                                nodeBuilder.Add((entry.Attribute("Name").Value, parsedValue, entry.Attribute("ExtraDescription")?.Value));
+                            }
+
+                            builder.Add(node.Attribute("Name").Value, nodeBuilder.ToImmutable());
+                            continue;
+                        }
+                    }
+                    else if (node.Name == "AbstractNode")
+                    {
+                        // Abstract nodes without explicit Include="true" are skipped
+                        continue;
+                    }
+
+                    // Implicit operation kind
+                    operationKind++;
+                    while (skippedOperationKinds.Contains(operationKind))
+                    {
+                        operationKind++;
+                    }
+
+                    var nodeName = node.Attribute("Name").Value;
+                    var kindName = nodeName.Substring("I".Length, nodeName.Length - "I".Length - "Operation".Length);
+                    builder.Add(nodeName, ImmutableArray.Create((kindName, operationKind, (string)null)));
+                }
+
+                return builder.ToImmutable();
+            }
+
+            private static ImmutableHashSet<int> GetSkippedOperationKinds(XDocument document)
+            {
+                var builder = ImmutableHashSet.CreateBuilder<int>();
+                foreach (var skippedKind in document.XPathSelectElements("/Tree/UnusedOperationKinds/Entry"))
+                {
+                    builder.Add(ParsePrefixHexValue(skippedKind.Attribute("Value").Value));
+                }
+
+                foreach (var explicitKind in document.XPathSelectElements("/Tree/*/OperationKind/Entry"))
+                {
+                    builder.Add(ParsePrefixHexValue(explicitKind.Attribute("Value").Value));
+                }
+
+                return builder.ToImmutable();
+            }
+
+            private static int ParsePrefixHexValue(string value)
+            {
+                if (!value.StartsWith("0x"))
+                {
+                    throw new InvalidOperationException($"Unexpected number format: '{value}'");
+                }
+
+                return int.Parse(value.Substring("0x".Length), NumberStyles.AllowHexSpecifier);
+            }
         }
 
         private sealed class InterfaceData
         {
             private readonly DocumentData documentData;
 
-            public InterfaceData(DocumentData documentData, XElement node)
+            public InterfaceData(DocumentData documentData, XElement node, ImmutableArray<(string name, int value, string extraDescription)> operationKinds)
             {
                 this.documentData = documentData;
 
+                this.OperationKinds = operationKinds;
                 this.InterfaceName = node.Attribute("Name").Value;
+                this.Name = this.InterfaceName.Substring("I".Length, this.InterfaceName.Length - "I".Length - "Operation".Length);
                 this.WrapperName = this.InterfaceName + "Wrapper";
                 this.BaseInterfaceName = node.Attribute("Base").Value;
                 this.IsAbstract = node.Name == "AbstractNode";
                 this.Properties = node.XPathSelectElements("Property").Select(property => new PropertyData(property)).ToImmutableArray();
             }
 
+            public ImmutableArray<(string name, int value, string extraDescription)> OperationKinds { get; }
+
             public string InterfaceName { get; }
+
+            public string Name { get; }
 
             public string WrapperName { get; }
 
