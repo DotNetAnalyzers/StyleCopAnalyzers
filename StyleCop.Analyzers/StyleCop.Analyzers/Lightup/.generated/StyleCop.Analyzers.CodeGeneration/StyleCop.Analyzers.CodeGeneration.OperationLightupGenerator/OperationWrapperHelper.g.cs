@@ -131,12 +131,6 @@ namespace StyleCop.Analyzers.Lightup
             builder.Add(typeof(ISwitchExpressionOperationWrapper), codeAnalysisAssembly.GetType(ISwitchExpressionOperationWrapper.WrappedTypeName));
             builder.Add(typeof(ISwitchExpressionArmOperationWrapper), codeAnalysisAssembly.GetType(ISwitchExpressionArmOperationWrapper.WrappedTypeName));
             builder.Add(typeof(IPropertySubpatternOperationWrapper), codeAnalysisAssembly.GetType(IPropertySubpatternOperationWrapper.WrappedTypeName));
-            builder.Add(typeof(IAggregateQueryOperationWrapper), codeAnalysisAssembly.GetType(IAggregateQueryOperationWrapper.WrappedTypeName));
-            builder.Add(typeof(IFixedOperationWrapper), codeAnalysisAssembly.GetType(IFixedOperationWrapper.WrappedTypeName));
-            builder.Add(typeof(INoPiaObjectCreationOperationWrapper), codeAnalysisAssembly.GetType(INoPiaObjectCreationOperationWrapper.WrappedTypeName));
-            builder.Add(typeof(IPlaceholderOperationWrapper), codeAnalysisAssembly.GetType(IPlaceholderOperationWrapper.WrappedTypeName));
-            builder.Add(typeof(IPointerIndirectionReferenceOperationWrapper), codeAnalysisAssembly.GetType(IPointerIndirectionReferenceOperationWrapper.WrappedTypeName));
-            builder.Add(typeof(IWithStatementOperationWrapper), codeAnalysisAssembly.GetType(IWithStatementOperationWrapper.WrappedTypeName));
             builder.Add(typeof(IUsingDeclarationOperationWrapper), codeAnalysisAssembly.GetType(IUsingDeclarationOperationWrapper.WrappedTypeName));
             builder.Add(typeof(INegatedPatternOperationWrapper), codeAnalysisAssembly.GetType(INegatedPatternOperationWrapper.WrappedTypeName));
             builder.Add(typeof(IBinaryPatternOperationWrapper), codeAnalysisAssembly.GetType(IBinaryPatternOperationWrapper.WrappedTypeName));

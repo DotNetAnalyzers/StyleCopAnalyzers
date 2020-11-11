@@ -767,12 +767,22 @@ namespace StyleCop.Analyzers.CodeGeneration
                 var interfaces = new Dictionary<string, InterfaceData>();
                 foreach (var node in document.XPathSelectElements("/Tree/AbstractNode"))
                 {
+                    if (node.Attribute("Internal")?.Value == "true")
+                    {
+                        continue;
+                    }
+
                     var interfaceData = new InterfaceData(this, node);
                     interfaces.Add(interfaceData.InterfaceName, interfaceData);
                 }
 
                 foreach (var node in document.XPathSelectElements("/Tree/Node"))
                 {
+                    if (node.Attribute("Internal")?.Value == "true")
+                    {
+                        continue;
+                    }
+
                     var interfaceData = new InterfaceData(this, node);
                     interfaces.Add(interfaceData.InterfaceName, interfaceData);
                 }
