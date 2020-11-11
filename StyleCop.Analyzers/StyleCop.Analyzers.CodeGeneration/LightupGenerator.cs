@@ -20,16 +20,10 @@ namespace StyleCop.Analyzers.CodeGeneration
     {
         public void Initialize(GeneratorInitializationContext context)
         {
-            context.RegisterForSyntaxNotifications(() => new SyntaxReceiver());
         }
 
         public void Execute(GeneratorExecutionContext context)
         {
-            if (context.SyntaxReceiver is not SyntaxReceiver receiver)
-            {
-                return;
-            }
-
             var operationInterfacesFile = context.AdditionalFiles.Single(x => Path.GetFileName(x.Path) == "OperationInterfaces.xml");
             var operationInterfacesText = operationInterfacesFile.GetText(context.CancellationToken);
             if (operationInterfacesText is null)
@@ -851,13 +845,6 @@ namespace StyleCop.Analyzers.CodeGeneration
             private static bool IsAnyOperationArray(string type)
             {
                 return type.StartsWith("ImmutableArray<I") && type.EndsWith("Operation>");
-            }
-        }
-
-        private class SyntaxReceiver : ISyntaxReceiver
-        {
-            public void OnVisitSyntaxNode(SyntaxNode syntaxNode)
-            {
             }
         }
     }
