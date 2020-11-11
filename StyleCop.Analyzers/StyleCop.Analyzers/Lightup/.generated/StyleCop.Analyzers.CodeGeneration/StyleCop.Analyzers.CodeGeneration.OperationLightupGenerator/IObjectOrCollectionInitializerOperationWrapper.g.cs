@@ -11,14 +11,11 @@ namespace StyleCop.Analyzers.Lightup
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IObjectOrCollectionInitializerOperation";
         private static readonly Type WrappedType;
-
         private static readonly Func<IOperation, ImmutableArray<IOperation>> InitializersAccessor;
-
         private readonly IOperation operation;
-
         static IObjectOrCollectionInitializerOperationWrapper()
         {
-            WrappedType = WrapperHelper.GetWrappedType(typeof(IObjectOrCollectionInitializerOperationWrapper));
+            WrappedType = OperationWrapperHelper.GetWrappedType(typeof(IObjectOrCollectionInitializerOperationWrapper));
             InitializersAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, ImmutableArray<IOperation>>(WrappedType, nameof(Initializers));
         }
 
@@ -28,17 +25,8 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public IOperation WrappedOperation => this.operation;
-
         public ITypeSymbol Type => this.WrappedOperation.Type;
-
-        public ImmutableArray<IOperation> Initializers
-        {
-            get
-            {
-                return InitializersAccessor(this.WrappedOperation);
-            }
-        }
-
+        public ImmutableArray<IOperation> Initializers => InitializersAccessor(this.WrappedOperation);
         public static IObjectOrCollectionInitializerOperationWrapper FromOperation(IOperation operation)
         {
             if (operation == null)

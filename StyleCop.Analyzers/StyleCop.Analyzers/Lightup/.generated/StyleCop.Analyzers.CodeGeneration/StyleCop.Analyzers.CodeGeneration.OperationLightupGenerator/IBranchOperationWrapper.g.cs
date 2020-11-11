@@ -4,30 +4,31 @@
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
+    using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct IArgumentOperationWrapper : IOperationWrapper
+    internal readonly struct IBranchOperationWrapper : IOperationWrapper
     {
-        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IArgumentOperation";
+        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IBranchOperation";
         private static readonly Type WrappedType;
-
+        private static readonly Func<IOperation, ILabelSymbol> TargetAccessor;
         private readonly IOperation operation;
-
-        static IArgumentOperationWrapper()
+        static IBranchOperationWrapper()
         {
-            WrappedType = WrapperHelper.GetWrappedType(typeof(IObjectCreationOperationWrapper));
+            WrappedType = OperationWrapperHelper.GetWrappedType(typeof(IBranchOperationWrapper));
+            TargetAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, ILabelSymbol>(WrappedType, nameof(Target));
         }
 
-        private IArgumentOperationWrapper(IOperation operation)
+        private IBranchOperationWrapper(IOperation operation)
         {
             this.operation = operation;
         }
 
         public IOperation WrappedOperation => this.operation;
-
         public ITypeSymbol Type => this.WrappedOperation.Type;
-
-        public static IArgumentOperationWrapper FromOperation(IOperation operation)
+        public ILabelSymbol Target => TargetAccessor(this.WrappedOperation);
+        public object BranchKind => throw new NotImplementedException("Property 'IBranchOperation.BranchKind' has unsupported type 'BranchKind'");
+        public static IBranchOperationWrapper FromOperation(IOperation operation)
         {
             if (operation == null)
             {
@@ -39,7 +40,7 @@ namespace StyleCop.Analyzers.Lightup
                 throw new InvalidCastException($"Cannot cast '{operation.GetType().FullName}' to '{WrappedTypeName}'");
             }
 
-            return new IArgumentOperationWrapper(operation);
+            return new IBranchOperationWrapper(operation);
         }
 
         public static bool IsInstance(IOperation operation)

@@ -4,21 +4,19 @@
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
+    using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
     internal readonly struct IMemberReferenceOperationWrapper : IOperationWrapper
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IMemberReferenceOperation";
         private static readonly Type WrappedType;
-
         private static readonly Func<IOperation, IOperation> InstanceAccessor;
         private static readonly Func<IOperation, ISymbol> MemberAccessor;
-
         private readonly IOperation operation;
-
         static IMemberReferenceOperationWrapper()
         {
-            WrappedType = WrapperHelper.GetWrappedType(typeof(IFieldReferenceOperationWrapper));
+            WrappedType = OperationWrapperHelper.GetWrappedType(typeof(IMemberReferenceOperationWrapper));
             InstanceAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IOperation>(WrappedType, nameof(Instance));
             MemberAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, ISymbol>(WrappedType, nameof(Member));
         }
@@ -29,25 +27,9 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public IOperation WrappedOperation => this.operation;
-
         public ITypeSymbol Type => this.WrappedOperation.Type;
-
-        public IOperation Instance
-        {
-            get
-            {
-                return InstanceAccessor(this.WrappedOperation);
-            }
-        }
-
-        public ISymbol Member
-        {
-            get
-            {
-                return MemberAccessor(this.WrappedOperation);
-            }
-        }
-
+        public IOperation Instance => InstanceAccessor(this.WrappedOperation);
+        public ISymbol Member => MemberAccessor(this.WrappedOperation);
         public static IMemberReferenceOperationWrapper FromOperation(IOperation operation)
         {
             if (operation == null)

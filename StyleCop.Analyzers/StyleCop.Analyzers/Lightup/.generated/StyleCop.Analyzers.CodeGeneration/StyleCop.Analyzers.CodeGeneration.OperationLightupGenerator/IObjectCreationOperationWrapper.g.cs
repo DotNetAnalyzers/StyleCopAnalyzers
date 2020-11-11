@@ -11,16 +11,13 @@ namespace StyleCop.Analyzers.Lightup
     {
         internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IObjectCreationOperation";
         private static readonly Type WrappedType;
-
         private static readonly Func<IOperation, IMethodSymbol> ConstructorAccessor;
         private static readonly Func<IOperation, IOperation> InitializerAccessor;
         private static readonly Func<IOperation, ImmutableArray<IOperation>> ArgumentsAccessor;
-
         private readonly IOperation operation;
-
         static IObjectCreationOperationWrapper()
         {
-            WrappedType = WrapperHelper.GetWrappedType(typeof(IObjectCreationOperationWrapper));
+            WrappedType = OperationWrapperHelper.GetWrappedType(typeof(IObjectCreationOperationWrapper));
             ConstructorAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IMethodSymbol>(WrappedType, nameof(Constructor));
             InitializerAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IOperation>(WrappedType, nameof(Initializer));
             ArgumentsAccessor = LightupHelpers.CreateOperationListPropertyAccessor<IOperation>(WrappedType, nameof(Arguments));
@@ -32,33 +29,10 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public IOperation WrappedOperation => this.operation;
-
         public ITypeSymbol Type => this.WrappedOperation.Type;
-
-        public IMethodSymbol Constructor
-        {
-            get
-            {
-                return ConstructorAccessor(this.WrappedOperation);
-            }
-        }
-
-        public IObjectOrCollectionInitializerOperationWrapper Initializer
-        {
-            get
-            {
-                return IObjectOrCollectionInitializerOperationWrapper.FromOperation(InitializerAccessor(this.WrappedOperation));
-            }
-        }
-
-        public ImmutableArray<IOperation> Arguments
-        {
-            get
-            {
-                return ArgumentsAccessor(this.WrappedOperation);
-            }
-        }
-
+        public IMethodSymbol Constructor => ConstructorAccessor(this.WrappedOperation);
+        public IObjectOrCollectionInitializerOperationWrapper Initializer => IObjectOrCollectionInitializerOperationWrapper.FromOperation(InitializerAccessor(this.WrappedOperation));
+        public ImmutableArray<IOperation> Arguments => ArgumentsAccessor(this.WrappedOperation);
         public static IObjectCreationOperationWrapper FromOperation(IOperation operation)
         {
             if (operation == null)

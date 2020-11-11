@@ -16,7 +16,6 @@ namespace StyleCop.Analyzers.Lightup
         static WrapperHelper()
         {
             var csharpCodeAnalysisAssembly = typeof(CSharpSyntaxNode).GetTypeInfo().Assembly;
-            var codeAnalysisAssembly = typeof(SyntaxNode).GetTypeInfo().Assembly;
             var builder = ImmutableDictionary.CreateBuilder<Type, Type>();
 
             builder.Add(typeof(CasePatternSwitchLabelSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(CasePatternSwitchLabelSyntaxWrapper.WrappedTypeName));
@@ -55,13 +54,6 @@ namespace StyleCop.Analyzers.Lightup
             builder.Add(typeof(VarPatternSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(VarPatternSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(VariableDesignationSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(VariableDesignationSyntaxWrapper.WrappedTypeName));
             builder.Add(typeof(WhenClauseSyntaxWrapper), csharpCodeAnalysisAssembly.GetType(WhenClauseSyntaxWrapper.WrappedTypeName));
-
-            builder.Add(typeof(IArgumentOperationWrapper), codeAnalysisAssembly.GetType(IArgumentOperationWrapper.WrappedTypeName));
-            builder.Add(typeof(IFieldReferenceOperationWrapper), codeAnalysisAssembly.GetType(IFieldReferenceOperationWrapper.WrappedTypeName));
-            builder.Add(typeof(IMemberReferenceOperationWrapper), codeAnalysisAssembly.GetType(IMemberReferenceOperationWrapper.WrappedTypeName));
-            builder.Add(typeof(IObjectCreationOperationWrapper), codeAnalysisAssembly.GetType(IObjectCreationOperationWrapper.WrappedTypeName));
-            builder.Add(typeof(IObjectOrCollectionInitializerOperationWrapper), codeAnalysisAssembly.GetType(IObjectOrCollectionInitializerOperationWrapper.WrappedTypeName));
-            builder.Add(typeof(ITypeParameterObjectCreationOperationWrapper), codeAnalysisAssembly.GetType(ITypeParameterObjectCreationOperationWrapper.WrappedTypeName));
 
             WrappedTypes = builder.ToImmutable();
         }

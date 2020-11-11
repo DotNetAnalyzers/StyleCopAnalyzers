@@ -4,41 +4,33 @@
 namespace StyleCop.Analyzers.Lightup
 {
     using System;
+    using System.Collections.Immutable;
     using Microsoft.CodeAnalysis;
 
-    internal readonly struct ITypeParameterObjectCreationOperationWrapper : IOperationWrapper
+    internal readonly struct IArrayCreationOperationWrapper : IOperationWrapper
     {
-        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.ITypeParameterObjectCreationOperation";
+        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.Operations.IArrayCreationOperation";
         private static readonly Type WrappedType;
-
+        private static readonly Func<IOperation, ImmutableArray<IOperation>> DimensionSizesAccessor;
         private static readonly Func<IOperation, IOperation> InitializerAccessor;
-
         private readonly IOperation operation;
-
-        static ITypeParameterObjectCreationOperationWrapper()
+        static IArrayCreationOperationWrapper()
         {
-            WrappedType = WrapperHelper.GetWrappedType(typeof(ITypeParameterObjectCreationOperationWrapper));
+            WrappedType = OperationWrapperHelper.GetWrappedType(typeof(IArrayCreationOperationWrapper));
+            DimensionSizesAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, ImmutableArray<IOperation>>(WrappedType, nameof(DimensionSizes));
             InitializerAccessor = LightupHelpers.CreateOperationPropertyAccessor<IOperation, IOperation>(WrappedType, nameof(Initializer));
         }
 
-        private ITypeParameterObjectCreationOperationWrapper(IOperation operation)
+        private IArrayCreationOperationWrapper(IOperation operation)
         {
             this.operation = operation;
         }
 
         public IOperation WrappedOperation => this.operation;
-
         public ITypeSymbol Type => this.WrappedOperation.Type;
-
-        public IObjectOrCollectionInitializerOperationWrapper Initializer
-        {
-            get
-            {
-                return IObjectOrCollectionInitializerOperationWrapper.FromOperation(InitializerAccessor(this.WrappedOperation));
-            }
-        }
-
-        public static ITypeParameterObjectCreationOperationWrapper FromOperation(IOperation operation)
+        public ImmutableArray<IOperation> DimensionSizes => DimensionSizesAccessor(this.WrappedOperation);
+        public IArrayInitializerOperationWrapper Initializer => IArrayInitializerOperationWrapper.FromOperation(InitializerAccessor(this.WrappedOperation));
+        public static IArrayCreationOperationWrapper FromOperation(IOperation operation)
         {
             if (operation == null)
             {
@@ -50,7 +42,7 @@ namespace StyleCop.Analyzers.Lightup
                 throw new InvalidCastException($"Cannot cast '{operation.GetType().FullName}' to '{WrappedTypeName}'");
             }
 
-            return new ITypeParameterObjectCreationOperationWrapper(operation);
+            return new IArrayCreationOperationWrapper(operation);
         }
 
         public static bool IsInstance(IOperation operation)
