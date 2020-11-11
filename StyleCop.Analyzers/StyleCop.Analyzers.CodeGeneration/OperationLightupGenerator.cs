@@ -16,7 +16,7 @@ namespace StyleCop.Analyzers.CodeGeneration
     using Microsoft.CodeAnalysis.Text;
 
     [Generator]
-    internal sealed class LightupGenerator : ISourceGenerator
+    internal sealed class OperationLightupGenerator : ISourceGenerator
     {
         public void Initialize(GeneratorInitializationContext context)
         {
