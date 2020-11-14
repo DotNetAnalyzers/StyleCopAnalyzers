@@ -32,21 +32,6 @@ namespace StyleCop.Analyzers.Lightup
             return (SingleVariableDesignationSyntaxWrapper)node.SyntaxNode;
         }
 
-        public static explicit operator SingleVariableDesignationSyntaxWrapper(SyntaxNode node)
-        {
-            if (node == null)
-            {
-                return default;
-            }
-
-            if (!IsInstance(node))
-            {
-                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
-            }
-
-            return new SingleVariableDesignationSyntaxWrapper((CSharpSyntaxNode)node);
-        }
-
         public static implicit operator VariableDesignationSyntaxWrapper(SingleVariableDesignationSyntaxWrapper wrapper)
         {
             return VariableDesignationSyntaxWrapper.FromUpcast(wrapper.node);

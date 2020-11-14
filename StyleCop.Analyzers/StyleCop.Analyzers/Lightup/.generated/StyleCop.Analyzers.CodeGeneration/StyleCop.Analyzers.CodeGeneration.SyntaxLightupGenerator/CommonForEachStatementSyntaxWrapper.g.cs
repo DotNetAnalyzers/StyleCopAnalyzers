@@ -20,6 +20,21 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public StatementSyntax SyntaxNode => this.node;
+        public static explicit operator CommonForEachStatementSyntaxWrapper(SyntaxNode node)
+        {
+            if (node == null)
+            {
+                return default;
+            }
+
+            if (!IsInstance(node))
+            {
+                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
+            }
+
+            return new CommonForEachStatementSyntaxWrapper((StatementSyntax)node);
+        }
+
         public static implicit operator StatementSyntax(CommonForEachStatementSyntaxWrapper wrapper)
         {
             return wrapper.node;

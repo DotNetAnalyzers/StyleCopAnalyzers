@@ -14,21 +14,6 @@ namespace StyleCop.Analyzers.Lightup
             WrappedType = WrapperHelper.GetWrappedType(typeof(PatternSyntaxWrapper));
         }
 
-        public static explicit operator PatternSyntaxWrapper(SyntaxNode node)
-        {
-            if (node == null)
-            {
-                return default;
-            }
-
-            if (!IsInstance(node))
-            {
-                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
-            }
-
-            return new PatternSyntaxWrapper((CSharpSyntaxNode)node);
-        }
-
         internal static PatternSyntaxWrapper FromUpcast(CSharpSyntaxNode node)
         {
             return new PatternSyntaxWrapper(node);

@@ -40,21 +40,6 @@ namespace StyleCop.Analyzers.Lightup
             }
         }
 
-        public static explicit operator WhenClauseSyntaxWrapper(SyntaxNode node)
-        {
-            if (node == null)
-            {
-                return default;
-            }
-
-            if (!IsInstance(node))
-            {
-                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
-            }
-
-            return new WhenClauseSyntaxWrapper((CSharpSyntaxNode)node);
-        }
-
         public WhenClauseSyntaxWrapper WithWhenKeyword(SyntaxToken whenKeyword)
         {
             return new WhenClauseSyntaxWrapper(WithWhenKeywordAccessor(this.SyntaxNode, whenKeyword));

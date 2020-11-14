@@ -20,6 +20,21 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public TypeSyntax SyntaxNode => this.node;
+        public static explicit operator FunctionPointerTypeSyntaxWrapper(SyntaxNode node)
+        {
+            if (node == null)
+            {
+                return default;
+            }
+
+            if (!IsInstance(node))
+            {
+                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
+            }
+
+            return new FunctionPointerTypeSyntaxWrapper((TypeSyntax)node);
+        }
+
         public static implicit operator TypeSyntax(FunctionPointerTypeSyntaxWrapper wrapper)
         {
             return wrapper.node;

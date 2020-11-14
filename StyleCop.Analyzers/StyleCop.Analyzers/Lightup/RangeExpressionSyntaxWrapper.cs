@@ -53,21 +53,6 @@ namespace StyleCop.Analyzers.Lightup
             }
         }
 
-        public static explicit operator RangeExpressionSyntaxWrapper(ExpressionSyntax node)
-        {
-            if (node == null)
-            {
-                return default;
-            }
-
-            if (!IsInstance(node))
-            {
-                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
-            }
-
-            return new RangeExpressionSyntaxWrapper((ExpressionSyntax)node);
-        }
-
         public RangeExpressionSyntaxWrapper WithLeftOperand(ExpressionSyntax leftOperand)
         {
             return new RangeExpressionSyntaxWrapper(WithLeftOperandAccessor(this.SyntaxNode, leftOperand));

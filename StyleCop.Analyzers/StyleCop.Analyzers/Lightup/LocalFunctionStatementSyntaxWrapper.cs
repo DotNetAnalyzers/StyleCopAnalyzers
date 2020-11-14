@@ -124,21 +124,6 @@ namespace StyleCop.Analyzers.Lightup
             }
         }
 
-        public static explicit operator LocalFunctionStatementSyntaxWrapper(SyntaxNode node)
-        {
-            if (node == null)
-            {
-                return default;
-            }
-
-            if (!IsInstance(node))
-            {
-                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
-            }
-
-            return new LocalFunctionStatementSyntaxWrapper((StatementSyntax)node);
-        }
-
         public LocalFunctionStatementSyntaxWrapper WithModifiers(SyntaxTokenList modifiers)
         {
             return new LocalFunctionStatementSyntaxWrapper(WithModifiersAccessor(this.SyntaxNode, modifiers));

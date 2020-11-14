@@ -20,6 +20,21 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public SwitchLabelSyntax SyntaxNode => this.node;
+        public static explicit operator CasePatternSwitchLabelSyntaxWrapper(SyntaxNode node)
+        {
+            if (node == null)
+            {
+                return default;
+            }
+
+            if (!IsInstance(node))
+            {
+                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
+            }
+
+            return new CasePatternSwitchLabelSyntaxWrapper((SwitchLabelSyntax)node);
+        }
+
         public static implicit operator SwitchLabelSyntax(CasePatternSwitchLabelSyntaxWrapper wrapper)
         {
             return wrapper.node;

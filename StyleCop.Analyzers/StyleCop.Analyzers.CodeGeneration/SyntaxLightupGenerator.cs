@@ -126,6 +126,94 @@ namespace StyleCop.Analyzers.CodeGeneration
                 initializer: null,
                 semicolonToken: SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
 
+            // public static explicit operator WhenClauseSyntaxWrapper(SyntaxNode node)
+            // {
+            //     if (node == null)
+            //     {
+            //         return default;
+            //     }
+            //
+            //     if (!IsInstance(node))
+            //     {
+            //         throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
+            //     }
+            //
+            //     return new WhenClauseSyntaxWrapper((CSharpSyntaxNode)node);
+            // }
+            members = members.Add(SyntaxFactory.ConversionOperatorDeclaration(
+                attributeLists: default,
+                modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword)),
+                implicitOrExplicitKeyword: SyntaxFactory.Token(SyntaxKind.ExplicitKeyword),
+                operatorKeyword: SyntaxFactory.Token(SyntaxKind.OperatorKeyword),
+                type: SyntaxFactory.IdentifierName(nodeData.WrapperName),
+                parameterList: SyntaxFactory.ParameterList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Parameter(
+                    attributeLists: default,
+                    modifiers: default,
+                    type: SyntaxFactory.IdentifierName("SyntaxNode"),
+                    identifier: SyntaxFactory.Identifier("node"),
+                    @default: null))),
+                body: SyntaxFactory.Block(
+                    SyntaxFactory.IfStatement(
+                        condition: SyntaxFactory.BinaryExpression(
+                            SyntaxKind.EqualsExpression,
+                            left: SyntaxFactory.IdentifierName("node"),
+                            right: SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)),
+                        statement: SyntaxFactory.Block(
+                            SyntaxFactory.ReturnStatement(SyntaxFactory.LiteralExpression(SyntaxKind.DefaultLiteralExpression)))),
+                    SyntaxFactory.IfStatement(
+                        condition: SyntaxFactory.PrefixUnaryExpression(
+                            SyntaxKind.LogicalNotExpression,
+                            operand: SyntaxFactory.InvocationExpression(
+                                expression: SyntaxFactory.IdentifierName("IsInstance"),
+                                argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(SyntaxFactory.IdentifierName("node")))))),
+                        statement: SyntaxFactory.Block(
+                            SyntaxFactory.ThrowStatement(SyntaxFactory.ObjectCreationExpression(
+                                type: SyntaxFactory.IdentifierName("InvalidCastException"),
+                                argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(
+                                    SyntaxFactory.InterpolatedStringExpression(
+                                        SyntaxFactory.Token(SyntaxKind.InterpolatedStringStartToken),
+                                        SyntaxFactory.List(new InterpolatedStringContentSyntax[]
+                                        {
+                                            SyntaxFactory.InterpolatedStringText(SyntaxFactory.Token(
+                                                leading: default,
+                                                SyntaxKind.InterpolatedStringTextToken,
+                                                "Cannot cast '",
+                                                "Cannot cast '",
+                                                trailing: default)),
+                                            SyntaxFactory.Interpolation(SyntaxFactory.MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                expression: SyntaxFactory.InvocationExpression(
+                                                    expression: SyntaxFactory.MemberAccessExpression(
+                                                        SyntaxKind.SimpleMemberAccessExpression,
+                                                        expression: SyntaxFactory.IdentifierName("node"),
+                                                        name: SyntaxFactory.IdentifierName("GetType")),
+                                                    argumentList: SyntaxFactory.ArgumentList()),
+                                                name: SyntaxFactory.IdentifierName("FullName"))),
+                                            SyntaxFactory.InterpolatedStringText(SyntaxFactory.Token(
+                                                leading: default,
+                                                SyntaxKind.InterpolatedStringTextToken,
+                                                "' to '",
+                                                "' to '",
+                                                trailing: default)),
+                                            SyntaxFactory.Interpolation(SyntaxFactory.IdentifierName("WrappedTypeName")),
+                                            SyntaxFactory.InterpolatedStringText(SyntaxFactory.Token(
+                                                leading: default,
+                                                SyntaxKind.InterpolatedStringTextToken,
+                                                "'",
+                                                "'",
+                                                trailing: default)),
+                                        }))))),
+                                initializer: null)))),
+                    SyntaxFactory.ReturnStatement(SyntaxFactory.ObjectCreationExpression(
+                        type: SyntaxFactory.IdentifierName(nodeData.WrapperName),
+                        argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Argument(
+                            SyntaxFactory.CastExpression(
+                                type: SyntaxFactory.IdentifierName(concreteBase),
+                                expression: SyntaxFactory.IdentifierName("node"))))),
+                        initializer: null))),
+                expressionBody: null,
+                semicolonToken: default));
+
             // public static implicit operator CSharpSyntaxNode(SyntaxWrapper wrapper)
             // {
             //     return wrapper.node;

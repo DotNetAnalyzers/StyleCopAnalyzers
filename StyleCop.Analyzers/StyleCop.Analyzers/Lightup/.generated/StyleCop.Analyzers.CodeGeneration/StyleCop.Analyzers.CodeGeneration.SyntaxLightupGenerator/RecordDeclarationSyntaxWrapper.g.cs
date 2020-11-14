@@ -20,6 +20,21 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public TypeDeclarationSyntax SyntaxNode => this.node;
+        public static explicit operator RecordDeclarationSyntaxWrapper(SyntaxNode node)
+        {
+            if (node == null)
+            {
+                return default;
+            }
+
+            if (!IsInstance(node))
+            {
+                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
+            }
+
+            return new RecordDeclarationSyntaxWrapper((TypeDeclarationSyntax)node);
+        }
+
         public static implicit operator TypeDeclarationSyntax(RecordDeclarationSyntaxWrapper wrapper)
         {
             return wrapper.node;

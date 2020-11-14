@@ -20,6 +20,21 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
+        public static explicit operator VarPatternSyntaxWrapper(SyntaxNode node)
+        {
+            if (node == null)
+            {
+                return default;
+            }
+
+            if (!IsInstance(node))
+            {
+                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
+            }
+
+            return new VarPatternSyntaxWrapper((CSharpSyntaxNode)node);
+        }
+
         public static implicit operator CSharpSyntaxNode(VarPatternSyntaxWrapper wrapper)
         {
             return wrapper.node;

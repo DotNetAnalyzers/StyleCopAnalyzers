@@ -20,6 +20,21 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
+        public static explicit operator BinaryPatternSyntaxWrapper(SyntaxNode node)
+        {
+            if (node == null)
+            {
+                return default;
+            }
+
+            if (!IsInstance(node))
+            {
+                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
+            }
+
+            return new BinaryPatternSyntaxWrapper((CSharpSyntaxNode)node);
+        }
+
         public static implicit operator CSharpSyntaxNode(BinaryPatternSyntaxWrapper wrapper)
         {
             return wrapper.node;

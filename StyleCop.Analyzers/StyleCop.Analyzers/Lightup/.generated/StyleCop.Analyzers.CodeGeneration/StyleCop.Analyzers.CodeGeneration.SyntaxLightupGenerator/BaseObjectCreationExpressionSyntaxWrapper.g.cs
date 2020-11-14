@@ -20,6 +20,21 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public ExpressionSyntax SyntaxNode => this.node;
+        public static explicit operator BaseObjectCreationExpressionSyntaxWrapper(SyntaxNode node)
+        {
+            if (node == null)
+            {
+                return default;
+            }
+
+            if (!IsInstance(node))
+            {
+                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
+            }
+
+            return new BaseObjectCreationExpressionSyntaxWrapper((ExpressionSyntax)node);
+        }
+
         public static implicit operator ExpressionSyntax(BaseObjectCreationExpressionSyntaxWrapper wrapper)
         {
             return wrapper.node;

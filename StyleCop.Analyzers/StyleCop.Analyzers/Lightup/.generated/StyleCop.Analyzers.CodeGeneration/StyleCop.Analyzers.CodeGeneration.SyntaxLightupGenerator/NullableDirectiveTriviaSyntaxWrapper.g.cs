@@ -20,6 +20,21 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public DirectiveTriviaSyntax SyntaxNode => this.node;
+        public static explicit operator NullableDirectiveTriviaSyntaxWrapper(SyntaxNode node)
+        {
+            if (node == null)
+            {
+                return default;
+            }
+
+            if (!IsInstance(node))
+            {
+                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
+            }
+
+            return new NullableDirectiveTriviaSyntaxWrapper((DirectiveTriviaSyntax)node);
+        }
+
         public static implicit operator DirectiveTriviaSyntax(NullableDirectiveTriviaSyntaxWrapper wrapper)
         {
             return wrapper.node;

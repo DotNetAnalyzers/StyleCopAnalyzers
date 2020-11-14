@@ -20,6 +20,21 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public ExpressionSyntax SyntaxNode => this.node;
+        public static explicit operator SwitchExpressionSyntaxWrapper(SyntaxNode node)
+        {
+            if (node == null)
+            {
+                return default;
+            }
+
+            if (!IsInstance(node))
+            {
+                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
+            }
+
+            return new SwitchExpressionSyntaxWrapper((ExpressionSyntax)node);
+        }
+
         public static implicit operator ExpressionSyntax(SwitchExpressionSyntaxWrapper wrapper)
         {
             return wrapper.node;

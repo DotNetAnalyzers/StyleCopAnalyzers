@@ -44,21 +44,6 @@ namespace StyleCop.Analyzers.Lightup
             }
         }
 
-        public static explicit operator CasePatternSwitchLabelSyntaxWrapper(SyntaxNode node)
-        {
-            if (node == null)
-            {
-                return default;
-            }
-
-            if (!IsInstance(node))
-            {
-                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
-            }
-
-            return new CasePatternSwitchLabelSyntaxWrapper((SwitchLabelSyntax)node);
-        }
-
         public CasePatternSwitchLabelSyntaxWrapper WithKeyword(SyntaxToken keyword)
         {
             return new CasePatternSwitchLabelSyntaxWrapper(WithKeywordAccessor(this.SyntaxNode, keyword));

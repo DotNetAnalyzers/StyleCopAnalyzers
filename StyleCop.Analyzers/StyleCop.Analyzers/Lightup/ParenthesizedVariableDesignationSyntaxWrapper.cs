@@ -56,21 +56,6 @@ namespace StyleCop.Analyzers.Lightup
             return (ParenthesizedVariableDesignationSyntaxWrapper)node.SyntaxNode;
         }
 
-        public static explicit operator ParenthesizedVariableDesignationSyntaxWrapper(SyntaxNode node)
-        {
-            if (node == null)
-            {
-                return default;
-            }
-
-            if (!IsInstance(node))
-            {
-                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
-            }
-
-            return new ParenthesizedVariableDesignationSyntaxWrapper((CSharpSyntaxNode)node);
-        }
-
         public static implicit operator VariableDesignationSyntaxWrapper(ParenthesizedVariableDesignationSyntaxWrapper wrapper)
         {
             return VariableDesignationSyntaxWrapper.FromUpcast(wrapper.node);

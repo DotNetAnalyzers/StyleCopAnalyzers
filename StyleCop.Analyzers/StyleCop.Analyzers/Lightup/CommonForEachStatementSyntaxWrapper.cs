@@ -108,21 +108,6 @@ namespace StyleCop.Analyzers.Lightup
             return new CommonForEachStatementSyntaxWrapper(node);
         }
 
-        public static explicit operator CommonForEachStatementSyntaxWrapper(SyntaxNode node)
-        {
-            if (node == null)
-            {
-                return default;
-            }
-
-            if (!IsInstance(node))
-            {
-                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
-            }
-
-            return new CommonForEachStatementSyntaxWrapper((StatementSyntax)node);
-        }
-
         public CommonForEachStatementSyntaxWrapper WithAwaitKeyword(SyntaxToken awaitKeyword)
         {
             return new CommonForEachStatementSyntaxWrapper(WithAwaitKeywordAccessor(this.SyntaxNode, awaitKeyword));

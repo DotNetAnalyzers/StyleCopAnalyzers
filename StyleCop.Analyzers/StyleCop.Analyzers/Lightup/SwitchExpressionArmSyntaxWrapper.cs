@@ -66,21 +66,6 @@ namespace StyleCop.Analyzers.Lightup
             }
         }
 
-        public static explicit operator SwitchExpressionArmSyntaxWrapper(SyntaxNode node)
-        {
-            if (node == null)
-            {
-                return default;
-            }
-
-            if (!IsInstance(node))
-            {
-                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
-            }
-
-            return new SwitchExpressionArmSyntaxWrapper((CSharpSyntaxNode)node);
-        }
-
         public SwitchExpressionArmSyntaxWrapper WithPattern(PatternSyntaxWrapper pattern)
         {
             return new SwitchExpressionArmSyntaxWrapper(WithPatternAccessor(this.SyntaxNode, pattern.SyntaxNode));

@@ -32,21 +32,6 @@ namespace StyleCop.Analyzers.Lightup
             return (DiscardPatternSyntaxWrapper)node.SyntaxNode;
         }
 
-        public static explicit operator DiscardPatternSyntaxWrapper(SyntaxNode node)
-        {
-            if (node == null)
-            {
-                return default;
-            }
-
-            if (!IsInstance(node))
-            {
-                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
-            }
-
-            return new DiscardPatternSyntaxWrapper((CSharpSyntaxNode)node);
-        }
-
         public static implicit operator PatternSyntaxWrapper(DiscardPatternSyntaxWrapper wrapper)
         {
             return PatternSyntaxWrapper.FromUpcast(wrapper.node);

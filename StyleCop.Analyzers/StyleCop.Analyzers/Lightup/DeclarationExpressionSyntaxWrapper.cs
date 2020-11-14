@@ -40,21 +40,6 @@ namespace StyleCop.Analyzers.Lightup
             }
         }
 
-        public static explicit operator DeclarationExpressionSyntaxWrapper(SyntaxNode node)
-        {
-            if (node == null)
-            {
-                return default;
-            }
-
-            if (!IsInstance(node))
-            {
-                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
-            }
-
-            return new DeclarationExpressionSyntaxWrapper((ExpressionSyntax)node);
-        }
-
         public DeclarationExpressionSyntaxWrapper WithType(TypeSyntax type)
         {
             return new DeclarationExpressionSyntaxWrapper(WithTypeAccessor(this.SyntaxNode, type));

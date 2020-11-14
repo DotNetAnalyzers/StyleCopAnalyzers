@@ -39,21 +39,6 @@ namespace StyleCop.Analyzers.Lightup
             }
         }
 
-        public static explicit operator ThrowExpressionSyntaxWrapper(SyntaxNode node)
-        {
-            if (node == null)
-            {
-                return default;
-            }
-
-            if (!IsInstance(node))
-            {
-                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
-            }
-
-            return new ThrowExpressionSyntaxWrapper((ExpressionSyntax)node);
-        }
-
         public ThrowExpressionSyntaxWrapper WithThrowKeyword(SyntaxToken throwKeyword)
         {
             return new ThrowExpressionSyntaxWrapper(WithThrowKeywordAccessor(this.SyntaxNode, throwKeyword));

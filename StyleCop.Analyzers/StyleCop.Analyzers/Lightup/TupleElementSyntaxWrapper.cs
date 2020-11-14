@@ -40,21 +40,6 @@ namespace StyleCop.Analyzers.Lightup
             }
         }
 
-        public static explicit operator TupleElementSyntaxWrapper(SyntaxNode node)
-        {
-            if (node == null)
-            {
-                return default;
-            }
-
-            if (!IsInstance(node))
-            {
-                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
-            }
-
-            return new TupleElementSyntaxWrapper((CSharpSyntaxNode)node);
-        }
-
         public TupleElementSyntaxWrapper WithIdentifier(SyntaxToken identifier)
         {
             return new TupleElementSyntaxWrapper(WithIdentifierAccessor(this.SyntaxNode, identifier));

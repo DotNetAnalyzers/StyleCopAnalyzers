@@ -71,21 +71,6 @@ namespace StyleCop.Analyzers.Lightup
             return (RecursivePatternSyntaxWrapper)node.SyntaxNode;
         }
 
-        public static explicit operator RecursivePatternSyntaxWrapper(SyntaxNode node)
-        {
-            if (node == null)
-            {
-                return default;
-            }
-
-            if (!IsInstance(node))
-            {
-                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
-            }
-
-            return new RecursivePatternSyntaxWrapper((CSharpSyntaxNode)node);
-        }
-
         public static implicit operator PatternSyntaxWrapper(RecursivePatternSyntaxWrapper wrapper)
         {
             return PatternSyntaxWrapper.FromUpcast(wrapper.node);

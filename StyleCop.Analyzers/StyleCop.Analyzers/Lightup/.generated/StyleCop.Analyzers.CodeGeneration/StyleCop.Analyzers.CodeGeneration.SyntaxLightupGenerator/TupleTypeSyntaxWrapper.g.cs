@@ -20,6 +20,21 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public TypeSyntax SyntaxNode => this.node;
+        public static explicit operator TupleTypeSyntaxWrapper(SyntaxNode node)
+        {
+            if (node == null)
+            {
+                return default;
+            }
+
+            if (!IsInstance(node))
+            {
+                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
+            }
+
+            return new TupleTypeSyntaxWrapper((TypeSyntax)node);
+        }
+
         public static implicit operator TypeSyntax(TupleTypeSyntaxWrapper wrapper)
         {
             return wrapper.node;

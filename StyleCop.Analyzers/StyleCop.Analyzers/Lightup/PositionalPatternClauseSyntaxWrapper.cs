@@ -53,21 +53,6 @@ namespace StyleCop.Analyzers.Lightup
             }
         }
 
-        public static explicit operator PositionalPatternClauseSyntaxWrapper(SyntaxNode node)
-        {
-            if (node == null)
-            {
-                return default;
-            }
-
-            if (!IsInstance(node))
-            {
-                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
-            }
-
-            return new PositionalPatternClauseSyntaxWrapper((CSharpSyntaxNode)node);
-        }
-
         public PositionalPatternClauseSyntaxWrapper AddSubpatterns(params SubpatternSyntaxWrapper[] items)
         {
             return new PositionalPatternClauseSyntaxWrapper(this.WithSubpatterns(this.Subpatterns.AddRange(items)));

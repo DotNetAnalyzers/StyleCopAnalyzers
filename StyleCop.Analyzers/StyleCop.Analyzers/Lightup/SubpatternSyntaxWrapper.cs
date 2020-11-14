@@ -42,21 +42,6 @@ namespace StyleCop.Analyzers.Lightup
             }
         }
 
-        public static explicit operator SubpatternSyntaxWrapper(SyntaxNode node)
-        {
-            if (node == null)
-            {
-                return default;
-            }
-
-            if (!IsInstance(node))
-            {
-                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
-            }
-
-            return new SubpatternSyntaxWrapper((CSharpSyntaxNode)node);
-        }
-
         public SubpatternSyntaxWrapper WithNameColon(NameColonSyntax nameColon)
         {
             return new SubpatternSyntaxWrapper(WithNameColonAccessor(this.SyntaxNode, nameColon));

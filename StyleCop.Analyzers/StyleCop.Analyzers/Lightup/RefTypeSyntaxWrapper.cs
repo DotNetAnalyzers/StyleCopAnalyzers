@@ -51,21 +51,6 @@ namespace StyleCop.Analyzers.Lightup
             }
         }
 
-        public static explicit operator RefTypeSyntaxWrapper(SyntaxNode node)
-        {
-            if (node == null)
-            {
-                return default;
-            }
-
-            if (!IsInstance(node))
-            {
-                throw new InvalidCastException($"Cannot cast '{node.GetType().FullName}' to '{WrappedTypeName}'");
-            }
-
-            return new RefTypeSyntaxWrapper((TypeSyntax)node);
-        }
-
         public RefTypeSyntaxWrapper WithRefKeyword(SyntaxToken refKeyword)
         {
             return new RefTypeSyntaxWrapper(WithRefKeywordAccessor(this.SyntaxNode, refKeyword));
