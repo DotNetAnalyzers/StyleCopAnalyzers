@@ -7,18 +7,13 @@ namespace StyleCop.Analyzers.Lightup
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
 
-    internal struct VarPatternSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
+    internal partial struct VarPatternSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
-        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.VarPatternSyntax";
-        private static readonly Type WrappedType;
-
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> VarKeywordAccessor;
         private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode> DesignationAccessor;
 
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithVarKeywordAccessor;
         private static readonly Func<CSharpSyntaxNode, CSharpSyntaxNode, CSharpSyntaxNode> WithDesignationAccessor;
-
-        private readonly CSharpSyntaxNode node;
 
         static VarPatternSyntaxWrapper()
         {
@@ -29,13 +24,6 @@ namespace StyleCop.Analyzers.Lightup
             WithVarKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(VarKeyword));
             WithDesignationAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, CSharpSyntaxNode>(WrappedType, nameof(Designation));
         }
-
-        private VarPatternSyntaxWrapper(CSharpSyntaxNode node)
-        {
-            this.node = node;
-        }
-
-        public CSharpSyntaxNode SyntaxNode => this.node;
 
         public SyntaxToken VarKeyword
         {

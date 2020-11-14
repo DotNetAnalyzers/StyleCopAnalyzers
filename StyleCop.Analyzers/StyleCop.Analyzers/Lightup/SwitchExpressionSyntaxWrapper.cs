@@ -7,11 +7,8 @@ namespace StyleCop.Analyzers.Lightup
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal struct SwitchExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
+    internal partial struct SwitchExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
     {
-        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.SwitchExpressionSyntax";
-
-        private static readonly Type WrappedType;
         private static readonly Func<ExpressionSyntax, SeparatedSyntaxListWrapper<SwitchExpressionArmSyntaxWrapper>> ArmsAccessor;
         private static readonly Func<ExpressionSyntax, ExpressionSyntax> GoverningExpressionAccessor;
         private static readonly Func<ExpressionSyntax, SyntaxToken> OpenBraceTokenAccessor;
@@ -23,8 +20,6 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithOpenBraceTokenAccessor;
         private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithSwitchKeywordAccessor;
         private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithCloseBraceTokenAccessor;
-
-        private readonly ExpressionSyntax node;
 
         static SwitchExpressionSyntaxWrapper()
         {
@@ -41,13 +36,6 @@ namespace StyleCop.Analyzers.Lightup
             WithSwitchKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, SyntaxToken>(WrappedType, nameof(SwitchKeyword));
             WithCloseBraceTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, SyntaxToken>(WrappedType, nameof(CloseBraceToken));
         }
-
-        private SwitchExpressionSyntaxWrapper(ExpressionSyntax node)
-        {
-            this.node = node;
-        }
-
-        public ExpressionSyntax SyntaxNode => this.node;
 
         public ExpressionSyntax GoverningExpression
         {

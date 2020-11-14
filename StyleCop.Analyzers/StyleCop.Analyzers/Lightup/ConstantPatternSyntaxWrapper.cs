@@ -8,15 +8,10 @@ namespace StyleCop.Analyzers.Lightup
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal struct ConstantPatternSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
+    internal partial struct ConstantPatternSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
-        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.ConstantPatternSyntax";
-        private static readonly Type WrappedType;
-
         private static readonly Func<CSharpSyntaxNode, ExpressionSyntax> ExpressionAccessor;
         private static readonly Func<CSharpSyntaxNode, ExpressionSyntax, CSharpSyntaxNode> WithExpressionAccessor;
-
-        private readonly CSharpSyntaxNode node;
 
         static ConstantPatternSyntaxWrapper()
         {
@@ -24,13 +19,6 @@ namespace StyleCop.Analyzers.Lightup
             ExpressionAccessor = LightupHelpers.CreateSyntaxPropertyAccessor<CSharpSyntaxNode, ExpressionSyntax>(WrappedType, nameof(Expression));
             WithExpressionAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, ExpressionSyntax>(WrappedType, nameof(Expression));
         }
-
-        private ConstantPatternSyntaxWrapper(CSharpSyntaxNode node)
-        {
-            this.node = node;
-        }
-
-        public CSharpSyntaxNode SyntaxNode => this.node;
 
         public ExpressionSyntax Expression
         {

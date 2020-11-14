@@ -8,17 +8,12 @@ namespace StyleCop.Analyzers.Lightup
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal struct TupleElementSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
+    internal partial struct TupleElementSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
-        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.TupleElementSyntax";
-        private static readonly Type WrappedType;
-
         private static readonly Func<CSharpSyntaxNode, SyntaxToken> IdentifierAccessor;
         private static readonly Func<CSharpSyntaxNode, TypeSyntax> TypeAccessor;
         private static readonly Func<CSharpSyntaxNode, SyntaxToken, CSharpSyntaxNode> WithIdentifierAccessor;
         private static readonly Func<CSharpSyntaxNode, TypeSyntax, CSharpSyntaxNode> WithTypeAccessor;
-
-        private readonly CSharpSyntaxNode node;
 
         static TupleElementSyntaxWrapper()
         {
@@ -28,13 +23,6 @@ namespace StyleCop.Analyzers.Lightup
             WithIdentifierAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, SyntaxToken>(WrappedType, nameof(Identifier));
             WithTypeAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<CSharpSyntaxNode, TypeSyntax>(WrappedType, nameof(Type));
         }
-
-        private TupleElementSyntaxWrapper(CSharpSyntaxNode node)
-        {
-            this.node = node;
-        }
-
-        public CSharpSyntaxNode SyntaxNode => this.node;
 
         public SyntaxToken Identifier
         {

@@ -7,17 +7,12 @@ namespace StyleCop.Analyzers.Lightup
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal struct ThrowExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
+    internal partial struct ThrowExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
     {
-        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.ThrowExpressionSyntax";
-        private static readonly Type WrappedType;
-
         private static readonly Func<ExpressionSyntax, SyntaxToken> ThrowKeywordAccessor;
         private static readonly Func<ExpressionSyntax, ExpressionSyntax> ExpressionAccessor;
         private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithThrowKeywordAccessor;
         private static readonly Func<ExpressionSyntax, ExpressionSyntax, ExpressionSyntax> WithExpressionAccessor;
-
-        private readonly ExpressionSyntax node;
 
         static ThrowExpressionSyntaxWrapper()
         {
@@ -27,13 +22,6 @@ namespace StyleCop.Analyzers.Lightup
             WithThrowKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, SyntaxToken>(WrappedType, nameof(ThrowKeyword));
             WithExpressionAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, ExpressionSyntax>(WrappedType, nameof(Expression));
         }
-
-        private ThrowExpressionSyntaxWrapper(ExpressionSyntax node)
-        {
-            this.node = node;
-        }
-
-        public ExpressionSyntax SyntaxNode => this.node;
 
         public SyntaxToken ThrowKeyword
         {

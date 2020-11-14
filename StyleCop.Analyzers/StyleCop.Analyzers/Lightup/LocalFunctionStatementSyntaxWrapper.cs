@@ -8,11 +8,8 @@ namespace StyleCop.Analyzers.Lightup
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal struct LocalFunctionStatementSyntaxWrapper : ISyntaxWrapper<StatementSyntax>
+    internal partial struct LocalFunctionStatementSyntaxWrapper : ISyntaxWrapper<StatementSyntax>
     {
-        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.LocalFunctionStatementSyntax";
-        private static readonly Type WrappedType;
-
         private static readonly Func<StatementSyntax, SyntaxTokenList> ModifiersAccessor;
         private static readonly Func<StatementSyntax, TypeSyntax> ReturnTypeAccessor;
         private static readonly Func<StatementSyntax, SyntaxToken> IdentifierAccessor;
@@ -31,8 +28,6 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<StatementSyntax, BlockSyntax, StatementSyntax> WithBodyAccessor;
         private static readonly Func<StatementSyntax, ArrowExpressionClauseSyntax, StatementSyntax> WithExpressionBodyAccessor;
         private static readonly Func<StatementSyntax, SyntaxToken, StatementSyntax> WithSemicolonTokenAccessor;
-
-        private readonly StatementSyntax node;
 
         static LocalFunctionStatementSyntaxWrapper()
         {
@@ -56,13 +51,6 @@ namespace StyleCop.Analyzers.Lightup
             WithExpressionBodyAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<StatementSyntax, ArrowExpressionClauseSyntax>(WrappedType, nameof(ExpressionBody));
             WithSemicolonTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<StatementSyntax, SyntaxToken>(WrappedType, nameof(SemicolonToken));
         }
-
-        private LocalFunctionStatementSyntaxWrapper(StatementSyntax node)
-        {
-            this.node = node;
-        }
-
-        public StatementSyntax SyntaxNode => this.node;
 
         public SyntaxTokenList Modifiers
         {

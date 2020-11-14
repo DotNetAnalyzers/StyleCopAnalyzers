@@ -7,19 +7,14 @@ namespace StyleCop.Analyzers.Lightup
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal struct TupleExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
+    internal partial struct TupleExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
     {
-        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.TupleExpressionSyntax";
-        private static readonly Type WrappedType;
-
         private static readonly Func<ExpressionSyntax, SyntaxToken> OpenParenTokenAccessor;
         private static readonly Func<ExpressionSyntax, SeparatedSyntaxList<ArgumentSyntax>> ArgumentsAccessor;
         private static readonly Func<ExpressionSyntax, SyntaxToken> CloseParenTokenAccessor;
         private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithOpenParenTokenAccessor;
         private static readonly Func<ExpressionSyntax, SeparatedSyntaxList<ArgumentSyntax>, ExpressionSyntax> WithArgumentsAccessor;
         private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithCloseParenTokenAccessor;
-
-        private readonly ExpressionSyntax node;
 
         static TupleExpressionSyntaxWrapper()
         {
@@ -31,13 +26,6 @@ namespace StyleCop.Analyzers.Lightup
             WithArgumentsAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, SeparatedSyntaxList<ArgumentSyntax>>(WrappedType, nameof(Arguments));
             WithCloseParenTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, SyntaxToken>(WrappedType, nameof(CloseParenToken));
         }
-
-        private TupleExpressionSyntaxWrapper(ExpressionSyntax node)
-        {
-            this.node = node;
-        }
-
-        public ExpressionSyntax SyntaxNode => this.node;
 
         public SyntaxToken OpenParenToken
         {

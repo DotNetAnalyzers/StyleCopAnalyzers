@@ -7,17 +7,12 @@ namespace StyleCop.Analyzers.Lightup
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal struct RefExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
+    internal partial struct RefExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
     {
-        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.RefExpressionSyntax";
-        private static readonly Type WrappedType;
-
         private static readonly Func<ExpressionSyntax, SyntaxToken> RefKeywordAccessor;
         private static readonly Func<ExpressionSyntax, ExpressionSyntax> ExpressionAccessor;
         private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithRefKeywordAccessor;
         private static readonly Func<ExpressionSyntax, ExpressionSyntax, ExpressionSyntax> WithExpressionAccessor;
-
-        private readonly ExpressionSyntax node;
 
         static RefExpressionSyntaxWrapper()
         {
@@ -27,13 +22,6 @@ namespace StyleCop.Analyzers.Lightup
             WithRefKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, SyntaxToken>(WrappedType, nameof(RefKeyword));
             WithExpressionAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, ExpressionSyntax>(WrappedType, nameof(Expression));
         }
-
-        private RefExpressionSyntaxWrapper(ExpressionSyntax node)
-        {
-            this.node = node;
-        }
-
-        public ExpressionSyntax SyntaxNode => this.node;
 
         public SyntaxToken RefKeyword
         {

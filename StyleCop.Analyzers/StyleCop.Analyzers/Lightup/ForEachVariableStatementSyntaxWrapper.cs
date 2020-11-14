@@ -7,11 +7,8 @@ namespace StyleCop.Analyzers.Lightup
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal struct ForEachVariableStatementSyntaxWrapper : ISyntaxWrapper<StatementSyntax>
+    internal partial struct ForEachVariableStatementSyntaxWrapper : ISyntaxWrapper<StatementSyntax>
     {
-        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.ForEachVariableStatementSyntax";
-        private static readonly Type WrappedType;
-
         private static readonly Func<StatementSyntax, ExpressionSyntax> VariableAccessor;
 
         private static readonly Func<StatementSyntax, SyntaxToken, StatementSyntax> WithAwaitKeywordAccessor;
@@ -22,8 +19,6 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<StatementSyntax, ExpressionSyntax, StatementSyntax> WithExpressionAccessor;
         private static readonly Func<StatementSyntax, SyntaxToken, StatementSyntax> WithCloseParenTokenAccessor;
         private static readonly Func<StatementSyntax, StatementSyntax, StatementSyntax> WithStatementAccessor;
-
-        private readonly StatementSyntax node;
 
         static ForEachVariableStatementSyntaxWrapper()
         {
@@ -39,13 +34,6 @@ namespace StyleCop.Analyzers.Lightup
             WithCloseParenTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<StatementSyntax, SyntaxToken>(WrappedType, nameof(CloseParenToken));
             WithStatementAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<StatementSyntax, StatementSyntax>(WrappedType, nameof(Statement));
         }
-
-        private ForEachVariableStatementSyntaxWrapper(StatementSyntax node)
-        {
-            this.node = node;
-        }
-
-        public StatementSyntax SyntaxNode => this.node;
 
         public SyntaxToken AwaitKeyword
         {

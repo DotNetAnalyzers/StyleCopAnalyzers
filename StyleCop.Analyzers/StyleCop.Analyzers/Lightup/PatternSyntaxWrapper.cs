@@ -7,24 +7,12 @@ namespace StyleCop.Analyzers.Lightup
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
 
-    internal struct PatternSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
+    internal partial struct PatternSyntaxWrapper : ISyntaxWrapper<CSharpSyntaxNode>
     {
-        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.PatternSyntax";
-        private static readonly Type WrappedType;
-
-        private readonly CSharpSyntaxNode node;
-
         static PatternSyntaxWrapper()
         {
             WrappedType = WrapperHelper.GetWrappedType(typeof(PatternSyntaxWrapper));
         }
-
-        private PatternSyntaxWrapper(CSharpSyntaxNode node)
-        {
-            this.node = node;
-        }
-
-        public CSharpSyntaxNode SyntaxNode => this.node;
 
         public static explicit operator PatternSyntaxWrapper(SyntaxNode node)
         {

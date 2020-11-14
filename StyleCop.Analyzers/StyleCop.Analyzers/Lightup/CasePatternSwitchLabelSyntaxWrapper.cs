@@ -8,19 +8,14 @@ namespace StyleCop.Analyzers.Lightup
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal struct CasePatternSwitchLabelSyntaxWrapper : ISyntaxWrapper<SwitchLabelSyntax>
+    internal partial struct CasePatternSwitchLabelSyntaxWrapper : ISyntaxWrapper<SwitchLabelSyntax>
     {
-        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.CasePatternSwitchLabelSyntax";
-        private static readonly Type WrappedType;
-
         private static readonly Func<SwitchLabelSyntax, CSharpSyntaxNode> PatternAccessor;
         private static readonly Func<SwitchLabelSyntax, CSharpSyntaxNode> WhenClauseAccessor;
         private static readonly Func<SwitchLabelSyntax, SyntaxToken, SwitchLabelSyntax> WithKeywordAccessor;
         private static readonly Func<SwitchLabelSyntax, SyntaxToken, SwitchLabelSyntax> WithColonTokenAccessor;
         private static readonly Func<SwitchLabelSyntax, CSharpSyntaxNode, SwitchLabelSyntax> WithPatternAccessor;
         private static readonly Func<SwitchLabelSyntax, CSharpSyntaxNode, SwitchLabelSyntax> WithWhenClauseAccessor;
-
-        private readonly SwitchLabelSyntax node;
 
         static CasePatternSwitchLabelSyntaxWrapper()
         {
@@ -32,13 +27,6 @@ namespace StyleCop.Analyzers.Lightup
             WithPatternAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<SwitchLabelSyntax, CSharpSyntaxNode>(WrappedType, nameof(Pattern));
             WithWhenClauseAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<SwitchLabelSyntax, CSharpSyntaxNode>(WrappedType, nameof(WhenClause));
         }
-
-        private CasePatternSwitchLabelSyntaxWrapper(SwitchLabelSyntax node)
-        {
-            this.node = node;
-        }
-
-        public SwitchLabelSyntax SyntaxNode => this.node;
 
         public PatternSyntaxWrapper Pattern
         {

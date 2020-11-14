@@ -7,19 +7,14 @@ namespace StyleCop.Analyzers.Lightup
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal struct RefTypeSyntaxWrapper : ISyntaxWrapper<TypeSyntax>
+    internal partial struct RefTypeSyntaxWrapper : ISyntaxWrapper<TypeSyntax>
     {
-        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.RefTypeSyntax";
-        private static readonly Type WrappedType;
-
         private static readonly Func<TypeSyntax, SyntaxToken> RefKeywordAccessor;
         private static readonly Func<TypeSyntax, SyntaxToken> ReadOnlyKeywordAccessor;
         private static readonly Func<TypeSyntax, TypeSyntax> TypeAccessor;
         private static readonly Func<TypeSyntax, SyntaxToken, TypeSyntax> WithRefKeywordAccessor;
         private static readonly Func<TypeSyntax, SyntaxToken, TypeSyntax> WithReadOnlyKeywordAccessor;
         private static readonly Func<TypeSyntax, TypeSyntax, TypeSyntax> WithTypeAccessor;
-
-        private readonly TypeSyntax node;
 
         static RefTypeSyntaxWrapper()
         {
@@ -31,13 +26,6 @@ namespace StyleCop.Analyzers.Lightup
             WithReadOnlyKeywordAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeSyntax, SyntaxToken>(WrappedType, nameof(ReadOnlyKeyword));
             WithTypeAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<TypeSyntax, TypeSyntax>(WrappedType, nameof(Type));
         }
-
-        private RefTypeSyntaxWrapper(TypeSyntax node)
-        {
-            this.node = node;
-        }
-
-        public TypeSyntax SyntaxNode => this.node;
 
         public SyntaxToken RefKeyword
         {

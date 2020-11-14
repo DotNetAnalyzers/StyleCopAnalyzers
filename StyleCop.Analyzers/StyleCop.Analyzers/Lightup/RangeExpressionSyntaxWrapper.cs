@@ -7,11 +7,8 @@ namespace StyleCop.Analyzers.Lightup
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    internal struct RangeExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
+    internal partial struct RangeExpressionSyntaxWrapper : ISyntaxWrapper<ExpressionSyntax>
     {
-        internal const string WrappedTypeName = "Microsoft.CodeAnalysis.CSharp.Syntax.RangeExpressionSyntax";
-        private static readonly Type WrappedType;
-
         private static readonly Func<ExpressionSyntax, ExpressionSyntax> LeftOperandAccessor;
         private static readonly Func<ExpressionSyntax, SyntaxToken> OperatorTokenAccessor;
         private static readonly Func<ExpressionSyntax, ExpressionSyntax> RightOperandAccessor;
@@ -19,8 +16,6 @@ namespace StyleCop.Analyzers.Lightup
         private static readonly Func<ExpressionSyntax, ExpressionSyntax, ExpressionSyntax> WithLeftOperandAccessor;
         private static readonly Func<ExpressionSyntax, SyntaxToken, ExpressionSyntax> WithOperatorTokenAccessor;
         private static readonly Func<ExpressionSyntax, ExpressionSyntax, ExpressionSyntax> WithRightOperandAccessor;
-
-        private readonly ExpressionSyntax node;
 
         static RangeExpressionSyntaxWrapper()
         {
@@ -33,13 +28,6 @@ namespace StyleCop.Analyzers.Lightup
             WithOperatorTokenAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, SyntaxToken>(WrappedType, nameof(OperatorToken));
             WithRightOperandAccessor = LightupHelpers.CreateSyntaxWithPropertyAccessor<ExpressionSyntax, ExpressionSyntax>(WrappedType, nameof(RightOperand));
         }
-
-        private RangeExpressionSyntaxWrapper(ExpressionSyntax node)
-        {
-            this.node = node;
-        }
-
-        public ExpressionSyntax SyntaxNode => this.node;
 
         public ExpressionSyntax LeftOperand
         {
