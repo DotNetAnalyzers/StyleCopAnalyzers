@@ -20,5 +20,14 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public CSharpSyntaxNode SyntaxNode => this.node;
+        public static implicit operator CSharpSyntaxNode(ExpressionOrPatternSyntaxWrapper wrapper)
+        {
+            return wrapper.node;
+        }
+
+        public static bool IsInstance(SyntaxNode node)
+        {
+            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
+        }
     }
 }

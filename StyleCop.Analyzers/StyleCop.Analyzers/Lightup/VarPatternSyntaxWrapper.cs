@@ -66,16 +66,6 @@ namespace StyleCop.Analyzers.Lightup
             return PatternSyntaxWrapper.FromUpcast(wrapper.node);
         }
 
-        public static implicit operator CSharpSyntaxNode(VarPatternSyntaxWrapper wrapper)
-        {
-            return wrapper.node;
-        }
-
-        public static bool IsInstance(SyntaxNode node)
-        {
-            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
-        }
-
         public VarPatternSyntaxWrapper WithVarKeyword(SyntaxToken varKeyword)
         {
             return new VarPatternSyntaxWrapper(WithVarKeywordAccessor(this.SyntaxNode, varKeyword));

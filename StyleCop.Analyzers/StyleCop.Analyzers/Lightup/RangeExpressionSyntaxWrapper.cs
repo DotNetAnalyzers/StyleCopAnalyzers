@@ -68,16 +68,6 @@ namespace StyleCop.Analyzers.Lightup
             return new RangeExpressionSyntaxWrapper((ExpressionSyntax)node);
         }
 
-        public static implicit operator ExpressionSyntax(RangeExpressionSyntaxWrapper wrapper)
-        {
-            return wrapper.node;
-        }
-
-        public static bool IsInstance(SyntaxNode node)
-        {
-            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
-        }
-
         public RangeExpressionSyntaxWrapper WithLeftOperand(ExpressionSyntax leftOperand)
         {
             return new RangeExpressionSyntaxWrapper(WithLeftOperandAccessor(this.SyntaxNode, leftOperand));

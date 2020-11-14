@@ -29,16 +29,6 @@ namespace StyleCop.Analyzers.Lightup
             return new VariableDesignationSyntaxWrapper((CSharpSyntaxNode)node);
         }
 
-        public static implicit operator CSharpSyntaxNode(VariableDesignationSyntaxWrapper wrapper)
-        {
-            return wrapper.node;
-        }
-
-        public static bool IsInstance(SyntaxNode node)
-        {
-            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
-        }
-
         internal static VariableDesignationSyntaxWrapper FromUpcast(CSharpSyntaxNode node)
         {
             return new VariableDesignationSyntaxWrapper(node);

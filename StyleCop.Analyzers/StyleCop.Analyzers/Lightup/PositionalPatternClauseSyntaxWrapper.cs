@@ -68,16 +68,6 @@ namespace StyleCop.Analyzers.Lightup
             return new PositionalPatternClauseSyntaxWrapper((CSharpSyntaxNode)node);
         }
 
-        public static implicit operator CSharpSyntaxNode(PositionalPatternClauseSyntaxWrapper wrapper)
-        {
-            return wrapper.node;
-        }
-
-        public static bool IsInstance(SyntaxNode node)
-        {
-            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
-        }
-
         public PositionalPatternClauseSyntaxWrapper AddSubpatterns(params SubpatternSyntaxWrapper[] items)
         {
             return new PositionalPatternClauseSyntaxWrapper(this.WithSubpatterns(this.Subpatterns.AddRange(items)));

@@ -123,16 +123,6 @@ namespace StyleCop.Analyzers.Lightup
             return new CommonForEachStatementSyntaxWrapper((StatementSyntax)node);
         }
 
-        public static implicit operator StatementSyntax(CommonForEachStatementSyntaxWrapper wrapper)
-        {
-            return wrapper.node;
-        }
-
-        public static bool IsInstance(SyntaxNode node)
-        {
-            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
-        }
-
         public CommonForEachStatementSyntaxWrapper WithAwaitKeyword(SyntaxToken awaitKeyword)
         {
             return new CommonForEachStatementSyntaxWrapper(WithAwaitKeywordAccessor(this.SyntaxNode, awaitKeyword));

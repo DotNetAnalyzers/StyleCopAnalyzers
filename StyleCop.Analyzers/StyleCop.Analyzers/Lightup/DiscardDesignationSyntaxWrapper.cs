@@ -52,16 +52,6 @@ namespace StyleCop.Analyzers.Lightup
             return VariableDesignationSyntaxWrapper.FromUpcast(wrapper.node);
         }
 
-        public static implicit operator CSharpSyntaxNode(DiscardDesignationSyntaxWrapper wrapper)
-        {
-            return wrapper.node;
-        }
-
-        public static bool IsInstance(SyntaxNode node)
-        {
-            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
-        }
-
         public DiscardDesignationSyntaxWrapper WithUnderscoreToken(SyntaxToken identifier)
         {
             return new DiscardDesignationSyntaxWrapper(WithUnderscoreTokenAccessor(this.SyntaxNode, identifier));

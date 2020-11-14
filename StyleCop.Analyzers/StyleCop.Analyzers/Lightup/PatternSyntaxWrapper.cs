@@ -29,16 +29,6 @@ namespace StyleCop.Analyzers.Lightup
             return new PatternSyntaxWrapper((CSharpSyntaxNode)node);
         }
 
-        public static implicit operator CSharpSyntaxNode(PatternSyntaxWrapper wrapper)
-        {
-            return wrapper.node;
-        }
-
-        public static bool IsInstance(SyntaxNode node)
-        {
-            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
-        }
-
         internal static PatternSyntaxWrapper FromUpcast(CSharpSyntaxNode node)
         {
             return new PatternSyntaxWrapper(node);

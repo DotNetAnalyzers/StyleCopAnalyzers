@@ -66,16 +66,6 @@ namespace StyleCop.Analyzers.Lightup
             return new TupleExpressionSyntaxWrapper((ExpressionSyntax)node);
         }
 
-        public static implicit operator ExpressionSyntax(TupleExpressionSyntaxWrapper wrapper)
-        {
-            return wrapper.node;
-        }
-
-        public static bool IsInstance(SyntaxNode node)
-        {
-            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
-        }
-
         public TupleExpressionSyntaxWrapper AddArguments(params ArgumentSyntax[] items)
         {
             return new TupleExpressionSyntaxWrapper(this.WithArguments(this.Arguments.AddRange(items)));

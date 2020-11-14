@@ -55,16 +55,6 @@ namespace StyleCop.Analyzers.Lightup
             return new TupleElementSyntaxWrapper((CSharpSyntaxNode)node);
         }
 
-        public static implicit operator CSharpSyntaxNode(TupleElementSyntaxWrapper wrapper)
-        {
-            return wrapper.node;
-        }
-
-        public static bool IsInstance(SyntaxNode node)
-        {
-            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
-        }
-
         public TupleElementSyntaxWrapper WithIdentifier(SyntaxToken identifier)
         {
             return new TupleElementSyntaxWrapper(WithIdentifierAccessor(this.SyntaxNode, identifier));

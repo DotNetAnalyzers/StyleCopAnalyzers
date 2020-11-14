@@ -92,16 +92,6 @@ namespace StyleCop.Analyzers.Lightup
             return new SwitchExpressionSyntaxWrapper((ExpressionSyntax)node);
         }
 
-        public static implicit operator ExpressionSyntax(SwitchExpressionSyntaxWrapper wrapper)
-        {
-            return wrapper.node;
-        }
-
-        public static bool IsInstance(SyntaxNode node)
-        {
-            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
-        }
-
         public SwitchExpressionSyntaxWrapper AddArms(params SwitchExpressionArmSyntaxWrapper[] arms)
         {
             return new SwitchExpressionSyntaxWrapper(this.WithArms(this.Arms.AddRange(arms)));

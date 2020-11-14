@@ -67,16 +67,6 @@ namespace StyleCop.Analyzers.Lightup
             return new IsPatternExpressionSyntaxWrapper((ExpressionSyntax)node);
         }
 
-        public static implicit operator ExpressionSyntax(IsPatternExpressionSyntaxWrapper wrapper)
-        {
-            return wrapper.node;
-        }
-
-        public static bool IsInstance(SyntaxNode node)
-        {
-            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
-        }
-
         public IsPatternExpressionSyntaxWrapper WithExpression(ExpressionSyntax expression)
         {
             return new IsPatternExpressionSyntaxWrapper(WithExpressionAccessor(this.SyntaxNode, expression));

@@ -54,16 +54,6 @@ namespace StyleCop.Analyzers.Lightup
             return new RefExpressionSyntaxWrapper((ExpressionSyntax)node);
         }
 
-        public static implicit operator ExpressionSyntax(RefExpressionSyntaxWrapper wrapper)
-        {
-            return wrapper.node;
-        }
-
-        public static bool IsInstance(SyntaxNode node)
-        {
-            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
-        }
-
         public RefExpressionSyntaxWrapper WithRefKeyword(SyntaxToken refKeyword)
         {
             return new RefExpressionSyntaxWrapper(WithRefKeywordAccessor(this.SyntaxNode, refKeyword));

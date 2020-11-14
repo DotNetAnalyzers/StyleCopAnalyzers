@@ -57,16 +57,6 @@ namespace StyleCop.Analyzers.Lightup
             return new SubpatternSyntaxWrapper((CSharpSyntaxNode)node);
         }
 
-        public static implicit operator CSharpSyntaxNode(SubpatternSyntaxWrapper wrapper)
-        {
-            return wrapper.node;
-        }
-
-        public static bool IsInstance(SyntaxNode node)
-        {
-            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
-        }
-
         public SubpatternSyntaxWrapper WithNameColon(NameColonSyntax nameColon)
         {
             return new SubpatternSyntaxWrapper(WithNameColonAccessor(this.SyntaxNode, nameColon));

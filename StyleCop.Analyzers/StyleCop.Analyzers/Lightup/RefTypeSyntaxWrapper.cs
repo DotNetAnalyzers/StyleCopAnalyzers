@@ -66,16 +66,6 @@ namespace StyleCop.Analyzers.Lightup
             return new RefTypeSyntaxWrapper((TypeSyntax)node);
         }
 
-        public static implicit operator TypeSyntax(RefTypeSyntaxWrapper wrapper)
-        {
-            return wrapper.node;
-        }
-
-        public static bool IsInstance(SyntaxNode node)
-        {
-            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
-        }
-
         public RefTypeSyntaxWrapper WithRefKeyword(SyntaxToken refKeyword)
         {
             return new RefTypeSyntaxWrapper(WithRefKeywordAccessor(this.SyntaxNode, refKeyword));

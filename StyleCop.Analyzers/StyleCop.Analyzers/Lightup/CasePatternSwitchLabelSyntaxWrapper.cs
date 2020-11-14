@@ -59,16 +59,6 @@ namespace StyleCop.Analyzers.Lightup
             return new CasePatternSwitchLabelSyntaxWrapper((SwitchLabelSyntax)node);
         }
 
-        public static implicit operator SwitchLabelSyntax(CasePatternSwitchLabelSyntaxWrapper wrapper)
-        {
-            return wrapper.node;
-        }
-
-        public static bool IsInstance(SyntaxNode node)
-        {
-            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
-        }
-
         public CasePatternSwitchLabelSyntaxWrapper WithKeyword(SyntaxToken keyword)
         {
             return new CasePatternSwitchLabelSyntaxWrapper(WithKeywordAccessor(this.SyntaxNode, keyword));

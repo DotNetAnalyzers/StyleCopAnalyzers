@@ -53,16 +53,6 @@ namespace StyleCop.Analyzers.Lightup
             return PatternSyntaxWrapper.FromUpcast(wrapper.node);
         }
 
-        public static implicit operator CSharpSyntaxNode(ConstantPatternSyntaxWrapper wrapper)
-        {
-            return wrapper.node;
-        }
-
-        public static bool IsInstance(SyntaxNode node)
-        {
-            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
-        }
-
         public ConstantPatternSyntaxWrapper WithExpression(ExpressionSyntax expression)
         {
             return new ConstantPatternSyntaxWrapper(WithExpressionAccessor(this.SyntaxNode, expression));

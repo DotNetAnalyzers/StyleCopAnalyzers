@@ -139,16 +139,6 @@ namespace StyleCop.Analyzers.Lightup
             return new LocalFunctionStatementSyntaxWrapper((StatementSyntax)node);
         }
 
-        public static implicit operator StatementSyntax(LocalFunctionStatementSyntaxWrapper wrapper)
-        {
-            return wrapper.node;
-        }
-
-        public static bool IsInstance(SyntaxNode node)
-        {
-            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
-        }
-
         public LocalFunctionStatementSyntaxWrapper WithModifiers(SyntaxTokenList modifiers)
         {
             return new LocalFunctionStatementSyntaxWrapper(WithModifiersAccessor(this.SyntaxNode, modifiers));

@@ -20,5 +20,14 @@ namespace StyleCop.Analyzers.Lightup
         }
 
         public BaseTypeSyntax SyntaxNode => this.node;
+        public static implicit operator BaseTypeSyntax(PrimaryConstructorBaseTypeSyntaxWrapper wrapper)
+        {
+            return wrapper.node;
+        }
+
+        public static bool IsInstance(SyntaxNode node)
+        {
+            return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
+        }
     }
 }

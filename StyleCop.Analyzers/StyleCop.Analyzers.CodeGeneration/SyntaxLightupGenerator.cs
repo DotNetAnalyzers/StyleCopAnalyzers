@@ -126,6 +126,67 @@ namespace StyleCop.Analyzers.CodeGeneration
                 initializer: null,
                 semicolonToken: SyntaxFactory.Token(SyntaxKind.SemicolonToken)));
 
+            // public static implicit operator CSharpSyntaxNode(SyntaxWrapper wrapper)
+            // {
+            //     return wrapper.node;
+            // }
+            members = members.Add(SyntaxFactory.ConversionOperatorDeclaration(
+                attributeLists: default,
+                modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword)),
+                implicitOrExplicitKeyword: SyntaxFactory.Token(SyntaxKind.ImplicitKeyword),
+                operatorKeyword: SyntaxFactory.Token(SyntaxKind.OperatorKeyword),
+                type: SyntaxFactory.IdentifierName(concreteBase),
+                parameterList: SyntaxFactory.ParameterList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Parameter(
+                    attributeLists: default,
+                    modifiers: default,
+                    type: SyntaxFactory.IdentifierName(nodeData.WrapperName),
+                    identifier: SyntaxFactory.Identifier("wrapper"),
+                    @default: null))),
+                body: SyntaxFactory.Block(SyntaxFactory.ReturnStatement(SyntaxFactory.MemberAccessExpression(
+                    SyntaxKind.SimpleMemberAccessExpression,
+                    expression: SyntaxFactory.IdentifierName("wrapper"),
+                    name: SyntaxFactory.IdentifierName("node")))),
+                expressionBody: null,
+                semicolonToken: default));
+
+            // public static bool IsInstance(SyntaxNode node)
+            // {
+            //     return node != null && LightupHelpers.CanWrapNode(node, WrappedType);
+            // }
+            members = members.Add(SyntaxFactory.MethodDeclaration(
+                attributeLists: default,
+                modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword), SyntaxFactory.Token(SyntaxKind.StaticKeyword)),
+                returnType: SyntaxFactory.PredefinedType(SyntaxFactory.Token(SyntaxKind.BoolKeyword)),
+                explicitInterfaceSpecifier: null,
+                identifier: SyntaxFactory.Identifier("IsInstance"),
+                typeParameterList: null,
+                parameterList: SyntaxFactory.ParameterList(SyntaxFactory.SingletonSeparatedList(SyntaxFactory.Parameter(
+                    attributeLists: default,
+                    modifiers: default,
+                    type: SyntaxFactory.IdentifierName("SyntaxNode"),
+                    identifier: SyntaxFactory.Identifier("node"),
+                    @default: null))),
+                constraintClauses: default,
+                body: SyntaxFactory.Block(
+                    SyntaxFactory.ReturnStatement(SyntaxFactory.BinaryExpression(
+                        SyntaxKind.LogicalAndExpression,
+                        left: SyntaxFactory.BinaryExpression(
+                            SyntaxKind.NotEqualsExpression,
+                            left: SyntaxFactory.IdentifierName("node"),
+                            right: SyntaxFactory.LiteralExpression(SyntaxKind.NullLiteralExpression)),
+                        right: SyntaxFactory.InvocationExpression(
+                            expression: SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                expression: SyntaxFactory.IdentifierName("LightupHelpers"),
+                                name: SyntaxFactory.IdentifierName("CanWrapNode")),
+                            argumentList: SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList(
+                                new[]
+                                {
+                                    SyntaxFactory.Argument(SyntaxFactory.IdentifierName("node")),
+                                    SyntaxFactory.Argument(SyntaxFactory.IdentifierName("WrappedType")),
+                                })))))),
+                expressionBody: null));
+
             var wrapperStruct = SyntaxFactory.StructDeclaration(
                 attributeLists: default,
                 modifiers: SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.InternalKeyword), SyntaxFactory.Token(SyntaxKind.ReadOnlyKeyword), SyntaxFactory.Token(SyntaxKind.PartialKeyword)),
